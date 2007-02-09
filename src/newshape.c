@@ -1,12 +1,12 @@
 #include "opentyrian.h"
 #include "newshape.h"
 
-void JE_NewLoadShapesB(JE_byte table, FILE **f)
+void JE_NewLoadShapesB(JE_byte table, FILE *f)
 {
 	short tempw;
 	short z;
 
-	fread(&tempw, 2, 1, *f);
+	fread(&tempw, 2, 1, f);
 	maxshape[table] = tempw;
 
 	if(!LoadOverride)
@@ -19,17 +19,17 @@ void JE_NewLoadShapesB(JE_byte table, FILE **f)
 	{
 		for(z = 0; z < min-1; z++)
 		{
-			fread(&shapexist[table][z], 1, 1, *f);
+			fread(&shapexist[table][z], 1, 1, f);
 
 			if(shapexist[table][z])
 			{
-				fread(&shapex   [table][z], 2, 1, *f);
-				fread(&shapey   [table][z], 2, 1, *f);
-				fread(&shapesize[table][z], 2, 1, *f);
+				fread(&shapex   [table][z], 2, 1, f);
+				fread(&shapey   [table][z], 2, 1, f);
+				fread(&shapesize[table][z], 2, 1, f);
 
 				(*shapearray)[table][z] = malloc(shapex[table][z]*shapey[table][z]);
 
-				fread((*shapearray)[table][z], shapesize[table][z], 1, *f);
+				fread((*shapearray)[table][z], shapesize[table][z], 1, f);
 
 				free((*shapearray)[table][z]);
 			}
@@ -39,17 +39,17 @@ void JE_NewLoadShapesB(JE_byte table, FILE **f)
 	for(z = min-1; z < max; z++)
 	{
 		tempw = z-min+1;
-		fread(&shapexist[table][tempw], 1, 1, *f);
+		fread(&shapexist[table][tempw], 1, 1, f);
 
 		if(shapexist[table][tempw])
 		{
-			fread(&shapex   [table][tempw], 2, 1, *f);
-			fread(&shapey   [table][tempw], 2, 1, *f);
-			fread(&shapesize[table][tempw], 2, 1, *f);
+			fread(&shapex   [table][tempw], 2, 1, f);
+			fread(&shapey   [table][tempw], 2, 1, f);
+			fread(&shapesize[table][tempw], 2, 1, f);
 
 			(*shapearray)[table][tempw] = malloc(shapex[table][tempw]*shapey[table][tempw]);
 
-			fread((*shapearray)[table][tempw], shapesize[table][tempw], 1, *f);
+			fread((*shapearray)[table][tempw], shapesize[table][tempw], 1, f);
 		}
 	}
 }
