@@ -43,7 +43,7 @@ JE_byte x;
    Draw X pixels of color Y
 */
 
-void JE_NewLoadShapes(JE_byte table, char *shapefile);
+void JE_NewLoadShapes(JE_byte table, JE_string shapefile);
 void JE_NewLoadShapesB(JE_byte table, FILE *f);
 void JE_NewCompressBlock(JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize);
 void JE_NewDrawShape(JE_byte *shape, JE_word xsize, JE_word ysize);
