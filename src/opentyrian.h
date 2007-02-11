@@ -13,6 +13,6 @@ typedef unsigned short JE_word;
 typedef unsigned char JE_byte;
 typedef int JE_boolean;
 
-SDL_Surface *vgascreenseg = NULL;
+SDL_Surface *vgascreenseg;
 
 #endif /* _OPENTYRIAN_H */

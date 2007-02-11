@@ -1,25 +1,25 @@
 #ifndef _NEWSHAPE_H
 #define _NEWSHAPE_H
 
-const JE_integer OldBlack = 0;
-const JE_integer NewBlack = 253;
+const JE_integer OldBlack;
+const JE_integer NewBlack;
 #define maximumshape 151
 #define maxtable 8
-const JE_integer _PlanetShapes    = 0;
-const JE_integer _FontShapes      = 1;
-const JE_integer _SmallFontShapes = 2;
-const JE_integer _FaceShapes      = 3;
-const JE_integer _OptionShapes    = 4;   /*Also contains help shapes*/
-const JE_integer _TinyFont        = 5;
-const JE_integer _WeaponShapes    = 6;
-const JE_integer _ExtraShapes     = 7;   /*Used for Ending pics*/
+const JE_integer _PlanetShapes;
+const JE_integer _FontShapes;
+const JE_integer _SmallFontShapes;
+const JE_integer _FaceShapes;
+const JE_integer _OptionShapes;
+const JE_integer _TinyFont;
+const JE_integer _WeaponShapes;
+const JE_integer _ExtraShapes;
 
 typedef JE_byte *shapearraytype[maxtable][maximumshape];
 
 JE_boolean LoadOverride;
 JE_word min, max;
 
-SDL_Surface *tempscreenseg = NULL;
+SDL_Surface *tempscreenseg;
 
 shapearraytype *shapearray;
 

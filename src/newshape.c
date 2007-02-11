@@ -1,6 +1,19 @@
 #include "opentyrian.h"
 #include "newshape.h"
 
+const JE_integer OldBlack = 0;
+const JE_integer NewBlack = 253;
+const JE_integer _PlanetShapes    = 0;
+const JE_integer _FontShapes      = 1;
+const JE_integer _SmallFontShapes = 2;
+const JE_integer _FaceShapes      = 3;
+const JE_integer _OptionShapes    = 4;   /*Also contains help shapes*/
+const JE_integer _TinyFont        = 5;
+const JE_integer _WeaponShapes    = 6;
+const JE_integer _ExtraShapes     = 7;   /*Used for Ending pics*/
+
+SDL_Surface *tempscreenseg = NULL;
+
 void JE_NewLoadShapesB(JE_byte table, FILE *f)
 {
 	short tempw;
