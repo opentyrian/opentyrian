@@ -61,4 +61,6 @@ void JE_MouseReplace();
 
 JE_byte *Shapes6Pointer;
 
+void newshape_init();
+
 #endif /* _NEWSHAPE_H */
