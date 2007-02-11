@@ -9,16 +9,6 @@ const JE_integer _Darken;
 const JE_integer _Trick;
 const JE_integer _Noshade;
 
-/*
-const JE_integer _PlanetShapes;
-const JE_integer _FontShapes;
-const JE_integer _SmallFontShapes;
-const JE_integer _FaceShapes;
-const JE_integer _OptionShapes;
-const JE_integer _TinyFont;
-const JE_integer _WeaponShapes;
-*/
-
 JE_integer DefaultBrightness;
 JE_byte TextGlowFont,
         TextGlowBrightness;
