@@ -1,3 +1,6 @@
+#ifndef _NEWSHAPE_H
+#define _NEWSHAPE_H
+
 const JE_integer OldBlack = 0;
 const JE_integer NewBlack = 253;
 #define maximumshape 151
@@ -20,14 +23,14 @@ SDL_Surface *tempscreenseg = NULL;
 
 shapearraytype *shapearray;
 
-JE_word shapex[maxtable][maximumshape],
-        shapey[maxtable][maximumshape];
-JE_word shapesize[maxtable][maximumshape];
-JE_boolean shapexist[maxtable][maximumshape];
+JE_word shapex[maxtable][maximumshape],	/* [1..maxtable,1..maximumshape] */
+        shapey[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+JE_word shapesize[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+JE_boolean shapexist[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
 
-JE_byte maxshape[maxtable];
+JE_byte maxshape[maxtable];	/* [1..maxtable] */
 
-JE_byte mousegrabshape[24*28];
+JE_byte mousegrabshape[24*28];	/* [1..24*28] */
 
 JE_byte x;
 
@@ -57,3 +60,5 @@ void JE_MouseStart();
 void JE_MouseReplace();
 
 JE_byte *Shapes6Pointer;
+
+#endif /* _NEWSHAPE_H */
