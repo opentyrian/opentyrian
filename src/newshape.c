@@ -1,4 +1,4 @@
-#include "opentyrian.h"
+#include "opentyr.h"
 #include "newshape.h"
 
 const JE_integer OldBlack = 0;
