@@ -16,6 +16,8 @@ typedef int JE_boolean;
 typedef char *JE_string;
 typedef char JE_char;
 
+typedef double JE_real; /* TODO: check if type is right */
+
 SDL_Surface *vgascreenseg;
 
 #endif /* _OPENTYRIAN_H */
