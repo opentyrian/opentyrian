@@ -1,3 +1,8 @@
+#ifndef _3DSTAR_H
+#define _3DSTAR_H
+
+#include "opentyr.h"
+
 #define MAXSTARS 1000
 #define MAXRAND 3999
 
@@ -46,3 +51,5 @@ void resetvalues( void );
 void changesetup( JE_byte setuptype );
 
 /* TODO... */
+
+#endif /*_3DSTAR_H */
