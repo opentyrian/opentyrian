@@ -65,3 +65,42 @@ void JE_NewDrawCShapeBright(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 
 	SDL_UnlockSurface(tempscreenseg);
 }
+
+/*Intended for Font drawing - maximum X size is 255*/
+void JE_NewDrawCShapeDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+
+	SDL_LockSurface(tempscreenseg);
+	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+
+	for(p = shape; yloop < ysize; p++)
+	{
+		switch(*p)
+		{
+		case 255:	/* p transparent pixels */
+			p++;
+			s += *p; xloop += *p;
+			break;
+		case 254:	/* next y */
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+			break;
+		case 253:	/* 1 transparent pixel */
+			s++; xloop++;
+			break;
+		default:	/* set a pixel */
+			*s = ((*p & 0x0f) >> 1) + (*p & 0xf0);
+			s++; xloop++;
+		}
+		if(xloop == xsize)
+		{
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+		}
+	}
+
+	SDL_UnlockSurface(tempscreenseg);
+}
