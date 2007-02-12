@@ -1,21 +1,35 @@
-CC = gcc
-CFLAGS = -ansi -pedantic -Wall -Werror
-LDFLAGS = `sdl-config --cflags --libs`
-IN = src
-OUT = bin
-OBJS = opentyr.o newshape.o fonthand.o
+# BUILD SETTINGS ###################################
+DEBUG := 1
 
-all: tyrian
+# END SETTINGS #####################################
 
-.PHONY: clean
-clean:
-	-rm ${IN}/*.o
-	-rm ${OUT}/tyrian
-	-rmdir ${OUT}
+TARGET := tyrian
+OBJS := opentyr.o newshape.o fonthand.o
 
-tyrian: ${OBJS}
-	-mkdir ${OUT} 
-	${CC} ${LDFLAGS} -o ${OUT}/$@ $(OBJS:%=${IN}/%)
+ifeq ($(DEBUG), 1)
+	DEBUG_FLAGS := -g3 -O0 -Wno-unused
+else
+	DEBUG_FLAGS := -O2 -fomit-frame-pointer -DNDEBUG
+endif
 
-${OBJS}:
-	${CC} ${CFLAGS} -c ${IN}/$*.c -o ${IN}/$*.o
+SDL_CFLAGS := $(shell sdl-config --cflags)
+SDL_LDFLAGS := $(shell sdl-config --libs)
+
+CFLAGS := -ansi -pedantic -Wall -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
+LDFLAGS := $(SDL_LDFLAGS) -lm
+
+####################################################
+
+OBJS := $(foreach obj, $(OBJS), obj/$(obj))
+
+$(TARGET) : $(OBJS)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+obj/%.o : src/%.c
+	$(CC) -o $@ -c $(CFLAGS) $<
+
+.PHONY : clean
+
+clean :
+	rm -f obj/*.o
+	rm -f $(TARGET)
