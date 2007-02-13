@@ -95,6 +95,45 @@ void JE_NewDrawCShapeBright(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 }
 
 /*Intended for Font drawing - maximum X size is 255*/
+void JE_NewDrawCShapeShadow(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+
+	SDL_LockSurface(tempscreenseg);
+	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+
+	for(p = shape; yloop < ysize; p++)
+	{
+		switch(*p)
+		{
+		case 255:	/* p transparent pixels */
+			p++;
+			s += *p; xloop += *p;
+			break;
+		case 254:	/* next y */
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+			break;
+		case 253:	/* 1 transparent pixel */
+			s++; xloop++;
+			break;
+		default:	/* set a pixel */
+			*s = 0;
+			s++; xloop++;
+		}
+		if(xloop == xsize)
+		{
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+		}
+	}
+
+	SDL_UnlockSurface(tempscreenseg);
+}
+
+/*Intended for Font drawing - maximum X size is 255*/
 void JE_NewDrawCShapeDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y)
 {
 	JE_word xloop = 0, yloop = 0;
@@ -131,4 +170,36 @@ void JE_NewDrawCShapeDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	}
 
 	SDL_UnlockSurface(tempscreenseg);
+}
+
+void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortint brightness)
+{
+	JE_byte a, b;
+	JE_byte bright = 0;
+	for(a = 0; s[a] != 0; a++)
+	{
+		b = s[a];
+
+		if((b > 32) && (b < 126) && (fontmap[b-33] != 255) && ((*shapearray)[_TinyFont][fontmap[b-33]] != NULL))
+		{
+			if (brightness >= 0)
+				JE_NewDrawCShapeBright((*shapearray)[_TinyFont][fontmap[b-33]], shapex[_TinyFont][fontmap[b-33]], shapey[_TinyFont][fontmap[b-33]], x, y, colorbank, brightness + bright);
+			else
+				JE_NewDrawCShapeShadow((*shapearray)[_TinyFont][fontmap[b-33]], shapex[_TinyFont][fontmap[b-33]], shapey[_TinyFont][fontmap[b-33]], x, y);
+
+			x += shapex[_TinyFont][fontmap[b-33]] + 1;
+		} else
+			if(b == 32)
+				x += 6;
+			else
+				if(b == 126)
+				{
+					if(bright > 0)
+						bright = 0;
+					else
+						bright = 4;
+				}
+	}
+	if(brightness >= 0)
+		tempscreenseg = vgascreenseg;
 }

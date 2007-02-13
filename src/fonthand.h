@@ -47,9 +47,7 @@ void JE_OuttextAdjust(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_shor
 JE_char JE_Bright(JE_boolean makebright);
 
 void JE_UpdateWarning();
-void JE_Outtextglow(JE_word x, JE_word y, JE_string s);
+void JE_OuttextGlow(JE_word x, JE_word y, JE_string s);
 void JE_OuttextANDDarken(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_byte brightness, JE_byte font);
-
-void fonthand_init();
 
 #endif /* _FONTHAND_H */
