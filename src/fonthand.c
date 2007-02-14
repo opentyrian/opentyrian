@@ -14,12 +14,6 @@ const JE_byte fontmap[136] = 	/* [33..168] */
 	125,126
 };
 
-const JE_integer _Partshade  = 0;
-const JE_integer _Fullshade  = 1;
-const JE_integer _Darken     = 2;
-const JE_integer _Trick      = 3;
-const JE_integer _Noshade    = 255;
-
 /* shape constants included in newshape.h */
 
 JE_integer DefaultBrightness = -3;
@@ -324,6 +318,47 @@ void JE_NewDrawCShapeAdjustNum(JE_byte table, JE_byte shape, JE_word x, JE_word 
 	JE_NewDrawCShapeAdjust((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y, filter, brightness);
 }
 
+void JE_NewDrawCShapeBrightAndDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+
+	SDL_LockSurface(tempscreenseg);
+	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+
+	filter <<= 4;
+
+	for(p = shape; yloop < ysize; p++)
+	{
+		switch(*p)
+		{
+		case 255:	/* p transparent pixels */
+			p++;
+			s += *p; xloop += *p;
+			break;
+		case 254:	/* next y */
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+			break;
+		case 253:	/* 1 transparent pixel */
+			s++; xloop++;
+			break;
+		default:	/* set a pixel */
+			*s = ((*p && 0x0f) | filter) + brightness;
+			s[tempscreenseg->w+1] = ((s[tempscreenseg->w+1] & 0x0f) >> 1) + (s[tempscreenseg->w+1] & 0xf0);
+			s++; xloop++;
+		}
+		if(xloop == xsize)
+		{
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+		}
+	}
+
+	SDL_UnlockSurface(tempscreenseg);
+}
+
 /*void NewDrawCShapeZoom   (table : byte; shape : byte; x,y : word; scale : real );
 {
 	JE_byte lookuphoriz[320];
@@ -334,7 +369,54 @@ void JE_NewDrawCShapeAdjustNum(JE_byte table, JE_byte shape, JE_word x, JE_word 
 
 }*/
 
-/*!*/
+JE_word JE_FontCenter(JE_string s, JE_byte font)
+{
+	return(160 - (JE_TextWidth(s, font) / 2));
+}
+
+JE_word JE_TextWidth(JE_string s, JE_byte font)
+{
+	JE_byte a, b;
+	JE_word x = 0;
+
+	for(a = 0; s[a] != 0; a++)
+	{
+		b = s[a];
+
+		if ((b > 32) && (b < 126))
+		{
+			if(fontmap[b-33] != 255)
+				x += shapex[font][fontmap[b-33]] + 1;
+		} else
+			if(b == 32)
+				x += 6;
+   };
+   return(x);
+}
+
+void JE_TextShade(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortint brightness, JE_byte shadetype)
+{
+	switch(shadetype)
+	{
+	case _Partshade:
+		JE_Outtext(x+1, y+1, s, 0, -1);
+		JE_Outtext(x, y, s, colorbank, brightness);
+		break;
+	case _Fullshade:
+		JE_Outtext(x-1, y, s, 0, -1);
+		JE_Outtext(x+1, y, s, 0, -1);
+		JE_Outtext(x, y-1, s, 0, -1);
+		JE_Outtext(x, y+1, s, 0, -1);
+		JE_Outtext(x, y, s, colorbank, brightness);
+		break;
+	case _Darken:
+		JE_OuttextAndDarken(x+1, y+1, s, colorbank, brightness, _TinyFont);
+		break;
+	case _Trick:
+		JE_OuttextModify(x, y, s, colorbank, brightness, _TinyFont);
+		break;
+   }
+}
 
 void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortint brightness)
 {
@@ -430,6 +512,33 @@ void JE_OuttextAdjust(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_shor
 			else
 				if(b == 32)
 					x += 6;
+	}
+}
+
+void JE_OuttextAndDarken(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_byte brightness, JE_byte font)
+{
+	JE_byte a, b;
+	JE_byte bright = 0;
+
+	for(a = 0; s[a] != 0; a++)
+	{
+		b = s[a];
+
+		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		{
+			JE_NewDrawCShapeBrightAndDarken((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y, colorbank, brightness + bright);
+
+			x += shapex[font][fontmap[b-33]] + 1;
+		} else
+			if(b == 32)
+				x += 6;
+			else
+				if(b == 126) {
+					if(bright > 0)
+						bright = 0;
+					else
+						bright = 4;
+				}
 	}
 }
 
