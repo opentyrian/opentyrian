@@ -221,10 +221,126 @@ void JE_NewDrawCShapeTrickNum(JE_byte table, JE_byte shape, JE_word x, JE_word y
 	JE_NewDrawCShapeTrick((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y);
 }
 
+void JE_NewDrawCShapeModify(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+	JE_byte temp;
+
+	SDL_LockSurface(tempscreenseg);
+	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+
+	filter <<= 4;
+
+	for(p = shape; yloop < ysize; p++)
+	{
+		switch(*p)
+		{
+		case 255:	/* p transparent pixels */
+			p++;
+			s += *p; xloop += *p;
+			break;
+		case 254:	/* next y */
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+			break;
+		case 253:	/* 1 transparent pixel */
+			s++; xloop++;
+			break;
+		default:	/* set a pixel */
+			temp = (*p & 0x0f) + brightness;
+			if(temp >= 0x1f)
+				temp = 0;
+			if(temp >= 0x0f)
+				temp = 0x0f;
+			temp >>= 1;
+			*s = (((*s & 0x0f) >> 1) | filter) + temp;
+			s++; xloop++;
+		}
+		if(xloop == xsize)
+		{
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+		}
+	}
+
+	SDL_UnlockSurface(tempscreenseg);
+}
+
+void JE_NewDrawCShapeModifyNum(JE_byte table, JE_byte shape, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
+{
+	JE_NewDrawCShapeModify((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y, filter, brightness);
+}
+
+void JE_NewDrawCShapeAdjust(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+	JE_byte temp;
+
+	SDL_LockSurface(tempscreenseg);
+	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+
+	filter <<= 4;
+
+	for(p = shape; yloop < ysize; p++)
+	{
+		switch(*p)
+		{
+		case 255:	/* p transparent pixels */
+			p++;
+			s += *p; xloop += *p;
+			break;
+		case 254:	/* next y */
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+			break;
+		case 253:	/* 1 transparent pixel */
+			s++; xloop++;
+			break;
+		default:	/* set a pixel */
+			temp = (*p & 0x0f) + brightness;
+			if(temp >= 0x1f)
+				temp = 0;
+			if(temp >= 0x0f)
+				temp = 0x0f;
+			*s = temp | filter;
+			s++; xloop++;
+		}
+		if(xloop == xsize)
+		{
+			s -= xloop; xloop = 0;
+			s += tempscreenseg->w; yloop++;
+		}
+	}
+
+	SDL_UnlockSurface(tempscreenseg);
+}
+
+void JE_NewDrawCShapeAdjustNum(JE_byte table, JE_byte shape, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
+{
+	JE_NewDrawCShapeAdjust((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y, filter, brightness);
+}
+
+/*void NewDrawCShapeZoom   (table : byte; shape : byte; x,y : word; scale : real );
+{
+	JE_byte lookuphoriz[320];
+	JE_byte lookupvert[200];
+
+	for(x = 0; x < shapex[table][shape]; x++)
+		;
+
+}*/
+
+/*!*/
+
 void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortint brightness)
 {
 	JE_byte a, b;
 	JE_byte bright = 0;
+
 	for(a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
@@ -251,4 +367,76 @@ void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortin
 	}
 	if(brightness >= 0)
 		tempscreenseg = vgascreenseg;
+}
+
+void JE_OuttextModify(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_byte brightness, JE_byte font)
+{
+	JE_byte a, b;
+
+	for(a = 0; s[a] != 0; a++)
+	{
+		b = s[a];
+
+		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		{
+			JE_NewDrawCShapeModify((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y, filter, brightness);
+
+			x += shapex[font][fontmap[b-33]] + 1;
+		} else
+			if(b == 32)
+				x += 6;
+    }
+}
+
+void JE_OuttextShade(JE_word x, JE_word y, JE_string s, JE_byte font)
+{
+	JE_byte a, b;
+
+	for(a = 0; s[a] != 0; a++)
+	{
+		b = s[a];
+
+		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		{
+			JE_NewDrawCShapeDarken((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y);
+
+			x += shapex[font][fontmap[b-33]] + 1;
+		} else
+			if(b == 32)
+				x += 6;
+	}
+}
+
+void JE_OuttextAdjust(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow)
+{
+	JE_byte a, b;
+	JE_byte bright = 0;
+
+	for(a = 0; s[a] != 0; a++)
+	{
+		b = s[a];
+
+		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		{
+			if(shadow)
+				JE_NewDrawCShapeDarken((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x + 2, y + 2);
+
+			JE_NewDrawCShapeAdjust((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y, filter, brightness + (bright << 2));
+
+			x += shapex[font][fontmap[b-33]] + 1;
+		} else
+			if(b == 126)
+				bright = !bright;
+			else
+				if(b == 32)
+					x += 6;
+	}
+}
+
+JE_char JE_Bright(JE_boolean makebright)
+{
+  if(makebright)
+     return('~');
+  else
+     return('\0');
 }
