@@ -113,7 +113,7 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 	JE_byte *p;	/* shape pointer */
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
-	if((shape > maxshape[table]) || (!shapexist[table][shape]) || (shape == 0))
+	if((shape > maxshape[table]) || (!shapexist[table][shape]) || (shape == 255))
 		exit(99);
 
 	xsize = shapex[table][shape]; ysize = shapey[table][shape];
