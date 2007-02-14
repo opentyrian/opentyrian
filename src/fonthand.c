@@ -153,7 +153,7 @@ void JE_NewDrawCShapeDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 			s++; xloop++;
 			break;
 		default:	/* set a pixel */
-			*s = ((*p & 0x0f) >> 1) + (*p & 0xf0);
+			*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
 			s++; xloop++;
 		}
 		if(xloop == xsize)
@@ -346,7 +346,7 @@ void JE_NewDrawCShapeBrightAndDarken(JE_byte *shape, JE_word xsize, JE_word ysiz
 			break;
 		default:	/* set a pixel */
 			*s = ((*p && 0x0f) | filter) + brightness;
-			s[tempscreenseg->w+1] = ((s[tempscreenseg->w+1] & 0x0f) >> 1) + (s[tempscreenseg->w+1] & 0xf0);
+			s[tempscreenseg->w] = ((s[tempscreenseg->w] & 0x0f) >> 1) + (s[tempscreenseg->w] & 0xf0);
 			s++; xloop++;
 		}
 		if(xloop == xsize)
