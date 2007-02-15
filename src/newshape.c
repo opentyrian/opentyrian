@@ -12,6 +12,8 @@ const JE_integer _TinyFont        = 5;
 const JE_integer _WeaponShapes    = 6;
 const JE_integer _ExtraShapes     = 7;   /*Used for Ending pics*/
 
+JE_boolean LoadOverride = 0;	/*false*/
+
 SDL_Surface *tempscreenseg = NULL;
 
 void JE_NewLoadShapesB(JE_byte table, FILE *f)
@@ -115,7 +117,7 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	if((shape > maxshape[table]) || (!shapexist[table][shape]) || (shape == 255))
-		exit(99);
+		exit(99);	/* pascalism */
 
 	xsize = shapex[table][shape]; ysize = shapey[table][shape];
 
@@ -154,7 +156,6 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 
 void newshape_init()
 {
-	LoadOverride = 0; /*false*/
 	tempscreenseg = vgascreenseg;
 	for(x = 0; x < maxtable; x++)
 		maxshape[x] = 0;

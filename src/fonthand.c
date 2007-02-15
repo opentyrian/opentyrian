@@ -23,7 +23,7 @@ JE_byte TextGlowBrightness = 6;
 void JE_Dstring(JE_word x, JE_word y, JE_string s, JE_byte font)
 {
 	JE_byte a, b;
-	JE_boolean bright = 0; /*false*/
+	JE_boolean bright = 0;	/*false*/
 
 	for(a = 0; s[a] != 0; a++)
 	{
@@ -438,7 +438,7 @@ void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortin
 	{
 		b = s[a];
 
-		if((b > 32) && (b < 126) && (fontmap[b-33] != 255) && ((*shapearray)[_TinyFont][fontmap[b-33]] != NULL))
+		if((b > 32) && (b < 169) && (fontmap[b-33] != 255) && ((*shapearray)[_TinyFont][fontmap[b-33]] != NULL))
 		{
 			if (brightness >= 0)
 				JE_NewDrawCShapeBright((*shapearray)[_TinyFont][fontmap[b-33]], shapex[_TinyFont][fontmap[b-33]], shapey[_TinyFont][fontmap[b-33]], x, y, colorbank, brightness + bright);
@@ -470,7 +470,7 @@ void JE_OuttextModify(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_byte
 	{
 		b = s[a];
 
-		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		if((b > 32) && (b < 169) && (fontmap[b-33] != 255))
 		{
 			JE_NewDrawCShapeModify((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y, filter, brightness);
 
@@ -489,7 +489,7 @@ void JE_OuttextShade(JE_word x, JE_word y, JE_string s, JE_byte font)
 	{
 		b = s[a];
 
-		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		if((b > 32) && (b < 169) && (fontmap[b-33] != 255))
 		{
 			JE_NewDrawCShapeDarken((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y);
 
@@ -503,13 +503,13 @@ void JE_OuttextShade(JE_word x, JE_word y, JE_string s, JE_byte font)
 void JE_OuttextAdjust(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow)
 {
 	JE_byte a, b;
-	JE_byte bright = 0;
+	JE_boolean bright = 0;	/* false */
 
 	for(a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
 
-		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		if((b > 32) && (b < 169) && (fontmap[b-33] != 255))
 		{
 			if(shadow)
 				JE_NewDrawCShapeDarken((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x + 2, y + 2);
@@ -535,7 +535,7 @@ void JE_OuttextAndDarken(JE_word x, JE_word y, JE_string s, JE_byte colorbank, J
 	{
 		b = s[a];
 
-		if((b > 32) && (b < 126) && (fontmap[b-33] != 255))
+		if((b > 32) && (b < 169) && (fontmap[b-33] != 255))
 		{
 			JE_NewDrawCShapeBrightAndDarken((*shapearray)[font][fontmap[b-33]], shapex[font][fontmap[b-33]], shapey[font][fontmap[b-33]], x, y, colorbank, brightness + bright);
 

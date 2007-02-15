@@ -44,10 +44,10 @@ void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortin
 void JE_OuttextModify(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_byte brightness, JE_byte font);
 void JE_OuttextShade(JE_word x, JE_word y, JE_string s, JE_byte font);
 void JE_OuttextAdjust(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow);
+void JE_OuttextAndDarken(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_byte brightness, JE_byte font);
 JE_char JE_Bright(JE_boolean makebright);
 
 void JE_UpdateWarning();
 void JE_OuttextGlow(JE_word x, JE_word y, JE_string s);
-void JE_OuttextAndDarken(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_byte brightness, JE_byte font);
 
 #endif /* _FONTHAND_H */
