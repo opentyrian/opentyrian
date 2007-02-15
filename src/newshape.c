@@ -75,7 +75,8 @@ void JE_NewDrawCShape(JE_byte *shape, JE_word xsize, JE_word ysize)
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	for(p = shape; yloop < ysize; p++)
 	{
@@ -119,7 +120,8 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 	xsize = shapex[table][shape]; ysize = shapey[table][shape];
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	for(p = (*shapearray)[table][shape]; yloop < ysize; p++)
 	{

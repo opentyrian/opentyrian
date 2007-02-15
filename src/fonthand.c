@@ -55,7 +55,8 @@ void JE_NewDrawCShapeBright(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	filter <<= 4;
 
@@ -96,7 +97,8 @@ void JE_NewDrawCShapeShadow(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	for(p = shape; yloop < ysize; p++)
 	{
@@ -135,10 +137,12 @@ void JE_NewDrawCShapeDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	for(p = shape; yloop < ysize; p++)
 	{
+		/* (unported) compare the screen offset to 65535, if equal do case 253 */
 		switch(*p)
 		{
 		case 255:	/* p transparent pixels */
@@ -179,7 +183,8 @@ void JE_NewDrawCShapeTrick(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	for(p = shape; yloop < ysize; p++)
 	{
@@ -215,6 +220,7 @@ void JE_NewDrawCShapeTrickNum(JE_byte table, JE_byte shape, JE_word x, JE_word y
 	JE_NewDrawCShapeTrick((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y);
 }
 
+/*Intended for Font drawing - maximum X size is 255*/
 void JE_NewDrawCShapeModify(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
 {
 	JE_word xloop = 0, yloop = 0;
@@ -223,7 +229,8 @@ void JE_NewDrawCShapeModify(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	JE_byte temp;
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	filter <<= 4;
 
@@ -267,6 +274,7 @@ void JE_NewDrawCShapeModifyNum(JE_byte table, JE_byte shape, JE_word x, JE_word 
 	JE_NewDrawCShapeModify((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y, filter, brightness);
 }
 
+/*Intended for Font drawing - maximum X size is 255*/
 void JE_NewDrawCShapeAdjust(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
 {
 	JE_word xloop = 0, yloop = 0;
@@ -275,7 +283,8 @@ void JE_NewDrawCShapeAdjust(JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	JE_byte temp;
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	filter <<= 4;
 
@@ -318,6 +327,7 @@ void JE_NewDrawCShapeAdjustNum(JE_byte table, JE_byte shape, JE_word x, JE_word 
 	JE_NewDrawCShapeAdjust((*shapearray)[table][shape], shapex[table][shape], shapey[table][shape], x, y, filter, brightness);
 }
 
+/*Intended for Font drawing - maximum X size is 255*/
 void JE_NewDrawCShapeBrightAndDarken(JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness)
 {
 	JE_word xloop = 0, yloop = 0;
@@ -325,7 +335,8 @@ void JE_NewDrawCShapeBrightAndDarken(JE_byte *shape, JE_word xsize, JE_word ysiz
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
 	SDL_LockSurface(tempscreenseg);
-	s = (unsigned char *)((int)tempscreenseg->pixels + y * tempscreenseg->pitch + x * tempscreenseg->format->BytesPerPixel);
+	s = (unsigned char *)tempscreenseg->pixels;
+	s += y * tempscreenseg->w + x;
 
 	filter <<= 4;
 
@@ -345,9 +356,11 @@ void JE_NewDrawCShapeBrightAndDarken(JE_byte *shape, JE_word xsize, JE_word ysiz
 			s++; xloop++;
 			break;
 		default:	/* set a pixel */
-			*s = ((*p && 0x0f) | filter) + brightness;
-			s[tempscreenseg->w+1] = ((s[tempscreenseg->w+1] & 0x0f) >> 1) + (s[tempscreenseg->w+1] & 0xf0);
+			*s = ((*p & 0x0f) | filter) + brightness;
 			s++; xloop++;
+			s += tempscreenseg->w;	/* jump a pixel down (after incrementing x) */
+			*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
+			s -= tempscreenseg->w;	/* jump back up */
 		}
 		if(xloop == xsize)
 		{
@@ -359,14 +372,13 @@ void JE_NewDrawCShapeBrightAndDarken(JE_byte *shape, JE_word xsize, JE_word ysiz
 	SDL_UnlockSurface(tempscreenseg);
 }
 
-/*void NewDrawCShapeZoom   (table : byte; shape : byte; x,y : word; scale : real );
+/*void JE_NewDrawCShapeZoom(JE_byte table, JE_byte, JE_word x, JE_word y, JE_real scale);
 {
 	JE_byte lookuphoriz[320];
 	JE_byte lookupvert[200];
 
 	for(x = 0; x < shapex[table][shape]; x++)
 		;
-
 }*/
 
 JE_word JE_FontCenter(JE_string s, JE_byte font)
@@ -414,7 +426,6 @@ void JE_TextShade(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_short
 		break;
 	case _Trick:
 		JE_OuttextModify(x, y, s, colorbank, brightness, _TinyFont);
-		break;
    }
 }
 
