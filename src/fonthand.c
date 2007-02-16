@@ -1,5 +1,3 @@
-#include "opentyr.h"
-#include "newshape.h"
 #include "fonthand.h"
 
 const JE_byte fontmap[136] = 	/* [33..168] */

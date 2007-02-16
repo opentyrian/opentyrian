@@ -1,4 +1,3 @@
-#include "opentyr.h"
 #include "newshape.h"
 
 const JE_integer OldBlack = 0;
@@ -159,5 +158,5 @@ void newshape_init()
 	tempscreenseg = vgascreenseg;
 	for(x = 0; x < maxtable; x++)
 		maxshape[x] = 0;
-	shapearray = malloc(sizeof(shapearraytype));
+	shapearray = malloc(sizeof(JE_shapearraytype));
 }

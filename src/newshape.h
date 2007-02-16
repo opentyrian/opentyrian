@@ -1,6 +1,8 @@
 #ifndef _NEWSHAPE_H
 #define _NEWSHAPE_H
 
+#include "opentyr.h"
+
 const JE_integer OldBlack;
 const JE_integer NewBlack;
 #define maximumshape 151
@@ -14,14 +16,14 @@ const JE_integer _TinyFont;
 const JE_integer _WeaponShapes;
 const JE_integer _ExtraShapes;
 
-typedef JE_byte *shapearraytype[maxtable][maximumshape];
+typedef JE_byte *JE_shapearraytype[maxtable][maximumshape];
 
 JE_boolean LoadOverride;
 JE_word min, max;
 
 SDL_Surface *tempscreenseg;
 
-shapearraytype *shapearray;
+JE_shapearraytype *shapearray;
 
 JE_word shapex[maxtable][maximumshape],	/* [1..maxtable,1..maximumshape] */
         shapey[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */

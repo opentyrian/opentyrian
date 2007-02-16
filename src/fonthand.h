@@ -1,6 +1,9 @@
 #ifndef _FONTHAND_H
 #define _FONTHAND_H
 
+#include "opentyr.h"
+#include "newshape.h"
+
 const JE_byte fontmap[136]; 	/* [33..168] */
 
 #define _Partshade  0
