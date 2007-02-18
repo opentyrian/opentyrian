@@ -153,6 +153,19 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 	SDL_UnlockSurface(tempscreenseg);
 }
 
+void JE_NewPurgeShapes(JE_byte table)
+{
+	JE_word x;
+	if(maxshape[table] > 0)
+
+		for(x = 0; x < maxshape[table]; x++)
+			if(shapexist[table][x])
+			{
+				free((*shapearray)[table][x]);
+				shapexist[table][x] = 0;	/*false*/
+			}
+}
+
 void newshape_init()
 {
 	tempscreenseg = vgascreenseg;
