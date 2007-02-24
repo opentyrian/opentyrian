@@ -50,6 +50,10 @@ void init( void );
 void resetvalues( void );
 void changesetup( JE_byte setuptype );
 
+void main( void ); /* <- ??? */
+    void newstar( void );
+
+
 /* TODO... */
 
 #endif /*_3DSTAR_H */
