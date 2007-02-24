@@ -9,6 +9,25 @@ typedef JE_word shapetypeone[84]; /* [1..84] */
 typedef JE_byte screentype[65535]; /* [0..65534] */
 typedef screentype *screenptr;
 
+#define CrtAddress 0x3D4
+#define StatusReg 0x3DA
+
+JE_word TestAX, TestBX, TestCX, TestDX;
+JE_boolean Mouse_Installed;
+screentype *VGAScreen, *VGAScreen2;
+/* JE_THandle VGAScreenHandler, VGAScreen2Handler;
+ * YKS: TODO: Must figure WTF THandle is and what to replace it with */
+JE_char k;
+JE_word ABSLoc;
+JE_word VGAScreenSeg, VGAScreen2Seg;
+
+/* JE: From Nortsong */
+JE_word speed; /* JE: holds timer speed for 70Hz */
+
+JE_byte scancode;
+JE_byte outcol;
+JE_byte Screen_Attribute;
+
 void initvga256( void );
 void InitVGA256X( void );
 void closevga256( void );
@@ -38,7 +57,7 @@ void circle( JE_word x, JE_byte y, JE_word z, JE_byte c );
 void line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e );
 void getimage16( JE_word a, JE_byte b, shape16B *p );
 void putimage16( JE_word a, JE_byte b, shape16B *p );
-void drawgraphic( JE_word x, JE_word y, shapetypeone s );
+void drawgraphic( JE_word x, JE_word y, shapetypeone s ); /* YKS: Is this rigth? Or does s need an * too? */
 void ABSdrawgraphic( shapetypeone s );
 void drawgraphicover( JE_word x, JE_word y, shapetypeone s );
 void ABSdrawgraphicover( shapetypeone s );
