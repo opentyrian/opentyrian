@@ -106,6 +106,8 @@ void JE_NewDrawCShape(JE_byte *shape, JE_word xsize, JE_word ysize)
 	}
 
 	SDL_UnlockSurface(tempscreenseg);
+
+	tempscreenseg = vgascreenseg;
 }
 
 void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
@@ -151,19 +153,69 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 	}
 
 	SDL_UnlockSurface(tempscreenseg);
+
+	tempscreenseg = vgascreenseg;
 }
 
 void JE_NewPurgeShapes(JE_byte table)
 {
 	JE_word x;
-	if(maxshape[table] > 0)
 
+	if(maxshape[table] > 0)
 		for(x = 0; x < maxshape[table]; x++)
 			if(shapexist[table][x])
 			{
 				free((*shapearray)[table][x]);
 				shapexist[table][x] = 0;	/*false*/
 			}
+}
+
+void JE_DrawShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p = shape;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+
+	SDL_LockSurface(vgascreenseg);
+	s = (unsigned char *)vgascreenseg->pixels;
+	s += y * vgascreenseg->w + x;
+
+	for(yloop = 0; yloop < 28; yloop++)
+	{
+		for(xloop = 0; xloop < 24; xloop++)
+		{
+			*s = *p;
+			s++; p++;
+		}
+		s -= 24;
+		s += vgascreenseg->w;
+	}
+
+	SDL_UnlockSurface(vgascreenseg);
+}
+
+void JE_GrabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
+{
+	JE_word xloop = 0, yloop = 0;
+	JE_byte *p = shape;	/* shape pointer */
+	unsigned char *s;	/* screen pointer, 8-bit specific */
+
+	SDL_LockSurface(vgascreenseg);
+	s = (unsigned char *)vgascreenseg->pixels;
+	s += y * vgascreenseg->w + x;
+
+	for(yloop = 0; yloop < 28; yloop++)
+	{
+		for(xloop = 0; xloop < 24; xloop++)
+		{
+			*p = *s;
+			s++; p++;
+		}
+		s -= 24;
+		s += vgascreenseg->w;
+	}
+
+	SDL_UnlockSurface(vgascreenseg);
 }
 
 void newshape_init()
