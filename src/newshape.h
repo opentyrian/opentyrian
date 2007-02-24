@@ -16,7 +16,7 @@ const JE_integer _TinyFont;
 const JE_integer _WeaponShapes;
 const JE_integer _ExtraShapes;
 
-typedef JE_byte *JE_shapearraytype[maxtable][maximumshape];
+typedef JE_byte *JE_shapearraytype[maxtable][maximumshape];	/* [1..maxtable, 1..maximumshape] */
 
 JE_boolean LoadOverride;
 JE_word min, max;
