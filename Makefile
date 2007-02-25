@@ -20,6 +20,8 @@ LDFLAGS := $(SDL_LDFLAGS) -lm
 
 ####################################################
 
+all : $(TARGET)
+
 OBJS := $(foreach obj, $(OBJS), obj/$(obj))
 
 $(TARGET) : $(OBJS)
