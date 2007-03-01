@@ -2,18 +2,18 @@
 
 const JE_string shpfile[SHPnum] = /* [1..SHPnum] */
 {
-   "ESTFE.SHP", /*2*/
-   "ESTFD.SHP", /*3*/
-   "ESTFC.SHP", /*6*/
-   "ESTPA.SHP", /*1*/
-   "ESTFF.SHP", /*4*/
-   "ESTSA.SHP", /*5*/
-   "ESTWB.SHP", /*7*/
-   "NEWSH(.SHP",
-   "NEWSH{.SHP",
-   "NEWSH&.SHP",
-   "NEWSHQ.SHP",
-   "NEWSH`.SHP"
+	"ESTFE.SHP", /*2*/
+	"ESTFD.SHP", /*3*/
+	"ESTFC.SHP", /*6*/
+	"ESTPA.SHP", /*1*/
+	"ESTFF.SHP", /*4*/
+	"ESTSA.SHP", /*5*/
+	"ESTWB.SHP", /*7*/
+	"NEWSH(.SHP",
+	"NEWSH{.SHP",
+	"NEWSH&.SHP",
+	"NEWSHQ.SHP",
+	"NEWSH`.SHP"
 };
 
 /*
