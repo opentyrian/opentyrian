@@ -71,3 +71,8 @@ void JE_HelpBox(JE_word x, JE_word y, JE_string message, JE_byte boxwidth)
 	helpboxcolor = 12;
 	helpboxshadetype = _FullShade;
 }
+
+void JE_HBox(JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth)
+{
+	JE_HelpBox(x, y, (*helptxt)[messagenum], boxwidth);
+}
