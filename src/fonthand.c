@@ -408,11 +408,11 @@ void JE_TextShade(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_short
 {
 	switch(shadetype)
 	{
-	case _Partshade:
+	case _PartShade:
 		JE_Outtext(x+1, y+1, s, 0, -1);
 		JE_Outtext(x, y, s, colorbank, brightness);
 		break;
-	case _Fullshade:
+	case _FullShade:
 		JE_Outtext(x-1, y, s, 0, -1);
 		JE_Outtext(x+1, y, s, 0, -1);
 		JE_Outtext(x, y-1, s, 0, -1);

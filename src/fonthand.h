@@ -6,11 +6,11 @@
 
 const JE_byte fontmap[136]; 	/* [33..168] */
 
-#define _Partshade  0
-#define _Fullshade  1
+#define _PartShade  0
+#define _FullShade  1
 #define _Darken     2
 #define _Trick      3
-#define _Noshade    255
+#define _NoShade    255
 
 JE_integer DefaultBrightness;
 JE_byte TextGlowFont,
