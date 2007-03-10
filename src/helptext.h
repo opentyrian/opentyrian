@@ -2,6 +2,8 @@
 #define HELPTEXT_H
 
 #include "opentyr.h"
+#include "fonthand.h"
+#include "newshape.h"
 
 #define maxhelpmessage 39
 #define maxmenu 14
@@ -47,5 +49,9 @@ JE_shipinfotype *shipinfo;
 char menuint[maxmenu+1][11][18];	/* [0..maxmenu, 1..11] of string [17] */
 
 JE_byte temp, temp2;
+
+void JE_HelpBox(JE_word x, JE_word y, JE_string message, JE_byte boxwidth);
+void JE_HBox(JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth);
+void JE_loadhelptext(void);
 
 #endif /* HELPTEXT_H */
