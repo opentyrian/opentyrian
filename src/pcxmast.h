@@ -1,5 +1,5 @@
-#ifndef _PCXMAST_H
-#define _PCXMAST_H
+#ifndef PCXMAST_H
+#define PCXMAST_H
 
 #include "opentyr.h"
 
@@ -16,4 +16,4 @@ typedef JE_longint JE_pcxpostype[PCXnum + 1];	/* [1..PCXnum + 1] */
 
 JE_pcxpostype pcxpos;
 
-#endif /* _PCXMAST_H */
+#endif /* PCXMAST_H */

@@ -1,5 +1,5 @@
-#ifndef _NEWSHAPE_H
-#define _NEWSHAPE_H
+#ifndef NEWSHAPE_H
+#define NEWSHAPE_H
 
 #include "opentyr.h"
 
@@ -65,4 +65,4 @@ JE_byte *Shapes6Pointer;
 
 void newshape_init(void);
 
-#endif /* _NEWSHAPE_H */
+#endif /* NEWSHAPE_H */

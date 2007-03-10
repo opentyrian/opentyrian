@@ -1,5 +1,5 @@
-#ifndef _HELPTEXT_H
-#define _HELPTEXT_H
+#ifndef HELPTEXT_H
+#define HELPTEXT_H
 
 #include "opentyr.h"
 
@@ -48,4 +48,4 @@ char menuint[maxmenu+1][11][18];	/* [0..maxmenu, 1..11] of string [17] */
 
 JE_byte temp, temp2;
 
-#endif /* _HELPTEXT_H */
+#endif /* HELPTEXT_H */

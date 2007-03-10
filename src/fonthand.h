@@ -1,5 +1,5 @@
-#ifndef _FONTHAND_H
-#define _FONTHAND_H
+#ifndef FONTHAND_H
+#define FONTHAND_H
 
 #include "opentyr.h"
 #include "newshape.h"
@@ -53,4 +53,4 @@ JE_char JE_Bright(JE_boolean makebright);
 void JE_UpdateWarning(void);
 void JE_OuttextGlow(JE_word x, JE_word y, JE_string s);
 
-#endif /* _FONTHAND_H */
+#endif /* FONTHAND_H */

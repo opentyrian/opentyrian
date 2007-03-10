@@ -1,5 +1,5 @@
-#ifndef _3DSTAR_H
-#define _3DSTAR_H
+#ifndef 3DSTAR_H
+#define 3DSTAR_H
 
 #include "opentyr.h"
 
@@ -56,4 +56,4 @@ void main( void ); /* <- ??? */
 
 /* TODO... */
 
-#endif /*_3DSTAR_H */
+#endif /* 3DSTAR_H */

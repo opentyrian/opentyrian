@@ -1,5 +1,5 @@
-#ifndef _VGA256D_H
-#define _VGA256D_H
+#ifndef VGA256D_H
+#define VGA256D_H
 
 #include "opentyr.h"
 
@@ -74,4 +74,4 @@ void JE_GetPalette( JE_byte col, JE_byte *Red, JE_byte *Green, JE_byte *Blue );
 void JE_SetPalette( JE_byte Col, JE_byte Red, JE_byte Green, JE_byte Blue );
 void JE_darkenscreen( void );
 
-#endif /* _VGA256D_H */
+#endif /* VGA256D_H */

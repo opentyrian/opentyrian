@@ -1,5 +1,5 @@
-#ifndef _OPENTYRIAN_H
-#define _OPENTYRIAN_H
+#ifndef OPENTYRIAN_H
+#define OPENTYRIAN_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,4 +28,4 @@ typedef double JE_real; /* TODO: check if type is right */
 
 SDL_Surface *vgascreenseg;
 
-#endif /* _OPENTYRIAN_H */
+#endif /* OPENTYRIAN_H */

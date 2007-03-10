@@ -1,5 +1,5 @@
-#ifndef _SHPMAST_H
-#define _SHPMAST_H
+#ifndef SHPMAST_H
+#define SHPMAST_H
 
 #include "opentyr.h"
 
@@ -11,4 +11,4 @@ typedef JE_longint JE_shppostype[SHPnum + 1]; /* [1..SHPnum + 1] */
 
 JE_shppostype shppos;
 
-#endif /* _NEWSHAPE_H */
+#endif /* SHPMAST_H */
