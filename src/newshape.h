@@ -58,11 +58,11 @@ void JE_DrawShapeTypeOne(JE_word x, JE_word y, JE_byte *shape);
 void JE_GrabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape);
 
 JE_boolean JE_WaitAction(JE_byte time, JE_boolean checkjoystick);
-void JE_MouseStart();
-void JE_MouseReplace();
+void JE_MouseStart(void);
+void JE_MouseReplace(void);
 
 JE_byte *Shapes6Pointer;
 
-void newshape_init();
+void newshape_init(void);
 
 #endif /* _NEWSHAPE_H */

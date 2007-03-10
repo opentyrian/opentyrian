@@ -218,7 +218,7 @@ void JE_GrabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 	SDL_UnlockSurface(vgascreenseg);
 }
 
-void newshape_init()
+void newshape_init(void)
 {
 	tempscreenseg = vgascreenseg;
 	for(x = 0; x < maxtable; x++)
