@@ -7,7 +7,7 @@ int main()
 	/* TODO: DetectCFG */
 	/* TODO: scanforepisodes */
 
-	printf("\nWelcome to... >> Open Tyrian v0.1 <<\n\n");
+	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
 
 	/* TODO: InitKeyboard */
 

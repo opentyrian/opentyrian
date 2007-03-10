@@ -19,7 +19,7 @@ JE_byte TextGlowFont,
 /*Warning stuff*/
 JE_boolean levelwarningdisplay;
 JE_byte levelwarninglines;
-char levelwarningtext[10][61];	/* [1..10] */
+char levelwarningtext[10][61];	/* [1..10] of string [60] */
 JE_boolean warningred;
 
 JE_byte warningsounddelay;
