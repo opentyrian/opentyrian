@@ -18,6 +18,9 @@ JE_byte menuhelp[maxmenu][11] = 	/* [1..maxmenu, 1..11] */
 	{4, 34, 3, 5,                       0, 0, 0, 0, 0, 0, 0}
 };
 
+JE_byte verticalheight = 7;
+JE_byte helpboxcolor = 12, helpboxbrightness = 1, helpboxshadetype = _FullShade;
+
 void JE_HelpBox(JE_word x, JE_word y, JE_string message, JE_byte boxwidth)
 {
 	JE_byte startpos, endpos, pos;
@@ -75,4 +78,13 @@ void JE_HelpBox(JE_word x, JE_word y, JE_string message, JE_byte boxwidth)
 void JE_HBox(JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth)
 {
 	JE_HelpBox(x, y, (*helptxt)[messagenum], boxwidth);
+}
+
+
+void helptext_init(void)
+{
+  helptxt = malloc(sizeof(JE_helptxttype));
+  mainmenuhelp = malloc(sizeof(JE_helptxttype));
+  Destructhelp = malloc(sizeof(JE_destructhelptype));
+  shipinfo = malloc(sizeof(JE_shipinfotype));
 }
