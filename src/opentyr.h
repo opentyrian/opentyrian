@@ -15,16 +15,16 @@
 
 #define ROUND(x) (floor((x)+0.5))
 
-typedef signed long JE_longint;
-typedef signed short JE_integer;
-typedef signed char JE_shortint;
+typedef signed long    JE_longint;
+typedef signed short   JE_integer;
+typedef signed char    JE_shortint;
 typedef unsigned short JE_word;
-typedef unsigned char JE_byte;
-typedef int JE_boolean;
+typedef unsigned char  JE_byte;
+typedef int            JE_boolean;
 
-typedef char *JE_string;
-typedef char JE_char;
+typedef char          *JE_string;
+typedef char           JE_char;
 
-typedef double JE_real; /* TODO: check if type is right */
+typedef double         JE_real;
 
 #endif /* OPENTYRIAN_H */
