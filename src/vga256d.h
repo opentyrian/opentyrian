@@ -5,11 +5,11 @@
 
 #include "SDL.h"
 
-typedef JE_word shape16B[1]; /* [0.. 0] */
-typedef shape16B *shape16;
-typedef JE_word shapetypeone[84]; /* [1..84] */
-typedef JE_byte screentype[65535]; /* [0..65534] */
-typedef screentype *screenptr;
+typedef JE_word JE_shape16B[1]; /* [0.. 0] */
+typedef JE_shape16B *JE_shape16;
+typedef JE_word JE_shapetypeone[84]; /* [1..84] */
+typedef JE_byte JE_screentype[65535]; /* [0..65534] */
+typedef JE_screentype *JE_screenptr;
 
 #define CrtAddress 0x3D4
 #define StatusReg 0x3DA
@@ -60,13 +60,13 @@ void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c );
 void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e );
-void JE_getimage16( JE_word a, JE_byte b, shape16B *p );
-void JE_putimage16( JE_word a, JE_byte b, shape16B *p );
-void JE_drawgraphic( JE_word x, JE_word y, shapetypeone s ); /* TODO */
-void JE_ABSdrawgraphic( shapetypeone s );
-void JE_drawgraphicover( JE_word x, JE_word y, shapetypeone s );
-void JE_ABSdrawgraphicover( shapetypeone s );
-void JE_readgraphic( JE_integer x, JE_integer y, shapetypeone s );
+void JE_getimage16( JE_word a, JE_byte b, JE_shape16B *p );
+void JE_putimage16( JE_word a, JE_byte b, JE_shape16B *p );
+void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s ); /* TODO */
+void JE_ABSdrawgraphic( JE_shapetypeone s );
+void JE_drawgraphicover( JE_word x, JE_word y, JE_shapetypeone s );
+void JE_ABSdrawgraphicover( JE_shapetypeone s );
+void JE_readgraphic( JE_integer x, JE_integer y, JE_shapetypeone s );
 void JE_getk( JE_char *y ); /* TODO */
 void JE_getupk( JE_char *k ); /* TODO */
 JE_boolean JE_keypressed( JE_char *kp ); /* TODO */
