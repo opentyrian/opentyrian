@@ -403,14 +403,14 @@ void JE_Outtext( JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shorti
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
 
-        if((b > 32) && (b < 169) && (fontmap[b-33] != 255) && ((*shapearray)[_TinyFont][fontmap[b-33]] != NULL)) {
+        if((b > 32) && (b < 169) && (fontmap[b-33] != 255) && ((*shapearray)[TinyFont][fontmap[b-33]] != NULL)) {
             if (brightness >= 0) {
-                JE_NewDrawCShapeBright((*shapearray)[_TinyFont][fontmap[b-33]], shapex[_TinyFont][fontmap[b-33]], shapey[_TinyFont][fontmap[b-33]], x, y, colorbank, brightness + bright);
+                JE_NewDrawCShapeBright((*shapearray)[TinyFont][fontmap[b-33]], shapex[TinyFont][fontmap[b-33]], shapey[TinyFont][fontmap[b-33]], x, y, colorbank, brightness + bright);
             } else {
-                JE_NewDrawCShapeShadow((*shapearray)[_TinyFont][fontmap[b-33]], shapex[_TinyFont][fontmap[b-33]], shapey[_TinyFont][fontmap[b-33]], x, y);
+                JE_NewDrawCShapeShadow((*shapearray)[TinyFont][fontmap[b-33]], shapex[TinyFont][fontmap[b-33]], shapey[TinyFont][fontmap[b-33]], x, y);
             }
 
-            x += shapex[_TinyFont][fontmap[b-33]] + 1;
+            x += shapex[TinyFont][fontmap[b-33]] + 1;
         } else {
             if(b == 32) {
                 x += 6;
