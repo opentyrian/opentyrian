@@ -256,3 +256,36 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
         x += g; y += h;
     }
 }
+
+void JE_getimage16( JE_word a, JE_byte b, shape16B *p )
+{
+    printf("!!! STUB: %s:%d:JE_getimage16\n", __FILE__, __LINE__);
+}
+void JE_putimage16( JE_word a, JE_byte b, shape16B *p )
+{
+    printf("!!! STUB: %s:%d:JE_putimage16\n", __FILE__, __LINE__);
+}
+void JE_ABSdrawgraphic( shapetypeone s )
+{
+    printf("!!! STUB: %s:%d:JE_ABSdrawgraphic\n", __FILE__, __LINE__);
+}
+void JE_drawgraphicover( JE_word x, JE_word y, shapetypeone s )
+{
+    printf("!!! STUB: %s:%d:JE_drawgraphicover\n", __FILE__, __LINE__);
+}
+void JE_ABSdrawgraphicover( shapetypeone s )
+{
+    printf("!!! STUB: %s:%d:JE_ABSdrawgraphicover\n", __FILE__, __LINE__);
+}
+void JE_readgraphic( JE_integer x, JE_integer y, shapetypeone s )
+{
+    printf("!!! STUB: %s:%d:JE_readgraphic\n", __FILE__, __LINE__);
+}
+void JE_wait( JE_byte min, JE_byte sec, JE_byte hun )
+{
+    printf("!!! STUB: %s:%d:JE_wait\n", __FILE__, __LINE__);
+}
+void JE_darkenscreen( void )
+{
+    printf("!!! STUB: %s:%d:JE_darkenscreen\n", __FILE__, __LINE__);
+}

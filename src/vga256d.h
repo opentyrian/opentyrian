@@ -60,20 +60,20 @@ void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c );
 void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e );
-void JE_getimage16( JE_word a, JE_byte b, shape16B *p ); /* TODO */
-void JE_putimage16( JE_word a, JE_byte b, shape16B *p ); /* TODO */
+void JE_getimage16( JE_word a, JE_byte b, shape16B *p );
+void JE_putimage16( JE_word a, JE_byte b, shape16B *p );
 void JE_drawgraphic( JE_word x, JE_word y, shapetypeone s ); /* TODO */
-void JE_ABSdrawgraphic( shapetypeone s ); /* TODO */
-void JE_drawgraphicover( JE_word x, JE_word y, shapetypeone s ); /* TODO */
-void JE_ABSdrawgraphicover( shapetypeone s ); /* TODO */
-void JE_readgraphic( JE_integer x, JE_integer y, shapetypeone s ); /* TODO */
+void JE_ABSdrawgraphic( shapetypeone s );
+void JE_drawgraphicover( JE_word x, JE_word y, shapetypeone s );
+void JE_ABSdrawgraphicover( shapetypeone s );
+void JE_readgraphic( JE_integer x, JE_integer y, shapetypeone s );
 void JE_getk( JE_char *y ); /* TODO */
 void JE_getupk( JE_char *k ); /* TODO */
 JE_boolean JE_keypressed( JE_char *kp ); /* TODO */
 JE_boolean JE_kp( void ); /* TODO */
-void JE_wait( JE_byte min, JE_byte sec, JE_byte hun ); /* TODO */
+void JE_wait( JE_byte min, JE_byte sec, JE_byte hun );
 void JE_GetPalette( JE_byte col, JE_byte *Red, JE_byte *Green, JE_byte *Blue ); /* TODO */
 void JE_SetPalette( JE_byte Col, JE_byte Red, JE_byte Green, JE_byte Blue ); /* TODO */
-void JE_darkenscreen( void ); /* TODO */
+void JE_darkenscreen( void );
 
 #endif /* VGA256D_H */
