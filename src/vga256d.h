@@ -7,7 +7,7 @@
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 typedef JE_shape16B *JE_shape16;
-typedef JE_word JE_shapetypeone[84]; /* [1..84] */
+typedef JE_byte JE_shapetypeone[168]; /* [0..168-1] */  /* originally: JE_word JE_shapetypeone[84]; [1..84] */
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 

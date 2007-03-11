@@ -280,9 +280,9 @@ void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s )
 
     vga += y*320+x;
     
-    for (i = 0; i <15; i++) {
+    for (i = 0; i <14; i++) {
         memcpy(vga, s, 12);
-        vga += 308; s += 12;
+        vga += 320; s += 12;
     }
 }
 
