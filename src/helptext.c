@@ -34,7 +34,7 @@ void JE_HelpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
 
     char *substring;
 
-    if(message[0] == 0) {
+    if(message[0] == '\0') {
         return;
     }
 
@@ -49,7 +49,7 @@ void JE_HelpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
             endpos = pos;
             do {
                 pos++;
-                if(message[pos-1] == 0) {
+                if(message[pos-1] == '\0') {
                     endstring = 1;  /*true*/
                     if(pos - startpos < boxwidth) {
                         endpos = pos + 1;
