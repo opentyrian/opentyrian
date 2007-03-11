@@ -1,9 +1,12 @@
-/* Various helpful small routines and constants for the various Tyrian sections
-
-   Includes a mini-mouse unit.*/
+#ifndef NORTVARS_H
+#define NORTVARS_H
 
 #include "opentyr.h"
 #include "vga256d.h"
+
+/* Various helpful small routines and constants for the various Tyrian sections
+
+   Includes a mini-mouse unit.*/
 
 /* File constants for Saving ShapeFile */
 const JE_byte NV_shapeactive;
@@ -70,3 +73,5 @@ void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 void JE_DrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 void JE_SuperDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+
+#endif /* NORTVARS_H */
