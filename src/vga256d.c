@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 
 void JE_initvga256( void )
 {
@@ -47,9 +48,15 @@ void JE_GetVGA( void )
     SDL_Flip(VGAScreenSeg); /* TODO: YKS: This is probably not what we should do, but I don't see a way of doing it either. */
 }
 
-/* OnScreen TODO */
+void JE_OnScreen( void )
+{
+    printf("!!! STUB: %s:%d:JE_OnScreen\n", __FILE__, __LINE__);
+}
 
-/* OffScreen TODO */
+void JE_OffScreen( void )
+{
+    printf("!!! STUB: %s:%d:JE_OffScreen\n", __FILE__, __LINE__);
+}
 
 void JE_disable_refresh( void )
 {
@@ -278,10 +285,16 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
     }
 }
 
-/*void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue )
+void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue )
 {
-    TODO
-}*/
+    SDL_Color color;
+
+    color = VGAScreenSeg->format->palette->colors[col];
+
+    *red = color.r;
+    *green = color.g;
+    *blue = color.b;
+}
 
 void JE_SetPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
 {
@@ -308,7 +321,30 @@ void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s )
     }
 }
 
-JE_boolean JE_keypressed(JE_char *kp)
+void JE_getk( JE_char *k )
+{
+    SDL_Event ev;
+
+    for (;;)
+    {
+        SDL_WaitEvent(&ev);
+
+        if (ev.type == SDL_KEYDOWN)
+        {
+            scancode = ev.key.keysym.scancode;
+            *k = ev.key.keysym.unicode & 0x7F;
+            break;
+        }
+    }
+}
+
+void JE_getupk( JE_char *k )
+{
+    JE_getk(k);
+    *k = toupper(*k);
+}
+
+JE_boolean JE_keypressed( JE_char *kp )
 {
     SDL_Event ev;
 
@@ -322,6 +358,13 @@ JE_boolean JE_keypressed(JE_char *kp)
     } else {
         return 0;
     }
+}
+
+JE_boolean JE_kp( void )
+{
+    SDL_PumpEvents();
+
+    return SDL_PeepEvents(NULL, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_KEYDOWN));
 }
 
 /*****************************************/

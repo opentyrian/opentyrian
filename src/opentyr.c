@@ -46,14 +46,10 @@ int main( int argc, char *argv[] )
     SDL_UnlockSurface(VGAScreenSeg);
 
     JE_ShowVGARetrace();
-
     SDL_SaveBMP(VGAScreenSeg, "sshot.bmp");
-    SDL_Delay(3000);
 
-    JE_keypressed(&a);
-    printf("Key pressed: %c\n", a);
-
-    SDL_Delay(3000);
+    JE_getk(&a);
+    printf("Key pressed: %d\n", a);
 
     JE_closevga256();
 

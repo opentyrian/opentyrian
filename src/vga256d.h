@@ -32,16 +32,16 @@ JE_byte outcol;
 JE_byte Screen_Attribute;
 
 void JE_initvga256( void );
-void JE_InitVGA256X( void ); /* dead code */
+void JE_InitVGA256X( void );
 void JE_closevga256( void );
 void JE_clr256( void );
 void JE_ShowVGA( void );
 void JE_ShowVGARetrace( void );
 void JE_GetVGA( void );
-void JE_OnScreen( void ); /* TODO */
-void JE_OffScreen( void ); /* TODO */
-void JE_disable_refresh( void ); /* dead code */
-void JE_enable_refresh( void ); /* dead code */
+void JE_OnScreen( void );
+void JE_OffScreen( void );
+void JE_disable_refresh( void );
+void JE_enable_refresh( void );
 void JE_WaitRetrace( void );
 void JE_WaitPartialRetrace( void );
 void JE_WaitNotRetrace( void );
@@ -67,12 +67,12 @@ void JE_ABSdrawgraphic( JE_shapetypeone s );
 void JE_drawgraphicover( JE_word x, JE_word y, JE_shapetypeone s );
 void JE_ABSdrawgraphicover( JE_shapetypeone s );
 void JE_readgraphic( JE_integer x, JE_integer y, JE_shapetypeone s );
-void JE_getk( JE_char *y ); /* TODO */
-void JE_getupk( JE_char *k ); /* TODO */
+void JE_getk( JE_char *y );
+void JE_getupk( JE_char *k );
 JE_boolean JE_keypressed( JE_char *kp );
-JE_boolean JE_kp( void ); /* TODO */
+JE_boolean JE_kp( void );
 void JE_wait( JE_byte min, JE_byte sec, JE_byte hun );
-void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue ); /* TODO */
+void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue );
 void JE_SetPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
 void JE_darkenscreen( void );
 
