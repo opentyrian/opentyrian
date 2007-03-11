@@ -2,8 +2,6 @@
 #define HELPTEXT_H
 
 #include "opentyr.h"
-#include "fonthand.h"
-#include "newshape.h"
 
 #define maxhelpmessage 39
 #define maxmenu 14

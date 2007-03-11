@@ -1,3 +1,4 @@
+#include "opentyr.h"
 #include "shpmast.h"
 
 const JE_string shpfile[SHPnum] = /* [1..SHPnum] */

@@ -2,7 +2,6 @@
 #define FONTHAND_H
 
 #include "opentyr.h"
-#include "newshape.h"
 
 const JE_byte fontmap[136]; 	/* [33..168] */
 

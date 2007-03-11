@@ -1,3 +1,4 @@
+#include "opentyr.h"
 #include "nortvars.h"
 
 const JE_byte NV_shapeactive   = 0x01;

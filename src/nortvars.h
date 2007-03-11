@@ -15,7 +15,7 @@ const JE_byte NV_shapeinactive;
 typedef JE_char JE_textbuffer[4096]; /* [1..4096] */
 
 struct JE_ColorRec {
-    JE_byte R, G, B;
+    JE_byte r, g, b;
 };
 
 typedef struct JE_ColorRec JE_ColorType[256]; /* [0..255] */
@@ -42,7 +42,7 @@ void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s );
 
 void JE_CompressShapeFileC( JE_char s );
 void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s, JE_byte **Shape );
-JE_word JE_BtoW( JE_byte a, JE_byte B );
+JE_word JE_BtoW( JE_byte a, JE_byte b );
 JE_string JE_st( JE_longint num );
 
 JE_word JE_MousePosition( JE_word *MouseX, JE_word *MouseY );

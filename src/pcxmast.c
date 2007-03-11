@@ -1,3 +1,4 @@
+#include "opentyr.h"
 #include "pcxmast.h"
 
 JE_string pcxfile[PCXnum] = 	/* [1..PCXnum] */

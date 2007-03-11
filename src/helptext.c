@@ -1,4 +1,7 @@
+#include "opentyr.h"
 #include "helptext.h"
+#include "fonthand.h"
+#include "newshape.h"
 
 JE_byte menuhelp[maxmenu][11] =     /* [1..maxmenu, 1..11] */
 {

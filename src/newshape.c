@@ -1,3 +1,4 @@
+#include "opentyr.h"
 #include "newshape.h"
 #include "vga256d.h"
 
