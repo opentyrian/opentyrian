@@ -53,7 +53,5 @@ int main( int argc, char *argv[] )
 
     JE_closevga256();
 
-    SDL_Quit();
-	
 	return 0;
 }

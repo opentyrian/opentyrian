@@ -25,7 +25,8 @@ void JE_InitVGA256X( void )
 
 void JE_closevga256( void )
 {
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    /* SDL_QuitSubSystem(SDL_INIT_VIDEO); */
+    SDL_Quit();
 }
 
 void JE_clr256( void )
