@@ -7,6 +7,8 @@
 
 int main( int argc, char *argv[] )
 {
+    char a = '!';
+
 	/* TODO: DetectCFG */
 	/* TODO: scanforepisodes */
 
@@ -46,6 +48,11 @@ int main( int argc, char *argv[] )
     JE_ShowVGARetrace();
 
     SDL_SaveBMP(VGAScreenSeg, "sshot.bmp");
+    SDL_Delay(3000);
+
+    JE_keypressed(&a);
+    printf("Key pressed: %c\n", a);
+
     SDL_Delay(3000);
 
     JE_closevga256();

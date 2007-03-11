@@ -62,14 +62,14 @@ void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c );
 void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e );
 void JE_getimage16( JE_word a, JE_byte b, JE_shape16B *p );
 void JE_putimage16( JE_word a, JE_byte b, JE_shape16B *p );
-void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s ); /* TODO */
+void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s );
 void JE_ABSdrawgraphic( JE_shapetypeone s );
 void JE_drawgraphicover( JE_word x, JE_word y, JE_shapetypeone s );
 void JE_ABSdrawgraphicover( JE_shapetypeone s );
 void JE_readgraphic( JE_integer x, JE_integer y, JE_shapetypeone s );
 void JE_getk( JE_char *y ); /* TODO */
 void JE_getupk( JE_char *k ); /* TODO */
-JE_boolean JE_keypressed( JE_char *kp ); /* TODO */
+JE_boolean JE_keypressed( JE_char *kp );
 JE_boolean JE_kp( void ); /* TODO */
 void JE_wait( JE_byte min, JE_byte sec, JE_byte hun );
 void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue ); /* TODO */

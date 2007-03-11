@@ -12,6 +12,7 @@ void JE_initvga256( void )
         printf("Display initialization failed: %s\n", SDL_GetError());
         exit(1);
     }
+    SDL_EnableUNICODE(1);
 }
 
 void JE_InitVGA256X( void )
@@ -283,6 +284,21 @@ void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s )
     for (i = 0; i <14; i++) {
         memcpy(vga, s, 12);
         vga += 320; s += 12;
+    }
+}
+
+JE_boolean JE_keypressed(JE_char *kp)
+{
+    SDL_Event ev;
+
+    SDL_PumpEvents();
+
+    if (SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_KEYDOWN)) > 0) {
+        scancode = ev.key.keysym.scancode;
+        *kp = ev.key.keysym.unicode & 0x7F;
+        return 1;
+    } else {
+        return 0;
     }
 }
 
