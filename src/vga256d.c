@@ -8,7 +8,9 @@
 
 void JE_initvga256( void )
 {
-    if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) || !(VGAScreenSeg = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF))) {
+    if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||
+       !(VGAScreenSeg = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
+    {
         printf("Display initialization failed: %s\n", SDL_GetError());
         exit(1);
     }
@@ -82,7 +84,8 @@ INLINE void JE_pix( JE_word x, JE_word y, JE_byte c )
 INLINE void JE_pix2( JE_word x, JE_word y, JE_byte c )
 {
     /* Bad things happen if we don't clip */
-    if (x < 320 && y < 200) {
+    if (x < 320 && y < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         vga[y*320+x] = c;
     }
@@ -105,7 +108,8 @@ void JE_pix3( JE_word x, JE_word y, JE_byte c )
 
 INLINE void JE_pixabs( JE_word x, JE_byte c )
 {
-    if (x < 320*200) {
+    if (x < 320*200)
+    {
         char *vga = VGAScreenSeg->pixels;
         vga[x] = c;
     }
@@ -114,7 +118,8 @@ INLINE void JE_pixabs( JE_word x, JE_byte c )
 INLINE void JE_getpix( JE_word x, JE_word y, JE_byte *c )
 {
     /* Bad things happen if we don't clip */
-    if (x < 320 && y < 200) {
+    if (x < 320 && y < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         *c = vga[y*320+x];
     }
@@ -123,7 +128,8 @@ INLINE void JE_getpix( JE_word x, JE_word y, JE_byte *c )
 INLINE JE_byte JE_getpixel( JE_word x, JE_word y )
 {
     /* Bad things happen if we don't clip */
-    if (x < 320 && y < 200) {
+    if (x < 320 && y < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         return vga[y*320+x];
     }
@@ -133,7 +139,8 @@ INLINE JE_byte JE_getpixel( JE_word x, JE_word y )
 
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
 {
-    if (a < 320 && c < 320 && b < 200 && d < 200) {
+    if (a < 320 && c < 320 && b < 200 && d < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         int i;
 
@@ -144,12 +151,14 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
         memset(vga+(d*320+a), e, c-a+1);
 
         /* Left line */
-        for (i=(b+1)*320+a; i < (d*320+a); i += 320) {
+        for (i=(b+1)*320+a; i < (d*320+a); i += 320)
+        {
             vga[i] = e;
         }
         
         /* Right line */
-        for (i=(b+1)*320+c; i < (d*320+c); i += 320) {
+        for (i=(b+1)*320+c; i < (d*320+c); i += 320)
+        {
             vga[i] = e;
         }
     } else {
@@ -159,13 +168,15 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
 
 void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, x2, y2, color */
 {
-    if (a < 320 && c < 320 && b < 200 && d < 200) {
+    if (a < 320 && c < 320 && b < 200 && d < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         int i, width;
 
         width = c-a+1;
 
-        for (i = b*320+a; i <= d*320+a; i += 320) {
+        for (i = b*320+a; i <= d*320+a; i += 320)
+        {
             memset(vga+i, e, width);
         }
     } else {
@@ -175,14 +186,17 @@ void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, 
 
 void JE_barshade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
-    if (a < 320 && c < 320 && b < 200 && d < 200) {
+    if (a < 320 && c < 320 && b < 200 && d < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         int i,j, width;
 
         width = c-a+1;
 
-        for (i = b*320+a; i <= d*320+a; i += 320) {
-            for (j = 0; j < width; j++) {
+        for (i = b*320+a; i <= d*320+a; i += 320)
+        {
+            for (j = 0; j < width; j++)
+            {
                 vga[i+j] = ((vga[i+j] & 0x0F) >> 1) | (vga[i+j] & 0xF0);
             }
         }
@@ -198,21 +212,25 @@ INLINE void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d )
 
 void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
-    if (a < 320 && c < 320 && b < 200 && d < 200) {
+    if (a < 320 && c < 320 && b < 200 && d < 200)
+    {
         char *vga = VGAScreenSeg->pixels;
         int i,j, width;
 
         width = c-a+1;
 
-        for (i = b*320+a; i <= d*320+a; i += 320) {
-            for (j = 0; j < width; j++) {
+        for (i = b*320+a; i <= d*320+a; i += 320)
+        {
+            for (j = 0; j < width; j++)
+            {
                 JE_byte al, ah;
                 al = ah = vga[i+j];
 
                 ah &= 0xF0;
                 al = (al & 0x0F) + 2;
 
-                if (al > 0x0F) {
+                if (al > 0x0F)
+                {
                     al = 0x0F;
                 }
 
@@ -228,7 +246,8 @@ void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c ) /* z == radius */
 {
     JE_real a = 0, rx,ry,rz, b; char *vga;
 
-    while (a < 6.29) {
+    while (a < 6.29)
+    {
         a += (160-z)/16000.0; /* Magic numbers everywhere! */
 
         rx = x; ry = y; rz = z;
@@ -252,7 +271,8 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
 
     vga = VGAScreenSeg->pixels;
 
-    for (z = 0; z <= v; z++) {
+    for (z = 0; z <= v; z++)
+    {
         vga[(int)(round(x)+round(y)*320.0)] = e;
         x += g; y += h;
     }
@@ -281,7 +301,8 @@ void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s )
 
     vga += y*320+x;
     
-    for (i = 0; i <14; i++) {
+    for (i = 0; i <14; i++)
+    {
         memcpy(vga, s, 12);
         vga += 320; s += 12;
     }
@@ -293,7 +314,8 @@ JE_boolean JE_keypressed(JE_char *kp)
 
     SDL_PumpEvents();
 
-    if (SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_KEYDOWN)) > 0) {
+    if (SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_KEYDOWN)) > 0)
+    {
         scancode = ev.key.keysym.scancode;
         *kp = ev.key.keysym.unicode & 0x7F;
         return 1;
