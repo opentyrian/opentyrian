@@ -7,16 +7,15 @@
 
 #define OldBlack         0
 #define NewBlack         253
-#define _PlanetShapes    0
-#define _FontShapes      1
-#define _SmallFontShapes 2
-#define _FaceShapes      3
-#define _OptionShapes    4 /*Also contains help shapes*/
-#define _TinyFont        5
-#define _WeaponShapes    6
-#define _ExtraShapes     7 /*Used for Ending pics*/
+#define PlanetShapes    0
+#define FontShapes      1
+#define SmallFontShapes 2
+#define FaceShapes      3
+#define OptionShapes    4 /*Also contains help shapes*/
+#define TinyFont        5
+#define WeaponShapes    6
+#define ExtraShapes     7 /*Used for Ending pics*/
 
-#define LoadOverride     0 /*false*/
 
 #define maximumshape     151
 #define maxtable         8
@@ -39,6 +38,8 @@ JE_byte maxshape[maxtable];	/* [1..maxtable] */
 JE_byte mousegrabshape[24*28];	/* [1..24*28] */
 
 JE_byte x;
+
+JE_boolean LoadOverride;
 
 /*
   Colors:

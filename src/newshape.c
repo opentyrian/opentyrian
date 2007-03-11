@@ -1,6 +1,8 @@
 #include "newshape.h"
 #include "vga256d.h"
 
+JE_boolean LoadOverride = 0; /* false */
+
 SDL_Surface *tempscreenseg = NULL;
 
 void JE_NewLoadShapesB( JE_byte table, FILE *f )

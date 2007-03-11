@@ -375,22 +375,22 @@ JE_word JE_TextWidth( JE_string s, JE_byte font )
 void JE_TextShade( JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortint brightness, JE_byte shadetype )
 {
     switch(shadetype) {
-        case _PartShade:
+        case PartShade:
             JE_Outtext(x+1, y+1, s, 0, -1);
             JE_Outtext(x, y, s, colorbank, brightness);
             break;
-        case _FullShade:
+        case FullShade:
             JE_Outtext(x-1, y, s, 0, -1);
             JE_Outtext(x+1, y, s, 0, -1);
             JE_Outtext(x, y-1, s, 0, -1);
             JE_Outtext(x, y+1, s, 0, -1);
             JE_Outtext(x, y, s, colorbank, brightness);
             break;
-        case _Darken:
-            JE_OuttextAndDarken(x+1, y+1, s, colorbank, brightness, _TinyFont);
+        case Darken:
+            JE_OuttextAndDarken(x+1, y+1, s, colorbank, brightness, TinyFont);
             break;
-        case _Trick:
-            JE_OuttextModify(x, y, s, colorbank, brightness, _TinyFont);
+        case Trick:
+            JE_OuttextModify(x, y, s, colorbank, brightness, TinyFont);
             break;
    }
 }
