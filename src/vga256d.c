@@ -154,3 +154,70 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
         printf("!!! WARNING: Rectangle clipped: %d %d %d %d %d\n", a,b,c,d,e);
     }
 }
+
+void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, x2, y2, color */
+{
+    if (a < 320 && c < 320 && b < 200 && d < 200) {
+        char *vga = VGAScreenSeg->pixels;
+        int i, width;
+
+        width = c-a+1;
+
+        for (i = b*320+a; i <= d*320+a; i += 320) {
+            memset(vga+i, e, width);
+        }
+    } else {
+        printf("!!! WARNING: Filled Rectangle clipped: %d %d %d %d %d\n", a,b,c,d,e);
+    }
+} 
+
+void JE_barshade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+{
+    if (a < 320 && c < 320 && b < 200 && d < 200) {
+        char *vga = VGAScreenSeg->pixels;
+        int i,j, width;
+
+        width = c-a+1;
+
+        for (i = b*320+a; i <= d*320+a; i += 320) {
+            for (j = 0; j < width; j++) {
+                vga[i+j] = ((vga[i+j] & 0x0F) >> 1) | (vga[i+j] & 0xF0);
+            }
+        }
+    } else {
+        printf("!!! WARNING: Darker Rectangle clipped: %d %d %d %d\n", a,b,c,d);
+    }
+} 
+
+INLINE void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d )
+{
+    JE_barshade(a+3, b+2, c-3, d-2);
+}
+
+void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+{
+    if (a < 320 && c < 320 && b < 200 && d < 200) {
+        char *vga = VGAScreenSeg->pixels;
+        int i,j, width;
+
+        width = c-a+1;
+
+        for (i = b*320+a; i <= d*320+a; i += 320) {
+            for (j = 0; j < width; j++) {
+                JE_byte al, ah;
+                al = ah = vga[i+j];
+
+                ah &= 0xF0;
+                al = (al & 0x0F) + 2;
+
+                if (al > 0x0F) {
+                    al = 0x0F;
+                }
+
+                vga[i+j] = al + ah;
+            }
+        }
+    } else {
+        printf("!!! WARNING: Brighter Rectangle clipped: %d %d %d %d\n", a,b,c,d);
+    }
+} 

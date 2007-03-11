@@ -1,4 +1,5 @@
 #include "newshape.h"
+#include "vga256d.h"
 
 const JE_integer OldBlack = 0;
 const JE_integer NewBlack = 253;
@@ -107,7 +108,7 @@ void JE_NewDrawCShape(JE_byte *shape, JE_word xsize, JE_word ysize)
 
 	SDL_UnlockSurface(tempscreenseg);
 
-	tempscreenseg = vgascreenseg;
+	tempscreenseg = VGAScreenSeg;
 }
 
 void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
@@ -154,7 +155,7 @@ void JE_NewDrawCShapeNum(JE_byte table, JE_byte shape, JE_word x, JE_word y)
 
 	SDL_UnlockSurface(tempscreenseg);
 
-	tempscreenseg = vgascreenseg;
+	tempscreenseg = VGAScreenSeg;
 }
 
 void JE_NewPurgeShapes(JE_byte table)
@@ -176,9 +177,9 @@ void JE_DrawShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 	JE_byte *p = shape;	/* shape pointer */
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
-	SDL_LockSurface(vgascreenseg);
-	s = (unsigned char *)vgascreenseg->pixels;
-	s += y * vgascreenseg->w + x;
+	SDL_LockSurface(VGAScreenSeg);
+	s = (unsigned char *)VGAScreenSeg->pixels;
+	s += y * VGAScreenSeg->w + x;
 
 	for(yloop = 0; yloop < 28; yloop++)
 	{
@@ -188,10 +189,10 @@ void JE_DrawShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 			s++; p++;
 		}
 		s -= 24;
-		s += vgascreenseg->w;
+		s += VGAScreenSeg->w;
 	}
 
-	SDL_UnlockSurface(vgascreenseg);
+	SDL_UnlockSurface(VGAScreenSeg);
 }
 
 void JE_GrabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
@@ -200,9 +201,9 @@ void JE_GrabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 	JE_byte *p = shape;	/* shape pointer */
 	unsigned char *s;	/* screen pointer, 8-bit specific */
 
-	SDL_LockSurface(vgascreenseg);
-	s = (unsigned char *)vgascreenseg->pixels;
-	s += y * vgascreenseg->w + x;
+	SDL_LockSurface(VGAScreenSeg);
+	s = (unsigned char *)VGAScreenSeg->pixels;
+	s += y * VGAScreenSeg->w + x;
 
 	for(yloop = 0; yloop < 28; yloop++)
 	{
@@ -212,15 +213,15 @@ void JE_GrabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 			s++; p++;
 		}
 		s -= 24;
-		s += vgascreenseg->w;
+		s += VGAScreenSeg->w;
 	}
 
-	SDL_UnlockSurface(vgascreenseg);
+	SDL_UnlockSurface(VGAScreenSeg);
 }
 
 void newshape_init(void)
 {
-	tempscreenseg = vgascreenseg;
+	tempscreenseg = VGAScreenSeg;
 	for(x = 0; x < maxtable; x++)
 		maxshape[x] = 0;
 	shapearray = malloc(sizeof(JE_shapearraytype));

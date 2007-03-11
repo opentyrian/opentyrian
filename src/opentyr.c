@@ -35,10 +35,11 @@ int main( int argc, char *argv[] )
     col.r = 0xFF;
     col.g = 0xFF;
     col.b = 0x0;
-    
+
     SDL_SetColors(VGAScreenSeg, &col, 1, 1);
 
-    JE_rectangle(30, 30, 320-30, 200-30, 1);
+    JE_rectangle(1, 1, 320-2, 200-2, 1);
+    JE_bar(3,3, 320-4, 200-4, 1);
 
     JE_ShowVGARetrace();
 

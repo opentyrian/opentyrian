@@ -26,6 +26,4 @@ typedef char JE_char;
 
 typedef double JE_real; /* TODO: check if type is right */
 
-SDL_Surface *vgascreenseg;
-
 #endif /* OPENTYRIAN_H */

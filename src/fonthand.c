@@ -1,4 +1,5 @@
 #include "fonthand.h"
+#include "vga256d.h"
 
 const JE_byte fontmap[136] = 	/* [33..168] */
 {
@@ -457,7 +458,7 @@ void JE_Outtext(JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shortin
 				}
 	}
 	if(brightness >= 0)
-		tempscreenseg = vgascreenseg;
+		tempscreenseg = VGAScreenSeg;
 }
 
 void JE_OuttextModify(JE_word x, JE_word y, JE_string s, JE_byte filter, JE_byte brightness, JE_byte font)
