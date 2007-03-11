@@ -7,7 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    char a = '!';
+    JE_char a = '!';
 
 	/* TODO: DetectCFG */
 	/* TODO: scanforepisodes */
