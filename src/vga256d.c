@@ -8,7 +8,7 @@
 
 void JE_initvga256( void )
 {
-    if (!(VGAScreenSeg = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF))) {
+    if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) || !(VGAScreenSeg = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF))) {
         printf("Display initialization failed: %s\n", SDL_GetError());
         exit(1);
     }
@@ -21,7 +21,7 @@ void JE_InitVGA256X( void )
 
 void JE_closevga256( void )
 {
-    /* We don't have any cleanup to do */
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void JE_clr256( void )
@@ -256,6 +256,24 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
         x += g; y += h;
     }
 }
+
+/*void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue )
+{
+    TODO
+}*/
+
+void JE_SetPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
+{
+    SDL_Color color;
+
+    color.r = red;
+    color.g = green;
+    color.b = blue;
+
+    SDL_SetColors(VGAScreenSeg, &color, col, 1);
+}
+
+/*****************************************/
 
 void JE_getimage16( JE_word a, JE_byte b, shape16B *p )
 {

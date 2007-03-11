@@ -72,8 +72,8 @@ void JE_getupk( JE_char *k ); /* TODO */
 JE_boolean JE_keypressed( JE_char *kp ); /* TODO */
 JE_boolean JE_kp( void ); /* TODO */
 void JE_wait( JE_byte min, JE_byte sec, JE_byte hun );
-void JE_GetPalette( JE_byte col, JE_byte *Red, JE_byte *Green, JE_byte *Blue ); /* TODO */
-void JE_SetPalette( JE_byte Col, JE_byte Red, JE_byte Green, JE_byte Blue ); /* TODO */
+void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue ); /* TODO */
+void JE_SetPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
 void JE_darkenscreen( void );
 
 #endif /* VGA256D_H */

@@ -7,8 +7,6 @@
 
 int main( int argc, char *argv[] )
 {
-    SDL_Color col;
-
 	/* TODO: DetectCFG */
 	/* TODO: scanforepisodes */
 
@@ -28,15 +26,11 @@ int main( int argc, char *argv[] )
 	/* here ends line 92771 of TYRIAN2.PAS
 	 * TODO: Finish it and stuff. */
 
-    SDL_Init( SDL_INIT_VIDEO );
+    SDL_Init( 0 );
 
     JE_initvga256();
 
-    col.r = 0xFF;
-    col.g = 0xFF;
-    col.b = 0x0;
-
-    SDL_SetColors(VGAScreenSeg, &col, 1, 1);
+    JE_SetPalette(1, 0xFF, 0xFF, 0x0);
 
     SDL_LockSurface(VGAScreenSeg);
 
