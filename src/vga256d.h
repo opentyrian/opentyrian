@@ -3,6 +3,8 @@
 
 #include "opentyr.h"
 
+#include "SDL.h"
+
 typedef JE_word shape16B[1]; /* [0.. 0] */
 typedef shape16B *shape16;
 typedef JE_word shapetypeone[84]; /* [1..84] */

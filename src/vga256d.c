@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 void JE_initvga256( void )
 {
@@ -221,3 +222,37 @@ void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y
         printf("!!! WARNING: Brighter Rectangle clipped: %d %d %d %d\n", a,b,c,d);
     }
 } 
+
+void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c ) /* z == radius */
+{
+    JE_real a = 0, rx,ry,rz, b; char *vga;
+
+    while (a < 6.29) {
+        a += (160-z)/16000.0; /* Magic numbers everywhere! */
+
+        rx = x; ry = y; rz = z;
+
+        b = x + floor(sin(a)*z+(y+floor(cos(a)*z))*320);
+
+        vga = VGAScreenSeg->pixels;
+        vga[(int)b] = c;
+    }
+}
+
+void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
+{
+    JE_real g,h,x,y;
+    JE_integer z,v;
+    char *vga;
+
+    v = ROUND(sqrt(abs((a*a)-(c*c))+abs((b*b)-(d*d)) / 4));
+    g = (c-a)/(double)v; h = (d-b)/(double)v;
+    x = a; y = b;
+
+    vga = VGAScreenSeg->pixels;
+
+    for (z = 0; z <= v; z++) {
+        vga[(int)(round(x)+round(y)*320.0)] = e;
+        x += g; y += h;
+    }
+}

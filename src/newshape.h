@@ -3,6 +3,8 @@
 
 #include "opentyr.h"
 
+#include "SDL.h"
+
 const JE_integer OldBlack;
 const JE_integer NewBlack;
 #define maximumshape 151

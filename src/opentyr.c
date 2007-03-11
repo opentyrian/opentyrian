@@ -2,8 +2,8 @@
 #include "vga256d.h"
 
 #include "SDL.h"
-#include <stdio.h>
 
+#include <stdio.h>
 
 int main( int argc, char *argv[] )
 {
@@ -41,7 +41,9 @@ int main( int argc, char *argv[] )
     SDL_LockSurface(VGAScreenSeg);
 
     JE_rectangle(1, 1, 320-2, 200-2, 1);
-    JE_bar(3,3, 320-4, 200-4, 1);
+    JE_bar(150,90, 170, 110, 1);
+    JE_circle(160, 100, 32, 1);
+    JE_line(0,0, 319, 199, 1);
 
     SDL_UnlockSurface(VGAScreenSeg);
 

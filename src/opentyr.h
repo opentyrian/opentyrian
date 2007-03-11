@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#include <SDL/SDL.h>
+#include <math.h> /* For the ROUND() macro */
 
 #if __STDC_VERSION__ >= 199901L
 #define INLINE inline
@@ -13,6 +12,8 @@
 #else
 #define INLINE
 #endif
+
+#define ROUND(x) (floor((x)+0.5))
 
 typedef signed long JE_longint;
 typedef signed short JE_integer;
