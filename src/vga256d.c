@@ -273,6 +273,19 @@ void JE_SetPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
     SDL_SetColors(VGAScreenSeg, &color, col, 1);
 }
 
+void JE_drawgraphic( JE_word x, JE_word y, shapetypeone s )
+{
+    char *vga = VGAScreenSeg->pixels;
+    int i;
+
+    vga += y*320+x;
+    
+    for (i = 0; i <15; i++) {
+        memcpy(vga, s, 12);
+        vga += 308; s += 12;
+    }
+}
+
 /*****************************************/
 
 void JE_getimage16( JE_word a, JE_byte b, shape16B *p )

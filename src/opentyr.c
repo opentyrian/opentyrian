@@ -30,14 +30,16 @@ int main( int argc, char *argv[] )
 
     JE_initvga256();
 
-    JE_SetPalette(1, 0xFF, 0xFF, 0x0);
+    JE_SetPalette(1, 0xFF, 0xFF,  0x0);
+    JE_SetPalette(2, 0x00, 0x00, 0xAA);
+    JE_SetPalette(3,  0x0, 0xFF,  0x0);
 
     SDL_LockSurface(VGAScreenSeg);
 
-    JE_rectangle(1, 1, 320-2, 200-2, 1);
-    JE_bar(150,90, 170, 110, 1);
-    JE_circle(160, 100, 32, 1);
-    JE_line(0,0, 319, 199, 1);
+    JE_rectangle(1, 1, 318, 198, 1);
+    JE_bar(150,90, 170, 110, 2);
+    JE_circle(160, 100, 32, 3);
+    JE_line(1,1, 318, 198, 1);
 
     SDL_UnlockSurface(VGAScreenSeg);
 
