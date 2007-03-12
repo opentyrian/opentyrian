@@ -2,7 +2,7 @@
 #include "newshape.h"
 #include "vga256d.h"
 
-JE_boolean LoadOverride = 0; /* false */
+JE_boolean LoadOverride = FALSE;
 
 SDL_Surface *tempscreenseg = NULL;
 
@@ -141,7 +141,7 @@ void JE_NewPurgeShapes( JE_byte table )
         for(x = 0; x < maxshape[table]; x++) {
             if(shapexist[table][x]) {
                 free((*shapearray)[table][x]);
-                shapexist[table][x] = 0;    /*false*/
+                shapexist[table][x] = FALSE;
             }
         }
     }

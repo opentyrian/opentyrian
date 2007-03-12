@@ -23,7 +23,7 @@ const JE_byte fontmap[136] =    /* [33..168] */
 void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font )
 {
     JE_byte a, b;
-    JE_boolean bright = 0; /*false*/
+    JE_boolean bright = FALSE;
 
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
@@ -472,7 +472,7 @@ void JE_OuttextShade( JE_word x, JE_word y, JE_string s, JE_byte font )
 void JE_OuttextAdjust( JE_word x, JE_word y, JE_string s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow )
 {
     JE_byte a, b;
-    JE_boolean bright = 0;  /* false */
+    JE_boolean bright = FALSE;
 
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
