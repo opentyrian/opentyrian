@@ -25,8 +25,8 @@ typedef unsigned short JE_word;
 typedef unsigned char  JE_byte;
 typedef int            JE_boolean;
 
-typedef unsigned char *JE_string;
-typedef unsigned char  JE_char;
+typedef char          *JE_string;
+typedef char           JE_char;
 
 typedef double         JE_real;
 
