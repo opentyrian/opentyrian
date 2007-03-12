@@ -1,7 +1,7 @@
 #include "opentyr.h"
 #include "nortvars.h"
 
-struct pcxheader_rec {
+struct JE_pcxheader {
     JE_byte manufacturer;
     JE_byte version;
     JE_byte encoding;
@@ -23,5 +23,5 @@ JE_word Bytes;
 JE_char c, c2;
 JE_boolean overrideblack;
 
-void LoadPCX( JE_string Name, JE_boolean storepalette );
-void UpdatePCXColorsSlow( JE_ColorType *ColorBuffer );
+void JE_LoadPCX( JE_string Name, JE_boolean storepalette );
+void JE_UpdatePCXColorsSlow( JE_ColorType *ColorBuffer );
