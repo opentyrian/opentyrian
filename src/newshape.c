@@ -6,9 +6,36 @@
 VGA256D_EXTERNS
 /*************/
 
-JE_boolean LoadOverride = FALSE;
+JE_word min, max;
 
 SDL_Surface *tempscreenseg = NULL;
+
+JE_shapearraytype *shapearray;
+
+JE_word shapex[maxtable][maximumshape],	/* [1..maxtable,1..maximumshape] */
+        shapey[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+JE_word shapesize[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+JE_boolean shapexist[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+
+JE_byte maxshape[maxtable];	/* [1..maxtable] */
+
+JE_byte mousegrabshape[24*28];	/* [1..24*28] */
+
+JE_byte x;
+
+JE_boolean LoadOverride = FALSE;
+
+/*
+  Colors:
+  253 : Black
+  254 : Jump to next line
+
+   Skip X Pixels
+   Draw X pixels of color Y
+*/
+
+JE_byte *Shapes6Pointer;
+
 
 void JE_NewLoadShapesB( JE_byte table, FILE *f )
 {

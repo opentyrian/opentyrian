@@ -1,8 +1,8 @@
+#include <stdio.h>
+
 #include "opentyr.h"
 #include "error.h"
 #include "vga256d.h"
-
-#include <stdio.h>
 
 JE_char dir[12];
 

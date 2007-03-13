@@ -16,12 +16,13 @@ struct JE_pcxheader {
     JE_word palette_Type;
 };
 
-JE_ColorType Colors2;
-JE_word width,
-        depth;
-JE_word Bytes;
-JE_char c, c2;
-JE_boolean overrideblack;
+#define PCXLOAD_EXTERNS \
+extern JE_ColorType Colors2; \
+extern JE_word width, \
+               depth; \
+extern JE_word Bytes; \
+extern JE_char c, c2; \
+extern JE_boolean overrideblack;
 
 void JE_LoadPCX( JE_string Name, JE_boolean storepalette );
 void JE_UpdatePCXColorsSlow( JE_ColorType *ColorBuffer );

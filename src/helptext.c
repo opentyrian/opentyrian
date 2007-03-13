@@ -1,9 +1,11 @@
+#include <string.h>
+
 #include "opentyr.h"
 #include "helptext.h"
 #include "fonthand.h"
 #include "newshape.h"
 
-JE_byte menuhelp[maxmenu][11] =     /* [1..maxmenu, 1..11] */
+const JE_byte menuhelp[maxmenu][11] =     /* [1..maxmenu, 1..11] */
 {
     {1, 34, 2, 3, 4, 5,                       0, 0, 0, 0, 0},
     {6, 7, 8, 9, 10, 11, 11, 12,                    0, 0, 0},

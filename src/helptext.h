@@ -6,7 +6,6 @@
 #define maxhelpmessage 39
 #define maxmenu 14
 
-
 #define destructmodes 5
 
 typedef char JE_helptxttype[maxhelpmessage][231];	/* [1..maxhelpmessage] of string [230] */

@@ -4,14 +4,6 @@
 #include "opentyr.h"
 #include "vga256d.h"
 
-/* Various helpful small routines and constants for the various Tyrian sections
-
-   Includes a mini-mouse unit.*/
-
-/* File constants for Saving ShapeFile */
-const JE_byte NV_shapeactive;
-const JE_byte NV_shapeinactive;
-
 typedef JE_char JE_textbuffer[4096]; /* [1..4096] */
 
 struct JE_ColorRec {
@@ -26,16 +18,16 @@ typedef JE_shapetypeone JE_shapetype[304]; /* [1..304] */
 typedef JE_byte JE_newshapetypeone[182]; /* [0..168+14-1] */
 typedef JE_newshapetypeone JE_newshapetype[304]; /* [1..304] */
 
-JE_boolean ScanForJoystick;
-JE_word z, y;
-JE_boolean InputDetected;
-JE_word LastMouseX, LastMouseY;
-
-
-/*Mouse Data*/  /*Mouse_Installed is in VGA256d*/
-JE_byte MouseCursor;
-JE_boolean Mouse_ThreeButton;
-JE_word MouseX, MouseY, MouseButton;
+#define NORTVARS_EXTERNS \
+extern JE_byte NV_shapeactive; \
+extern JE_byte NV_shapeinactive; \
+extern JE_boolean ScanForJoystick; \
+extern JE_word z, y; \
+extern JE_boolean InputDetected; \
+extern JE_word LastMouseX, LastMouseY; \
+extern JE_byte MouseCursor; \
+extern JE_boolean Mouse_ThreeButton; \
+extern JE_word MouseX, MouseY, MouseButton;
 
 void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s );
 void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s );

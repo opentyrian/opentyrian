@@ -3,8 +3,6 @@
 
 #include "opentyr.h"
 
-#include <stdio.h>
-
 #define ERROR_EXTERNS \
 extern JE_boolean ErrorActive; \
 extern JE_boolean ErrorOccurred;
