@@ -3,27 +3,24 @@
 
 #include "opentyr.h"
 
-const JE_byte fontmap[136]; 	/* [33..168] */
-
 #define PartShade  0
 #define FullShade  1
 #define Darken     2
 #define Trick      3
 #define NoShade    255
 
-JE_integer DefaultBrightness;
-JE_byte TextGlowFont, TextGlowBrightness;
-
-/*Warning stuff*/
-JE_boolean levelwarningdisplay;
-JE_byte levelwarninglines;
-char levelwarningtext[10][61];	/* [1..10] of string [60] */
-JE_boolean warningred;
-
-JE_byte warningsounddelay;
-JE_word armorshipdelay;
-JE_byte warningcol;
-JE_shortint warningcolchange;
+#define FONTHAND_EXTERNS \
+extern JE_integer DefaultBrightness; \
+extern JE_byte TextGlowFont, TextGlowBrightness; \
+extern JE_boolean levelwarningdisplay; \
+extern JE_byte levelwarninglines; \
+extern JE_char levelwarningtext[10][61];   /* [1..10] of string [60] */ \
+extern JE_boolean warningred; \
+extern JE_byte warningsounddelay; \
+extern JE_word armorshipdelay; \
+extern JE_byte warningcol; \
+extern JE_shortint warningcolchange; \
+extern const JE_byte fontmap[136]; 	/* [33..168] */
 
 void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font );
 void JE_NewDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_shortint brightness );

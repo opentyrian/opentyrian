@@ -15,6 +15,10 @@
 
 #define ROUND(x) (floor((x)+0.5))
 
+/* Gets number of elements in an array.
+ * !!! USE WITH ARRAYS ONLY !!! */
+#define COUNTOF(x) (sizeof(x) / sizeof *(x))
+
 #define TRUE 1
 #define FALSE 0
 

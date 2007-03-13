@@ -2,6 +2,10 @@
 #include "newshape.h"
 #include "vga256d.h"
 
+/*************/
+VGA256D_EXTERNS
+/*************/
+
 JE_boolean LoadOverride = FALSE;
 
 SDL_Surface *tempscreenseg = NULL;

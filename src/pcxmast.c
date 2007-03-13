@@ -1,7 +1,7 @@
 #include "opentyr.h"
 #include "pcxmast.h"
 
-JE_string pcxfile[PCXnum] = 	/* [1..PCXnum] */
+const JE_string pcxfile[PCXnum] = 	/* [1..PCXnum] */
 {
 	"INTSHPB.PCX",
 	"SETUP2.PCX",
@@ -18,9 +18,11 @@ JE_string pcxfile[PCXnum] = 	/* [1..PCXnum] */
 	"FIREPICA.PCX"
 };
 
-JE_byte pcxpal[PCXnum] = 	/* [1..PCXnum] */
+const JE_byte pcxpal[PCXnum] = 	/* [1..PCXnum] */
 { 1, 8, 6, 9, 11, 6, 19, 20, 20, 21, 22, 23, 6};
 
 /*FACEMAX*/
-JE_byte facepal[12] = 	/* [1..12] */
+const JE_byte facepal[12] = 	/* [1..12] */
 { 2, 3, 4, 5, 7, 10, 12, 13, 17, 14, 15, 16};
+
+JE_pcxpostype pcxpos;

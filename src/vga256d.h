@@ -5,31 +5,22 @@
 
 #include "SDL.h"
 
+#define CrtAddress 0x3D4
+#define StatusReg 0x3DA
+
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 typedef JE_shape16B *JE_shape16;
 typedef JE_byte JE_shapetypeone[168]; /* [0..168-1] */  /* originally: JE_word JE_shapetypeone[84]; [1..84] */
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
-#define CrtAddress 0x3D4
-#define StatusReg 0x3DA
-
-JE_word TestAX, TestBX, TestCX, TestDX;
-JE_boolean Mouse_Installed;
-/* screentype *VGAScreen, *VGAScreen2; */
-/* JE_THandle VGAScreenHandler, VGAScreen2Handler; */
-JE_char k;
-JE_word ABSLoc;
-/* JE_word VGAScreenSeg, VGAScreen2Seg; */
-
-SDL_Surface *VGAScreenSeg;
-
-/* JE: From Nortsong */
-JE_word speed; /* JE: holds timer speed for 70Hz */
-
-JE_byte scancode;
-JE_byte outcol;
-JE_byte Screen_Attribute;
+#define VGA256D_EXTERNS \
+extern JE_boolean Mouse_Installed; \
+extern JE_char k; \
+extern SDL_Surface *VGAScreenSeg; \
+extern JE_word speed; /* JE: holds timer speed for 70Hz */ \
+extern JE_byte scancode; \
+extern JE_byte outcol;
 
 void JE_initvga256( void );
 void JE_InitVGA256X( void );
@@ -45,7 +36,6 @@ void JE_enable_refresh( void );
 void JE_WaitRetrace( void );
 void JE_WaitPartialRetrace( void );
 void JE_WaitNotRetrace( void );
-
 INLINE void JE_pix( JE_word x, JE_word y, JE_byte c );
 INLINE void JE_pix2( JE_word x, JE_word y, JE_byte c );
 INLINE void JE_pixcool( JE_word x, JE_word y, JE_byte c );

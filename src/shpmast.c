@@ -17,6 +17,8 @@ const JE_string shpfile[SHPnum] = /* [1..SHPnum] */
     "NEWSH`.SHP"
 };
 
+JE_shppostype shppos;
+
 /*
 
 ===================

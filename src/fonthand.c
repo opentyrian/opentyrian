@@ -2,6 +2,10 @@
 #include "newshape.h"
 #include "vga256d.h"
 
+/*************/
+VGA256D_EXTERNS
+/*************/
+
 const JE_byte fontmap[136] =    /* [33..168] */
 {
     26,33,60,61,62,255,32,64,65,63,84,29,83,28,80,79,70,71,72,73,74,75,76,77,
@@ -16,9 +20,18 @@ const JE_byte fontmap[136] =    /* [33..168] */
 
 /* shape constants included in newshape.h */
 
-#define DefaultBrightness (-3)
-#define TextGlowBrightness 6
+JE_integer DefaultBrightness = -3;
+JE_byte TextGlowBrightness = 6;
 
+JE_boolean levelwarningdisplay;
+JE_byte levelwarninglines;
+JE_char levelwarningtext[10][61];  /* [1..10] of string [60] */
+JE_boolean warningred;
+
+JE_byte warningsounddelay;
+JE_word armorshipdelay;
+JE_byte warningcol;
+JE_shortint warningcolchange;
 
 void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font )
 {

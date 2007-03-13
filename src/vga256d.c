@@ -7,6 +7,23 @@
 #include <math.h>
 #include <ctype.h>
 
+/* JE_word TestAX, TestBX, TestCX, TestDX; */
+JE_boolean Mouse_Installed;
+/* screentype *VGAScreen, *VGAScreen2; */
+/* JE_THandle VGAScreenHandler, VGAScreen2Handler; */
+JE_char k;
+/* JE_word ABSLoc; */
+/* JE_word VGAScreenSeg, VGAScreen2Seg; */
+
+SDL_Surface *VGAScreenSeg;
+
+/* JE: From Nortsong */
+JE_word speed; /* JE: holds timer speed for 70Hz */
+
+JE_byte scancode;
+JE_byte outcol;
+/* JE_byte Screen_Attribute; */
+
 void JE_initvga256( void )
 {
     if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||

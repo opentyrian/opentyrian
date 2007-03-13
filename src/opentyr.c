@@ -5,6 +5,10 @@
 
 #include <stdio.h>
 
+/*************/
+VGA256D_EXTERNS
+/*************/
+
 int main( int argc, char *argv[] )
 {
     JE_char a = '!';

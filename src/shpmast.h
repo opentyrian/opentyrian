@@ -5,10 +5,12 @@
 
 #define SHPnum 12
 
-const JE_string shpfile[SHPnum];
-
 typedef JE_longint JE_shppostype[SHPnum + 1]; /* [1..SHPnum + 1] */
 
-JE_shppostype shppos;
+#define SHPMAST_EXTERNS \
+extern const JE_string shpfile[SHPnum]; \
+extern JE_shppostype shppos; \
+
+
 
 #endif /* SHPMAST_H */
