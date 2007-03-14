@@ -19,14 +19,14 @@
 #include "opentyr.h"
 #include "pcxload.h"
 
-JE_ColorType Colors2;
+JE_colortype Colors2;
 JE_word width,
         depth;
 JE_word Bytes;
 JE_char c, c2;
 JE_boolean overrideblack = FALSE;
 
-void JE_UpdatePCXColorsSlow( JE_ColorType *ColorBuffer )
+void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer )
 {
 	int i;
     for(i = 0; i < 256; i++)
@@ -42,7 +42,7 @@ void JE_LoadPCX( JE_string Name, JE_boolean storepalette)
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
 #endif
-    struct JE_pcxheader header;
+    struct JE_pcxheader_rec header;
     JE_char textbuf[1024]; /* [1..1024] */
     FILE *fi;
     FILE *PCXfile;

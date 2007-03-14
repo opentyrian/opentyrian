@@ -24,11 +24,11 @@
 
 typedef JE_char JE_textbuffer[4096]; /* [1..4096] */
 
-struct JE_ColorRec {
+struct JE_colorrec {
     JE_byte r, g, b;
 };
 
-typedef struct JE_ColorRec JE_ColorType[256]; /* [0..255] */
+typedef struct JE_colorrec JE_colortype[256]; /* [0..255] */
 
 /*typedef JE_byte JE_shapetypeone[168];*/ /* [0..168-1] */ /* defined in vga256d */
 typedef JE_shapetypeone JE_shapetype[304]; /* [1..304] */

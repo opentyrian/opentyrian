@@ -22,7 +22,7 @@
 #include "opentyr.h"
 #include "nortvars.h"
 
-struct JE_pcxheader {
+struct JE_pcxheader_rec {
     JE_byte manufacturer;
     JE_byte version;
     JE_byte encoding;
@@ -38,7 +38,7 @@ struct JE_pcxheader {
 };
 
 #define PCXLOAD_EXTERNS \
-extern JE_ColorType Colors2; \
+extern JE_colortype Colors2; \
 extern JE_word width, \
                depth; \
 extern JE_word Bytes; \
@@ -46,6 +46,6 @@ extern JE_char c, c2; \
 extern JE_boolean overrideblack;
 
 void JE_LoadPCX( JE_string Name, JE_boolean storepalette );
-void JE_UpdatePCXColorsSlow( JE_ColorType *ColorBuffer );
+void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer );
 
 #endif /* PCXLOAD_H */
