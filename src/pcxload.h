@@ -16,6 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef PCXLOAD_H
+#define PCXLOAD_H
+
 #include "opentyr.h"
 #include "nortvars.h"
 
@@ -30,8 +33,8 @@ struct JE_pcxheader {
     JE_byte palette[48];  /* [0..47] */
     JE_byte reserved;
     JE_byte colour_planes;
-    JE_word Bytes_per_line;
-    JE_word palette_Type;
+    JE_word bytes_per_line;
+    JE_word palette_type;
 };
 
 #define PCXLOAD_EXTERNS \
@@ -44,3 +47,5 @@ extern JE_boolean overrideblack;
 
 void JE_LoadPCX( JE_string Name, JE_boolean storepalette );
 void JE_UpdatePCXColorsSlow( JE_ColorType *ColorBuffer );
+
+#endif /* PCXLOAD_H */
