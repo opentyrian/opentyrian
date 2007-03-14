@@ -22,6 +22,7 @@
 
 /*************/
 VGA256D_EXTERNS
+NEWSHAPE_EXTERNS
 /*************/
 
 const JE_byte fontmap[136] =    /* [33..168] */
