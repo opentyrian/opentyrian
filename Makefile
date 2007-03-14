@@ -4,7 +4,7 @@ DEBUG := 1
 # END SETTINGS #####################################
 
 TARGET := tyrian
-OBJS := error.o fonthand.o helptext.o newshape.o nortvars.o opentyr.o pcxload.o pcxmast.o shpmast.o vga256d.o
+OBJS := error.o fonthand.o helptext.o newshape.o nortvars.o opentyr.o pallib.o picload.o pcxload.o pcxmast.o shpmast.o starfade.o vga256d.o
 
 ifeq ($(DEBUG), 1)
 	DEBUG_FLAGS := -g3 -O0 -Wno-unused
