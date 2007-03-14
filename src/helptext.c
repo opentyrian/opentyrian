@@ -1,6 +1,6 @@
 /*
- * Jumpers Editor++: A cross-platform and extendable editor and player for the Jumper series of games;
- * Copyright (C) 2007  Yuri K. Schlesner
+ * OpenTyrian Classic: A moden cross-platform port of Tyrian
+ * Copyright (C) 2007  The OpenTyrian Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
