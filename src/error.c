@@ -141,19 +141,29 @@ JE_string JE_locatefile( const JE_string filename )
 
 void JE_resetfile( FILE **f, const JE_string filename )
 {
+    JE_resetfileext(f,filename, TRUE);
+}
+
+void JE_resetfileext( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added. */
+{
     JE_string buf;
 
     buf = JE_locatefile(filename);
-    *f = fopen(buf, "r+b");
+    *f = fopen(buf, (write ? "r+b" : "rb"));
     free(buf);
 }
 
 void JE_resettext( FILE **f, const JE_string filename )
 {
+    JE_resettextext(f,filename, TRUE);
+}
+
+void JE_resettextext( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added */
+{
     JE_string buf;
 
     buf = JE_locatefile(filename);
-    *f = fopen(buf, "r+b");
+    *f = fopen(buf, (write ? "r+" : "r"));
     free(buf);
 }
 

@@ -27,7 +27,9 @@ extern JE_boolean ErrorOccurred;
 
 JE_boolean JE_find( const JE_string s );
 void JE_resetfile( FILE **f, const JE_string filename );
+void JE_resetfileext( FILE **f, const JE_string filename, JE_boolean write );
 void JE_resettext( FILE **f, const JE_string filename );
+void JE_resettextext( FILE **f, const JE_string filename, JE_boolean write );
 JE_string JE_locatefile( const JE_string filename );
 void JE_findtyrian( const JE_string filename );
 JE_boolean JE_IsCFGThere( void );
