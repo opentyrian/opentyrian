@@ -141,6 +141,7 @@ JE_string JE_locatefile( const JE_string filename )
 
 void JE_resetfile( FILE **f, const JE_string filename )
 {
+    printf("!!! WARNING: JE_resefile is deprecated!\n");
     JE_resetfileext(f,filename, TRUE);
 }
 
@@ -155,6 +156,7 @@ void JE_resetfileext( FILE **f, const JE_string filename, JE_boolean write ) /* 
 
 void JE_resettext( FILE **f, const JE_string filename )
 {
+    printf("!!! WARNING: JE_resetext is deprecated!\n");
     JE_resettextext(f,filename, TRUE);
 }
 
