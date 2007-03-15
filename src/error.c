@@ -99,7 +99,7 @@ void JE_findtyrian( const JE_string filename )
                 strcpy(dir, tyrian_searchpaths[i]);
                 strcat(dir, "/");
                 printf("Tyrian data files found at %s\n\n", dir);
-                break;
+                return;
             }
         }
         JE_closevga256();

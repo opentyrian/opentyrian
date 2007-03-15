@@ -32,3 +32,5 @@ JE_word LastMouseX, LastMouseY;
 JE_byte MouseCursor;
 JE_boolean Mouse_ThreeButton;
 JE_word MouseX, MouseY, MouseButton;
+
+/* TODO */

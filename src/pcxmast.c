@@ -37,10 +37,10 @@ const JE_string pcxfile[PCXnum] = 	/* [1..PCXnum] */
 };
 
 const JE_byte pcxpal[PCXnum] = 	/* [1..PCXnum] */
-{ 1, 8, 6, 9, 11, 6, 19, 20, 20, 21, 22, 23, 6};
+{ 0, 7, 5, 8, 10, 5, 18, 19, 19, 20, 21, 22, 5};
 
 /*FACEMAX*/
 const JE_byte facepal[12] = 	/* [1..12] */
-{ 2, 3, 4, 5, 7, 10, 12, 13, 17, 14, 15, 16};
+{ 1, 2, 3, 4, 6, 9, 11, 12, 16, 13, 14, 15};
 
 JE_pcxpostype pcxpos;

@@ -19,8 +19,39 @@
 #include "opentyr.h"
 #include "pallib.h"
 #include "nortvars.h"
+#include "error.h"
 
 JE_paltype *palettes;
 JE_word palnum;
 
-/* TODO */
+void JE_loadpals ( void )
+{
+    FILE *f;
+    int i;
+
+    palnum = 0;
+
+    f = fopen(JE_locatefile("PALETTE.DAT"), "r+b");
+    while(!feof(f))
+    {
+        for(i = 0; i < 256; i++)
+        {
+            fread(&(*palettes)[palnum][i].r, sizeof((*palettes)[palnum][i].r), 1, f);
+            fread(&(*palettes)[palnum][i].g, sizeof((*palettes)[palnum][i].g), 1, f);
+            fread(&(*palettes)[palnum][i].b, sizeof((*palettes)[palnum][i].b), 1, f);
+        }
+        palnum++;
+    }
+    fclose(f);
+}
+
+void JE_ZPal( JE_byte palette )
+{
+    /* TODO: JE_updatecolorsfast(&(palettes*)[palette]);*/
+}
+
+void pallib_init( void )
+{
+    palettes = malloc(sizeof(*palettes));
+    JE_loadpals();
+}

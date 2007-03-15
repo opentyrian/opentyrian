@@ -32,13 +32,15 @@ PALLIB_EXTERNS
 
 JE_boolean NotYetLoadedPCX = TRUE;
 
-void LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
+void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
 {
     typedef JE_byte JE_buftype[63000]; /* [1..63000] */
 
     JE_word x;
     JE_buftype *buf;
     FILE *PCXfile;
+
+    PCXnumber--;
 
     JE_resetfile(&PCXfile, "TYRIAN.PIC");
 
@@ -49,19 +51,18 @@ void LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
         for(x = 0; x < PCXnum; x++)
             fread(&pcxpos[x], sizeof(pcxpos[x]), 1, PCXfile);
         fseek(PCXfile, 0, SEEK_END);
-        pcxpos[PCXnum + 1] = ftell(PCXfile);
+        pcxpos[PCXnum] = ftell(PCXfile);
     }
 
     fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
     buf = malloc(sizeof(*buf));
-    fread(buf, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], 1, PCXfile);
+    fread(buf, 1, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
     fclose(PCXfile);
 
     /* TODO: Unpack_PCX;*/
     free(buf);
 
-    /*! MXD: I've typedef'd something wrong, I think */
-    /* TODO: colors = (*palettes)[pcxpal[PCXnumber]];*/
+    memcpy(colors, (*palettes)[pcxpal[PCXnumber]], sizeof(colors));
     if(storepal)
         /* TODO: JE_updatecolorsfast(&colors)*/;
 }
