@@ -32,13 +32,13 @@ void JE_loadpals ( void )
     palnum = 0;
 
     f = fopen(JE_locatefile("PALETTE.DAT"), "r+b");
-    while(!feof(f))
+    while (palnum < maxpal && !feof(f))
     {
-        for(i = 0; i < 256; i++)
+        for (i = 0; i < 256; i++)
         {
-            fread(&(*palettes)[palnum][i].r, sizeof((*palettes)[palnum][i].r), 1, f);
-            fread(&(*palettes)[palnum][i].g, sizeof((*palettes)[palnum][i].g), 1, f);
-            fread(&(*palettes)[palnum][i].b, sizeof((*palettes)[palnum][i].b), 1, f);
+            (*palettes)[palnum][i].r = getc(f);
+            (*palettes)[palnum][i].g = getc(f);
+            (*palettes)[palnum][i].b = getc(f);
         }
         palnum++;
     }
