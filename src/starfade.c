@@ -20,8 +20,28 @@
 #include "starfade.h"
 #include "nortvars.h"
 #include "starfade.h"
+#include "vga256d.h"
+
+/*************/
+VGA256D_EXTERNS
+/*************/
 
 JE_colortype black, colors, colors2, DummyPalette, DummySub;
 JE_word NoColorsX3;
+
+void JE_UpdateColorsFast( JE_colortype *ColorBuffer )
+{
+    SDL_Color p[256];
+    int i;
+
+    for(i = 0; i < 256; i++)
+    {
+        p[i].r = (*ColorBuffer)[i].r;
+        p[i].g = (*ColorBuffer)[i].g;
+        p[i].b = (*ColorBuffer)[i].b;
+    }
+
+    SDL_SetColors(VGAScreenSeg, p, 0, 256);
+}
 
 /* TODO */

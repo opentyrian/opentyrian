@@ -31,9 +31,9 @@ void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer )
 	int i;
     for(i = 0; i < 256; i++)
     {
-        ColorBuffer[i]->r <<= 2;
-        ColorBuffer[i]->g <<= 2;
-        ColorBuffer[i]->b <<= 2;
+        ColorBuffer[i]->r >>= 2;
+        ColorBuffer[i]->g >>= 2;
+        ColorBuffer[i]->b >>= 2;
     }
 }
 

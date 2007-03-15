@@ -23,11 +23,15 @@
 #include "starfade.h"
 #include "nortvars.h"
 #include "pallib.h"
+#include "vga256d.h"
+
+#include <string.h>
 
 /*************/
 PCXMAST_EXTERNS
 STARFADE_EXTERNS
 PALLIB_EXTERNS
+VGA256D_EXTERNS
 /*************/
 
 JE_boolean NotYetLoadedPCX = TRUE;
@@ -39,6 +43,12 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
     JE_word x;
     JE_buftype *buf;
     FILE *PCXfile;
+    
+    int i;
+    JE_byte *p;
+    unsigned char *s;   /* screen pointer, 8-bit specific */
+
+    s = (unsigned char *)VGAScreenSeg->pixels;
 
     PCXnumber--;
 
@@ -59,10 +69,24 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
     fread(buf, 1, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
     fclose(PCXfile);
 
-    /* TODO: Unpack_PCX;*/
+    p = (JE_byte *)buf;
+    for(i = 0; i < 320 * 200; )
+    {
+        if((*p & 0xc0) == 0xc0)
+        {
+            i += (*p & 0x3f);
+            memset(s, *(p + 1), (*p & 0x3f));
+            s += (*p & 0x3f); p += 2;
+        } else {
+            i++;
+            *s = *p;
+            s++; p++;
+        }
+    }
+
     free(buf);
 
     memcpy(colors, (*palettes)[pcxpal[PCXnumber]], sizeof(colors));
     if(storepal)
-        /* TODO: JE_updatecolorsfast(&colors)*/;
+        JE_UpdateColorsFast(&colors);
 }
