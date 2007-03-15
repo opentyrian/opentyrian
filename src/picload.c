@@ -41,9 +41,9 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
     typedef JE_byte JE_buftype[63000]; /* [1..63000] */
 
     JE_word x;
-    JE_buftype *buf;
+    JE_buftype buf;
     FILE *PCXfile;
-    
+
     int i;
     JE_byte *p;
     unsigned char *s;   /* screen pointer, 8-bit specific */
@@ -65,7 +65,6 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
     }
 
     fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
-    buf = malloc(sizeof(*buf));
     fread(buf, 1, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
     fclose(PCXfile);
 
@@ -83,8 +82,6 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
             s++; p++;
         }
     }
-
-    free(buf);
 
     memcpy(colors, (*palettes)[pcxpal[PCXnumber]], sizeof(colors));
     if(storepal)

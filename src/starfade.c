@@ -36,9 +36,9 @@ void JE_UpdateColorsFast( JE_colortype *ColorBuffer )
 
     for(i = 0; i < 256; i++)
     {
-        p[i].r = (*ColorBuffer)[i].r;
-        p[i].g = (*ColorBuffer)[i].g;
-        p[i].b = (*ColorBuffer)[i].b;
+        p[i].r = (*ColorBuffer)[i].r << 2;
+        p[i].g = (*ColorBuffer)[i].g << 2;
+        p[i].b = (*ColorBuffer)[i].b << 2;
     }
 
     SDL_SetColors(VGAScreenSeg, p, 0, 256);

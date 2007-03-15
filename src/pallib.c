@@ -20,6 +20,7 @@
 #include "pallib.h"
 #include "nortvars.h"
 #include "error.h"
+#include "starfade.h"
 
 JE_paltype *palettes;
 JE_word palnum;
@@ -31,7 +32,7 @@ void JE_loadpals ( void )
 
     palnum = 0;
 
-    f = fopen(JE_locatefile("PALETTE.DAT"), "r+b");
+    f = fopen(JE_locatefile("PALETTE.DAT"), "rb");
     while (palnum < maxpal && !feof(f))
     {
         for (i = 0; i < 256; i++)
@@ -47,7 +48,7 @@ void JE_loadpals ( void )
 
 void JE_ZPal( JE_byte palette )
 {
-    /* TODO: JE_updatecolorsfast(&(palettes*)[palette]);*/
+    JE_UpdateColorsFast(&(*palettes)[palette]);
 }
 
 void pallib_init( void )
