@@ -30,8 +30,8 @@ typedef JE_colortype JE_paltype[maxpal]; /* [1..maxpal] */
 extern JE_paltype palettes; \
 extern JE_word palnum;
 
-void loadpals( void );
-void ZPal( JE_byte palette );
+void JE_loadpals( void );
+void JE_ZPal( JE_byte palette );
 void pallib_init( void );
 
 #endif /* PALLIB_H */
