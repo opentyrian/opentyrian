@@ -27,7 +27,7 @@
 typedef JE_colortype JE_paltype[maxpal]; /* [1..maxpal] */
 
 #define PALLIB_EXTERNS \
-extern JE_paltype *palettes; \
+extern JE_paltype palettes; \
 extern JE_word palnum;
 
 void loadpals( void );

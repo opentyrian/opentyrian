@@ -83,7 +83,7 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
         }
     }
 
-    memcpy(colors, (*palettes)[pcxpal[PCXnumber]], sizeof(colors));
+    memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
     if(storepal)
         JE_UpdateColorsFast(&colors);
 }

@@ -22,7 +22,7 @@
 #include "error.h"
 #include "starfade.h"
 
-JE_paltype *palettes;
+JE_paltype palettes;
 JE_word palnum;
 
 void JE_loadpals ( void )
@@ -37,9 +37,9 @@ void JE_loadpals ( void )
     {
         for (i = 0; i < 256; i++)
         {
-            (*palettes)[palnum][i].r = getc(f);
-            (*palettes)[palnum][i].g = getc(f);
-            (*palettes)[palnum][i].b = getc(f);
+            palettes[palnum][i].r = getc(f);
+            palettes[palnum][i].g = getc(f);
+            palettes[palnum][i].b = getc(f);
         }
         palnum++;
     }
@@ -48,11 +48,10 @@ void JE_loadpals ( void )
 
 void JE_ZPal( JE_byte palette )
 {
-    JE_UpdateColorsFast(&(*palettes)[palette]);
+    JE_UpdateColorsFast(&palettes[palette]);
 }
 
 void pallib_init( void )
 {
-    palettes = malloc(sizeof(*palettes));
     JE_loadpals();
 }
