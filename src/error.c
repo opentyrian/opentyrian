@@ -96,6 +96,8 @@ void JE_findtyrian( const JE_string filename )
             strcat(strcat(strbuf, "/"), filename);
             if (JE_find(strbuf))
             {
+                free(strbuf);
+
                 strcpy(dir, tyrian_searchpaths[i]);
                 strcat(dir, "/");
                 printf("Tyrian data files found at %s\n\n", dir);
@@ -111,29 +113,26 @@ void JE_findtyrian( const JE_string filename )
     }
 }
 
-JE_string JE_locatefile( const JE_string filename )
+JE_string JE_locatefile( const JE_string filename ) /* !!! WARNING: Non-reentrant !!! */
 {
-    JE_string buf;
+    static JE_char buf[1024];
 
     if (!JE_find(filename))
     {
-
         if (strcmp(dir, "") == 0 && ErrorActive)
         {
             JE_findtyrian(filename);
         }
 
-        buf = malloc((strlen(filename)+strlen(dir)+1) * sizeof(*buf));
         strcpy(buf, dir);
         strcat(buf, filename);
 
         if (!JE_find(buf))
         {
-            free(buf);
             JE_errorhand(filename);
         }
     } else {
-        buf = malloc((strlen(filename)+1) * sizeof(*buf));
+        strcpy(buf, filename);
     }
 
     return buf;
@@ -147,11 +146,8 @@ void JE_resetfile( FILE **f, const JE_string filename )
 
 void JE_resetfileext( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added. */
 {
-    JE_string buf;
 
-    buf = JE_locatefile(filename);
-    *f = fopen(buf, (write ? "r+b" : "rb"));
-    free(buf);
+    *f = fopen(JE_locatefile(filename), (write ? "r+b" : "rb"));
 }
 
 void JE_resettext( FILE **f, const JE_string filename )
@@ -162,11 +158,7 @@ void JE_resettext( FILE **f, const JE_string filename )
 
 void JE_resettextext( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added */
 {
-    JE_string buf;
-
-    buf = JE_locatefile(filename);
-    *f = fopen(buf, (write ? "r+" : "r"));
-    free(buf);
+    *f = fopen(JE_locatefile(filename), (write ? "r+" : "r"));
 }
 
 JE_boolean JE_IsCFGThere( void ) /* Warning: It actually returns false when the config file exists */
