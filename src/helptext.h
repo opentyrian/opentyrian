@@ -31,7 +31,7 @@ typedef char JE_helptexttype[34][66];	/* [1..34] of string [65] */
 typedef char JE_destructhelptype[25][22];	/* [1..25] of string [21] */
 typedef JE_string JE_shipinfotype[13][2];	/* [1..13, 1..2] */
 
-#ifdef NO_EXTERNS
+#ifndef NO_EXTERNS
 extern JE_byte verticalheight;
 extern JE_byte helpboxcolor, helpboxbrightness, helpboxshadetype;
 extern JE_helptxttype *helptxt;

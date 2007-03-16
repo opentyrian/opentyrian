@@ -27,7 +27,7 @@
 #define Trick      3
 #define NoShade    255
 
-#ifdef NO_EXTERNS
+#ifndef NO_EXTERNS
 extern JE_integer DefaultBrightness;
 extern JE_byte TextGlowFont, TextGlowBrightness;
 extern JE_boolean levelwarningdisplay;

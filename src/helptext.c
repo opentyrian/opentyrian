@@ -16,12 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include <string.h>
-
 #include "opentyr.h"
+#define NO_EXTERNS
 #include "helptext.h"
+#undef NO_EXTERNS
+
 #include "fonthand.h"
 #include "newshape.h"
+
+#include <string.h>
 
 const JE_byte menuhelp[maxmenu][11] =     /* [1..maxmenu, 1..11] */
 {
