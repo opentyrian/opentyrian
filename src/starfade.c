@@ -22,10 +22,6 @@
 #include "starfade.h"
 #include "vga256d.h"
 
-/*************/
-VGA256D_EXTERNS
-/*************/
-
 JE_colortype black, colors, colors2, DummyPalette, DummySub;
 JE_word NoColorsX3;
 

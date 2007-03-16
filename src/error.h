@@ -21,9 +21,10 @@
 
 #include "opentyr.h"
 
-#define ERROR_EXTERNS \
-extern JE_boolean ErrorActive; \
+#ifndef NO_EXTERNS
+extern JE_boolean ErrorActive;
 extern JE_boolean ErrorOccurred;
+#endif
 
 JE_boolean JE_find( const JE_string s );
 void JE_resetfile( FILE **f, const JE_string filename );

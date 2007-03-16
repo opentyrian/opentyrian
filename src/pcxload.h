@@ -37,13 +37,14 @@ struct JE_pcxheader_rec {
     JE_word palette_type;
 };
 
-#define PCXLOAD_EXTERNS \
-extern JE_colortype Colors2; \
-extern JE_word width, \
-               depth; \
-extern JE_word Bytes; \
-extern JE_char c, c2; \
+#ifndef NO_EXTERNS
+extern JE_colortype Colors2;
+extern JE_word width,
+               depth;
+extern JE_word Bytes;
+extern JE_char c, c2;
 extern JE_boolean overrideblack;
+#endif
 
 void JE_LoadPCX( JE_string Name, JE_boolean storepalette );
 void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer );

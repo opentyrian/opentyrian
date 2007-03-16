@@ -27,18 +27,19 @@
 #define Trick      3
 #define NoShade    255
 
-#define FONTHAND_EXTERNS \
-extern JE_integer DefaultBrightness; \
-extern JE_byte TextGlowFont, TextGlowBrightness; \
-extern JE_boolean levelwarningdisplay; \
-extern JE_byte levelwarninglines; \
-extern JE_char levelwarningtext[10][61];   /* [1..10] of string [60] */ \
-extern JE_boolean warningred; \
-extern JE_byte warningsounddelay; \
-extern JE_word armorshipdelay; \
-extern JE_byte warningcol; \
-extern JE_shortint warningcolchange; \
-extern const JE_byte fontmap[136]; 	/* [33..168] */
+#ifdef NO_EXTERNS
+extern JE_integer DefaultBrightness;
+extern JE_byte TextGlowFont, TextGlowBrightness;
+extern JE_boolean levelwarningdisplay;
+extern JE_byte levelwarninglines;
+extern JE_char levelwarningtext[10][61]; /* [1..10] of string [60] */
+extern JE_boolean warningred;
+extern JE_byte warningsounddelay;
+extern JE_word armorshipdelay;
+extern JE_byte warningcol;
+extern JE_shortint warningcolchange;
+extern const JE_byte fontmap[136]; /* [33..168] */
+#endif
 
 void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font );
 void JE_NewDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_shortint brightness );

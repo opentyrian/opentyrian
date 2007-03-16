@@ -18,11 +18,8 @@
  */
 #include "opentyr.h"
 #include "newshape.h"
-#include "vga256d.h"
 
-/*************/
-VGA256D_EXTERNS
-/*************/
+#include "vga256d.h"
 
 JE_word min, max;
 

@@ -32,13 +32,14 @@ typedef JE_byte JE_shapetypeone[168]; /* [0..168-1] */  /* originally: JE_word J
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
-#define VGA256D_EXTERNS \
-extern JE_boolean Mouse_Installed; \
-extern JE_char k; \
-extern SDL_Surface *VGAScreenSeg; \
-extern JE_word speed; /* JE: holds timer speed for 70Hz */ \
-extern JE_byte scancode; \
+#ifndef NO_EXTERNS
+extern JE_boolean Mouse_Installed;
+extern JE_char k;
+extern SDL_Surface *VGAScreenSeg;
+extern JE_word speed; /* JE: holds timer speed for 70Hz */
+extern JE_byte scancode;
 extern JE_byte outcol;
+#endif
 
 void JE_initvga256( void );
 void JE_InitVGA256X( void );

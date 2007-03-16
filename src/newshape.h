@@ -21,6 +21,8 @@
 
 #include "opentyr.h"
 
+#include "SDL.h"
+
 #define OldBlack         0
 #define NewBlack         253
 
@@ -39,19 +41,20 @@
 
 typedef JE_byte *JE_shapearraytype[maxtable][maximumshape];	/* [1..maxtable, 1..maximumshape] */
 
-#define NEWSHAPE_EXTERNS \
-extern JE_word min, max; \
-extern SDL_Surface *tempscreenseg; \
-extern JE_shapearraytype *shapearray; \
-extern JE_word shapex[maxtable][maximumshape],	/* [1..maxtable,1..maximumshape] */ \
-               shapey[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */ \
-extern JE_word shapesize[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */ \
-extern JE_boolean shapexist[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */ \
-extern JE_byte maxshape[maxtable];	/* [1..maxtable] */ \
-extern JE_byte mousegrabshape[24*28];	/* [1..24*28] */ \
-extern JE_byte x; \
-extern JE_boolean LoadOverride; \
+#ifndef NO_EXTERNS
+extern JE_word min, max;
+extern SDL_Surface *tempscreenseg;
+extern JE_shapearraytype *shapearray;
+extern JE_word shapex[maxtable][maximumshape],  /* [1..maxtable,1..maximumshape] */
+               shapey[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+extern JE_word shapesize[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+extern JE_boolean shapexist[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+extern JE_byte maxshape[maxtable];	/* [1..maxtable] */
+extern JE_byte mousegrabshape[24*28];	/* [1..24*28] */
+extern JE_byte x;
+extern JE_boolean LoadOverride;
 extern JE_byte *Shapes6Pointer;
+#endif
 
 void JE_NewLoadShapes( JE_byte table, JE_string shapefile );
 void JE_NewLoadShapesB( JE_byte table, FILE *f );

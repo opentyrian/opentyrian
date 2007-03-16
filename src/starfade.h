@@ -22,9 +22,10 @@
 #include "opentyr.h"
 #include "nortvars.h"
 
-#define STARFADE_EXTERNS \
-extern JE_colortype black, colors, colors2, DummyPalette, DummySub; \
+#ifndef NO_EXTERNS
+extern JE_colortype black, colors, colors2, DummyPalette, DummySub;
 extern JE_word NoColorsX3;
+#endif
 
 /*void UpdateColorsSlow( JE_colortype *ColorBuffer );*/
 void JE_UpdateColorsFast( JE_colortype *ColorBuffer );

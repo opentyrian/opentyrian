@@ -29,12 +29,6 @@
 
 #include <stdio.h>
 
-/*************/
-VGA256D_EXTERNS
-NEWSHAPE_EXTERNS
-SHPMAST_EXTERNS
-/*************/
-
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 int main( int argc, char *argv[] )

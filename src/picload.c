@@ -27,13 +27,6 @@
 
 #include <string.h>
 
-/*************/
-PCXMAST_EXTERNS
-STARFADE_EXTERNS
-PALLIB_EXTERNS
-VGA256D_EXTERNS
-/*************/
-
 JE_boolean NotYetLoadedPCX = TRUE;
 
 void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
