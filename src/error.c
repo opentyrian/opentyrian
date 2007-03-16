@@ -76,7 +76,6 @@ JE_boolean JE_find( const JE_string s )
 
 void JE_findtyrian( const JE_string filename )
 {
-    JE_byte x;
     JE_string strbuf;
 
     if (JE_find(filename))

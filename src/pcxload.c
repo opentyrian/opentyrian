@@ -43,9 +43,9 @@ void JE_LoadPCX( JE_string Name, JE_boolean storepalette)
 printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
 #endif
     struct JE_pcxheader_rec header;
-    JE_char textbuf[1024]; /* [1..1024] */
+/*    JE_char textbuf[1024]; [1..1024] Unused */
     FILE *fi;
-    FILE *PCXfile;
+/*    FILE *PCXfile; Unused */
     int i;
 
     fi = fopen(Name, "rb");
