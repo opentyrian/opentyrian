@@ -18,6 +18,12 @@
  */
 #include "opentyr.h"
 #include "vga256d.h"
+#include "error.h"
+#include "pallib.h"
+#include "picload.h"
+#include "newshape.h"
+#include "shpmast.h"
+#include "fonthand.h"
 
 #include "SDL.h"
 
@@ -25,11 +31,17 @@
 
 /*************/
 VGA256D_EXTERNS
+NEWSHAPE_EXTERNS
+SHPMAST_EXTERNS
 /*************/
+
+const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 int main( int argc, char *argv[] )
 {
     JE_char a = '!';
+    FILE *f;
+    JE_integer shpnumb;
 
 	/* TODO: DetectCFG */
 	/* TODO: scanforepisodes */
@@ -54,16 +66,38 @@ int main( int argc, char *argv[] )
 
     JE_initvga256();
 
-    JE_SetPalette(1, 0xFF, 0xFF,  0x0);
-    JE_SetPalette(2, 0x00, 0x00, 0xAA);
-    JE_SetPalette(3,  0x0, 0xFF,  0x0);
+    newshape_init();
+
+    JE_loadpals();
+
+    /* [UGH] */
+    JE_resetfileext(&f, "TYRIAN.SHP", FALSE);
+    if(!f)
+    {
+        return(1);
+    }
+
+    fread(&shpnumb, 2, 1, f);
+
+    for(x = 0; x < shpnumb; x++)
+    {
+        fread(&shppos[x], 4, 1, f);
+    }
+    /*shppos[shpnumb+1]=filesize(f);*/
+
+    for(x = 0; x < 7; x++)
+    {  /*Load EST shapes*/
+        fseek(f, shppos[x], SEEK_SET);
+        JE_NewLoadShapesB(shapereorderlist[x], f);
+    }
+    /* [/UGH] */
 
     SDL_LockSurface(VGAScreenSeg);
 
-    JE_rectangle(1, 1, 318, 198, 1);
-    JE_bar(150,90, 170, 110, 2);
-    JE_circle(160, 100, 32, 3);
-    JE_line(1,1, 318, 198, 1);
+    JE_LoadPIC(13, TRUE);
+
+    JE_Dstring(JE_FontCenter("OpenTyrian test", FontShapes), 55, "~OpenTyrian~ test", FontShapes);
+    JE_TextShade(JE_FontCenter("Press any key to exit.", TinyFont), 85, "Press any key to exit.", 7, 0, FullShade);
 
     SDL_UnlockSurface(VGAScreenSeg);
 

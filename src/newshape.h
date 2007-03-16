@@ -23,6 +23,8 @@
 
 #define OldBlack         0
 #define NewBlack         253
+
+/* Font faces */
 #define PlanetShapes    0
 #define FontShapes      1
 #define SmallFontShapes 2
