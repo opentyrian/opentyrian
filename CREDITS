@@ -1,0 +1,11 @@
+Main coders:
+
+MindlessXD - Unknown Name - <Unknow Email>
+    - Wrote fonthand.c/h, helptext.c/h, newshape.c/h, nortvars.c/h, pallib.c/h, pcxload.c/h,
+      pcxmast.c/h, picload.c/h, shpmast.c/h and starfade.c/h.
+    - Created initial opentyr.c/h
+
+yuriks - Yuri K. Schlesner - <yuriks.br@gmail.com>
+    - Wrote error.c/h and vga256d.c/h.
+    - Enchanchements to opentyr.c/h.
+    - Wrote Makefile.
