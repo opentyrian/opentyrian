@@ -133,7 +133,7 @@ void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
         }
     }
 
-    tempscreenseg = VGAScreenSeg;
+    tempscreenseg = VGAScreen;
 }
 
 void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
@@ -176,7 +176,7 @@ void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
         }
     }
 
-    tempscreenseg = VGAScreenSeg;
+    tempscreenseg = VGAScreen;
 }
 
 void JE_NewPurgeShapes( JE_byte table )
@@ -199,8 +199,8 @@ void JE_DrawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
     JE_byte *p = shape; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
 
-    s = (unsigned char *)VGAScreenSeg->pixels;
-    s += y * VGAScreenSeg->w + x;
+    s = (unsigned char *)VGAScreen->pixels;
+    s += y * VGAScreen->w + x;
 
     for(yloop = 0; yloop < 28; yloop++) {
         for(xloop = 0; xloop < 24; xloop++) {
@@ -208,7 +208,7 @@ void JE_DrawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
             s++; p++;
         }
         s -= 24;
-        s += VGAScreenSeg->w;
+        s += VGAScreen->w;
     }
 }
 
@@ -218,8 +218,8 @@ void JE_GrabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
     JE_byte *p = shape; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
 
-    s = (unsigned char *)VGAScreenSeg->pixels;
-    s += y * VGAScreenSeg->w + x;
+    s = (unsigned char *)VGAScreen->pixels;
+    s += y * VGAScreen->w + x;
 
     for(yloop = 0; yloop < 28; yloop++) {
         for(xloop = 0; xloop < 24; xloop++) {
@@ -227,13 +227,13 @@ void JE_GrabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
             s++; p++;
         }
         s -= 24;
-        s += VGAScreenSeg->w;
+        s += VGAScreen->w;
     }
 }
 
 void newshape_init( void )
 {
-    tempscreenseg = VGAScreenSeg;
+    tempscreenseg = VGAScreen;
     for(x = 0; x < maxtable; x++) {
         maxshape[x] = 0;
     }

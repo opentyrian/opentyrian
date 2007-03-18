@@ -456,7 +456,7 @@ void JE_Outtext( JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shorti
         }
     }
     if(brightness >= 0) {
-        tempscreenseg = VGAScreenSeg;
+        tempscreenseg = VGAScreen;
     }
 }
 

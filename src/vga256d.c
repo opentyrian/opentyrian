@@ -25,27 +25,22 @@
 #include <math.h>
 #include <ctype.h>
 
-/* JE_word TestAX, TestBX, TestCX, TestDX; */
 JE_boolean Mouse_Installed;
-/* screentype *VGAScreen, *VGAScreen2; */
-/* JE_THandle VGAScreenHandler, VGAScreen2Handler; */
 JE_char k;
-/* JE_word ABSLoc; */
-/* JE_word VGAScreenSeg, VGAScreen2Seg; */
 
-SDL_Surface *VGAScreenSeg;
+SDL_Surface *VGAScreen;
+Uint8 VGAScreen2Seg[320*200];
 
 /* JE: From Nortsong */
 JE_word speed; /* JE: holds timer speed for 70Hz */
 
 JE_byte scancode;
 JE_byte outcol;
-/* JE_byte Screen_Attribute; */
 
 void JE_initvga256( void )
 {
     if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||
-       !(VGAScreenSeg = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
+       !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
     {
         printf("Display initialization failed: %s\n", SDL_GetError());
         exit(1);
@@ -66,22 +61,22 @@ void JE_closevga256( void )
 
 void JE_clr256( void )
 {
-    memset(VGAScreenSeg->pixels, 0, VGAScreenSeg->pitch * VGAScreenSeg->h);
+    memset(VGAScreen->pixels, 0, VGAScreen->pitch * VGAScreen->h);
 }
 
 void JE_ShowVGA( void )
 {
-    SDL_Flip(VGAScreenSeg);
+    SDL_Flip(VGAScreen);
 }
 
 void JE_ShowVGARetrace( void )
 {
-    SDL_Flip(VGAScreenSeg);
+    SDL_Flip(VGAScreen);
 }
 
 void JE_GetVGA( void )
 {
-    SDL_Flip(VGAScreenSeg); /* TODO: YKS: This is probably not what we should do, but I don't see a way of doing it either. */
+    SDL_Flip(VGAScreen); /* TODO: YKS: This is probably not what we should do, but I don't see a way of doing it either. */
 }
 
 void JE_OnScreen( void )
@@ -129,7 +124,7 @@ INLINE void JE_pix2( JE_word x, JE_word y, JE_byte c )
     /* Bad things happen if we don't clip */
     if (x < 320 && y < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         vga[y*320+x] = c;
     }
 }
@@ -153,7 +148,7 @@ INLINE void JE_pixabs( JE_word x, JE_byte c )
 {
     if (x < 320*200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         vga[x] = c;
     }
 }
@@ -163,7 +158,7 @@ INLINE void JE_getpix( JE_word x, JE_word y, JE_byte *c )
     /* Bad things happen if we don't clip */
     if (x < 320 && y < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         *c = vga[y*320+x];
     }
 }
@@ -173,7 +168,7 @@ INLINE JE_byte JE_getpixel( JE_word x, JE_word y )
     /* Bad things happen if we don't clip */
     if (x < 320 && y < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         return vga[y*320+x];
     }
 
@@ -184,7 +179,7 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
 {
     if (a < 320 && c < 320 && b < 200 && d < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         int i;
 
         /* Top line */
@@ -213,7 +208,7 @@ void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, 
 {
     if (a < 320 && c < 320 && b < 200 && d < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         int i, width;
 
         width = c-a+1;
@@ -231,7 +226,7 @@ void JE_barshade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2
 {
     if (a < 320 && c < 320 && b < 200 && d < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         int i,j, width;
 
         width = c-a+1;
@@ -257,7 +252,7 @@ void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y
 {
     if (a < 320 && c < 320 && b < 200 && d < 200)
     {
-        char *vga = VGAScreenSeg->pixels;
+        char *vga = VGAScreen->pixels;
         int i,j, width;
 
         width = c-a+1;
@@ -297,7 +292,7 @@ void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c ) /* z == radius */
 
         b = x + floor(sin(a)*z+(y+floor(cos(a)*z))*320);
 
-        vga = VGAScreenSeg->pixels;
+        vga = VGAScreen->pixels;
         vga[(int)b] = c;
     }
 }
@@ -312,7 +307,7 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
     g = (c-a)/(double)v; h = (d-b)/(double)v;
     x = a; y = b;
 
-    vga = VGAScreenSeg->pixels;
+    vga = VGAScreen->pixels;
 
     for (z = 0; z <= v; z++)
     {
@@ -325,7 +320,7 @@ void JE_GetPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue )
 {
     SDL_Color color;
 
-    color = VGAScreenSeg->format->palette->colors[col];
+    color = VGAScreen->format->palette->colors[col];
 
     *red = color.r;
     *green = color.g;
@@ -340,12 +335,12 @@ void JE_SetPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
     color.g = green;
     color.b = blue;
 
-    SDL_SetColors(VGAScreenSeg, &color, col, 1);
+    SDL_SetColors(VGAScreen, &color, col, 1);
 }
 
 void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s )
 {
-    char *vga = VGAScreenSeg->pixels;
+    char *vga = VGAScreen->pixels;
     int i;
 
     vga += y*320+x;

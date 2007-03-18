@@ -22,7 +22,8 @@
 #include "starfade.h"
 #include "vga256d.h"
 
-JE_colortype black, colors, colors2;
+JE_colortype black = {{0,0,0}}; /* Rest is filled with 0's too */
+JE_colortype colors, colors2;
 
 void JE_UpdateColorsFast( JE_colortype *ColorBuffer )
 {
@@ -36,7 +37,7 @@ void JE_UpdateColorsFast( JE_colortype *ColorBuffer )
         p[i].b = (*ColorBuffer)[i].b << 2;
     }
 
-    SDL_SetColors(VGAScreenSeg, p, 0, 256);
+    SDL_SetColors(VGAScreen, p, 0, 256);
 }
 
 void JE_FadeColors( JE_colortype *FromColors, JE_colortype *ToColors, JE_byte StartCol, JE_byte NoColors, JE_byte NoSteps )
@@ -50,8 +51,7 @@ void JE_FadeColors( JE_colortype *FromColors, JE_colortype *ToColors, JE_byte St
             p[i].g = ((*FromColors)[i].g + ((((*ToColors)[i].g - (*FromColors)[i].g) * s) / NoSteps)) << 2;
             p[i].b = ((*FromColors)[i].b + ((((*ToColors)[i].b - (*FromColors)[i].b) * s) / NoSteps)) << 2;
         }
-        SDL_SetColors(VGAScreenSeg, p, StartCol, NoColors + 1);
-        SDL_Flip(VGAScreenSeg);
+        SDL_SetColors(VGAScreen, p, StartCol, NoColors + 1);
         SDL_Delay(16); /* TODO */
     }
 }
