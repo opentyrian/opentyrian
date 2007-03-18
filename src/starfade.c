@@ -22,8 +22,7 @@
 #include "starfade.h"
 #include "vga256d.h"
 
-JE_colortype black, colors, colors2, DummyPalette, DummySub;
-JE_word NoColorsX3;
+JE_colortype black, colors, colors2;
 
 void JE_UpdateColorsFast( JE_colortype *ColorBuffer )
 {
@@ -40,4 +39,37 @@ void JE_UpdateColorsFast( JE_colortype *ColorBuffer )
     SDL_SetColors(VGAScreenSeg, p, 0, 256);
 }
 
-/* TODO */
+void JE_FadeColors( JE_colortype *FromColors, JE_colortype *ToColors, JE_byte StartCol, JE_byte NoColors, JE_byte NoSteps )
+{
+    SDL_Color p[256];
+    int s, i;
+
+    for(s = 0; s <= NoSteps; s++) {
+        for(i = 0; i <= NoColors; i++) {
+            p[i].r = ((*FromColors)[i].r + ((((*ToColors)[i].r - (*FromColors)[i].r) * s) / NoSteps)) << 2;
+            p[i].g = ((*FromColors)[i].g + ((((*ToColors)[i].g - (*FromColors)[i].g) * s) / NoSteps)) << 2;
+            p[i].b = ((*FromColors)[i].b + ((((*ToColors)[i].b - (*FromColors)[i].b) * s) / NoSteps)) << 2;
+        }
+        SDL_SetColors(VGAScreenSeg, p, StartCol, NoColors + 1);
+        SDL_Flip(VGAScreenSeg);
+        SDL_Delay(16); /* TODO */
+    }
+}
+
+void JE_FadeBlack( JE_byte steps )
+{
+    JE_FadeColors(&colors, &black, 0, 255, steps);
+}
+
+void JE_FadeColor( JE_byte steps )
+{
+    JE_FadeColors(&black, &colors, 0, 255, steps);
+}
+
+void JE_FadeWhite( JE_byte steps )
+{
+    memset(black, 63, sizeof(black));
+    JE_FadeColors(&colors, &black, 0, 255, steps);
+    memcpy(colors, black, sizeof(colors));
+    memset(black, 0, sizeof(black));
+}
