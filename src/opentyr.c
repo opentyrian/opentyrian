@@ -20,11 +20,8 @@
 #include "vga256d.h"
 #include "error.h"
 #include "pallib.h"
-#include "picload.h"
 #include "newshape.h"
 #include "shpmast.h"
-#include "fonthand.h"
-
 #include "tyrian2.h"
 
 #include "SDL.h"
@@ -89,18 +86,10 @@ int main( int argc, char *argv[] )
     /* [/UGH] */
 
     SDL_LockSurface(VGAScreen);
-
-/*    JE_LoadPIC(13, TRUE);
-
-    JE_Dstring(JE_FontCenter("OpenTyrian test", FontShapes), 55, "~OpenTyrian~ test", FontShapes);
-    JE_TextShade(JE_FontCenter("Press any key to exit.", TinyFont), 85, "Press any key to exit.", 7, 0, FullShade);*/
-
     TitleScreen(TRUE);
-
     SDL_UnlockSurface(VGAScreen);
 
-    JE_ShowVGARetrace();
-    /*SDL_SaveBMP(VGAScreen, "sshot.bmp");*/
+    JE_ShowVGA();
 
     JE_getk(&a);
     printf("Key pressed: %d\n", a);
