@@ -106,7 +106,7 @@ void JE_findtyrian( const JE_string filename )
         JE_closevga256();
 
         printf("WARNING: Unable to find Tyrian data files.\n"
-               "Stopped on file %s\n."
+               "Stopped on file %s.\n"
                "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", filename);
         exit(1);
     }
