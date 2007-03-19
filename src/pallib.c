@@ -50,8 +50,3 @@ void JE_ZPal( JE_byte palette )
 {
     JE_UpdateColorsFast(&palettes[palette]);
 }
-
-void pallib_init( void )
-{
-    JE_loadpals();
-}

@@ -7,5 +7,6 @@ MindlessXD - Unknown Name - <Unknown Email>
 
 yuriks - Yuri K. Schlesner - <yuriks.br@gmail.com>
     - Wrote error.c/h and vga256d.c/h.
+    - Bits of config.c/h, helptext.c/h, tyrian2.c/h.
     - Enchanchements to opentyr.c/h.
     - Wrote Makefile.
