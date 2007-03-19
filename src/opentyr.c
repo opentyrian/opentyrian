@@ -23,6 +23,7 @@
 #include "newshape.h"
 #include "shpmast.h"
 #include "tyrian2.h"
+#include "helptext.h"
 
 #include "SDL.h"
 
@@ -60,6 +61,7 @@ int main( int argc, char *argv[] )
     JE_initvga256();
 
     newshape_init();
+    JE_loadhelptext();
 
     JE_loadpals();
 

@@ -113,19 +113,19 @@ void TitleScreen( JE_boolean animate )
             for (temp = 0; temp < menunum; temp++)
             {
                 tempx = 104+(temp)*13;
-                /*tempy = JE_FontCenter(menutext[temp],SmallFontShapes);*/
-                tempy = JE_FontCenter("FOOBAR",SmallFontShapes);
+                tempy = JE_FontCenter(menutext[temp],SmallFontShapes);
+                /*tempy = JE_FontCenter("FOOBAR",SmallFontShapes);*/
 
-                /*JE_OuttextAdjust(tempy-1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
+                JE_OuttextAdjust(tempy-1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy+1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy+1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy-1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy,tempx,menutext[temp],15,-3,SmallFontShapes,FALSE);*/
-                JE_OuttextAdjust(tempy-1,tempx-1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
+                JE_OuttextAdjust(tempy,tempx,menutext[temp],15,-3,SmallFontShapes,FALSE);
+                /*JE_OuttextAdjust(tempy-1,tempx-1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy+1,tempx+1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy+1,tempx-1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy-1,tempx+1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy,tempx,"FOOBAR",15,-3,SmallFontShapes,FALSE);
+                JE_OuttextAdjust(tempy,tempx,"FOOBAR",15,-3,SmallFontShapes,FALSE);*/
             }
             JE_ShowVGA();
 
