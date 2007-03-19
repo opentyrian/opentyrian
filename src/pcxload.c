@@ -1,5 +1,5 @@
 /*
- * OpenTyrian Classic: A moden cross-platform port of Tyrian
+ * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Team
  *
  * This program is free software; you can redistribute it and/or
