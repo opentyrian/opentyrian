@@ -26,6 +26,8 @@
 #include "starfade.h"
 #include "helptext.h"
 #include "nortsong.h"
+#include "pallib.h"
+#include "pcxmast.h"
 
 #include <string.h>
 
@@ -105,7 +107,7 @@ void TitleScreen( JE_boolean animate )
                     JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
 
                     JE_ShowVGA();
-                    JE_framedelay();
+                    JE_waitdelay();
                 }
             }
             MoveTyrianLogoUp = FALSE;
@@ -136,8 +138,8 @@ void OpeningAnim( void )
     JE_clr256();
 
     memcpy(colors, black, sizeof(colors));
-
     memset(black, 63, sizeof(black));
+
     JE_FadeColors(&colors, &black, 0, 255, 50);
 
     JE_LoadPIC(10, FALSE);
@@ -145,5 +147,18 @@ void OpeningAnim( void )
 
     JE_FadeColors(&black, &colors, 0, 255, 50);
 
+    JE_setdelay(200);
     memset(black, 0, sizeof(black));
+
+    JE_waitdelay();
+    JE_FadeBlack(15);
+
+    JE_LoadPIC(12, FALSE);
+    JE_ShowVGA();
+    memcpy(colors, palettes[pcxpal[12]], sizeof(colors));
+
+    JE_FadeColor(10);
+    JE_setwaitdelay(200);
+    JE_FadeBlack(10);
+
 }
