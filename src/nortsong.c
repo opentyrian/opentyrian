@@ -30,7 +30,20 @@ void JE_setdelay( JE_byte delay )
     target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
 }
 
-void JE_framedelay( void )
+void JE_waitdelay( void )
 {
-    while (SDL_GetTicks() < target);
+    while (SDL_GetTicks() < target)
+    {
+        SDL_PumpEvents();
+    }
+}
+
+/* Convenience function */
+void JE_setwaitdelay( JE_byte delay )
+{
+    target = (delay << 4)+SDL_GetTicks();
+    while (SDL_GetTicks() < target)
+    {
+        SDL_PumpEvents();
+    }
 }

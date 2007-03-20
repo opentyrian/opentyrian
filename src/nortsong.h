@@ -28,6 +28,7 @@ Uint32 target;
 #endif
 
 void JE_setdelay( JE_byte delay );
-void JE_framedelay( void );
+void JE_waitdelay( void );
+void JE_setwaitdelay( JE_byte delay );
 
 #endif /* NORTSONG_H */
