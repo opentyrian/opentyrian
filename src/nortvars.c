@@ -17,11 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
+#include "error.h"
+#include "vga256d.h"
+
 #define NO_EXTERNS
 #include "nortvars.h"
 #undef NO_EXTERNS
-
-#include "error.h"
 
 /* File constants for Saving ShapeFile */
 const JE_byte NV_shapeactive   = 0x01;
@@ -148,3 +150,37 @@ void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s, JE_byte
 }
 
 /* TODO */
+
+void JE_DrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
+{
+    JE_byte *p; /* shape pointer */
+    unsigned char *s;   /* screen pointer, 8-bit specific */
+
+    int i;
+
+    s = (unsigned char *)VGAScreen->pixels;
+    s += y * VGAScreen->w + x;
+
+    p = Shape + ((s_ - 1) * 2);
+    p = Shape + *(short *)p;
+
+    while(*p != 0x0f)
+    {
+        s += *p & 0x0f;
+        i = (*p & 0xf0) >> 4;
+        if(i)
+        {
+            while(i--)
+            {
+                p++;
+                *s = *p;
+                s++;
+            }
+        } else {
+            s -= 12;
+            s += VGAScreen->w;
+        }
+        p++;
+    }
+}
+
