@@ -27,8 +27,8 @@
 Uint32 target;
 #endif
 
-void JE_setdelay( JE_byte delay );
-void JE_waitdelay( void );
-void JE_setwaitdelay( JE_byte delay );
+void setdelay( JE_byte delay );
+void waitdelay( void );
+void waitdelayorkey( void );
 
 #endif /* NORTSONG_H */

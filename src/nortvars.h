@@ -60,8 +60,6 @@ JE_word JE_MousePosition( JE_word *MouseX, JE_word *MouseY );
 JE_boolean JE_Buttonpressed( void );
 void JE_SetMousePosition( JE_word MouseX, JE_word MouseY );
 
-JE_boolean JE_AnyButton( void );
-
 /*void JE_ShowMouse( void );
 void JE_HideMouse( void );*/
 

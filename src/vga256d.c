@@ -356,6 +356,7 @@ void JE_getk( JE_char *k )
 {
     SDL_Event ev;
 
+    printf("!!! WARNING: JE_getk is deprecated! %s:%d\n", __FILE__, __LINE__);
     for (;;)
     {
         SDL_WaitEvent(&ev);
@@ -371,6 +372,7 @@ void JE_getk( JE_char *k )
 
 void JE_getupk( JE_char *k )
 {
+    printf("!!! WARNING: JE_getupk is deprecated! %s:%d\n", __FILE__, __LINE__);
     JE_getk(k);
     *k = toupper(*k);
 }
@@ -381,6 +383,7 @@ JE_boolean JE_keypressed( JE_char *kp )
 
     SDL_PumpEvents();
 
+    printf("!!! WARNING: JE_keypressed is deprecated! %s:%d\n", __FILE__, __LINE__);
     if (SDL_PeepEvents(&ev, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_KEYDOWN)) > 0)
     {
         scancode = ev.key.keysym.scancode;
@@ -393,6 +396,7 @@ JE_boolean JE_keypressed( JE_char *kp )
 
 JE_boolean JE_kp( void )
 {
+    printf("!!! WARNING: JE_kp is deprecated! %s:%d\n", __FILE__, __LINE__);
     SDL_PumpEvents();
 
     return SDL_PeepEvents(NULL, 1, SDL_PEEKEVENT, SDL_EVENTMASK(SDL_KEYDOWN));

@@ -25,16 +25,21 @@
 
 #ifndef NO_EXTERNS
 extern const char *KeyNames[];
-extern JE_boolean newkey;
-extern SDLKey key, nkey;
+extern JE_boolean newkey, newmouse, keydown, mousedown;
+extern SDLKey lastkey_sym;
+extern SDLMod lastkey_mod;
+extern Uint8 lastmouse_but;
+extern Uint16 lastmouse_x, lastmouse_y;
+extern JE_boolean mouse_pressed[3];
+extern Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
 extern int numkeys;
 extern Uint8 *keysactive;
 #endif
 
-void JE_InitKeyboard( void );
-void JE_EndKeyboard( void );
-void JE_ClearKeyboard( void );
-void JE_WaitForKey( void );
-void JE_FlushBIOSBuffer( void );
+void flush_events_buffer( void );
+void wait_keymouse( void );
+void init_keyboard( void );
+void service_SDL_events( void );
+void sleep_game( void );
 
 #endif /* KEYBOARD_H */

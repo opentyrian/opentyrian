@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
 #define NO_EXTERNS
 #include "keyboard.h"
 #undef NO_EXTERNS
@@ -114,60 +115,108 @@ const char *KeyNames[] = {
     "F12"
 };
 
-JE_boolean newkey;
-JE_byte key, nkey;
+JE_boolean newkey, newmouse, keydown, mousedown;
+SDLKey lastkey_sym;
+SDLMod lastkey_mod;
+Uint8 lastmouse_but;
+Uint16 lastmouse_x, lastmouse_y;
+JE_boolean mouse_pressed[3] = {FALSE, FALSE, FALSE};
+Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
 
 int numkeys;
-Uint8 *keysactive; /* Remember to call SDL_PumpEvents first! */
+Uint8 *keysactive;
 
-void updatekeys( void )
-{
-    SDL_Event ev;
-
-    while (SDL_PollEvent(&ev))
-    {
-        if (ev.type == SDL_KEYDOWN)
-        {
-            newkey = TRUE;
-            nkey = key = ev.key.keysym.sym;
-        }
-    }
-}
-
-void JE_FlushBIOSBuffer( void )
+void flush_events_buffer( void )
 {
     SDL_Event ev;
 
     while (SDL_PollEvent(&ev));
 }
 
-void JE_WaitForKey( void )
+void wait_keymouse( void )
 {
-    SDL_Event ev;
-
-    JE_FlushBIOSBuffer();
-    while (SDL_WaitEvent(&ev))
+    newkey = newmouse = FALSE;
+    while (!newmouse && !newkey)
     {
-        if (ev.type == SDL_KEYDOWN)
+        if (SDL_GetTicks() % 5 == 0)
         {
-            break;
+            service_SDL_events();
         }
     }
-    JE_FlushBIOSBuffer();
 }
 
-void JE_InitKeyboard( void )
+void init_keyboard( void )
 {
     keysactive = SDL_GetKeyState(&numkeys);
 }
 
-void JE_EndKeyboard( void )
+void service_SDL_events( void )
 {
-    keysactive = NULL;
-    numkeys = 0;
+    SDL_Event ev;
+
+    while (SDL_PollEvent(&ev))
+    {
+        switch (ev.type)
+        {
+            case SDL_MOUSEMOTION:
+                mouse_x = ev.motion.x;
+                mouse_y = ev.motion.y;
+                mouse_xrel = ev.motion.xrel;
+                mouse_yrel = ev.motion.yrel;
+                break;
+            case SDL_KEYDOWN:
+                newkey = TRUE;
+                lastkey_sym = ev.key.keysym.sym;
+                lastkey_mod = ev.key.keysym.mod;
+                keydown = TRUE;
+                break;
+            case SDL_KEYUP:
+                keydown = FALSE;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                if (ev.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    newmouse = TRUE;
+                    lastmouse_but = ev.button.button;
+                    lastmouse_x = ev.button.x;
+                    lastmouse_y = ev.button.y;
+                    mousedown = TRUE;
+                } else {
+                    mousedown = FALSE;
+                }
+                switch (ev.button.button)
+                {
+                    case SDL_BUTTON_LEFT:
+                        mouse_pressed[0] = mousedown; break;
+                    case SDL_BUTTON_RIGHT:
+                        mouse_pressed[1] = mousedown; break;
+                    case SDL_BUTTON_MIDDLE:
+                        mouse_pressed[2] = mousedown; break;
+                }
+                break;
+            case SDL_ACTIVEEVENT:
+                if (ev.active.type & SDL_APPACTIVE || !ev.active.gain)
+                {
+                    sleep_game();
+                }
+                break;
+            case SDL_QUIT:
+                /* TODO: Call the cleanup code here. */
+                break;
+        }
+    }
 }
 
-void JE_ClearKeyboard( void )
+void sleep_game( void )
 {
-    /* Dunno, nop for now. =] */
+    SDL_Event ev;
+
+    while (SDL_WaitEvent(&ev))
+    {
+        if (ev.type == SDL_ACTIVEEVENT /*&& ev.active.state & SDL_APPACTIVE*/ && ev.active.gain)
+        {
+            return;
+        }
+    }
 }

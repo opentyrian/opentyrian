@@ -103,13 +103,13 @@ void TitleScreen( JE_boolean animate )
                 {
                     int i;
 
-                    JE_setdelay(2);
+                    setdelay(2);
                     memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
                     JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
 
                     JE_ShowVGA();
-                    JE_waitdelay();
+                    waitdelay();
                 }
             }
             MoveTyrianLogoUp = FALSE;
@@ -149,18 +149,21 @@ void OpeningAnim( void )
 
     JE_FadeColors(&black, &colors, 0, 255, 50);
 
-    JE_setdelay(200);
+    setdelay(200);
     memset(black, 0, sizeof(black));
 
-    JE_waitdelay();
+    waitdelayorkey();
     JE_FadeBlack(15);
+
+    /***************/
 
     JE_LoadPIC(12, FALSE);
     memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
     JE_ShowVGA();
 
     JE_FadeColor(10);
-    JE_setwaitdelay(200);
+    setdelay(200);
+    waitdelayorkey();
     JE_FadeBlack(10);
 
 }

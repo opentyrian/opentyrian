@@ -24,7 +24,7 @@
 #include "shpmast.h"
 #include "tyrian2.h"
 #include "helptext.h"
-#include "nortsong.h"
+#include "keyboard.h"
 
 #include "SDL.h"
 
@@ -34,7 +34,6 @@ const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 int main( int argc, char *argv[] )
 {
-    JE_char a = '!';
     FILE *f;
     JE_integer shpnumb;
 
@@ -95,8 +94,7 @@ int main( int argc, char *argv[] )
 
     JE_ShowVGA();
 
-    JE_getk(&a);
-    printf("Key pressed: %d\n", a);
+    wait_keymouse();
 
     JE_closevga256();
 

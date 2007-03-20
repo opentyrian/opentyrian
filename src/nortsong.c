@@ -17,6 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
+#include "keyboard.h"
+
 #define NO_EXTERNS
 #include "nortsong.h"
 #undef NO_EXTERNS
@@ -25,25 +28,34 @@
 
 Uint32 target;
 
-void JE_setdelay( JE_byte delay )
+void setdelay( JE_byte delay )
 {
     target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
 }
 
-void JE_waitdelay( void )
+void waitdelay( void )
 {
-    while (SDL_GetTicks() < target)
+    int ticks;
+
+    while ((ticks = SDL_GetTicks()) < target)
     {
-        SDL_PumpEvents();
+        if (ticks % 5 == 0)
+        {
+            service_SDL_events();
+        }
     }
 }
 
-/* Convenience function */
-void JE_setwaitdelay( JE_byte delay )
+void waitdelayorkey( void )
 {
-    target = (delay << 4)+SDL_GetTicks();
-    while (SDL_GetTicks() < target)
+    int ticks;
+
+    newkey = newmouse = FALSE;
+    while ((ticks = SDL_GetTicks()) < target && !newmouse && !newkey)
     {
-        SDL_PumpEvents();
+        if (ticks % 5 == 0)
+        {
+            service_SDL_events();
+        }
     }
 }
