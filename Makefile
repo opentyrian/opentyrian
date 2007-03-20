@@ -1,5 +1,7 @@
 # BUILD SETTINGS ###################################
 DEBUG := 1
+# Valid values: WINDOWS, UNIX
+PLATFORM := UNIX
 
 # END SETTINGS #####################################
 
@@ -12,8 +14,13 @@ else
 	DEBUG_FLAGS := -O2 -fomit-frame-pointer -DNDEBUG
 endif
 
-SDL_CFLAGS := $(shell sdl-config --cflags)
-SDL_LDFLAGS := $(shell sdl-config --libs)
+ifeq ($(PLATFORM), WINDOWS)
+	SDL_CFLAGS := -I/mingw/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
+	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -mwindows
+else
+	SDL_CFLAGS := $(shell sdl-config --cflags)
+	SDL_LDFLAGS := $(shell sdl-config --libs)
+endif
 
 CFLAGS := -ansi -pedantic -Wall -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
 LDFLAGS := $(SDL_LDFLAGS) -lm
