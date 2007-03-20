@@ -93,6 +93,8 @@ void TitleScreen( JE_boolean animate )
             colors2[temp].r = 0;
 
             JE_ShowVGA();
+            JE_FadeColor(10);
+
             fadein = FALSE;
 
             if (MoveTyrianLogoUp)
