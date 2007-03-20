@@ -154,8 +154,8 @@ void OpeningAnim( void )
     JE_FadeBlack(15);
 
     JE_LoadPIC(12, FALSE);
+    memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
     JE_ShowVGA();
-    memcpy(colors, palettes[pcxpal[12]], sizeof(colors));
 
     JE_FadeColor(10);
     JE_setwaitdelay(200);
