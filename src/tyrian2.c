@@ -25,6 +25,7 @@
 #include "picload.h"
 #include "starfade.h"
 #include "helptext.h"
+#include "nortsong.h"
 
 #include <string.h>
 
@@ -97,14 +98,14 @@ void TitleScreen( JE_boolean animate )
                 for (temp = 61; temp >= 4; temp -= 2)
                 {
                     int i;
-                    /*framecount = 2;*/
+
+                    JE_setdelay(2);
                     memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
                     JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
 
-                    SDL_Delay(16*2);
                     JE_ShowVGA();
-                    /*waitframecount;*/
+                    JE_framedelay();
                 }
             }
             MoveTyrianLogoUp = FALSE;
@@ -114,18 +115,12 @@ void TitleScreen( JE_boolean animate )
             {
                 tempx = 104+(temp)*13;
                 tempy = JE_FontCenter(menutext[temp],SmallFontShapes);
-                /*tempy = JE_FontCenter("FOOBAR",SmallFontShapes);*/
 
                 JE_OuttextAdjust(tempy-1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy+1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy+1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy-1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
                 JE_OuttextAdjust(tempy,tempx,menutext[temp],15,-3,SmallFontShapes,FALSE);
-                /*JE_OuttextAdjust(tempy-1,tempx-1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy+1,tempx+1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy+1,tempx-1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy-1,tempx+1,"FOOBAR",15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy,tempx,"FOOBAR",15,-3,SmallFontShapes,FALSE);*/
             }
             JE_ShowVGA();
 
@@ -134,4 +129,21 @@ void TitleScreen( JE_boolean animate )
             memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
         }
     }
+}
+
+void OpeningAnim( void )
+{
+    JE_clr256();
+
+    memcpy(colors, black, sizeof(colors));
+
+    memset(black, 63, sizeof(black));
+    JE_FadeColors(&colors, &black, 0, 255, 50);
+
+    JE_LoadPIC(10, FALSE);
+    JE_ShowVGA();
+
+    JE_FadeColors(&black, &colors, 0, 255, 50);
+
+    memset(black, 0, sizeof(black));
 }

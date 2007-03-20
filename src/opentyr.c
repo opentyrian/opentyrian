@@ -24,6 +24,7 @@
 #include "shpmast.h"
 #include "tyrian2.h"
 #include "helptext.h"
+#include "nortsong.h"
 
 #include "SDL.h"
 
@@ -88,6 +89,7 @@ int main( int argc, char *argv[] )
     /* [/UGH] */
 
     SDL_LockSurface(VGAScreen);
+    OpeningAnim();
     TitleScreen(TRUE);
     SDL_UnlockSurface(VGAScreen);
 
