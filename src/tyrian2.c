@@ -47,8 +47,6 @@ void TitleScreen( JE_boolean animate )
 
     tempscreenseg = VGAScreen;
 
-    JE_LoadPIC(4, TRUE);
-
     first = TRUE;
     redraw = TRUE;
     fadein = FALSE;
@@ -137,33 +135,36 @@ void TitleScreen( JE_boolean animate )
 
 void OpeningAnim( void )
 {
-    JE_clr256();
+    /*JE_clr256();*/
 
-    memcpy(colors, black, sizeof(colors));
-    memset(black, 63, sizeof(black));
+    /*movetyrianlogoup = TRUE;*/
 
-    JE_FadeColors(&colors, &black, 0, 255, 50);
+    if(1) /*(!IsNetworkGame && !StoppedDemo)*/
+    {
+        memcpy(colors, black, sizeof(colors));
+        memset(black, 63, sizeof(black));
+        JE_FadeColors(&colors, &black, 0, 255, 50);
 
-    JE_LoadPIC(10, FALSE);
-    JE_ShowVGA();
+        JE_LoadPIC(10, FALSE);
+        JE_ShowVGA();
 
-    JE_FadeColors(&black, &colors, 0, 255, 50);
+        JE_FadeColors(&black, &colors, 0, 255, 50);
+        memset(black, 0, sizeof(black));
 
-    setdelay(200);
-    memset(black, 0, sizeof(black));
+        setdelay(200);
+        waitdelayorkey();
 
-    waitdelayorkey();
-    JE_FadeBlack(15);
+        JE_FadeBlack(15);
 
-    /***************/
+        JE_LoadPIC(12, FALSE);
+        JE_ShowVGA();
 
-    JE_LoadPIC(12, FALSE);
-    memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
-    JE_ShowVGA();
+        memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
+        JE_FadeColor(10);
 
-    JE_FadeColor(10);
-    setdelay(200);
-    waitdelayorkey();
-    JE_FadeBlack(10);
+        setdelay(200);
+        waitdelayorkey();
 
+        JE_FadeBlack(10);
+    }
 }
