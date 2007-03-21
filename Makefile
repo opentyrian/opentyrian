@@ -2,6 +2,7 @@
 DEBUG := 1
 # Valid values: WINDOWS, UNIX
 PLATFORM := UNIX
+PROFILE := 0
 
 # END SETTINGS #####################################
 
@@ -22,8 +23,14 @@ else
 	SDL_LDFLAGS := $(shell sdl-config --libs)
 endif
 
+
 CFLAGS := -ansi -pedantic -Wall -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
 LDFLAGS := $(SDL_LDFLAGS) -lm
+
+ifeq ($(PROFILE), 1)
+	CFLAGS += -pg
+	LDFLAGS += -pg
+endif
 
 ####################################################
 
