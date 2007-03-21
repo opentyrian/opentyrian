@@ -195,12 +195,12 @@ void service_SDL_events( void )
                         mouse_pressed[2] = mousedown; break;
                 }
                 break;
-            case SDL_ACTIVEEVENT:
+            /*case SDL_ACTIVEEVENT:
                 if (ev.active.type & SDL_APPACTIVE || !ev.active.gain)
                 {
                     sleep_game();
                 }
-                break;
+                break;*/
             case SDL_QUIT:
                 /* TODO: Call the cleanup code here. */
                 break;
