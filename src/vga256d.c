@@ -93,18 +93,16 @@ void JE_ShowVGA( void )
 
     size = ScreenSurf->w * ScreenSurf->h;
 
-    x = 0; rw = FALSE;
+    x = 0; rw = TRUE;
     for (i = 0; i < size; i++)
     {
         if (++x == 640)
         {
-            if (rw == FALSE)
+            if (rw == TRUE)
             {
-                rw = TRUE;
                 pb -= 320;
-            } else {
-                rw = FALSE;
             }
+            rw = !rw;
             x = 0;
         }
         ps[i] = pb[i>>1];
