@@ -82,7 +82,7 @@ void JE_clr256( void )
 
 void JE_ShowVGA( void )
 {
-    int i, x, size, rw;
+    int x, y;
     Uint8 *ps; Uint8 *pb;
 
     SDL_LockSurface(ScreenSurf);
@@ -91,21 +91,16 @@ void JE_ShowVGA( void )
     ps = ScreenSurf->pixels;
     pb = VGAScreen->pixels;
 
-    size = ScreenSurf->w * ScreenSurf->h;
-
-    x = 0; rw = TRUE;
-    for (i = 0; i < size; i++)
+    for (y = 0; y < VGAScreen->h; y++)
     {
-        if (++x == 640)
+        for(x = 0; x < VGAScreen->w; x++)
         {
-            if (rw == TRUE)
-            {
-                pb -= 320;
-            }
-            rw = !rw;
-            x = 0;
+            memset(ps, *pb, 2);
+            pb++;
+            ps += 2;
         }
-        ps[i] = pb[i>>1];
+        memcpy(ps, ps - ScreenSurf->w, ScreenSurf->w);
+        ps += ScreenSurf->w;
     }
 
     SDL_SetColors(ScreenSurf, VGAScreen->format->palette->colors, 0, 256);
