@@ -149,8 +149,6 @@ void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s, JE_byte
     fclose(f);
 }
 
-/* TODO */
-
 void JE_DrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
 {
     JE_byte *p; /* shape pointer */
@@ -184,3 +182,94 @@ void JE_DrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     }
 }
 
+void JE_SuperDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
+{
+    JE_byte *p; /* shape pointer */
+    unsigned char *s;   /* screen pointer, 8-bit specific */
+
+    int i;
+
+    s = (unsigned char *)VGAScreen->pixels;
+    s += y * VGAScreen->w + x;
+
+    p = Shape + ((s_ - 1) * 2);
+    p = Shape + *(short *)p;
+
+    while(*p != 0x0f)
+    {
+        s += *p & 0x0f;
+        i = (*p & 0xf0) >> 4;
+        if(i)
+        {
+            while(i--)
+            {
+                p++;
+                *s = (((*p & 0x0f) + (*s & 0x0f)) >> 1) | (*p & 0xf0);
+                s++;
+            }
+        } else {
+            s -= 12;
+            s += VGAScreen->w;
+        }
+        p++;
+    }
+}
+
+void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
+{
+    JE_byte *p; /* shape pointer */
+    unsigned char *s;   /* screen pointer, 8-bit specific */
+
+    int i;
+
+    s = (unsigned char *)VGAScreen->pixels;
+    s += y * VGAScreen->w + x;
+
+    p = Shape + ((s_ - 1) * 2);
+    p = Shape + *(short *)p;
+
+    while(*p != 0x0f)
+    {
+        s += *p & 0x0f;
+        i = (*p & 0xf0) >> 4;
+        if(i)
+        {
+            while(i--)
+            {
+                p++;
+                *s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
+                s++;
+            }
+        } else {
+            s -= 12;
+            s += VGAScreen->w;
+        }
+        p++;
+    }
+}
+
+void JE_DrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
+{
+  JE_DrawShape2(x,      y,      s,      Shape);
+  JE_DrawShape2(x + 12, y,      s + 1,  Shape);
+  JE_DrawShape2(x,      y + 14, s + 19, Shape);
+  JE_DrawShape2(x + 12, y + 14, s + 20, Shape);
+}
+
+void JE_SuperDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
+{
+  JE_SuperDrawShape2(x,      y,      s,      Shape);
+  JE_SuperDrawShape2(x + 12, y,      s + 1,  Shape);
+  JE_SuperDrawShape2(x,      y + 14, s + 19, Shape);
+  JE_SuperDrawShape2(x + 12, y + 14, s + 20, Shape);
+}
+
+void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
+{
+  JE_DrawShape2Shadow(x,      y,      s,      Shape);
+  JE_DrawShape2Shadow(x + 12, y,      s + 1 , Shape);
+  JE_DrawShape2Shadow(x,      y + 14, s + 19, Shape);
+  JE_DrawShape2Shadow(x + 12, y + 14, s + 20, Shape);
+}
+
+/* TODO */

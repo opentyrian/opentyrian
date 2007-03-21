@@ -75,10 +75,9 @@ void JE_drawansi( JE_string ansiscreen );
 /*JE_boolean JE_waitaction( JE_byte time );*/
 
 void JE_DrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-
 void JE_SuperDrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-
 void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+
 void JE_DrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 void JE_SuperDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
