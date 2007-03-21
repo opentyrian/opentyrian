@@ -28,6 +28,7 @@
 JE_boolean Mouse_Installed;
 JE_char k;
 
+SDL_Surface *ScreenSurf;
 SDL_Surface *VGAScreen;
 Uint8 VGAScreen2Seg[320*200];
 
@@ -39,13 +40,28 @@ JE_byte outcol;
 
 void JE_initvga256( void )
 {
+    int rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
     if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||
-       !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
+       !(ScreenSurf = SDL_SetVideoMode(640,400,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
     {
         printf("Display initialization failed: %s\n", SDL_GetError());
         exit(1);
     }
-    SDL_EnableUNICODE(1);
+
+    VGAScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320,200,8, 0,0,0,0);
 }
 
 void JE_InitVGA256X( void )
@@ -66,7 +82,40 @@ void JE_clr256( void )
 
 void JE_ShowVGA( void )
 {
-    SDL_Flip(VGAScreen);
+    int i, x, size, rw;
+    Uint8 *ps; Uint8 *pb;
+
+    SDL_LockSurface(ScreenSurf);
+    SDL_LockSurface(VGAScreen);
+
+    ps = ScreenSurf->pixels;
+    pb = VGAScreen->pixels;
+
+    size = ScreenSurf->w * ScreenSurf->h;
+
+    x = 0; rw = FALSE;
+    for (i = 0; i < size; i++)
+    {
+        if (++x == 640)
+        {
+            if (rw == FALSE)
+            {
+                rw = TRUE;
+                pb -= 320;
+            } else {
+                rw = FALSE;
+            }
+            x = 0;
+        }
+        ps[i] = pb[i>>1];
+    }
+
+    SDL_SetColors(ScreenSurf, VGAScreen->format->palette->colors, 0, 256);
+
+    SDL_LockSurface(ScreenSurf);
+    SDL_LockSurface(VGAScreen);
+
+    SDL_Flip(ScreenSurf);
 }
 
 void JE_ShowVGARetrace( void )
@@ -76,7 +125,6 @@ void JE_ShowVGARetrace( void )
 
 void JE_GetVGA( void )
 {
-    SDL_Flip(VGAScreen); /* TODO: YKS: This is probably not what we should do, but I don't see a way of doing it either. */
 }
 
 void JE_OnScreen( void )
