@@ -1,5 +1,5 @@
 # BUILD SETTINGS ###################################
-DEBUG := 1
+DEBUG := 0
 # Valid values: WINDOWS, UNIX
 PLATFORM := UNIX
 PROFILE := 0
@@ -12,7 +12,7 @@ OBJS := config.o error.o fonthand.o helptext.o keyboard.o newshape.o nortsong.o 
 ifeq ($(DEBUG), 1)
 	DEBUG_FLAGS := -g3 -O0 -Wno-unused
 else
-	DEBUG_FLAGS := -O2 -fomit-frame-pointer -DNDEBUG
+	DEBUG_FLAGS := -O2 -fomit-frame-pointer -DNDEBUG -Wno-unused
 endif
 
 ifeq ($(PLATFORM), WINDOWS)
