@@ -1,5 +1,5 @@
 # BUILD SETTINGS ###################################
-DEBUG := 0
+DEBUG := 1
 # Valid values: WINDOWS, UNIX
 PLATFORM := UNIX
 PROFILE := 0
