@@ -25,6 +25,7 @@
 #include "newshape.h"
 #include "error.h"
 #include "config.h"
+#include "episodes.h"
 
 #include <string.h>
 
@@ -142,7 +143,6 @@ void JE_HBox(JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth)
 void JE_loadhelptext( void )
 {
     FILE *f; int i;
-    JE_longint Episode1DataLoc; /* TODO: REMOVE BECAUSE IT BELONGS IN EPISODES.PAS */
 
     JE_resetfileext(&f, "TYRIAN.HDT", FALSE);
     fread(&Episode1DataLoc, sizeof(Episode1DataLoc), 1, f);
