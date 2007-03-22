@@ -82,7 +82,7 @@ void JE_clr256( void )
 
 void JE_ShowVGA( void )
 {
-    int x, y;
+    int x, y, i;
     Uint8 *ps; Uint8 *pb;
 
     SDL_LockSurface(ScreenSurf);
@@ -95,9 +95,12 @@ void JE_ShowVGA( void )
     {
         for(x = 0; x < VGAScreen->w; x++)
         {
-            memset(ps, *pb, 2);
+            for(i = 0; i < 2; i++)
+            {
+                *ps = *pb;
+                ps++;
+            }
             pb++;
-            ps += 2;
         }
         memcpy(ps, ps - ScreenSurf->w, ScreenSurf->w);
         ps += ScreenSurf->w;
