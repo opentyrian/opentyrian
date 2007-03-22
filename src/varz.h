@@ -20,8 +20,7 @@
 #define VARZ_H
 
 #include "opentyr.h"
-
-#define PortNum 42 /* temporary fix */
+#include "episodes.h"
 
 #define SA 7
 
