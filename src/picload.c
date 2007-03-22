@@ -74,6 +74,10 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
             *s = *p;
             s++; p++;
         }
+        if(i && (i % 320 == 0))
+        {
+            s += VGAScreen->w - 320;
+        }
     }
 
     memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
