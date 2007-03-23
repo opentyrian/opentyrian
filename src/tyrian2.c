@@ -137,8 +137,6 @@ void TitleScreen( JE_boolean animate )
             }
         }
 
-        wait_nokeymouse();
-
         memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
         for (temp = 0; temp < menunum; temp++)
@@ -154,37 +152,42 @@ void TitleScreen( JE_boolean animate )
 
         /* stuff */
 
-        wait_keyboard();
-        switch (lastkey_sym)
-        {
-            case SDLK_UP:
-                if (menu == 0)
-                {
-                    menu = menunum-1;
-                    /* playsamplenum(Cursormove); */
-                } else {
-                    menu--;
-                }
-                break;
-            case SDLK_DOWN:
-                menu++;
-                if (menu >= menunum)
-                {
-                    menu = 0;
-                    /* playsamplenum(Cursormove); */
-                }
-                break;
-            case SDLK_RETURN:
-                /* playsamplenum(Select); */
-                /* TODO > */ quit = TRUE;
-                break;
-            case SDLK_ESCAPE:
-                quit = TRUE;
-                break;
-            default:
-                break;
-        }
+        newkey = FALSE;
+        service_SDL_events();
 
+        if (newkey)
+        {
+            switch (lastkey_sym)
+            {
+                case SDLK_UP:
+                    if (menu == 0)
+                    {
+                        menu = menunum-1;
+                    } else {
+                        menu--;
+                    }
+                    /* playsamplenum(Cursormove); */
+                    break;
+                case SDLK_DOWN:
+                    if (menu == menunum-1)
+                    {
+                        menu = 0;
+                    } else {
+                        menu++;
+                    }
+                    /* playsamplenum(Cursormove); */
+                    break;
+                case SDLK_RETURN:
+                    /* playsamplenum(Select); */
+                    /* TODO > */ quit = TRUE;
+                    break;
+                case SDLK_ESCAPE:
+                    quit = TRUE;
+                    break;
+                default:
+                    break;
+            }
+        }
     } while (!(quit || gameloaded || jumpsection || playdemo || loaddestruct));
 }
 
