@@ -51,7 +51,6 @@ extern JE_word shapesize[maxtable][maximumshape];	/* [1..maxtable,1..maximumshap
 extern JE_boolean shapexist[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
 extern JE_byte maxshape[maxtable];	/* [1..maxtable] */
 extern JE_byte mousegrabshape[24*28];	/* [1..24*28] */
-extern JE_byte x;
 extern JE_boolean LoadOverride;
 extern JE_byte *Shapes6Pointer;
 #endif

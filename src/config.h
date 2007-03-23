@@ -118,8 +118,6 @@ extern JE_byte Background3Over;
 extern JE_byte Background2Over;
 extern JE_byte GammaCorrection;
 extern JE_boolean SuperPause, ExplosionTransparent, YouAreCheating, DisplayScore, SoundHasChanged, Background2, SmoothScroll, Wild, SuperWild, StarActive, TopEnemyOver,SkyEnemyOverALL, Background2NotTransparent, tempb;
-extern JE_byte temp;
-extern JE_word tempw;
 extern JE_byte VersionNum;
 extern JE_byte FastPlay;
 extern JE_boolean PentiumMode;
@@ -132,8 +130,6 @@ extern JE_word savefilesseg, savefilesofs;
 extern JE_SaveGameTemp SaveTemp;
 extern JE_word savetempofs, savetempseg;
 extern JE_word EditorLevel;
-extern JE_word x;
-
 extern const JE_byte StringCryptKey[10];
 #endif
 

@@ -36,6 +36,7 @@ int main( int argc, char *argv[] )
 {
     FILE *f;
     JE_integer shpnumb;
+    int i;
 
 	/* TODO: DetectCFG */
 	/* TODO: scanforepisodes */
@@ -60,6 +61,7 @@ int main( int argc, char *argv[] )
 
     JE_initvga256();
 
+    init_keyboard();
     newshape_init();
     JE_loadhelptext();
 
@@ -74,16 +76,16 @@ int main( int argc, char *argv[] )
 
     fread(&shpnumb, 2, 1, f);
 
-    for(x = 0; x < shpnumb; x++)
+    for(i = 0; i < shpnumb; i++)
     {
-        fread(&shppos[x], 4, 1, f);
+        fread(&shppos[i], 4, 1, f);
     }
     /*shppos[shpnumb+1]=filesize(f);*/
 
-    for(x = 0; x < 7; x++)
+    for(i = 0; i < 7; i++)
     {  /*Load EST shapes*/
-        fseek(f, shppos[x], SEEK_SET);
-        JE_NewLoadShapesB(shapereorderlist[x], f);
+        fseek(f, shppos[i], SEEK_SET);
+        JE_NewLoadShapesB(shapereorderlist[i], f);
     }
     /* [/UGH] */
 
@@ -93,8 +95,6 @@ int main( int argc, char *argv[] )
     SDL_UnlockSurface(VGAScreen);
 
     JE_ShowVGA();
-
-    wait_keymouse();
 
     JE_closevga256();
 
