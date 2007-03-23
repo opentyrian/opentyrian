@@ -28,6 +28,7 @@
 #include "nortsong.h"
 #include "pallib.h"
 #include "pcxmast.h"
+#include "keyboard.h"
 
 #include <string.h>
 
@@ -37,6 +38,8 @@ JE_integer temp, tempx, tempy;
 void TitleScreen( JE_boolean animate )
 {
     /* TODO TODO TODO: Major stuff TODO. */
+    JE_boolean quit = 0, jumpsection = 0, playdemo = 0, loaddestruct = 0, gameloaded = 0; /* TODO TODO REMOVE!!!!!!!! */
+
     const int menunum = 7;
     JE_byte namego[7+2] = {0}; /* [1..SA+2] */
     JE_word waitfordemo;
@@ -53,84 +56,136 @@ void TitleScreen( JE_boolean animate )
 
     /* If IsNetworkActive { TODO } else { */
 
-    DefaultBrightness = -3;
-
-    /* Animate instead of quickly fading in */
-    if (redraw)
+    do
     {
-        /* if currentsong<>Song_Title then playsong(Song_Title); */
-        menu = 1;
-        redraw = FALSE;
-        if (animate)
+        DefaultBrightness = -3;
+
+        /* Animate instead of quickly fading in */
+        if (redraw)
         {
-            if (fadein)
+            /* if currentsong<>Song_Title then playsong(Song_Title); */
+            menu = 0;
+            redraw = FALSE;
+            if (animate)
             {
-                JE_FadeBlack(10);
-            }
-            JE_LoadPIC(4,FALSE);
-
-            memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-
-            if (MoveTyrianLogoUp)
-            {
-                temp = 62;
-            } else {
-                temp = 4;
-            }
-
-            JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
-
-
-            memcpy(colors2, colors, sizeof(colors));
-            for (temp = 256-16; temp < 256; temp++)
-            {
-                colors[temp].r = 0;
-                colors[temp].g = 0;
-                colors[temp].b = 0;
-            }
-            colors2[temp].r = 0;
-
-            JE_ShowVGA();
-            JE_FadeColor(10);
-
-            fadein = FALSE;
-
-            if (MoveTyrianLogoUp)
-            {
-                for (temp = 61; temp >= 4; temp -= 2)
+                if (fadein)
                 {
-                    int i;
-
-                    setdelay(2);
-                    memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
-
-                    JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
-
-                    JE_ShowVGA();
-                    waitdelay();
+                    JE_FadeBlack(10);
                 }
+                JE_LoadPIC(4,FALSE);
+
+                memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+
+                if (MoveTyrianLogoUp)
+                {
+                    temp = 62;
+                } else {
+                    temp = 4;
+                }
+
+                JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
+
+
+                memcpy(colors2, colors, sizeof(colors));
+                for (temp = 256-16; temp < 256; temp++)
+                {
+                    colors[temp].r = 0;
+                    colors[temp].g = 0;
+                    colors[temp].b = 0;
+                }
+                colors2[temp].r = 0;
+
+                JE_ShowVGA();
+                JE_FadeColor(10);
+
+                fadein = FALSE;
+
+                if (MoveTyrianLogoUp)
+                {
+                    for (temp = 61; temp >= 4; temp -= 2)
+                    {
+                        int i;
+
+                        setdelay(2);
+                        memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+
+                        JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
+
+                        JE_ShowVGA();
+                        waitdelay();
+                    }
+                }
+                MoveTyrianLogoUp = FALSE;
+
+                /* Draw Menu Text on Screen */
+                for (temp = 0; temp < menunum; temp++)
+                {
+                    tempx = 104+(temp)*13;
+                    tempy = JE_FontCenter(menutext[temp],SmallFontShapes);
+
+                    JE_OuttextAdjust(tempy-1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_OuttextAdjust(tempy+1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_OuttextAdjust(tempy+1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_OuttextAdjust(tempy-1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_OuttextAdjust(tempy,tempx,menutext[temp],15,-3,SmallFontShapes,FALSE);
+                }
+                JE_ShowVGA();
+
+                JE_FadeColors(&colors, &colors2, 0, 255, 20);
+
+                memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
             }
-            MoveTyrianLogoUp = FALSE;
-
-            /* Draw Menu Text on Screen */
-            for (temp = 0; temp < menunum; temp++)
-            {
-                tempx = 104+(temp)*13;
-                tempy = JE_FontCenter(menutext[temp],SmallFontShapes);
-
-                JE_OuttextAdjust(tempy-1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy+1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy+1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy-1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                JE_OuttextAdjust(tempy,tempx,menutext[temp],15,-3,SmallFontShapes,FALSE);
-            }
-            JE_ShowVGA();
-
-            JE_FadeColors(&colors, &colors2, 0, 255, 20);
-
-            memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
         }
-    }
+
+        wait_nokeymouse();
+
+        memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+
+        for (temp = 0; temp < menunum; temp++)
+        {
+            JE_OuttextAdjust(JE_FontCenter(menutext[temp], SmallFontShapes),
+            104+temp*13,
+            menutext[temp], 15, -3+((temp == menu) * 2), SmallFontShapes, FALSE);
+        }
+
+        JE_ShowVGA();
+
+        first = FALSE;
+
+        /* stuff */
+
+        wait_keyboard();
+        switch (lastkey_sym)
+        {
+            case SDLK_UP:
+                if (menu == 0)
+                {
+                    menu = menunum-1;
+                    /* playsamplenum(Cursormove); */
+                } else {
+                    menu--;
+                }
+                break;
+            case SDLK_DOWN:
+                menu++;
+                if (menu >= menunum)
+                {
+                    menu = 0;
+                    /* playsamplenum(Cursormove); */
+                }
+                break;
+            case SDLK_RETURN:
+                /* playsamplenum(Select); */
+                /* TODO > */ quit = TRUE;
+                break;
+            case SDLK_ESCAPE:
+                quit = TRUE;
+                break;
+            default:
+                break;
+        }
+
+    } while (!(quit || gameloaded || jumpsection || playdemo || loaddestruct));
 }
 
 void OpeningAnim( void )
