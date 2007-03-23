@@ -133,10 +133,33 @@ void flush_events_buffer( void )
     while (SDL_PollEvent(&ev));
 }
 
+void wait_nokeymouse( void )
+{
+    while (mousedown || keydown)
+    {
+        if (SDL_GetTicks() % 5 == 0)
+        {
+            service_SDL_events();
+        }
+    }
+}
+
 void wait_keymouse( void )
 {
     newkey = newmouse = FALSE;
     while (!newmouse && !newkey)
+    {
+        if (SDL_GetTicks() % 5 == 0)
+        {
+            service_SDL_events();
+        }
+    }
+}
+
+void wait_keyboard( void )
+{
+    newkey = FALSE;
+    while (!newkey)
     {
         if (SDL_GetTicks() % 5 == 0)
         {

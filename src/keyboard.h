@@ -37,7 +37,9 @@ extern Uint8 *keysactive;
 #endif
 
 void flush_events_buffer( void );
+void wait_nokeymouse( void );
 void wait_keymouse( void );
+void wait_keyboard( void );
 void init_keyboard( void );
 void service_SDL_events( void );
 void sleep_game( void );
