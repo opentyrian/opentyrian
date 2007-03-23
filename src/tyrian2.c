@@ -29,11 +29,11 @@
 #include "pallib.h"
 #include "pcxmast.h"
 #include "keyboard.h"
+#include "varz.h"
 
 #include <string.h>
 
 JE_boolean MoveTyrianLogoUp = TRUE; /* TODO TODO REMOVE!!!!!!!!!!! */
-JE_integer temp, tempx, tempy;
 
 void TitleScreen( JE_boolean animate )
 {
@@ -47,6 +47,8 @@ void TitleScreen( JE_boolean animate )
     JE_boolean redraw, fadein, first;
     JE_char flash;
     JE_word z;
+
+    JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
 
     tempscreenseg = VGAScreen;
 

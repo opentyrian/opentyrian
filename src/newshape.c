@@ -36,8 +36,6 @@ JE_byte maxshape[maxtable];	/* [1..maxtable] */
 
 JE_byte mousegrabshape[24*28];	/* [1..24*28] */
 
-JE_byte x;
-
 JE_boolean LoadOverride = FALSE;
 
 /*
@@ -233,9 +231,11 @@ void JE_GrabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 
 void newshape_init( void )
 {
+    int i;
+
     tempscreenseg = VGAScreen;
-    for(x = 0; x < maxtable; x++) {
-        maxshape[x] = 0;
+    for(i = 0; i < maxtable; i++) {
+        maxshape[i] = 0;
     }
     shapearray = malloc(sizeof(JE_shapearraytype));
 }

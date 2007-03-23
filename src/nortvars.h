@@ -40,7 +40,6 @@ typedef JE_newshapetypeone JE_newshapetype[304]; /* [1..304] */
 extern JE_byte NV_shapeactive;
 extern JE_byte NV_shapeinactive;
 extern JE_boolean ScanForJoystick;
-extern JE_word z, y;
 extern JE_boolean InputDetected;
 extern JE_word LastMouseX, LastMouseY;
 extern JE_byte MouseCursor;

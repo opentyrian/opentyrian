@@ -30,7 +30,6 @@ const JE_byte NV_shapeactive   = 0x01;
 const JE_byte NV_shapeinactive = 0x00;
 
 JE_boolean ScanForJoystick;
-JE_word z, y;
 JE_boolean InputDetected;
 JE_word LastMouseX, LastMouseY;
 

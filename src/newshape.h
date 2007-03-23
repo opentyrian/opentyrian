@@ -42,7 +42,6 @@
 typedef JE_byte *JE_shapearraytype[maxtable][maximumshape];	/* [1..maxtable, 1..maximumshape] */
 
 #ifndef NO_EXTERNS
-extern JE_word min, max;
 extern SDL_Surface *tempscreenseg;
 extern JE_shapearraytype *shapearray;
 extern JE_word shapex[maxtable][maximumshape],  /* [1..maxtable,1..maximumshape] */
