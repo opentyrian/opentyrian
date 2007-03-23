@@ -43,7 +43,7 @@ void TitleScreen( JE_boolean animate )
     const int menunum = 7;
     JE_byte namego[7+2] = {0}; /* [1..SA+2] */
     JE_word waitfordemo;
-    JE_byte menu;
+    JE_byte menu = 0;
     JE_boolean redraw, fadein, first;
     JE_char flash;
     JE_word z;
@@ -64,7 +64,6 @@ void TitleScreen( JE_boolean animate )
         if (redraw)
         {
             /* if currentsong<>Song_Title then playsong(Song_Title); */
-            menu = 0;
             redraw = FALSE;
             if (animate)
             {
@@ -150,7 +149,7 @@ void TitleScreen( JE_boolean animate )
 
         first = FALSE;
 
-        /* stuff */
+        /* TODO: stuff */
 
         newkey = FALSE;
         service_SDL_events();
