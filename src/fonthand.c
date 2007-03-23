@@ -22,7 +22,7 @@
 #include "newshape.h"
 #include "vga256d.h"
 
-const JE_byte fontmap[136] =    /* [33..168] */
+const JE_byte fontmap[136] = /* [33..168] */
 {
     26,33,60,61,62,255,32,64,65,63,84,29,83,28,80,79,70,71,72,73,74,75,76,77,
     78,31,30,255,255,255,27,255,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
@@ -41,7 +41,7 @@ JE_byte TextGlowBrightness = 6;
 
 JE_boolean levelwarningdisplay;
 JE_byte levelwarninglines;
-JE_char levelwarningtext[10][61];  /* [1..10] of string [60] */
+char levelwarningtext[10][61]; /* [1..10] of string [60] */
 JE_boolean warningred;
 
 JE_byte warningsounddelay;

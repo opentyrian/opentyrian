@@ -32,7 +32,7 @@ extern JE_integer DefaultBrightness;
 extern JE_byte TextGlowFont, TextGlowBrightness;
 extern JE_boolean levelwarningdisplay;
 extern JE_byte levelwarninglines;
-extern JE_char levelwarningtext[10][61]; /* [1..10] of string [60] */
+extern char levelwarningtext[10][61]; /* [1..10] of string [60] */
 extern JE_boolean warningred;
 extern JE_byte warningsounddelay;
 extern JE_word armorshipdelay;
