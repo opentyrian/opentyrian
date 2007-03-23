@@ -50,7 +50,7 @@ void TitleScreen( JE_boolean animate )
 
     JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
 
-    tempscreenseg = VGAScreen;
+    tempScreenSeg = VGAScreen;
 
     first = TRUE;
     redraw = TRUE;

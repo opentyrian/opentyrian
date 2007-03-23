@@ -23,20 +23,20 @@
 
 JE_word min, max;
 
-SDL_Surface *tempscreenseg = NULL;
+SDL_Surface *tempScreenSeg = NULL;
 
-JE_shapearraytype *shapearray;
+JE_ShapeArrayType *shapeArray;
 
-JE_word shapex[maxtable][maximumshape],	/* [1..maxtable,1..maximumshape] */
-        shapey[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
-JE_word shapesize[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
-JE_boolean shapexist[maxtable][maximumshape];	/* [1..maxtable,1..maximumshape] */
+JE_word shapeX[MaxTable][MaximumShape],	/* [1..maxtable,1..maximumshape] */
+        shapeY[MaxTable][MaximumShape];	/* [1..maxtable,1..maximumshape] */
+JE_word shapeSize[MaxTable][MaximumShape];	/* [1..maxtable,1..maximumshape] */
+JE_boolean shapeExist[MaxTable][MaximumShape];	/* [1..maxtable,1..maximumshape] */
 
-JE_byte maxshape[maxtable];	/* [1..maxtable] */
+JE_byte maxShape[MaxTable];	/* [1..maxtable] */
 
-JE_byte mousegrabshape[24*28];	/* [1..24*28] */
+JE_byte mouseGrabShape[24*28];	/* [1..24*28] */
 
-JE_boolean LoadOverride = FALSE;
+JE_boolean loadOverride = FALSE;
 
 /*
   Colors:
@@ -47,7 +47,7 @@ JE_boolean LoadOverride = FALSE;
    Draw X pixels of color Y
 */
 
-JE_byte *Shapes6Pointer;
+JE_byte *shapes6Pointer;
 
 
 void JE_NewLoadShapesB( JE_byte table, FILE *f )
@@ -56,43 +56,43 @@ void JE_NewLoadShapesB( JE_byte table, FILE *f )
     short z;
 
     fread(&tempw, 2, 1, f);
-    maxshape[table] = tempw;
+    maxShape[table] = tempw;
 
-    if(!LoadOverride) {
+    if(!loadOverride) {
         min = 1;
-        max = maxshape[table];
+        max = maxShape[table];
     }
 
     if(min > 1) {
         for(z = 0; z < min-1; z++) {
-            fread(&shapexist[table][z], 1, 1, f);
+            fread(&shapeExist[table][z], 1, 1, f);
 
-            if(shapexist[table][z]) {
-                fread(&shapex   [table][z], 2, 1, f);
-                fread(&shapey   [table][z], 2, 1, f);
-                fread(&shapesize[table][z], 2, 1, f);
+            if(shapeExist[table][z]) {
+                fread(&shapeX   [table][z], 2, 1, f);
+                fread(&shapeY   [table][z], 2, 1, f);
+                fread(&shapeSize[table][z], 2, 1, f);
 
-                (*shapearray)[table][z] = malloc(shapex[table][z]*shapey[table][z]);
+                (*shapeArray)[table][z] = malloc(shapeX[table][z]*shapeY[table][z]);
 
-                fread((*shapearray)[table][z], shapesize[table][z], 1, f);
+                fread((*shapeArray)[table][z], shapeSize[table][z], 1, f);
 
-                free((*shapearray)[table][z]);
+                free((*shapeArray)[table][z]);
             }
         }
     }
 
     for(z = min-1; z < max; z++) {
         tempw = z-min+1;
-        fread(&shapexist[table][tempw], 1, 1, f);
+        fread(&shapeExist[table][tempw], 1, 1, f);
 
-        if(shapexist[table][tempw]) {
-            fread(&shapex   [table][tempw], 2, 1, f);
-            fread(&shapey   [table][tempw], 2, 1, f);
-            fread(&shapesize[table][tempw], 2, 1, f);
+        if(shapeExist[table][tempw]) {
+            fread(&shapeX   [table][tempw], 2, 1, f);
+            fread(&shapeY   [table][tempw], 2, 1, f);
+            fread(&shapeSize[table][tempw], 2, 1, f);
 
-            (*shapearray)[table][tempw] = malloc(shapex[table][tempw]*shapey[table][tempw]);
+            (*shapeArray)[table][tempw] = malloc(shapeX[table][tempw]*shapeY[table][tempw]);
 
-            fread((*shapearray)[table][tempw], shapesize[table][tempw], 1, f);
+            fread((*shapeArray)[table][tempw], shapeSize[table][tempw], 1, f);
         }
     }
 }
@@ -104,8 +104,8 @@ void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
     JE_byte *p; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
 
-    s = (unsigned char *)tempscreenseg->pixels;
-    s += y * tempscreenseg->w + x;
+    s = (unsigned char *)tempScreenSeg->pixels;
+    s += y * tempScreenSeg->w + x;
 
     for(p = shape; yloop < ysize; p++) {
         switch(*p) {
@@ -115,7 +115,7 @@ void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
                 break;
             case 254:   /* next y */
                 s -= xloop; xloop = 0;
-                s += tempscreenseg->w; yloop++;
+                s += tempScreenSeg->w; yloop++;
                 break;
             case 253:   /* 1 transparent pixel */
                 s++; xloop++;
@@ -127,11 +127,11 @@ void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
         }
         if(xloop == xsize) {
             s -= xloop; xloop = 0;
-            s += tempscreenseg->w; yloop++;
+            s += tempScreenSeg->w; yloop++;
         }
     }
 
-    tempscreenseg = VGAScreen;
+    tempScreenSeg = VGAScreen;
 }
 
 void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
@@ -141,16 +141,16 @@ void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
     JE_byte *p; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
 
-    if((shape > maxshape[table]) || (!shapexist[table][shape]) || (shape == 255)) {
+    if((shape > maxShape[table]) || (!shapeExist[table][shape]) || (shape == 255)) {
         exit(99);   /* pascalism */
     }
 
-    xsize = shapex[table][shape]; ysize = shapey[table][shape];
+    xsize = shapeX[table][shape]; ysize = shapeY[table][shape];
 
-    s = (unsigned char *)tempscreenseg->pixels;
-    s += y * tempscreenseg->w + x;
+    s = (unsigned char *)tempScreenSeg->pixels;
+    s += y * tempScreenSeg->w + x;
 
-    for(p = (*shapearray)[table][shape]; yloop < ysize; p++) {
+    for(p = (*shapeArray)[table][shape]; yloop < ysize; p++) {
         switch(*p) {
             case 255:   /* p transparent pixels */
                 p++;
@@ -158,7 +158,7 @@ void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
                 break;
             case 254:   /* next y */
                 s -= xloop; xloop = 0;
-                s += tempscreenseg->w; yloop++;
+                s += tempScreenSeg->w; yloop++;
                 break;
             case 253:   /* 1 transparent pixel */
                 s++; xloop++;
@@ -170,22 +170,22 @@ void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
         }
         if(xloop == xsize) {
             s -= xloop; xloop = 0;
-            s += tempscreenseg->w; yloop++;
+            s += tempScreenSeg->w; yloop++;
         }
     }
 
-    tempscreenseg = VGAScreen;
+    tempScreenSeg = VGAScreen;
 }
 
 void JE_NewPurgeShapes( JE_byte table )
 {
     JE_word x;
 
-    if(maxshape[table] > 0) {
-        for(x = 0; x < maxshape[table]; x++) {
-            if(shapexist[table][x]) {
-                free((*shapearray)[table][x]);
-                shapexist[table][x] = FALSE;
+    if(maxShape[table] > 0) {
+        for(x = 0; x < maxShape[table]; x++) {
+            if(shapeExist[table][x]) {
+                free((*shapeArray)[table][x]);
+                shapeExist[table][x] = FALSE;
             }
         }
     }
@@ -233,9 +233,9 @@ void newshape_init( void )
 {
     int i;
 
-    tempscreenseg = VGAScreen;
-    for(i = 0; i < maxtable; i++) {
-        maxshape[i] = 0;
+    tempScreenSeg = VGAScreen;
+    for(i = 0; i < MaxTable; i++) {
+        maxShape[i] = 0;
     }
-    shapearray = malloc(sizeof(JE_shapearraytype));
+    shapeArray = malloc(sizeof(JE_ShapeArrayType));
 }
