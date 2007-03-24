@@ -37,14 +37,12 @@ typedef JE_byte JE_newshapetypeone[182]; /* [0..168+14-1] */
 typedef JE_newshapetypeone JE_newshapetype[304]; /* [1..304] */
 
 #ifndef NO_EXTERNS
-extern JE_byte NV_shapeactive;
-extern JE_byte NV_shapeinactive;
-extern JE_boolean ScanForJoystick;
-extern JE_boolean InputDetected;
-extern JE_word LastMouseX, LastMouseY;
-extern JE_byte MouseCursor;
-extern JE_boolean Mouse_ThreeButton;
-extern JE_word MouseX, MouseY, MouseButton;
+extern JE_boolean scanForJoystick;
+extern JE_boolean inputDetected;
+extern JE_word lastMouseX, lastMouseY;
+extern JE_byte mouseCursor;
+extern JE_boolean mouse_ThreeButton;
+extern JE_word mouseX, mouseY, mouseButton;
 #endif
 
 void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s );

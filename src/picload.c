@@ -27,7 +27,7 @@
 
 #include <string.h>
 
-JE_boolean NotYetLoadedPCX = TRUE;
+JE_boolean notYetLoadedPCX = TRUE;
 
 void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
 {
@@ -47,9 +47,9 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
 
     JE_resetfileext(&PCXfile, "TYRIAN.PIC", FALSE);
 
-    if(NotYetLoadedPCX)
+    if(notYetLoadedPCX)
     {     /*Same as old AnalyzePic*/
-        NotYetLoadedPCX = FALSE;
+        notYetLoadedPCX = FALSE;
         fread(&x, 2, 1, PCXfile);
         for(x = 0; x < PCXnum; x++)
             fread(&pcxpos[x], sizeof(pcxpos[x]), 1, PCXfile);

@@ -60,7 +60,7 @@ void TitleScreen( JE_boolean animate )
 
     do
     {
-        DefaultBrightness = -3;
+        defaultBrightness = -3;
 
         /* Animate instead of quickly fading in */
         if (redraw)

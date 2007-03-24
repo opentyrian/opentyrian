@@ -28,17 +28,17 @@
 #define NoShade    255
 
 #ifndef NO_EXTERNS
-extern JE_integer DefaultBrightness;
-extern JE_byte TextGlowFont, TextGlowBrightness;
-extern JE_boolean levelwarningdisplay;
-extern JE_byte levelwarninglines;
-extern char levelwarningtext[10][61]; /* [1..10] of string [60] */
-extern JE_boolean warningred;
-extern JE_byte warningsounddelay;
-extern JE_word armorshipdelay;
-extern JE_byte warningcol;
-extern JE_shortint warningcolchange;
-extern const JE_byte fontmap[136]; /* [33..168] */
+extern const JE_byte fontMap[136];
+extern JE_integer defaultBrightness;
+extern JE_byte textGlowFont, textGlowBrightness;
+extern JE_boolean levelWarningDisplay;
+extern JE_byte levelWarningLines;
+extern char levelWarningText[10][61];
+extern JE_boolean warningRed;
+extern JE_byte warningSoundDelay;
+extern JE_word armorShipDelay;
+extern JE_byte warningCol;
+extern JE_shortint warningColChange;
 #endif
 
 void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font );

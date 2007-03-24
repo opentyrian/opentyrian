@@ -29,14 +29,14 @@
 const JE_byte NV_shapeactive   = 0x01;
 const JE_byte NV_shapeinactive = 0x00;
 
-JE_boolean ScanForJoystick;
-JE_boolean InputDetected;
-JE_word LastMouseX, LastMouseY;
+JE_boolean scanForJoystick;
+JE_boolean inputDetected;
+JE_word lastMouseX, lastMouseY;
 
 /*Mouse Data*/  /*Mouse_Installed is in VGA256d*/
-JE_byte MouseCursor;
-JE_boolean Mouse_ThreeButton;
-JE_word MouseX, MouseY, MouseButton;
+JE_byte mouseCursor;
+JE_boolean mouse_ThreeButton;
+JE_word mouseX, mouseY, mouseButton;
 
 
 void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s )

@@ -22,7 +22,7 @@
 #include "newshape.h"
 #include "vga256d.h"
 
-const JE_byte fontmap[136] = /* [33..168] */
+const JE_byte fontMap[136] = /* [33..168] */
 {
     26,33,60,61,62,255,32,64,65,63,84,29,83,28,80,79,70,71,72,73,74,75,76,77,
     78,31,30,255,255,255,27,255,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
@@ -36,18 +36,18 @@ const JE_byte fontmap[136] = /* [33..168] */
 
 /* shape constants included in newshape.h */
 
-JE_integer DefaultBrightness = -3;
-JE_byte TextGlowBrightness = 6;
+JE_integer defaultBrightness = -3;
+JE_byte textGlowFont, textGlowBrightness = 6;
 
-JE_boolean levelwarningdisplay;
-JE_byte levelwarninglines;
-char levelwarningtext[10][61]; /* [1..10] of string [60] */
-JE_boolean warningred;
+JE_boolean levelWarningDisplay;
+JE_byte levelWarningLines;
+char levelWarningText[10][61]; /* [1..10] of string [60] */
+JE_boolean warningRed;
 
-JE_byte warningsounddelay;
-JE_word armorshipdelay;
-JE_byte warningcol;
-JE_shortint warningcolchange;
+JE_byte warningSoundDelay;
+JE_word armorShipDelay;
+JE_byte warningCol;
+JE_shortint warningColChange;
 
 void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font )
 {
@@ -58,11 +58,11 @@ void JE_Dstring( JE_word x, JE_word y, JE_string s, JE_byte font )
         b = s[a];
 
         if((b > 32) && (b < 126)) {
-            if(fontmap[b-33] != 255) {
-                JE_NewDrawCShapeDarken((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x + 2, y + 2);
-                JE_NewDrawCShapeBright((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x, y, 15, DefaultBrightness + (bright << 1));
+            if(fontMap[b-33] != 255) {
+                JE_NewDrawCShapeDarken((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x + 2, y + 2);
+                JE_NewDrawCShapeBright((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, 15, defaultBrightness + (bright << 1));
 
-                x += shapeX[font][fontmap[b-33]] + 1;
+                x += shapeX[font][fontMap[b-33]] + 1;
             }
         } else {
             if(b == 32) {
@@ -391,8 +391,8 @@ JE_word JE_TextWidth( JE_string s, JE_byte font )
         b = s[a];
 
         if ((b > 32) && (b < 126)) {
-            if(fontmap[b-33] != 255)
-                x += shapeX[font][fontmap[b-33]] + 1;
+            if(fontMap[b-33] != 255)
+                x += shapeX[font][fontMap[b-33]] + 1;
         } else {
             if(b == 32) {
                 x += 6;
@@ -433,14 +433,14 @@ void JE_Outtext( JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shorti
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
 
-        if((b > 32) && (b < 169) && (fontmap[b-33] != 255) && ((*shapeArray)[TinyFont][fontmap[b-33]] != NULL)) {
+        if((b > 32) && (b < 169) && (fontMap[b-33] != 255) && ((*shapeArray)[TinyFont][fontMap[b-33]] != NULL)) {
             if (brightness >= 0) {
-                JE_NewDrawCShapeBright((*shapeArray)[TinyFont][fontmap[b-33]], shapeX[TinyFont][fontmap[b-33]], shapeY[TinyFont][fontmap[b-33]], x, y, colorbank, brightness + bright);
+                JE_NewDrawCShapeBright((*shapeArray)[TinyFont][fontMap[b-33]], shapeX[TinyFont][fontMap[b-33]], shapeY[TinyFont][fontMap[b-33]], x, y, colorbank, brightness + bright);
             } else {
-                JE_NewDrawCShapeShadow((*shapeArray)[TinyFont][fontmap[b-33]], shapeX[TinyFont][fontmap[b-33]], shapeY[TinyFont][fontmap[b-33]], x, y);
+                JE_NewDrawCShapeShadow((*shapeArray)[TinyFont][fontMap[b-33]], shapeX[TinyFont][fontMap[b-33]], shapeY[TinyFont][fontMap[b-33]], x, y);
             }
 
-            x += shapeX[TinyFont][fontmap[b-33]] + 1;
+            x += shapeX[TinyFont][fontMap[b-33]] + 1;
         } else {
             if(b == 32) {
                 x += 6;
@@ -467,10 +467,10 @@ void JE_OuttextModify( JE_word x, JE_word y, JE_string s, JE_byte filter, JE_byt
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
 
-        if((b > 32) && (b < 169) && (fontmap[b-33] != 255)) {
-            JE_NewDrawCShapeModify((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x, y, filter, brightness);
+        if((b > 32) && (b < 169) && (fontMap[b-33] != 255)) {
+            JE_NewDrawCShapeModify((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, filter, brightness);
 
-            x += shapeX[font][fontmap[b-33]] + 1;
+            x += shapeX[font][fontMap[b-33]] + 1;
         } else {
             if(b == 32) {
                 x += 6;
@@ -486,10 +486,10 @@ void JE_OuttextShade( JE_word x, JE_word y, JE_string s, JE_byte font )
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
 
-        if((b > 32) && (b < 169) && (fontmap[b-33] != 255)) {
-            JE_NewDrawCShapeDarken((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x, y);
+        if((b > 32) && (b < 169) && (fontMap[b-33] != 255)) {
+            JE_NewDrawCShapeDarken((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y);
 
-            x += shapeX[font][fontmap[b-33]] + 1;
+            x += shapeX[font][fontMap[b-33]] + 1;
         } else {
             if(b == 32) {
                 x += 6;
@@ -506,14 +506,14 @@ void JE_OuttextAdjust( JE_word x, JE_word y, JE_string s, JE_byte filter, JE_sho
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
 
-        if((b > 32) && (b < 169) && (fontmap[b-33] != 255)) {
+        if((b > 32) && (b < 169) && (fontMap[b-33] != 255)) {
             if(shadow) {
-                JE_NewDrawCShapeDarken((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x + 2, y + 2);
+                JE_NewDrawCShapeDarken((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x + 2, y + 2);
             }
 
-            JE_NewDrawCShapeAdjust((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x, y, filter, brightness + (bright << 2));
+            JE_NewDrawCShapeAdjust((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, filter, brightness + (bright << 2));
 
-            x += shapeX[font][fontmap[b-33]] + 1;
+            x += shapeX[font][fontMap[b-33]] + 1;
         } else {
             if(b == 126) {
                 bright = !bright;
@@ -534,10 +534,10 @@ void JE_OuttextAndDarken( JE_word x, JE_word y, JE_string s, JE_byte colorbank, 
     for(a = 0; s[a] != 0; a++) {
         b = s[a];
 
-        if((b > 32) && (b < 169) && (fontmap[b-33] != 255)) {
-            JE_NewDrawCShapeBrightAndDarken((*shapeArray)[font][fontmap[b-33]], shapeX[font][fontmap[b-33]], shapeY[font][fontmap[b-33]], x, y, colorbank, brightness + bright);
+        if((b > 32) && (b < 169) && (fontMap[b-33] != 255)) {
+            JE_NewDrawCShapeBrightAndDarken((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, colorbank, brightness + bright);
 
-            x += shapeX[font][fontmap[b-33]] + 1;
+            x += shapeX[font][fontMap[b-33]] + 1;
         } else {
             if(b == 32) {
                 x += 6;
