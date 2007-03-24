@@ -23,28 +23,28 @@
 #undef NO_EXTERNS
 
 /* MAIN Weapons Data */
-JE_WeaponPortType *WeaponPort;
-JE_WeaponType     *Weapons;
+JE_WeaponPortType *weaponPort;
+JE_WeaponType     *weapons;
 
 /* Items */
-JE_PowerType   *PowerSys;
-JE_ShipType    *Ships;
-JE_OptionType  *Options;
-JE_ShieldType  *Shields;
-JE_SpecialType *Special;
+JE_PowerType   *powerSys;
+JE_ShipType    *ships;
+JE_OptionType  *options;
+JE_ShieldType  *shields;
+JE_SpecialType *special;
 
 /* Enemy data */
-JE_EnemyDatType *EnemyDat;
+JE_EnemyDatType *enemyDat;
 
 /* EPISODE variables */
-JE_byte    EpisodeNum = 0;
-JE_boolean EpisodeAvail[EpisodeMax]; /* [1..episodemax] */
-char       MacroFile[13], CubeFile[13]; /* string [12] */
+JE_byte    episodeNum = 0;
+JE_boolean episodeAvail[EpisodeMax]; /* [1..episodemax] */
+char       macroFile[13], CubeFile[13]; /* string [12] */
 
-JE_longint Episode1DataLoc;
+JE_longint episode1DataLoc;
 
 /* Tells the game whether the level currently loaded is a bonus level. */
-JE_boolean BonusLevel;
+JE_boolean bonusLevel;
 
 /* Tells if the game jumped back to Episode 1 */
-JE_boolean JumpBacktoEpisode1;
+JE_boolean jumpBackToEpisode1;

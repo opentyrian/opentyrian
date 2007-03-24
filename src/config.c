@@ -27,17 +27,17 @@
 
 /* Configuration Load/Save handler */
 
-const JE_byte CryptKey[10] = /* [1..10] */
+const JE_byte cryptKey[10] = /* [1..10] */
 {
     15,50,89,240,147,34,86, 9,32,208
 };
 
-const JE_KeySettingType DefaultKeySettings =
+const JE_KeySettingType defaultKeySettings =
 {
     72,80,75,77,57,28,29,56
 };
 
-const char DefaultHighScoreNames[34][23] = /* [1..34] of string [22] */
+const char defaultHighScoreNames[34][23] = /* [1..34] of string [22] */
 {/*1P*/
 /*TYR*/     "The Prime Chair",    /*13*/
             "Transon Lohk",
@@ -79,7 +79,7 @@ const char DefaultHighScoreNames[34][23] = /* [1..34] of string [22] */
             "Rennis the Rat Guard"
 };
 
-const char DefaultTeamNames[22][25] = /* [1..22] of string [24] */
+const char defaultTeamNames[22][25] = /* [1..22] of string [24] */
 {
     "Jackrabbits",
     "Team Tyrian",
@@ -106,7 +106,7 @@ const char DefaultTeamNames[22][25] = /* [1..22] of string [24] */
 };
 
 
-const JE_EditorItemAvailType InitialItemAvail =
+const JE_EditorItemAvailType initialItemAvail =
 {
     1,1,1,0,0,1,1,0,1,1,1,1,1,0,1,0,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0, /*Front/Rear Weapons  1-38*/
     0,0,0,0,0,0,0,0,0,0,1,                                                           /*Fill*/
@@ -126,106 +126,106 @@ const JE_EditorItemAvailType InitialItemAvail =
 
 
 JE_boolean smoothies[9]; /* [1..9] */
-JE_byte StarShowVGASpecialCode;
+JE_byte starShowVGASpecialCode;
 
 /* Stars */
 struct
 {
-    JE_byte SC;
-    JE_word SLoc;
-    JE_word SMov;
-} StarDat[MaxStars]; /* [1..Maxstars] */
-JE_word StarY;
+    JE_byte sC;
+    JE_word sLoc;
+    JE_word sMov;
+} starDat[MaxStars]; /* [1..Maxstars] */
+JE_word starY;
 
 
 /* CubeData */
-JE_word lastcubemax, cubemax;
-JE_word cubelist[4]; /* [1..4] */
+JE_word lastCubeMax, cubeMax;
+JE_word cubeList[4]; /* [1..4] */
 
 /* High-Score Stuff */
-JE_boolean gamehasrepeated;
+JE_boolean gameHasRepeated;
 
 /* Difficulty */
-JE_shortint DifficultyLevel, OldDifficultyLevel, InitialDifficulty;
+JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
 
 /* Player Stuff */
 JE_longint score, score2;
 
-JE_integer    power, LastPower, PowerAdd;
-JE_PItemsType PItems, PItemsPlayer2, PItemsBack, PItemsBack2;
-JE_shortint   shield, ShieldMax, ShieldSet;
-JE_shortint   shield2, ShieldMax2;
-JE_integer    ArmorLevel, ArmorLevel2;
-JE_byte       ShieldWait, ShieldT;
+JE_integer    power, lastPower, powerAdd;
+JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
+JE_shortint   shield, shieldMax, shieldSet;
+JE_shortint   shield2, shieldMax2;
+JE_integer    armorLevel, armorLevel2;
+JE_byte       shieldWait, shieldT;
 
-JE_byte          ShotRepeat[11], ShotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
-JE_byte          PortConfig[10]; /* [1..10] */
-JE_boolean       PortConfigDone;
-JE_PortPowerType PortPower, LastPortPower;
+JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
+JE_byte          portConfig[10]; /* [1..10] */
+JE_boolean       portConfigDone;
+JE_PortPowerType portPower, lastPortPower;
 
-JE_boolean ResetVersion;
+JE_boolean resetVersion;
 
 /* Level Data */
-char    LastLevelName[11], LevelName[11]; /* string [10] */
-JE_byte Mainlevel, NextLevel, SaveLevel;   /*Current Level #*/
+char    lastLevelName[11], levelName[11]; /* string [10] */
+JE_byte mainLevel, nextLevel, saveLevel;   /*Current Level #*/
 
 /* Keyboard Junk */
-JE_KeySettingType KeySettings;
+JE_KeySettingType keySettings;
 
 /* Configuration */
-JE_shortint LevelFilter, LevelFilterNew, LevelBrightness, LevelBrightnessChg;
-JE_boolean  FiltrationAvail, FilterActive, FilterFade, FilterFadeStart;
+JE_shortint levelFilter, levelFilterNew, levelBrightness, levelBrightnessChg;
+JE_boolean  filtrationAvail, filterActive, filterFade, filterFadeStart;
 
-JE_boolean GameJustLoaded;
+JE_boolean gameJustLoaded;
 
-JE_boolean GalagaMode;
+JE_boolean galagaMode;
 
-JE_boolean ExtraGame;
+JE_boolean extraGame;
 
-JE_boolean TwoPlayerMode, TwoPlayerLinked, OnePlayerAction, SuperTyrian, TrentWin;
-JE_byte    SuperArcadeMode;
+JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian, trentWin;
+JE_byte    superArcadeMode;
 
-JE_byte    SuperArcadePowerup;
+JE_byte    superArcadePowerup;
 
-JE_real LinkGunDirec;
-JE_byte PlayerDevice1, PlayerDevice2;
-JE_byte InputDevice1, InputDevice2;
+JE_real linkGunDirec;
+JE_byte playerDevice1, playerDevice2;
+JE_byte inputDevice1, inputDevice2;
 
-JE_byte SecretHint;
-JE_byte Background3Over;
-JE_byte Background2Over;
-JE_byte GammaCorrection;
-JE_boolean SuperPause,
-           ExplosionTransparent,
-           YouAreCheating,
-           DisplayScore,
-           SoundHasChanged,
-           Background2, SmoothScroll, Wild, SuperWild, StarActive,
-           TopEnemyOver,
-           SkyEnemyOverALL,
-           Background2NotTransparent,
+JE_byte secretHint;
+JE_byte background3OVer;
+JE_byte background2OVer;
+JE_byte gammaCorrection;
+JE_boolean superPause,
+           explosionTransparent,
+           youAreCheating,
+           displayScore,
+           soundHasChanged,
+           background2, smoothScroll, wild, superWild, starActive,
+           topEnemyOver,
+           skyEnemyOverAll,
+           background2NotTransparent,
            tempb;
 JE_byte temp;
 JE_word tempw;
 
-JE_byte VersionNum;   /*SW 1.0 and SW/Reg 1.1 = 0 or 1
+JE_byte versionNum;   /*SW 1.0 and SW/Reg 1.1 = 0 or 1
                         EA 1.2 = 2*/
 
-JE_byte    FastPlay;
-JE_boolean PentiumMode;
+JE_byte    fastPlay;
+JE_boolean pentiumMode;
 
 /* Savegame files */
-JE_boolean PlayerPasswordInput;
-JE_byte    InputDevice;  /* 0=Mouse   1=Joystick   2=Gravis GamePad */
-JE_byte    GameSpeed;
-JE_byte    ProcessorType;  /* 1=386  2=486  3=Pentium Hyper */
+JE_boolean playerPasswordInput;
+JE_byte    inputDevice;  /* 0=Mouse   1=Joystick   2=Gravis GamePad */
+JE_byte    gameSpeed;
+JE_byte    processorType;  /* 1=386  2=486  3=Pentium Hyper */
 
-JE_SaveFilesType SaveFiles; /*array[1..savefilesnum] of savefiletype;*/
-JE_word savefilesseg, savefilesofs;
-JE_SaveGameTemp SaveTemp;
-JE_word savetempofs, savetempseg;
+JE_SaveFilesType saveFiles; /*array[1..savefilesnum] of savefiletype;*/
+JE_byte *saveFilePointer;
+JE_SaveGameTemp saveTemp;
+JE_byte *saveTempPointer;
 
-JE_word EditorLevel;   /*Initial value 800*/
+JE_word editorLevel;   /*Initial value 800*/
 
 JE_word x;
 

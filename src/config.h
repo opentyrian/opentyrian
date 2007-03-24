@@ -43,24 +43,24 @@ typedef struct
     JE_PItemsType items;
     JE_longint    score;
     JE_longint    score2;
-    char          levelname[10]; /* string [9]; */
+    char          levelName[10]; /* string [9]; */
     JE_char       name[14]; /* [1..14] */
     JE_byte       cubes;
     JE_byte       power[2]; /* [1..2] */
     JE_byte       episode;
-    JE_PItemsType lastitems;
+    JE_PItemsType lastItems;
     JE_byte       difficulty;
-    JE_byte       secrethint;
+    JE_byte       secretHint;
     JE_byte       input1;
     JE_byte       input2;
-    JE_boolean    gamehasrepeated;   /*See if you went from one episode to another*/
-    JE_byte       initialdifficulty;
+    JE_boolean    gameHasRepeated;   /*See if you went from one episode to another*/
+    JE_byte       initialDifficulty;
 
     /* High Scores - Each episode has both sets of 1&2 player selections - with 3 in each */
-    JE_longint    highscore1,
-                  highscore2;
-    char          highscorename[30]; /* string [29] */
-    JE_byte       highscorediff;
+    JE_longint    highScore1,
+                  highScore2;
+    char          highScoreName[30]; /* string [29] */
+    JE_byte       highScoreDiff;
 } JE_SaveFileType;
 
 typedef JE_SaveFileType JE_SaveFilesType[SaveFilesNum]; /* [1..savefilesnum] */
@@ -69,68 +69,69 @@ typedef JE_byte JE_SaveGameTemp[sizeof(JE_SaveFilesType) + 4 + 100]; /* [1..size
 typedef JE_byte JE_PortPowerType[7]; /* [1..7] */
 
 #ifndef NO_EXTERNS
-extern const JE_byte CryptKey[10];
-extern const JE_KeySettingType DefaultKeySettings;
-extern const char DefaultHighScoreNames[34][23];
-extern const char DefaultTeamNames[22][25];
-extern const JE_EditorItemAvailType InitialItemAvail;
+extern const JE_byte cryptKey[10];
+extern const JE_KeySettingType defaultKeySettings;
+extern const char defaultHighScoreNames[34][23];
+extern const char defaultTeamNames[22][25];
+extern const JE_EditorItemAvailType initialItemAvail;
 extern JE_boolean smoothies[9];
-extern JE_byte StarShowVGASpecialCode;
+extern JE_byte starShowVGASpecialCode;
 extern struct
 {
-    JE_byte SC;
-    JE_word SLoc;
-    JE_word SMov;
-} StarDat[MaxStars];
-extern JE_word StarY;
-extern JE_word lastcubemax, cubemax;
-extern JE_word cubelist[4];
-extern JE_boolean gamehasrepeated;
-extern JE_shortint DifficultyLevel, OldDifficultyLevel, InitialDifficulty;
+    JE_byte sC;
+    JE_word sLoc;
+    JE_word sMov;
+} starDat[MaxStars];
+extern JE_word starY;
+extern JE_word lastCubeMax, cubeMax;
+extern JE_word cubeList[4];
+extern JE_boolean gameHasRepeated;
+extern JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
 extern JE_longint score, score2;
-extern JE_integer power, LastPower, PowerAdd;
-extern JE_PItemsType PItems, PItemsPlayer2, PItemsBack, PItemsBack2;
-extern JE_shortint shield, ShieldMax, ShieldSet;
-extern JE_shortint shield2, ShieldMax2;
-extern JE_integer ArmorLevel, ArmorLevel2;
-extern JE_byte ShieldWait, ShieldT;
-extern JE_byte ShotRepeat[11], ShotMultiPos[11];
-extern JE_byte PortConfig[10];
-extern JE_boolean PortConfigDone;
-extern JE_PortPowerType PortPower, LastPortPower;
-extern JE_boolean ResetVersion;
-extern char LastLevelName[11], LevelName[11];
-extern JE_byte Mainlevel, NextLevel, SaveLevel;
-extern JE_KeySettingType KeySettings;
-extern JE_shortint LevelFilter, LevelFilterNew, LevelBrightness, LevelBrightnessChg;
-extern JE_boolean FiltrationAvail, FilterActive, FilterFade, FilterFadeStart;
-extern JE_boolean GameJustLoaded;
-extern JE_boolean GalagaMode;
-extern JE_boolean ExtraGame;
-extern JE_boolean TwoPlayerMode, TwoPlayerLinked, OnePlayerAction, SuperTyrian, TrentWin;
-extern JE_byte SuperArcadeMode;
-extern JE_byte SuperArcadePowerup;
-extern JE_real LinkGunDirec;
-extern JE_byte PlayerDevice1, PlayerDevice2;
-extern JE_byte InputDevice1, InputDevice2;
-extern JE_byte SecretHint;
-extern JE_byte Background3Over;
-extern JE_byte Background2Over;
-extern JE_byte GammaCorrection;
-extern JE_boolean SuperPause, ExplosionTransparent, YouAreCheating, DisplayScore, SoundHasChanged, Background2, SmoothScroll, Wild, SuperWild, StarActive, TopEnemyOver,SkyEnemyOverALL, Background2NotTransparent, tempb;
-extern JE_byte VersionNum;
-extern JE_byte FastPlay;
-extern JE_boolean PentiumMode;
-extern JE_boolean PlayerPasswordInput;
-extern JE_byte InputDevice;
-extern JE_byte GameSpeed;
-extern JE_byte ProcessorType;
-extern JE_SaveFilesType SaveFiles;
-extern JE_word savefilesseg, savefilesofs;
-extern JE_SaveGameTemp SaveTemp;
-extern JE_word savetempofs, savetempseg;
-extern JE_word EditorLevel;
-extern const JE_byte StringCryptKey[10];
+extern JE_integer power, lastPower, powerAdd;
+extern JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
+extern JE_shortint shield, shieldMax, shieldSet;
+extern JE_shortint shield2, shieldMax2;
+extern JE_integer armorLevel, armorLevel2;
+extern JE_byte shieldWait, shieldT;
+extern JE_byte shotRepeat[11], shotMultiPos[11];
+extern JE_byte portConfig[10];
+extern JE_boolean portConfigDone;
+extern JE_PortPowerType portPower, lastPortPower;
+extern JE_boolean resetVersion;
+extern char lastLevelName[11], levelName[11];
+extern JE_byte mainLevel, nextLevel, saveLevel;
+extern JE_KeySettingType keySettings;
+extern JE_shortint levelFilter, levelFilterNew, levelBrightness, levelBrightnessChg;
+extern JE_boolean filtrationAvail, filterActive, filterFade, filterFadeStart;
+extern JE_boolean gameJustLoaded;
+extern JE_boolean galagaMode;
+extern JE_boolean extraGame;
+extern JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian, trentWin;
+extern JE_byte superArcadeMode;
+extern JE_byte superArcadePowerup;
+extern JE_real linkGunDirec;
+extern JE_byte playerDevice1, playerDevice2;
+extern JE_byte inputDevice1, inputDevice2;
+extern JE_byte secretHint;
+extern JE_byte background3OVer;
+extern JE_byte background2OVer;
+extern JE_byte gammaCorrection;
+extern JE_boolean superPause, explosionTransparent, youAreCheating, displayScore, soundHasChanged, background2, smoothScroll, wild, superWild, starActive, topEnemyOver, skyEnemyOverAll, background2NotTransparent, tempb;
+extern JE_byte temp;
+extern JE_word tempw;
+extern JE_byte versionNum;
+extern JE_byte fastPlay;
+extern JE_boolean pentiumMode;
+extern JE_boolean playerPasswordInput;
+extern JE_byte inputDevice;
+extern JE_byte gameSpeed;
+extern JE_byte processorType;
+extern JE_SaveFilesType saveFiles;
+extern JE_byte *saveFilePointer;
+extern JE_SaveGameTemp saveTemp;
+extern JE_byte *saveTempPointer;
+extern JE_word editorLevel;
 #endif
 
 void JE_InitProcessorType( void );

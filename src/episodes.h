@@ -154,25 +154,25 @@ typedef struct
 } JE_EnemyDatType[EnemyNum + 1]; /* [0..enemynum] */
 
 #ifndef NO_EXTERNS
-extern JE_WeaponPortType *WeaponPort;
-extern JE_WeaponType     *Weapons;
-extern JE_PowerType   *PowerSys;
-extern JE_ShipType    *Ships;
-extern JE_OptionType  *Options;
-extern JE_ShieldType  *Shields;
-extern JE_SpecialType *Special;
-extern JE_EnemyDatType *EnemyDat;
-extern JE_byte    EpisodeNum;
-extern JE_boolean EpisodeAvail[EpisodeMax]; /* [1..episodemax] */
-extern char       MacroFile[13], CubeFile[13]; /* string [12] */
-extern JE_longint Episode1DataLoc;
-extern JE_boolean BonusLevel;
-extern JE_boolean JumpBacktoEpisode1;
+extern JE_WeaponPortType *weaponPort;
+extern JE_WeaponType *weapons;
+extern JE_PowerType *powerSys;
+extern JE_ShipType *ships;
+extern JE_OptionType *options;
+extern JE_ShieldType *shields;
+extern JE_SpecialType *special;
+extern JE_EnemyDatType *enemyDat;
+extern JE_byte episodeNum;
+extern JE_boolean episodeAvail[EpisodeMax];
+extern char macroFile[13], CubeFile[13];
+extern JE_longint episode1DataLoc;
+extern JE_boolean bonusLevel;
+extern JE_boolean jumpBackToEpisode1;
 #endif
 
-void JE_loaditemdat( void );
-void JE_initepisode( JE_byte newepisode );
-JE_boolean FindNextEpisode( void );
-void scanforepisodes( void );
+void JE_LoadItemDat( void );
+void JE_InitEpisode( JE_byte newepisode );
+JE_boolean JE_FindNextEpisode( void );
+void JE_ScanForEpisodes( void );
 
 #endif /* EPISODES_H */
