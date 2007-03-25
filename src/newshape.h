@@ -51,7 +51,6 @@ extern JE_boolean shapeExist[MaxTable][MaximumShape];
 extern JE_byte maxShape[MaxTable];
 extern JE_byte mouseGrabShape[24*28];
 extern JE_boolean loadOverride;
-extern JE_byte *shapes6Pointer;
 #endif
 
 void JE_NewLoadShapes( JE_byte table, JE_string shapefile );

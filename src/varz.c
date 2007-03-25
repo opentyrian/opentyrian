@@ -356,30 +356,20 @@ JE_byte purpleballsremaining[2]; /* [1..2] */
 
 JE_boolean playeralive,playeraliveB;
 JE_byte playerstillexploding, playerstillexploding2;
-void *eshapes1, *eshapes2, *eshapes3, *eshapes4, *eshapes5, *eshapes6;
+JE_byte *eShapes1, *eShapes2, *eShapes3, *eShapes4, *eShapes5, *eShapes6;
 
-void *ShapesC1, *Shapes6, *Shapes9, *ShapesW2;
+JE_byte *shapesC1, *shapes6, *shapes9, *shapesW2;
 
-JE_word EShapes1Ofs, EShapes1Seg,
-        EShapes2Ofs, EShapes2Seg,
-        EShapes3Ofs, EShapes3Seg,
-        EShapes4Ofs, EShapes4Seg,
-        EShapes5Ofs, EShapes5Seg,
-        EShapes6Ofs, EShapes6Seg,
-        ShapesC1Ofs, ShapesC1Seg,
-        Shapes9Ofs,  Shapes9Seg,
-        ShapesW2Ofs, ShapesW2Seg;     /* 6 is in NewShape */
-
-JE_word EShapes1Size,
-        EShapes2Size,
-        EShapes3Size,
-        EShapes4Size,
-        EShapes5Size,
-        EShapes6Size,
-        ShapesC1Size,
-        Shapes6Size,
-        Shapes9Size,
-        ShapesW2Size;
+JE_word eShapes1Size,
+        eShapes2Size,
+        eShapes3Size,
+        eShapes4Size,
+        eShapes5Size,
+        eShapes6Size,
+        shapesC1Size,
+        shapes6Size,
+        shapes9Size,
+        shapesW2Size;
 
 JE_byte SAni;
 JE_integer SAniX, SAniY, SaniXNeg, SaniYNeg;  /* X,Y ranges of field of hit */

@@ -47,8 +47,6 @@ JE_boolean loadOverride = FALSE;
    Draw X pixels of color Y
 */
 
-JE_byte *shapes6Pointer;
-
 
 void JE_NewLoadShapesB( JE_byte table, FILE *f )
 {
