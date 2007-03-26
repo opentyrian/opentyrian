@@ -18,10 +18,24 @@
  */
 #include "opentyr.h"
 
-JE_boolean timMode, richMode, recordDemo,
-           robertWeird, constantPlay, constantDie,
-           scanForJoystick, useBios, NOSOUND, quikJuke, noRetrace, joyMax, forceAveraging,
-           forceMaxVolume, soundInfoReport;
+JE_boolean timMode         = FALSE;
+JE_boolean richMode        = FALSE;
+JE_boolean recordDemo      = FALSE;
+
+JE_boolean robertWeird     = TRUE;
+JE_boolean constantPlay    = FALSE;
+JE_boolean constantDie;
+
+JE_boolean scanForJoystick = TRUE;
+JE_boolean useBios         = FALSE;
+JE_boolean NOSOUND         = FALSE;
+JE_boolean quikJuke        = FALSE;
+JE_boolean noRetrace       = FALSE;
+JE_boolean joyMax          = FALSE;
+JE_boolean forceAveraging  = TRUE;
+
+JE_boolean forceMaxVolume  = FALSE;
+JE_boolean soundInfoReport = FALSE;
 JE_boolean stupidWindows;
 
 /* Special Note:

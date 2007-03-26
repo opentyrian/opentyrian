@@ -19,6 +19,7 @@
 #include "opentyr.h"
 #include "params.h"
 #include "vga256d.h"
+#include "keyboard.h"
 
 #define NO_EXTERNS
 #include "joystick.h"
@@ -36,11 +37,11 @@ JE_ButtonAssign joyButtonAssign;
 JE_boolean useButtonAssign = FALSE;
 
 /* Joystick Data */
-JE_word jMinX, jMaxX, jMinY, jMaxY, jCenterX, jCenterY, joyX, joyY;
-JE_word lastJoyX,  lastJoyY;
-JE_word lastJoyXb, lastJoyYb;
-JE_word lastJoyXc, lastJoyYc;
-JE_word lastJoyXd, lastJoyYd;
+Sint16 jMinX, jMaxX, jMinY, jMaxY, jCenterX, jCenterY, joyX, joyY;
+Sint16 lastJoyX,  lastJoyY;
+Sint16 lastJoyXb, lastJoyYb;
+Sint16 lastJoyXc, lastJoyYc;
+Sint16 lastJoyXd, lastJoyYd;
 
 JE_byte joystickError;
 JE_boolean joystickUp, joystickDown, joystickLeft, joystickRight, joystickInput;
@@ -126,17 +127,17 @@ void JE_joystick2( void )
 
         if(!joyMax)
         {
-            joystickUp    = (joyY) < (jCenterY - jCenterY / 2);
-            joystickDown  = (joyY) > (jCenterY + jCenterY / 2);
+            joystickUp    = joyY < (jCenterY - jCenterY / 2);
+            joystickDown  = joyY > (jCenterY + jCenterY / 2);
 
-            joystickLeft  = (joyX) < (jCenterX - jCenterY / 2);
-            joystickRight = (joyX) > (jCenterX + jCenterX / 2);
+            joystickLeft  = joyX < (jCenterX - jCenterY / 2);
+            joystickRight = joyX > (jCenterX + jCenterX / 2);
         } else {
-            joystickUp    = (joyY) < (jCenterY - jCenterY / 5);
-            joystickDown  = (joyY) > (jCenterY + jCenterY / 5);
+            joystickUp    = joyY < (jCenterY - jCenterY / 5);
+            joystickDown  = joyY > (jCenterY + jCenterY / 5);
 
-            joystickLeft  = (joyX) < (jCenterX - jCenterY / 5);
-            joystickRight = (joyX) > (jCenterX + jCenterX / 5);
+            joystickLeft  = joyX < (jCenterX - jCenterY / 5);
+            joystickRight = joyX > (jCenterX + jCenterX / 5);
         }
 
         joystickInput = joystickUp | joystickDown | joystickLeft | joystickRight | button[0] | button[1] | button[2] | button[3];
@@ -180,17 +181,17 @@ JE_boolean JE_joystickTranslate( void )
     if(tempb)
     {
         if(joystickUp)
-            scancode = 72;
+            lastkey_sym = SDLK_UP; /* scancode = 72; */
         if(joystickDown)
-            scancode = 80;
+            lastkey_sym = SDLK_DOWN; /* scancode = 80; */
         if(joystickLeft)
-            scancode = 75;
+            lastkey_sym = SDLK_LEFT; /* scancode = 75; */
         if(joystickRight)
-            scancode = 77;
+            lastkey_sym = SDLK_RIGHT; /* scancode = 77; */
         if(button[0])
-            k = 13;
+            lastkey_sym = SDLK_RETURN; /* k = 13; */
         if(button[1])
-            k = 27;
+            lastkey_sym = SDLK_ESCAPE; /* k = 27; */
     }
 
     return(tempb);
@@ -229,6 +230,7 @@ void JE_joystickInit( void )
 
     if(scanForJoystick)
     {
+        SDL_InitSubSystem(SDL_INIT_JOYSTICK);
         if(SDL_NumJoysticks())
         {
             joystick = SDL_JoystickOpen(0);

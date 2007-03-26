@@ -25,6 +25,7 @@
 #include "tyrian2.h"
 #include "helptext.h"
 #include "keyboard.h"
+#include "joystick.h"
 
 #include "SDL.h"
 
@@ -62,6 +63,8 @@ int main( int argc, char *argv[] )
     JE_initvga256();
 
     init_keyboard();
+    JE_joystickInit();
+
     newshape_init();
     JE_loadhelptext();
 

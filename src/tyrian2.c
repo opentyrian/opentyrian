@@ -30,6 +30,7 @@
 #include "pcxmast.h"
 #include "keyboard.h"
 #include "varz.h"
+#include "joystick.h"
 
 #include <string.h>
 
@@ -55,6 +56,9 @@ void TitleScreen( JE_boolean animate )
     first = TRUE;
     redraw = TRUE;
     fadein = FALSE;
+
+    joystickWaitMax = 80;
+    joystickWait = 0;
 
     /* If IsNetworkActive { TODO } else { */
 
@@ -156,7 +160,7 @@ void TitleScreen( JE_boolean animate )
         newkey = FALSE;
         service_SDL_events();
 
-        if (newkey)
+        if (newkey || JE_joystickTranslate())
         {
             switch (lastkey_sym)
             {
