@@ -20,6 +20,8 @@
 
 #include "error.h"
 #include "vga256d.h"
+#include "keyboard.h"
+#include "joystick.h"
 
 #define NO_EXTERNS
 #include "nortvars.h"
@@ -269,6 +271,13 @@ void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
   JE_DrawShape2Shadow(x + 12, y,      s + 1 , Shape);
   JE_DrawShape2Shadow(x,      y + 14, s + 19, Shape);
   JE_DrawShape2Shadow(x + 12, y + 14, s + 20, Shape);
+}
+
+JE_boolean JE_anyButton( void )
+{
+    JE_joystick2();
+    service_SDL_events();
+    return(keydown || mousedown || button[0]);
 }
 
 /* TODO */

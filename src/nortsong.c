@@ -33,6 +33,11 @@ void setdelay( JE_byte delay )
     target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
 }
 
+INLINE int delaycount( void )
+{
+    return(SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
+}
+
 void waitdelay( void )
 {
     int ticks;

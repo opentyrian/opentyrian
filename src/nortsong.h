@@ -28,6 +28,7 @@ Uint32 target;
 #endif
 
 void setdelay( JE_byte delay );
+int delaycount( void );
 void waitdelay( void );
 void waitdelayorkey( void );
 

@@ -253,7 +253,7 @@ void OpeningAnim( void )
         memset(black, 0, sizeof(black));
 
         setdelay(200);
-        waitdelayorkey();
+        while(delaycount() && !JE_anyButton());
 
         JE_FadeBlack(15);
 
@@ -264,7 +264,7 @@ void OpeningAnim( void )
         JE_FadeColor(10);
 
         setdelay(200);
-        waitdelayorkey();
+        while(delaycount() && !JE_anyButton());
 
         JE_FadeBlack(10);
     }
