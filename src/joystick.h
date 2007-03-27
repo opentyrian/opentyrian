@@ -37,7 +37,7 @@ extern JE_word lastJoyXc, lastJoyYc;
 extern JE_word lastJoyXd, lastJoyYd;
 extern JE_byte joystickError;
 extern JE_boolean joystickUp, joystickDown, joystickLeft, joystickRight, joystickInput;
-extern JE_boolean joystick_Installed;
+extern JE_boolean joystick_installed;
 extern JE_word joystickWait, joystickWaitMax;
 #endif
 

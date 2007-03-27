@@ -45,7 +45,7 @@ Sint16 lastJoyXd, lastJoyYd;
 
 JE_byte joystickError;
 JE_boolean joystickUp, joystickDown, joystickLeft, joystickRight, joystickInput;
-JE_boolean joystick_Installed;
+JE_boolean joystick_installed;
 JE_word joystickWait, joystickWaitMax;
 
 /*JE_byte SJoyCD;*/ /*NortVars anybutton check - problems with checking too fast*/
@@ -119,7 +119,7 @@ void JE_joystick2( void )
 {
     joystickInput = FALSE;
 
-    if(joystick_Installed)
+    if(joystick_installed)
     {
         JE_joystick1();
         memcpy(button, joyButton, sizeof(button));
@@ -226,7 +226,7 @@ JE_boolean JE_joystickNotHeld( void )
 
 void JE_joystickInit( void )
 {
-    joystick_Installed = FALSE;
+    joystick_installed = FALSE;
 
     if(scanForJoystick)
     {
@@ -239,13 +239,13 @@ void JE_joystickInit( void )
             {
                 if(SDL_JoystickNumButtons(joystick) >= 4 && SDL_JoystickNumAxes(joystick) >= 2)
                 {
-                    joystick_Installed = TRUE;
+                    joystick_installed = TRUE;
                 }
             }
         }
     }
 
-    if(joystick_Installed)
+    if(joystick_installed)
     {
         JE_joystick1();
         if(forceAveraging)

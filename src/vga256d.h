@@ -33,7 +33,7 @@ typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
 #ifndef NO_EXTERNS
-extern JE_boolean Mouse_Installed;
+extern JE_boolean mouse_installed;
 extern JE_char k;
 extern SDL_Surface *VGAScreen;
 extern Uint8 VGAScreen2Seg[320*200];

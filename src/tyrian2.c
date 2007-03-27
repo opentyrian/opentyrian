@@ -31,6 +31,7 @@
 #include "keyboard.h"
 #include "varz.h"
 #include "joystick.h"
+#include "setup.h"
 
 #include <string.h>
 
@@ -43,7 +44,7 @@ void TitleScreen( JE_boolean animate )
 
     const int menunum = 7;
     JE_byte namego[7+2] = {0}; /* [1..SA+2] */
-    JE_word waitfordemo;
+    JE_word waitForDemo;
     JE_byte menu = 0;
     JE_boolean redraw, fadein, first;
     JE_char flash;
@@ -157,13 +158,11 @@ void TitleScreen( JE_boolean animate )
 
         /* TODO: stuff */
 
-        newkey = FALSE;
-        service_SDL_events();
+        waitForDemo = 2000;
+        JE_textMenuWait(&waitForDemo, FALSE);
 
-        if (newkey || JE_joystickTranslate())
+        switch (lastkey_sym)
         {
-            switch (lastkey_sym)
-            {
                 case SDLK_UP:
                     if (menu == 0)
                     {
@@ -230,7 +229,6 @@ void TitleScreen( JE_boolean animate )
                 default:
                     break;
             }
-        }
     } while (!(quit || gameloaded || jumpsection || playdemo || loaddestruct));
 }
 

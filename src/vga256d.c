@@ -25,7 +25,7 @@
 #include <math.h>
 #include <ctype.h>
 
-JE_boolean Mouse_Installed;
+JE_boolean mouse_installed = TRUE;
 JE_char k;
 
 SDL_Surface *VGAScreen;
