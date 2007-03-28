@@ -52,7 +52,7 @@ JE_byte helpboxcolor = 12;
 JE_byte helpboxbrightness = 1;
 JE_byte helpboxshadetype = FullShade;
 
-char helptxt[maxhelpmessage][231];
+char helptxt[maxhelpmessage][231]; /* [1..maxhelpmessage] of string [230]; */
 char pname[21][16];          /* [1..21] of string [15] */
 char misctext[68][42];       /* [1..68] of string [41] */
 char misctextB[5][11];       /* [1..5] of string [10] */

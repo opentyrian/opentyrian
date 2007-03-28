@@ -28,6 +28,7 @@
 #include "nortsong.h"
 #include "keyboard.h"
 #include "config.h"
+#include "episodes.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -157,7 +158,7 @@ JE_boolean JE_playerSelect( void )
             JE_OuttextAdjust(JE_FontCenter(playername[temp], SmallFontShapes), temp * 24 + 30, playername[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*BETA TEST VERSION*/
-        /*  Dstring(fontcenter(misctext[35],_FontShapes),170,misctext[35],_FontShapes);*/
+        /*  JE_Dstring(JE_FontCenter(misctext[35], FontShapes), 170, misctext[34], FontShapes);*/
 
         JE_ShowVGA();
         tempw = 0;
@@ -196,6 +197,101 @@ JE_boolean JE_playerSelect( void )
 
     } while(!quit);
 
-    return(TRUE);
+    return(TRUE); /*MXD assumes this default return value here*/
 }
 
+JE_boolean JE_episodeSelect( void )
+{
+    JE_byte sel;
+    JE_boolean quit;
+    JE_byte max;
+
+    max = EpisodeMax;
+
+    if(!(episodeAvail[0] && episodeAvail[1] && episodeAvail[2]))
+        episodeAvail[3] = FALSE;
+
+    if(episodeAvail[4] == FALSE)
+        max = 4;
+
+    /*if(!episodeavail[3]) max = 3;*/
+
+    startepisodeselect:
+    JE_LoadPIC(2, FALSE);
+    memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+    JE_ShowVGA;
+    JE_FadeColor(10);
+    quit = FALSE;
+
+    sel = 1;
+
+    do {
+
+        JE_Dstring(JE_FontCenter(episodename[0], FontShapes), 20, episodename[0], FontShapes);
+
+        for(temp = 1; temp <= max; temp++)
+            JE_OuttextAdjust(20, temp * 30 + 20, episodename[temp], 15, - 4 - (!episodeAvail[temp] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
+
+        /*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
+
+        JE_ShowVGA;
+        tempw = 0;
+        JE_textMenuWait(&tempw, FALSE);
+
+        switch(lastkey_sym)
+        {
+            case SDLK_UP:
+                sel--;
+                if(sel < 1)
+                    sel = max;
+                /*playsamplenum(_Cursormove);*/
+                break;
+            case SDLK_DOWN:
+                sel++;
+                if(sel > max)
+                    sel = 1;
+                /*playsamplenum(_Cursormove);*/
+                break;
+            case SDLK_RETURN:
+                if(episodeAvail[sel-1])
+                {
+                    /*playsamplenum(_Select);*/
+
+                    quit = TRUE;
+                    /* TODO: initepisode(sel);*/
+                    return(TRUE);
+                } else {
+                    if(sel > 1)
+                    {
+                        /*playsamplenum(_ESC);*/
+                        JE_FadeBlack (10);
+                        /*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
+                        verticalheight = 9;
+                        helpboxcolor = 15;
+                        helpboxbrightness = 4;
+                        helpboxshadetype = FullShade;
+                        JE_HelpBox(10, 10, helptxt[29], 50);
+                        JE_ShowVGA();
+                        JE_FadeColor(10);
+                        while(!JE_anyButton())
+                            ;
+                        lastkey_sym = 0;
+                        JE_FadeBlack(10);
+                        goto startepisodeselect;
+                    }
+                }
+                break;
+            case SDLK_ESCAPE:
+                quit = TRUE;
+                /*playsamplenum(_ESC);*/
+                return(FALSE);
+                break;
+            default:
+                break;
+        }
+
+    } while(!quit && !haltGame /*&& !netQuit*/);
+    pItems[8] = episodeNum;
+
+    return(FALSE); /*MXD assumes this default return value here*/
+}
