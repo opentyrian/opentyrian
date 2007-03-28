@@ -223,17 +223,17 @@ void JE_loadhelptext( void )
     }
     JE_skipcryptln(f); JE_skipcryptln(f);
     
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i <= 5; i++) {
         JE_readcryptln(f,episodename[i]);       /*Episode Names*/
     }
     JE_skipcryptln(f); JE_skipcryptln(f);
     
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i <= 6; i++) {
         JE_readcryptln(f,difficultyname[i]);    /*Difficulty Level*/
     }
     JE_skipcryptln(f); JE_skipcryptln(f);
     
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i <= 4; i++) {
         JE_readcryptln(f,playername[i]);        /*Player Names*/
     }
     JE_skipcryptln(f); JE_skipcryptln(f);
@@ -258,7 +258,7 @@ void JE_loadhelptext( void )
     }
     JE_skipcryptln(f); JE_skipcryptln(f);
     
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i <= 10; i++) {
         JE_readcryptln(f,difficultynameB[i]);   /*HighScore Difficulty Names*/
     }
     JE_skipcryptln(f); JE_skipcryptln(f);
@@ -278,7 +278,7 @@ void JE_loadhelptext( void )
     }
     JE_skipcryptln(f); JE_skipcryptln(f);                                                                                                                                  
     
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i <= 10; i++) {
         JE_readcryptln(f,superships[i]);        /*SuperShips - For Super Arcade Mode*/
     }
     JE_skipcryptln(f); JE_skipcryptln(f);

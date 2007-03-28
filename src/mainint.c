@@ -22,14 +22,20 @@
 #include "fonthand.h"
 #include "vga256d.h"
 #include "helptext.h"
+#include "picload.h"
+#include "starfade.h"
+#include "newshape.h"
+#include "nortsong.h"
+#include "keyboard.h"
+#include "config.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
-#endif
+#undef NO_EXTERNS
 
 #define MAXPAGE 8
 #define TOPICS 6
-const JE_byte topicStart[TOPICS] = { 0, 1, 2, 3, 7, 255 }
+const JE_byte topicStart[TOPICS] = { 0, 1, 2, 3, 7, 255 };
 
 JE_shortint constantLastX;
 JE_word textErase;
@@ -38,6 +44,8 @@ JE_word downgradeCost;
 JE_boolean performSave;
 JE_boolean jumpSection;
 JE_boolean useLastBank; /* See if I want to use the last 16 colors for DisplayText */
+
+extern int haltGame, netQuit; /* placeholders */
 
 void JE_helpSystem( JE_byte startTopic )
 {
@@ -48,11 +56,11 @@ void JE_helpSystem( JE_byte startTopic )
     page = topicStart[startTopic];
     k = '\0';
     
-    JE_fadeBlack(10);
-    JE_loadPIC(2, FALSE);
+    JE_FadeBlack(10);
+    JE_LoadPIC(2, FALSE);
     /* playsong(Song_MapView); */
     JE_ShowVGA();
-    JE_fadeColor(10);
+    JE_FadeColor(10);
 
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
@@ -102,7 +110,7 @@ void JE_helpSystem( JE_byte startTopic )
 
                     do
                     {
-                        for (temp = 1; temp < topics; temp++)
+                        for (temp = 1; temp < TOPICS; temp++)
                         {
                             if (temp == menu)
                             {
@@ -120,5 +128,74 @@ void JE_helpSystem( JE_byte startTopic )
                         /* textmenuwait(&tempw, FALSE); */
                         
                         /* TODO */
+                } while(1 /*TODO*/);
+            }
+        }
     } while (1);
 }
+
+JE_boolean JE_playerSelect( void )
+{
+    JE_byte maxSel;
+    JE_byte sel;
+    JE_boolean quit;
+
+    JE_LoadPIC(2, FALSE);
+    memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+    JE_ShowVGA;
+    JE_FadeColor(20);
+    quit = FALSE;
+
+    sel = 1;
+    maxSel = 4;
+
+    do {
+
+        JE_Dstring(JE_FontCenter(playername[0], FontShapes), 20, playername[0], FontShapes);
+
+        for(temp = 1; temp <= maxSel; temp++)
+            JE_OuttextAdjust(JE_FontCenter(playername[temp], SmallFontShapes), temp * 24 + 30, playername[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+
+        /*BETA TEST VERSION*/
+        /*  Dstring(fontcenter(misctext[35],_FontShapes),170,misctext[35],_FontShapes);*/
+
+        JE_ShowVGA();
+        tempw = 0;
+        JE_textMenuWait(&tempw, FALSE);
+
+        switch(lastkey_sym)
+        {
+            case SDLK_UP:
+                sel--;
+                if(sel < 1)
+                    sel = maxSel;
+                /*playsamplenum(_Cursormove);*/
+                break;
+            case SDLK_DOWN:
+                sel++;
+                if(sel > maxSel)
+                    sel = 1;
+                /*playsamplenum(_Cursormove);*/
+                break;
+            case SDLK_RETURN:
+                quit = TRUE;
+                twoPlayerMode = (sel == 3);
+                onePlayerAction = (sel == 2);
+                /*playsamplenum(_Select);*/
+                if(sel == 4)
+                    netQuit = TRUE;
+                break;
+            case SDLK_ESCAPE:
+               quit = TRUE;
+               /*playsamplenum(_ESC);*/
+               return(FALSE);
+               break;
+            default:
+                break;
+        }
+
+    } while(!quit);
+
+    return(TRUE);
+}
+
