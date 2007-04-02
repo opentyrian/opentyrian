@@ -158,7 +158,7 @@ JE_boolean JE_playerSelect( void )
             JE_OuttextAdjust(JE_FontCenter(playername[temp], SmallFontShapes), temp * 24 + 30, playername[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*BETA TEST VERSION*/
-        /*  JE_Dstring(JE_FontCenter(misctext[35], FontShapes), 170, misctext[34], FontShapes);*/
+        /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
         JE_ShowVGA();
         tempw = 0;
@@ -294,4 +294,87 @@ JE_boolean JE_episodeSelect( void )
     pItems[8] = episodeNum;
 
     return(FALSE); /*MXD assumes this default return value here*/
+}
+
+JE_boolean JE_difficultySelect( void )
+{
+    JE_byte maxSel;
+    JE_byte sel;
+    JE_boolean quit;
+
+    JE_LoadPIC(2, FALSE);
+    memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+    JE_ShowVGA;
+    JE_FadeColor(20);
+    quit = FALSE;
+
+    sel = 2;
+    maxSel = 3;
+
+    do {
+
+        JE_Dstring(JE_FontCenter(difficultyname[0], FontShapes), 20, difficultyname[0], FontShapes);
+
+        for(temp = 1; temp <= maxSel; temp++)
+            JE_OuttextAdjust(JE_FontCenter(difficultyname[temp], SmallFontShapes), temp * 24 + 30, difficultyname[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+
+        /*BETA TEST VERSION*/
+        /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
+
+        JE_ShowVGA;
+        tempw = 0;
+        JE_textMenuWait(&tempw, FALSE);
+
+        if(keysactive[SDLK_l] && keysactive[SDLK_o] && keysactive[SDLK_r] && keysactive[SDLK_d])
+        {
+            if(maxSel == 5)
+                maxSel = 6;
+        }
+
+        switch(lastkey_sym)
+        {
+            case SDLK_UP:
+                sel--;
+                if(sel < 1)
+                    sel = maxSel;
+                /*playsamplenum(_Cursormove);*/
+                break;
+            case SDLK_DOWN:
+                sel++;
+                if(sel > maxSel)
+                    sel = 1;
+                /*playsamplenum(_Cursormove);*/
+                break;
+            case SDLK_RETURN:
+                quit = TRUE;
+
+                if(sel == 5)
+                    sel++;
+                if(sel == 6)
+                    sel = 8;
+                difficultyLevel = sel;
+                /*playsamplenum(_Select);*/
+                break;
+            case SDLK_ESCAPE:
+                quit = TRUE;
+                /*playsamplenum(_ESC);*/
+                return(FALSE);
+                break;
+            case SDLK_g: /*TODO*/
+                if(SDL_GetModState() & KMOD_SHIFT)
+                    if(maxSel < 4)
+                        maxSel = 4;
+                break;
+            case SDLK_RIGHTBRACKET: /*TODO*/
+                if(SDL_GetModState() & KMOD_SHIFT)
+                    if(maxSel == 4)
+                        maxSel = 5;
+                break;
+            default:
+                break;
+        }
+
+    } while(!quit && !haltGame /*&& !netQuit*/);
+
+    return(TRUE); /*MXD assumes this default return value here*/
 }
