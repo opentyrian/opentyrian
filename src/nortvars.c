@@ -126,7 +126,7 @@ void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s )
     /*fprintf(stderr, "Shapes%c completed.\n", s);*/
 }
 
-void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s, JE_byte **Shape )
+void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s )
 {
     FILE *f;
 
@@ -143,7 +143,6 @@ void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s, JE_byte
     fseek(f, 0, SEEK_SET);
 
     *Shapes = malloc(*ShapeSize);
-    *Shape = *Shapes;
 
     fread(*Shapes, 1, *ShapeSize, f);
 

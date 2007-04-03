@@ -49,7 +49,7 @@ void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s );
 void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s );
 
 void JE_CompressShapeFileC( JE_char s );
-void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s, JE_byte **Shape );
+void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s );
 
 JE_word JE_mousePosition( JE_word *MouseX, JE_word *MouseY );
 JE_boolean JE_buttonPressed( void );
