@@ -18,6 +18,9 @@
  */
 #include "opentyr.h"
 
+#include "error.h"
+#include "lvllib.h"
+
 #define NO_EXTERNS
 #include "episodes.h"
 #undef NO_EXTERNS
@@ -39,7 +42,7 @@ JE_EnemyDatType *enemyDat;
 /* EPISODE variables */
 JE_byte    episodeNum = 0;
 JE_boolean episodeAvail[EpisodeMax]; /* [1..episodemax] */
-char       macroFile[13], CubeFile[13]; /* string [12] */
+char       macroFile[13], cubeFile[13]; /* string [12] */
 
 JE_longint episode1DataLoc;
 
@@ -48,3 +51,46 @@ JE_boolean bonusLevel;
 
 /* Tells if the game jumped back to Episode 1 */
 JE_boolean jumpBackToEpisode1;
+
+void JE_loadItemDat( void )
+{
+    FILE *lvlFile;
+    JE_word itemNum[7]; /* [1..7] */
+
+    if(episodeNum > 3)
+    {
+        JE_resetfile(&lvlFile, levelFile);
+        fseek(lvlFile, lvlPos[lvlNum], SEEK_SET);
+    } else {
+        JE_resetfile(&lvlFile, "TYRIAN.HDT");
+        fread(&episode1DataLoc, 1, sizeof(episode1DataLoc), lvlFile);
+        fseek(lvlFile, episode1DataLoc, SEEK_SET);
+    }
+
+    fread(&itemNum,   1, sizeof(itemNum), lvlFile);
+    fread(weapons,    1, sizeof(JE_WeaponType), lvlFile);
+    fread(weaponPort, 1, sizeof(JE_WeaponPortType), lvlFile);
+    fread(special,    1, sizeof(JE_SpecialType), lvlFile);
+    fread(powerSys,   1, sizeof(JE_PowerType), lvlFile);
+    fread(ships,      1, sizeof(JE_ShipType), lvlFile);
+    fread(options,    1, sizeof(JE_OptionType), lvlFile);
+    fread(shields,    1, sizeof(JE_ShieldType), lvlFile);
+    fread(enemyDat,   1, sizeof(JE_EnemyDatType), lvlFile);
+
+    fclose(lvlFile);
+}
+
+void JE_initEpisode(JE_byte newEpisode)
+{
+    if(newEpisode != episodeNum)
+    {
+        episodeNum = newEpisode;
+
+        sprintf(levelFile, "TYRIAN%d.LVL", episodeNum);
+        sprintf(cubeFile,  "CUBETXT%d.DAT", episodeNum);
+        sprintf(macroFile, "LEVELS%d.DAT", episodeNum);
+
+        JE_analyzeLevel();
+        JE_loadItemDat();
+    }
+}

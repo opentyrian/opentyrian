@@ -170,9 +170,9 @@ extern JE_boolean bonusLevel;
 extern JE_boolean jumpBackToEpisode1;
 #endif
 
-void JE_LoadItemDat( void );
-void JE_InitEpisode( JE_byte newepisode );
-JE_boolean JE_FindNextEpisode( void );
-void JE_ScanForEpisodes( void );
+void JE_loadItemDat( void );
+void JE_initEpisode( JE_byte newEpisode );
+JE_boolean JE_findNextEpisode( void );
+void JE_scanForEpisodes( void );
 
 #endif /* EPISODES_H */

@@ -258,7 +258,7 @@ JE_boolean JE_episodeSelect( void )
                     /*playsamplenum(_Select);*/
 
                     quit = TRUE;
-                    /* TODO: initepisode(sel);*/
+                    JE_initEpisode(sel);
                     return(TRUE);
                 } else {
                     if(sel > 1)
@@ -360,12 +360,12 @@ JE_boolean JE_difficultySelect( void )
                 /*playsamplenum(_ESC);*/
                 return(FALSE);
                 break;
-            case SDLK_g: /*TODO*/
+            case SDLK_g:
                 if(SDL_GetModState() & KMOD_SHIFT)
                     if(maxSel < 4)
                         maxSel = 4;
                 break;
-            case SDLK_RIGHTBRACKET: /*TODO*/
+            case SDLK_RIGHTBRACKET:
                 if(SDL_GetModState() & KMOD_SHIFT)
                     if(maxSel == 4)
                         maxSel = 5;
