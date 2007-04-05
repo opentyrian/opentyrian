@@ -41,7 +41,7 @@ int main( int argc, char *argv[] )
     JE_integer shpnumb;
     int i;
 
-	/* TODO: DetectCFG */
+	JE_detectCFG();
 	JE_scanForEpisodes();
 
 	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
@@ -82,7 +82,7 @@ int main( int argc, char *argv[] )
     JE_joystickInit();
 
     newshape_init();
-    JE_loadhelptext();
+    JE_loadHelpText();
 
     JE_loadpals();
 

@@ -32,6 +32,7 @@
 #include "varz.h"
 #include "joystick.h"
 #include "setup.h"
+#include "mainint.h"
 
 #include <string.h>
 
@@ -127,13 +128,13 @@ void TitleScreen( JE_boolean animate )
                 for (temp = 0; temp < menunum; temp++)
                 {
                     tempx = 104+(temp)*13;
-                    tempy = JE_FontCenter(menutext[temp],SmallFontShapes);
+                    tempy = JE_fontCenter(menuText[temp],SmallFontShapes);
 
-                    JE_OuttextAdjust(tempy-1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_OuttextAdjust(tempy+1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_OuttextAdjust(tempy+1,tempx-1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_OuttextAdjust(tempy-1,tempx+1,menutext[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_OuttextAdjust(tempy,tempx,menutext[temp],15,-3,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempy-1,tempx-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempy+1,tempx+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempy+1,tempx-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempy-1,tempx+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempy,tempx,menuText[temp],15,-3,SmallFontShapes,FALSE);
                 }
                 JE_ShowVGA();
 
@@ -147,9 +148,9 @@ void TitleScreen( JE_boolean animate )
 
         for (temp = 0; temp < menunum; temp++)
         {
-            JE_OuttextAdjust(JE_FontCenter(menutext[temp], SmallFontShapes),
+            JE_outTextAdjust(JE_fontCenter(menuText[temp], SmallFontShapes),
             104+temp*13,
-            menutext[temp], 15, -3+((temp == menu) * 2), SmallFontShapes, FALSE);
+            menuText[temp], 15, -3+((temp == menu) * 2), SmallFontShapes, FALSE);
         }
 
         JE_ShowVGA();

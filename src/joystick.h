@@ -26,7 +26,6 @@ typedef JE_byte JE_ButtonAssign[4]; /* [1..4] */
 
 #ifndef NO_EXTERNS
 extern const JE_ButtonAssign defaultJoyButtonAssign;
-extern JE_ButtonType tempButton, button, joyButton;
 extern JE_boolean buttonHeld;
 extern JE_ButtonAssign joyButtonAssign;
 extern JE_boolean useButtonAssign;

@@ -85,19 +85,19 @@ void JE_helpSystem( JE_byte startTopic )
         {
             JE_char buf[128];
 
-            snprintf(buf, sizeof(buf), "%s %d", misctext[24], page-topicStart[temp2]+1);
-            JE_Outtext(10, 192, buf, 13, 5);
+            snprintf(buf, sizeof(buf), "%s %d", miscText[24], page-topicStart[temp2]+1);
+            JE_outText(10, 192, buf, 13, 5);
 
-            snprintf(buf, sizeof(buf), "%s %d of %d", misctext[25], page, MAXPAGE);
-            JE_Outtext(220, 192, buf, 13, 5);
+            snprintf(buf, sizeof(buf), "%s %d of %d", miscText[25], page, MAXPAGE);
+            JE_outText(220, 192, buf, 13, 5);
 
-            JE_Dstring(JE_FontCenter(topicname[temp2], SmallFontShapes), 1, topicname[temp2], SmallFontShapes);
+            JE_dString(JE_fontCenter(topicName[temp2], SmallFontShapes), 1, topicName[temp2], SmallFontShapes);
         }
 
         menu = 0;
 
-        helpboxbrightness = 3;
-        verticalheight = 8;
+        helpBoxBrightness = 3;
+        verticalHeight = 8;
 
         switch (page)
         {
@@ -107,7 +107,7 @@ void JE_helpSystem( JE_byte startTopic )
                 {
                     menu = TOPICS;
                     /* joystickwaitmax = 120; joystickwait = 0; */
-                    JE_Dstring(JE_FontCenter(topicname[0], FontShapes), 30, topicname[0], FontShapes);
+                    JE_dString(JE_fontCenter(topicName[0], FontShapes), 30, topicName[0], FontShapes);
 
                     do
                     {
@@ -152,10 +152,10 @@ JE_boolean JE_playerSelect( void )
 
     do {
 
-        JE_Dstring(JE_FontCenter(playername[0], FontShapes), 20, playername[0], FontShapes);
+        JE_dString(JE_fontCenter(playerName[0], FontShapes), 20, playerName[0], FontShapes);
 
         for(temp = 1; temp <= maxSel; temp++)
-            JE_OuttextAdjust(JE_FontCenter(playername[temp], SmallFontShapes), temp * 24 + 30, playername[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+            JE_outTextAdjust(JE_fontCenter(playerName[temp], SmallFontShapes), temp * 24 + 30, playerName[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
@@ -227,10 +227,10 @@ JE_boolean JE_episodeSelect( void )
 
     do {
 
-        JE_Dstring(JE_FontCenter(episodename[0], FontShapes), 20, episodename[0], FontShapes);
+        JE_dString(JE_fontCenter(episodeName[0], FontShapes), 20, episodeName[0], FontShapes);
 
         for(temp = 1; temp <= max; temp++)
-            JE_OuttextAdjust(20, temp * 30 + 20, episodename[temp], 15, - 4 - (!episodeAvail[temp-1] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
+            JE_outTextAdjust(20, temp * 30 + 20, episodeName[temp], 15, - 4 - (!episodeAvail[temp-1] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
@@ -266,11 +266,11 @@ JE_boolean JE_episodeSelect( void )
                         /*playsamplenum(_ESC);*/
                         JE_FadeBlack (10);
                         /*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
-                        verticalheight = 9;
-                        helpboxcolor = 15;
-                        helpboxbrightness = 4;
-                        helpboxshadetype = FullShade;
-                        JE_HelpBox(10, 10, helptxt[29], 50);
+                        verticalHeight = 9;
+                        helpBoxColor = 15;
+                        helpBoxBrightness = 4;
+                        helpBoxShadeType = FullShade;
+                        JE_helpBox(10, 10, helpTxt[29], 50);
                         JE_ShowVGA();
                         JE_FadeColor(10);
                         while(!JE_anyButton())
@@ -313,10 +313,10 @@ JE_boolean JE_difficultySelect( void )
 
     do {
 
-        JE_Dstring(JE_FontCenter(difficultyname[0], FontShapes), 20, difficultyname[0], FontShapes);
+        JE_dString(JE_fontCenter(difficultyName[0], FontShapes), 20, difficultyName[0], FontShapes);
 
         for(temp = 1; temp <= maxSel; temp++)
-            JE_OuttextAdjust(JE_FontCenter(difficultyname[temp], SmallFontShapes), temp * 24 + 30, difficultyname[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+            JE_outTextAdjust(JE_fontCenter(difficultyName[temp], SmallFontShapes), temp * 24 + 30, difficultyName[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
