@@ -87,7 +87,7 @@ int main( int argc, char *argv[] )
     JE_loadpals();
 
     /* [UGH] */
-    JE_resetfileext(&f, "TYRIAN.SHP", FALSE);
+    JE_resetFileExt(&f, "TYRIAN.SHP", FALSE);
     if(!f)
     {
         return(1);

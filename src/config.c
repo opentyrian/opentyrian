@@ -232,7 +232,7 @@ JE_word x;
 
 const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 
-void JE_decryptstring( JE_string s, JE_byte len )
+void JE_decryptString( JE_string s, JE_byte len )
 {
     int i;
 
@@ -246,7 +246,7 @@ void JE_decryptstring( JE_string s, JE_byte len )
     }
 }
 
-void JE_readcryptln( FILE* f, JE_string s )
+void JE_readCryptLn( FILE* f, JE_string s )
 {
     int size;
 
@@ -255,11 +255,11 @@ void JE_readcryptln( FILE* f, JE_string s )
     fread(s, size, 1, f);
 /*    s[0] = (char)size;*/
 
-    JE_decryptstring(s, size);
+    JE_decryptString(s, size);
 
 }
 
-void JE_skipcryptln( FILE* f )
+void JE_skipCryptLn( FILE* f )
 {
     char size;
 

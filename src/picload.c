@@ -45,7 +45,7 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
 
     PCXnumber--;
 
-    JE_resetfileext(&PCXfile, "TYRIAN.PIC", FALSE);
+    JE_resetFileExt(&PCXfile, "TYRIAN.PIC", FALSE);
 
     if(notYetLoadedPCX)
     {     /*Same as old AnalyzePic*/

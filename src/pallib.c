@@ -32,7 +32,7 @@ void JE_loadpals( void )
 
     palnum = 0;
 
-    f = fopen(JE_locatefile("PALETTE.DAT"), "rb");
+    f = fopen(JE_locateFile("PALETTE.DAT"), "rb");
     while (palnum < maxpal && !feof(f))
     {
         for (i = 0; i < 256; i++)
