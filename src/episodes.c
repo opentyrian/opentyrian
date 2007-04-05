@@ -19,6 +19,7 @@
 #include "opentyr.h"
 
 #include "error.h"
+#include "lvlmast.h"
 #include "lvllib.h"
 
 #define NO_EXTERNS

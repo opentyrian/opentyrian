@@ -35,22 +35,22 @@
 
 #define EnemyNum   850
 
-#define LVLnum  (18 * 2)
-#define LVLnum2 (12 * 2)
-#define LVLnum3 (12 * 2)
-#define LVLnum4 (20 * 2)
-#define LVLnum5 (1 * 2)
+#define LVLNum  (18 * 2)
+#define LVLNum2 (12 * 2)
+#define LVLNum3 (12 * 2)
+#define LVLNum4 (20 * 2)
+#define LVLNum5 (1 * 2)
 
-typedef JE_longint JE_lvlpostype[LVLnum + 2]; /* [1..LVLnum + 2] */
+/*! typedef JE_longint JE_LvlPosType[LVLNum + 2];*/ /* [1..LVLnum + 2] */
 
 #ifndef NO_EXTERNS
 extern const JE_char ShapeFile[34]; /* [1..34] */
-extern const char lvlfile[LVLnum][9]; /* [1..LVLnum] of string [8] */
-extern const char lvlfile2[LVLnum2][9]; /* [1..LVLnum2] of string [8] */
-extern const char lvlfile3[LVLnum3][9]; /* [1..LVLnum3] of string [8] */
-extern const char lvlfile4[LVLnum4][9]; /* [1..LVLnum4] of string [8] */
-extern const char lvlfile5[LVLnum5][9]; /* [1..lvlnum5] of string [8] */
-extern JE_lvlpostype lvlpos;
+extern const char lvlFile[LVLNum][9]; /* [1..LVLnum] of string [8] */
+extern const char lvlFile2[LVLNum2][9]; /* [1..LVLnum2] of string [8] */
+extern const char lvlFile3[LVLNum3][9]; /* [1..LVLnum3] of string [8] */
+extern const char lvlFile4[LVLNum4][9]; /* [1..LVLnum4] of string [8] */
+extern const char lvlFile5[LVLNum5][9]; /* [1..lvlnum5] of string [8] */
+/*! extern JE_LvlPosType lvlPos;*/
 #endif
 
 #endif /* LVLMAST_H */

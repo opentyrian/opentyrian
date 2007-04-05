@@ -19,6 +19,7 @@
 #include "opentyr.h"
 
 #include "error.h"
+
 #include "lvllib.h"
 
 JE_LvlPosType lvlPos;

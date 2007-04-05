@@ -23,13 +23,13 @@
 #undef NO_EXTERNS
 
 
-const JE_char ShapeFile[34] = /* [1..34] */
+const JE_char shapeFile[34] = /* [1..34] */
 {
     '2', '4', '7', '8', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
     'O', 'P', 'Q', 'R', 'S', 'T', 'U', '5', '#', 'V', '0', '@', '3', '^', '5', '9'
 };
 
-const char lvlfile[LVLnum][9] = /* [1..LVLnum] of string [8] */
+const char lvlFile[LVLNum][9] = /* [1..LVLnum] of string [8] */
 {
 /* 1*/  "ASTROID4",     "MAINMAPE",
 /* 2*/  "ASTROID5",     "MAINMAPD",
@@ -51,7 +51,7 @@ const char lvlfile[LVLnum][9] = /* [1..LVLnum] of string [8] */
 /*18*/  "BEER",         "MAINMAAX"
 };
 
-const char lvlfile2[LVLnum2][9] = /* [1..LVLnum2] of string [8] */
+const char lvlFile2[LVLNum2][9] = /* [1..LVLnum2] of string [8] */
 {
         "JUNGLE",       "MAINMAPF",
         "GIGER",        "MAINMAPR",
@@ -67,7 +67,7 @@ const char lvlfile2[LVLnum2][9] = /* [1..LVLnum2] of string [8] */
         "JUNGLE4",      "MAINMAAP"
 };
 
-const char lvlfile3[LVLnum3][9] = /* [1..LVLnum3] of string [8] */
+const char lvlFile3[LVLNum3][9] = /* [1..LVLnum3] of string [8] */
 {
         "ICE",          "MAINMAPX",
         "ASTCITY",      "MAINMAPP",
@@ -83,7 +83,7 @@ const char lvlfile3[LVLnum3][9] = /* [1..LVLnum3] of string [8] */
         "MACES",        "MAINMAP9"    /*Bonus Maces*/
 };
 
-const char lvlfile4[LVLnum4][9] = /* [1..LVLnum4] of string [8] */
+const char lvlFile4[LVLNum4][9] = /* [1..LVLnum4] of string [8] */
 {
         "HARVEST",      "MAINMAAC",   /*Harvest World   ooooo */
         "MAZE",         "MAINMAAD",   /*Windy 2         ooooo */
@@ -107,12 +107,12 @@ const char lvlfile4[LVLnum4][9] = /* [1..LVLnum4] of string [8] */
 /*20*/  "SPACEAT2",     "MAINMABB"    /*Camanis Go      ooooo */
 };
 
-const char lvlfile5[LVLnum5][9] = /* [1..lvlnum5] of string [8] */
+const char lvlFile5[LVLNum5][9] = /* [1..lvlnum5] of string [8] */
 {
 /* 1*/  "E5LVL01",      "MAINMA51"    /*FogWalls        ----- */
 };
 
-JE_lvlpostype lvlpos;
+/*! JE_LvlPosType lvlPos;*/
 
 /*
  Episode 4 uses...
