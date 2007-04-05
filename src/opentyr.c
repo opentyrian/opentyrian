@@ -26,6 +26,8 @@
 #include "helptext.h"
 #include "keyboard.h"
 #include "joystick.h"
+#include "episodes.h"
+#include "varz.h"
 
 #include "SDL.h"
 
@@ -40,7 +42,7 @@ int main( int argc, char *argv[] )
     int i;
 
 	/* TODO: DetectCFG */
-	/* TODO: scanforepisodes */
+	JE_scanForEpisodes();
 
 	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
 
@@ -54,6 +56,20 @@ int main( int argc, char *argv[] )
 	/* TODO: LoadConfiguration */
 
 	/* TODO: Tyrian originally checked availible memory here. */
+
+    enemyDat = malloc(sizeof(*enemyDat));
+    weaponPort = malloc(sizeof(*weaponPort));
+    weapons = malloc(sizeof(*weapons));
+    ships = malloc(sizeof(*ships));
+    options = malloc(sizeof(*options));
+    powerSys = malloc(sizeof(*powerSys));
+    shields = malloc(sizeof(*shields));
+    special = malloc(sizeof(*special));
+
+    megaData1 = malloc(sizeof(*megaData1));
+    megaData2 = malloc(sizeof(*megaData2));
+    megaData3 = malloc(sizeof(*megaData3));
+
 
 	/* here ends line 92771 of TYRIAN2.PAS
 	 * TODO: Finish it and stuff. */

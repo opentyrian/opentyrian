@@ -230,7 +230,7 @@ JE_boolean JE_episodeSelect( void )
         JE_Dstring(JE_FontCenter(episodename[0], FontShapes), 20, episodename[0], FontShapes);
 
         for(temp = 1; temp <= max; temp++)
-            JE_OuttextAdjust(20, temp * 30 + 20, episodename[temp], 15, - 4 - (!episodeAvail[temp] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
+            JE_OuttextAdjust(20, temp * 30 + 20, episodename[temp], 15, - 4 - (!episodeAvail[temp-1] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 

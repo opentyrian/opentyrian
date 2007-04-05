@@ -22,6 +22,7 @@
 #include "opentyr.h"
 
 #ifndef NO_EXTERNS
+extern JE_char dir[12];
 extern JE_boolean ErrorActive;
 extern JE_boolean ErrorOccurred;
 #endif

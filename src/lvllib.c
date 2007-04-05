@@ -33,7 +33,7 @@ void JE_analyzeLevel( void )
     JE_word x;
     FILE *f;
 
-    JE_resetfile(&f, levelFile);
+    JE_resetfileext(&f, levelFile, FALSE);
     fread(&lvlNum, 2, 1, f);
     for(x = 0; x < lvlNum; x++)
         fread(&lvlPos[x], sizeof(lvlPos[x]), 1, f);

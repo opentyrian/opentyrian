@@ -59,10 +59,10 @@ void JE_loadItemDat( void )
 
     if(episodeNum > 3)
     {
-        JE_resetfile(&lvlFile, levelFile);
+        JE_resetfileext(&lvlFile, levelFile, FALSE);
         fseek(lvlFile, lvlPos[lvlNum], SEEK_SET);
     } else {
-        JE_resetfile(&lvlFile, "TYRIAN.HDT");
+        JE_resetfileext(&lvlFile, "TYRIAN.HDT", FALSE);
         fread(&episode1DataLoc, 1, sizeof(episode1DataLoc), lvlFile);
         fseek(lvlFile, episode1DataLoc, SEEK_SET);
     }
@@ -92,5 +92,21 @@ void JE_initEpisode(JE_byte newEpisode)
 
         JE_analyzeLevel();
         JE_loadItemDat();
+    }
+}
+
+void JE_scanForEpisodes( void )
+{
+    JE_byte temp;
+
+    char buf[sizeof(dir) + 11];
+
+    for(temp = 0; temp < EpisodeMax; temp++)
+    {
+        sprintf(buf, "TYRIAN%d.LVL", temp + 1);
+        episodeAvail[temp] = (dir != "") & JE_find(buf);
+
+        sprintf(buf, "%sTYRIAN%d.LVL", dir, temp + 1);
+        episodeAvail[temp] |= JE_find(buf);
     }
 }

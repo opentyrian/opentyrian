@@ -203,9 +203,9 @@ JE_byte Statbar[2], Statcol[2]; /* [1..2] */
 JE_map1buffer *map1buffertop, *map1bufferbot;
 
 /* Shape/Map Data - All in one Segment! */
-struct JE_megadatatype1 *megadata1;
-struct JE_megadatatype2 *megadata2;
-struct JE_megadatatype3 *megadata3;
+struct JE_megadatatype1 *megaData1;
+struct JE_megadatatype2 *megaData2;
+struct JE_megadatatype3 *megaData3;
 
 /* Secret Level Display */
 JE_byte Flash;

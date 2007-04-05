@@ -172,6 +172,8 @@ void init_keyboard( void )
 {
     keysactive = SDL_GetKeyState(&numkeys);
     SDL_EnableKeyRepeat(500, 60);
+
+    /*SDL_WM_GrabInput(SDL_GRAB_ON);*/
 }
 
 void service_SDL_events( void )
