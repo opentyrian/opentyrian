@@ -102,6 +102,8 @@ void JE_scanForEpisodes( void )
 
     char buf[sizeof(dir) + 11];
 
+    JE_findTyrian("TYRIAN1.LVL"); /* need to know where to scan */
+
     for(temp = 0; temp < EpisodeMax; temp++)
     {
         sprintf(buf, "TYRIAN%d.LVL", temp + 1);

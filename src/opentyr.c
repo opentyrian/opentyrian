@@ -42,9 +42,10 @@ int main( int argc, char *argv[] )
     int i;
 
 	JE_detectCFG();
-	JE_scanForEpisodes();
 
 	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
+
+	JE_scanForEpisodes();
 
 	/* TODO: InitKeyboard */
 
