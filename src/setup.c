@@ -75,7 +75,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
         if(*waitTime > 0)
             *waitTime--;
 
-    } while(!inputDetected && (*waitTime != 1) && !haltGame && !netQuit);
+    } while(!(inputDetected || *waitTime == 1 || haltGame || netQuit));
 }
 
 /* TODO */
