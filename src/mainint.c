@@ -31,6 +31,9 @@
 #include "episodes.h"
 #include "sndmast.h"
 #include "setup.h"
+#include "shpmast.h"
+#include "error.h"
+#include "params.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -379,4 +382,62 @@ JE_boolean JE_difficultySelect( void )
     } while(!(quit || haltGame /*|| netQuit*/));
 
     return(TRUE); /*MXD assumes this default return value here*/
+}
+
+void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
+{
+    *shapes = malloc(shapeSize);
+    fread(*shapes, 1, shapeSize, f);
+}
+
+void JE_loadMainShapeTables( void )
+{
+    const JE_byte shapeReorderList[7] /* [1..7] */ = {1, 2, 5, 0, 3, 4, 6};
+
+    FILE *f;
+
+    typedef JE_longint JE_ShpPosType[SHPnum + 1]; /* [1..shpnum + 1] */
+
+    JE_ShpPosType shpPos;
+    JE_word shpNumb;
+
+    if(tyrianXmas)
+        JE_resetFileExt(&f, "TYRIANC.SHP", FALSE);
+    else
+        JE_resetFileExt(&f, "TYRIAN.SHP", FALSE);
+
+    fread(&shpNumb, 2, 1, f);
+    for(x = 0; x < shpNumb; x++)
+        fread(&shpPos[x], sizeof(shpPos[x]), 1, f);
+    fseek(f, 0, SEEK_END);
+    shpPos[shpNumb] = ftell(f);
+
+    /*fclose(f);*/
+
+    for(temp = 0; temp < 7; temp++)
+    { /*Load EST shapes*/
+        fseek(f, shpPos[temp], SEEK_SET);
+        JE_NewLoadShapesB(shapeReorderList[temp], f);
+    }
+
+    shapesC1Size = shpPos[temp + 1] - shpPos[temp];
+    JE_loadCompShapesB(&shapesC1, f, shapesC1Size);
+    temp++;
+
+    shapes9Size = shpPos[temp + 1] - shpPos[temp];
+    JE_loadCompShapesB(&shapes9 , f, shapes9Size);
+    temp++;
+
+    eShapes6Size = shpPos[temp + 1] - shpPos[temp];
+    JE_loadCompShapesB(&eShapes6, f, eShapes6Size);
+    temp++;
+
+    eShapes5Size = shpPos[temp + 1] - shpPos[temp];
+    JE_loadCompShapesB(&eShapes5, f, eShapes5Size);
+    temp++;
+
+    shapesW2Size = shpPos[temp + 1] - shpPos[temp];
+    JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
+
+    fclose(f);
 }

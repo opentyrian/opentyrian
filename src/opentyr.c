@@ -28,6 +28,7 @@
 #include "joystick.h"
 #include "episodes.h"
 #include "varz.h"
+#include "mainint.h"
 
 #include "SDL.h"
 
@@ -71,6 +72,8 @@ int main( int argc, char *argv[] )
     megaData2 = malloc(sizeof(*megaData2));
     megaData3 = malloc(sizeof(*megaData3));
 
+    newshape_init();
+    JE_loadMainShapeTables();
 
 	/* here ends line 92771 of TYRIAN2.PAS
 	 * TODO: Finish it and stuff. */
@@ -82,32 +85,9 @@ int main( int argc, char *argv[] )
     init_keyboard();
     JE_joystickInit();
 
-    newshape_init();
     JE_loadHelpText();
 
     JE_loadpals();
-
-    /* [UGH] */
-    JE_resetFileExt(&f, "TYRIAN.SHP", FALSE);
-    if(!f)
-    {
-        return(1);
-    }
-
-    fread(&shpnumb, 2, 1, f);
-
-    for(i = 0; i < shpnumb; i++)
-    {
-        fread(&shppos[i], 4, 1, f);
-    }
-    /*shppos[shpnumb+1]=filesize(f);*/
-
-    for(i = 0; i < 7; i++)
-    {  /*Load EST shapes*/
-        fseek(f, shppos[i], SEEK_SET);
-        JE_NewLoadShapesB(shapereorderlist[i], f);
-    }
-    /* [/UGH] */
 
     SDL_LockSurface(VGAScreen);
     OpeningAnim();

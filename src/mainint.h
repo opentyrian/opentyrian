@@ -71,7 +71,7 @@ void JE_inGameDisplays( void );
 void JE_mainKeyboardInput( void );
 void JE_pauseGame( void );
 
-void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word *shapeSize );
+void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize );
 
 void JE_loadMainShapeTables( void );
 void JE_mainGamePlayerFunctions( void );
