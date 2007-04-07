@@ -37,6 +37,7 @@ extern Uint8 *keysactive;
 #endif
 
 void flush_events_buffer( void );
+void wait_nomouse( void );
 void wait_nokeymouse( void );
 void wait_keymouse( void );
 void wait_keyboard( void );

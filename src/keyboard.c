@@ -24,6 +24,9 @@
 
 #include "SDL.h"
 
+#define SDL_POLL_INTERVAL 5
+
+/* TODO: Decide if this stays or not */
 const char *KeyNames[] = {
     "ESC",
     "1",
@@ -133,11 +136,22 @@ void flush_events_buffer( void )
     while (SDL_PollEvent(&ev));
 }
 
+void wait_nomouse( void )
+{
+    while (mousedown)
+    {
+        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
+        {
+            service_SDL_events();
+        }
+    }
+}
+
 void wait_nokeymouse( void )
 {
     while (mousedown || keydown)
     {
-        if (SDL_GetTicks() % 5 == 0)
+        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
         {
             service_SDL_events();
         }
@@ -149,7 +163,7 @@ void wait_keymouse( void )
     newkey = newmouse = FALSE;
     while (!newmouse && !newkey)
     {
-        if (SDL_GetTicks() % 5 == 0)
+        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
         {
             service_SDL_events();
         }
@@ -161,7 +175,7 @@ void wait_keyboard( void )
     newkey = FALSE;
     while (!newkey)
     {
-        if (SDL_GetTicks() % 5 == 0)
+        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
         {
             service_SDL_events();
         }
@@ -173,7 +187,9 @@ void init_keyboard( void )
     keysactive = SDL_GetKeyState(&numkeys);
     SDL_EnableKeyRepeat(500, 60);
 
-    /*SDL_WM_GrabInput(SDL_GRAB_ON);*/
+#ifdef NDEBUG
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+#endif
 }
 
 void service_SDL_events( void )
@@ -229,6 +245,7 @@ void service_SDL_events( void )
                 break;*/
             case SDL_QUIT:
                 /* TODO: Call the cleanup code here. */
+                exit(0);
                 break;
         }
     }
