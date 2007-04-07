@@ -55,7 +55,7 @@ void waitdelayorkey( void )
 {
     int ticks;
 
-    newkey = newmouse = FALSE;
+    service_SDL_events();
     while ((ticks = SDL_GetTicks()) < target && !newmouse && !newkey)
     {
         if (ticks % 5 == 0)

@@ -138,6 +138,7 @@ void flush_events_buffer( void )
 
 void wait_nomouse( void )
 {
+    service_SDL_events();
     while (mousedown)
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -149,6 +150,7 @@ void wait_nomouse( void )
 
 void wait_nokeymouse( void )
 {
+    service_SDL_events();
     while (mousedown || keydown)
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -160,7 +162,7 @@ void wait_nokeymouse( void )
 
 void wait_keymouse( void )
 {
-    newkey = newmouse = FALSE;
+    service_SDL_events();
     while (!newmouse && !newkey)
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -172,7 +174,7 @@ void wait_keymouse( void )
 
 void wait_keyboard( void )
 {
-    newkey = FALSE;
+    service_SDL_events();
     while (!newkey)
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -196,6 +198,8 @@ void service_SDL_events( void )
 {
     SDL_Event ev;
 
+    newkey = FALSE;
+    newmouse = FALSE;
     while (SDL_PollEvent(&ev))
     {
         switch (ev.type)
