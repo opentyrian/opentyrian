@@ -20,8 +20,9 @@
 #include "newshape.h"
 
 #include "vga256d.h"
-
-JE_word min, max;
+#include "nortvars.h"
+#include "keyboard.h"
+#include "varz.h"
 
 SDL_Surface *tempScreenSeg = NULL;
 
@@ -50,6 +51,8 @@ JE_boolean loadOverride = FALSE;
 
 void JE_NewLoadShapesB( JE_byte table, FILE *f )
 {
+    JE_word min, max;
+
     short tempw;
     short z;
 
@@ -189,7 +192,7 @@ void JE_NewPurgeShapes( JE_byte table )
     }
 }
 
-void JE_DrawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
+void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
     JE_word xloop = 0, yloop = 0;
     JE_byte *p = shape; /* shape pointer */
@@ -208,7 +211,7 @@ void JE_DrawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
     }
 }
 
-void JE_GrabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
+void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
     JE_word xloop = 0, yloop = 0;
     JE_byte *p = shape; /* shape pointer */
@@ -225,6 +228,38 @@ void JE_GrabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
         s -= 24;
         s += VGAScreen->w;
     }
+}
+
+void JE_mouseStart( void )
+{
+    const JE_word mouseCursorGr[3] /* [1..3] */ = {273, 275, 277};
+
+    JE_word tempw;
+
+    if(mouse_installed)
+    {
+        tempw = mouseCursorGr[mouseCursor];
+
+        service_SDL_events();
+        lastMouseX = mouse_x;
+        lastMouseY = mouse_y;
+
+        if(lastMouseX > 320 - 13)
+            lastMouseX = 320 - 13;
+        if(lastMouseY > 200 - 16)
+            lastMouseY = 200 - 16;
+
+        JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
+
+        /*JE_DrawShape2x2shadow(lastmousex+2,lastmousey+2,tempw,shapes6);*/
+        JE_DrawShape2x2(lastMouseX, lastMouseY, tempw, shapes6);
+     }
+}
+
+void JE_mouseReplace( void )
+{
+  if(mouse_installed)
+     JE_drawShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 }
 
 void newshape_init( void )

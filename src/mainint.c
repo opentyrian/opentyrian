@@ -30,6 +30,7 @@
 #include "config.h"
 #include "episodes.h"
 #include "sndmast.h"
+#include "setup.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
