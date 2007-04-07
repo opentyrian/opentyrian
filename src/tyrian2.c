@@ -164,72 +164,72 @@ void TitleScreen( JE_boolean animate )
 
         switch (lastkey_sym)
         {
-                case SDLK_UP:
-                    if (menu == 0)
-                    {
-                        menu = menunum-1;
-                    } else {
-                        menu--;
-                    }
-                    /* playsamplenum(Cursormove); */
-                    break;
-                case SDLK_DOWN:
-                    if (menu == menunum-1)
-                    {
-                        menu = 0;
-                    } else {
-                        menu++;
-                    }
-                    /* playsamplenum(Cursormove); */
-                    break;
-                case SDLK_RETURN:
-                    /* playsamplenum(Select); */
-                    switch (menu)
-                    {
-                        case 0: /* New game */
-                            break;
-                        case 1: /* Load game */
-                            /* JE_loadscreen(); */
-                            if (!gameloaded)
-                            {
-                                redraw = TRUE;
-                            }
-                            fadein = TRUE;
-                            break;
-                        case 2: /* High scores */
-                            /* JE_highscorescreen(); */
-                            fadein = TRUE;
-                            break;
-                        case 3: /* Instructions */
-                            /* JE_helpsystem(1); */
+            case SDLK_UP:
+                if (menu == 0)
+                {
+                    menu = menunum-1;
+                } else {
+                    menu--;
+                }
+                /* JE_playSampleNum(Cursormove); */
+                break;
+            case SDLK_DOWN:
+                if (menu == menunum-1)
+                {
+                    menu = 0;
+                } else {
+                    menu++;
+                }
+                /* JE_playSampleNum(Cursormove); */
+                break;
+            case SDLK_RETURN:
+                /* JE_playSampleNum(Select); */
+                switch (menu)
+                {
+                    case 0: /* New game */
+                        break;
+                    case 1: /* Load game */
+                        /* JE_loadscreen(); */
+                        if (!gameloaded)
+                        {
                             redraw = TRUE;
-                            fadein = TRUE;
-                            break;
-                        case 4: /* Ordering info */
-                            break;
-                        case 5: /* Demo */
-                            /* JE_InitPlayerData(); */
-                            PlayDemo = TRUE;
-                            if (PlayDemoNum++ > 4)
-                            {
-                                PlayDemoNum = 0;
-                            }
-                            break;
-                        case 6: /* Quit */
-                            quit = TRUE;
-                            break;
-                    }
-                    if (menu != 4) /* Tweak added to prevent fadein when selecting Ordering Info. */
-                    {
+                        }
+                        fadein = TRUE;
+                        break;
+                    case 2: /* High scores */
+                        /* JE_highscorescreen(); */
+                        fadein = TRUE;
+                        break;
+                    case 3: /* Instructions */
+                        JE_helpSystem(1);
                         redraw = TRUE;
-                    }
-                    break;
-                case SDLK_ESCAPE:
-                    quit = TRUE;
-                    break;
-                default:
-                    break;
-            }
+                        fadein = TRUE;
+                        break;
+                    case 4: /* Ordering info */
+                        break;
+                    case 5: /* Demo */
+                        /* JE_InitPlayerData(); */
+                        PlayDemo = TRUE;
+                        if (PlayDemoNum++ > 4)
+                        {
+                            PlayDemoNum = 0;
+                        }
+                        break;
+                    case 6: /* Quit */
+                        quit = TRUE;
+                        break;
+                }
+                if (menu != 4) /* Tweak added to prevent fadein when selecting Ordering Info. */
+                {
+                    redraw = TRUE;
+                }
+                break;
+            case SDLK_ESCAPE:
+                quit = TRUE;
+                break;
+            default:
+                break;
+        }
     } while (!(quit || gameloaded || jumpsection || playdemo || loaddestruct));
 }
 
