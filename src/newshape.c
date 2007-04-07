@@ -23,6 +23,11 @@
 #include "nortvars.h"
 #include "keyboard.h"
 #include "varz.h"
+#include "nortsong.h"
+#include "joystick.h"
+#include "params.h"
+
+extern int netQuit; /* placeholder */
 
 SDL_Surface *tempScreenSeg = NULL;
 
@@ -228,6 +233,47 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
         s -= 24;
         s += VGAScreen->w;
     }
+}
+
+JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
+{
+    if(time > 0)
+        setdelay(time);
+    do {
+        service_SDL_events();
+        mouseButton = lastmouse_but;
+        mouseX = mouse_x;
+        mouseY = mouse_y;
+        inputDetected = mousedown | keydown;
+
+        if(JE_joystickNotHeld())
+            inputDetected = TRUE;
+
+        if(time == 0 && temp != 0)
+        {
+            JE_mouseStart;
+            JE_ShowVGA;
+            JE_mouseReplace;
+        }
+
+        if(time == 0 && isNetworkGame)
+        {
+            /* TODO
+            JE_setNetByte(0);
+            JE_updateStream();
+            if(netQuit)
+            {
+                lastkey_sym = SDLK_ESC;
+                return(TRUE); *//* MXD assumes this default return value *//*
+            }
+            if(JE_scanNetByte(128))
+                return(TRUE); *//* MXD assumes this default return value */
+            /*Let other player continue moving around*/
+        }
+
+    } while(!(inputDetected || delaycount() == 0 || netQuit));
+
+    return(inputDetected);
 }
 
 void JE_mouseStart( void )

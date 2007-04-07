@@ -65,7 +65,7 @@ void JE_NewPurgeShapes( JE_byte table );
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 
-JE_boolean JE_WaitAction( JE_byte time, JE_boolean checkjoystick );
+JE_boolean JE_waitAction( JE_byte time, JE_boolean checkjoystick );
 void JE_mouseStart( void );
 void JE_mouseReplace( void );
 
