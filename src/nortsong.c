@@ -64,3 +64,8 @@ void waitdelayorkey( void )
         }
     }
 }
+
+void JE_playSampleNum( JE_byte samplenum )
+{
+    /* TODO dummy function */
+}

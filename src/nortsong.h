@@ -32,4 +32,6 @@ int delaycount( void );
 void waitdelay( void );
 void waitdelayorkey( void );
 
+void JE_playSampleNum( JE_byte samplenum );
+
 #endif /* NORTSONG_H */

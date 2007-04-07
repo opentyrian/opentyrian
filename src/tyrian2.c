@@ -33,6 +33,7 @@
 #include "joystick.h"
 #include "setup.h"
 #include "mainint.h"
+#include "sndmast.h"
 
 #include <string.h>
 
@@ -171,7 +172,7 @@ void TitleScreen( JE_boolean animate )
                 } else {
                     menu--;
                 }
-                /* JE_playSampleNum(Cursormove); */
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 if (menu == menunum-1)
@@ -180,10 +181,10 @@ void TitleScreen( JE_boolean animate )
                 } else {
                     menu++;
                 }
-                /* JE_playSampleNum(Cursormove); */
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
-                /* JE_playSampleNum(Select); */
+                JE_playSampleNum(Select);
                 switch (menu)
                 {
                     case 0: /* New game */

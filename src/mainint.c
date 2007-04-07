@@ -29,6 +29,7 @@
 #include "keyboard.h"
 #include "config.h"
 #include "episodes.h"
+#include "sndmast.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -170,25 +171,25 @@ JE_boolean JE_playerSelect( void )
                 sel--;
                 if(sel < 1)
                     sel = maxSel;
-                /*playsamplenum(_Cursormove);*/
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 sel++;
                 if(sel > maxSel)
                     sel = 1;
-                /*playsamplenum(_Cursormove);*/
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
                 quit = TRUE;
                 twoPlayerMode = (sel == 3);
                 onePlayerAction = (sel == 2);
-                /*playsamplenum(_Select);*/
+                JE_playSampleNum(Select);
                 if(sel == 4)
                     netQuit = TRUE;
                 break;
             case SDLK_ESCAPE:
                quit = TRUE;
-               /*playsamplenum(_ESC);*/
+               JE_playSampleNum(ESC);
                return(FALSE);
                break;
             default:
@@ -244,18 +245,18 @@ JE_boolean JE_episodeSelect( void )
                 sel--;
                 if(sel < 1)
                     sel = max;
-                /*playsamplenum(_Cursormove);*/
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 sel++;
                 if(sel > max)
                     sel = 1;
-                /*playsamplenum(_Cursormove);*/
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
                 if(episodeAvail[sel-1])
                 {
-                    /*playsamplenum(_Select);*/
+                    JE_playSampleNum(Select);
 
                     quit = TRUE;
                     JE_initEpisode(sel);
@@ -263,7 +264,7 @@ JE_boolean JE_episodeSelect( void )
                 } else {
                     if(sel > 1)
                     {
-                        /*playsamplenum(_ESC);*/
+                        JE_playSampleNum(ESC);
                         JE_FadeBlack (10);
                         /*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
                         verticalHeight = 9;
@@ -283,7 +284,7 @@ JE_boolean JE_episodeSelect( void )
                 break;
             case SDLK_ESCAPE:
                 quit = TRUE;
-                /*playsamplenum(_ESC);*/
+                JE_playSampleNum(ESC);
                 return(FALSE);
                 break;
             default:
@@ -337,13 +338,13 @@ JE_boolean JE_difficultySelect( void )
                 sel--;
                 if(sel < 1)
                     sel = maxSel;
-                /*playsamplenum(_Cursormove);*/
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 sel++;
                 if(sel > maxSel)
                     sel = 1;
-                /*playsamplenum(_Cursormove);*/
+                JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
                 quit = TRUE;
@@ -353,11 +354,11 @@ JE_boolean JE_difficultySelect( void )
                 if(sel == 6)
                     sel = 8;
                 difficultyLevel = sel;
-                /*playsamplenum(_Select);*/
+                JE_playSampleNum(Select);
                 break;
             case SDLK_ESCAPE:
                 quit = TRUE;
-                /*playsamplenum(_ESC);*/
+                JE_playSampleNum(ESC);
                 return(FALSE);
                 break;
             case SDLK_g:
