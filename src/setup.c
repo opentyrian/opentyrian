@@ -30,7 +30,9 @@ int haltGame = 0, netQuit = 0; /* placeholders */
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
+#ifdef NDEBUG /* Disable mouse grabbing/etc in debug builds */
     SDL_WarpMouse(160, 100);
+#endif
     lastkey_sym = 0;
 
     do {
@@ -48,6 +50,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
         if(mousedown)
             lastkey_sym = SDLK_RETURN;
 
+#ifdef NDEBUG
         if(mouse_installed)
         {
             if(abs(mouse_y - 100) > 10)
@@ -67,6 +70,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
                     lastkey_sym = SDLK_RIGHT;
             }
         }
+#endif
 
         if(*waitTime > 0)
             *waitTime--;
