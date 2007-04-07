@@ -181,17 +181,17 @@ JE_boolean JE_joystickTranslate( void )
     if(tempb)
     {
         if(joystickUp)
-            lastkey_sym = SDLK_UP; /* scancode = 72; */
+            lastkey_sym = SDLK_UP;
         if(joystickDown)
-            lastkey_sym = SDLK_DOWN; /* scancode = 80; */
+            lastkey_sym = SDLK_DOWN;
         if(joystickLeft)
-            lastkey_sym = SDLK_LEFT; /* scancode = 75; */
+            lastkey_sym = SDLK_LEFT;
         if(joystickRight)
-            lastkey_sym = SDLK_RIGHT; /* scancode = 77; */
+            lastkey_sym = SDLK_RIGHT;
         if(button[0])
-            lastkey_sym = SDLK_RETURN; /* k = 13; */
+            lastkey_sym = SDLK_RETURN;
         if(button[1])
-            lastkey_sym = SDLK_ESCAPE; /* k = 27; */
+            lastkey_sym = SDLK_ESCAPE;
     }
 
     return(tempb);
@@ -202,12 +202,12 @@ JE_boolean JE_joystickNotHeld( void )
     if(JE_joystickTranslate())
     {
 
-        if((k == 13) || (k == 27))
+        if(lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_ESCAPE)
         {
             if(buttonHeld)
             {
-                k = 0;
-            } else  {
+                lastkey_sym = 0;
+            } else {
                 buttonHeld = TRUE;
                 return(TRUE);
             }
