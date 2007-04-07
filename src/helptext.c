@@ -111,9 +111,9 @@ void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
                     }
                 }
 
-            } while((message[pos-1] != ' ') && !endstring);
+            } while(!(message[pos-1] != ' ' || endstring));
 
-        } while(!(pos - startpos > boxwidth) && !endstring);
+        } while(!(pos - startpos > boxwidth || endstring));
 
         substring = malloc(endpos - startpos + 1);
         memcpy(substring, message + startpos - 1, endpos - startpos);

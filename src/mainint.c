@@ -290,7 +290,7 @@ JE_boolean JE_episodeSelect( void )
                 break;
         }
 
-    } while(!quit && !haltGame /*&& !netQuit*/);
+    } while(!(quit || haltGame /*|| netQuit*/));
     pItems[8] = episodeNum;
 
     return(FALSE); /*MXD assumes this default return value here*/
@@ -374,7 +374,7 @@ JE_boolean JE_difficultySelect( void )
                 break;
         }
 
-    } while(!quit && !haltGame /*&& !netQuit*/);
+    } while(!(quit || haltGame /*|| netQuit*/));
 
     return(TRUE); /*MXD assumes this default return value here*/
 }
