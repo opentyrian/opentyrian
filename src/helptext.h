@@ -61,7 +61,7 @@ extern JE_byte menuHelp[MaxMenu][11];   /* [1..maxmenu, 1..11] */
 /*JE_byte temp, temp2;*/
 
 void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth );
-void JE_hBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth );
+void JE_HBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth );
 void JE_loadHelpText( void );
 
 #endif /* HELPTEXT_H */
