@@ -39,7 +39,7 @@ void JE_initPlayerData( void );
 void JE_highScoreScreen( void );
 void JE_gammaCorrect( JE_colortype *colorBuffer, JE_byte gamma );
 JE_boolean JE_gammaCheck( void );
-void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma );
+/* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
 void JE_loadOrderingInfo( void );
 JE_boolean JE_nextEpisode( void );
 JE_boolean JE_episodeSelect( void );
@@ -71,7 +71,7 @@ void JE_inGameDisplays( void );
 void JE_mainKeyboardInput( void );
 void JE_pauseGame( void );
 
-void JE_loadCompShapesB( JE_byte **Shapes, FILE *f, JE_word *ShapeSize );
+void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word *shapeSize );
 
 void JE_loadMainShapeTables( void );
 void JE_mainGamePlayerFunctions( void );
