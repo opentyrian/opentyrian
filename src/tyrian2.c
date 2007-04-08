@@ -252,7 +252,7 @@ void JE_OpeningAnim( void )
 
     moveTyrianLogoUp = TRUE;
 
-    if(!isNetworkGame && !stoppedDemo)
+    if (!isNetworkGame && !stoppedDemo)
     {
         memcpy(colors, black, sizeof(colors));
         memset(black, 63, sizeof(black));
@@ -265,7 +265,7 @@ void JE_OpeningAnim( void )
         memset(black, 0, sizeof(black));
 
         setdelay(200);
-        while(!(delaycount() == 0 || JE_anyButton()));
+        while (!(delaycount() == 0 || JE_anyButton()));
 
         JE_FadeBlack(15);
 
@@ -276,7 +276,7 @@ void JE_OpeningAnim( void )
         JE_FadeColor(10);
 
         setdelay(200);
-        while(!(delaycount() == 0 || JE_anyButton()));
+        while (!(delaycount() == 0 || JE_anyButton()));
 
         JE_FadeBlack(10);
     }

@@ -44,38 +44,47 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 
         inputDetected = keydown | mousedown | JE_joystickNotHeld();
 
-        if(lastkey_sym == SDLK_SPACE)
+        if (lastkey_sym == SDLK_SPACE)
+        {
             lastkey_sym = SDLK_RETURN;
+        }
 
-        if(mousedown)
+        if (mousedown)
+        {
             lastkey_sym = SDLK_RETURN;
+        }
 
 #ifdef NDEBUG
-        if(mouse_installed)
+        if (mouse_installed)
         {
-            if(abs(mouse_y - 100) > 10)
+            if (abs(mouse_y - 100) > 10)
             {
                 inputDetected = TRUE;
-                if(mouse_y - 100 < 0)
+                if (mouse_y - 100 < 0)
+                {
                     lastkey_sym = SDLK_UP;
-                else
+                } else {
                     lastkey_sym = SDLK_DOWN;
+                }
             }
-            if(abs(mouse_x - 160) > 10)
+            if (abs(mouse_x - 160) > 10)
             {
                 inputDetected = TRUE;
-                if(mouse_x - 160 < 0)
+                if (mouse_x - 160 < 0)
+                {
                     lastkey_sym = SDLK_LEFT;
-                else
+                } else {
                     lastkey_sym = SDLK_RIGHT;
+                }
             }
         }
 #endif
 
-        if(*waitTime > 0)
+        if (*waitTime > 0)
+        {
             *waitTime--;
-
-    } while(!(inputDetected || *waitTime == 1 || haltGame || netQuit));
+        }
+    } while (!(inputDetected || *waitTime == 1 || haltGame || netQuit));
 }
 
 /* TODO */

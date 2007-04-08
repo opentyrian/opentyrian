@@ -35,7 +35,7 @@ void setdelay( JE_byte delay )
 
 INLINE int delaycount( void )
 {
-    return(SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
+    return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
 }
 
 void waitdelay( void )

@@ -52,14 +52,16 @@ void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s )
 
     JE_resetFileExt(&f, buffer, FALSE);
 
-    for(x = 0; x < 304; x++)
+    for (x = 0; x < 304; x++)
     {
         active = getc(f);
 
-        if(active)
+        if (active)
+        {
             fread((*Shapes)[x], 1, sizeof(*(*Shapes)[x]), f);
-        else
+        } else {
             memset((*Shapes)[x], 0, sizeof(*(*Shapes)[x]));
+        }
     }
 
     fclose(f);
@@ -80,45 +82,52 @@ void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s )
 
     JE_resetFileExt(&f, buffer, FALSE);
 
-    for(z = 0; z < 304; z++)
+    for (z = 0; z < 304; z++)
     {
         active = getc(f);
 
-        if(active)
+        if (active)
         {
             fread(tempshape, 1, sizeof(tempshape), f);
 
-            for(y = 0; y <= 13; y++)
+            for (y = 0; y <= 13; y++)
             {
 
                 black = 0;
                 color = 0;
-                for(x = 0; x <= 11; x++)
+                for (x = 0; x <= 11; x++)
                 {
-                    if(tempshape[x + y * 12] == 0)
+                    if (tempshape[x + y * 12] == 0)
+                    {
                         black++;
-                    else
+                    } else {
                         color++;
+                    }
                 }
 
-                if(black == 12)
+                if (black == 12)
                 {  /* Compression Value 0 - All black */
                     (*Shapes)[z][y * 13] = 0;
-                }
-                else
-                    if(color == 12)
+                } else {
+                    if (color == 12)
                     {  /* Compression Value 1 - All color */
                         (*Shapes)[z][y * 13] = 1;
-                        for(x = 0; x <= 11; x++)
+                        for (x = 0; x <= 11; x++)
+                        {
                             (*Shapes)[z][x + 1 + y * 13] = tempshape[x + y * 12];
+                        }
                     } else {
                         (*Shapes)[z][y * 13] = 2;
-                        for(x = 0; x <= 11; x++)
+                        for (x = 0; x <= 11; x++)
+                        {
                             (*Shapes)[z][x + 1 + y * 13] = tempshape[x + y * 12];
+                        }
                     }
+                }
             }
-        } else
+        } else {
             memset((*Shapes)[z], 0, sizeof((*Shapes)[z]));
+        }
     }
 
     fclose(f);
@@ -133,8 +142,10 @@ void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s )
     char buffer[11];
     sprintf(buffer, "NEWSH%c.SHP", s);
 
-    if(*Shapes != NULL)
+    if (*Shapes != NULL)
+    {
         free(*Shapes);
+    }
 
     JE_resetFileExt(&f, buffer, FALSE);
 
@@ -162,13 +173,13 @@ void JE_DrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     p = Shape + ((s_ - 1) * 2);
     p = Shape + *(short *)p;
 
-    while(*p != 0x0f)
+    while (*p != 0x0f)
     {
         s += *p & 0x0f;
         i = (*p & 0xf0) >> 4;
-        if(i)
+        if (i)
         {
-            while(i--)
+            while (i--)
             {
                 p++;
                 *s = *p;
@@ -195,13 +206,13 @@ void JE_SuperDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     p = Shape + ((s_ - 1) * 2);
     p = Shape + *(short *)p;
 
-    while(*p != 0x0f)
+    while (*p != 0x0f)
     {
         s += *p & 0x0f;
         i = (*p & 0xf0) >> 4;
-        if(i)
+        if (i)
         {
-            while(i--)
+            while (i--)
             {
                 p++;
                 *s = (((*p & 0x0f) + (*s & 0x0f)) >> 1) | (*p & 0xf0);
@@ -228,13 +239,13 @@ void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     p = Shape + ((s_ - 1) * 2);
     p = Shape + *(short *)p;
 
-    while(*p != 0x0f)
+    while (*p != 0x0f)
     {
         s += *p & 0x0f;
         i = (*p & 0xf0) >> 4;
-        if(i)
+        if (i)
         {
-            while(i--)
+            while (i--)
             {
                 p++;
                 *s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
@@ -250,33 +261,33 @@ void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
 
 void JE_DrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_DrawShape2(x,      y,      s,      Shape);
-  JE_DrawShape2(x + 12, y,      s + 1,  Shape);
-  JE_DrawShape2(x,      y + 14, s + 19, Shape);
-  JE_DrawShape2(x + 12, y + 14, s + 20, Shape);
+  JE_DrawShape2(x,    y,    s,    Shape);
+  JE_DrawShape2(x+12, y,    s+1,  Shape);
+  JE_DrawShape2(x,    y+14, s+19, Shape);
+  JE_DrawShape2(x+12, y+14, s+20, Shape);
 }
 
 void JE_SuperDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_SuperDrawShape2(x,      y,      s,      Shape);
-  JE_SuperDrawShape2(x + 12, y,      s + 1,  Shape);
-  JE_SuperDrawShape2(x,      y + 14, s + 19, Shape);
-  JE_SuperDrawShape2(x + 12, y + 14, s + 20, Shape);
+  JE_SuperDrawShape2(x,    y,    s,    Shape);
+  JE_SuperDrawShape2(x+12, y,    s+1,  Shape);
+  JE_SuperDrawShape2(x,    y+14, s+19, Shape);
+  JE_SuperDrawShape2(x+12, y+14, s+20, Shape);
 }
 
 void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_DrawShape2Shadow(x,      y,      s,      Shape);
-  JE_DrawShape2Shadow(x + 12, y,      s + 1 , Shape);
-  JE_DrawShape2Shadow(x,      y + 14, s + 19, Shape);
-  JE_DrawShape2Shadow(x + 12, y + 14, s + 20, Shape);
+  JE_DrawShape2Shadow(x,    y,    s,    Shape);
+  JE_DrawShape2Shadow(x+12, y,    s+1 , Shape);
+  JE_DrawShape2Shadow(x,    y+14, s+19, Shape);
+  JE_DrawShape2Shadow(x+12, y+14, s+20, Shape);
 }
 
 JE_boolean JE_anyButton( void )
 {
     JE_joystick2();
     service_SDL_events();
-    return(keydown || mousedown || button[0]);
+    return keydown || mousedown || button[0];
 }
 
 /* TODO */

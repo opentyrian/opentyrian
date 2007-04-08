@@ -55,29 +55,33 @@ int main( int argc, char *argv[] )
     playDemoNum = 0;
     playDemo = FALSE;
 
-	/* TODO: LoadConfiguration(); */
+    /* TODO: LoadConfiguration(); */
 
-	/* TODO: Tyrian originally checked availible memory here. */
+    /* TODO: Tyrian originally checked availible memory here. */
 
     /* TODO ParamCheck(); */
 
-    if(scanForJoystick)
+    if (scanForJoystick)
     {
         JE_joystickInit();
-        if(joystick_installed)
-           printf("Joystick detected.  %d   %d\n", jCenterX, jCenterY);
-        else
-           printf("No joystick found.\n");
-     } else {
+        if (joystick_installed)
+        {
+            printf("Joystick detected.  %d   %d\n", jCenterX, jCenterY);
+        } else {
+            printf("No joystick found.\n");
+        }
+    } else {
         printf("Joystick override.\n");
         joystick_installed = FALSE;
-     }
+    }
 
-    if(mouse_installed)
+    if (mouse_installed)
     {
         printf("Mouse Detected.   ");
         if(mouse_threeButton)
+        {
             printf("Mouse driver reports three buttons.");
+        }
         printf("\n");
     } else {
         printf("No mouse found.\n");
@@ -86,7 +90,9 @@ int main( int argc, char *argv[] )
     if(tyrianXmas)
     {
         if(JE_getFileSize("TYRIANC.SHP") == 0)
+        {
             tyrianXmas = FALSE;
+        }
         /*if(JE_getFileSize("VOICESC.SHP") == 0) tyrianXmas = FALSE;*/
         if(tyrianXmas)
         {
@@ -95,8 +101,10 @@ int main( int argc, char *argv[] )
             printf("  Activate Christmas? (Y/N)\n");
             printf("*****************************\n");
             wait_keyboard();
-            if(lastkey_sym != SDLK_y)
+            if (lastkey_sym != SDLK_y)
+            {
                 tyrianXmas = FALSE;
+            }
         } else {
             printf("Christmas is missing.\n");
         }
@@ -111,8 +119,9 @@ int main( int argc, char *argv[] )
     /* TODO initialize sound system */
 
     if(recordDemo)
+    {
         printf("Game will be recorded.\n");
-
+    }
 
     megaData1 = malloc(sizeof(*megaData1));
     megaData2 = malloc(sizeof(*megaData2));
@@ -125,8 +134,8 @@ int main( int argc, char *argv[] )
     JE_loadHelpText();
     /*debuginfo("Help text complete");*/
 
-	/* here ends line 92771 of TYRIAN2.PAS
-	 * TODO: Finish it and stuff. */
+    /* here ends line 92771 of TYRIAN2.PAS
+    * TODO: Finish it and stuff. */
 
     JE_loadpals();
 
@@ -139,5 +148,5 @@ int main( int argc, char *argv[] )
 
     JE_closevga256();
 
-	return 0;
+    return 0;
 }

@@ -309,8 +309,10 @@ JE_boolean JE_playerSelect( void )
 
         JE_dString(JE_fontCenter(playerName[0], FontShapes), 20, playerName[0], FontShapes);
 
-        for(temp = 1; temp <= maxSel; temp++)
+        for (temp = 1; temp <= maxSel; temp++)
+        {
             JE_outTextAdjust(JE_fontCenter(playerName[temp], SmallFontShapes), temp * 24 + 30, playerName[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+        }
 
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
@@ -319,18 +321,22 @@ JE_boolean JE_playerSelect( void )
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
-        switch(lastkey_sym)
+        switch (lastkey_sym)
         {
             case SDLK_UP:
                 sel--;
-                if(sel < 1)
+                if (sel < 1)
+                {
                     sel = maxSel;
+                }
                 JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 sel++;
-                if(sel > maxSel)
+                if (sel > maxSel)
+                {
                     sel = 1;
+                }
                 JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
@@ -338,21 +344,23 @@ JE_boolean JE_playerSelect( void )
                 twoPlayerMode = (sel == 3);
                 onePlayerAction = (sel == 2);
                 JE_playSampleNum(Select);
-                if(sel == 4)
+                if (sel == 4)
+                {
                     netQuit = TRUE;
+                }
                 break;
             case SDLK_ESCAPE:
                quit = TRUE;
                JE_playSampleNum(ESC);
-               return(FALSE);
+               return FALSE;
                break;
             default:
                 break;
         }
 
-    } while(!quit);
+    } while (!quit);
 
-    return(TRUE); /*MXD assumes this default return value here*/
+    return TRUE; /*MXD assumes this default return value here*/
 }
 
 JE_boolean JE_episodeSelect( void )
@@ -363,15 +371,19 @@ JE_boolean JE_episodeSelect( void )
 
     max = EpisodeMax;
 
-    if(!(episodeAvail[0] && episodeAvail[1] && episodeAvail[2]))
+    if (!(episodeAvail[0] && episodeAvail[1] && episodeAvail[2]))
+    {
         episodeAvail[3] = FALSE;
+        }
 
-    if(episodeAvail[4] == FALSE)
+    if (episodeAvail[4] == FALSE)
+    {
         max = 4;
+    }
 
     /*if(!episodeavail[3]) max = 3;*/
 
-    startepisodeselect:
+startepisodeselect:
     JE_LoadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
     JE_ShowVGA();
@@ -384,7 +396,7 @@ JE_boolean JE_episodeSelect( void )
 
         JE_dString(JE_fontCenter(episodeName[0], FontShapes), 20, episodeName[0], FontShapes);
 
-        for(temp = 1; temp <= max; temp++)
+        for (temp = 1; temp <= max; temp++)
             JE_outTextAdjust(20, temp * 30 + 20, episodeName[temp], 15, - 4 - (!episodeAvail[temp-1] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
 
         /*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
@@ -393,30 +405,34 @@ JE_boolean JE_episodeSelect( void )
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
-        switch(lastkey_sym)
+        switch (lastkey_sym)
         {
             case SDLK_UP:
                 sel--;
-                if(sel < 1)
+                if (sel < 1)
+                {
                     sel = max;
+                }
                 JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 sel++;
-                if(sel > max)
+                if (sel > max)
+                {
                     sel = 1;
+                }
                 JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
-                if(episodeAvail[sel-1])
+                if (episodeAvail[sel-1])
                 {
                     JE_playSampleNum(Select);
 
                     quit = TRUE;
                     JE_initEpisode(sel);
-                    return(TRUE);
+                    return TRUE;
                 } else {
-                    if(sel > 1)
+                    if (sel > 1)
                     {
                         JE_playSampleNum(ESC);
                         JE_FadeBlack (10);
@@ -428,8 +444,7 @@ JE_boolean JE_episodeSelect( void )
                         JE_helpBox(10, 10, helpTxt[29], 50);
                         JE_ShowVGA();
                         JE_FadeColor(10);
-                        while(!JE_anyButton())
-                            ;
+                        while (!JE_anyButton());
                         lastkey_sym = 0;
                         JE_FadeBlack(10);
                         goto startepisodeselect;
@@ -439,16 +454,16 @@ JE_boolean JE_episodeSelect( void )
             case SDLK_ESCAPE:
                 quit = TRUE;
                 JE_playSampleNum(ESC);
-                return(FALSE);
+                return FALSE;
                 break;
             default:
                 break;
         }
 
-    } while(!(quit || haltGame /*|| netQuit*/));
+    } while (!(quit || haltGame /*|| netQuit*/));
     pItems[8] = episodeNum;
 
-    return(FALSE); /*MXD assumes this default return value here*/
+    return FALSE; /*MXD assumes this default return value here*/
 }
 
 JE_boolean JE_difficultySelect( void )
@@ -467,11 +482,12 @@ JE_boolean JE_difficultySelect( void )
     maxSel = 3;
 
     do {
-
         JE_dString(JE_fontCenter(difficultyName[0], FontShapes), 20, difficultyName[0], FontShapes);
 
-        for(temp = 1; temp <= maxSel; temp++)
+        for (temp = 1; temp <= maxSel; temp++)
+        {
             JE_outTextAdjust(JE_fontCenter(difficultyName[temp], SmallFontShapes), temp * 24 + 30, difficultyName[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+        }
 
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
@@ -480,58 +496,76 @@ JE_boolean JE_difficultySelect( void )
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
-        if(keysactive[SDLK_l] && keysactive[SDLK_o] && keysactive[SDLK_r] && keysactive[SDLK_d])
+        if (keysactive[SDLK_l] && keysactive[SDLK_o] && keysactive[SDLK_r] && keysactive[SDLK_d])
         {
-            if(maxSel == 5)
+            if (maxSel == 5)
+            {
                 maxSel = 6;
+            }
         }
 
-        switch(lastkey_sym)
+        switch (lastkey_sym)
         {
             case SDLK_UP:
                 sel--;
-                if(sel < 1)
+                if (sel < 1)
+                {
                     sel = maxSel;
+                }
                 JE_playSampleNum(CursorMove);
                 break;
             case SDLK_DOWN:
                 sel++;
-                if(sel > maxSel)
+                if (sel > maxSel)
+                {
                     sel = 1;
+                }
                 JE_playSampleNum(CursorMove);
                 break;
             case SDLK_RETURN:
                 quit = TRUE;
 
-                if(sel == 5)
+                if (sel == 5)
+                {
                     sel++;
-                if(sel == 6)
+                }
+                if (sel == 6)
+                {
                     sel = 8;
+                }
                 difficultyLevel = sel;
                 JE_playSampleNum(Select);
                 break;
             case SDLK_ESCAPE:
                 quit = TRUE;
                 JE_playSampleNum(ESC);
-                return(FALSE);
+                return FALSE;
                 break;
             case SDLK_g:
-                if(SDL_GetModState() & KMOD_SHIFT)
-                    if(maxSel < 4)
+                if (SDL_GetModState() & KMOD_SHIFT)
+                {
+                    if (maxSel < 4)
+                    {
                         maxSel = 4;
+                    }
+                }
                 break;
             case SDLK_RIGHTBRACKET:
-                if(SDL_GetModState() & KMOD_SHIFT)
-                    if(maxSel == 4)
+                if (SDL_GetModState() & KMOD_SHIFT)
+                {
+                    if (maxSel == 4)
+                    {
                         maxSel = 5;
+                    }
+                }
                 break;
             default:
                 break;
         }
 
-    } while(!(quit || haltGame /*|| netQuit*/));
+    } while (!(quit || haltGame /*|| netQuit*/));
 
-    return(TRUE); /*MXD assumes this default return value here*/
+    return TRUE; /*MXD assumes this default return value here*/
 }
 
 void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
@@ -551,21 +585,26 @@ void JE_loadMainShapeTables( void )
     JE_ShpPosType shpPos;
     JE_word shpNumb;
 
-    if(tyrianXmas)
+    if (tyrianXmas)
+    {
         JE_resetFileExt(&f, "TYRIANC.SHP", FALSE);
-    else
+    } else {
         JE_resetFileExt(&f, "TYRIAN.SHP", FALSE);
+    }
 
     fread(&shpNumb, 2, 1, f);
-    for(x = 0; x < shpNumb; x++)
+    for (x = 0; x < shpNumb; x++)
+    {
         fread(&shpPos[x], sizeof(shpPos[x]), 1, f);
+    }
     fseek(f, 0, SEEK_END);
     shpPos[shpNumb] = ftell(f);
 
     /*fclose(f);*/
 
-    for(temp = 0; temp < 7; temp++)
-    { /*Load EST shapes*/
+    /*Load EST shapes*/
+    for (temp = 0; temp < 7; temp++)
+    {
         fseek(f, shpPos[temp], SEEK_SET);
         JE_newLoadShapesB(shapeReorderList[temp], f);
     }

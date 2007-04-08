@@ -47,12 +47,15 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
 
     JE_resetFileExt(&PCXfile, "TYRIAN.PIC", FALSE);
 
-    if(notYetLoadedPCX)
-    {     /*Same as old AnalyzePic*/
+    /*Same as old AnalyzePic*/
+    if (notYetLoadedPCX)
+    {
         notYetLoadedPCX = FALSE;
         fread(&x, 2, 1, PCXfile);
-        for(x = 0; x < PCXnum; x++)
+        for (x = 0; x < PCXnum; x++)
+        {
             fread(&pcxpos[x], sizeof(pcxpos[x]), 1, PCXfile);
+        }
         fseek(PCXfile, 0, SEEK_END);
         pcxpos[PCXnum] = ftell(PCXfile);
     }
@@ -62,9 +65,9 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
     fclose(PCXfile);
 
     p = (JE_byte *)buf;
-    for(i = 0; i < 320 * 200; )
+    for (i = 0; i < 320 * 200; )
     {
-        if((*p & 0xc0) == 0xc0)
+        if ((*p & 0xc0) == 0xc0)
         {
             i += (*p & 0x3f);
             memset(s, *(p + 1), (*p & 0x3f));
@@ -74,13 +77,15 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
             *s = *p;
             s++; p++;
         }
-        if(i && (i % 320 == 0))
+        if (i && (i % 320 == 0))
         {
             s += VGAScreen->w - 320;
         }
     }
 
     memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
-    if(storepal)
+    if (storepal)
+    {
         JE_UpdateColorsFast(&colors);
+    }
 }

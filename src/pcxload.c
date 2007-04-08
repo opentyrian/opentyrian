@@ -28,8 +28,8 @@ JE_boolean overrideblack = FALSE;
 
 void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer )
 {
-	int i;
-    for(i = 0; i < 256; i++)
+    int i;
+    for (i = 0; i < 256; i++)
     {
         ColorBuffer[i]->r >>= 2;
         ColorBuffer[i]->g >>= 2;
@@ -59,14 +59,16 @@ printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
     fread(&header.ymax, 2, 1, fi);
     fread(&header.hres, 2, 1, fi);
     fread(&header.vres, 2, 1, fi);
-    for(i = 0; i < 48; i++)
+    for (i = 0; i < 48; i++)
+    {
         fread(&header.palette[i], 1, 1, fi);
+    }
     fread(&header.reserved, 1, 1, fi);
     fread(&header.colour_planes, 1, 1, fi);
     fread(&header.bytes_per_line, 2, 1, fi);
     fread(&header.palette_type, 2, 1, fi);
 
-    if((header.manufacturer == 10) && (header.version == 5) && (header.bits_per_pixel == 8) && (header.colour_planes == 1))
+    if ((header.manufacturer == 10) && (header.version == 5) && (header.bits_per_pixel == 8) && (header.colour_planes == 1))
     {
         /* TODO */
     }

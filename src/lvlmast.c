@@ -135,22 +135,21 @@ const char lvlFile5[LVLNum5][9] = /* [1..lvlnum5] of string [8] */
 */
 
 /*
-�������������
 TYPE 5: Shape Files      
-��������������
-      SHAPES1.DAT  o      Items
-      SHAPES3.DAT  o      Shots
-      SHAPES6.DAT  o      Explosions
-      SHAPES9.DAT  o      Player ships/options
+
+      SHAPES1.DAT  o - - - -  Items
+      SHAPES3.DAT  o - - - -  Shots
+      SHAPES6.DAT  o - - - -  Explosions
+      SHAPES9.DAT  o - - - -  Player ships/options
 
  1    SHAPES2.DAT  - o - - -  Tyrian ships
  2    SHAPES4.DAT  - o - - -  TyrianBoss
  3    SHAPES7.DAT  - - - - -  Iceships
  4    SHAPES8.DAT  - - - - -  Tunnel World
- 5    SHAPESA.DAT  o    -  Mine Stuff
+ 5    SHAPESA.DAT  o - - - -  Mine Stuff
  6    SHAPESB.DAT  - - - - -  IceBoss
  7    SHAPESC.DAT  - o - - -  Deliani Stuff
- 8    SHAPESD.DAT  o    -  Asteroid Stuff I
+ 8    SHAPESD.DAT  o - - - -  Asteroid Stuff I
  9    SHAPESE.DAT  - o - - -  Tyrian Bonus Rock + Bubbles
  10   SHAPESF.DAT  - o - - -  Savara Stuff I
  11   SHAPESG.DAT  - - - - -  Giger Stuff
@@ -159,18 +158,18 @@ TYPE 5: Shape Files
  14   SHAPESJ.DAT  - - - - -  Jungle Stuff
  15   SHAPESK.DAT  - - - - -  Snowballs
  16   SHAPESL.DAT  - - - - o  Satellites
- 17   SHAPESM.DAT  o    -  Asteroid Stuff IV
+ 17   SHAPESM.DAT  o - - - -  Asteroid Stuff IV
  18   SHAPESN.DAT  - - - - -  Giger Boss
  19   SHAPESO.DAT  - o - - -  Savara Boss
- 20   SHAPESP.DAT  o    -  Asteroid Stuff III
- 21   SHAPESQ.DAT  o    -  Coins and Gems
+ 20   SHAPESP.DAT  o - - - -  Asteroid Stuff III
+ 21   SHAPESQ.DAT  o - - - -  Coins and Gems
  22   SHAPESR.DAT  - - - - -  TunnelWorld Boss
- 23   SHAPESS.DAT  o    -  Asteroid Stuff II
+ 23   SHAPESS.DAT  o - - - -  Asteroid Stuff II
  24   SHAPEST.DAT  - o - - -  Deli Boss
  25   SHAPESU.DAT  - - - - -  Deli Stuff II
  28   SHAPESV.DAT  - - o - o  Misc Stuff/Cars
  27   SHAPES#.DAT  - - - o o  Sawblades
  31   SHAPES(.DAT  - - - - o  Desert/Lava
-                  ������
+
                    M 1 2 3 4  episode
 */

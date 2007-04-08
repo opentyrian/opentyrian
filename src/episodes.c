@@ -81,7 +81,7 @@ void JE_loadItemDat( void )
     fclose(lvlFile);
 }
 
-void JE_initEpisode(JE_byte newEpisode)
+void JE_initEpisode( JE_byte newEpisode )
 {
     if(newEpisode != episodeNum)
     {
