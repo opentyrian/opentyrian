@@ -34,10 +34,9 @@
 #include "setup.h"
 #include "mainint.h"
 #include "sndmast.h"
+#include "params.h"
 
 #include <string.h>
-
-JE_boolean MoveTyrianLogoUp = TRUE; /* TODO TODO REMOVE!!!!!!!!!!! */
 
 void JE_TitleScreen( JE_boolean animate )
 {
@@ -97,7 +96,7 @@ void JE_TitleScreen( JE_boolean animate )
 
                 memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
-                if (MoveTyrianLogoUp)
+                if (moveTyrianLogoUp)
                 {
                     temp = 62;
                 } else {
@@ -121,7 +120,7 @@ void JE_TitleScreen( JE_boolean animate )
 
                 fadein = FALSE;
 
-                if (MoveTyrianLogoUp)
+                if (moveTyrianLogoUp)
                 {
                     for (temp = 61; temp >= 4; temp -= 2)
                     {
@@ -130,13 +129,13 @@ void JE_TitleScreen( JE_boolean animate )
                         setdelay(2);
                         memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
-                        JE_newDrawCShapeNum(PlanetShapes,146,11,temp);
+                        JE_newDrawCShapeNum(PlanetShapes, 146, 11, temp);
 
                         JE_ShowVGA();
                         waitdelay();
                     }
                 }
-                MoveTyrianLogoUp = FALSE;
+                moveTyrianLogoUp = FALSE;
 
                 /* Draw Menu Text on Screen */
                 for (temp = 0; temp < menunum; temp++)
@@ -251,9 +250,9 @@ void JE_OpeningAnim( void )
 {
     /*JE_clr256();*/
 
-    /*movetyrianlogoup = TRUE;*/
+    moveTyrianLogoUp = TRUE;
 
-    if(1) /*(!IsNetworkGame && !StoppedDemo)*/
+    if(!isNetworkGame && !stoppedDemo)
     {
         memcpy(colors, black, sizeof(colors));
         memset(black, 63, sizeof(black));
@@ -266,7 +265,7 @@ void JE_OpeningAnim( void )
         memset(black, 0, sizeof(black));
 
         setdelay(200);
-        while(delaycount() && !JE_anyButton());
+        while(!(delaycount() || JE_anyButton()));
 
         JE_FadeBlack(15);
 
@@ -277,7 +276,7 @@ void JE_OpeningAnim( void )
         JE_FadeColor(10);
 
         setdelay(200);
-        while(delaycount() && !JE_anyButton());
+        while(!(delaycount() || JE_anyButton()));
 
         JE_FadeBlack(10);
     }

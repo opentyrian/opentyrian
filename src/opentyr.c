@@ -48,6 +48,9 @@ int main( int argc, char *argv[] )
 
     JE_scanForEpisodes();
 
+    JE_initvga256();
+    init_keyboard();
+
     recordFileNum = 1;
     playDemoNum = 0;
     playDemo = FALSE;
@@ -124,9 +127,6 @@ int main( int argc, char *argv[] )
 
 	/* here ends line 92771 of TYRIAN2.PAS
 	 * TODO: Finish it and stuff. */
-
-    JE_initvga256();
-    init_keyboard();
 
     JE_loadpals();
 
