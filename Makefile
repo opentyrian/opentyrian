@@ -1,5 +1,5 @@
 # BUILD SETTINGS ###################################
-DEBUG := 1
+DEBUG := 0
 # Valid values: WINDOWS, UNIX
 PLATFORM := UNIX
 PROFILE := 0
@@ -24,7 +24,7 @@ else
 endif
 
 
-CFLAGS := -ansi -pedantic -Wall -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
+CFLAGS := -ansi -pedantic -Wall -Wextra -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
 LDFLAGS := $(SDL_LDFLAGS) -lm
 
 ifeq ($(PROFILE), 1)

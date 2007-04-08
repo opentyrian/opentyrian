@@ -40,7 +40,7 @@ INLINE int delaycount( void )
 
 void waitdelay( void )
 {
-    int ticks;
+    Uint32 ticks;
 
     while ((ticks = SDL_GetTicks()) < target)
     {
@@ -53,7 +53,7 @@ void waitdelay( void )
 
 void waitdelayorkey( void )
 {
-    int ticks;
+    Uint32 ticks;
 
     service_SDL_events();
     while ((ticks = SDL_GetTicks()) < target && !newmouse && !newkey)

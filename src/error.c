@@ -29,6 +29,8 @@ JE_boolean ErrorOccurred = FALSE;
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
+void JE_errorhand( const JE_string s );
+
 JE_longint JE_getFileSize( const JE_string filename )
 {
     FILE *f;
@@ -82,7 +84,7 @@ void JE_findTyrian( const JE_string filename )
     {
         dir[0] = '\0';
     } else {
-        int i;
+        unsigned int i;
 
         /* Let's find it! */
         printf("Searching for Tyrian files...\n\n");
