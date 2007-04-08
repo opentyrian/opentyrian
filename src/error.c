@@ -55,8 +55,9 @@ void JE_errorhand( const JE_string s )
     if (ErrorActive)
     {
         JE_closevga256();
-        printf("Warning: File not found --> %s <--\n", s);
-        getchar();
+        printf("WARNING: Unable to find Tyrian data files.\n"
+               "Stopped on file %s.\n"
+               "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", s);
         exit(1);
     } else {
         ErrorOccurred = 1;
@@ -117,9 +118,23 @@ JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentran
 {
     static JE_char buf[1024];
 
-    JE_findTyrian(filename);
+    if (!JE_find(filename))
+    {
+        if (strcmp(dir, "") == 0 && ErrorActive)
+        {
+            JE_findTyrian(filename);
+        }
 
-    strcpy(buf, filename);
+        strcpy(buf, dir);
+        strcat(buf, filename);
+        if (!JE_find(buf))
+        {
+            JE_errorhand(filename);
+        }
+    } else {
+        strcpy(buf, filename);
+    }
+
     return buf;
 }
 
