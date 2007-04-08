@@ -47,7 +47,7 @@ void JE_titleScreen( JE_boolean animate )
     JE_word waitForDemo;
     JE_byte menu = 0;
     JE_boolean redraw = TRUE,
-               fadein = FALSE,
+               fadeIn = FALSE,
                first = TRUE;
     JE_char flash;
     JE_word z;
@@ -87,7 +87,7 @@ void JE_titleScreen( JE_boolean animate )
             redraw = FALSE;
             if (animate)
             {
-                if (fadein)
+                if (fadeIn)
                 {
                     JE_fadeBlack(10);
                 }
@@ -117,7 +117,7 @@ void JE_titleScreen( JE_boolean animate )
                 JE_showVGA();
                 JE_fadeColor(10);
 
-                fadein = FALSE;
+                fadeIn = FALSE;
 
                 if (moveTyrianLogoUp)
                 {
@@ -203,28 +203,84 @@ void JE_titleScreen( JE_boolean animate )
                 switch (menu)
                 {
                     case 0: /* New game */
+                        JE_fadeBlack(10);
+                        if (JE_playerSelect())
+                        {
+                            if (0 /*netQuit*/)
+                            {
+                                /* JE_tyrianHalt(9); */
+                            }
+
+                            if (JE_episodeSelect() && JE_difficultySelect())
+                            {
+                                gameLoaded = TRUE;
+                            } else {
+                                redraw = TRUE;
+                                fadeIn = TRUE;
+                            }
+
+                            initialDifficulty = difficultyLevel;
+
+                            if (onePlayerAction)
+                            {
+                                score = 0;
+                                pItems[11] = 8;
+                            } else {
+                                if (twoPlayerMode)
+                                {
+                                    score = 0;
+                                    score2 = 0;
+                                    pItems[11] = 11;
+                                    difficultyLevel++;
+                                    inputDevice1 = 1;
+                                    inputDevice2 = 2;
+                                } else {
+                                    if (richMode)
+                                    {
+                                        score = 1000000;
+                                    } else {
+                                        switch (episodeNum)
+                                        {
+                                            case 1:
+                                                score = 10000;
+                                                break;
+                                            case 2:
+                                                score = 15000;
+                                                break;
+                                            case 3:
+                                                score = 20000;
+                                                break;
+                                            case 4:
+                                                score = 30000;
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        fadeIn = TRUE;
                         break;
                     case 1: /* Load game */
-                        /* JE_loadscreen(); */
+                        /* JE_loadScreen(); */
                         if (!gameLoaded)
                         {
                             redraw = TRUE;
                         }
-                        fadein = TRUE;
+                        fadeIn = TRUE;
                         break;
                     case 2: /* High scores */
-                        /* JE_highscorescreen(); */
-                        fadein = TRUE;
+                        /* JE_highScoreScreen(); */
+                        fadeIn = TRUE;
                         break;
                     case 3: /* Instructions */
                         JE_helpSystem(1);
                         redraw = TRUE;
-                        fadein = TRUE;
+                        fadeIn = TRUE;
                         break;
                     case 4: /* Ordering info */
                         break;
                     case 5: /* Demo */
-                        /* JE_InitPlayerData(); */
+                        /* JE_initPlayerData(); */
                         playDemo = TRUE;
                         if (playDemoNum++ > 4)
                         {
@@ -235,7 +291,7 @@ void JE_titleScreen( JE_boolean animate )
                         quit = TRUE;
                         break;
                 }
-                if (menu != 4) /* Tweak added to prevent fadein when selecting Ordering Info. */
+                if (menu != 4) /* Tweak added to prevent fadeIn when selecting Ordering Info. */
                 {
                     redraw = TRUE;
                 }
