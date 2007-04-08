@@ -182,8 +182,6 @@ void service_SDL_events( void )
 {
     SDL_Event ev;
 
-    newkey = FALSE;
-    newmouse = FALSE;
     while (SDL_PollEvent(&ev))
     {
         switch (ev.type)

@@ -55,11 +55,10 @@ void wait_delay( void )
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
     Uint32 ticks;
-    keyboard = !keyboard;
-    mouse = !mouse;
 
+    newkey = newmouse = FALSE;
     service_SDL_events();
-    while ((ticks = SDL_GetTicks()) < target && !(keydown||(keyboard)) && !(mousedown||(mouse)) && !(button[0]||(!joystick)))
+    while ((ticks = SDL_GetTicks()) < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
     {
         if (ticks % SDL_POLL_INTERVAL == 0)
         {

@@ -230,10 +230,11 @@ void JE_helpSystem( JE_byte startTopic )
         {
             JE_ShowVGA();
             wait_noinput(FALSE,TRUE,FALSE);
-            JE_waitAction(1, TRUE);
+            while (!JE_waitAction(1, TRUE));
 
-            if (newmouse /*TODO: not sure if this is correct*/)
+            if (newmouse)
             {
+                newmouse = FALSE;
                 switch (lastmouse_but)
                 {
                     case SDL_BUTTON_LEFT:
@@ -252,6 +253,7 @@ void JE_helpSystem( JE_byte startTopic )
 
             if (newkey)
             {
+                newkey = FALSE;
                 switch (lastkey_sym)
                 {
                     case SDLK_LEFT:
