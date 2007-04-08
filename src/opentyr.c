@@ -38,22 +38,19 @@ const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 int main( int argc, char *argv[] )
 {
-    FILE *f;
-    JE_integer shpnumb;
-    int i;
+    SDL_Init( 0 );
 
-	JE_detectCFG();
+    JE_detectCFG();
 
-	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
+    printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
 
-	JE_scanForEpisodes();
+    JE_scanForEpisodes();
 
-	/* TODO: InitKeyboard */
+    init_keyboard();
 
-	/* TODO: Not sure what these are about?
-	 * recordfilenum = 1;
-	 * playdemonum = 0; 
-	 * playdemo = false; */
+    recordFileNum = 1;
+    playDemoNum = 0;
+    playDemo = FALSE;
 
 	/* TODO: LoadConfiguration */
 
@@ -74,18 +71,17 @@ int main( int argc, char *argv[] )
 
     newshape_init();
     JE_loadMainShapeTables();
+    /* TODO JE_loadExtraShapes;*/  /*Editship*/
+
+    JE_loadHelpText();
+    /*debuginfo("Help text complete");*/
 
 	/* here ends line 92771 of TYRIAN2.PAS
 	 * TODO: Finish it and stuff. */
 
-    SDL_Init( 0 );
-
     JE_initvga256();
 
-    init_keyboard();
     JE_joystickInit();
-
-    JE_loadHelpText();
 
     JE_loadpals();
 

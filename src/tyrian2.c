@@ -128,14 +128,14 @@ void TitleScreen( JE_boolean animate )
                 /* Draw Menu Text on Screen */
                 for (temp = 0; temp < menunum; temp++)
                 {
-                    tempx = 104+(temp)*13;
-                    tempy = JE_fontCenter(menuText[temp],SmallFontShapes);
+                    tempX = 104+(temp)*13;
+                    tempY = JE_fontCenter(menuText[temp],SmallFontShapes);
 
-                    JE_outTextAdjust(tempy-1,tempx-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_outTextAdjust(tempy+1,tempx+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_outTextAdjust(tempy+1,tempx-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_outTextAdjust(tempy-1,tempx+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-                    JE_outTextAdjust(tempy,tempx,menuText[temp],15,-3,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempY-1,tempX-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempY+1,tempX+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempY+1,tempX-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
+                    JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SmallFontShapes,FALSE);
                 }
                 JE_ShowVGA();
 
@@ -210,10 +210,10 @@ void TitleScreen( JE_boolean animate )
                         break;
                     case 5: /* Demo */
                         /* JE_InitPlayerData(); */
-                        PlayDemo = TRUE;
-                        if (PlayDemoNum++ > 4)
+                        playDemo = TRUE;
+                        if (playDemoNum++ > 4)
                         {
-                            PlayDemoNum = 0;
+                            playDemoNum = 0;
                         }
                         break;
                     case 6: /* Quit */
