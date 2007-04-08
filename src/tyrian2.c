@@ -46,7 +46,7 @@ void JE_TitleScreen( JE_boolean animate )
     const int menunum = 7;
     JE_byte namego[SA + 2] = {0}; /* [1..SA+2] */
     JE_word waitForDemo;
-    JE_byte menu;
+    JE_byte menu = 0;
     JE_boolean redraw = TRUE,
                fadein = FALSE,
                first = TRUE;
@@ -265,7 +265,7 @@ void JE_OpeningAnim( void )
         memset(black, 0, sizeof(black));
 
         setdelay(200);
-        while(!(delaycount() || JE_anyButton()));
+        while(!(delaycount() == 0 || JE_anyButton()));
 
         JE_FadeBlack(15);
 
@@ -276,7 +276,7 @@ void JE_OpeningAnim( void )
         JE_FadeColor(10);
 
         setdelay(200);
-        while(!(delaycount() || JE_anyButton()));
+        while(!(delaycount() == 0 || JE_anyButton()));
 
         JE_FadeBlack(10);
     }
