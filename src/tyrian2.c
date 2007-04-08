@@ -40,7 +40,6 @@
 
 void JE_TitleScreen( JE_boolean animate )
 {
-    /* TODO TODO TODO: Major stuff TODO. */
     JE_boolean quit = 0;
 
     const int menunum = 7;
@@ -170,7 +169,11 @@ void JE_TitleScreen( JE_boolean animate )
 
         first = FALSE;
 
-        /* TODO: stuff */
+        if (trentWin)
+        {
+            quit = TRUE;
+            goto trentWinsGame;
+        }
 
         waitForDemo = 2000;
         JE_textMenuWait(&waitForDemo, FALSE);
@@ -244,6 +247,15 @@ void JE_TitleScreen( JE_boolean animate )
                 break;
         }
     } while (!(quit || gameLoaded || jumpSection || playDemo || loadDestruct));
+
+trentWinsGame:
+    JE_FadeBlack(15);
+    if (quit)
+    {
+        /* JE_tyrianHalt(0); */
+    }
+
+    /* } (IsNetworkActive) */
 }
 
 void JE_OpeningAnim( void )
