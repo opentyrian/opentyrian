@@ -154,14 +154,14 @@ typedef struct
 } JE_EnemyDatType[EnemyNum + 1]; /* [0..enemynum] */
 
 #ifndef NO_EXTERNS
-extern JE_WeaponPortType *weaponPort;
-extern JE_WeaponType *weapons;
-extern JE_PowerType *powerSys;
-extern JE_ShipType *ships;
-extern JE_OptionType *options;
-extern JE_ShieldType *shields;
-extern JE_SpecialType *special;
-extern JE_EnemyDatType *enemyDat;
+extern JE_WeaponPortType weaponPort;
+extern JE_WeaponType weapons;
+extern JE_PowerType powerSys;
+extern JE_ShipType ships;
+extern JE_OptionType options;
+extern JE_ShieldType shields;
+extern JE_SpecialType special;
+extern JE_EnemyDatType enemyDat;
 extern JE_byte episodeNum;
 extern JE_boolean episodeAvail[EpisodeMax];
 extern char macroFile[13], CubeFile[13];

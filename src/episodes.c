@@ -27,18 +27,18 @@
 #undef NO_EXTERNS
 
 /* MAIN Weapons Data */
-JE_WeaponPortType *weaponPort;
-JE_WeaponType     *weapons;
+JE_WeaponPortType weaponPort;
+JE_WeaponType     weapons;
 
 /* Items */
-JE_PowerType   *powerSys;
-JE_ShipType    *ships;
-JE_OptionType  *options;
-JE_ShieldType  *shields;
-JE_SpecialType *special;
+JE_PowerType   powerSys;
+JE_ShipType    ships;
+JE_OptionType  options;
+JE_ShieldType  shields;
+JE_SpecialType special;
 
 /* Enemy data */
-JE_EnemyDatType *enemyDat;
+JE_EnemyDatType enemyDat;
 
 /* EPISODE variables */
 JE_byte    episodeNum = 0;
@@ -68,15 +68,15 @@ void JE_loadItemDat( void )
         fseek(lvlFile, episode1DataLoc, SEEK_SET);
     }
 
-    fread(&itemNum,   1, sizeof(itemNum), lvlFile);
-    fread(weapons,    1, sizeof(JE_WeaponType), lvlFile);
-    fread(weaponPort, 1, sizeof(JE_WeaponPortType), lvlFile);
-    fread(special,    1, sizeof(JE_SpecialType), lvlFile);
-    fread(powerSys,   1, sizeof(JE_PowerType), lvlFile);
-    fread(ships,      1, sizeof(JE_ShipType), lvlFile);
-    fread(options,    1, sizeof(JE_OptionType), lvlFile);
-    fread(shields,    1, sizeof(JE_ShieldType), lvlFile);
-    fread(enemyDat,   1, sizeof(JE_EnemyDatType), lvlFile);
+    fread(&itemNum,    1, sizeof(itemNum), lvlFile);
+    fread(&weapons,    1, sizeof(weapons), lvlFile);
+    fread(&weaponPort, 1, sizeof(weaponPort), lvlFile);
+    fread(&special,    1, sizeof(special), lvlFile);
+    fread(&powerSys,   1, sizeof(powerSys), lvlFile);
+    fread(&ships,      1, sizeof(ships), lvlFile);
+    fread(&options,    1, sizeof(options), lvlFile);
+    fread(&shields,    1, sizeof(shields), lvlFile);
+    fread(&enemyDat,   1, sizeof(enemyDat), lvlFile);
 
     fclose(lvlFile);
 }

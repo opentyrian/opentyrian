@@ -29,6 +29,8 @@
 #include "episodes.h"
 #include "varz.h"
 #include "mainint.h"
+#include "nortvars.h"
+#include "params.h"
 
 #include "SDL.h"
 
@@ -52,18 +54,64 @@ int main( int argc, char *argv[] )
     playDemoNum = 0;
     playDemo = FALSE;
 
-	/* TODO: LoadConfiguration */
+	/* TODO: LoadConfiguration(); */
 
 	/* TODO: Tyrian originally checked availible memory here. */
 
-    enemyDat = malloc(sizeof(*enemyDat));
-    weaponPort = malloc(sizeof(*weaponPort));
-    weapons = malloc(sizeof(*weapons));
-    ships = malloc(sizeof(*ships));
-    options = malloc(sizeof(*options));
-    powerSys = malloc(sizeof(*powerSys));
-    shields = malloc(sizeof(*shields));
-    special = malloc(sizeof(*special));
+    /* TODO ParamCheck(); */
+
+    if(scanForJoystick)
+    {
+        JE_joystickInit();
+        if(joystick_installed)
+           printf("Joystick detected.  %d   %d\n", jCenterX, jCenterY);
+        else
+           printf("No joystick found.\n");
+     } else {
+        printf("Joystick override.\n");
+        joystick_installed = FALSE;
+     }
+
+    if(mouse_installed)
+    {
+        printf("Mouse Detected.   ");
+        if(mouse_threeButton)
+            printf("Mouse driver reports three buttons.");
+        printf("\n");
+    } else {
+        printf("No mouse found.\n");
+    }
+
+    if(tyrianXmas)
+    {
+        if(JE_getFileSize("TYRIANC.SHP") == 0)
+            tyrianXmas = FALSE;
+        /*if(JE_getFileSize("VOICESC.SHP") == 0) tyrianXmas = FALSE;*/
+        if(tyrianXmas)
+        {
+            printf("*****************************\n");
+            printf("Christmas has been detected.\n");
+            printf("  Activate Christmas? (Y/N)\n");
+            printf("*****************************\n");
+            wait_keyboard();
+            if(lastkey_sym != SDLK_y)
+                tyrianXmas = FALSE;
+        } else {
+            printf("Christmas is missing.\n");
+        }
+    }
+
+    /* Default Options */
+    youAreCheating = FALSE;
+    smoothScroll = TRUE;
+    showMemLeft = FALSE;
+    playerPasswordInput = TRUE;
+
+    /* TODO initialize sound system */
+
+    if(recordDemo)
+        printf("Game will be recorded.\n");
+
 
     megaData1 = malloc(sizeof(*megaData1));
     megaData2 = malloc(sizeof(*megaData2));
@@ -80,8 +128,6 @@ int main( int argc, char *argv[] )
 	 * TODO: Finish it and stuff. */
 
     JE_initvga256();
-
-    JE_joystickInit();
 
     JE_loadpals();
 

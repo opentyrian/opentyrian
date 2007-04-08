@@ -41,7 +41,7 @@ extern JE_boolean scanForJoystick;
 extern JE_boolean inputDetected;
 extern JE_word lastMouseX, lastMouseY;
 extern JE_byte mouseCursor;
-extern JE_boolean mouse_ThreeButton;
+extern JE_boolean mouse_threeButton;
 extern JE_word mouseX, mouseY, mouseButton;
 #endif
 

@@ -37,7 +37,7 @@ JE_word lastMouseX, lastMouseY;
 
 /*Mouse Data*/  /*Mouse_Installed is in VGA256d*/
 JE_byte mouseCursor;
-JE_boolean mouse_ThreeButton;
+JE_boolean mouse_threeButton;
 JE_word mouseX, mouseY, mouseButton;
 
 
