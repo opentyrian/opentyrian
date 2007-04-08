@@ -58,8 +58,8 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 {
     JE_word min, max = 0;
 
-    short tempw;
-    short z;
+    JE_word tempw;
+    JE_word z;
 
     fread(&tempw, 2, 1, f);
     maxShape[table] = tempw;
@@ -251,9 +251,9 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 
         if(time == 0 && temp != 0)
         {
-            JE_mouseStart;
-            JE_ShowVGA;
-            JE_mouseReplace;
+            JE_mouseStart();
+            JE_ShowVGA();
+            JE_mouseReplace();
         }
 
         if(time == 0 && isNetworkGame)
