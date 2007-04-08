@@ -53,13 +53,13 @@ extern JE_byte mouseGrabShape[24*28];
 extern JE_boolean loadOverride;
 #endif
 
-void JE_NewLoadShapes( JE_byte table, JE_string shapefile );
-void JE_NewLoadShapesB( JE_byte table, FILE *f );
-void JE_NewCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize );
-void JE_NewDrawShape( JE_byte *shape, JE_word xsize, JE_word ysize );
-void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize );
-void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y );
-void JE_NewPurgeShapes( JE_byte table );
+void JE_newLoadShapes( JE_byte table, JE_string shapefile );
+void JE_newLoadShapesB( JE_byte table, FILE *f );
+void JE_newCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize );
+void JE_newDrawShape( JE_byte *shape, JE_word xsize, JE_word ysize );
+void JE_newDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize );
+void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y );
+void JE_newPurgeShapes( JE_byte table );
 /*void  JE_OverrideLoadShapes( JE_byte table, char *shapefile, JE_word minimum, JE_word maximum );*/
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );

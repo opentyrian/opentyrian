@@ -54,9 +54,9 @@ JE_boolean loadOverride = FALSE;
 */
 
 
-void JE_NewLoadShapesB( JE_byte table, FILE *f )
+void JE_newLoadShapesB( JE_byte table, FILE *f )
 {
-    JE_word min, max;
+    JE_word min, max = 0;
 
     short tempw;
     short z;
@@ -103,7 +103,7 @@ void JE_NewLoadShapesB( JE_byte table, FILE *f )
     }
 }
 
-void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
+void JE_newDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
 {
     JE_word x = 2, y = 2;
     JE_word xloop = 0, yloop = 0;
@@ -140,7 +140,7 @@ void JE_NewDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
     tempScreenSeg = VGAScreen;
 }
 
-void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
+void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 {
     JE_word xsize, ysize;
     JE_word xloop = 0, yloop = 0;
@@ -183,7 +183,7 @@ void JE_NewDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
     tempScreenSeg = VGAScreen;
 }
 
-void JE_NewPurgeShapes( JE_byte table )
+void JE_newPurgeShapes( JE_byte table )
 {
     JE_word x;
 
