@@ -117,23 +117,9 @@ JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentran
 {
     static JE_char buf[1024];
 
-    if (!JE_find(filename))
-    {
-        if (strcmp(dir, "") == 0 && ErrorActive)
-        {
-            JE_findTyrian(filename);
-        }
+    JE_findTyrian(filename);
 
-        strcpy(buf, dir);
-        strcat(buf, filename);
-        if (!JE_find(buf))
-        {
-            JE_errorhand(filename);
-        }
-    } else {
-        strcpy(buf, filename);
-    }
-
+    strcpy(buf, filename);
     return buf;
 }
 
