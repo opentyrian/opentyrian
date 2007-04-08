@@ -29,94 +29,94 @@
 
 /* TODO: Decide if this stays or not */
 const char *KeyNames[] = {
-    "ESC",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "0",
-    "DASH",
-    "EQUALS",
-    "BACKSPACE",
-    "TAB",
-    "Q",
-    "W",
-    "E",
-    "R",
-    "T",
-    "Y",
-    "U",
-    "I",
-    "O",
-    "P",
-    "LEFT BRACKET",
-    "RIGHT BRACKET",
-    "ENTER",
-    "CONTROL",
-    "A",
-    "S",
-    "D",
-    "F",
-    "G",
-    "H",
-    "J",
-    "K",
-    "L",
-    "SEMI-COLON",
-    "SINGLE QUOTE",
-    "REVERSE QUOTE",
-    "SHIFT",
-    "BACKSPACE",
-    "Z",
-    "X",
-    "C",
-    "V",
-    "B",
-    "N",
-    "M",
-    "COMMA",
-    "PERIOD",
-    "/",
-    "RIGHT SHIFT",
-    "*",
-    "ALT",
-    "SPACEBAR",
-    "CAPSLOCK",
-    "F1",
-    "F2",
-    "F3",
-    "F4",
-    "F5",
-    "F6",
-    "F7",
-    "F8",
-    "F9",
-    "F10",
-    "NUMLOCK",
-    "SCROLL LOCK",
-    "HOME",
-    "UP",
-    "PAGE UP",
-    "-",
-    "LEFT",
-    "KEYPAD CENTER",
-    "RIGHT",
-    "+",
-    "END",
-    "DOWN",
-    "PAGE DOWN",
-    "INSERT",
-    "DEL",
-    "??",
-    "??",
-    "??",
-    "F11",
-    "F12"
+	"ESC",
+	"1",
+	"2",
+	"3",
+	"4",
+	"5",
+	"6",
+	"7",
+	"8",
+	"9",
+	"0",
+	"DASH",
+	"EQUALS",
+	"BACKSPACE",
+	"TAB",
+	"Q",
+	"W",
+	"E",
+	"R",
+	"T",
+	"Y",
+	"U",
+	"I",
+	"O",
+	"P",
+	"LEFT BRACKET",
+	"RIGHT BRACKET",
+	"ENTER",
+	"CONTROL",
+	"A",
+	"S",
+	"D",
+	"F",
+	"G",
+	"H",
+	"J",
+	"K",
+	"L",
+	"SEMI-COLON",
+	"SINGLE QUOTE",
+	"REVERSE QUOTE",
+	"SHIFT",
+	"BACKSPACE",
+	"Z",
+	"X",
+	"C",
+	"V",
+	"B",
+	"N",
+	"M",
+	"COMMA",
+	"PERIOD",
+	"/",
+	"RIGHT SHIFT",
+	"*",
+	"ALT",
+	"SPACEBAR",
+	"CAPSLOCK",
+	"F1",
+	"F2",
+	"F3",
+	"F4",
+	"F5",
+	"F6",
+	"F7",
+	"F8",
+	"F9",
+	"F10",
+	"NUMLOCK",
+	"SCROLL LOCK",
+	"HOME",
+	"UP",
+	"PAGE UP",
+	"-",
+	"LEFT",
+	"KEYPAD CENTER",
+	"RIGHT",
+	"+",
+	"END",
+	"DOWN",
+	"PAGE DOWN",
+	"INSERT",
+	"DEL",
+	"??",
+	"??",
+	"??",
+	"F11",
+	"F12"
 };
 
 JE_boolean newkey, newmouse, keydown, mousedown;
@@ -132,121 +132,121 @@ Uint8 *keysactive;
 
 void flush_events_buffer( void )
 {
-    SDL_Event ev;
+	SDL_Event ev;
 
-    while (SDL_PollEvent(&ev));
+	while (SDL_PollEvent(&ev));
 }
 
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-    service_SDL_events();
-    while (!((keydown || !keyboard) || (mousedown || !mouse) || (button[0] || !joystick)))
-    {
-        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
-        {
-            if (joystick)
-            {
-                JE_joystick2();
-            }
-            service_SDL_events();
-        }
-    }
+	service_SDL_events();
+	while (!((keydown || !keyboard) || (mousedown || !mouse) || (button[0] || !joystick)))
+	{
+		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
+		{
+			if (joystick)
+			{
+				JE_joystick2();
+			}
+			service_SDL_events();
+		}
+	}
 }
 
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-    service_SDL_events();
-    while ((keydown && keyboard) || (mousedown && mouse) || (button[0] && joystick))
-    {
-        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
-        {
-            if (joystick)
-            {
-                JE_joystick2();
-            }
-            service_SDL_events();
-        }
-    }
+	service_SDL_events();
+	while ((keydown && keyboard) || (mousedown && mouse) || (button[0] && joystick))
+	{
+		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
+		{
+			if (joystick)
+			{
+				JE_joystick2();
+			}
+			service_SDL_events();
+		}
+	}
 }
 
 void init_keyboard( void )
 {
-    keysactive = SDL_GetKeyState(&numkeys);
-    SDL_EnableKeyRepeat(500, 60);
+	keysactive = SDL_GetKeyState(&numkeys);
+	SDL_EnableKeyRepeat(500, 60);
 
 #ifdef NDEBUG
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+	SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif
 }
 
 void service_SDL_events( void )
 {
-    SDL_Event ev;
+	SDL_Event ev;
 
-    while (SDL_PollEvent(&ev))
-    {
-        switch (ev.type)
-        {
-            case SDL_MOUSEMOTION:
-                mouse_x = ev.motion.x;
-                mouse_y = ev.motion.y;
-                mouse_xrel = ev.motion.xrel;
-                mouse_yrel = ev.motion.yrel;
-                break;
-            case SDL_KEYDOWN:
-                newkey = TRUE;
-                lastkey_sym = ev.key.keysym.sym;
-                lastkey_mod = ev.key.keysym.mod;
-                keydown = TRUE;
-                break;
-            case SDL_KEYUP:
-                keydown = FALSE;
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
-                if (ev.type == SDL_MOUSEBUTTONDOWN)
-                {
-                    newmouse = TRUE;
-                    lastmouse_but = ev.button.button;
-                    lastmouse_x = ev.button.x;
-                    lastmouse_y = ev.button.y;
-                    mousedown = TRUE;
-                } else {
-                    mousedown = FALSE;
-                }
-                switch (ev.button.button)
-                {
-                    case SDL_BUTTON_LEFT:
-                        mouse_pressed[0] = mousedown; break;
-                    case SDL_BUTTON_RIGHT:
-                        mouse_pressed[1] = mousedown; break;
-                    case SDL_BUTTON_MIDDLE:
-                        mouse_pressed[2] = mousedown; break;
-                }
-                break;
-            /*case SDL_ACTIVEEVENT:
-                if (ev.active.type & SDL_APPACTIVE || !ev.active.gain)
-                {
-                    sleep_game();
-                }
-                break;*/
-            case SDL_QUIT:
-                /* TODO: Call the cleanup code here. */
-                exit(0);
-                break;
-        }
-    }
+	while (SDL_PollEvent(&ev))
+	{
+		switch (ev.type)
+		{
+			case SDL_MOUSEMOTION:
+				mouse_x = ev.motion.x;
+				mouse_y = ev.motion.y;
+				mouse_xrel = ev.motion.xrel;
+				mouse_yrel = ev.motion.yrel;
+				break;
+			case SDL_KEYDOWN:
+				newkey = TRUE;
+				lastkey_sym = ev.key.keysym.sym;
+				lastkey_mod = ev.key.keysym.mod;
+				keydown = TRUE;
+				break;
+			case SDL_KEYUP:
+				keydown = FALSE;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				if (ev.type == SDL_MOUSEBUTTONDOWN)
+				{
+					newmouse = TRUE;
+					lastmouse_but = ev.button.button;
+					lastmouse_x = ev.button.x;
+					lastmouse_y = ev.button.y;
+					mousedown = TRUE;
+				} else {
+					mousedown = FALSE;
+				}
+				switch (ev.button.button)
+				{
+					case SDL_BUTTON_LEFT:
+						mouse_pressed[0] = mousedown; break;
+					case SDL_BUTTON_RIGHT:
+						mouse_pressed[1] = mousedown; break;
+					case SDL_BUTTON_MIDDLE:
+						mouse_pressed[2] = mousedown; break;
+				}
+				break;
+			/*case SDL_ACTIVEEVENT:
+				if (ev.active.type & SDL_APPACTIVE || !ev.active.gain)
+				{
+					sleep_game();
+				}
+				break;*/
+			case SDL_QUIT:
+				/* TODO: Call the cleanup code here. */
+				exit(0);
+				break;
+		}
+	}
 }
 
 void sleep_game( void )
 {
-    SDL_Event ev;
+	SDL_Event ev;
 
-    while (SDL_WaitEvent(&ev))
-    {
-        if (ev.type == SDL_ACTIVEEVENT /*&& ev.active.state & SDL_APPACTIVE*/ && ev.active.gain)
-        {
-            return;
-        }
-    }
+	while (SDL_WaitEvent(&ev))
+	{
+		if (ev.type == SDL_ACTIVEEVENT /*&& ev.active.state & SDL_APPACTIVE*/ && ev.active.gain)
+		{
+			return;
+		}
+	}
 }

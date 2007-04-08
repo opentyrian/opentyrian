@@ -26,7 +26,7 @@
 typedef JE_char JE_textbuffer[4096]; /* [1..4096] */
 
 struct JE_colorrec {
-    JE_byte r, g, b;
+	JE_byte r, g, b;
 };
 
 typedef struct JE_colorrec JE_colortype[256]; /* [0..255] */

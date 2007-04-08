@@ -30,22 +30,22 @@
 
 #include <string.h>
 
-const JE_byte menuHelp[MaxMenu][11] =     /* [1..maxmenu, 1..11] */
+const JE_byte menuHelp[MaxMenu][11] = /* [1..maxmenu, 1..11] */
 {
-    {1, 34, 2, 3, 4, 5,                       0, 0, 0, 0, 0},
-    {6, 7, 8, 9, 10, 11, 11, 12,                    0, 0, 0},
-    {13, 14, 15, 15, 16, 17, 12,                 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {4, 30, 30, 3, 5,                      0, 0, 0, 0, 0, 0},
-    {                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {16, 17, 15, 15, 12,                   0, 0, 0, 0, 0, 0},
-    {31, 31, 31, 31, 32, 12,                  0, 0, 0, 0, 0},
-    {4, 34, 3, 5,                       0, 0, 0, 0, 0, 0, 0}
+	{  1, 34,  2,  3,  4,  5,                  0, 0, 0, 0, 0 },
+	{  6,  7,  8,  9, 10, 11, 11, 12,                0, 0, 0 },
+	{ 13, 14, 15, 15, 16, 17, 12,                 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{  4, 30, 30,  3,  5,                   0, 0, 0, 0, 0, 0 },
+	{                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 16, 17, 15, 15, 12,                   0, 0, 0, 0, 0, 0 },
+	{ 31, 31, 31, 31, 32, 12,                  0, 0, 0, 0, 0 },
+	{  4, 34,  3,  5,                    0, 0, 0, 0, 0, 0, 0 }
 };
 
 JE_byte verticalHeight = 7;
@@ -54,265 +54,305 @@ JE_byte helpBoxBrightness = 1;
 JE_byte helpBoxShadeType = FullShade;
 
 char helpTxt[MaxHelpMessage][231]; /* [1..maxhelpmessage] of string [230]; */
-char pName[21][16];          /* [1..21] of string [15] */
-char miscText[68][42];       /* [1..68] of string [41] */
-char miscTextB[5][11];       /* [1..5] of string [10] */
-char keyName[8][18];         /* [1..8] of string [17] */
-char menuText[7][21];        /* [1..7] of string [20] */
-char outputs[9][31];         /* [1..9] of string [30] */
-char topicName[6][21];       /* [1..6] of string [20] */
+char pName[21][16];                /* [1..21] of string [15] */
+char miscText[68][42];             /* [1..68] of string [41] */
+char miscTextB[5][11];             /* [1..5] of string [10] */
+char keyName[8][18];               /* [1..8] of string [17] */
+char menuText[7][21];              /* [1..7] of string [20] */
+char outputs[9][31];               /* [1..9] of string [30] */
+char topicName[6][21];             /* [1..6] of string [20] */
 char mainMenuHelp[34][66];
-char inGameText[6][21];      /* [1..6] of string [20] */
-char detailLevel[6][13];     /* [1..6] of string [12] */
-char gameSpeedText[5][13];   /* [1..5] of string [12] */
-char episodeName[6][31];     /* [0..5] of string [30] */
-char difficultyName[7][21];  /* [0..6] of string [20] */
-char playerName[5][26];      /* [0..4] of string [25] */
-char inputDevices[3][13];    /* [1..3] of string [12] */
-char networkText[4][21];     /* [1..4] of string [20] */
-char difficultyNameB[10][21];/* [0..9] of string [20] */
-char joyButton[5][21];       /* [1..5] of string [20] */
-char superShips[11][26];     /* [0..10] of string [25] */
-char specialName[9][10];     /* [1..9] of string [9] */
+char inGameText[6][21];            /* [1..6] of string [20] */
+char detailLevel[6][13];           /* [1..6] of string [12] */
+char gameSpeedText[5][13];         /* [1..5] of string [12] */
+char episodeName[6][31];           /* [0..5] of string [30] */
+char difficultyName[7][21];        /* [0..6] of string [20] */
+char playerName[5][26];            /* [0..4] of string [25] */
+char inputDevices[3][13];          /* [1..3] of string [12] */
+char networkText[4][21];           /* [1..4] of string [20] */
+char difficultyNameB[10][21];      /* [0..9] of string [20] */
+char joyButton[5][21];             /* [1..5] of string [20] */
+char superShips[11][26];           /* [0..10] of string [25] */
+char specialName[9][10];           /* [1..9] of string [9] */
 char destructHelp[25][22];
-char weaponNames[17][17];    /* [1..17] of string [16] */
+char weaponNames[17][17];          /* [1..17] of string [16] */
 char destructModeName[DestructModes][13]; /* [1..destructmodes] of string [12] */
 char shipInfo[13][2][256];
-char menuInt[MaxMenu+1][11][18]; /* [0..maxmenu, 1..11] of string [17] */
+char menuInt[MaxMenu+1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
 
 
 JE_byte temp, temp2;
 
 void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
 {
-    JE_byte startpos, endpos, pos;
-    JE_boolean endstring;
+	JE_byte startpos, endpos, pos;
+	JE_boolean endstring;
 
-    char *substring;
+	char *substring;
 
-    if(message[0] == '\0') {
-        return;
-    }
+	if (message[0] == '\0')
+	{
+		return;
+	}
 
-    pos = 1;
-    endpos = 0;
-    endstring = FALSE;
+	pos = 1;
+	endpos = 0;
+	endstring = FALSE;
 
-    do {
-        startpos = endpos + 1;
+	do
+	{
+		startpos = endpos + 1;
 
-        do {
-            endpos = pos;
-            do {
-                pos++;
-                if(message[pos-1] == '\0') {
-                    endstring = TRUE;
-                    if(pos - startpos < boxwidth) {
-                        endpos = pos + 1;
-                    }
-                }
+		do
+		{
+			endpos = pos;
+			do
+			{
+				pos++;
+				if (message[pos-1] == '\0')
+				{
+					endstring = TRUE;
+					if (pos - startpos < boxwidth)
+					{
+						endpos = pos + 1;
+					}
+				}
 
-            } while(!(message[pos-1] != ' ' || endstring));
+			} while (!(message[pos-1] != ' ' || endstring));
 
-        } while(!(pos - startpos > boxwidth || endstring));
+		} while (!(pos - startpos > boxwidth || endstring));
 
-        substring = malloc(endpos - startpos + 1);
-        memcpy(substring, message + startpos - 1, endpos - startpos);
-        substring[endpos - startpos] = 0;
+		substring = malloc(endpos - startpos + 1);
+		memcpy(substring, message + startpos - 1, endpos - startpos);
+		substring[endpos - startpos] = 0;
 
-        JE_textShade(x, y, substring, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+		JE_textShade(x, y, substring, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 
-        free(substring);
+		free(substring);
 
-        y += verticalHeight;
+		y += verticalHeight;
 
-    } while(!endstring);
+	} while (!endstring);
 
-    if(endpos != pos) {
-        JE_textShade(x, y, message + endpos, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
-    }
+	if (endpos != pos)
+	{
+		JE_textShade(x, y, message + endpos, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+	}
 
-    helpBoxColor = 12;
-    helpBoxShadeType = FullShade;
+	helpBoxColor = 12;
+	helpBoxShadeType = FullShade;
 }
 
 void JE_HBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth )
 {
-    JE_helpBox(x, y, helpTxt[messagenum-1], boxwidth);
+	JE_helpBox(x, y, helpTxt[messagenum-1], boxwidth);
 }
 
 void JE_loadHelpText( void )
 {
-    FILE *f; int i;
+	FILE *f; int i;
 
-    JE_resetFileExt(&f, "TYRIAN.HDT", FALSE);
-    fread(&episode1DataLoc, sizeof(episode1DataLoc), 1, f);
-    JE_skipCryptLn(f);
+	JE_resetFileExt(&f, "TYRIAN.HDT", FALSE);
+	fread(&episode1DataLoc, sizeof(episode1DataLoc), 1, f);
+	JE_skipCryptLn(f);
 
-    for (i = 0; i < MaxHelpMessage; i++) {
-        JE_readCryptLn(f,helpTxt[i]);           /*Online Help*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < MaxHelpMessage; i++)
+	{
+		JE_readCryptLn(f,helpTxt[i]);       /*Online Help*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 21; i++) {
-        JE_readCryptLn(f,pName[i]);             /*Planet names*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 21; i++)
+	{
+		JE_readCryptLn(f,pName[i]);         /*Planet names*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 68; i++) {
-        JE_readCryptLn(f,miscText[i]);          /*Miscellaneous text*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 68; i++)
+	{
+		JE_readCryptLn(f,miscText[i]);      /*Miscellaneous text*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 5; i++) {
-        JE_readCryptLn(f,miscTextB[i]);         /*Little Miscellaneous text*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 5; i++)
+	{
+		JE_readCryptLn(f,miscTextB[i]);     /*Little Miscellaneous text*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 11; i++) {
-        JE_readCryptLn(f,menuInt[6][i]);        /*Key names*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 11; i++)
+	{
+		JE_readCryptLn(f,menuInt[6][i]);    /*Key names*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 7; i++) {
-        JE_readCryptLn(f,menuText[i]);          /*Main Menu*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 7; i++)
+	{
+		JE_readCryptLn(f,menuText[i]);      /*Main Menu*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 9; i++) {
-        JE_readCryptLn(f,outputs[i]);           /*Event text*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 9; i++)
+	{
+		JE_readCryptLn(f,outputs[i]);       /*Event text*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 6; i++) {
-        JE_readCryptLn(f,topicName[i]);         /*Help topics*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 6; i++)
+	{
+		JE_readCryptLn(f,topicName[i]);     /*Help topics*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 34; i++) {
-        JE_readCryptLn(f,mainMenuHelp[i]);      /*Main Menu Help*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
+	for (i = 0; i < 34; i++)
+	{
+		JE_readCryptLn(f,mainMenuHelp[i]);  /*Main Menu Help*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
-    for (i = 0; i < 7; i++) {
-        JE_readCryptLn(f,menuInt[1][i]);        /*Menu 1 - Main*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 9; i++) {
-        JE_readCryptLn(f,menuInt[2][i]);        /*Menu 2 - Items*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 8; i++) {
-        JE_readCryptLn(f,menuInt[3][i]);        /*Menu 3 - Options*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 6; i++) {
-        JE_readCryptLn(f,inGameText[i]);        /*InGame Menu*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 6; i++) {
-        JE_readCryptLn(f,detailLevel[i]);       /*Detail Level*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 5; i++) {
-        JE_readCryptLn(f,gameSpeedText[i]);     /*Game speed text*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i <= 5; i++) {
-        JE_readCryptLn(f,episodeName[i]);       /*Episode Names*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i <= 6; i++) {
-        JE_readCryptLn(f,difficultyName[i]);    /*Difficulty Level*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i <= 4; i++) {
-        JE_readCryptLn(f,playerName[i]);        /*Player Names*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 6; i++) {
-        JE_readCryptLn(f,menuInt[10][i]);       /*Menu 10 - 2Player Main*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 3; i++) {
-        JE_readCryptLn(f,inputDevices[i]);      /*Input Devices*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 4; i++) {
-        JE_readCryptLn(f,networkText[i]);       /*Network text*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 4; i++) {
-        JE_readCryptLn(f,menuInt[11][i]);       /*Menu 11 - 2Player Network*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i <= 10; i++) {
-        JE_readCryptLn(f,difficultyNameB[i]);   /*HighScore Difficulty Names*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 6; i++) {
-        JE_readCryptLn(f,menuInt[12][i]);       /*Menu 12 - Network Options*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 7; i++) {
-        JE_readCryptLn(f,menuInt[13][i]);       /*Menu 13 - Joystick*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 5; i++) {
-        JE_readCryptLn(f,joyButton[i]);         /*Joystick Button Assignments*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i <= 10; i++) {
-        JE_readCryptLn(f,superShips[i]);        /*SuperShips - For Super Arcade Mode*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 9; i++) {
-        JE_readCryptLn(f,specialName[i]);       /*SuperShips - For Super Arcade Mode*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 25; i++) {
-        JE_readCryptLn(f,destructHelp[i]);      /*Secret DESTRUCT game*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 17; i++) {
-        JE_readCryptLn(f,weaponNames[i]);       /*Secret DESTRUCT weapons*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < DestructModes; i++) {
-        JE_readCryptLn(f,destructModeName[i]);  /*Secret DESTRUCT modes*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 13; i++) {
-        JE_readCryptLn(f,shipInfo[i][0]);       /*NEW: Ship Info*/
-        JE_readCryptLn(f,shipInfo[i][1]);       /*NEW: Ship Info*/
-    }
-    JE_skipCryptLn(f); JE_skipCryptLn(f);
-    
-    for (i = 0; i < 5; i++) {
-        JE_readCryptLn(f,menuInt[14][i]);       /*Menu 12 - Network Options*/
-    }
+	for (i = 0; i < 7; i++)
+	{
+		JE_readCryptLn(f,menuInt[1][i]);    /*Menu 1 - Main*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 9; i++)
+	{
+		JE_readCryptLn(f,menuInt[2][i]);    /*Menu 2 - Items*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 8; i++)
+	{
+		JE_readCryptLn(f,menuInt[3][i]);    /*Menu 3 - Options*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 6; i++)
+	{
+		JE_readCryptLn(f,inGameText[i]);    /*InGame Menu*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 6; i++)
+	{
+		JE_readCryptLn(f,detailLevel[i]);   /*Detail Level*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 5; i++)
+	{
+		JE_readCryptLn(f,gameSpeedText[i]); /*Game speed text*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i <= 5; i++)
+	{
+		JE_readCryptLn(f,episodeName[i]);   /*Episode Names*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i <= 6; i++)
+	{
+		JE_readCryptLn(f,difficultyName[i]);/*Difficulty Level*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i <= 4; i++)
+	{
+		JE_readCryptLn(f,playerName[i]);    /*Player Names*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 6; i++)
+	{
+		JE_readCryptLn(f,menuInt[10][i]);       /*Menu 10 - 2Player Main*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 3; i++)
+	{
+		JE_readCryptLn(f,inputDevices[i]);      /*Input Devices*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 4; i++)
+	{
+		JE_readCryptLn(f,networkText[i]);       /*Network text*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 4; i++)
+	{
+		JE_readCryptLn(f,menuInt[11][i]);       /*Menu 11 - 2Player Network*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i <= 10; i++)
+	{
+		JE_readCryptLn(f,difficultyNameB[i]);   /*HighScore Difficulty Names*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 6; i++)
+	{
+		JE_readCryptLn(f,menuInt[12][i]);       /*Menu 12 - Network Options*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 7; i++)
+	{
+		JE_readCryptLn(f,menuInt[13][i]);       /*Menu 13 - Joystick*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 5; i++)
+	{
+		JE_readCryptLn(f,joyButton[i]);         /*Joystick Button Assignments*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i <= 10; i++)
+	{
+		JE_readCryptLn(f,superShips[i]);        /*SuperShips - For Super Arcade Mode*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 9; i++)
+	{
+		JE_readCryptLn(f,specialName[i]);       /*SuperShips - For Super Arcade Mode*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 25; i++)
+	{
+		JE_readCryptLn(f,destructHelp[i]);      /*Secret DESTRUCT game*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 17; i++)
+	{
+		JE_readCryptLn(f,weaponNames[i]);       /*Secret DESTRUCT weapons*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < DestructModes; i++)
+	{
+		JE_readCryptLn(f,destructModeName[i]);  /*Secret DESTRUCT modes*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 13; i++)
+	{
+		JE_readCryptLn(f,shipInfo[i][0]);       /*NEW: Ship Info*/
+		JE_readCryptLn(f,shipInfo[i][1]);       /*NEW: Ship Info*/
+	}
+	JE_skipCryptLn(f); JE_skipCryptLn(f);
+	
+	for (i = 0; i < 5; i++)
+	{
+		JE_readCryptLn(f,menuInt[14][i]);       /*Menu 12 - Network Options*/
+	}
 
-    fclose(f);
+	fclose(f);
 }

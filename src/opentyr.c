@@ -43,83 +43,83 @@ const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 int main( int argc, char *argv[] )
 {
-    SDL_Init( 0 );
+	SDL_Init( 0 );
 
-    JE_detectCFG();
+	JE_detectCFG();
 
-    printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
+	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
 
-    JE_scanForEpisodes();
+	JE_scanForEpisodes();
 
-    JE_initvga256();
-    init_keyboard();
+	JE_initvga256();
+	init_keyboard();
 
-    recordFileNum = 1;
-    playDemoNum = 0;
-    playDemo = FALSE;
+	recordFileNum = 1;
+	playDemoNum = 0;
+	playDemo = FALSE;
 
-    /* TODO: LoadConfiguration(); */
+	/* TODO: LoadConfiguration(); */
 
-    /* TODO: Tyrian originally checked availible memory here. */
+	/* TODO: Tyrian originally checked availible memory here. */
 
-    /* TODO ParamCheck(); */
+	/* TODO ParamCheck(); */
 
-    if (scanForJoystick)
-    {
-        JE_joystickInit();
-        if (joystick_installed)
-        {
-            printf("Joystick detected.  %d   %d\n", jCenterX, jCenterY);
-        } else {
-            printf("No joystick found.\n");
-        }
-    } else {
-        printf("Joystick override.\n");
-        joystick_installed = FALSE;
-    }
+	if (scanForJoystick)
+	{
+		JE_joystickInit();
+		if (joystick_installed)
+		{
+			printf("Joystick detected. %d %d\n", jCenterX, jCenterY);
+		} else {
+			printf("No joystick found.\n");
+		}
+	} else {
+		printf("Joystick override.\n");
+		joystick_installed = FALSE;
+	}
 
-    if (mouse_installed)
-    {
-        printf("Mouse Detected.   ");
-        if(mouse_threeButton)
-        {
-            printf("Mouse driver reports three buttons.");
-        }
-        printf("\n");
-    } else {
-        printf("No mouse found.\n");
-    }
+	if (mouse_installed)
+	{
+		printf("Mouse Detected.   ");
+		if (mouse_threeButton)
+		{
+			printf("Mouse driver reports three buttons.");
+		}
+		printf("\n");
+	} else {
+		printf("No mouse found.\n");
+	}
 
-    if(tyrianXmas)
-    {
-        if(JE_getFileSize("TYRIANC.SHP") == 0)
-        {
-            tyrianXmas = FALSE;
-        }
-        /*if(JE_getFileSize("VOICESC.SHP") == 0) tyrianXmas = FALSE;*/
-        if(tyrianXmas)
-        {
-            printf("*****************************\n");
-            printf("Christmas has been detected.\n");
-            printf("  Activate Christmas? (Y/N)\n");
-            printf("*****************************\n");
-            wait_input(TRUE,FALSE,FALSE);
-            if (lastkey_sym != SDLK_y)
-            {
-                tyrianXmas = FALSE;
-            }
-        } else {
-            printf("Christmas is missing.\n");
-        }
-    }
+	if (tyrianXmas)
+	{
+		if (JE_getFileSize("TYRIANC.SHP") == 0)
+		{
+			tyrianXmas = FALSE;
+		}
+		/*if (JE_getFileSize("VOICESC.SHP") == 0) tyrianXmas = FALSE;*/
+		if (tyrianXmas)
+		{
+			printf("*****************************\n");
+			printf("Christmas has been detected.\n");
+			printf("  Activate Christmas? (Y/N)\n");
+			printf("*****************************\n");
+			wait_input(TRUE,FALSE,FALSE);
+			if (lastkey_sym != SDLK_y)
+			{
+				tyrianXmas = FALSE;
+			}
+		} else {
+			printf("Christmas is missing.\n");
+		}
+	}
 
-    /* Default Options */
-    youAreCheating = FALSE;
-    smoothScroll = TRUE;
-    showMemLeft = FALSE;
-    playerPasswordInput = TRUE;
+	/* Default Options */
+	youAreCheating = FALSE;
+	smoothScroll = TRUE;
+	showMemLeft = FALSE;
+	playerPasswordInput = TRUE;
 
-    /* Initialize sound system */
+	/* initialize sound system */
 	JE_loadSong(1);
 	
 	if ( TRUE ) /* TODO: Check if sound is enabled, handle either appropriately */
@@ -132,35 +132,35 @@ int main( int argc, char *argv[] )
 		/* TODO: No sound! What now?! */
 	}
 
-    if(recordDemo)
-    {
-        printf("Game will be recorded.\n");
-    }
+	if (recordDemo)
+	{
+		printf("Game will be recorded.\n");
+	}
 
-    megaData1 = malloc(sizeof(*megaData1));
-    megaData2 = malloc(sizeof(*megaData2));
-    megaData3 = malloc(sizeof(*megaData3));
+	megaData1 = malloc(sizeof(*megaData1));
+	megaData2 = malloc(sizeof(*megaData2));
+	megaData3 = malloc(sizeof(*megaData3));
 
-    newshape_init();
-    JE_loadMainShapeTables();
-    /* TODO JE_loadExtraShapes;*/  /*Editship*/
+	newshape_init();
+	JE_loadMainShapeTables();
+	/* TODO JE_loadExtraShapes;*/  /*Editship*/
 
-    JE_loadHelpText();
-    /*debuginfo("Help text complete");*/
+	JE_loadHelpText();
+	/*debuginfo("Help text complete");*/
 
-    /* here ends line 92771 of TYRIAN2.PAS
-    * TODO: Finish it and stuff. */
+	/* here ends line 92771 of TYRIAN2.PAS
+	* TODO: Finish it and stuff. */
 
-    JE_loadpals();
+	JE_loadpals();
 
-    SDL_LockSurface(VGAScreen);
-    JE_openingAnim();
-    JE_titleScreen(TRUE);
-    SDL_UnlockSurface(VGAScreen);
+	SDL_LockSurface(VGAScreen);
+	JE_openingAnim();
+	JE_titleScreen(TRUE);
+	SDL_UnlockSurface(VGAScreen);
 
-    JE_showVGA();
+	JE_showVGA();
 
-    JE_closevga256();
+	JE_closevga256();
 
-    return 0;
+	return 0;
 }

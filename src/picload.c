@@ -32,61 +32,61 @@ JE_boolean notYetLoadedPCX = TRUE;
 
 void JE_loadPIC( JE_byte PCXnumber, JE_boolean storepal )
 {
-    typedef JE_byte JE_buftype[63000]; /* [1..63000] */
+	typedef JE_byte JE_buftype[63000]; /* [1..63000] */
 
-    JE_word x;
-    JE_buftype buf;
-    FILE *PCXfile;
+	JE_word x;
+	JE_buftype buf;
+	FILE *PCXfile;
 
-    int i;
-    JE_byte *p;
-    unsigned char *s;   /* screen pointer, 8-bit specific */
+	int i;
+	JE_byte *p;
+	unsigned char *s; /* screen pointer, 8-bit specific */
 
-    s = (unsigned char *)VGAScreen->pixels;
+	s = (unsigned char *)VGAScreen->pixels;
 
-    PCXnumber--;
+	PCXnumber--;
 
-    JE_resetFileExt(&PCXfile, "TYRIAN.PIC", FALSE);
+	JE_resetFileExt(&PCXfile, "TYRIAN.PIC", FALSE);
 
-    /*Same as old AnalyzePic*/
-    if (notYetLoadedPCX)
-    {
-        notYetLoadedPCX = FALSE;
-        fread(&x, 2, 1, PCXfile);
-        for (x = 0; x < PCXnum; x++)
-        {
-            fread(&pcxpos[x], sizeof(pcxpos[x]), 1, PCXfile);
-        }
-        fseek(PCXfile, 0, SEEK_END);
-        pcxpos[PCXnum] = ftell(PCXfile);
-    }
+	/*Same as old AnalyzePic*/
+	if (notYetLoadedPCX)
+	{
+		notYetLoadedPCX = FALSE;
+		fread(&x, 2, 1, PCXfile);
+		for (x = 0; x < PCXnum; x++)
+		{
+			fread(&pcxpos[x], sizeof(pcxpos[x]), 1, PCXfile);
+		}
+		fseek(PCXfile, 0, SEEK_END);
+		pcxpos[PCXnum] = ftell(PCXfile);
+	}
 
-    fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
-    fread(buf, 1, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
-    fclose(PCXfile);
+	fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
+	fread(buf, 1, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
+	fclose(PCXfile);
 
-    p = (JE_byte *)buf;
-    for (i = 0; i < 320 * 200; )
-    {
-        if ((*p & 0xc0) == 0xc0)
-        {
-            i += (*p & 0x3f);
-            memset(s, *(p + 1), (*p & 0x3f));
-            s += (*p & 0x3f); p += 2;
-        } else {
-            i++;
-            *s = *p;
-            s++; p++;
-        }
-        if (i && (i % 320 == 0))
-        {
-            s += VGAScreen->w - 320;
-        }
-    }
+	p = (JE_byte *)buf;
+	for (i = 0; i < 320 * 200; )
+	{
+		if ((*p & 0xc0) == 0xc0)
+		{
+			i += (*p & 0x3f);
+			memset(s, *(p + 1), (*p & 0x3f));
+			s += (*p & 0x3f); p += 2;
+		} else {
+			i++;
+			*s = *p;
+			s++; p++;
+		}
+		if (i && (i % 320 == 0))
+		{
+			s += VGAScreen->w - 320;
+		}
+	}
 
-    memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
-    if (storepal)
-    {
-        JE_updateColorsFast(&colors);
-    }
+	memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
+	if (storepal)
+	{
+		JE_updateColorsFast(&colors);
+	}
 }

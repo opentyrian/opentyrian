@@ -32,60 +32,61 @@ int haltGame = 0, netQuit = 0; /* placeholders */
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
 #ifdef NDEBUG /* Disable mouse grabbing/etc in debug builds */
-    SDL_WarpMouse(160, 100);
+	SDL_WarpMouse(160, 100);
 #endif
-    lastkey_sym = 0;
+	lastkey_sym = 0;
 
-    do {
-        JE_showVGA();
+	do
+	{
+		JE_showVGA();
 
-        /*waitretrace;*/
+		/*waitretrace;*/
 
-        service_SDL_events();
+		service_SDL_events();
 
-        inputDetected = keydown | mousedown | JE_joystickNotHeld();
+		inputDetected = keydown | mousedown | JE_joystickNotHeld();
 
-        if (lastkey_sym == SDLK_SPACE)
-        {
-            lastkey_sym = SDLK_RETURN;
-        }
+		if (lastkey_sym == SDLK_SPACE)
+		{
+			lastkey_sym = SDLK_RETURN;
+		}
 
-        if (mousedown)
-        {
-            lastkey_sym = SDLK_RETURN;
-        }
+		if (mousedown)
+		{
+			lastkey_sym = SDLK_RETURN;
+		}
 
 #ifdef NDEBUG
-        if (mouse_installed)
-        {
-            if (abs(mouse_y - 100) > 10)
-            {
-                inputDetected = TRUE;
-                if (mouse_y - 100 < 0)
-                {
-                    lastkey_sym = SDLK_UP;
-                } else {
-                    lastkey_sym = SDLK_DOWN;
-                }
-            }
-            if (abs(mouse_x - 160) > 10)
-            {
-                inputDetected = TRUE;
-                if (mouse_x - 160 < 0)
-                {
-                    lastkey_sym = SDLK_LEFT;
-                } else {
-                    lastkey_sym = SDLK_RIGHT;
-                }
-            }
-        }
+		if (mouse_installed)
+		{
+			if (abs(mouse_y - 100) > 10)
+			{
+				inputDetected = TRUE;
+				if (mouse_y - 100 < 0)
+				{
+					lastkey_sym = SDLK_UP;
+				} else {
+					lastkey_sym = SDLK_DOWN;
+				}
+			}
+			if (abs(mouse_x - 160) > 10)
+			{
+				inputDetected = TRUE;
+				if (mouse_x - 160 < 0)
+				{
+					lastkey_sym = SDLK_LEFT;
+				} else {
+					lastkey_sym = SDLK_RIGHT;
+				}
+			}
+		}
 #endif
 
-        if (*waitTime > 0)
-        {
-            *waitTime--;
-        }
-    } while (!(inputDetected || *waitTime == 1 || haltGame || netQuit));
+		if (*waitTime > 0)
+		{
+			*waitTime--;
+		}
+	} while (!(inputDetected || *waitTime == 1 || haltGame || netQuit));
 }
 
 /* TODO */

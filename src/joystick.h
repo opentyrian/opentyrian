@@ -47,8 +47,8 @@ void JE_joystick2( void );
 JE_boolean JE_nextJoystickCheck( void );
 JE_boolean JE_joystickTranslate( void );
 void JE_joystickInit( void );
-JE_boolean  JE_joystickNotHeld( void );
-void JE_updateButtons( void );   /*Uses ButtonAssign to find out*/
+JE_boolean JE_joystickNotHeld( void );
+void JE_updateButtons( void ); /*Uses ButtonAssign to find out*/
 
 void joystick_init( void );
 

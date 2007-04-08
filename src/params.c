@@ -40,8 +40,9 @@ JE_boolean soundInfoReport = FALSE;
 JE_boolean stupidWindows;
 
 /* Special Note:
-     The two booleans to detect network play for Tim's stuff.
-     It's in here because of the dumb port 60 bug. */
+ * The two booleans to detect network play for Tim's stuff.
+ * It's in here because of the dumb port 60 bug.
+ */
 JE_boolean isNetworkGame, isNetworkActive;
 
 JE_boolean tyrianXmas;

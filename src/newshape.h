@@ -40,7 +40,7 @@
 #define MaximumShape    151
 #define MaxTable        8
 
-typedef JE_byte *JE_ShapeArrayType[MaxTable][MaximumShape];	/* [1..maxtable, 1..maximumshape] */
+typedef JE_byte *JE_ShapeArrayType[MaxTable][MaximumShape]; /* [1..maxtable, 1..maximumshape] */
 
 #ifndef NO_EXTERNS
 extern SDL_Surface *tempScreenSeg;
@@ -61,7 +61,7 @@ void JE_newDrawShape( JE_byte *shape, JE_word xsize, JE_word ysize );
 void JE_newDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize );
 void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y );
 void JE_newPurgeShapes( JE_byte table );
-/*void  JE_OverrideLoadShapes( JE_byte table, char *shapefile, JE_word minimum, JE_word maximum );*/
+/*void JE_OverrideLoadShapes( JE_byte table, char *shapefile, JE_word minimum, JE_word maximum );*/
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );

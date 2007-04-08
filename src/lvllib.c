@@ -32,14 +32,16 @@ JE_word lvlNum;
 
 void JE_analyzeLevel( void )
 {
-    JE_word x;
-    FILE *f;
+	JE_word x;
+	FILE *f;
 
-    JE_resetFileExt(&f, levelFile, FALSE);
-    fread(&lvlNum, 2, 1, f);
-    for(x = 0; x < lvlNum; x++)
-        fread(&lvlPos[x], sizeof(lvlPos[x]), 1, f);
-    fseek(f, 0, SEEK_END);
-    lvlPos[lvlNum] = ftell(f);
-    fclose(f);
+	JE_resetFileExt(&f, levelFile, FALSE);
+	fread(&lvlNum, 2, 1, f);
+	for (x = 0; x < lvlNum; x++)
+	{
+		fread(&lvlPos[x], sizeof(lvlPos[x]), 1, f);
+	}
+	fseek(f, 0, SEEK_END);
+	lvlPos[lvlNum] = ftell(f);
+	fclose(f);
 }

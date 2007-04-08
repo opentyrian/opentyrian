@@ -35,63 +35,63 @@
 
 struct JE_singleenemytype
 {
-    JE_byte     fillbyte;
-    JE_integer  ex, ey;     /* POSITION */
-    JE_shortint exc, eyc;   /* CURRENT SPEED */
-    JE_shortint exca, eyca; /* RANDOM ACCELERATION */
-    JE_shortint excc, eycc; /* FIXED ACCELERATION WAITTIME */
-    JE_byte     exccw, eyccw;
-    JE_byte     armorleft;
-    JE_byte     eshotwait[3], eshotmultipos[3]; /* [1..3] */
-    JE_byte     enemycycle;
-    JE_byte     ani;
-    JE_word     egr[20]; /* [1..20] */
-    JE_byte     size;
-    JE_byte     linknum;
-    JE_byte     aniactive;
-    JE_byte     animax;
-    JE_byte     aniwhenfire;
-    JE_word     shapeseg;
-    JE_shortint exrev,eyrev;
-    JE_integer  exccadd,eyccadd;
-    JE_byte     exccwmax,eyccwmax;
-    JE_word     enemydatofs;
-    JE_boolean  edamaged;
-    JE_word     enemytype;
-    JE_byte     animin;
-    JE_word     edgr;
-    JE_shortint edlevel;
-    JE_shortint edani;
-    JE_byte     fill1;
-    JE_byte     filter;
-    JE_integer  evalue;
-    JE_integer  fixedmovey;
-    JE_byte     freq[3]; /* [1..3] */
-    JE_byte     launchwait;
-    JE_word     launchtype;
-    JE_byte     launchfreq;
-    JE_byte     xaccel;
-    JE_byte     yaccel;
-    JE_byte     tur[3]; /* [1..3] */
-    JE_word     enemydie;   /* Enemy created when this one dies */
-    JE_boolean  enemyground;
-    JE_byte     explonum;
-    JE_word     mapoffset;
-    JE_boolean  scoreitem;
+	JE_byte     fillbyte;
+	JE_integer  ex, ey;     /* POSITION */
+	JE_shortint exc, eyc;   /* CURRENT SPEED */
+	JE_shortint exca, eyca; /* RANDOM ACCELERATION */
+	JE_shortint excc, eycc; /* FIXED ACCELERATION WAITTIME */
+	JE_byte     exccw, eyccw;
+	JE_byte     armorleft;
+	JE_byte     eshotwait[3], eshotmultipos[3]; /* [1..3] */
+	JE_byte     enemycycle;
+	JE_byte     ani;
+	JE_word     egr[20]; /* [1..20] */
+	JE_byte     size;
+	JE_byte     linknum;
+	JE_byte     aniactive;
+	JE_byte     animax;
+	JE_byte     aniwhenfire;
+	JE_word     shapeseg;
+	JE_shortint exrev,eyrev;
+	JE_integer  exccadd,eyccadd;
+	JE_byte     exccwmax,eyccwmax;
+	JE_word     enemydatofs;
+	JE_boolean  edamaged;
+	JE_word     enemytype;
+	JE_byte     animin;
+	JE_word     edgr;
+	JE_shortint edlevel;
+	JE_shortint edani;
+	JE_byte     fill1;
+	JE_byte     filter;
+	JE_integer  evalue;
+	JE_integer  fixedmovey;
+	JE_byte     freq[3]; /* [1..3] */
+	JE_byte     launchwait;
+	JE_word     launchtype;
+	JE_byte     launchfreq;
+	JE_byte     xaccel;
+	JE_byte     yaccel;
+	JE_byte     tur[3]; /* [1..3] */
+	JE_word     enemydie; /* Enemy created when this one dies */
+	JE_boolean  enemyground;
+	JE_byte     explonum;
+	JE_word     mapoffset;
+	JE_boolean  scoreitem;
 
-    JE_boolean  special;
-    JE_byte     flagnum;
-    JE_boolean  setto;
+	JE_boolean  special;
+	JE_byte     flagnum;
+	JE_boolean  setto;
 
-    JE_byte     iced;      /*Duration*/
+	JE_byte     iced; /*Duration*/
 
-    JE_byte     launchspecial;
+	JE_byte     launchspecial;
 
-    JE_integer  xminbounce;
-    JE_integer  xmaxbounce;
-    JE_integer  yminbounce;
-    JE_integer  ymaxbounce;
-    JE_byte     fill[3]; /* [1..3] */
+	JE_integer  xminbounce;
+	JE_integer  xmaxbounce;
+	JE_integer  yminbounce;
+	JE_integer  ymaxbounce;
+	JE_byte     fill[3]; /* [1..3] */
 };
 
 typedef struct JE_singleenemytype JE_multienemytype[100]; /* [1..100] */
@@ -108,46 +108,46 @@ typedef JE_word JE_maptype3[600][15]; /* [1..600, 1..15] */
 
 struct JE_eventrectype
 {
-    JE_word     EventTime;
-    JE_byte     EventType;
-    JE_integer  EventDat, EventDat2;
-    JE_shortint EventDat3, EventDat5, EventDat6;
-    JE_byte     EventDat4;
+	JE_word     EventTime;
+	JE_byte     EventType;
+	JE_integer  EventDat, EventDat2;
+	JE_shortint EventDat3, EventDat5, EventDat6;
+	JE_byte     EventDat4;
 };
 
 struct JE_megadatatype1
 {
-    JE_maptype mainmap;
-    struct
-    {
-        JE_dancshape sh;
-    } shapes[72]; /* [0..71] */
-    JE_byte    tempdat1;
-    /*JE_dancshape filler;*/
+	JE_maptype mainmap;
+	struct
+	{
+		JE_dancshape sh;
+	} shapes[72]; /* [0..71] */
+	JE_byte    tempdat1;
+	/*JE_dancshape filler;*/
 };
 
 struct JE_megadatatype2
 {
-    JE_maptype2 mainmap;
-    struct
-    {
-        JE_byte nothing[3]; /* [1..3] */
-        JE_byte fill;
-        JE_dancshape sh;
-    } shapes[71]; /* [0..70] */
-    JE_byte     tempdat2;
+	JE_maptype2 mainmap;
+	struct
+	{
+		JE_byte nothing[3]; /* [1..3] */
+		JE_byte fill;
+		JE_dancshape sh;
+	} shapes[71]; /* [0..70] */
+	JE_byte tempdat2;
 };
 
 struct JE_megadatatype3
 {
-    JE_maptype3 mainmap;
-    struct
-    {
-        JE_byte nothing[3]; /* [1..3] */
-        JE_byte fill;
-        JE_dancshape sh;
-    } shapes[70]; /* [0..69] */
-    JE_byte tempdat3;
+	JE_maptype3 mainmap;
+	struct
+	{
+		JE_byte nothing[3]; /* [1..3] */
+		JE_byte fill;
+		JE_dancshape sh;
+	} shapes[70]; /* [0..69] */
+	JE_byte tempdat3;
 };
 
 typedef JE_multienemytype JE_EnemyType;
@@ -251,14 +251,31 @@ extern JE_word enemyOnScreen;
 extern JE_byte enemyShapeTables[6];
 extern JE_boolean uniqueEnemy;
 extern JE_word superEnemy254Jump;
-extern struct { JE_word explodeLoc; JE_word explodeGr; JE_byte followPlayer; JE_byte fixedExplode; JE_word fixedMovement; } explosions[ExplosionMax];
+extern struct {
+	JE_word explodeLoc;
+	JE_word explodeGr;
+	JE_byte followPlayer;
+	JE_byte fixedExplode;
+	JE_word fixedMovement;
+} explosions[ExplosionMax];
 extern JE_byte explodeAvail[ExplosionMax];
 extern JE_integer explosionFollowAmount;
 extern JE_boolean playerFollow, fixedExplosions;
 extern JE_integer explosionMoveUp;
 extern JE_boolean fireButtonHeld;
 extern JE_boolean enemyShotAvail[EnemyShotMax];
-extern struct { JE_integer Sx, Sy; JE_integer SxM, SyM; JE_shortint SxC, SyC; JE_byte Tx, Ty; JE_word SGR; JE_byte SDMG; JE_byte duration; JE_word animate; JE_word animax; JE_byte fill[12]; } enemyShot[EnemyShotMax];
+extern struct {
+	JE_integer Sx, Sy;
+	JE_integer SxM, SyM;
+	JE_shortint SxC, SyC;
+	JE_byte Tx, Ty;
+	JE_word SGR;
+	JE_byte SDMG;
+	JE_byte duration;
+	JE_word animate;
+	JE_word animax;
+	JE_byte fill[12];
+} enemyShot[EnemyShotMax];
 extern JE_byte zinglonDuration;
 extern JE_byte astralDuration;
 extern JE_word flareDuration;
@@ -271,7 +288,15 @@ extern JE_byte doIced;
 extern JE_boolean infiniteShot;
 extern JE_byte superBomb[2];
 extern JE_integer tempShotX, tempShotY;
-extern struct { JE_integer shotX; JE_integer shotY; JE_integer shotXM; JE_integer shotYM; JE_integer shotXC; JE_integer shotYC; JE_boolean shotComplicated; JE_integer shotDevX; JE_integer shotDirX; JE_integer shotDevY; JE_integer shotDirY; JE_integer shotCirSizeX; JE_integer shotCirSizeY; JE_byte shotTrail; JE_word shotGR; JE_word shotAni; JE_word shotAniMax; JE_shortint shotDmg; JE_byte shotBlastFilter; JE_byte chainReaction; JE_byte playerNumber; JE_byte aimAtEnemy; JE_byte aimDelay; JE_byte aimDelayMax; JE_byte fill[1]; } playerShotData[MaxPWeapon + 1];
+extern struct {
+	JE_integer shotX, shotY, shotXM, shotYM, shotXC, shotYC;
+	JE_boolean shotComplicated;
+	JE_integer shotDevX, shotDirX, shotDevY, shotDirY, shotCirSizeX, shotCirSizeY;
+	JE_byte shotTrail;
+	JE_word shotGR, shotAni, shotAniMax;
+	JE_shortint shotDmg;
+	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax, fill[1];
+} playerShotData[MaxPWeapon + 1];
 extern JE_byte chain;
 extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MaxPWeapon];
@@ -309,9 +334,17 @@ extern JE_boolean playerHNotReady;
 extern JE_word playerHX[20], playerHY[20];
 extern JE_word neat;
 extern JE_REXtype REXAvail;
-extern struct { JE_byte delay; JE_word ex, ey; JE_boolean big; } REXDat[20];
+extern struct {
+	JE_byte delay;
+	JE_word ex, ey;
+	JE_boolean big;
+} REXDat[20];
 extern JE_byte SPZ[MaxSP + 1];
-extern struct { JE_word location; JE_word movement; JE_byte color;} SPL[MaxSP + 1];
+extern struct {
+	JE_word location;
+	JE_word movement;
+	JE_byte color;
+} SPL[MaxSP + 1];
 extern JE_word lastSP;
 extern JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
 extern JE_word avail;
@@ -344,7 +377,7 @@ JE_word JE_SGR( JE_word ship, JE_word *ofs, JE_word *seg );
 void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );
 
-void JE_tyrianhalt( JE_byte code );     /* This ends the game */
+void JE_tyrianHalt( JE_byte code ); /* This ends the game */
 void JE_initplayershot( JE_word portnum, JE_byte temp, JE_word px, JE_word py,
                         JE_word mousex, JE_word mousey,
                         JE_word wpnum, JE_byte playernum );
@@ -369,7 +402,7 @@ void PortConfigs( void );
 
 void ResetPlayerH( void );
 
-void DoSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color );  /*SuperPixels*/
+void DoSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ); /*SuperPixels*/
 void DrawSP( void );
 
 void DrawOptionLevel( void );

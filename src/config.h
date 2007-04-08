@@ -39,29 +39,29 @@ typedef JE_byte JE_EditorItemAvailType[100]; /* [1..100] */
 
 typedef struct
 {
-    JE_word       encode;
-    JE_word       level;
-    JE_PItemsType items;
-    JE_longint    score;
-    JE_longint    score2;
-    char          levelName[10]; /* string [9]; */
-    JE_char       name[14]; /* [1..14] */
-    JE_byte       cubes;
-    JE_byte       power[2]; /* [1..2] */
-    JE_byte       episode;
-    JE_PItemsType lastItems;
-    JE_byte       difficulty;
-    JE_byte       secretHint;
-    JE_byte       input1;
-    JE_byte       input2;
-    JE_boolean    gameHasRepeated;   /*See if you went from one episode to another*/
-    JE_byte       initialDifficulty;
+	JE_word       encode;
+	JE_word       level;
+	JE_PItemsType items;
+	JE_longint    score;
+	JE_longint    score2;
+	char          levelName[10]; /* string [9]; */
+	JE_char       name[14]; /* [1..14] */
+	JE_byte       cubes;
+	JE_byte       power[2]; /* [1..2] */
+	JE_byte       episode;
+	JE_PItemsType lastItems;
+	JE_byte       difficulty;
+	JE_byte       secretHint;
+	JE_byte       input1;
+	JE_byte       input2;
+	JE_boolean    gameHasRepeated; /*See if you went from one episode to another*/
+	JE_byte       initialDifficulty;
 
-    /* High Scores - Each episode has both sets of 1&2 player selections - with 3 in each */
-    JE_longint    highScore1,
-                  highScore2;
-    char          highScoreName[30]; /* string [29] */
-    JE_byte       highScoreDiff;
+	/* High Scores - Each episode has both sets of 1&2 player selections - with 3 in each */
+	JE_longint    highScore1,
+	              highScore2;
+	char          highScoreName[30]; /* string [29] */
+	JE_byte       highScoreDiff;
 } JE_SaveFileType;
 
 typedef JE_SaveFileType JE_SaveFilesType[SaveFilesNum]; /* [1..savefilesnum] */
@@ -79,9 +79,9 @@ extern JE_boolean smoothies[9];
 extern JE_byte starShowVGASpecialCode;
 extern struct
 {
-    JE_byte sC;
-    JE_word sLoc;
-    JE_word sMov;
+	JE_byte sC;
+	JE_word sLoc;
+	JE_word sMov;
 } starDat[MaxStars];
 extern JE_word starY;
 extern JE_word lastCubeMax, cubeMax;

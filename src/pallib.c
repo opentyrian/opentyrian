@@ -28,26 +28,26 @@ JE_word palnum;
 
 void JE_loadpals( void )
 {
-    FILE *f;
-    int i;
+	FILE *f;
+	int i;
 
-    palnum = 0;
+	palnum = 0;
 
-    f = fopen(JE_locateFile("PALETTE.DAT"), "rb");
-    while (palnum < maxpal && !feof(f))
-    {
-        for (i = 0; i < 256; i++)
-        {
-            palettes[palnum][i].r = getc(f);
-            palettes[palnum][i].g = getc(f);
-            palettes[palnum][i].b = getc(f);
-        }
-        palnum++;
-    }
-    fclose(f);
+	f = fopen(JE_locateFile("PALETTE.DAT"), "rb");
+	while (palnum < maxpal && !feof(f))
+	{
+		for (i = 0; i < 256; i++)
+		{
+			palettes[palnum][i].r = getc(f);
+			palettes[palnum][i].g = getc(f);
+			palettes[palnum][i].b = getc(f);
+		}
+		palnum++;
+	}
+	fclose(f);
 }
 
 void JE_ZPal( JE_byte palette )
 {
-    JE_updateColorsFast(&palettes[palette]);
+	JE_updateColorsFast(&palettes[palette]);
 }

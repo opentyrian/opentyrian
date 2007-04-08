@@ -35,44 +35,44 @@ const char hexa[17] = "0123456789ABCDEF";
 
 void setdelay( JE_byte delay )
 {
-    target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
+	target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
 }
 
 INLINE int delaycount( void )
 {
-    return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
+	return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
 }
 
 void wait_delay( void )
 {
-    Uint32 ticks;
+	Uint32 ticks;
 
-    while ((ticks = SDL_GetTicks()) < target)
-    {
-        if (ticks % SDL_POLL_INTERVAL == 0)
-        {
-            service_SDL_events();
-        }
-    }
+	while ((ticks = SDL_GetTicks()) < target)
+	{
+		if (ticks % SDL_POLL_INTERVAL == 0)
+		{
+			service_SDL_events();
+		}
+	}
 }
 
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-    Uint32 ticks;
+	Uint32 ticks;
 
-    newkey = newmouse = FALSE;
-    service_SDL_events();
-    while ((ticks = SDL_GetTicks()) < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
-    {
-        if (ticks % SDL_POLL_INTERVAL == 0)
-        {
-            if (joystick)
-            {
-                JE_joystick2();
-            }
-            service_SDL_events();
-        }
-    }
+	newkey = newmouse = FALSE;
+	service_SDL_events();
+	while ((ticks = SDL_GetTicks()) < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
+	{
+		if (ticks % SDL_POLL_INTERVAL == 0)
+		{
+			if (joystick)
+			{
+				JE_joystick2();
+			}
+			service_SDL_events();
+		}
+	}
 }
 
 void JE_loadSong( JE_word songnum )
@@ -82,5 +82,5 @@ void JE_loadSong( JE_word songnum )
 
 void JE_playSampleNum( JE_byte samplenum )
 {
-    /* TODO dummy function */
+	/* TODO dummy function */
 }

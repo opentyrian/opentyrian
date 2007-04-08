@@ -34,51 +34,51 @@ const JE_byte SANextShip[SA + 2] /* [0..SA + 1] */ = { 3, 8, 6, 2, 5, 1, 4, 3, 7
 const JE_word SASpecialWeapon[SA] /* [1..SA] */  = { 7, 8, 9,10,11,12,13};
 const JE_word SASpecialWeaponB[SA] /* [1..SA] */ = {37, 6,15,40,16,14,41};
 const JE_byte SAShip[SA] /* [1..SA] */ = {3,1,5,10,2,11,12};
-const JE_word SAWeapon[SA][5] /* [1..SA, 1..5] */ = 
+const JE_word SAWeapon[SA][5] /* [1..SA, 1..5] */ =
 {  /* R Bl Bk G  P */
-    { 9,31,32,33,34},  /* Stealth Ship */
-    {19, 8,22,41,34},  /* StormWind    */
-    {27, 5,20,42,31},  /* Techno       */
-    {15, 3,28,22,12},  /* Enemy        */
-    {23,35,25,14, 6},  /* Weird        */
-    { 2, 5,21, 4, 7},  /* Unknown      */
-    {40,38,37,41,36}   /* NortShip Z   */
+	{ 9,31,32,33,34},  /* Stealth Ship */
+	{19, 8,22,41,34},  /* StormWind    */
+	{27, 5,20,42,31},  /* Techno       */
+	{15, 3,28,22,12},  /* Enemy        */
+	{23,35,25,14, 6},  /* Weird        */
+	{ 2, 5,21, 4, 7},  /* Unknown      */
+	{40,38,37,41,36}   /* NortShip Z   */
 };
 
-const JE_byte specialArcadeWeapon[PortNum] /* [1..Portnum] */ = 
+const JE_byte specialArcadeWeapon[PortNum] /* [1..Portnum] */ =
 {
-    17,17,18,0,0,0,10,0,0,0,0,0,44,0,10,0,19,0,0,-0,0,0,0,0,0,0,
-    -0,0,0,0,45,0,0,0,0,0,0,0,0,0,0,0
+	17,17,18,0,0,0,10,0,0,0,0,0,44,0,10,0,19,0,0,-0,0,0,0,0,0,0,
+	-0,0,0,0,45,0,0,0,0,0,0,0,0,0,0,0
 };
 
-const JE_byte optionSelect[16][3][2] /* [0..15, 1..3, 1..2] */ = 
-{   /* MAIN     OPT    FRONT */
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { { 1, 1},{16,16},{30,30} },  /*Single Shot*/
-    { { 2, 2},{29,29},{29,20} },  /*Dual Shot*/
-    { { 3, 3},{21,21},{12, 0} },  /*Charge Cannon*/
-    { { 4, 4},{18,18},{16,23} },  /*Vulcan*/
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { { 6, 6},{29,16},{ 0,22} },  /*Super Missile*/
-    { { 7, 7},{19,19},{19,28} },  /*Atom Bomb*/
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { {10,10},{21,21},{21,27} },  /*Mini Missile*/
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { {13,13},{17,17},{13,26} },  /*MicroBomb*/
-    { { 0, 0},{ 0, 0},{ 0, 0} },  /**/
-    { {15,15},{15,16},{15,16} }   /*Post-It*/
+const JE_byte optionSelect[16][3][2] /* [0..15, 1..3, 1..2] */ =
+{	/*  MAIN    OPT    FRONT */
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ { 1, 1},{16,16},{30,30} },  /*Single Shot*/
+	{ { 2, 2},{29,29},{29,20} },  /*Dual Shot*/
+	{ { 3, 3},{21,21},{12, 0} },  /*Charge Cannon*/
+	{ { 4, 4},{18,18},{16,23} },  /*Vulcan*/
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ { 6, 6},{29,16},{ 0,22} },  /*Super Missile*/
+	{ { 7, 7},{19,19},{19,28} },  /*Atom Bomb*/
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ {10,10},{21,21},{21,27} },  /*Mini Missile*/
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ {13,13},{17,17},{13,26} },  /*MicroBomb*/
+	{ { 0, 0},{ 0, 0},{ 0, 0} },  /**/
+	{ {15,15},{15,16},{15,16} }   /*Post-It*/
 };
 
-const JE_word PGR[21] /* [1..21] */ = 
+const JE_word PGR[21] /* [1..21] */ =
 {
-    4,
-    1,2,3,
-    41-21,57-21,73-21,89-21,105-21,
-    121-21,137-21,153-21,
-    151,151,151,151,73-21,73-21,1,2,4
-    /*151,151,151*/
+	4,
+	1,2,3,
+	41-21,57-21,73-21,89-21,105-21,
+	121-21,137-21,153-21,
+	151,151,151,151,73-21,73-21,1,2,4
+	/*151,151,151*/
 };
 const JE_byte PAni[21] /* [1..21] */ = {1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1};
 
@@ -86,73 +86,73 @@ const JE_byte PItemButtonMap[7] /* [1..7] */ = {12,1,2,10,6,4,5}; /*Financial St
 
 const JE_word linkGunWeapons[38] /* [1..38] */ =
 {
-    0,0,0,0,0,0,0,0,444,445,446,447,0,448,449,0,0,0,0,0,450,451,0,506,0,564,
-      445,446,447,448,449,445,446,447,448,449,450,451
+	0,0,0,0,0,0,0,0,444,445,446,447,0,448,449,0,0,0,0,0,450,451,0,506,0,564,
+	  445,446,447,448,449,445,446,447,448,449,450,451
 };
 const JE_word chargeGunWeapons[38] /* [1..38] */ =
 {
-    0,0,0,0,0,0,0,0,476,458,464,482,0,488,470,0,0,0,0,0,494,500,0,528,0,558,
-      458,458,458,458,458,458,458,458,458,458,458,458
+	0,0,0,0,0,0,0,0,476,458,464,482,0,488,470,0,0,0,0,0,494,500,0,528,0,558,
+	  458,458,458,458,458,458,458,458,458,458,458,458
 };
 const JE_word linkMultiGr[17] /* [0..16] */ =
-    {77,221,183,301,1,282,164,202,58,201,163,281,39,300,182,220,77};
+	{77,221,183,301,1,282,164,202,58,201,163,281,39,300,182,220,77};
 const JE_word linkSonicGr[17] /* [0..16] */ =
-    {85,242,131,303,47,284,150,223,66,224,149,283,9,302,130,243,85};
+	{85,242,131,303,47,284,150,223,66,224,149,283,9,302,130,243,85};
 const JE_word linkMult2Gr[17] /* [0..16] */ =
-    {78,299,295,297,2,278,276,280,59,279,275,277,40,296,294,298,78};
+	{78,299,295,297,2,278,276,280,59,279,275,277,40,296,294,298,78};
 
 const JE_byte randomEnemyLaunchSounds[3] /* [1..3] */ = {13,6,26};
 
-const JE_byte keyboardCombos[26][8] /* [1..26, 1..8] */ = 
+const JE_byte keyboardCombos[26][8] /* [1..26, 1..8] */ =
 {
-    {  2,  1,  2,  5,137,          0,  0,  0},  /*Invulnerability*/
-    {  4,  3,  2,  5,138,          0,  0,  0},  /*Atom Bomb*/
-    {  3,  4,  6,139,          0,  0,  0,  0},  /*Seeker Bombs*/
-    {  2,  5,142,          0,  0,  0,  0,  0},  /*Ice Blast*/
-    {  6,  2,  6,143,          0,  0,  0,  0},  /*Auto Repair*/
-    {  6,  7,  5,  8,  6,  7,  5,112        },  /*Spin Wave*/
-    {  7,  8,101,          0,  0,  0,  0,  0},  /*Repulsor*/
-    {  1,  7,  6,146,          0,  0,  0,  0},  /*Protron Field*/
-    {  8,  6,  7,  1,120,          0,  0,  0},  /*Minefield*/
-    {  3,  6,  8,  5,121,          0,  0,  0},  /*Post-It Blast*/
-    {  1,  2,  7,  8,119,          0,  0,  0},  /*Drone Ship - TBC*/
-    {  3,  4,  3,  6,123,          0,  0,  0},  /*Repair Player 2*/
-    {  6,  7,  5,  8,124,          0,  0,  0},  /*Super Bomb - TBC*/
-    {  1,  6,125,          0,  0,  0,  0,  0},  /*Hot Dog*/
-    {  9,  5,126,          0,  0,  0,  0,  0},  /*Lightning UP      */
-    {  1,  7,127,          0,  0,  0,  0,  0},  /*Lightning UP+LEFT */
-    {  1,  8,128,          0,  0,  0,  0,  0},  /*Lightning UP+RIGHT*/
-    {  9,  7,129,          0,  0,  0,  0,  0},  /*Lightning    LEFT */
-    {  9,  8,130,          0,  0,  0,  0,  0},  /*Lightning    RIGHT*/
-    {  4,  2,  3,  5,131,          0,  0,  0},  /*Warfly            */
-    {  3,  1,  2,  8,132,          0,  0,  0},  /*FrontBlaster      */
-    {  2,  4,  5,133,          0,  0,  0,  0},  /*Gerund            */
-    {  3,  4,  2,  8,134,          0,  0,  0},  /*FireBomb          */
-    {  1,  4,  6,135,          0,  0,  0,  0},  /*Indigo            */
-    {  1,  3,  6,137,          0,  0,  0,  0},  /*Invulnerability [easier] */
-    {  1,  4,  3,  4,  7,136,          0,  0}   /*D-Media Protron Drone    */
+	{ 2, 1,   2,   5, 137,           0, 0, 0}, /*Invulnerability*/
+	{ 4, 3,   2,   5, 138,           0, 0, 0}, /*Atom Bomb*/
+	{ 3, 4,   6, 139,             0, 0, 0, 0}, /*Seeker Bombs*/
+	{ 2, 5, 142,               0, 0, 0, 0, 0}, /*Ice Blast*/
+	{ 6, 2,   6, 143,             0, 0, 0, 0}, /*Auto Repair*/
+	{ 6, 7,   5,   8,   6,   7,  5, 112     }, /*Spin Wave*/
+	{ 7, 8, 101,               0, 0, 0, 0, 0}, /*Repulsor*/
+	{ 1, 7,   6, 146,             0, 0, 0, 0}, /*Protron Field*/
+	{ 8, 6,   7,   1, 120,           0, 0, 0}, /*Minefield*/
+	{ 3, 6,   8,   5, 121,           0, 0, 0}, /*Post-It Blast*/
+	{ 1, 2,   7,   8, 119,           0, 0, 0}, /*Drone Ship - TBC*/
+	{ 3, 4,   3,   6, 123,           0, 0, 0}, /*Repair Player 2*/
+	{ 6, 7,   5,   8, 124,           0, 0, 0}, /*Super Bomb - TBC*/
+	{ 1, 6, 125,               0, 0, 0, 0, 0}, /*Hot Dog*/
+	{ 9, 5, 126,               0, 0, 0, 0, 0}, /*Lightning UP      */
+	{ 1, 7, 127,               0, 0, 0, 0, 0}, /*Lightning UP+LEFT */
+	{ 1, 8, 128,               0, 0, 0, 0, 0}, /*Lightning UP+RIGHT*/
+	{ 9, 7, 129,               0, 0, 0, 0, 0}, /*Lightning    LEFT */
+	{ 9, 8, 130,               0, 0, 0, 0, 0}, /*Lightning    RIGHT*/
+	{ 4, 2,   3,   5, 131,           0, 0, 0}, /*Warfly            */
+	{ 3, 1,   2,   8, 132,           0, 0, 0}, /*FrontBlaster      */
+	{ 2, 4,   5, 133,             0, 0, 0, 0}, /*Gerund            */
+	{ 3, 4,   2,   8, 134,           0, 0, 0}, /*FireBomb          */
+	{ 1, 4,   6, 135,             0, 0, 0, 0}, /*Indigo            */
+	{ 1, 3,   6, 137,             0, 0, 0, 0}, /*Invulnerability [easier] */
+	{ 1, 4,   3,   4,   7, 136,         0, 0}  /*D-Media Protron Drone    */
 };
 
-const JE_byte shipCombosB[21] /* [1..21] */ = 
-    {15,16,17,18,19,20,21,22,23,24, 7, 8, 5,25,14, 4, 6, 3, 9, 2,26};
+const JE_byte shipCombosB[21] /* [1..21] */ =
+	{15,16,17,18,19,20,21,22,23,24, 7, 8, 5,25,14, 4, 6, 3, 9, 2,26};
   /*!! SUPER Tyrian !!*/
 const JE_byte superTyrianSpecials[4] /* [1..4] */ = {1,2,4,5};
 
-const JE_byte shipCombos[13][3] /* [0..12, 1..3] */ = 
+const JE_byte shipCombos[13][3] /* [0..12, 1..3] */ =
 {
-    { 5, 4, 7},  /*2nd Player ship*/
-    { 1, 2, 0},  /*USP Talon*/
-    {14, 4, 0},  /*Super Carrot*/
-    { 4, 5, 0},  /*Gencore Phoenix*/
-    { 6, 5, 0},  /*Gencore Maelstrom*/
-    { 7, 8, 0},  /*MicroCorp Stalker*/
-    { 7, 9, 0},  /*MicroCorp Stalker-B*/
-    {10, 3, 5},  /*Prototype Stalker-C*/
-    { 5, 8, 9},  /*Stalker*/
-    { 1, 3, 0},  /*USP Fang*/
-    { 7,16,17},  /*U-Ship*/
-    { 2,11,12},  /*1st Player ship*/
-    { 3, 8,10}   /*Nort ship*/
+	{ 5, 4, 7},  /*2nd Player ship*/
+	{ 1, 2, 0},  /*USP Talon*/
+	{14, 4, 0},  /*Super Carrot*/
+	{ 4, 5, 0},  /*Gencore Phoenix*/
+	{ 6, 5, 0},  /*Gencore Maelstrom*/
+	{ 7, 8, 0},  /*MicroCorp Stalker*/
+	{ 7, 9, 0},  /*MicroCorp Stalker-B*/
+	{10, 3, 5},  /*Prototype Stalker-C*/
+	{ 5, 8, 9},  /*Stalker*/
+	{ 1, 3, 0},  /*USP Fang*/
+	{ 7,16,17},  /*U-Ship*/
+	{ 2,11,12},  /*1st Player ship*/
+	{ 3, 8,10}   /*Nort ship*/
 };
 
 /*Street-Fighter Commands*/
@@ -181,14 +181,13 @@ JE_boolean returnActive;
 JE_word galagaShotFreq;
 JE_longint galagaLife;
 
-JE_boolean debug;    /*Debug Mode*/
+JE_boolean debug; /*Debug Mode*/
 JE_word debugTime, lastDebugTime;
 JE_longint debugHistCount;
 JE_real debugHist;
-JE_word curLoc;      /*Current Pixel location of background 1*/
+JE_word curLoc; /*Current Pixel location of background 1*/
 
-JE_boolean firstGameOver, gameLoaded,
-           enemyStillExploding;
+JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
 
 /* Error Checking */
 JE_word tempSS;
@@ -274,11 +273,11 @@ JE_word superEnemy254Jump;
 /*ExplosionData*/
 struct
 {
-    JE_word explodeLoc;
-    JE_word explodeGr;
-    JE_byte followPlayer;
-    JE_byte fixedExplode;
-    JE_word fixedMovement;
+	JE_word explodeLoc;
+	JE_word explodeGr;
+	JE_byte followPlayer;
+	JE_byte fixedExplode;
+	JE_word fixedMovement;
 } explosions[ExplosionMax]; /* [1..ExplosionMax] */
 JE_byte explodeAvail[ExplosionMax]; /* [1..ExplosionMax] */
 JE_integer explosionFollowAmount;
@@ -290,16 +289,16 @@ JE_boolean fireButtonHeld;
 JE_boolean enemyShotAvail[EnemyShotMax]; /* [1..Enemyshotmax] */
 struct
 {
-    JE_integer Sx, Sy;
-    JE_integer SxM, SyM;
-    JE_shortint SxC, SyC;
-    JE_byte Tx, Ty;
-    JE_word SGR;
-    JE_byte SDMG;
-    JE_byte duration;
-    JE_word animate;
-    JE_word animax;
-    JE_byte fill[12]; /* [1..12] */
+	JE_integer Sx, Sy;
+	JE_integer SxM, SyM;
+	JE_shortint SxC, SyC;
+	JE_byte Tx, Ty;
+	JE_word SGR;
+	JE_byte SDMG;
+	JE_byte duration;
+	JE_word animate;
+	JE_word animax;
+	JE_byte fill[12]; /* [1..12] */
 } enemyShot[EnemyShotMax]; /* [1..Enemyshotmax]  */
 
 /* Player Shot Data */
@@ -319,37 +318,37 @@ JE_byte superBomb[2]; /* [1..2] */
 JE_integer tempShotX, tempShotY;
 struct
 {
-    JE_integer  shotX;
-    JE_integer  shotY;
-    JE_integer  shotXM;
-    JE_integer  shotYM;
-    JE_integer  shotXC;  /*10*/
-    JE_integer  shotYC;
-    JE_boolean  shotComplicated;
-    JE_integer  shotDevX;
-    JE_integer  shotDirX;
-    JE_integer  shotDevY;  /*19*/
-    JE_integer  shotDirY;
-    JE_integer  shotCirSizeX;
-    JE_integer  shotCirSizeY;
-    JE_byte     shotTrail;
-    JE_word     shotGR;
-    JE_word     shotAni;     /*30*/
-    JE_word     shotAniMax;
-    JE_shortint shotDmg;
-    JE_byte     shotBlastFilter;
-    JE_byte     chainReaction;     /*35*/
-    JE_byte     playerNumber;
-    JE_byte     aimAtEnemy;
-    JE_byte     aimDelay;
-    JE_byte     aimDelayMax;     /*39*/
-    JE_byte     fill[1]; /* [1..1] */
+	JE_integer  shotX;
+	JE_integer  shotY;
+	JE_integer  shotXM;
+	JE_integer  shotYM;
+	JE_integer  shotXC;           /*10*/
+	JE_integer  shotYC;
+	JE_boolean  shotComplicated;
+	JE_integer  shotDevX;
+	JE_integer  shotDirX;
+	JE_integer  shotDevY;         /*19*/
+	JE_integer  shotDirY;
+	JE_integer  shotCirSizeX;
+	JE_integer  shotCirSizeY;
+	JE_byte     shotTrail;
+	JE_word     shotGR;
+	JE_word     shotAni;          /*30*/
+	JE_word     shotAniMax;
+	JE_shortint shotDmg;
+	JE_byte     shotBlastFilter;
+	JE_byte     chainReaction;    /*35*/
+	JE_byte     playerNumber;
+	JE_byte     aimAtEnemy;
+	JE_byte     aimDelay;
+	JE_byte     aimDelayMax;      /*39*/
+	JE_byte     fill[1];          /* [1..1] */
 } playerShotData[MaxPWeapon + 1]; /* [1..MaxPWeapon+1] */
 
 JE_byte chain;
 
 /*PlayerData*/
-JE_boolean allPlayersGone;  /*Both players dead and finished exploding*/
+JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 
 JE_byte shotAvail[MaxPWeapon]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 JE_byte shadowyDist;
@@ -425,19 +424,19 @@ JE_word neat;
 JE_REXtype REXAvail;
 struct
 {
-    JE_byte    delay;
-    JE_word    ex, ey;
-    JE_boolean big;
-    /*JE_byte    fill[2] \* [1..2] \* */
+	JE_byte    delay;
+	JE_word    ex, ey;
+	JE_boolean big;
+	/*JE_byte fill[2] \* [1..2] \* */
 } REXDat[20]; /* [1..20] */
 
 /*SuperPixels*/
 JE_byte SPZ[MaxSP + 1]; /* [0..MaxSP] */
 struct
 {
-    JE_word location;
-    JE_word movement;
-    JE_byte color;
+	JE_word location;
+	JE_word movement;
+	JE_byte color;
 } SPL[MaxSP + 1]; /* [0..MaxSP] */
 JE_word lastSP;
 

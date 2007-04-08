@@ -24,24 +24,23 @@
 #include "nortvars.h"
 
 struct JE_pcxheader_rec {
-    JE_byte manufacturer;
-    JE_byte version;
-    JE_byte encoding;
-    JE_byte bits_per_pixel;
-    JE_word xmin, ymin;
-    JE_word xmax, ymax;
-    JE_word hres, vres;
-    JE_byte palette[48];  /* [0..47] */
-    JE_byte reserved;
-    JE_byte colour_planes;
-    JE_word bytes_per_line;
-    JE_word palette_type;
+	JE_byte manufacturer;
+	JE_byte version;
+	JE_byte encoding;
+	JE_byte bits_per_pixel;
+	JE_word xmin, ymin;
+	JE_word xmax, ymax;
+	JE_word hres, vres;
+	JE_byte palette[48];  /* [0..47] */
+	JE_byte reserved;
+	JE_byte colour_planes;
+	JE_word bytes_per_line;
+	JE_word palette_type;
 };
 
 #ifndef NO_EXTERNS
 extern JE_colortype Colors2;
-extern JE_word width,
-               depth;
+extern JE_word width, depth;
 extern JE_word Bytes;
 extern JE_char c, c2;
 extern JE_boolean overrideblack;

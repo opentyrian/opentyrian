@@ -34,158 +34,158 @@ void JE_errorhand( const JE_string s );
 
 JE_longint JE_getFileSize( const JE_string filename )
 {
-    FILE *f;
-    JE_longint size = 0;
+	FILE *f;
+	JE_longint size = 0;
 
-    if (!(f = fopen(filename, "rb")))
-    {
-        return 0;
-    }
+	if (!(f = fopen(filename, "rb")))
+	{
+		return 0;
+	}
 
-    while (fgetc(f) != EOF)
-    {
-        size++;
-    }
-    fclose(f);
+	while (fgetc(f) != EOF)
+	{
+		size++;
+	}
+	fclose(f);
 
-    return size;
+	return size;
 }
 
 void JE_errorhand( const JE_string s )
 {
-    if (ErrorActive)
-    {
-        JE_closevga256();
-        printf("WARNING: Unable to find Tyrian data files.\n"
-               "Stopped on file %s.\n"
-               "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", s);
-        exit(1);
-    } else {
-        ErrorOccurred = 1;
-    }
+	if (ErrorActive)
+	{
+		JE_closevga256();
+		printf("WARNING: Unable to find Tyrian data files.\n"
+		       "Stopped on file %s.\n"
+		       "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", s);
+		exit(1);
+	} else {
+		ErrorOccurred = 1;
+	}
 }
 
 JE_boolean JE_find( const JE_string s )
 {
-    FILE *f;
+	FILE *f;
 
-    if ((f = fopen(s, "r")))
-    {
-        fclose(f);
-        return TRUE;
-    } else {
-        return FALSE;
-    }
+	if ((f = fopen(s, "r")))
+	{
+		fclose(f);
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 void JE_findTyrian( const JE_string filename )
 {
-    JE_string strbuf;
+	JE_string strbuf;
 
-    if (JE_find(filename))
-    {
-        dir[0] = '\0';
-    } else {
-        unsigned int i;
-        size_t tmpsize = (strlen(filename)+10) * sizeof (*strbuf);
+	if (JE_find(filename))
+	{
+		dir[0] = '\0';
+	} else {
+		unsigned int i;
+		size_t tmpsize = (strlen(filename)+10) * sizeof (*strbuf);
 
-        /* Let's find it! */
-        printf("Searching for Tyrian files...\n\n");
+		/* Let's find it! */
+		printf("Searching for Tyrian files...\n\n");
 
-        /* If you ever add a longer dir, increase the magic number. */
-        strbuf = malloc(tmpsize);
-        for (i = 0; i < COUNTOF(tyrian_searchpaths); i++)
-        {
-            snprintf(strbuf, tmpsize, "%s/%s", tyrian_searchpaths[i], filename);
-            if (JE_find(strbuf))
-            {
-                free(strbuf);
+		/* If you ever add a longer dir, increase the magic number. */
+		strbuf = malloc(tmpsize);
+		for (i = 0; i < COUNTOF(tyrian_searchpaths); i++)
+		{
+			snprintf(strbuf, tmpsize, "%s/%s", tyrian_searchpaths[i], filename);
+			if (JE_find(strbuf))
+			{
+				free(strbuf);
 
-                snprintf(dir, sizeof(dir), "%s/", tyrian_searchpaths[i]);
-                printf("Tyrian data files found at %s\n\n", dir);
-                return;
-            }
-        }
-        JE_closevga256();
+				snprintf(dir, sizeof(dir), "%s/", tyrian_searchpaths[i]);
+				printf("Tyrian data files found at %s\n\n", dir);
+				return;
+			}
+		}
+		JE_closevga256();
 
-        printf("WARNING: Unable to find Tyrian data files.\n"
-               "Stopped on file %s.\n"
-               "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", filename);
-        exit(1);
-    }
+		printf("WARNING: Unable to find Tyrian data files.\n"
+		       "Stopped on file %s.\n"
+		       "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", filename);
+		exit(1);
+	}
 }
 
 JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentrant !!! */
 {
-    static JE_char buf[1024];
+	static JE_char buf[1024];
 
-    if (!JE_find(filename))
-    {
-        if (strcmp(dir, "") == 0 && ErrorActive)
-        {
-            JE_findTyrian(filename);
-        }
+	if (!JE_find(filename))
+	{
+		if (strcmp(dir, "") == 0 && ErrorActive)
+		{
+			JE_findTyrian(filename);
+		}
 
-        strcpy(buf, dir);
-        strcat(buf, filename);
-        if (!JE_find(buf))
-        {
-            JE_errorhand(filename);
-        }
-    } else {
-        strcpy(buf, filename);
-    }
+		strcpy(buf, dir);
+		strcat(buf, filename);
+		if (!JE_find(buf))
+		{
+			JE_errorhand(filename);
+		}
+	} else {
+		strcpy(buf, filename);
+	}
 
-    return buf;
+	return buf;
 }
 
 void JE_resetFile( FILE **f, const JE_string filename )
 {
-    printf("!!! WARNING: JE_resetfile is deprecated!\n");
-    JE_resetFileExt(f, filename, TRUE);
+	printf("!!! WARNING: JE_resetfile is deprecated!\n");
+	JE_resetFileExt(f, filename, TRUE);
 }
 
 void JE_resetFileExt( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added. */
 {
-    *f = fopen(JE_locateFile(filename), (write ? "r+b" : "rb"));
+	*f = fopen(JE_locateFile(filename), (write ? "r+b" : "rb"));
 }
 
 void JE_resetText( FILE **f, const JE_string filename )
 {
-    printf("!!! WARNING: JE_resettext is deprecated!\n");
-    JE_resetTextExt(f, filename, TRUE);
+	printf("!!! WARNING: JE_resettext is deprecated!\n");
+	JE_resetTextExt(f, filename, TRUE);
 }
 
 void JE_resetTextExt( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added */
 {
-    *f = fopen(JE_locateFile(filename), (write ? "r+" : "r"));
+	*f = fopen(JE_locateFile(filename), (write ? "r+" : "r"));
 }
 
 JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the config file exists */
 {
-    JE_boolean tempb;
-    JE_byte x;
+	JE_boolean tempb;
+	JE_byte x;
 
-    tempb = !JE_find("TYRIAN.CFG");
+	tempb = !JE_find("TYRIAN.CFG");
 
-    if (!tempb)
-    {
-        x = JE_getFileSize("TYRIAN.CFG");
+	if (!tempb)
+	{
+		x = JE_getFileSize("TYRIAN.CFG");
 
-        if (x != 28)
-        {
-            tempb = TRUE;
-        }
-    }
+		if (x != 28)
+		{
+			tempb = TRUE;
+		}
+	}
 
-    return tempb;
+	return tempb;
 }
 
 void JE_detectCFG( void )
 {
-    if (JE_isCFGThere())
-    {
-        printf("\nYou must run SETUP before playing Tyrian.\n");
-        exit(1);
-    }
+	if (JE_isCFGThere())
+	{
+		printf("\nYou must run SETUP before playing Tyrian.\n");
+		exit(1);
+	}
 }
