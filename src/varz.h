@@ -337,21 +337,21 @@ extern JE_word shipGR, shipGR2;
 extern JE_word shipGRSeg, shipGROfs, shipGR2Seg, shipGR2Ofs;
 #endif
 
-void JE_GetShipInfo( void );
+void JE_getShipInfo( void );
 JE_word JE_SGR( JE_word ship, JE_word *ofs, JE_word *seg );
 
-void JE_CalcPurpleBall( JE_byte playernum );
-void JE_DrawOptions( void );
+void JE_calcPurpleBall( JE_byte playernum );
+void JE_drawOptions( void );
 
 void JE_tyrianhalt( JE_byte code );     /* This ends the game */
 void JE_initplayershot( JE_word portnum, JE_byte temp, JE_word px, JE_word py,
                         JE_word mousex, JE_word mousey,
                         JE_word wpnum, JE_byte playernum );
-void JE_DoSpecialShot( JE_byte playernum, JE_integer *armor, JE_shortint *shield );
+void JE_doSpecialShot( JE_byte playernum, JE_integer *armor, JE_shortint *shield );
 
 void JE_powerup( JE_byte port );
-void JE_WipeShieldArmorBars( void );
-JE_byte JE_PlayerDamage( JE_word tempx, JE_word tempy, JE_byte temp,
+void JE_wipeShieldArmorBars( void );
+JE_byte JE_playerDamage( JE_word tempx, JE_word tempy, JE_byte temp,
                          JE_integer *px, JE_integer *py,
                          JE_boolean *PlayerAlive,
                          JE_byte *PlayerStillExploding,

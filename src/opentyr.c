@@ -140,11 +140,11 @@ int main( int argc, char *argv[] )
     JE_loadpals();
 
     SDL_LockSurface(VGAScreen);
-    JE_OpeningAnim();
-    JE_TitleScreen(TRUE);
+    JE_openingAnim();
+    JE_titleScreen(TRUE);
     SDL_UnlockSurface(VGAScreen);
 
-    JE_ShowVGA();
+    JE_showVGA();
 
     JE_closevga256();
 

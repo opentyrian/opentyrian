@@ -41,7 +41,7 @@ JE_boolean mouse_threeButton;
 JE_word mouseX, mouseY, mouseButton;
 
 
-void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s )
+void JE_loadShapeFile( JE_shapetype *Shapes, JE_char s )
 {
     FILE *f;
     JE_word x;
@@ -69,7 +69,7 @@ void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s )
     /*fprintf(stderr, "Shapes%c completed.\n", s);*/
 }
 
-void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s )
+void JE_loadNewShapeFile( JE_newshapetype *Shapes, JE_char s )
 {
     FILE *f;
     JE_word x, y, z;
@@ -135,7 +135,7 @@ void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s )
     /*fprintf(stderr, "Shapes%c completed.\n", s);*/
 }
 
-void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s )
+void JE_loadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s )
 {
     FILE *f;
 
@@ -160,7 +160,7 @@ void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s )
     fclose(f);
 }
 
-void JE_DrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
+void JE_drawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
 {
     JE_byte *p; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
@@ -193,7 +193,7 @@ void JE_DrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     }
 }
 
-void JE_SuperDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
+void JE_superDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
 {
     JE_byte *p; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
@@ -226,7 +226,7 @@ void JE_SuperDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     }
 }
 
-void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
+void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
 {
     JE_byte *p; /* shape pointer */
     unsigned char *s;   /* screen pointer, 8-bit specific */
@@ -259,28 +259,28 @@ void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
     }
 }
 
-void JE_DrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
+void JE_drawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_DrawShape2(x,    y,    s,    Shape);
-  JE_DrawShape2(x+12, y,    s+1,  Shape);
-  JE_DrawShape2(x,    y+14, s+19, Shape);
-  JE_DrawShape2(x+12, y+14, s+20, Shape);
+  JE_drawShape2(x,    y,    s,    Shape);
+  JE_drawShape2(x+12, y,    s+1,  Shape);
+  JE_drawShape2(x,    y+14, s+19, Shape);
+  JE_drawShape2(x+12, y+14, s+20, Shape);
 }
 
-void JE_SuperDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
+void JE_superDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_SuperDrawShape2(x,    y,    s,    Shape);
-  JE_SuperDrawShape2(x+12, y,    s+1,  Shape);
-  JE_SuperDrawShape2(x,    y+14, s+19, Shape);
-  JE_SuperDrawShape2(x+12, y+14, s+20, Shape);
+  JE_superDrawShape2(x,    y,    s,    Shape);
+  JE_superDrawShape2(x+12, y,    s+1,  Shape);
+  JE_superDrawShape2(x,    y+14, s+19, Shape);
+  JE_superDrawShape2(x+12, y+14, s+20, Shape);
 }
 
-void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
+void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_DrawShape2Shadow(x,    y,    s,    Shape);
-  JE_DrawShape2Shadow(x+12, y,    s+1 , Shape);
-  JE_DrawShape2Shadow(x,    y+14, s+19, Shape);
-  JE_DrawShape2Shadow(x+12, y+14, s+20, Shape);
+  JE_drawShape2Shadow(x,    y,    s,    Shape);
+  JE_drawShape2Shadow(x+12, y,    s+1 , Shape);
+  JE_drawShape2Shadow(x,    y+14, s+19, Shape);
+  JE_drawShape2Shadow(x+12, y+14, s+20, Shape);
 }
 
 JE_boolean JE_anyButton( void )

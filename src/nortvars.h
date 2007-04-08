@@ -45,11 +45,11 @@ extern JE_boolean mouse_threeButton;
 extern JE_word mouseX, mouseY, mouseButton;
 #endif
 
-void JE_LoadShapeFile( JE_shapetype *Shapes, JE_char s );
-void JE_LoadNewShapeFile( JE_newshapetype *Shapes, JE_char s );
+void JE_loadShapeFile( JE_shapetype *Shapes, JE_char s );
+void JE_loadNewShapeFile( JE_newshapetype *Shapes, JE_char s );
 
-void JE_CompressShapeFileC( JE_char s );
-void JE_LoadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s );
+void JE_compressShapeFileC( JE_char s );
+void JE_loadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s );
 
 JE_word JE_mousePosition( JE_word *MouseX, JE_word *MouseY );
 JE_boolean JE_buttonPressed( void );
@@ -57,8 +57,8 @@ void JE_setMousePosition( JE_word MouseX, JE_word MouseY );
 
 JE_boolean JE_anyButton( void );
 
-/*void JE_ShowMouse( void );
-void JE_HideMouse( void );*/
+/*void JE_showMouse( void );
+void JE_hideMouse( void );*/
 
 void JE_dbar( JE_word x, JE_word y, JE_word num, JE_word col );
 void JE_dbar2( JE_word x, JE_word y, JE_word num, JE_word col );
@@ -71,12 +71,12 @@ void JE_wipekey( void );
 void JE_drawansi( JE_string ansiscreen );
 /*JE_boolean JE_waitaction( JE_byte time );*/
 
-void JE_DrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_SuperDrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_DrawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_drawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_superDrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 
-void JE_DrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_SuperDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_DrawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_drawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_superDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
 
 #endif /* NORTVARS_H */

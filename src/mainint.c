@@ -63,11 +63,11 @@ void JE_helpSystem( JE_byte startTopic )
     page = topicStart[startTopic-1];
     k = '\0';
     
-    JE_FadeBlack(10);
-    JE_LoadPIC(2, FALSE);
+    JE_fadeBlack(10);
+    JE_loadPIC(2, FALSE);
     /* playsong(Song_MapView); */
-    JE_ShowVGA();
-    JE_FadeColor(10);
+    JE_showVGA();
+    JE_fadeColor(10);
 
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
@@ -135,7 +135,7 @@ void JE_helpSystem( JE_byte startTopic )
                         JE_dString(JE_fontCenter(topicName[temp], SmallFontShapes), temp * 20 + 40, buf, SmallFontShapes);
                     }
 
-                    JE_ShowVGA();
+                    JE_showVGA();
 
                     tempw = 0;
                     JE_textMenuWait(&tempw, FALSE);
@@ -228,7 +228,7 @@ void JE_helpSystem( JE_byte startTopic )
 
         if (menu == 0)
         {
-            JE_ShowVGA();
+            JE_showVGA();
             wait_noinput(FALSE,TRUE,FALSE);
             while (!JE_waitAction(1, TRUE));
 
@@ -298,10 +298,10 @@ JE_boolean JE_playerSelect( void )
     JE_byte sel;
     JE_boolean quit;
 
-    JE_LoadPIC(2, FALSE);
+    JE_loadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-    JE_ShowVGA();
-    JE_FadeColor(20);
+    JE_showVGA();
+    JE_fadeColor(20);
     quit = FALSE;
 
     sel = 1;
@@ -319,7 +319,7 @@ JE_boolean JE_playerSelect( void )
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
-        JE_ShowVGA();
+        JE_showVGA();
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
@@ -386,10 +386,10 @@ JE_boolean JE_episodeSelect( void )
     /*if(!episodeavail[3]) max = 3;*/
 
 startepisodeselect:
-    JE_LoadPIC(2, FALSE);
+    JE_loadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-    JE_ShowVGA();
-    JE_FadeColor(10);
+    JE_showVGA();
+    JE_fadeColor(10);
     quit = FALSE;
 
     sel = 1;
@@ -403,7 +403,7 @@ startepisodeselect:
 
         /*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
-        JE_ShowVGA();
+        JE_showVGA();
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
@@ -437,18 +437,18 @@ startepisodeselect:
                     if (sel > 1)
                     {
                         JE_playSampleNum(ESC);
-                        JE_FadeBlack (10);
+                        JE_fadeBlack (10);
                         /*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
                         verticalHeight = 9;
                         helpBoxColor = 15;
                         helpBoxBrightness = 4;
                         helpBoxShadeType = FullShade;
                         JE_helpBox(10, 10, helpTxt[29], 50);
-                        JE_ShowVGA();
-                        JE_FadeColor(10);
+                        JE_showVGA();
+                        JE_fadeColor(10);
                         wait_input(TRUE,TRUE,TRUE);
                         lastkey_sym = 0;
-                        JE_FadeBlack(10);
+                        JE_fadeBlack(10);
                         goto startepisodeselect;
                     }
                 }
@@ -474,10 +474,10 @@ JE_boolean JE_difficultySelect( void )
     JE_byte sel;
     JE_boolean quit;
 
-    JE_LoadPIC(2, FALSE);
+    JE_loadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-    JE_ShowVGA();
-    JE_FadeColor(20);
+    JE_showVGA();
+    JE_fadeColor(20);
     quit = FALSE;
 
     sel = 2;
@@ -494,7 +494,7 @@ JE_boolean JE_difficultySelect( void )
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
-        JE_ShowVGA();
+        JE_showVGA();
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 

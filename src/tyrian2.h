@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-void JE_TitleScreen( JE_boolean animate );
-void JE_OpeningAnim( void );
+void JE_titleScreen( JE_boolean animate );
+void JE_openingAnim( void );
 
 #endif /* TYRIAN2_H */

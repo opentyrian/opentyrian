@@ -36,7 +36,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
     lastkey_sym = 0;
 
     do {
-        JE_ShowVGA();
+        JE_showVGA();
 
         /*waitretrace;*/
 

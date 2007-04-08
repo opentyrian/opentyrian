@@ -26,7 +26,7 @@ JE_word Bytes;
 JE_char c, c2;
 JE_boolean overrideblack = FALSE;
 
-void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer )
+void JE_updatePCXColorsSlow( JE_colortype *ColorBuffer )
 {
     int i;
     for (i = 0; i < 256; i++)
@@ -37,7 +37,7 @@ void JE_UpdatePCXColorsSlow( JE_colortype *ColorBuffer )
     }
 }
 
-void JE_LoadPCX( JE_string Name, JE_boolean storepalette)
+void JE_loadPCX( JE_string Name, JE_boolean storepalette)
 {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);

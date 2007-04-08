@@ -29,7 +29,7 @@
 
 JE_boolean notYetLoadedPCX = TRUE;
 
-void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
+void JE_loadPIC( JE_byte PCXnumber, JE_boolean storepal )
 {
     typedef JE_byte JE_buftype[63000]; /* [1..63000] */
 
@@ -86,6 +86,6 @@ void JE_LoadPIC( JE_byte PCXnumber, JE_boolean storepal )
     memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
     if (storepal)
     {
-        JE_UpdateColorsFast(&colors);
+        JE_updateColorsFast(&colors);
     }
 }

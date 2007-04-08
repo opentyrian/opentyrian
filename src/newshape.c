@@ -269,7 +269,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
         if (time == 0 && temp != 0)
         {
             JE_mouseStart();
-            JE_ShowVGA();
+            JE_showVGA();
             JE_mouseReplace();
         }
 
@@ -319,8 +319,8 @@ void JE_mouseStart( void )
 
         JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 
-        /*JE_DrawShape2x2shadow(lastmousex+2,lastmousey+2,tempw,shapes6);*/
-        JE_DrawShape2x2(lastMouseX, lastMouseY, tempw, shapes6);
+        /*JE_drawShape2x2shadow(lastmousex+2,lastmousey+2,tempw,shapes6);*/
+        JE_drawShape2x2(lastMouseX, lastMouseY, tempw, shapes6);
      }
 }
 

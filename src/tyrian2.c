@@ -38,7 +38,7 @@
 
 #include <string.h>
 
-void JE_TitleScreen( JE_boolean animate )
+void JE_titleScreen( JE_boolean animate )
 {
     JE_boolean quit = 0;
 
@@ -89,9 +89,9 @@ void JE_TitleScreen( JE_boolean animate )
             {
                 if (fadein)
                 {
-                    JE_FadeBlack(10);
+                    JE_fadeBlack(10);
                 }
-                JE_LoadPIC(4, FALSE);
+                JE_loadPIC(4, FALSE);
 
                 memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
@@ -114,8 +114,8 @@ void JE_TitleScreen( JE_boolean animate )
                 }
                 colors2[temp].r = 0;
 
-                JE_ShowVGA();
-                JE_FadeColor(10);
+                JE_showVGA();
+                JE_fadeColor(10);
 
                 fadein = FALSE;
 
@@ -130,7 +130,7 @@ void JE_TitleScreen( JE_boolean animate )
 
                         JE_newDrawCShapeNum(PlanetShapes, 146, 11, temp);
 
-                        JE_ShowVGA();
+                        JE_showVGA();
                         wait_delay();
                     }
                 }
@@ -148,9 +148,9 @@ void JE_TitleScreen( JE_boolean animate )
                     JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
                     JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SmallFontShapes,FALSE);
                 }
-                JE_ShowVGA();
+                JE_showVGA();
 
-                JE_FadeColors(&colors, &colors2, 0, 255, 20);
+                JE_fadeColors(&colors, &colors2, 0, 255, 20);
 
                 memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
             }
@@ -165,7 +165,7 @@ void JE_TitleScreen( JE_boolean animate )
             menuText[temp], 15, -3+((temp == menu) * 2), SmallFontShapes, FALSE);
         }
 
-        JE_ShowVGA();
+        JE_showVGA();
 
         first = FALSE;
 
@@ -249,7 +249,7 @@ void JE_TitleScreen( JE_boolean animate )
     } while (!(quit || gameLoaded || jumpSection || playDemo || loadDestruct));
 
 trentWinsGame:
-    JE_FadeBlack(15);
+    JE_fadeBlack(15);
     if (quit)
     {
         /* JE_tyrianHalt(0); */
@@ -258,7 +258,7 @@ trentWinsGame:
     /* } (IsNetworkActive) */
 }
 
-void JE_OpeningAnim( void )
+void JE_openingAnim( void )
 {
     /*JE_clr256();*/
 
@@ -268,28 +268,28 @@ void JE_OpeningAnim( void )
     {
         memcpy(colors, black, sizeof(colors));
         memset(black, 63, sizeof(black));
-        JE_FadeColors(&colors, &black, 0, 255, 50);
+        JE_fadeColors(&colors, &black, 0, 255, 50);
 
-        JE_LoadPIC(10, FALSE);
-        JE_ShowVGA();
+        JE_loadPIC(10, FALSE);
+        JE_showVGA();
 
-        JE_FadeColors(&black, &colors, 0, 255, 50);
+        JE_fadeColors(&black, &colors, 0, 255, 50);
         memset(black, 0, sizeof(black));
 
         setdelay(200);
         wait_delayorinput(TRUE,TRUE,TRUE);
 
-        JE_FadeBlack(15);
+        JE_fadeBlack(15);
 
-        JE_LoadPIC(12, FALSE);
-        JE_ShowVGA();
+        JE_loadPIC(12, FALSE);
+        JE_showVGA();
 
         memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
-        JE_FadeColor(10);
+        JE_fadeColor(10);
 
         setdelay(200);
         wait_delayorinput(TRUE,TRUE,TRUE);
 
-        JE_FadeBlack(10);
+        JE_fadeBlack(10);
     }
 }
