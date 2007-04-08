@@ -138,11 +138,8 @@ void flush_events_buffer( void )
 
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-    keyboard = !keyboard; /* Saves two nots in the loop */
-    mouse = !mouse;
-
     service_SDL_events();
-    while (!((keydown||keyboard) || (mousedown||mouse) || (button[0] || !joystick)))
+    while (!((keydown || !keyboard) || (mousedown || !mouse) || (button[0] || !joystick)))
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
         {
