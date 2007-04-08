@@ -29,8 +29,9 @@
 #include "keyboard.h"
 #include "config.h"
 #include "episodes.h"
-#include "sndmast.h"
 #include "setup.h"
+#include "helptext.h"
+#include "sndmast.h"
 #include "shpmast.h"
 #include "error.h"
 #include "params.h"
@@ -55,11 +56,11 @@ extern int haltGame, netQuit; /* placeholders */
 
 void JE_helpSystem( JE_byte startTopic )
 {
-    JE_integer page, lastPage;
+    JE_integer page, lastPage = 0;
     JE_byte menu;
     JE_char flash;
 
-    page = topicStart[startTopic];
+    page = topicStart[startTopic-1];
     k = '\0';
     
     JE_FadeBlack(10);
@@ -74,15 +75,17 @@ void JE_helpSystem( JE_byte startTopic )
 
     do
     {
+        service_SDL_events();
+
         memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
         temp2 = 0;
 
         for (temp = 0; temp < TOPICS; temp++)
         {
-            if (topicStart[temp] < page)
+            if (topicStart[temp] <= page)
             {
-                temp2 = page;
+                temp2 = temp;
             }
         }
 
@@ -107,37 +110,184 @@ void JE_helpSystem( JE_byte startTopic )
         switch (page)
         {
             case 0:
-                menu = 2;
+                menu = 0;
                 if (lastPage == MAXPAGE)
                 {
-                    menu = TOPICS;
-                    /* joystickwaitmax = 120; joystickwait = 0; */
-                    JE_dString(JE_fontCenter(topicName[0], FontShapes), 30, topicName[0], FontShapes);
+                    menu = TOPICS-2;
+                }
+                /* joystickwaitmax = 120; joystickwait = 0; */
+                JE_dString(JE_fontCenter(topicName[0], FontShapes), 30, topicName[0], FontShapes);
 
-                    do
+                do
+                {
+                    for (temp = 1; temp <= TOPICS; temp++)
                     {
-                        for (temp = 1; temp < TOPICS; temp++)
+                        char buf[21+1];
+
+                        if (temp == menu+1)
                         {
-                            if (temp == menu)
-                            {
-                                flash = '~';
-                            } else {
-                                flash = '\0';
-                            }
+                            strcpy(buf+1, topicName[temp]);
+                            buf[0] = '~';
+                        } else {
+                            strcpy(buf, topicName[temp]);
                         }
 
-                        setdelay(1);
-                        JE_ShowVGA();
-                        waitdelay();
+                        JE_dString(JE_fontCenter(topicName[temp], SmallFontShapes), temp * 20 + 40, buf, SmallFontShapes);
+                    }
 
-                        tempw = 0;
-                        /* textmenuwait(&tempw, FALSE); */
-                        
-                        /* TODO */
-                } while(1 /*TODO*/);
+                    JE_ShowVGA();
+
+                    tempw = 0;
+                    JE_textMenuWait(&tempw, FALSE);
+                    switch (lastkey_sym)
+                    {
+                        case SDLK_UP:
+                            if (menu == 0)
+                            {
+                                menu = TOPICS-2; /* -2 since TOPICS apparently also include the title >_> */
+                            } else {
+                                menu--;
+                            }
+                            JE_playSampleNum(CursorMove);
+                            break;
+                        case SDLK_DOWN:
+                            if (menu == TOPICS-2)
+                            {
+                                menu = 0;
+                            } else {
+                                menu++;
+                            }
+                            JE_playSampleNum(CursorMove);
+                            break;
+                        default: break;
+                    }
+                } while (lastkey_sym != SDLK_ESCAPE && lastkey_sym != SDLK_RETURN);
+
+                if (lastkey_sym == SDLK_RETURN)
+                {
+                    page = topicStart[menu+1];
+                    JE_playSampleNum(Click);
+                }
+
+                /* joystickwaitmax = 120; joystickwait = 80; */
+                break;
+            case 1: /* One-Player Menu */
+                JE_HBox(10,  20,  2, 60);
+                JE_HBox(10,  50,  5, 60);
+                JE_HBox(10,  80, 21, 60);
+                JE_HBox(10, 110,  1, 60);
+                JE_HBox(10, 140, 28, 60);
+                break;
+            case 2: /* Two-Player Menu */
+                JE_HBox(10,  20,  1, 60);
+                JE_HBox(10,  60,  2, 60);
+                JE_HBox(10, 100, 21, 60);
+                JE_HBox(10, 140, 28, 60);
+                break;
+            case 3: /* Upgrade Ship */
+                JE_HBox(10,  20,  5, 60);
+                JE_HBox(10,  70,  6, 60);
+                JE_HBox(10, 110,  7, 60);
+                break;
+            case 4:
+                JE_HBox(10,  20,  8, 60);
+                JE_HBox(10,  55,  9, 60);
+                JE_HBox(10,  87, 10, 60);
+                JE_HBox(10, 120, 11, 60);
+                JE_HBox(10, 170, 13, 60);
+                break;
+            case 5:
+                JE_HBox(10,  20, 14, 60);
+                JE_HBox(10,  80, 15, 60);
+                JE_HBox(10, 120, 16, 60);
+                break;
+            case 6:
+                JE_HBox(10,  20, 17, 60);
+                JE_HBox(10,  40, 18, 60);
+                JE_HBox(10, 130, 20, 60);
+                break;
+            case 7: /* Options */
+                JE_HBox(10,  20, 21, 60);
+                JE_HBox(10,  70, 22, 60);
+                JE_HBox(10, 110, 23, 60);
+                JE_HBox(10, 140, 24, 60);
+                break;
+            case 8:
+                JE_HBox(10,  20, 25, 60);
+                JE_HBox(10,  60, 26, 60);
+                JE_HBox(10, 100, 27, 60);
+                JE_HBox(10, 140, 28, 60);
+                JE_HBox(10, 170, 29, 60);
+                break;
+        }
+
+        helpBoxBrightness = 1;
+        verticalHeight = 7;
+
+        lastPage = page;
+
+        if (menu == 0)
+        {
+            JE_ShowVGA();
+            wait_nomouse();
+            JE_waitAction(1, TRUE);
+
+            if (newmouse /*TODO: not sure if this is correct*/)
+            {
+                switch (lastmouse_but)
+                {
+                    case SDL_BUTTON_LEFT:
+                        lastkey_sym = SDLK_RIGHT;
+                        break;
+                    case SDL_BUTTON_RIGHT:
+                        lastkey_sym = SDLK_LEFT;
+                        break;
+                    case SDL_BUTTON_MIDDLE:
+                        lastkey_sym = SDLK_ESCAPE;
+                        break;
+                }
+                wait_nomouse();
+                newkey = TRUE;
+            }
+
+            if (newkey)
+            {
+                switch (lastkey_sym)
+                {
+                    case SDLK_LEFT:
+                    case SDLK_UP:
+                    case SDLK_PAGEUP:
+                        page--;
+                        JE_playSampleNum(CursorMove);
+                        break;
+                    case SDLK_RIGHT:
+                    case SDLK_DOWN:
+                    case SDLK_PAGEDOWN:
+                    case SDLK_RETURN:
+                    case SDLK_SPACE:
+                        if (page == MAXPAGE)
+                        {
+                            page = 0;
+                        } else {
+                            page++;
+                        }
+                        JE_playSampleNum(CursorMove);
+                        break;
+                    case SDLK_F1:
+                        page = 0;
+                        JE_playSampleNum(CursorMove);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
-    } while (1);
+
+        if (page == 255)
+        {
+            lastkey_sym = SDLK_ESCAPE;
+        }
+    } while (lastkey_sym != SDLK_ESCAPE);
 }
 
 JE_boolean JE_playerSelect( void )
@@ -148,7 +298,7 @@ JE_boolean JE_playerSelect( void )
 
     JE_LoadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-    JE_ShowVGA;
+    JE_ShowVGA();
     JE_FadeColor(20);
     quit = FALSE;
 
@@ -224,7 +374,7 @@ JE_boolean JE_episodeSelect( void )
     startepisodeselect:
     JE_LoadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-    JE_ShowVGA;
+    JE_ShowVGA();
     JE_FadeColor(10);
     quit = FALSE;
 
@@ -239,7 +389,7 @@ JE_boolean JE_episodeSelect( void )
 
         /*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
-        JE_ShowVGA;
+        JE_ShowVGA();
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
@@ -309,7 +459,7 @@ JE_boolean JE_difficultySelect( void )
 
     JE_LoadPIC(2, FALSE);
     memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-    JE_ShowVGA;
+    JE_ShowVGA();
     JE_FadeColor(20);
     quit = FALSE;
 
@@ -326,7 +476,7 @@ JE_boolean JE_difficultySelect( void )
         /*BETA TEST VERSION*/
         /*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
 
-        JE_ShowVGA;
+        JE_ShowVGA();
         tempw = 0;
         JE_textMenuWait(&tempw, FALSE);
 
