@@ -49,4 +49,6 @@ void JE_joystickInit( void );
 JE_boolean  JE_joystickNotHeld( void );
 void JE_updateButtons( void );   /*Uses ButtonAssign to find out*/
 
+void joystick_init( void );
+
 #endif /* JOYSTICK_H */
