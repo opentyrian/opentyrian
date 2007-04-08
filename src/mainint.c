@@ -417,7 +417,7 @@ void JE_loadMainShapeTables( void )
     for(temp = 0; temp < 7; temp++)
     { /*Load EST shapes*/
         fseek(f, shpPos[temp], SEEK_SET);
-        JE_NewLoadShapesB(shapeReorderList[temp], f);
+        JE_newLoadShapesB(shapeReorderList[temp], f);
     }
 
     shapesC1Size = shpPos[temp + 1] - shpPos[temp];

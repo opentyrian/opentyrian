@@ -132,8 +132,8 @@ int main( int argc, char *argv[] )
     JE_loadpals();
 
     SDL_LockSurface(VGAScreen);
-    OpeningAnim();
-    TitleScreen(TRUE);
+    JE_OpeningAnim();
+    JE_TitleScreen(TRUE);
     SDL_UnlockSurface(VGAScreen);
 
     JE_ShowVGA();

@@ -39,29 +39,41 @@
 
 JE_boolean MoveTyrianLogoUp = TRUE; /* TODO TODO REMOVE!!!!!!!!!!! */
 
-void TitleScreen( JE_boolean animate )
+void JE_TitleScreen( JE_boolean animate )
 {
     /* TODO TODO TODO: Major stuff TODO. */
-    JE_boolean quit = 0, jumpsection = 0, playdemo = 0, loaddestruct = 0, gameloaded = 0; /* TODO TODO REMOVE!!!!!!!! */
+    JE_boolean quit = 0;
 
     const int menunum = 7;
-    JE_byte namego[7+2] = {0}; /* [1..SA+2] */
+    JE_byte namego[SA + 2] = {0}; /* [1..SA+2] */
     JE_word waitForDemo;
-    JE_byte menu = 0;
-    JE_boolean redraw, fadein, first;
+    JE_byte menu;
+    JE_boolean redraw = TRUE,
+               fadein = FALSE,
+               first = TRUE;
     JE_char flash;
     JE_word z;
 
     JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
 
-    tempScreenSeg = VGAScreen;
+    /* TODO JE_initPlayerData(); */
 
-    first = TRUE;
-    redraw = TRUE;
-    fadein = FALSE;
+    /*PlayCredits;*/
+
+    /* TODO JE_sortHighScores;*/
+
+    /* TODO if(haltGame)
+    {
+        JE_tyrianHalt(0);
+    }*/
+
+    tempScreenSeg = VGAScreen;
 
     joystickWaitMax = 80;
     joystickWait = 0;
+
+    gameLoaded = FALSE;
+    jumpSection = FALSE;
 
     /* If IsNetworkActive { TODO } else { */
 
@@ -72,7 +84,8 @@ void TitleScreen( JE_boolean animate )
         /* Animate instead of quickly fading in */
         if (redraw)
         {
-            /* if currentsong<>Song_Title then playsong(Song_Title); */
+            /* TODO if(currentSong != song_title) JE_playSong(song_title); */
+            menu = 0;
             redraw = FALSE;
             if (animate)
             {
@@ -80,7 +93,7 @@ void TitleScreen( JE_boolean animate )
                 {
                     JE_FadeBlack(10);
                 }
-                JE_LoadPIC(4,FALSE);
+                JE_LoadPIC(4, FALSE);
 
                 memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
@@ -91,7 +104,7 @@ void TitleScreen( JE_boolean animate )
                     temp = 4;
                 }
 
-                JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
+                JE_newDrawCShapeNum(PlanetShapes, 146, 11, temp);
 
 
                 memcpy(colors2, colors, sizeof(colors));
@@ -117,7 +130,7 @@ void TitleScreen( JE_boolean animate )
                         setdelay(2);
                         memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
-                        JE_NewDrawCShapeNum(PlanetShapes,146,11,temp);
+                        JE_newDrawCShapeNum(PlanetShapes,146,11,temp);
 
                         JE_ShowVGA();
                         waitdelay();
@@ -191,7 +204,7 @@ void TitleScreen( JE_boolean animate )
                         break;
                     case 1: /* Load game */
                         /* JE_loadscreen(); */
-                        if (!gameloaded)
+                        if (!gameLoaded)
                         {
                             redraw = TRUE;
                         }
@@ -231,10 +244,10 @@ void TitleScreen( JE_boolean animate )
             default:
                 break;
         }
-    } while (!(quit || gameloaded || jumpsection || playdemo || loaddestruct));
+    } while (!(quit || gameLoaded || jumpSection || playDemo || loadDestruct));
 }
 
-void OpeningAnim( void )
+void JE_OpeningAnim( void )
 {
     /*JE_clr256();*/
 
