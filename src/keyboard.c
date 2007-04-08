@@ -18,6 +18,8 @@
  */
 #include "opentyr.h"
 
+#include "joystick.h"
+
 #define NO_EXTERNS
 #include "keyboard.h"
 #undef NO_EXTERNS
@@ -134,6 +136,44 @@ void flush_events_buffer( void )
     SDL_Event ev;
 
     while (SDL_PollEvent(&ev));
+}
+
+void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
+{
+    keyboard = !keyboard; /* Saves two nots in the loop */
+    mouse = !mouse;
+
+    service_SDL_events();
+    while (!(keydown||(keyboard)) && !(mousedown||(mouse)) && !(button[0]||(!joystick)))
+    {
+        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
+        {
+            if (joystick)
+            {
+                JE_joystick2();
+            }
+            service_SDL_events();
+        }
+    }
+}
+
+void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
+{
+    keyboard = !keyboard; /* Saves two nots in the loop */
+    mouse = !mouse;
+
+    service_SDL_events();
+    while ((keydown||(keyboard)) || (mousedown||(mouse)) || (button[0]||(!joystick)))
+    {
+        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
+        {
+            if (joystick)
+            {
+                JE_joystick2();
+            }
+            service_SDL_events();
+        }
+    }
 }
 
 void wait_nomouse( void )

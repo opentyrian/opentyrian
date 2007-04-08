@@ -37,6 +37,8 @@ extern Uint8 *keysactive;
 #endif
 
 void flush_events_buffer( void );
+void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
+void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 void wait_nomouse( void );
 void wait_nokeymouse( void );
 void wait_keymouse( void );
