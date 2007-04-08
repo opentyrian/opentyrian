@@ -29,6 +29,9 @@
 #include "SDL.h"
 
 Uint32 target;
+JE_boolean mixEnable = FALSE;
+const char hexa[17] = "0123456789ABCDEF";
+  
 
 void setdelay( JE_byte delay )
 {
@@ -70,6 +73,11 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
             service_SDL_events();
         }
     }
+}
+
+void JE_loadSong( JE_word songnum )
+{
+	/* TODO dummy function */
 }
 
 void JE_playSampleNum( JE_byte samplenum )

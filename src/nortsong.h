@@ -21,11 +21,20 @@
 #define NORTSONG_H
 
 #include "opentyr.h"
+#include "musmast.h"
+#include "sndmast.h"
 
 #include "SDL.h"
 
+typedef JE_longint JE_SongPosType [MUSICNUM];
+typedef JE_byte JE_DigiMixType [0x4ff];
+typedef JE_byte JE_AweType [35000];
+
 #ifndef NO_EXTERNS
-Uint32 target;
+extern Uint32 target;
+
+extern JE_char hexa[17];
+extern JE_boolean mixEnable;
 #endif
 
 void setdelay( JE_byte delay );
@@ -33,6 +42,49 @@ int delaycount( void );
 void wait_delay( void );
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 
-void JE_playSampleNum( JE_byte samplenum );
+void JE_resetTimerInt( void );
+void JE_playSong ( JE_word songnum );
+void JE_loadSong( JE_word songnum );
+void JE_endMusic ( JE_byte soundeffects);
+void JE_StopSong( void );
+void JE_RestartSong( void );
+void JE_reinit ( JE_boolean redo );
+void JE_AWEStuff( void );
+void JE_setTimerInt( void );
+void JE_calcFXVol( void );
+void JE_changeVolume( JE_word temp, JE_integer change, JE_word fxvol, JE_integer fxchange );
+void JE_frameDelay( JE_byte delay );
+
+void JE_loadSmpFile ( JE_string name, JE_byte samplenum);
+void JE_loadSndFile( void );
+void JE_playSampleNum ( JE_byte samplenum );
+
+void JE_FXDestruct ( JE_byte samplenum );
+
+void JE_setvol (JE_byte musicvolume, JE_byte sample );
+
+void JE_waitframecount( void );
+
+JE_string JE_hexa2 (JE_byte data );
+JE_string JE_hexa4 (JE_byte data );
+
+
+/* SYN: This stuff is probably unneeded, as it deals with sound hardware issues abstracted 
+   away by SDL. Pascal code is left here as reference, just in case we want this stuff
+   later.
+
+midiportlist : ARRAY [1..10] OF
+  WORD =
+  ($0000, $0000, $1000, $0666, $0330, $0320, $0332, $0334, $0336, $0300);
+
+fxportlist : ARRAY [1..4] OF
+  WORD =
+  ($FFFF, $0000, $0666, $1000);
+
+dmalist : ARRAY [1..3] OF
+  WORD =
+  ($0000, $0003, $0001);
+
+*/
 
 #endif /* NORTSONG_H */

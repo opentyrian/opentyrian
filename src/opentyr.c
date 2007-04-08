@@ -30,6 +30,8 @@
 #include "episodes.h"
 #include "varz.h"
 #include "mainint.h"
+#include "musmast.h"
+#include "nortsong.h"
 #include "nortvars.h"
 #include "params.h"
 
@@ -117,7 +119,18 @@ int main( int argc, char *argv[] )
     showMemLeft = FALSE;
     playerPasswordInput = TRUE;
 
-    /* TODO initialize sound system */
+    /* Initialize sound system */
+	JE_loadSong(1);
+	
+	if ( TRUE ) /* TODO: Check if sound is enabled, handle either appropriately */
+	{
+		/* SYN: This code block doesn't really resemble the original, because the
+			underlying sound code is very different. */
+		
+		/* TODO: Any sound initialization stuff */
+	} else {
+		/* TODO: No sound! What now?! */
+	}
 
     if(recordDemo)
     {

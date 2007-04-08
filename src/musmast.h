@@ -1,0 +1,39 @@
+/* vim: set noet:
+ *
+ * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * Copyright (C) 2007  The OpenTyrian Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+#ifndef MUSMAST_H
+#define MUSMAST_H
+
+#define DEFAULT_SONG_BUY 3
+#define SONG_LEVELEND 10
+#define SONG_GAMEOVER 11
+#define SONG_MAPVIEW 20
+#define SONG_ENDGAME1 8
+#define SONG_ZANAC 32
+#define SONG_TITLE 30
+
+#define MUSICNUM 41
+
+#ifndef NO_EXTERNS
+extern const char musicFile[MUSICNUM][13];
+extern const char musicTitle[MUSICNUM][48];
+extern JE_boolean musicFade;
+#endif
+
+#endif /* MUSMAST_H */
