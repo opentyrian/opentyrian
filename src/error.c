@@ -85,22 +85,21 @@ void JE_findTyrian( const JE_string filename )
         dir[0] = '\0';
     } else {
         unsigned int i;
+        size_t tmpsize = (strlen(filename)+10) * sizeof (*strbuf);
 
         /* Let's find it! */
         printf("Searching for Tyrian files...\n\n");
 
         /* If you ever add a longer dir, increase the magic number. */
-        strbuf = malloc((strlen(filename)+10) * sizeof (*strbuf));
+        strbuf = malloc(tmpsize);
         for (i = 0; i < COUNTOF(tyrian_searchpaths); i++)
         {
-            strcpy(strbuf, tyrian_searchpaths[i]);
-            strcat(strcat(strbuf, "/"), filename);
+            snprintf(strbuf, tmpsize, "%s/%s", tyrian_searchpaths[i], filename);
             if (JE_find(strbuf))
             {
                 free(strbuf);
 
-                strcpy(dir, tyrian_searchpaths[i]);
-                strcat(dir, "/");
+                snprintf(dir, sizeof(dir), "%s/", tyrian_searchpaths[i]);
                 printf("Tyrian data files found at %s\n\n", dir);
                 return;
             }
@@ -127,7 +126,6 @@ JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentran
 
         strcpy(buf, dir);
         strcat(buf, filename);
-
         if (!JE_find(buf))
         {
             JE_errorhand(filename);
