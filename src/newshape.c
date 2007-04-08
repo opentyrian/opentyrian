@@ -261,15 +261,10 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
     }
     do {
         service_SDL_events();
-        mouseButton = lastmouse_but;
+        mouseButton = mousedown ? lastmouse_but : 0;
         mouseX = mouse_x;
         mouseY = mouse_y;
-        inputDetected = mousedown | keydown;
-
-        if (JE_joystickNotHeld())
-        {
-            inputDetected = TRUE;
-        }
+        inputDetected = newmouse | newkey | JE_joystickNotHeld();
 
         if (time == 0 && temp != 0)
         {
@@ -309,6 +304,7 @@ void JE_mouseStart( void )
         tempw = mouseCursorGr[mouseCursor];
 
         service_SDL_events();
+        mouseButton = mousedown ? lastmouse_but : 0;
         lastMouseX = mouse_x;
         lastMouseY = mouse_y;
 
