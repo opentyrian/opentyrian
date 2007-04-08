@@ -100,7 +100,7 @@ int main( int argc, char *argv[] )
             printf("Christmas has been detected.\n");
             printf("  Activate Christmas? (Y/N)\n");
             printf("*****************************\n");
-            wait_keyboard();
+            wait_input(TRUE,FALSE,FALSE);
             if (lastkey_sym != SDLK_y)
             {
                 tyrianXmas = FALSE;

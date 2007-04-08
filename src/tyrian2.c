@@ -132,7 +132,7 @@ void JE_TitleScreen( JE_boolean animate )
                         JE_newDrawCShapeNum(PlanetShapes, 146, 11, temp);
 
                         JE_ShowVGA();
-                        waitdelay();
+                        wait_delay();
                     }
                 }
                 moveTyrianLogoUp = FALSE;
@@ -265,7 +265,7 @@ void JE_OpeningAnim( void )
         memset(black, 0, sizeof(black));
 
         setdelay(200);
-        while (!(delaycount() == 0 || JE_anyButton()));
+        wait_delayorinput(TRUE,TRUE,TRUE);
 
         JE_FadeBlack(15);
 
@@ -276,7 +276,7 @@ void JE_OpeningAnim( void )
         JE_FadeColor(10);
 
         setdelay(200);
-        while (!(delaycount() == 0 || JE_anyButton()));
+        wait_delayorinput(TRUE,TRUE,TRUE);
 
         JE_FadeBlack(10);
     }

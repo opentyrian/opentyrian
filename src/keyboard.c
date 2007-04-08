@@ -26,8 +26,6 @@
 
 #include "SDL.h"
 
-#define SDL_POLL_INTERVAL 5
-
 /* TODO: Decide if this stays or not */
 const char *KeyNames[] = {
     "ESC",
@@ -144,7 +142,7 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
     mouse = !mouse;
 
     service_SDL_events();
-    while (!(keydown||(keyboard)) && !(mousedown||(mouse)) && !(button[0]||(!joystick)))
+    while (!((keydown||keyboard) || (mousedown||mouse) || (button[0] || !joystick)))
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
         {
@@ -159,11 +157,8 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-    keyboard = !keyboard; /* Saves two nots in the loop */
-    mouse = !mouse;
-
     service_SDL_events();
-    while ((keydown||(keyboard)) || (mousedown||(mouse)) || (button[0]||(!joystick)))
+    while ((keydown && keyboard) || (mousedown && mouse) || (button[0] && joystick))
     {
         if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
         {
@@ -171,54 +166,6 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
             {
                 JE_joystick2();
             }
-            service_SDL_events();
-        }
-    }
-}
-
-void wait_nomouse( void )
-{
-    service_SDL_events();
-    while (mousedown)
-    {
-        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
-        {
-            service_SDL_events();
-        }
-    }
-}
-
-void wait_nokeymouse( void )
-{
-    service_SDL_events();
-    while (mousedown || keydown)
-    {
-        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
-        {
-            service_SDL_events();
-        }
-    }
-}
-
-void wait_keymouse( void )
-{
-    service_SDL_events();
-    while (!newmouse && !newkey)
-    {
-        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
-        {
-            service_SDL_events();
-        }
-    }
-}
-
-void wait_keyboard( void )
-{
-    service_SDL_events();
-    while (!newkey)
-    {
-        if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
-        {
             service_SDL_events();
         }
     }

@@ -23,6 +23,8 @@
 
 #include "SDL.h"
 
+#define SDL_POLL_INTERVAL 5
+
 #ifndef NO_EXTERNS
 extern const char *KeyNames[];
 extern JE_boolean newkey, newmouse, keydown, mousedown;
@@ -39,10 +41,6 @@ extern Uint8 *keysactive;
 void flush_events_buffer( void );
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
-void wait_nomouse( void );
-void wait_nokeymouse( void );
-void wait_keymouse( void );
-void wait_keyboard( void );
 void init_keyboard( void );
 void service_SDL_events( void );
 void sleep_game( void );

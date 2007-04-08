@@ -229,7 +229,7 @@ void JE_helpSystem( JE_byte startTopic )
         if (menu == 0)
         {
             JE_ShowVGA();
-            wait_nomouse();
+            wait_noinput(FALSE,TRUE,FALSE);
             JE_waitAction(1, TRUE);
 
             if (newmouse /*TODO: not sure if this is correct*/)
@@ -246,7 +246,7 @@ void JE_helpSystem( JE_byte startTopic )
                         lastkey_sym = SDLK_ESCAPE;
                         break;
                 }
-                wait_nomouse();
+                wait_noinput(FALSE,TRUE,FALSE);
                 newkey = TRUE;
             }
 
@@ -444,7 +444,7 @@ startepisodeselect:
                         JE_helpBox(10, 10, helpTxt[29], 50);
                         JE_ShowVGA();
                         JE_FadeColor(10);
-                        while (!JE_anyButton());
+                        wait_input(TRUE,TRUE,TRUE);
                         lastkey_sym = 0;
                         JE_FadeBlack(10);
                         goto startepisodeselect;

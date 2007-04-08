@@ -54,7 +54,7 @@ void JE_FadeColors( JE_colortype *FromColors, JE_colortype *ToColors, JE_byte St
             p[i].b = ((*FromColors)[i].b + ((((*ToColors)[i].b - (*FromColors)[i].b) * s) / NoSteps)) << 2;
         }
         SDL_SetColors(VGAScreen, p, StartCol, NoColors + 1);
-        waitdelay();
+        wait_delay();
     }
 }
 

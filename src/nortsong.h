@@ -29,8 +29,8 @@ Uint32 target;
 
 void setdelay( JE_byte delay );
 int delaycount( void );
-void waitdelay( void );
-void waitdelayorkey( void );
+void wait_delay( void );
+void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 
 void JE_playSampleNum( JE_byte samplenum );
 
