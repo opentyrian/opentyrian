@@ -48,8 +48,6 @@ int main( int argc, char *argv[] )
 
     JE_scanForEpisodes();
 
-    init_keyboard();
-
     recordFileNum = 1;
     playDemoNum = 0;
     playDemo = FALSE;
@@ -128,6 +126,7 @@ int main( int argc, char *argv[] )
 	 * TODO: Finish it and stuff. */
 
     JE_initvga256();
+    init_keyboard();
 
     JE_loadpals();
 
