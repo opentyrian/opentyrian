@@ -181,17 +181,35 @@ JE_boolean JE_joystickTranslate( void )
     if(tempb)
     {
         if(joystickUp)
+        {
+            newkey = TRUE;
             lastkey_sym = SDLK_UP;
+        }
         if(joystickDown)
+        {
+            newkey = TRUE;
             lastkey_sym = SDLK_DOWN;
+        }
         if(joystickLeft)
+        {
+            newkey = TRUE;
             lastkey_sym = SDLK_LEFT;
+        }
         if(joystickRight)
+        {
+            newkey = TRUE;
             lastkey_sym = SDLK_RIGHT;
+        }
         if(button[0])
+        {
+            newkey = TRUE;
             lastkey_sym = SDLK_RETURN;
+        }
         if(button[1])
+        {
+            newkey = TRUE;
             lastkey_sym = SDLK_ESCAPE;
+        }
     }
 
     return(tempb);
@@ -206,7 +224,7 @@ JE_boolean JE_joystickNotHeld( void )
         {
             if(buttonHeld)
             {
-                lastkey_sym = 0;
+                newkey = FALSE;
             } else {
                 buttonHeld = TRUE;
                 return(TRUE);
