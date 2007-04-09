@@ -1,4 +1,4 @@
-/*  vim: set noet:
+/* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Team
