@@ -289,7 +289,7 @@ JE_boolean JE_anyButton( void )
 {
 	button[0] = FALSE;
 	newkey = FALSE; /* counter intuitive */
-	service_SDL_events();
+	service_SDL_events(FALSE);
 	JE_joystick2();
 	return newkey || mousedown || button[0];
 }

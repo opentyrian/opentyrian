@@ -56,7 +56,7 @@ void wait_delay( void )
 	{
 		if (ticks % SDL_POLL_INTERVAL == 0)
 		{
-			service_SDL_events();
+			service_SDL_events(FALSE);
 		}
 	}
 }
@@ -66,7 +66,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 	Uint32 ticks;
 
 	newkey = newmouse = FALSE;
-	service_SDL_events();
+	service_SDL_events(FALSE);
 	while ((ticks = SDL_GetTicks()) < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
 	{
 		if (ticks % SDL_POLL_INTERVAL == 0)
@@ -75,7 +75,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 			{
 				JE_joystick2();
 			}
-			service_SDL_events();
+			service_SDL_events(FALSE);
 		}
 	}
 }

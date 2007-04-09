@@ -76,7 +76,7 @@ void JE_helpSystem( JE_byte startTopic )
 
 	do
 	{
-		service_SDL_events();
+		service_SDL_events(FALSE);
 
 		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 

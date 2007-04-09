@@ -42,7 +42,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 
 		/*waitretrace;*/
 
-		service_SDL_events();
+		service_SDL_events(FALSE);
 
 		inputDetected = newkey | mousedown | JE_joystickNotHeld();
 

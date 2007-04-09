@@ -139,7 +139,7 @@ void flush_events_buffer( void )
 
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-	service_SDL_events();
+	service_SDL_events(FALSE);
 	while (!((keydown || !keyboard) || (mousedown || !mouse) || (button[0] || !joystick)))
 	{
 		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -148,14 +148,14 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 			{
 				JE_joystick2();
 			}
-			service_SDL_events();
+			service_SDL_events(FALSE);
 		}
 	}
 }
 
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-	service_SDL_events();
+	service_SDL_events(FALSE);
 	while ((keydown && keyboard) || (mousedown && mouse) || (button[0] && joystick))
 	{
 		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -164,7 +164,7 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 			{
 				JE_joystick2();
 			}
-			service_SDL_events();
+			service_SDL_events(FALSE);
 		}
 	}
 }
@@ -179,10 +179,14 @@ void init_keyboard( void )
 #endif
 }
 
-void service_SDL_events( void )
+void service_SDL_events( JE_boolean clear_new )
 {
 	SDL_Event ev;
 
+	if (clear_new)
+	{
+		newkey = newmouse = FALSE;
+	}
 	while (SDL_PollEvent(&ev))
 	{
 		switch (ev.type)
