@@ -264,7 +264,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 	}
 	do
 	{
-		service_SDL_events(FALSE);
+		service_SDL_events(TRUE);
 		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
 		mouseX = mouse_x;
 		mouseY = mouse_y;

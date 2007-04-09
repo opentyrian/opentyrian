@@ -288,8 +288,7 @@ void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 JE_boolean JE_anyButton( void )
 {
 	button[0] = FALSE;
-	newkey = FALSE; /* counter intuitive */
-	service_SDL_events(FALSE);
+	service_SDL_events(TRUE);
 	JE_joystick2();
 	return newkey || mousedown || button[0];
 }
