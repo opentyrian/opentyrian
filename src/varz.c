@@ -194,18 +194,18 @@ JE_word tempSS;
 
 
 /* Destruction Ratio */
-JE_word totalenemy;
+JE_word totalEnemy;
 JE_word enemyKilled;
 
 JE_byte statBar[2], statCol[2]; /* [1..2] */
 
 /* Buffer */
-JE_map1buffer *map1BufferTop, *map1BufferBot;
+JE_Map1Buffer *map1BufferTop, *map1BufferBot;
 
 /* Shape/Map Data - All in one Segment! */
-struct JE_megadatatype1 *megaData1;
-struct JE_megadatatype2 *megaData2;
-struct JE_megadatatype3 *megaData3;
+struct JE_MegaDataType1 *megaData1;
+struct JE_MegaDataType2 *megaData2;
+struct JE_MegaDataType3 *megaData3;
 
 /* Secret Level Display */
 JE_byte flash;

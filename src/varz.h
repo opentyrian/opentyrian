@@ -33,7 +33,7 @@
 
 #define MAX_SP 100
 
-struct JE_singleenemytype
+struct JE_SingleEnemyType
 {
 	JE_byte     fillbyte;
 	JE_integer  ex, ey;     /* POSITION */
@@ -94,19 +94,19 @@ struct JE_singleenemytype
 	JE_byte     fill[3]; /* [1..3] */
 };
 
-typedef struct JE_singleenemytype JE_multienemytype[100]; /* [1..100] */
+typedef struct JE_SingleEnemyType JE_MultiEnemyType[100]; /* [1..100] */
 
-typedef JE_word JE_dancshape[(24 * 28) / 2]; /* [1..(24*28) div 2] */
+typedef JE_word JE_DancShape[(24 * 28) / 2]; /* [1..(24*28) div 2] */
 
-typedef JE_char JE_charstring[256]; /* [1..256] */
+typedef JE_char JE_CharString[256]; /* [1..256] */
 
-typedef JE_byte JE_map1buffer[24 * 28 * 13 * 4]; /* [1..24*28*13*4] */
+typedef JE_byte JE_Map1Buffer[24 * 28 * 13 * 4]; /* [1..24*28*13*4] */
 
-typedef JE_word JE_maptype[300][14]; /* [1..300, 1..14] */
-typedef JE_word JE_maptype2[300][14]; /* [1..600, 1..14] */
-typedef JE_word JE_maptype3[600][15]; /* [1..600, 1..15] */
+typedef JE_word JE_MapType[300][14]; /* [1..300, 1..14] */
+typedef JE_word JE_MapType2[300][14]; /* [1..600, 1..14] */
+typedef JE_word JE_MapType3[600][15]; /* [1..600, 1..15] */
 
-struct JE_eventrectype
+struct JE_EventRecType
 {
 	JE_word     EventTime;
 	JE_byte     EventType;
@@ -115,42 +115,42 @@ struct JE_eventrectype
 	JE_byte     EventDat4;
 };
 
-struct JE_megadatatype1
+struct JE_MegaDataType1
 {
-	JE_maptype mainmap;
+	JE_MapType mainmap;
 	struct
 	{
-		JE_dancshape sh;
+		JE_DancShape sh;
 	} shapes[72]; /* [0..71] */
 	JE_byte    tempdat1;
-	/*JE_dancshape filler;*/
+	/*JE_DancShape filler;*/
 };
 
-struct JE_megadatatype2
+struct JE_MegaDataType2
 {
-	JE_maptype2 mainmap;
+	JE_MapType2 mainmap;
 	struct
 	{
 		JE_byte nothing[3]; /* [1..3] */
 		JE_byte fill;
-		JE_dancshape sh;
+		JE_DancShape sh;
 	} shapes[71]; /* [0..70] */
 	JE_byte tempdat2;
 };
 
-struct JE_megadatatype3
+struct JE_MegaDataType3
 {
-	JE_maptype3 mainmap;
+	JE_MapType3 mainmap;
 	struct
 	{
 		JE_byte nothing[3]; /* [1..3] */
 		JE_byte fill;
-		JE_dancshape sh;
+		JE_DancShape sh;
 	} shapes[70]; /* [0..69] */
 	JE_byte tempdat3;
 };
 
-typedef JE_multienemytype JE_EnemyType;
+typedef JE_MultiEnemyType JE_EnemyType;
 typedef JE_byte JE_EnemyAvailType[100]; /* [1..100] */
 
 typedef JE_byte JE_REXtype[20]; /* [1..20] */
@@ -202,13 +202,13 @@ extern JE_real debugHist;
 extern JE_word curLoc;
 extern JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
 extern JE_word tempSS;
-extern JE_word totalenemy;
+extern JE_word totalEnemy;
 extern JE_word enemyKilled;
 extern JE_byte statBar[2], statCol[2];
-extern JE_map1buffer *map1BufferTop, *map1BufferBot;
-extern struct JE_megadatatype1 *megaData1;
-extern struct JE_megadatatype2 *megaData2;
-extern struct JE_megadatatype3 *megaData3;
+extern JE_Map1Buffer *map1BufferTop, *map1BufferBot;
+extern struct JE_MegaDataType1 *megaData1;
+extern struct JE_MegaDataType2 *megaData2;
+extern struct JE_MegaDataType3 *megaData3;
 extern JE_byte flash;
 extern JE_shortint flashChange;
 extern JE_byte displayTime;
