@@ -25,12 +25,11 @@
 #include "nortsong.h"
 #include "joystick.h"
 #include "params.h"
+#include "network.h"
 
 #define NO_EXTERNS
 #include "newshape.h"
 #undef NO_EXTERNS
-
-extern int netQuit; /* placeholder */
 
 SDL_Surface *tempScreenSeg = NULL;
 

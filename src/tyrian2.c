@@ -34,6 +34,7 @@
 #include "mainint.h"
 #include "sndmast.h"
 #include "params.h"
+#include "network.h"
 
 #include "tyrian2.h"
 
@@ -61,10 +62,10 @@ void JE_titleScreen( JE_boolean animate )
 
 	/* TODO JE_sortHighScores;*/
 
-	/* TODO if (haltGame)
+	if (haltGame)
 	{
-		JE_tyrianHalt(0);
-	}*/
+		/* TODO JE_tyrianHalt(0); */
+	}
 
 	tempScreenSeg = VGAScreen;
 
@@ -210,7 +211,7 @@ void JE_titleScreen( JE_boolean animate )
 							JE_fadeBlack(10);
 							if (JE_playerSelect())
 							{
-								if (0 /*netQuit*/)
+								if (netQuit)
 								{
 									/* JE_tyrianHalt(9); */
 								}

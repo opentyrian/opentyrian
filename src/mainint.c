@@ -36,6 +36,7 @@
 #include "error.h"
 #include "params.h"
 #include "joystick.h"
+#include "network.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -52,8 +53,6 @@ JE_word downgradeCost;
 JE_boolean performSave;
 JE_boolean jumpSection;
 JE_boolean useLastBank; /* See if I want to use the last 16 colors for DisplayText */
-
-extern int haltGame, netQuit; /* placeholders */
 
 void JE_helpSystem( JE_byte startTopic )
 {

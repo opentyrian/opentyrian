@@ -22,14 +22,13 @@
 #include "keyboard.h"
 #include "joystick.h"
 #include "nortvars.h"
+#include "network.h"
 
 #define NO_EXTERNS
 #include "setup.h"
 #undef NO_EXTERNS
 
 #include "SDL.h"
-
-int haltGame = 0, netQuit = 0; /* placeholders */
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
