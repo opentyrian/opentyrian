@@ -94,7 +94,7 @@ void JE_loadSong( JE_word songnum )
 		fread(&x, 2, 1, fi);
 		fread(songPos, sizeof(songPos), 1, fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
 		fseek(fi, 0, SEEK_END);
-		songPos[MUSICNUM] = ftell(fi);
+		songPos[MUSIC_NUM] = ftell(fi);
 	}
 	
 	/* SYN: Now move to the start of the song we want, and load the number of bytes given by the

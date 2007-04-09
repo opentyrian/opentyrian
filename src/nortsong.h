@@ -26,7 +26,7 @@
 
 #include "SDL.h"
 
-typedef JE_longint JE_SongPosType [MUSICNUM + 1]; /* SYN: Reindex this by -1 */
+typedef JE_longint JE_SongPosType [MUSIC_NUM + 1]; /* SYN: Reindex this by -1 */
 typedef JE_byte JE_DigiMixType [0x4ff];
 typedef JE_byte JE_AweType [35000];
 
