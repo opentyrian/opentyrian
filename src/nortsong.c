@@ -22,6 +22,7 @@
 #include "keyboard.h"
 #include "joystick.h"
 #include "loudness.h"
+#include "error.h"
 
 #define NO_EXTERNS
 #include "nortsong.h"
@@ -85,7 +86,7 @@ void JE_loadSong( JE_word songnum )
 	JE_word x;
 	FILE *fi;
 	
-	fi = fopen("MUSIC.MUS", "rb");
+	JE_resetFileExt(&fi, "MUSIC.MUS", FALSE);
 	
 	if (notYetLoadedMusic)
 	{
