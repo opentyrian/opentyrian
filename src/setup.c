@@ -34,7 +34,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 #ifdef NDEBUG /* Disable mouse grabbing/etc in debug builds */
 	SDL_WarpMouse(160, 100);
 #endif
-	lastkey_sym = 0;
+	newkey = FALSE;
 
 	do
 	{
@@ -44,7 +44,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 
 		service_SDL_events();
 
-		inputDetected = keydown | mousedown | JE_joystickNotHeld();
+		inputDetected = newkey | mousedown | JE_joystickNotHeld();
 
 		if (lastkey_sym == SDLK_SPACE)
 		{
@@ -53,6 +53,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 
 		if (mousedown)
 		{
+			newkey = TRUE;
 			lastkey_sym = SDLK_RETURN;
 		}
 
