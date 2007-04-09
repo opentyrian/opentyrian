@@ -28,7 +28,7 @@ JE_boolean repeated;
 JE_boolean playing;
 
 /* SYN: The arguments to this function are probably meaningless now */
-void JE_initialize(JE_word soundblaster, JE_word midi)
+void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror)
 {
 	/* TODO: Stub function, need to fill in */
 }
@@ -55,6 +55,11 @@ void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 	/* TODO: Stub function, need to fill in */
 }
 
+void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
+{
+	/* TODO: Stub function, need to fill in */
+}
+
 /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
 void setVol(JE_word volume, JE_word sample)
 {
@@ -72,3 +77,19 @@ JE_word getSampleVol( void )
 	/* TODO: Stub function, need to fill in */
 	return 0;
 }
+
+void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dmahi)
+{
+	/* TODO: Stub function, need to fill in */
+}
+
+void JE_multiSampleMix( void )
+{
+	/* TODO: Stub function, need to fill in */
+}
+
+void JE_multiSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_byte chan, JE_byte vol)
+{
+	/* TODO: Stub function, need to fill in */
+}
+
