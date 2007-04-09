@@ -66,6 +66,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 				} else {
 					lastkey_sym = SDLK_DOWN;
 				}
+				newkey = TRUE;
 			}
 			if (abs(mouse_x - 160) > 10)
 			{
@@ -76,6 +77,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 				} else {
 					lastkey_sym = SDLK_RIGHT;
 				}
+				newkey = TRUE;
 			}
 		}
 #endif
