@@ -49,8 +49,8 @@ void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dma
 void JE_multiSampleMix( void );
 void JE_multiSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_byte chan, JE_byte vol);
 
-void setVol(JE_word volume, JE_word sample); /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
-JE_word getVol( void );
-JE_word getSampleVol( void );
+void JE_setVol(JE_word volume, JE_word sample); /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
+JE_word JE_getVol( void );
+JE_word JE_getSampleVol( void );
 
 #endif /* LOUDNESS_H */

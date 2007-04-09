@@ -61,18 +61,18 @@ void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 }
 
 /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
-void setVol(JE_word volume, JE_word sample)
+void JE_setVol(JE_word volume, JE_word sample)
 {
 	/* TODO: Stub function, need to fill in */
 }
 
-JE_word getVol( void )
+JE_word JE_getVol( void )
 {
 	/* TODO: Stub function, need to fill in */
 	return 0;
 }
 
-JE_word getSampleVol( void )
+JE_word JE_getSampleVol( void )
 {
 	/* TODO: Stub function, need to fill in */
 	return 0;
