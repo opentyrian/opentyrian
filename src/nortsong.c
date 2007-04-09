@@ -21,6 +21,7 @@
 
 #include "keyboard.h"
 #include "joystick.h"
+#include "loudness.h"
 
 #define NO_EXTERNS
 #include "nortsong.h"
@@ -28,10 +29,14 @@
 
 #include "SDL.h"
 
+const char hexa[17] = "0123456789ABCDEF";
+
 Uint32 target;
 JE_boolean mixEnable = FALSE;
-const char hexa[17] = "0123456789ABCDEF";
-  
+JE_boolean notYetLoadedSound = TRUE;
+JE_boolean notYetLoadedMusic = TRUE;
+
+JE_SongPosType songPos;
 
 void setdelay( JE_byte delay )
 {
@@ -77,7 +82,27 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 
 void JE_loadSong( JE_word songnum )
 {
-	/* TODO dummy function */
+	JE_word x;
+	FILE *fi;
+	
+	fi = fopen("MUSIC.MUS", "rb");
+	
+	if (notYetLoadedMusic)
+	{
+		/* SYN: We're loading offsets into MUSIC.MUS for each song here. */
+		notYetLoadedMusic = FALSE;
+		fread(&x, 2, 1, fi);
+		fread(songPos, sizeof(songPos), 1, fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
+		fseek(fi, 0, SEEK_END);
+		songPos[MUSICNUM] = ftell(fi);
+	}
+	
+	/* SYN: Now move to the start of the song we want, and load the number of bytes given by the
+	   difference in offsets between it and the next song. */
+	fseek(fi, songPos[songnum - 1], SEEK_SET);
+	fread(&musicData, (songPos[songnum] - songPos[songnum - 1]), 1, fi);
+	
+	fclose(fi);
 }
 
 void JE_playSampleNum( JE_byte samplenum )

@@ -26,7 +26,7 @@
 
 #include "SDL.h"
 
-typedef JE_longint JE_SongPosType [MUSIC_NUM];
+typedef JE_longint JE_SongPosType [MUSICNUM + 1]; /* SYN: Reindex this by -1 */
 typedef JE_byte JE_DigiMixType [0x4ff];
 typedef JE_byte JE_AweType [35000];
 
@@ -35,6 +35,9 @@ extern Uint32 target;
 
 extern JE_char hexa[17];
 extern JE_boolean mixEnable;
+
+extern JE_boolean notYetLoadedSound, notYetLoadedMusic;
+extern JE_SongPosType songPos;
 #endif
 
 void setdelay( JE_byte delay );
@@ -66,7 +69,7 @@ void JE_setvol (JE_byte musicvolume, JE_byte sample );
 void JE_waitframecount( void );
 
 JE_string JE_hexa2 (JE_byte data );
-JE_string JE_hexa4 (JE_byte data );
+JE_string JE_hexa4 (JE_word data );
 
 
 /* SYN: This stuff is probably unneeded, as it deals with sound hardware issues abstracted 
