@@ -227,7 +227,7 @@ JE_boolean JE_joystickNotHeld( void )
 {
 	if (JE_joystickTranslate())
 	{
-		if (lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_ESCAPE)
+		if (newkey && (lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_ESCAPE))
 		{
 			if (buttonHeld)
 			{

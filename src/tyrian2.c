@@ -179,129 +179,132 @@ void JE_titleScreen( JE_boolean animate )
 		waitForDemo = 2000;
 		JE_textMenuWait(&waitForDemo, FALSE);
 
-		switch (lastkey_sym)
+		if (newkey)
 		{
-			case SDLK_UP:
-				if (menu == 0)
-				{
-					menu = menunum-1;
-				} else {
-					menu--;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_DOWN:
-				if (menu == menunum-1)
-				{
-					menu = 0;
-				} else {
-					menu++;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_RETURN:
-				JE_playSampleNum(SELECT);
-				switch (menu)
-				{
-					case 0: /* New game */
-						JE_fadeBlack(10);
-						if (JE_playerSelect())
-						{
-							if (0 /*netQuit*/)
+			switch (lastkey_sym)
+			{
+				case SDLK_UP:
+					if (menu == 0)
+					{
+						menu = menunum-1;
+					} else {
+						menu--;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_DOWN:
+					if (menu == menunum-1)
+					{
+						menu = 0;
+					} else {
+						menu++;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_RETURN:
+					JE_playSampleNum(SELECT);
+					switch (menu)
+					{
+						case 0: /* New game */
+							JE_fadeBlack(10);
+							if (JE_playerSelect())
 							{
-								/* JE_tyrianHalt(9); */
-							}
-
-							if (JE_episodeSelect() && JE_difficultySelect())
-							{
-								gameLoaded = TRUE;
-							} else {
-								redraw = TRUE;
-								fadeIn = TRUE;
-							}
-
-							initialDifficulty = difficultyLevel;
-
-							if (onePlayerAction)
-							{
-								score = 0;
-								pItems[11] = 8;
-							} else {
-								if (twoPlayerMode)
+								if (0 /*netQuit*/)
+								{
+									/* JE_tyrianHalt(9); */
+								}
+	
+								if (JE_episodeSelect() && JE_difficultySelect())
+								{
+									gameLoaded = TRUE;
+								} else {
+									redraw = TRUE;
+									fadeIn = TRUE;
+								}
+	
+								initialDifficulty = difficultyLevel;
+	
+								if (onePlayerAction)
 								{
 									score = 0;
-									score2 = 0;
-									pItems[11] = 11;
-									difficultyLevel++;
-									inputDevice1 = 1;
-									inputDevice2 = 2;
+									pItems[11] = 8;
 								} else {
-									if (richMode)
+									if (twoPlayerMode)
 									{
-										score = 1000000;
+										score = 0;
+										score2 = 0;
+										pItems[11] = 11;
+										difficultyLevel++;
+										inputDevice1 = 1;
+										inputDevice2 = 2;
 									} else {
-										switch (episodeNum)
+										if (richMode)
 										{
-											case 1:
-												score = 10000;
-												break;
-											case 2:
-												score = 15000;
-												break;
-											case 3:
-												score = 20000;
-												break;
-											case 4:
-												score = 30000;
-												break;
+											score = 1000000;
+										} else {
+											switch (episodeNum)
+											{
+												case 1:
+													score = 10000;
+													break;
+												case 2:
+													score = 15000;
+													break;
+												case 3:
+													score = 20000;
+													break;
+												case 4:
+													score = 30000;
+													break;
+											}
 										}
 									}
 								}
 							}
-						}
-						fadeIn = TRUE;
-						break;
-					case 1: /* Load game */
-						/* JE_loadScreen(); */
-						if (!gameLoaded)
-						{
+							fadeIn = TRUE;
+							break;
+						case 1: /* Load game */
+							/* JE_loadScreen(); */
+							if (!gameLoaded)
+							{
+								redraw = TRUE;
+							}
+							fadeIn = TRUE;
+							break;
+						case 2: /* High scores */
+							/* JE_highScoreScreen(); */
+							fadeIn = TRUE;
+							break;
+						case 3: /* Instructions */
+							JE_helpSystem(1);
 							redraw = TRUE;
-						}
-						fadeIn = TRUE;
-						break;
-					case 2: /* High scores */
-						/* JE_highScoreScreen(); */
-						fadeIn = TRUE;
-						break;
-					case 3: /* Instructions */
-						JE_helpSystem(1);
+							fadeIn = TRUE;
+							break;
+						case 4: /* Ordering info */
+							break;
+						case 5: /* Demo */
+							/* JE_initPlayerData(); */
+							playDemo = TRUE;
+							if (playDemoNum++ > 4)
+							{
+								playDemoNum = 0;
+							}
+							break;
+						case 6: /* Quit */
+							quit = TRUE;
+							break;
+					}
+					if (menu != 4) /* Tweak added to prevent fadeIn when selecting Ordering Info. */
+					{
 						redraw = TRUE;
-						fadeIn = TRUE;
-						break;
-					case 4: /* Ordering info */
-						break;
-					case 5: /* Demo */
-						/* JE_initPlayerData(); */
-						playDemo = TRUE;
-						if (playDemoNum++ > 4)
-						{
-							playDemoNum = 0;
-						}
-						break;
-					case 6: /* Quit */
-						quit = TRUE;
-						break;
-				}
-				if (menu != 4) /* Tweak added to prevent fadeIn when selecting Ordering Info. */
-				{
-					redraw = TRUE;
-				}
-				break;
-			case SDLK_ESCAPE:
-				quit = TRUE;
-				break;
-			default:
-				break;
+					}
+					break;
+				case SDLK_ESCAPE:
+					quit = TRUE;
+					break;
+				default:
+					break;
+			}
 		}
 	} while (!(quit || gameLoaded || jumpSection || playDemo || loadDestruct));
 

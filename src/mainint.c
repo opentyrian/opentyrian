@@ -36,6 +36,7 @@
 #include "shpmast.h"
 #include "error.h"
 #include "params.h"
+#include "joystick.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -62,22 +63,19 @@ void JE_helpSystem( JE_byte startTopic )
 	JE_char flash;
 
 	page = topicStart[startTopic-1];
-	k = '\0';
 	
 	JE_fadeBlack(10);
 	JE_loadPIC(2, FALSE);
-	/* playsong(Song_MapView); */
+	/* TODO JE_playSong(Song_MapView); */
 	JE_showVGA();
 	JE_fadeColor(10);
 
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
-	/* joystickwaitmax = 120; joystickwait = 0; */
+	joystickWaitMax = 120; joystickWait = 0;
 
 	do
 	{
-		service_SDL_events(FALSE);
-
 		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
 		temp2 = 0;
@@ -111,12 +109,12 @@ void JE_helpSystem( JE_byte startTopic )
 		switch (page)
 		{
 			case 0:
-				menu = 0;
+				menu = 2;
 				if (lastPage == MAX_PAGE)
 				{
-					menu = TOPICS-2;
+					menu = TOPICS;
 				}
-				/* joystickwaitmax = 120; joystickwait = 0; */
+				joystickWaitMax = 120; joystickWait = 0;
 				JE_dString(JE_fontCenter(topicName[0], FONT_SHAPES), 30, topicName[0], FONT_SHAPES);
 
 				do
@@ -125,7 +123,7 @@ void JE_helpSystem( JE_byte startTopic )
 					{
 						char buf[21+1];
 
-						if (temp == menu+1)
+						if (temp == menu-1)
 						{
 							strcpy(buf+1, topicName[temp]);
 							buf[0] = '~';
@@ -140,37 +138,39 @@ void JE_helpSystem( JE_byte startTopic )
 
 					tempw = 0;
 					JE_textMenuWait(&tempw, FALSE);
-					switch (lastkey_sym)
+					if (newkey)
 					{
-						case SDLK_UP:
-							if (menu == 0)
-							{
-								menu = TOPICS-2; /* -2 since TOPICS apparently also include the title >_> */
-							} else {
+						switch (lastkey_sym)
+						{
+							case SDLK_UP:
 								menu--;
-							}
-							JE_playSampleNum(CURSOR_MOVE);
-							break;
-						case SDLK_DOWN:
-							if (menu == TOPICS-2)
-							{
-								menu = 0;
-							} else {
+								if (menu < 2)
+								{
+									menu = TOPICS;
+								}
+								JE_playSampleNum(CURSOR_MOVE);
+								break;
+							case SDLK_DOWN:
 								menu++;
-							}
-							JE_playSampleNum(CURSOR_MOVE);
-							break;
-						default: break;
+								if (menu > TOPICS)
+								{
+									menu = 2;
+								}
+								JE_playSampleNum(CURSOR_MOVE);
+								break;
+							default:
+								break;
+						}
 					}
-				} while (lastkey_sym != SDLK_ESCAPE && lastkey_sym != SDLK_RETURN);
+				} while (!(lastkey_sym == SDLK_ESCAPE || lastkey_sym == SDLK_RETURN));
 
 				if (lastkey_sym == SDLK_RETURN)
 				{
-					page = topicStart[menu+1];
+					page = topicStart[menu-1];
 					JE_playSampleNum(CLICK);
 				}
 
-				/* joystickwaitmax = 120; joystickwait = 80; */
+				joystickWaitMax = 120; joystickWait = 80;
 				break;
 			case 1: /* One-Player Menu */
 				JE_HBox(10,  20,  2, 60);
@@ -230,12 +230,14 @@ void JE_helpSystem( JE_byte startTopic )
 		if (menu == 0)
 		{
 			JE_showVGA();
-			wait_noinput(FALSE,TRUE,FALSE);
+			do
+			{
+				service_SDL_events(FALSE);
+			} while (mousedown);
 			while (!JE_waitAction(1, TRUE));
 
 			if (newmouse)
 			{
-				newmouse = FALSE;
 				switch (lastmouse_but)
 				{
 					case SDL_BUTTON_LEFT:
@@ -248,13 +250,15 @@ void JE_helpSystem( JE_byte startTopic )
 						lastkey_sym = SDLK_ESCAPE;
 						break;
 				}
-				wait_noinput(FALSE,TRUE,FALSE);
+				do
+				{
+					service_SDL_events(FALSE);
+				} while (mousedown);
 				newkey = TRUE;
 			}
 
 			if (newkey)
 			{
-				newkey = FALSE;
 				switch (lastkey_sym)
 				{
 					case SDLK_LEFT:
@@ -325,41 +329,44 @@ JE_boolean JE_playerSelect( void )
 		tempw = 0;
 		JE_textMenuWait(&tempw, FALSE);
 
-		switch (lastkey_sym)
+		if (newkey)
 		{
-			case SDLK_UP:
-				sel--;
-				if (sel < 1)
-				{
-					sel = maxSel;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_DOWN:
-				sel++;
-				if (sel > maxSel)
-				{
-					sel = 1;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_RETURN:
+			switch (lastkey_sym)
+			{
+				case SDLK_UP:
+					sel--;
+					if (sel < 1)
+					{
+						sel = maxSel;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_DOWN:
+					sel++;
+					if (sel > maxSel)
+					{
+						sel = 1;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_RETURN:
+					quit = TRUE;
+					twoPlayerMode = (sel == 3);
+					onePlayerAction = (sel == 2);
+					JE_playSampleNum(SELECT);
+					if (sel == 4)
+					{
+						netQuit = TRUE;
+					}
+					break;
+				case SDLK_ESCAPE:
 				quit = TRUE;
-				twoPlayerMode = (sel == 3);
-				onePlayerAction = (sel == 2);
-				JE_playSampleNum(SELECT);
-				if (sel == 4)
-				{
-					netQuit = TRUE;
-				}
+				JE_playSampleNum(ESC);
+				return FALSE;
 				break;
-			case SDLK_ESCAPE:
-			   quit = TRUE;
-			   JE_playSampleNum(ESC);
-			   return FALSE;
-			   break;
-			default:
-				break;
+				default:
+					break;
+			}
 		}
 
 	} while (!quit);
@@ -412,59 +419,62 @@ startepisodeselect:
 		tempw = 0;
 		JE_textMenuWait(&tempw, FALSE);
 
-		switch (lastkey_sym)
+		if (newkey)
 		{
-			case SDLK_UP:
-				sel--;
-				if (sel < 1)
-				{
-					sel = max;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_DOWN:
-				sel++;
-				if (sel > max)
-				{
-					sel = 1;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_RETURN:
-				if (episodeAvail[sel-1])
-				{
-					JE_playSampleNum(SELECT);
-
-					quit = TRUE;
-					JE_initEpisode(sel);
-					return TRUE;
-				} else {
-					if (sel > 1)
+			switch (lastkey_sym)
+			{
+				case SDLK_UP:
+					sel--;
+					if (sel < 1)
 					{
-						JE_playSampleNum(ESC);
-						JE_fadeBlack (10);
-						/*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
-						verticalHeight = 9;
-						helpBoxColor = 15;
-						helpBoxBrightness = 4;
-						helpBoxShadeType = FULL_SHADE;
-						JE_helpBox(10, 10, helpTxt[29], 50);
-						JE_showVGA();
-						JE_fadeColor(10);
-						wait_input(TRUE,TRUE,TRUE);
-						lastkey_sym = 0;
-						JE_fadeBlack(10);
-						goto startepisodeselect;
+						sel = max;
 					}
-				}
-				break;
-			case SDLK_ESCAPE:
-				quit = TRUE;
-				JE_playSampleNum(ESC);
-				return FALSE;
-				break;
-			default:
-				break;
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_DOWN:
+					sel++;
+					if (sel > max)
+					{
+						sel = 1;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_RETURN:
+					if (episodeAvail[sel-1])
+					{
+						JE_playSampleNum(SELECT);
+	
+						quit = TRUE;
+						JE_initEpisode(sel);
+						return TRUE;
+					} else {
+						if (sel > 1)
+						{
+							JE_playSampleNum(ESC);
+							JE_fadeBlack (10);
+							/*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
+							verticalHeight = 9;
+							helpBoxColor = 15;
+							helpBoxBrightness = 4;
+							helpBoxShadeType = FULL_SHADE;
+							JE_helpBox(10, 10, helpTxt[29], 50);
+							JE_showVGA();
+							JE_fadeColor(10);
+							wait_input(TRUE,TRUE,TRUE);
+							lastkey_sym = 0;
+							JE_fadeBlack(10);
+							goto startepisodeselect;
+						}
+					}
+					break;
+				case SDLK_ESCAPE:
+					quit = TRUE;
+					JE_playSampleNum(ESC);
+					return FALSE;
+					break;
+				default:
+					break;
+			}
 		}
 
 	} while (!(quit || haltGame /*|| netQuit*/));
@@ -512,63 +522,65 @@ JE_boolean JE_difficultySelect( void )
 			}
 		}
 
-		switch (lastkey_sym)
-		{
-			case SDLK_UP:
-				sel--;
-				if (sel < 1)
-				{
-					sel = maxSel;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_DOWN:
-				sel++;
-				if (sel > maxSel)
-				{
-					sel = 1;
-				}
-				JE_playSampleNum(CURSOR_MOVE);
-				break;
-			case SDLK_RETURN:
-				quit = TRUE;
-
-				if (sel == 5)
-				{
+		if (newkey) {
+			switch (lastkey_sym)
+			{
+				case SDLK_UP:
+					sel--;
+					if (sel < 1)
+					{
+						sel = maxSel;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_DOWN:
 					sel++;
-				}
-				if (sel == 6)
-				{
-					sel = 8;
-				}
-				difficultyLevel = sel;
-				JE_playSampleNum(SELECT);
-				break;
-			case SDLK_ESCAPE:
-				quit = TRUE;
-				JE_playSampleNum(ESC);
-				return FALSE;
-				break;
-			case SDLK_g:
-				if (SDL_GetModState() & KMOD_SHIFT)
-				{
-					if (maxSel < 4)
+					if (sel > maxSel)
 					{
-						maxSel = 4;
+						sel = 1;
 					}
-				}
-				break;
-			case SDLK_RIGHTBRACKET:
-				if (SDL_GetModState() & KMOD_SHIFT)
-				{
-					if (maxSel == 4)
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_RETURN:
+					quit = TRUE;
+	
+					if (sel == 5)
 					{
-						maxSel = 5;
+						sel++;
 					}
-				}
-				break;
-			default:
-				break;
+					if (sel == 6)
+					{
+						sel = 8;
+					}
+					difficultyLevel = sel;
+					JE_playSampleNum(SELECT);
+					break;
+				case SDLK_ESCAPE:
+					quit = TRUE;
+					JE_playSampleNum(ESC);
+					return FALSE;
+					break;
+				case SDLK_g:
+					if (SDL_GetModState() & KMOD_SHIFT)
+					{
+						if (maxSel < 4)
+						{
+							maxSel = 4;
+						}
+					}
+					break;
+				case SDLK_RIGHTBRACKET:
+					if (SDL_GetModState() & KMOD_SHIFT)
+					{
+						if (maxSel == 4)
+						{
+							maxSel = 5;
+						}
+					}
+					break;
+				default:
+					break;
+			}
 		}
 
 	} while (!(quit || haltGame /*|| netQuit*/));

@@ -34,7 +34,6 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 #ifdef NDEBUG /* Disable mouse grabbing/etc in debug builds */
 	SDL_WarpMouse(160, 100);
 #endif
-	newkey = FALSE;
 
 	do
 	{
