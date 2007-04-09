@@ -59,7 +59,7 @@ void JE_loadItemDat( void )
 	FILE *lvlFile;
 	JE_word itemNum[7]; /* [1..7] */
 
-	if(episodeNum > 3)
+	if (episodeNum > 3)
 	{
 		JE_resetFileExt(&lvlFile, levelFile, FALSE);
 		fseek(lvlFile, lvlPos[lvlNum], SEEK_SET);
@@ -84,7 +84,7 @@ void JE_loadItemDat( void )
 
 void JE_initEpisode( JE_byte newEpisode )
 {
-	if(newEpisode != episodeNum)
+	if (newEpisode != episodeNum)
 	{
 		episodeNum = newEpisode;
 
@@ -105,7 +105,7 @@ void JE_scanForEpisodes( void )
 
 	JE_findTyrian("TYRIAN1.LVL"); /* need to know where to scan */
 
-	for(temp = 0; temp < EpisodeMax; temp++)
+	for (temp = 0; temp < EpisodeMax; temp++)
 	{
 		sprintf(buf, "TYRIAN%d.LVL", temp + 1);
 		episodeAvail[temp] = (dir != "") & JE_find(buf);
