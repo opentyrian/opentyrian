@@ -25,13 +25,13 @@
 
 #define SA 7
 
-#define MaxPWeapon    81 /* 81*/
-#define ExplosionMax 200 /*200*/
-#define EnemyShotMax  60 /* 60*/
+#define MAX_PWEAPON     81 /* 81*/
+#define EXPLOSION_MAX  200 /*200*/
+#define ENEMY_SHOT_MAX  60 /* 60*/
 
-#define CurrentKeySpeed 1  /*Keyboard/Joystick movement rate*/
+#define CURRENT_KEY_SPEED 1  /*Keyboard/Joystick movement rate*/
 
-#define MaxSP 100
+#define MAX_SP 100
 
 struct JE_singleenemytype
 {
@@ -165,7 +165,7 @@ extern const JE_word SASpecialWeapon[SA];
 extern const JE_word SASpecialWeaponB[SA];
 extern const JE_byte SAShip[SA];
 extern const JE_word SAWeapon[SA][5];
-extern const JE_byte specialArcadeWeapon[PortNum];
+extern const JE_byte specialArcadeWeapon[PORT_NUM];
 extern const JE_byte optionSelect[16][3][2];
 extern const JE_word PGR[21];
 extern const JE_byte PAni[21];
@@ -257,13 +257,13 @@ extern struct {
 	JE_byte followPlayer;
 	JE_byte fixedExplode;
 	JE_word fixedMovement;
-} explosions[ExplosionMax];
-extern JE_byte explodeAvail[ExplosionMax];
+} explosions[EXPLOSION_MAX];
+extern JE_byte explodeAvail[EXPLOSION_MAX];
 extern JE_integer explosionFollowAmount;
 extern JE_boolean playerFollow, fixedExplosions;
 extern JE_integer explosionMoveUp;
 extern JE_boolean fireButtonHeld;
-extern JE_boolean enemyShotAvail[EnemyShotMax];
+extern JE_boolean enemyShotAvail[ENEMY_SHOT_MAX];
 extern struct {
 	JE_integer Sx, Sy;
 	JE_integer SxM, SyM;
@@ -275,7 +275,7 @@ extern struct {
 	JE_word animate;
 	JE_word animax;
 	JE_byte fill[12];
-} enemyShot[EnemyShotMax];
+} enemyShot[ENEMY_SHOT_MAX];
 extern JE_byte zinglonDuration;
 extern JE_byte astralDuration;
 extern JE_word flareDuration;
@@ -296,10 +296,10 @@ extern struct {
 	JE_word shotGR, shotAni, shotAniMax;
 	JE_shortint shotDmg;
 	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax, fill[1];
-} playerShotData[MaxPWeapon + 1];
+} playerShotData[MAX_PWEAPON + 1];
 extern JE_byte chain;
 extern JE_boolean allPlayersGone;
-extern JE_byte shotAvail[MaxPWeapon];
+extern JE_byte shotAvail[MAX_PWEAPON];
 extern JE_byte shadowyDist;
 extern JE_byte purpleBallsRemaining[2];
 extern JE_boolean playerAlive, playerAliveB;
@@ -339,12 +339,12 @@ extern struct {
 	JE_word ex, ey;
 	JE_boolean big;
 } REXDat[20];
-extern JE_byte SPZ[MaxSP + 1];
+extern JE_byte SPZ[MAX_SP + 1];
 extern struct {
 	JE_word location;
 	JE_word movement;
 	JE_byte color;
-} SPL[MaxSP + 1];
+} SPL[MAX_SP + 1];
 extern JE_word lastSP;
 extern JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
 extern JE_word avail;

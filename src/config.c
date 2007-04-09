@@ -135,7 +135,7 @@ struct
 	JE_byte sC;
 	JE_word sLoc;
 	JE_word sMov;
-} starDat[MaxStars]; /* [1..Maxstars] */
+} starDat[MAX_STARS]; /* [1..Maxstars] */
 JE_word starY;
 
 

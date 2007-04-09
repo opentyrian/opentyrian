@@ -30,7 +30,7 @@ const JE_char shapeFile[34] = /* [1..34] */
 	'O', 'P', 'Q', 'R', 'S', 'T', 'U', '5', '#', 'V', '0', '@', '3', '^', '5', '9'
 };
 
-const char lvlFile[LVLNum][9] = /* [1..LVLnum] of string [8] */
+const char lvlFile[LVL_NUM][9] = /* [1..LVLnum] of string [8] */
 {
 /* 1*/ "ASTROID4",  "MAINMAPE",
 /* 2*/ "ASTROID5",  "MAINMAPD",
@@ -52,7 +52,7 @@ const char lvlFile[LVLNum][9] = /* [1..LVLnum] of string [8] */
 /*18*/ "BEER",      "MAINMAAX"
 };
 
-const char lvlFile2[LVLNum2][9] = /* [1..LVLnum2] of string [8] */
+const char lvlFile2[LVL_NUM_2][9] = /* [1..LVLnum2] of string [8] */
 {
 	"JUNGLE",       "MAINMAPF",
 	"GIGER",        "MAINMAPR",
@@ -68,7 +68,7 @@ const char lvlFile2[LVLNum2][9] = /* [1..LVLnum2] of string [8] */
 	"JUNGLE4",      "MAINMAAP"
 };
 
-const char lvlFile3[LVLNum3][9] = /* [1..LVLnum3] of string [8] */
+const char lvlFile3[LVL_NUM_3][9] = /* [1..LVLnum3] of string [8] */
 {
 	"ICE",          "MAINMAPX",
 	"ASTCITY",      "MAINMAPP",
@@ -84,7 +84,7 @@ const char lvlFile3[LVLNum3][9] = /* [1..LVLnum3] of string [8] */
 	"MACES",        "MAINMAP9"  /*Bonus Maces*/
 };
 
-const char lvlFile4[LVLNum4][9] = /* [1..LVLnum4] of string [8] */
+const char lvlFile4[LVL_NUM_4][9] = /* [1..LVLnum4] of string [8] */
 {
        "HARVEST",   "MAINMAAC",   /*Harvest World   ooooo */
        "MAZE",      "MAINMAAD",   /*Windy 2         ooooo */
@@ -108,7 +108,7 @@ const char lvlFile4[LVLNum4][9] = /* [1..LVLnum4] of string [8] */
 /*20*/ "SPACEAT2",  "MAINMABB"    /*Camanis Go      ooooo */
 };
 
-const char lvlFile5[LVLNum5][9] = /* [1..lvlnum5] of string [8] */
+const char lvlFile5[LVL_NUM_5][9] = /* [1..lvlnum5] of string [8] */
 {
 /* 1*/ "E5LVL01",   "MAINMA51"    /*FogWalls        ----- */
 };

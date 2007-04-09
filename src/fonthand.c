@@ -439,22 +439,22 @@ void JE_textShade( JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shor
 {
 	switch (shadetype)
 	{
-		case PartShade:
+		case PART_SHADE:
 			JE_outText(x+1, y+1, s, 0, -1);
 			JE_outText(x, y, s, colorbank, brightness);
 			break;
-		case FullShade:
+		case FULL_SHADE:
 			JE_outText(x-1, y, s, 0, -1);
 			JE_outText(x+1, y, s, 0, -1);
 			JE_outText(x, y-1, s, 0, -1);
 			JE_outText(x, y+1, s, 0, -1);
 			JE_outText(x, y, s, colorbank, brightness);
 			break;
-		case Darken:
-			JE_outTextAndDarken(x+1, y+1, s, colorbank, brightness, TinyFont);
+		case DARKEN:
+			JE_outTextAndDarken(x+1, y+1, s, colorbank, brightness, TINY_FONT);
 			break;
-		case Trick:
-			JE_outTextModify(x, y, s, colorbank, brightness, TinyFont);
+		case TRICK:
+			JE_outTextModify(x, y, s, colorbank, brightness, TINY_FONT);
 			break;
    }
 }
@@ -468,18 +468,18 @@ void JE_outText( JE_word x, JE_word y, JE_string s, JE_byte colorbank, JE_shorti
 	{
 		b = s[a];
 
-		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255) && ((*shapeArray)[TinyFont][fontMap[b-33]] != NULL))
+		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255) && ((*shapeArray)[TINY_FONT][fontMap[b-33]] != NULL))
 		{
 			if (brightness >= 0)
 			{
-				JE_newDrawCShapeBright((*shapeArray)[TinyFont][fontMap[b-33]], shapeX[TinyFont][fontMap[b-33]],
-				                       shapeY[TinyFont][fontMap[b-33]], x, y, colorbank, brightness + bright);
+				JE_newDrawCShapeBright((*shapeArray)[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]],
+				                       shapeY[TINY_FONT][fontMap[b-33]], x, y, colorbank, brightness + bright);
 			} else {
-				JE_newDrawCShapeShadow((*shapeArray)[TinyFont][fontMap[b-33]], shapeX[TinyFont][fontMap[b-33]],
-				                       shapeY[TinyFont][fontMap[b-33]], x, y);
+				JE_newDrawCShapeShadow((*shapeArray)[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]],
+				                       shapeY[TINY_FONT][fontMap[b-33]], x, y);
 			}
 
-			x += shapeX[TinyFont][fontMap[b-33]] + 1;
+			x += shapeX[TINY_FONT][fontMap[b-33]] + 1;
 		} else {
 			if (b == 32)
 			{

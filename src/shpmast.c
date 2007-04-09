@@ -20,7 +20,7 @@
 #include "opentyr.h"
 #include "shpmast.h"
 
-const JE_string shpfile[SHPnum] = /* [1..SHPnum] */
+const JE_string shpfile[SHP_NUM] = /* [1..SHPnum] */
 {
 	"ESTFE.SHP", /*2*/
 	"ESTFD.SHP", /*3*/

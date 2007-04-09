@@ -30,7 +30,7 @@
 
 #include <string.h>
 
-const JE_byte menuHelp[MaxMenu][11] = /* [1..maxmenu, 1..11] */
+const JE_byte menuHelp[MAX_MENU][11] = /* [1..maxmenu, 1..11] */
 {
 	{  1, 34,  2,  3,  4,  5,                  0, 0, 0, 0, 0 },
 	{  6,  7,  8,  9, 10, 11, 11, 12,                0, 0, 0 },
@@ -51,9 +51,9 @@ const JE_byte menuHelp[MaxMenu][11] = /* [1..maxmenu, 1..11] */
 JE_byte verticalHeight = 7;
 JE_byte helpBoxColor = 12;
 JE_byte helpBoxBrightness = 1;
-JE_byte helpBoxShadeType = FullShade;
+JE_byte helpBoxShadeType = FULL_SHADE;
 
-char helpTxt[MaxHelpMessage][231]; /* [1..maxhelpmessage] of string [230]; */
+char helpTxt[MAX_HELP_MESSAGE][231]; /* [1..maxhelpmessage] of string [230]; */
 char pName[21][16];                /* [1..21] of string [15] */
 char miscText[68][42];             /* [1..68] of string [41] */
 char miscTextB[5][11];             /* [1..5] of string [10] */
@@ -76,9 +76,9 @@ char superShips[11][26];           /* [0..10] of string [25] */
 char specialName[9][10];           /* [1..9] of string [9] */
 char destructHelp[25][22];
 char weaponNames[17][17];          /* [1..17] of string [16] */
-char destructModeName[DestructModes][13]; /* [1..destructmodes] of string [12] */
+char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] */
 char shipInfo[13][2][256];
-char menuInt[MaxMenu+1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
+char menuInt[MAX_MENU+1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
 
 
 JE_byte temp, temp2;
@@ -140,7 +140,7 @@ void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
 	}
 
 	helpBoxColor = 12;
-	helpBoxShadeType = FullShade;
+	helpBoxShadeType = FULL_SHADE;
 }
 
 void JE_HBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth )
@@ -156,7 +156,7 @@ void JE_loadHelpText( void )
 	fread(&episode1DataLoc, sizeof(episode1DataLoc), 1, f);
 	JE_skipCryptLn(f);
 
-	for (i = 0; i < MaxHelpMessage; i++)
+	for (i = 0; i < MAX_HELP_MESSAGE; i++)
 	{
 		JE_readCryptLn(f,helpTxt[i]);       /*Online Help*/
 	}
@@ -336,7 +336,7 @@ void JE_loadHelpText( void )
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
-	for (i = 0; i < DestructModes; i++)
+	for (i = 0; i < DESTRUCT_MODES; i++)
 	{
 		JE_readCryptLn(f,destructModeName[i]);  /*Secret DESTRUCT modes*/
 	}

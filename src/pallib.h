@@ -23,9 +23,9 @@
 #include "opentyr.h"
 #include "nortvars.h"
 
-#define maxpal 23
+#define MAX_PAL 23
 
-typedef JE_colortype JE_paltype[maxpal]; /* [1..maxpal] */
+typedef JE_colortype JE_paltype[MAX_PAL]; /* [1..maxpal] */
 
 #ifndef NO_EXTERNS
 extern JE_paltype palettes;

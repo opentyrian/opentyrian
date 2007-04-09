@@ -25,8 +25,8 @@
 
 /* Episodes and general data */
 
-#define FirstLevel 1
-#define EpisodeMax 5
+#define FIRST_LEVEL 1
+#define EPISODE_MAX 5
 
 typedef struct
 {
@@ -45,7 +45,7 @@ typedef struct
 	JE_byte     sound;
 	JE_byte     trail;
 	JE_byte     shipblastfilter;
-} JE_WeaponType[WeapNum + 1]; /* [0..weapnum] */
+} JE_WeaponType[WEAP_NUM + 1]; /* [0..weapnum] */
 
 typedef struct
 {
@@ -55,7 +55,7 @@ typedef struct
 	JE_word cost;
 	JE_word itemgraphic;
 	JE_word poweruse;
-} JE_WeaponPortType[PortNum + 1]; /* [0..portnum] */
+} JE_WeaponPortType[PORT_NUM + 1]; /* [0..portnum] */
 
 typedef struct
 {
@@ -64,7 +64,7 @@ typedef struct
 	JE_byte     power;
 	JE_shortint speed;
 	JE_word     cost;
-} JE_PowerType[PowerNum + 1]; /* [0..powernum] */
+} JE_PowerType[POWER_NUM + 1]; /* [0..powernum] */
 
 typedef struct
 {
@@ -73,7 +73,7 @@ typedef struct
 	JE_byte pwr;
 	JE_byte stype;
 	JE_word wpn;
-} JE_SpecialType[SpecialNum + 1]; /* [0..specialnum] */
+} JE_SpecialType[SPECIAL_NUM + 1]; /* [0..specialnum] */
 
 typedef struct
 {
@@ -82,7 +82,7 @@ typedef struct
 	JE_shortint power;
 	JE_byte     speed;
 	JE_word     cost;
-} JE_EngineType[EngineNum + 1]; /* [0..enginenum] */
+} JE_EngineType[ENGINE_NUM + 1]; /* [0..enginenum] */
 
 typedef struct
 {
@@ -99,7 +99,7 @@ typedef struct
 	JE_byte     ammo;
 	JE_boolean  stop;
 	JE_byte     icongr;
-} JE_OptionType[OptionNum + 1]; /* [0..optionnum] */
+} JE_OptionType[OPTION_NUM + 1]; /* [0..optionnum] */
 
 typedef struct
 {
@@ -108,7 +108,7 @@ typedef struct
 	JE_byte mpwr;
 	JE_word itemgraphic;
 	JE_word cost;
-} JE_ShieldType[ShieldNum + 1]; /* [0..shieldnum] */
+} JE_ShieldType[SHIELD_NUM + 1]; /* [0..shieldnum] */
 
 typedef struct
 {
@@ -120,7 +120,7 @@ typedef struct
 	JE_byte     dmg;
 	JE_word     cost;
 	JE_byte     bigshipgraphic;
-} JE_ShipType[ShipNum + 1]; /* [0..shipnum] */
+} JE_ShipType[SHIP_NUM + 1]; /* [0..shipnum] */
 
 /* EnemyData */
 typedef struct
@@ -152,7 +152,7 @@ typedef struct
 	JE_word     elaunchtype;
 	JE_integer  value;
 	JE_word     eenemydie;
-} JE_EnemyDatType[EnemyNum + 1]; /* [0..enemynum] */
+} JE_EnemyDatType[ENEMY_NUM + 1]; /* [0..enemynum] */
 
 #ifndef NO_EXTERNS
 extern JE_WeaponPortType weaponPort;
@@ -164,7 +164,7 @@ extern JE_ShieldType shields;
 extern JE_SpecialType special;
 extern JE_EnemyDatType enemyDat;
 extern JE_byte episodeNum;
-extern JE_boolean episodeAvail[EpisodeMax];
+extern JE_boolean episodeAvail[EPISODE_MAX];
 extern char macroFile[13], CubeFile[13];
 extern JE_longint episode1DataLoc;
 extern JE_boolean bonusLevel;

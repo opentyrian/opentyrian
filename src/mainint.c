@@ -41,7 +41,7 @@
 #include "mainint.h"
 #undef NO_EXTERNS
 
-#define MAXPAGE 8
+#define MAX_PAGE 8
 #define TOPICS 6
 const JE_byte topicStart[TOPICS] = { 0, 1, 2, 3, 7, 255 };
 
@@ -97,10 +97,10 @@ void JE_helpSystem( JE_byte startTopic )
 			snprintf(buf, sizeof(buf), "%s %d", miscText[24], page-topicStart[temp2]+1);
 			JE_outText(10, 192, buf, 13, 5);
 
-			snprintf(buf, sizeof(buf), "%s %d of %d", miscText[25], page, MAXPAGE);
+			snprintf(buf, sizeof(buf), "%s %d of %d", miscText[25], page, MAX_PAGE);
 			JE_outText(220, 192, buf, 13, 5);
 
-			JE_dString(JE_fontCenter(topicName[temp2], SmallFontShapes), 1, topicName[temp2], SmallFontShapes);
+			JE_dString(JE_fontCenter(topicName[temp2], SMALL_FONT_SHAPES), 1, topicName[temp2], SMALL_FONT_SHAPES);
 		}
 
 		menu = 0;
@@ -112,12 +112,12 @@ void JE_helpSystem( JE_byte startTopic )
 		{
 			case 0:
 				menu = 0;
-				if (lastPage == MAXPAGE)
+				if (lastPage == MAX_PAGE)
 				{
 					menu = TOPICS-2;
 				}
 				/* joystickwaitmax = 120; joystickwait = 0; */
-				JE_dString(JE_fontCenter(topicName[0], FontShapes), 30, topicName[0], FontShapes);
+				JE_dString(JE_fontCenter(topicName[0], FONT_SHAPES), 30, topicName[0], FONT_SHAPES);
 
 				do
 				{
@@ -133,7 +133,7 @@ void JE_helpSystem( JE_byte startTopic )
 							strcpy(buf, topicName[temp]);
 						}
 
-						JE_dString(JE_fontCenter(topicName[temp], SmallFontShapes), temp * 20 + 40, buf, SmallFontShapes);
+						JE_dString(JE_fontCenter(topicName[temp], SMALL_FONT_SHAPES), temp * 20 + 40, buf, SMALL_FONT_SHAPES);
 					}
 
 					JE_showVGA();
@@ -149,7 +149,7 @@ void JE_helpSystem( JE_byte startTopic )
 							} else {
 								menu--;
 							}
-							JE_playSampleNum(CursorMove);
+							JE_playSampleNum(CURSOR_MOVE);
 							break;
 						case SDLK_DOWN:
 							if (menu == TOPICS-2)
@@ -158,7 +158,7 @@ void JE_helpSystem( JE_byte startTopic )
 							} else {
 								menu++;
 							}
-							JE_playSampleNum(CursorMove);
+							JE_playSampleNum(CURSOR_MOVE);
 							break;
 						default: break;
 					}
@@ -167,7 +167,7 @@ void JE_helpSystem( JE_byte startTopic )
 				if (lastkey_sym == SDLK_RETURN)
 				{
 					page = topicStart[menu+1];
-					JE_playSampleNum(Click);
+					JE_playSampleNum(CLICK);
 				}
 
 				/* joystickwaitmax = 120; joystickwait = 80; */
@@ -261,24 +261,24 @@ void JE_helpSystem( JE_byte startTopic )
 					case SDLK_UP:
 					case SDLK_PAGEUP:
 						page--;
-						JE_playSampleNum(CursorMove);
+						JE_playSampleNum(CURSOR_MOVE);
 						break;
 					case SDLK_RIGHT:
 					case SDLK_DOWN:
 					case SDLK_PAGEDOWN:
 					case SDLK_RETURN:
 					case SDLK_SPACE:
-						if (page == MAXPAGE)
+						if (page == MAX_PAGE)
 						{
 							page = 0;
 						} else {
 							page++;
 						}
-						JE_playSampleNum(CursorMove);
+						JE_playSampleNum(CURSOR_MOVE);
 						break;
 					case SDLK_F1:
 						page = 0;
-						JE_playSampleNum(CursorMove);
+						JE_playSampleNum(CURSOR_MOVE);
 						break;
 					default:
 						break;
@@ -311,15 +311,15 @@ JE_boolean JE_playerSelect( void )
 	do
 	{
 
-		JE_dString(JE_fontCenter(playerName[0], FontShapes), 20, playerName[0], FontShapes);
+		JE_dString(JE_fontCenter(playerName[0], FONT_SHAPES), 20, playerName[0], FONT_SHAPES);
 
 		for (temp = 1; temp <= maxSel; temp++)
 		{
-			JE_outTextAdjust(JE_fontCenter(playerName[temp], SmallFontShapes), temp * 24 + 30, playerName[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+			JE_outTextAdjust(JE_fontCenter(playerName[temp], SMALL_FONT_SHAPES), temp * 24 + 30, playerName[temp], 15, - 4 + ((sel == temp) << 1), SMALL_FONT_SHAPES, TRUE);
 		}
 
 		/*BETA TEST VERSION*/
-		/*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
+		/*  JE_Dstring(JE_FontCenter(misctext[34], FONT_SHAPES), 170, misctext[34], FONT_SHAPES);*/
 
 		JE_showVGA();
 		tempw = 0;
@@ -333,7 +333,7 @@ JE_boolean JE_playerSelect( void )
 				{
 					sel = maxSel;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_DOWN:
 				sel++;
@@ -341,13 +341,13 @@ JE_boolean JE_playerSelect( void )
 				{
 					sel = 1;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_RETURN:
 				quit = TRUE;
 				twoPlayerMode = (sel == 3);
 				onePlayerAction = (sel == 2);
-				JE_playSampleNum(Select);
+				JE_playSampleNum(SELECT);
 				if (sel == 4)
 				{
 					netQuit = TRUE;
@@ -373,7 +373,7 @@ JE_boolean JE_episodeSelect( void )
 	JE_boolean quit;
 	JE_byte max;
 
-	max = EpisodeMax;
+	max = EPISODE_MAX;
 
 	if (!(episodeAvail[0] && episodeAvail[1] && episodeAvail[2]))
 	{
@@ -399,14 +399,14 @@ startepisodeselect:
 	do
 	{
 
-		JE_dString(JE_fontCenter(episodeName[0], FontShapes), 20, episodeName[0], FontShapes);
+		JE_dString(JE_fontCenter(episodeName[0], FONT_SHAPES), 20, episodeName[0], FONT_SHAPES);
 
 		for (temp = 1; temp <= max; temp++)
 		{
-			JE_outTextAdjust(20, temp * 30 + 20, episodeName[temp], 15, - 4 - (!episodeAvail[temp-1] << 2) + ((sel == temp) << 1), SmallFontShapes, TRUE);
+			JE_outTextAdjust(20, temp * 30 + 20, episodeName[temp], 15, - 4 - (!episodeAvail[temp-1] << 2) + ((sel == temp) << 1), SMALL_FONT_SHAPES, TRUE);
 		}
 
-		/*JE_Dstring(JE_fontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
+		/*JE_Dstring(JE_fontCenter(misctext[34], FONT_SHAPES), 170, misctext[34], FONT_SHAPES);*/
 
 		JE_showVGA();
 		tempw = 0;
@@ -420,7 +420,7 @@ startepisodeselect:
 				{
 					sel = max;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_DOWN:
 				sel++;
@@ -428,12 +428,12 @@ startepisodeselect:
 				{
 					sel = 1;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_RETURN:
 				if (episodeAvail[sel-1])
 				{
-					JE_playSampleNum(Select);
+					JE_playSampleNum(SELECT);
 
 					quit = TRUE;
 					JE_initEpisode(sel);
@@ -447,7 +447,7 @@ startepisodeselect:
 						verticalHeight = 9;
 						helpBoxColor = 15;
 						helpBoxBrightness = 4;
-						helpBoxShadeType = FullShade;
+						helpBoxShadeType = FULL_SHADE;
 						JE_helpBox(10, 10, helpTxt[29], 50);
 						JE_showVGA();
 						JE_fadeColor(10);
@@ -490,15 +490,15 @@ JE_boolean JE_difficultySelect( void )
 
 	do
 	{
-		JE_dString(JE_fontCenter(difficultyName[0], FontShapes), 20, difficultyName[0], FontShapes);
+		JE_dString(JE_fontCenter(difficultyName[0], FONT_SHAPES), 20, difficultyName[0], FONT_SHAPES);
 
 		for (temp = 1; temp <= maxSel; temp++)
 		{
-			JE_outTextAdjust(JE_fontCenter(difficultyName[temp], SmallFontShapes), temp * 24 + 30, difficultyName[temp], 15, - 4 + ((sel == temp) << 1), SmallFontShapes, TRUE);
+			JE_outTextAdjust(JE_fontCenter(difficultyName[temp], SMALL_FONT_SHAPES), temp * 24 + 30, difficultyName[temp], 15, - 4 + ((sel == temp) << 1), SMALL_FONT_SHAPES, TRUE);
 		}
 
 		/*BETA TEST VERSION*/
-		/*  JE_Dstring(JE_FontCenter(misctext[34], FontShapes), 170, misctext[34], FontShapes);*/
+		/*  JE_Dstring(JE_FontCenter(misctext[34], FONT_SHAPES), 170, misctext[34], FONT_SHAPES);*/
 
 		JE_showVGA();
 		tempw = 0;
@@ -520,7 +520,7 @@ JE_boolean JE_difficultySelect( void )
 				{
 					sel = maxSel;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_DOWN:
 				sel++;
@@ -528,7 +528,7 @@ JE_boolean JE_difficultySelect( void )
 				{
 					sel = 1;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_RETURN:
 				quit = TRUE;
@@ -542,7 +542,7 @@ JE_boolean JE_difficultySelect( void )
 					sel = 8;
 				}
 				difficultyLevel = sel;
-				JE_playSampleNum(Select);
+				JE_playSampleNum(SELECT);
 				break;
 			case SDLK_ESCAPE:
 				quit = TRUE;
@@ -588,7 +588,7 @@ void JE_loadMainShapeTables( void )
 
 	FILE *f;
 
-	typedef JE_longint JE_ShpPosType[SHPnum + 1]; /* [1..shpnum + 1] */
+	typedef JE_longint JE_ShpPosType[SHP_NUM + 1]; /* [1..shpnum + 1] */
 
 	JE_ShpPosType shpPos;
 	JE_word shpNumb;

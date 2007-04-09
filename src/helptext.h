@@ -22,15 +22,15 @@
 
 #include "opentyr.h"
 
-#define MaxHelpMessage 39
-#define MaxMenu 14
+#define MAX_HELP_MESSAGE 39
+#define MAX_MENU 14
 
-#define DestructModes 5
+#define DESTRUCT_MODES 5
 
 #ifndef NO_EXTERNS
 extern JE_byte verticalHeight;
 extern JE_byte helpBoxColor, helpBoxBrightness, helpBoxShadeType;
-extern char helpTxt[MaxHelpMessage][231];
+extern char helpTxt[MAX_HELP_MESSAGE][231];
 extern char pName[21][16];              /* [1..21] of string [15] */
 extern char miscText[68][42];           /* [1..68] of string [41] */
 extern char miscTextB[5][11];           /* [1..5] of string [10] */
@@ -53,10 +53,10 @@ extern char superShips[11][26];         /* [0..10] of string [25] */
 extern char specialName[9][10];         /* [1..9] of string [9] */
 extern char destructHelp[25][22];
 extern char weaponNames[17][17];        /* [1..17] of string [16] */
-extern char destructModeName[DestructModes][13]; /* [1..destructmodes] of string [12] */
+extern char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] */
 extern char shipInfo[13][2][256];
-extern char menuInt[MaxMenu+1][11][18]; /* [0..maxmenu, 1..11] of string [17] */
-extern JE_byte menuHelp[MaxMenu][11];   /* [1..maxmenu, 1..11] */
+extern char menuInt[MAX_MENU+1][11][18]; /* [0..maxmenu, 1..11] of string [17] */
+extern JE_byte menuHelp[MAX_MENU][11];   /* [1..maxmenu, 1..11] */
 #endif
 
 /*JE_byte temp, temp2;*/

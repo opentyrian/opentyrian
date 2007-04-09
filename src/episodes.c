@@ -43,7 +43,7 @@ JE_EnemyDatType enemyDat;
 
 /* EPISODE variables */
 JE_byte    episodeNum = 0;
-JE_boolean episodeAvail[EpisodeMax]; /* [1..episodemax] */
+JE_boolean episodeAvail[EPISODE_MAX]; /* [1..episodemax] */
 char       macroFile[13], cubeFile[13]; /* string [12] */
 
 JE_longint episode1DataLoc;
@@ -105,7 +105,7 @@ void JE_scanForEpisodes( void )
 
 	JE_findTyrian("TYRIAN1.LVL"); /* need to know where to scan */
 
-	for (temp = 0; temp < EpisodeMax; temp++)
+	for (temp = 0; temp < EPISODE_MAX; temp++)
 	{
 		sprintf(buf, "TYRIAN%d.LVL", temp + 1);
 		episodeAvail[temp] = (dir != "") & JE_find(buf);

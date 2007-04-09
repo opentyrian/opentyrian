@@ -26,7 +26,7 @@
 
 #include "SDL.h"
 
-typedef JE_longint JE_SongPosType [MUSICNUM];
+typedef JE_longint JE_SongPosType [MUSIC_NUM];
 typedef JE_byte JE_DigiMixType [0x4ff];
 typedef JE_byte JE_AweType [35000];
 

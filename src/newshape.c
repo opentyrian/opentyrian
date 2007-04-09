@@ -34,12 +34,12 @@ SDL_Surface *tempScreenSeg = NULL;
 
 JE_ShapeArrayType *shapeArray;
 
-JE_word shapeX[MaxTable][MaximumShape],        /* [1..maxtable,1..maximumshape] */
-        shapeY[MaxTable][MaximumShape];        /* [1..maxtable,1..maximumshape] */
-JE_word shapeSize[MaxTable][MaximumShape];     /* [1..maxtable,1..maximumshape] */
-JE_boolean shapeExist[MaxTable][MaximumShape]; /* [1..maxtable,1..maximumshape] */
+JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],        /* [1..maxtable,1..maximumshape] */
+        shapeY[MAX_TABLE][MAXIMUM_SHAPE];        /* [1..maxtable,1..maximumshape] */
+JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];     /* [1..maxtable,1..maximumshape] */
+JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable,1..maximumshape] */
 
-JE_byte maxShape[MaxTable];                    /* [1..maxtable] */
+JE_byte maxShape[MAX_TABLE];                    /* [1..maxtable] */
 
 JE_byte mouseGrabShape[24*28];                 /* [1..24*28] */
 
@@ -341,7 +341,7 @@ void newshape_init( void )
 	int i;
 
 	tempScreenSeg = VGAScreen;
-	for (i = 0; i < MaxTable; i++)
+	for (i = 0; i < MAX_TABLE; i++)
 	{
 		maxShape[i] = 0;
 	}

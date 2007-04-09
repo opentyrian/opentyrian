@@ -21,7 +21,7 @@
 
 #include "sndmast.h"
 
-const char soundTitle[SoundNum + 9][9] = /* [1..soundnum + 9] of string [8] */
+const char soundTitle[SOUND_NUM + 9][9] = /* [1..soundnum + 9] of string [8] */
 {
 	"SCALEDN2", /*1*/
 	"F2",       /*2*/
@@ -65,15 +65,15 @@ const char soundTitle[SoundNum + 9][9] = /* [1..soundnum + 9] of string [8] */
 
 const JE_byte WindowTextSamples[9] = /* [1..9] */
 {
-	SoundNum + 6,
-	SoundNum + 2,
-	SoundNum + 3,
-	SoundNum + 1,
-	SoundNum + 6,
-	SoundNum + 7,
-	SoundNum + 9,
-	SoundNum + 6,
-	SoundNum + 3
+	SOUND_NUM + 6,
+	SOUND_NUM + 2,
+	SOUND_NUM + 3,
+	SOUND_NUM + 1,
+	SOUND_NUM + 6,
+	SOUND_NUM + 7,
+	SOUND_NUM + 9,
+	SOUND_NUM + 6,
+	SOUND_NUM + 3
 };
 
 

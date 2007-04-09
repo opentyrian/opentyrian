@@ -22,35 +22,35 @@
 
 #include "opentyr.h"
 
-#define EventMaximum 2500
+#define EVENT_MAXIMUM 2500
 
-#define WeapNum    780
-#define PortNum    42
-#define ArmorNum   4
-#define PowerNum   6
-#define EngineNum  6
-#define OptionNum  30
-#define ShipNum    13
-#define ShieldNum  10
-#define SpecialNum 46
+#define WEAP_NUM    780
+#define PORT_NUM    42
+#define ARMOR_NUM   4
+#define POWER_NUM   6
+#define ENGINE_NUM  6
+#define OPTION_NUM  30
+#define SHIP_NUM    13
+#define SHIELD_NUM  10
+#define SPECIAL_NUM 46
 
-#define EnemyNum   850
+#define ENEMY_NUM   850
 
-#define LVLNum  (18 * 2)
-#define LVLNum2 (12 * 2)
-#define LVLNum3 (12 * 2)
-#define LVLNum4 (20 * 2)
-#define LVLNum5 (1 * 2)
+#define LVL_NUM   (18 * 2)
+#define LVL_NUM_2 (12 * 2)
+#define LVL_NUM_3 (12 * 2)
+#define LVL_NUM_4 (20 * 2)
+#define LVL_NUM_5 (1 * 2)
 
 /*! typedef JE_longint JE_LvlPosType[LVLNum + 2];*/ /* [1..LVLnum + 2] */
 
 #ifndef NO_EXTERNS
 extern const JE_char ShapeFile[34]; /* [1..34] */
-extern const char lvlFile[LVLNum][9]; /* [1..LVLnum] of string [8] */
-extern const char lvlFile2[LVLNum2][9]; /* [1..LVLnum2] of string [8] */
-extern const char lvlFile3[LVLNum3][9]; /* [1..LVLnum3] of string [8] */
-extern const char lvlFile4[LVLNum4][9]; /* [1..LVLnum4] of string [8] */
-extern const char lvlFile5[LVLNum5][9]; /* [1..lvlnum5] of string [8] */
+extern const char lvlFile[LVL_NUM][9]; /* [1..LVLnum] of string [8] */
+extern const char lvlFile2[LVL_NUM_2][9]; /* [1..LVLnum2] of string [8] */
+extern const char lvlFile3[LVL_NUM_3][9]; /* [1..LVLnum3] of string [8] */
+extern const char lvlFile4[LVL_NUM_4][9]; /* [1..LVLnum4] of string [8] */
+extern const char lvlFile5[LVL_NUM_5][9]; /* [1..lvlnum5] of string [8] */
 /*! extern JE_LvlPosType lvlPos;*/
 #endif
 

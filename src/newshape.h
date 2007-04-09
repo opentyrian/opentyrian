@@ -24,32 +24,32 @@
 
 #include "SDL.h"
 
-#define OldBlack        0
-#define NewBlack        253
+#define OLD_BLACK         0
+#define NEW_BLACK         253
 
 /* Font faces */
-#define PlanetShapes    0
-#define FontShapes      1
-#define SmallFontShapes 2
-#define FaceShapes      3
-#define OptionShapes    4 /*Also contains help shapes*/
-#define TinyFont        5
-#define WeaponShapes    6
-#define ExtraShapes     7 /*Used for Ending pics*/
+#define PLANET_SHAPES     0
+#define FONT_SHAPES       1
+#define SMALL_FONT_SHAPES 2
+#define FACE_SHAPES       3
+#define OPTION_SHAPES     4 /*Also contains help shapes*/
+#define TINY_FONT         5
+#define WEAPON_SHAPES     6
+#define EXTRA_SHAPES      7 /*Used for Ending pics*/
 
-#define MaximumShape    151
-#define MaxTable        8
+#define MAXIMUM_SHAPE     151
+#define MAX_TABLE         8
 
-typedef JE_byte *JE_ShapeArrayType[MaxTable][MaximumShape]; /* [1..maxtable, 1..maximumshape] */
+typedef JE_byte *JE_ShapeArrayType[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable, 1..maximumshape] */
 
 #ifndef NO_EXTERNS
 extern SDL_Surface *tempScreenSeg;
 extern JE_ShapeArrayType *shapeArray;
-extern JE_word shapeX[MaxTable][MaximumShape],
-               shapeY[MaxTable][MaximumShape];
-extern JE_word shapeSize[MaxTable][MaximumShape];
-extern JE_boolean shapeExist[MaxTable][MaximumShape];
-extern JE_byte maxShape[MaxTable];
+extern JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],
+               shapeY[MAX_TABLE][MAXIMUM_SHAPE];
+extern JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];
+extern JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE];
+extern JE_byte maxShape[MAX_TABLE];
 extern JE_byte mouseGrabShape[24*28];
 extern JE_boolean loadOverride;
 #endif

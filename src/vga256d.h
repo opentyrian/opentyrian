@@ -24,8 +24,8 @@
 
 #include "SDL.h"
 
-#define CrtAddress 0x3D4
-#define StatusReg 0x3DA
+#define CRT_ADDRESS 0x3D4
+#define STATUS_REG 0x3DA
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 typedef JE_shape16B *JE_shape16;

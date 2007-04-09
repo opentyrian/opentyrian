@@ -22,11 +22,11 @@
 
 #include "opentyr.h"
 
-#define PartShade  0
-#define FullShade  1
-#define Darken     2
-#define Trick      3
-#define NoShade    255
+#define PART_SHADE 0
+#define FULL_SHADE 1
+#define DARKEN     2
+#define TRICK      3
+#define NO_SHADE 255
 
 #ifndef NO_EXTERNS
 extern const JE_byte fontMap[136];

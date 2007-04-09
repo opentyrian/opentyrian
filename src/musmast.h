@@ -21,18 +21,18 @@
 #define MUSMAST_H
 
 #define DEFAULT_SONG_BUY 3
-#define SONG_LEVELEND 10
-#define SONG_GAMEOVER 11
-#define SONG_MAPVIEW 20
-#define SONG_ENDGAME1 8
-#define SONG_ZANAC 32
-#define SONG_TITLE 30
+#define SONG_LEVELEND    10
+#define SONG_GAMEOVER    11
+#define SONG_MAPVIEW     20
+#define SONG_ENDGAME1    8
+#define SONG_ZANAC       32
+#define SONG_TITLE       30
 
-#define MUSICNUM 41
+#define MUSIC_NUM 41
 
 #ifndef NO_EXTERNS
-extern const char musicFile[MUSICNUM][13];
-extern const char musicTitle[MUSICNUM][48];
+extern const char musicFile[MUSIC_NUM][13];
+extern const char musicTitle[MUSIC_NUM][48];
 extern JE_boolean musicFade;
 #endif
 

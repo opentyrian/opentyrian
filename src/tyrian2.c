@@ -103,7 +103,7 @@ void JE_titleScreen( JE_boolean animate )
 					temp = 4;
 				}
 
-				JE_newDrawCShapeNum(PlanetShapes, 146, 11, temp);
+				JE_newDrawCShapeNum(PLANET_SHAPES, 146, 11, temp);
 
 
 				memcpy(colors2, colors, sizeof(colors));
@@ -129,7 +129,7 @@ void JE_titleScreen( JE_boolean animate )
 						setdelay(2);
 						memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
-						JE_newDrawCShapeNum(PlanetShapes, 146, 11, temp);
+						JE_newDrawCShapeNum(PLANET_SHAPES, 146, 11, temp);
 
 						JE_showVGA();
 						wait_delay();
@@ -141,13 +141,13 @@ void JE_titleScreen( JE_boolean animate )
 				for (temp = 0; temp < menunum; temp++)
 				{
 					tempX = 104+(temp)*13;
-					tempY = JE_fontCenter(menuText[temp],SmallFontShapes);
+					tempY = JE_fontCenter(menuText[temp],SMALL_FONT_SHAPES);
 
-					JE_outTextAdjust(tempY-1,tempX-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-					JE_outTextAdjust(tempY+1,tempX+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-					JE_outTextAdjust(tempY+1,tempX-1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-					JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SmallFontShapes,FALSE);
-					JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SmallFontShapes,FALSE);
+					JE_outTextAdjust(tempY-1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+					JE_outTextAdjust(tempY+1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+					JE_outTextAdjust(tempY+1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+					JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+					JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SMALL_FONT_SHAPES,FALSE);
 				}
 				JE_showVGA();
 
@@ -161,9 +161,9 @@ void JE_titleScreen( JE_boolean animate )
 
 		for (temp = 0; temp < menunum; temp++)
 		{
-			JE_outTextAdjust(JE_fontCenter(menuText[temp], SmallFontShapes),
+			JE_outTextAdjust(JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES),
 			104+temp*13,
-			menuText[temp], 15, -3+((temp == menu) * 2), SmallFontShapes, FALSE);
+			menuText[temp], 15, -3+((temp == menu) * 2), SMALL_FONT_SHAPES, FALSE);
 		}
 
 		JE_showVGA();
@@ -188,7 +188,7 @@ void JE_titleScreen( JE_boolean animate )
 				} else {
 					menu--;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_DOWN:
 				if (menu == menunum-1)
@@ -197,10 +197,10 @@ void JE_titleScreen( JE_boolean animate )
 				} else {
 					menu++;
 				}
-				JE_playSampleNum(CursorMove);
+				JE_playSampleNum(CURSOR_MOVE);
 				break;
 			case SDLK_RETURN:
-				JE_playSampleNum(Select);
+				JE_playSampleNum(SELECT);
 				switch (menu)
 				{
 					case 0: /* New game */

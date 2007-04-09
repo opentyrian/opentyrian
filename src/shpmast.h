@@ -22,12 +22,12 @@
 
 #include "opentyr.h"
 
-#define SHPnum 12
+#define SHP_NUM 12
 
-typedef JE_longint JE_shppostype[SHPnum + 1]; /* [1..SHPnum + 1] */
+typedef JE_longint JE_shppostype[SHP_NUM + 1]; /* [1..SHPnum + 1] */
 
 #ifndef NO_EXTERNS
-extern const JE_string shpfile[SHPnum];
+extern const JE_string shpfile[SHP_NUM];
 extern JE_shppostype shppos;
 #endif
 

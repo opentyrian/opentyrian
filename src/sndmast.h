@@ -20,22 +20,22 @@
 #ifndef SNDMAST_H
 #define SNDMAST_H
 
-#define SoundNum 29
+#define SOUND_NUM 29
 
-#define Click 24
-#define Wrong 23
-#define ESC   16
-#define Item  18
-#define Select 8
-#define CursorMove 28
-#define PowerUp 29
+#define CLICK        24
+#define WRONG        23
+#define ESC          16
+#define ITEM         18
+#define SELECT       8
+#define CURSOR_MOVE  28
+#define POWERUP      29
 
-#define V_GoodLuck (soundnum + 4)
-#define V_LevelEnd (soundnum + 5)
-#define V_DataCube (soundnum + 8)
+#define V_GOOD_LUCK (SOUND_NUM + 4)
+#define V_LEVEL_END (SOUND_NUM + 5)
+#define V_DATA_CUBE (SOUND_NUM + 8)
 
 #ifndef NO_EXTERNS
-extern const char soundTitle[SoundNum + 9][9];
+extern const char soundTitle[SOUND_NUM + 9][9];
 extern const JE_byte WindowTextSamples[9];
 #endif
 

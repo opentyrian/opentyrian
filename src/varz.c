@@ -45,7 +45,7 @@ const JE_word SAWeapon[SA][5] /* [1..SA, 1..5] */ =
 	{40,38,37,41,36}   /* NortShip Z   */
 };
 
-const JE_byte specialArcadeWeapon[PortNum] /* [1..Portnum] */ =
+const JE_byte specialArcadeWeapon[PORT_NUM] /* [1..Portnum] */ =
 {
 	17,17,18,0,0,0,10,0,0,0,0,0,44,0,10,0,19,0,0,-0,0,0,0,0,0,0,
 	-0,0,0,0,45,0,0,0,0,0,0,0,0,0,0,0
@@ -278,15 +278,15 @@ struct
 	JE_byte followPlayer;
 	JE_byte fixedExplode;
 	JE_word fixedMovement;
-} explosions[ExplosionMax]; /* [1..ExplosionMax] */
-JE_byte explodeAvail[ExplosionMax]; /* [1..ExplosionMax] */
+} explosions[EXPLOSION_MAX]; /* [1..ExplosionMax] */
+JE_byte explodeAvail[EXPLOSION_MAX]; /* [1..ExplosionMax] */
 JE_integer explosionFollowAmount;
 JE_boolean playerFollow, fixedExplosions;
 JE_integer explosionMoveUp;
 
 /*EnemyShotData*/
 JE_boolean fireButtonHeld;
-JE_boolean enemyShotAvail[EnemyShotMax]; /* [1..Enemyshotmax] */
+JE_boolean enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
 struct
 {
 	JE_integer Sx, Sy;
@@ -299,7 +299,7 @@ struct
 	JE_word animate;
 	JE_word animax;
 	JE_byte fill[12]; /* [1..12] */
-} enemyShot[EnemyShotMax]; /* [1..Enemyshotmax]  */
+} enemyShot[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax]  */
 
 /* Player Shot Data */
 JE_byte     zinglonDuration;
@@ -343,14 +343,14 @@ struct
 	JE_byte     aimDelay;
 	JE_byte     aimDelayMax;      /*39*/
 	JE_byte     fill[1];          /* [1..1] */
-} playerShotData[MaxPWeapon + 1]; /* [1..MaxPWeapon+1] */
+} playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
 
 JE_byte chain;
 
 /*PlayerData*/
 JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 
-JE_byte shotAvail[MaxPWeapon]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
+JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 JE_byte shadowyDist;
 JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
@@ -431,13 +431,13 @@ struct
 } REXDat[20]; /* [1..20] */
 
 /*SuperPixels*/
-JE_byte SPZ[MaxSP + 1]; /* [0..MaxSP] */
+JE_byte SPZ[MAX_SP + 1]; /* [0..MaxSP] */
 struct
 {
 	JE_word location;
 	JE_word movement;
 	JE_byte color;
-} SPL[MaxSP + 1]; /* [0..MaxSP] */
+} SPL[MAX_SP + 1]; /* [0..MaxSP] */
 JE_word lastSP;
 
 /*MegaData*/
