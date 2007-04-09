@@ -1,0 +1,78 @@
+Naming conventions:
+	Variable names: foo_bar
+	Types: FooBar
+	Functions: foo_bar
+
+	Tyrian variables: fooBar
+	Tyrian Types: JE_FooBar
+	Tyrian Functions: JE_fooBar or JE_foo_bar (discouraged)
+
+	#defined Constants: FOO_BAR
+
+Bracing style:
+	Braces go into separate lines (except on a else and the end of a do while loop)
+	Example:
+		if (fooBar)
+		{
+			/* Stuff */
+		} else {
+			do {
+				/* Crap */
+			} while (spamEggs == 42);
+		}
+
+	/!\ NEVER OMIT BRACES! /!\
+	Example (don't do this):
+		if (fooBar)
+			/* BAD! */
+		else
+			do
+				/* NONO! */
+			while (spamEggs == 42);
+
+Spacing style:
+	Put a space after if, for, while, etc...
+	Example:
+		if (fooBar)
+		{
+			/* good */
+		}
+		if(spam)
+		{
+			/* bad! */
+		}
+
+Indentation:
+	Use tabs for indentation, spaces for alignment.
+	Example (|||| represents a tab):
+
+void ( int long_argument_list, int stuff_like_that,
+       char more_crap, int foo_bar )
+{
+||||int my_var,
+||||    eggs = 42;
+||||
+||||doStuff();
+||||if (stuff)
+||||{
+||||||||/* This is a
+|||||||| * comment
+|||||||| */
+||||}
+}
+
+
+Comments:
+	Always use C-style (/* */) comments, since ANSI C doesn't allow C++ (//) style comments.
+
+	/* One liner */
+
+	/* Many
+	 * lines
+	 * spread
+	 * about.
+	 */
+
+
+Misc:
+	If in doubt, follow the source.
