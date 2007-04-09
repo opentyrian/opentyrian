@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
+#define NO_EXTERNS
 #include "pcxmast.h"
+#undef NO_EXTERNS
 
 const JE_string pcxfile[PCX_NUM] = /* [1..PCXnum] */
 {

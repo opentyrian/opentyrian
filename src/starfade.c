@@ -18,11 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "starfade.h"
 #include "nortvars.h"
 #include "starfade.h"
 #include "vga256d.h"
 #include "nortsong.h"
+
+#define NO_EXTERNS
+#include "starfade.h"
+#undef NO_EXTERNS
 
 JE_colortype black = {{0,0,0}}; /* Rest is filled with 0's too */
 JE_colortype colors, colors2;

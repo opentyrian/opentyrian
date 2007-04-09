@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#define NO_EXTERNS
-#include "helptext.h"
-#undef NO_EXTERNS
-
 #include "fonthand.h"
 #include "newshape.h"
 #include "error.h"
 #include "config.h"
 #include "episodes.h"
+
+#define NO_EXTERNS
+#include "helptext.h"
+#undef NO_EXTERNS
 
 #include <string.h>
 

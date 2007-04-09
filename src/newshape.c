@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "newshape.h"
-
 #include "vga256d.h"
 #include "nortvars.h"
 #include "keyboard.h"
@@ -27,6 +25,10 @@
 #include "nortsong.h"
 #include "joystick.h"
 #include "params.h"
+
+#define NO_EXTERNS
+#include "newshape.h"
+#undef NO_EXTERNS
 
 extern int netQuit; /* placeholder */
 

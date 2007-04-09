@@ -19,6 +19,10 @@
  */
 #include "opentyr.h"
 
+#define NO_EXTERNS
+#include "params.h"
+#undef NO_EXTERNS
+
 JE_boolean timMode         = FALSE;
 JE_boolean richMode        = FALSE;
 JE_boolean recordDemo      = FALSE;

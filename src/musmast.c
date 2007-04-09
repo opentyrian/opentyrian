@@ -19,7 +19,9 @@
  */
 #include "opentyr.h"
 
+#define NO_EXTERNS
 #include "musmast.h"
+#undef NO_EXTERNS
 
 const char musicFile[MUSIC_NUM][13] = 
 { 

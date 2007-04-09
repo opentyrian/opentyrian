@@ -18,13 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "picload.h"
 #include "error.h"
 #include "pcxmast.h"
 #include "starfade.h"
 #include "nortvars.h"
 #include "pallib.h"
 #include "vga256d.h"
+
+#define NO_EXTERNS
+#include "picload.h"
+#undef NO_EXTERNS
 
 #include <string.h>
 

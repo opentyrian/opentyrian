@@ -19,7 +19,9 @@
  */
 #include "opentyr.h"
 
+#define NO_EXTERNS
 #include "sndmast.h"
+#undef NO_EXTERNS
 
 const char soundTitle[SOUND_NUM + 9][9] = /* [1..soundnum + 9] of string [8] */
 {

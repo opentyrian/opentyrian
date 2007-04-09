@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-
 #include "varz.h"
 #include "fonthand.h"
 #include "vga256d.h"
@@ -66,7 +65,7 @@ void JE_helpSystem( JE_byte startTopic )
 	
 	JE_fadeBlack(10);
 	JE_loadPIC(2, FALSE);
-	/* TODO JE_playSong(Song_MapView); */
+	JE_playSong(SONG_MAPVIEW);
 	JE_showVGA();
 	JE_fadeColor(10);
 

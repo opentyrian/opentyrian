@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "tyrian2.h"
-
 #include "newshape.h"
 #include "fonthand.h"
 #include "vga256d.h"
@@ -36,6 +34,8 @@
 #include "mainint.h"
 #include "sndmast.h"
 #include "params.h"
+
+#include "tyrian2.h"
 
 #include <string.h>
 

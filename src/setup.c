@@ -23,7 +23,9 @@
 #include "joystick.h"
 #include "nortvars.h"
 
+#define NO_EXTERNS
 #include "setup.h"
+#undef NO_EXTERNS
 
 #include "SDL.h"
 

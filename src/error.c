@@ -17,11 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include <stdio.h>
-
 #include "opentyr.h"
-#include "error.h"
 #include "vga256d.h"
+
+#define NO_EXTERNS
+#include "error.h"
+#undef NO_EXTERNS
+
+#include <stdio.h>
 
 JE_char dir[12];
 
