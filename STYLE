@@ -17,7 +17,7 @@ Bracing style:
 			/* Stuff */
 		} else {
 			do
-            {
+			{
 				/* Crap */
 			} while (spamEggs == 42);
 		}
