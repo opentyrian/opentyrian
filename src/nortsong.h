@@ -38,6 +38,15 @@ extern JE_boolean mixEnable;
 
 extern JE_boolean notYetLoadedSound, notYetLoadedMusic;
 extern JE_SongPosType songPos;
+extern JE_byte soundEffects;
+
+extern JE_byte currentSong;
+extern JE_byte soundActive, musicActive;
+
+extern JE_byte *digiFx[SOUND_NUM + 9];
+extern JE_word fxSize[SOUND_NUM + 9];
+
+extern JE_word fxVolume, fxPlayVol;
 #endif
 
 void setdelay( JE_byte delay );
@@ -49,10 +58,10 @@ void JE_resetTimerInt( void );
 void JE_playSong ( JE_word songnum );
 void JE_loadSong( JE_word songnum );
 void JE_endMusic ( JE_byte soundeffects);
-void JE_StopSong( void );
-void JE_RestartSong( void );
+void JE_stopSong( void );
+void JE_restartSong( void );
 void JE_reinit ( JE_boolean redo );
-void JE_AWEStuff( void );
+void JE_aweStuff( void );
 void JE_setTimerInt( void );
 void JE_calcFXVol( void );
 void JE_changeVolume( JE_word temp, JE_integer change, JE_word fxvol, JE_integer fxchange );
@@ -62,7 +71,7 @@ void JE_loadSmpFile ( JE_string name, JE_byte samplenum);
 void JE_loadSndFile( void );
 void JE_playSampleNum ( JE_byte samplenum );
 
-void JE_FXDestruct ( JE_byte samplenum );
+void JE_fxDestruct ( JE_byte samplenum );
 
 void JE_setvol (JE_byte musicvolume, JE_byte sample );
 

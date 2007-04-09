@@ -29,6 +29,7 @@
 #include "joystick.h"
 #include "episodes.h"
 #include "varz.h"
+#include "loudness.h"
 #include "mainint.h"
 #include "musmast.h"
 #include "nortsong.h"
@@ -119,17 +120,32 @@ int main( int argc, char *argv[] )
 	showMemLeft = FALSE;
 	playerPasswordInput = TRUE;
 
-	/* initialize sound system */
+	printf("Initializing SDL audio...\n");		
 	JE_loadSong(1);
 	
 	if ( TRUE ) /* TODO: Check if sound is enabled, handle either appropriately */
 	{
 		/* SYN: This code block doesn't really resemble the original, because the
-			underlying sound code is very different. */
+			underlying sound code is very different. I've left out some stuff that
+		    checked hardware values and stuff here. */
 		
-		/* TODO: Any sound initialization stuff */
+		JE_initialize(0, 0, 0, 0, 0); /* TODO: Fix arguments */
+		
+		if (soundEffects)
+		{
+			JE_multiSampleInit(0, 0, 0, 0); /* TODO: Fix arguments */
+			
+			/* I don't think these messages matter, but I'll replace them with more useful stuff if I can. */
+			/*if (soundEffects == 2) printf("SoundBlaster active");
+			printf ("DSP Version ***\n");
+			printf ("SB port ***\n");
+			printf ("Interrupt ***\n");*/
+			
+			JE_loadSndFile();
+		}
+		
 	} else {
-		/* TODO: No sound! What now?! */
+		JE_initialize(0, 0, 0, 0, 0); /* TODO: Fix arguments here, too */
 	}
 
 	if (recordDemo)
@@ -147,9 +163,6 @@ int main( int argc, char *argv[] )
 
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/
-
-	/* here ends line 92771 of TYRIAN2.PAS
-	* TODO: Finish it and stuff. */
 
 	JE_loadpals();
 

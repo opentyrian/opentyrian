@@ -41,13 +41,17 @@ void JE_play( void );
    or restart it if it is. */
 void JE_selectSong( JE_word value ); 
 
+/* TODO: Some of these procs take segment and offset or other weird arguments, the signature of many of these may change
+   as I make stuff more "sensible" */
+
 void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq);
 void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq);
 JE_word JE_sampleStatus(JE_byte chan);
 	 
 void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dmahi);
 void JE_multiSampleMix( void );
-void JE_multiSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_byte chan, JE_byte vol);
+/* void JE_multiSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_byte chan, JE_byte vol); */
+void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
 
 void JE_setVol(JE_word volume, JE_word sample); /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
 JE_word JE_getVol( void );

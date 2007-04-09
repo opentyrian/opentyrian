@@ -83,7 +83,8 @@ void JE_titleScreen( JE_boolean animate )
 		/* Animate instead of quickly fading in */
 		if (redraw)
 		{
-			/* TODO if (currentSong != song_title) JE_playSong(song_title); */
+			if (currentSong != SONG_TITLE) JE_playSong(SONG_TITLE);
+				
 			menu = 0;
 			redraw = FALSE;
 			if (animate)

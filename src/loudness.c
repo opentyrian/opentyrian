@@ -23,14 +23,62 @@
 #include "loudness.h"
 #undef NO_EXTERNS
 
+/* TODO: Audio isn't really "working" yet. It makes noises but I still neeed to build
+   the mixer and full audio system back here. Also need to add the music. So yeah, I
+   know this code sucks right now. Ignore it, please. */
+
+
+/* SYN: These are externally accessible variables: */
 JE_MusicType musicData;
 JE_boolean repeated;
 JE_boolean playing;
 
+/* SYN: These shouldn't be used outside this file. Hands off! */
+Uint8 *final_audio_buffer;
+Uint8 *audio_pos;
+
+/* SYN: These are temporary while I get the bare bones audio working. */
+Uint8 *tmp_buffer;
+Uint8 *tmp_pos;
+Uint32 tmp_len;
+
+void audio_cb(void *userdata, Uint8 *feedme, int howmuch);
+
 /* SYN: The arguments to this function are probably meaningless now */
 void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror)
 {
-	/* TODO: Stub function, need to fill in */
+    SDL_AudioSpec plz;
+	
+	tmp_len = 0;
+	tmp_pos = NULL;
+	tmp_buffer = NULL;
+	
+    plz.freq = 11025;
+    plz.format = AUDIO_S8;
+    plz.channels = 1;
+    plz.samples = 512;
+    plz.callback = audio_cb;
+    plz.userdata = NULL;
+
+    if ( SDL_OpenAudio(&plz, NULL) < 0 ) 
+	{
+        printf("WARNING: Failed to initialize audio. Bailing out.\n");
+        exit(1);
+    }
+    SDL_PauseAudio(0);
+}
+
+void audio_cb(void *userdata, Uint8 *feedme, int howmuch)
+{
+	if (tmp_len == 0) 
+	{
+		return;
+	}
+		
+	howmuch = ( (Uint32) howmuch > tmp_len ? (int) tmp_len : howmuch);
+	SDL_MixAudio(feedme, tmp_pos, howmuch, SDL_MIX_MAXVOLUME);
+	tmp_pos += howmuch;
+	tmp_len -= howmuch;
 }
 
 void JE_deinitialize( void )
@@ -88,8 +136,17 @@ void JE_multiSampleMix( void )
 	/* TODO: Stub function, need to fill in */
 }
 
-void JE_multiSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_byte chan, JE_byte vol)
+void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)
 {
-	/* TODO: Stub function, need to fill in */
+	int i; 
+	
+	tmp_len = size;
+	tmp_buffer = malloc(tmp_len);
+	tmp_pos = tmp_buffer;
+	
+	for (i = 0; i < size; i++)
+	{
+		tmp_buffer[i] = (Uint8) (((signed char) buffer[i]) / 5);
+	}
 }
 
