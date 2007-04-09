@@ -263,33 +263,35 @@ void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *Shape )
 
 void JE_drawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_drawShape2(x,    y,    s,    Shape);
-  JE_drawShape2(x+12, y,    s+1,  Shape);
-  JE_drawShape2(x,    y+14, s+19, Shape);
-  JE_drawShape2(x+12, y+14, s+20, Shape);
+	JE_drawShape2(x,    y,    s,    Shape);
+	JE_drawShape2(x+12, y,    s+1,  Shape);
+	JE_drawShape2(x,    y+14, s+19, Shape);
+	JE_drawShape2(x+12, y+14, s+20, Shape);
 }
 
 void JE_superDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_superDrawShape2(x,    y,    s,    Shape);
-  JE_superDrawShape2(x+12, y,    s+1,  Shape);
-  JE_superDrawShape2(x,    y+14, s+19, Shape);
-  JE_superDrawShape2(x+12, y+14, s+20, Shape);
+	JE_superDrawShape2(x,    y,    s,    Shape);
+	JE_superDrawShape2(x+12, y,    s+1,  Shape);
+	JE_superDrawShape2(x,    y+14, s+19, Shape);
+	JE_superDrawShape2(x+12, y+14, s+20, Shape);
 }
 
 void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape )
 {
-  JE_drawShape2Shadow(x,    y,    s,    Shape);
-  JE_drawShape2Shadow(x+12, y,    s+1,  Shape);
-  JE_drawShape2Shadow(x,    y+14, s+19, Shape);
-  JE_drawShape2Shadow(x+12, y+14, s+20, Shape);
+	JE_drawShape2Shadow(x,    y,    s,    Shape);
+	JE_drawShape2Shadow(x+12, y,    s+1,  Shape);
+	JE_drawShape2Shadow(x,    y+14, s+19, Shape);
+	JE_drawShape2Shadow(x+12, y+14, s+20, Shape);
 }
 
 JE_boolean JE_anyButton( void )
 {
-	JE_joystick2();
+	button[0] = FALSE;
+	newkey = FALSE; /* counter intuitive */
 	service_SDL_events();
-	return keydown || mousedown || button[0];
+	JE_joystick2();
+	return newkey || mousedown || button[0];
 }
 
 /* TODO */

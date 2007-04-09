@@ -334,7 +334,7 @@ void JE_openingAnim( void )
 		memset(black, 0, sizeof(black));
 
 		setdelay(200);
-		wait_delayorinput(TRUE,TRUE,TRUE);
+		while(!(delaycount() == 0 || JE_anyButton()));
 
 		JE_fadeBlack(15);
 
@@ -345,7 +345,7 @@ void JE_openingAnim( void )
 		JE_fadeColor(10);
 
 		setdelay(200);
-		wait_delayorinput(TRUE,TRUE,TRUE);
+		while(!(delaycount() == 0 || JE_anyButton()));
 
 		JE_fadeBlack(10);
 	}
