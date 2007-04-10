@@ -23,6 +23,8 @@
 #include "musmast.h"
 #undef NO_EXTERNS
 
+JE_byte song_buy;
+
 const char musicFile[MUSIC_NUM][13] = 
 { 
 	/*  1 */  "ASTEROI2.DAT",
