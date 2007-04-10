@@ -99,12 +99,12 @@ void JE_findTyrian( const JE_string filename )
 		strbuf = malloc(tmpsize);
 		for (i = 0; i < COUNTOF(tyrian_searchpaths); i++)
 		{
-			snprintf(strbuf, tmpsize, "%s/%s", tyrian_searchpaths[i], filename);
+			sprintf(strbuf, "%s/%s", tyrian_searchpaths[i], filename);
 			if (JE_find(strbuf))
 			{
 				free(strbuf);
 
-				snprintf(dir, sizeof(dir), "%s/", tyrian_searchpaths[i]);
+				sprintf(dir, "%s/", tyrian_searchpaths[i]);
 				printf("Tyrian data files found at %s\n\n", dir);
 				return;
 			}

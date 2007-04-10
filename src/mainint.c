@@ -90,10 +90,10 @@ void JE_helpSystem( JE_byte startTopic )
 		{
 			JE_char buf[128];
 
-			snprintf(buf, sizeof(buf), "%s %d", miscText[24], page-topicStart[temp2]+1);
+			sprintf(buf, "%s %d", miscText[24], page-topicStart[temp2]+1);
 			JE_outText(10, 192, buf, 13, 5);
 
-			snprintf(buf, sizeof(buf), "%s %d of %d", miscText[25], page, MAX_PAGE);
+			sprintf(buf, "%s %d of %d", miscText[25], page, MAX_PAGE);
 			JE_outText(220, 192, buf, 13, 5);
 
 			JE_dString(JE_fontCenter(topicName[temp2], SMALL_FONT_SHAPES), 1, topicName[temp2], SMALL_FONT_SHAPES);
