@@ -407,7 +407,7 @@ void JE_newDrawCShapeBrightAndDarken( JE_byte *shape, JE_word xsize, JE_word ysi
 	for (x = 0; x < shapeX[table][shape]; x++);
 }*/
 
-INLINE JE_word JE_fontCenter( JE_string s, JE_byte font )
+JE_word JE_fontCenter( JE_string s, JE_byte font )
 {
 	return 160 - (JE_textWidth(s, font) / 2);
 }

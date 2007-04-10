@@ -24,14 +24,6 @@
 #include <stdio.h>
 #include <math.h> /* For the ROUND() macro */
 
-#if __STDC_VERSION__ >= 199901L
-#define INLINE inline
-#elif defined __GNUC__
-#define INLINE __inline__
-#else
-#define INLINE
-#endif
-
 #define ROUND(x) (floor((x)+0.5))
 
 /* Gets number of elements in an array.

@@ -117,12 +117,12 @@ void JE_waitNotRetrace( void )
 
 
 
-INLINE void JE_pix( JE_word x, JE_word y, JE_byte c )
+void JE_pix( JE_word x, JE_word y, JE_byte c )
 {
 	JE_pix2(x,y,c);
 }
 
-INLINE void JE_pix2( JE_word x, JE_word y, JE_byte c )
+void JE_pix2( JE_word x, JE_word y, JE_byte c )
 {
 	/* Bad things happen if we don't clip */
 	if (x < 320 && y < 200)
@@ -132,7 +132,7 @@ INLINE void JE_pix2( JE_word x, JE_word y, JE_byte c )
 	}
 }
 
-INLINE void JE_pixcool( JE_word x, JE_word y, JE_byte c )
+void JE_pixcool( JE_word x, JE_word y, JE_byte c )
 {
 	JE_pix3(x,y,c);
 }
@@ -147,7 +147,7 @@ void JE_pix3( JE_word x, JE_word y, JE_byte c )
 	JE_pix2(x,y+1,c);
 }
 
-INLINE void JE_pixabs( JE_word x, JE_byte c )
+void JE_pixabs( JE_word x, JE_byte c )
 {
 	if (x < 320*200)
 	{
@@ -156,7 +156,7 @@ INLINE void JE_pixabs( JE_word x, JE_byte c )
 	}
 }
 
-INLINE void JE_getpix( JE_word x, JE_word y, JE_byte *c )
+void JE_getpix( JE_word x, JE_word y, JE_byte *c )
 {
 	/* Bad things happen if we don't clip */
 	if (x < 320 && y < 200)
@@ -166,7 +166,7 @@ INLINE void JE_getpix( JE_word x, JE_word y, JE_byte *c )
 	}
 }
 
-INLINE JE_byte JE_getpixel( JE_word x, JE_word y )
+JE_byte JE_getpixel( JE_word x, JE_word y )
 {
 	/* Bad things happen if we don't clip */
 	if (x < 320 && y < 200)
@@ -246,7 +246,7 @@ void JE_barshade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2
 	}
 }
 
-INLINE void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d )
+void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d )
 {
 	JE_barshade(a+3, b+2, c-3, d-2);
 }
