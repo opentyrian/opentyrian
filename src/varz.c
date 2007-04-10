@@ -611,7 +611,7 @@ void JE_drawOptions( void )
 
 	if (option1Draw > 0)
 	{
-		if (tempScreenSeg == VGAScreen->pixels)
+		if (tempScreenSeg == VGAScreen)
 		{
 			/* TODO JE_barDraw(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
 		} else {
@@ -620,7 +620,7 @@ void JE_drawOptions( void )
 	}
 	if (option2Draw > 0)
 	{
-		if (tempScreenSeg == VGAScreen->pixels)
+		if (tempScreenSeg == VGAScreen)
 		{
 			/* TODO JE_barDraw(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
 		} else {
