@@ -63,7 +63,7 @@ void JE_helpSystem( JE_byte startTopic )
 	page = topicStart[startTopic-1];
 	
 	JE_fadeBlack(10);
-	JE_loadPIC(2, FALSE);
+	JE_loadPic(2, FALSE);
 	JE_playSong(SONG_MAPVIEW);
 	JE_showVGA();
 	JE_fadeColor(10);
@@ -301,7 +301,7 @@ JE_boolean JE_playerSelect( void )
 	JE_byte sel;
 	JE_boolean quit;
 
-	JE_loadPIC(2, FALSE);
+	JE_loadPic(2, FALSE);
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 	JE_showVGA();
 	JE_fadeColor(20);
@@ -393,7 +393,7 @@ JE_boolean JE_episodeSelect( void )
 	/*if (!episodeavail[3]) max = 3;*/
 
 startepisodeselect:
-	JE_loadPIC(2, FALSE);
+	JE_loadPic(2, FALSE);
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 	JE_showVGA();
 	JE_fadeColor(10);
@@ -487,7 +487,7 @@ JE_boolean JE_difficultySelect( void )
 	JE_byte sel;
 	JE_boolean quit;
 
-	JE_loadPIC(2, FALSE);
+	JE_loadPic(2, FALSE);
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 	JE_showVGA();
 	JE_fadeColor(20);

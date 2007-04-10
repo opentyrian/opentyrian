@@ -22,6 +22,6 @@
 
 #include "opentyr.h"
 
-void JE_loadPIC( JE_byte PCXnumber, JE_boolean storepal );
+void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal );
 
 #endif /* PICLOAD_H */

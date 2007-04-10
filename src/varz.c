@@ -383,14 +383,14 @@ JE_word playerInvulnerable1, playerInvulnerable2;
 
 JE_integer lastPXShotMove, lastPYShotMove;
 
-JE_integer PXB, PYB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
+JE_integer pxB, pyB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
            lastTurnB, lastTurn2B, tempLastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
 JE_word mouseXB, mouseYB;
 
-JE_integer PX, PY, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange,
+JE_integer px, py, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange,
            lastTurn, lastTurn2, tempLastTurn2;
-JE_byte StopwaitX, StopwaitY;
+JE_byte stopWaitX, stopWaitY;
 
 JE_integer PYHist[3], PYHistB[3]; /* [1..3] */
 
