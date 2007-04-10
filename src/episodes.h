@@ -140,8 +140,8 @@ typedef struct
 	JE_shortint startyc;
 	JE_byte     armor;
 	JE_byte     esize;
-	JE_word     Egraphic[20];  /* [1..20] */
-	JE_byte     ExplosionType;
+	JE_word     egraphic[20];  /* [1..20] */
+	JE_byte     explosiontype;
 	JE_byte     animate;       /* 0:Not Yet   1:Always   2:When Firing Only */
 	JE_byte     shapebank;     /* See LEVELMAK.DOC */
 	JE_shortint xrev, yrev;

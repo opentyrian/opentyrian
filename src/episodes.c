@@ -58,6 +58,8 @@ void JE_loadItemDat( void )
 	FILE *lvlFile;
 	JE_word itemNum[7]; /* [1..7] */
 
+	int i, j;
+
 	if (episodeNum > 3)
 	{
 		JE_resetFileExt(&lvlFile, levelFile, FALSE);
@@ -68,15 +70,146 @@ void JE_loadItemDat( void )
 		fseek(lvlFile, episode1DataLoc, SEEK_SET);
 	}
 
-	fread(&itemNum,    1, sizeof(itemNum), lvlFile);
-	fread(&weapons,    1, sizeof(weapons), lvlFile);
-	fread(&weaponPort, 1, sizeof(weaponPort), lvlFile);
-	fread(&special,    1, sizeof(special), lvlFile);
-	fread(&powerSys,   1, sizeof(powerSys), lvlFile);
-	fread(&ships,      1, sizeof(ships), lvlFile);
-	fread(&options,    1, sizeof(options), lvlFile);
-	fread(&shields,    1, sizeof(shields), lvlFile);
-	fread(&enemyDat,   1, sizeof(enemyDat), lvlFile);
+	fread(&itemNum,    sizeof(JE_word), 7, lvlFile);
+
+	for (i = 0; i < WEAP_NUM + 1; i++)
+	{
+		fread(&weapons[i].drain,           sizeof(JE_word), 1, lvlFile);
+		fread(&weapons[i].shotrepeat,      sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].multi,           sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].weapani,         sizeof(JE_word), 1, lvlFile);
+		fread(&weapons[i].max,             sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].tx,              sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].ty,              sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].aim,             sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].attack,          sizeof(JE_byte), 8, lvlFile);
+		fread(&weapons[i].del,             sizeof(JE_byte), 8, lvlFile);
+		fread(&weapons[i].sx,              sizeof(JE_shortint), 8, lvlFile);
+		fread(&weapons[i].sy,              sizeof(JE_shortint), 8, lvlFile);
+		fread(&weapons[i].bx,              sizeof(JE_shortint), 8, lvlFile);
+		fread(&weapons[i].by,              sizeof(JE_shortint), 8, lvlFile);
+		fread(&weapons[i].sg,              sizeof(JE_word), 8, lvlFile);
+		fread(&weapons[i].acceleration,    sizeof(JE_shortint), 1, lvlFile);
+		fread(&weapons[i].accelerationx,   sizeof(JE_shortint), 1, lvlFile);
+		fread(&weapons[i].circlesize,      sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].sound,           sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].trail,           sizeof(JE_byte), 1, lvlFile);
+		fread(&weapons[i].shipblastfilter, sizeof(JE_byte), 1, lvlFile);
+	}
+
+	for (i = 0; i < PORT_NUM + 1; i++)
+	{
+		fseek(lvlFile, 1, SEEK_CUR); /* skip string length */
+		fread(&weaponPort[i].name,        1, 30, lvlFile);
+		weaponPort[i].name[30] = '\0';
+		fread(&weaponPort[i].opnum,       sizeof(JE_byte), 1, lvlFile);
+		for (j = 0; j < 2; j++)
+		{
+			fread(&weaponPort[i].op[j],   sizeof(JE_word), 11, lvlFile);
+		}
+		fread(&weaponPort[i].cost,        sizeof(JE_word), 1, lvlFile);
+		fread(&weaponPort[i].itemgraphic, sizeof(JE_word), 1, lvlFile);
+		fread(&weaponPort[i].poweruse,    sizeof(JE_word), 1, lvlFile);
+	}
+
+	for (i = 0; i < SPECIAL_NUM + 1; i++)
+	{
+		fseek(lvlFile, 1, SEEK_CUR); /* skip string length */
+		fread(&special[i].name,        1, 30, lvlFile);
+		special[i].name[30] = '\0';
+		fread(&special[i].itemgraphic, sizeof(JE_word), 1, lvlFile);
+		fread(&special[i].pwr,         sizeof(JE_byte), 1, lvlFile);
+		fread(&special[i].stype,       sizeof(JE_byte), 1, lvlFile);
+		fread(&special[i].wpn,         sizeof(JE_word), 1, lvlFile);
+	}
+
+	for (i = 0; i < POWER_NUM + 1; i++)
+	{
+		fseek(lvlFile, 1, SEEK_CUR); /* skip string length */
+		fread(&powerSys[i].name,        1, 30, lvlFile);
+		powerSys[i].name[30] = '\0';
+		fread(&powerSys[i].itemgraphic, sizeof(JE_word), 1, lvlFile);
+		fread(&powerSys[i].power,       sizeof(JE_shortint), 1, lvlFile);
+		fread(&powerSys[i].speed,       sizeof(JE_byte), 1, lvlFile);
+		fread(&powerSys[i].cost,        sizeof(JE_word), 1, lvlFile);
+	}
+
+	for (i = 0; i < SHIP_NUM + 1; i++)
+	{
+		fseek(lvlFile, 1, SEEK_CUR); /* skip string length */
+		fread(&ships[i].name,           1, 30, lvlFile);
+		ships[i].name[30] = '\0';
+		fread(&ships[i].shipgraphic,    sizeof(JE_word), 1, lvlFile);
+		fread(&ships[i].itemgraphic,    sizeof(JE_word), 1, lvlFile);
+		fread(&ships[i].ani,            sizeof(JE_byte), 1, lvlFile);
+		fread(&ships[i].spd,            sizeof(JE_shortint), 1, lvlFile);
+		fread(&ships[i].dmg,            sizeof(JE_byte), 1, lvlFile);
+		fread(&ships[i].cost,           sizeof(JE_word), 1, lvlFile);
+		fread(&ships[i].bigshipgraphic, sizeof(JE_byte), 1, lvlFile);
+	}
+
+	for (i = 0; i < OPTION_NUM + 1; i++)
+	{
+		fseek(lvlFile, 1, SEEK_CUR); /* skip string length */
+		fread(&options[i].name,        1, 30, lvlFile);
+		options[i].name[30] = '\0';
+		fread(&options[i].pwr,         sizeof(JE_byte), 1, lvlFile);
+		fread(&options[i].itemgraphic, sizeof(JE_word), 1, lvlFile);
+		fread(&options[i].cost,        sizeof(JE_word), 1, lvlFile);
+		fread(&options[i].tr,          sizeof(JE_byte), 1, lvlFile);
+		fread(&options[i].option,      sizeof(JE_byte), 1, lvlFile);
+		fread(&options[i].opspd,       sizeof(JE_shortint), 1, lvlFile);
+		fread(&options[i].ani,         sizeof(JE_byte), 1, lvlFile);
+		fread(&options[i].gr,          sizeof(JE_word), 20, lvlFile);
+		fread(&options[i].wport,       sizeof(JE_byte), 1, lvlFile);
+		fread(&options[i].wpnum,       sizeof(JE_word), 1, lvlFile);
+		fread(&options[i].ammo,        sizeof(JE_byte), 1, lvlFile);
+		fread(&options[i].stop,        1, 1, lvlFile); /* override sizeof(JE_boolean) */
+		fread(&options[i].icongr,      sizeof(JE_byte), 1, lvlFile);
+	}
+
+	for (i = 0; i < SHIELD_NUM + 1; i++)
+	{
+		fseek(lvlFile, 1, SEEK_CUR); /* skip string length */
+		fread(&shields[i].name,        1, 30, lvlFile);
+		shields[i].name[30] = '\0';
+		fread(&shields[i].tpwr,        sizeof(JE_byte), 1, lvlFile);
+		fread(&shields[i].mpwr,        sizeof(JE_byte), 1, lvlFile);
+		fread(&shields[i].itemgraphic, sizeof(JE_word), 1, lvlFile);
+		fread(&shields[i].cost,        sizeof(JE_word), 1, lvlFile);
+	}
+
+	for (i = 0; i < ENEMY_NUM + 1; i++)
+	{
+		fread(&enemyDat[i].ani,           sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].tur,           sizeof(JE_byte), 3, lvlFile);
+		fread(&enemyDat[i].freq,          sizeof(JE_byte), 3, lvlFile);
+		fread(&enemyDat[i].xmove,         sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].ymove,         sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].xaccel,        sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].yaccel,        sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].xcaccel,       sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].ycaccel,       sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].startx,        sizeof(JE_integer), 1, lvlFile);
+		fread(&enemyDat[i].starty,        sizeof(JE_integer), 1, lvlFile);
+		fread(&enemyDat[i].startxc,       sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].startyc,       sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].armor,         sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].esize,         sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].egraphic,      sizeof(JE_word), 20, lvlFile);
+		fread(&enemyDat[i].explosiontype, sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].animate,       sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].shapebank,     sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].xrev,          sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].yrev,          sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].dgr,           sizeof(JE_word), 1, lvlFile);
+		fread(&enemyDat[i].dlevel,        sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].dani,          sizeof(JE_shortint), 1, lvlFile);
+		fread(&enemyDat[i].elaunchfreq,   sizeof(JE_byte), 1, lvlFile);
+		fread(&enemyDat[i].elaunchtype,   sizeof(JE_word), 1, lvlFile);
+		fread(&enemyDat[i].value,         sizeof(JE_integer), 1, lvlFile);
+		fread(&enemyDat[i].eenemydie,     sizeof(JE_word), 1, lvlFile);
+	}
 
 	fclose(lvlFile);
 }
