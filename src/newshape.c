@@ -58,7 +58,8 @@ JE_boolean loadOverride = FALSE;
 
 void JE_newLoadShapesB( JE_byte table, FILE *f )
 {
-	JE_word min, max = 0;
+	JE_word min = 0,
+	        max = 0;
 
 	JE_word tempw;
 	JE_word z;
