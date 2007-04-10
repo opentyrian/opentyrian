@@ -52,9 +52,9 @@ struct JE_SingleEnemyType
 	JE_byte     animax;
 	JE_byte     aniwhenfire;
 	JE_word     shapeseg;
-	JE_shortint exrev,eyrev;
-	JE_integer  exccadd,eyccadd;
-	JE_byte     exccwmax,eyccwmax;
+	JE_shortint exrev, eyrev;
+	JE_integer  exccadd, eyccadd;
+	JE_byte     exccwmax, eyccwmax;
 	JE_word     enemydatofs;
 	JE_boolean  edamaged;
 	JE_word     enemytype;
@@ -96,7 +96,7 @@ struct JE_SingleEnemyType
 
 typedef struct JE_SingleEnemyType JE_MultiEnemyType[100]; /* [1..100] */
 
-typedef JE_word JE_DancShape[(24 * 28) / 2]; /* [1..(24*28) div 2] */
+typedef JE_word JE_DanCShape[(24 * 28) / 2]; /* [1..(24*28) div 2] */
 
 typedef JE_char JE_CharString[256]; /* [1..256] */
 
@@ -108,11 +108,11 @@ typedef JE_word JE_MapType3[600][15]; /* [1..600, 1..15] */
 
 struct JE_EventRecType
 {
-	JE_word     EventTime;
-	JE_byte     EventType;
-	JE_integer  EventDat, EventDat2;
-	JE_shortint EventDat3, EventDat5, EventDat6;
-	JE_byte     EventDat4;
+	JE_word     eventTime;
+	JE_byte     eventType;
+	JE_integer  eventDat, eventDat2;
+	JE_shortint eventDat3, eventDat5, eventDat6;
+	JE_byte     eventDat4;
 };
 
 struct JE_MegaDataType1
@@ -120,10 +120,10 @@ struct JE_MegaDataType1
 	JE_MapType mainmap;
 	struct
 	{
-		JE_DancShape sh;
+		JE_DanCShape sh;
 	} shapes[72]; /* [0..71] */
-	JE_byte    tempdat1;
-	/*JE_DancShape filler;*/
+	JE_byte tempdat1;
+	/*JE_DanCShape filler;*/
 };
 
 struct JE_MegaDataType2
@@ -133,7 +133,7 @@ struct JE_MegaDataType2
 	{
 		JE_byte nothing[3]; /* [1..3] */
 		JE_byte fill;
-		JE_DancShape sh;
+		JE_DanCShape sh;
 	} shapes[71]; /* [0..70] */
 	JE_byte tempdat2;
 };
@@ -145,7 +145,7 @@ struct JE_MegaDataType3
 	{
 		JE_byte nothing[3]; /* [1..3] */
 		JE_byte fill;
-		JE_DancShape sh;
+		JE_DanCShape sh;
 	} shapes[70]; /* [0..69] */
 	JE_byte tempdat3;
 };
