@@ -35,6 +35,7 @@
 #include "sndmast.h"
 #include "params.h"
 #include "network.h"
+#include "loudness.h"
 
 #include "tyrian2.h"
 
@@ -83,11 +84,13 @@ void JE_main( void )
 
 	/* TODO */
 
+	start_level:
+
 	start_level_first:
 
 	/*stopsequence;*/
 	/*debuginfo('Setting Master Sound Volume');*/
-	/* TODO JE_setVol(Tyr_musicvolume, fxvolume);*/
+	JE_setVol(0 /*Tyr_musicvolume*/, 0 /*fxvolume*/); /* TODO */
 
 	JE_loadCompShapes(&shapes6, &shapes6Size, '1');  /* Items */
 
@@ -100,7 +103,7 @@ void JE_main( void )
 
 	doNotSaveBackup = FALSE;
 	/* TODO JE_loadMap();*/
-	/* TODO JE_selectSong (0xC001);*/  /*Fade song out*/
+	JE_selectSong(0xC001); /*Fade song out*/
 
 	playerAlive = TRUE;
 	playerAliveB = TRUE;
