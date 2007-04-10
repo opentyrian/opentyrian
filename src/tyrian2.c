@@ -300,6 +300,8 @@ void JE_titleScreen( JE_boolean animate )
 		waitForDemo = 2000;
 		JE_textMenuWait(&waitForDemo, FALSE);
 
+		/* TODO: Crapload of stuff */
+
 		if (newkey)
 		{
 			switch (lastkey_sym)
