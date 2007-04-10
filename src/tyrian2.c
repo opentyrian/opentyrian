@@ -129,16 +129,16 @@ void JE_main( void )
 		goto start_level_first;
 	}
 
-	px = 100;
-	py = 180;
+	PX = 100;
+	PY = 180;
 
-	pxB = 190;
-	pyB = 180;
+	PXB = 190;
+	PYB = 180;
 
 	playerHNotReady = TRUE;
 
-	lastPXShotMove = px;
-	lastPYShotMove = py;
+	lastPXShotMove = PX;
+	lastPYShotMove = PY;
 
 	if (twoPlayerMode)
 	{
@@ -148,7 +148,7 @@ void JE_main( void )
 	}
 
 	tempScreenSeg = VGAScreen;
-	/* TODO JE_drawOptions();*/
+	JE_drawOptions();
 
 	if (twoPlayerMode)
 	{
@@ -158,8 +158,13 @@ void JE_main( void )
 	}
 	JE_outText(268, temp, levelName, 12, 4);
 
-	/* TODO */
+	JE_showVGA();
+	/* TODO JE_gammaCorrect(&colors, gammaCorrection);*/
+	JE_fadeColor(50);
 
+	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
+
+	/* TODO */
 }
 
 void JE_titleScreen( JE_boolean animate )

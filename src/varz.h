@@ -314,10 +314,10 @@ extern JE_boolean keyMoveWait;
 extern JE_boolean makeMouseDelay;
 extern JE_word playerInvulnerable1, playerInvulnerable2;
 extern JE_integer lastPXShotMove, lastPYShotMove;
-extern JE_integer pxB, pyB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB, lastTurnB, lastTurn2B, tempLastTurn2B;
+extern JE_integer PXB, PYB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB, lastTurnB, lastTurn2B, tempLastTurn2B;
 extern JE_byte stopWaitXB, stopWaitYB;
 extern JE_word mouseXB, mouseYB;
-extern JE_integer px, py, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange, lastTurn, lastTurn2, tempLastTurn2;
+extern JE_integer PX, PY, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange, lastTurn, lastTurn2, tempLastTurn2;
 extern JE_byte stopWaitX, stopWaitY;
 extern JE_integer PYHist[3], PYHistB[3];
 extern JE_word option1Draw, option2Draw, option1Item, option2Item;
@@ -378,12 +378,12 @@ void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );
 
 void JE_tyrianHalt( JE_byte code ); /* This ends the game */
-void JE_initplayershot( JE_word portnum, JE_byte temp, JE_word px, JE_word py,
+void JE_initPlayerShot( JE_word portnum, JE_byte temp, JE_word px, JE_word py,
                         JE_word mousex, JE_word mousey,
                         JE_word wpnum, JE_byte playernum );
 void JE_doSpecialShot( JE_byte playernum, JE_integer *armor, JE_shortint *shield );
 
-void JE_powerup( JE_byte port );
+void JE_powerUp( JE_byte port );
 void JE_wipeShieldArmorBars( void );
 JE_byte JE_playerDamage( JE_word tempx, JE_word tempy, JE_byte temp,
                          JE_integer *px, JE_integer *py,
@@ -392,19 +392,19 @@ JE_byte JE_playerDamage( JE_word tempx, JE_word tempy, JE_byte temp,
                          JE_integer *ArmorLevel,
                          JE_shortint *Shield );
 
-void SetupExplosion( JE_integer x, JE_integer y, JE_integer explodetype );
-void setupexplosionlarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );
+void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodetype );
+void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );
 
-void DrawShield( void );
-void DrawArmor( void );
+void JE_drawShield( void );
+void JE_drawArmor( void );
 
-void PortConfigs( void );
+void JE_portConfigs( void );
 
-void ResetPlayerH( void );
+void JE_resetPlayerH( void );
 
-void DoSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ); /*SuperPixels*/
-void DrawSP( void );
+void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ); /*SuperPixels*/
+void JE_drawSP( void );
 
-void DrawOptionLevel( void );
+void JE_drawOptionLevel( void );
 
 #endif /* VARZ_H */

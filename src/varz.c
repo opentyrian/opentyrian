@@ -19,6 +19,9 @@
  */
 #include "opentyr.h"
 #include "episodes.h"
+#include "config.h"
+#include "newshape.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "varz.h"
@@ -356,9 +359,17 @@ JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
 JE_boolean playerAlive, playerAliveB;
 JE_byte playerStillExploding, playerStillExploding2;
-JE_byte *eShapes1, *eShapes2, *eShapes3, *eShapes4, *eShapes5, *eShapes6;
 
-JE_byte *shapesC1, *shapes6, *shapes9, *shapesW2;
+JE_byte *eShapes1 = NULL,
+        *eShapes2 = NULL,
+        *eShapes3 = NULL,
+        *eShapes4 = NULL,
+        *eShapes5 = NULL,
+        *eShapes6 = NULL;
+JE_byte *shapesC1 = NULL,
+        *shapes6  = NULL,
+        *shapes9  = NULL,
+        *shapesW2 = NULL;
 
 JE_word eShapes1Size,
         eShapes2Size,
@@ -383,12 +394,12 @@ JE_word playerInvulnerable1, playerInvulnerable2;
 
 JE_integer lastPXShotMove, lastPYShotMove;
 
-JE_integer pxB, pyB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
+JE_integer PXB, PYB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
            lastTurnB, lastTurn2B, tempLastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
 JE_word mouseXB, mouseYB;
 
-JE_integer px, py, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange,
+JE_integer PX, PY, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange,
            lastTurn, lastTurn2, tempLastTurn2;
 JE_byte stopWaitX, stopWaitY;
 
@@ -477,3 +488,172 @@ JE_boolean  linkToPlayer;
 JE_integer baseArmor, baseArmor2;
 JE_word shipGR, shipGR2;
 JE_word shipGRSeg, shipGROfs, shipGR2Seg, shipGR2Ofs;
+
+void JE_drawOptions( void )
+{
+	SDL_Surface *temp_surface;
+
+	if(twoPlayerMode)
+	{
+		option1Draw = 108;
+		option2Draw = 126;
+		if (pItemsPlayer2[3] == 0)
+		{
+			option1Draw = 0;
+		}
+		if (pItemsPlayer2[4] == 0)
+		{
+			option2Draw = 0;
+		}
+		option1Item = pItemsPlayer2[3];
+		option2Item = pItemsPlayer2[4];
+		tempX = PXB;
+		tempY = PYB;
+	} else {
+		option1Draw = 64;
+		option2Draw = 82;
+		option1Item = pItems[3];
+		option2Item = pItems[4];
+		if (option1Item == 0)
+		{
+			option1Draw = 0;
+		}
+		if (option2Item == 0)
+		{
+			option2Draw = 0;
+		}
+		tempX = PX;
+		tempY = PY;
+	}
+	option1X = tempX - 8;
+	option1LastX = 0;
+	option1Y = tempY + 2;
+	option1LastY = 0;
+	option2X = tempX + 8;
+	option2LastX = 0;
+	option2Y = tempY + 2;
+	option2LastY = 0;
+
+	option1Ammo = options[option1Item-1].ammo;
+	option2Ammo = options[option2Item-1].ammo;
+
+	optionAni1Go = options[option1Item-1].option == 1;
+	optionAni2Go = options[option2Item-1].option == 1;
+	option1Stop  = options[option1Item-1].stop;
+	option1MaxX  = options[option1Item-1].opspd;
+	option1MinX  = -option1MaxX;
+	option1MaxY  = options[option1Item-1].opspd;
+	option1MinY  = -option1MaxY;
+	option2Stop  = options[option2Item-1].stop;
+	option2MaxX  = options[option2Item-1].opspd;
+	option2MinX  = -option2MaxX;
+	option2MaxY  = options[option2Item-1].opspd;
+	option2MinY  = -option2MaxY;
+
+	if (option1Ammo > 0)
+	{
+		option1AmmoMax = option1Ammo / 10;
+	} else {
+		option1AmmoMax = 2;
+	}
+	if (option1AmmoMax == 0)
+	{
+		option1AmmoMax++;
+	}
+	option1AmmoRechargeWaitMax = (105 - option1Ammo) * 4;
+	option1AmmoRechargeWait = option1AmmoRechargeWaitMax;
+
+	if (option2Ammo > 0)
+	{
+		option2AmmoMax = option2Ammo / 10;
+	} else {
+		option2AmmoMax = 2;
+	}
+	if (option2AmmoMax == 0)
+	{
+		option2AmmoMax++;
+	}
+	option2AmmoRechargeWaitMax = (105 - option2Ammo) * 4;
+	option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
+
+	if (tempScreenSeg == VGAScreen->pixels)
+    {
+		if (option1Draw > 0)
+		{
+			JE_bar(284, option1Draw, 284 + 28, option1Draw + 15, 0);
+		}
+		if (option2Draw > 0)
+		{
+			JE_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
+		}
+	} else {
+		if (option1Draw > 0)
+		{
+			/* TODO vga256c.BAR(284, option1Draw, 284 + 28, option1Draw + 15, 0);*/
+		}
+		if (option2Draw > 0)
+		{
+			/* TODO vga256c.BAR(284, option2Draw, 284 + 28, option2Draw + 15, 0);*/
+		}
+	}
+
+	temp_surface = tempScreenSeg;
+	if (options[option1Item-1].icongr > 0)
+	{
+		JE_newDrawCShapeNum(OPTION_SHAPES, options[option1Item-1].icongr, 284, option1Draw);
+	}
+	tempScreenSeg = temp_surface;
+	if (options[option2Item-1].icongr > 0)
+	{
+		JE_newDrawCShapeNum(OPTION_SHAPES, options[option2Item-1].icongr, 284, option2Draw);
+	}
+	tempScreenSeg = temp_surface;
+
+	if (option1Draw > 0)
+	{
+		if (tempScreenSeg == VGAScreen->pixels)
+		{
+			/* TODO JE_barDraw(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
+		} else {
+			/* TODO JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
+		}
+	}
+	if (option2Draw > 0)
+	{
+		if (tempScreenSeg == VGAScreen->pixels)
+		{
+			/* TODO JE_barDraw(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+		} else {
+			/* TODO JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+		}
+	}
+
+	if (option1Ammo == 0)
+	{
+		option1Ammo = -1;
+	}
+	if (option2Ammo == 0)
+	{
+		option2Ammo = -1;
+	}
+
+	optionAni1 = 1;
+	optionAni2 = 1;
+	optionCharge1Wait = 20;
+	optionCharge2Wait = 20;
+	optionCharge1 = 0;
+	optionCharge2 = 0;
+
+	JE_drawOptionLevel();
+}
+
+void JE_drawOptionLevel( void )
+{
+	if (twoPlayerMode)
+	{
+		for (temp = 1; temp <= 3; temp++)
+		{
+			/* TODO vga256c.BAR(268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((pItemsPlayer2[6] - 100) == temp) * 11);*/
+		}
+	}
+}
