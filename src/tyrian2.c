@@ -40,6 +40,125 @@
 
 #include <string.h>
 
+/* Level Event Data */
+struct JE_EventRecType eventRec[EVENT_MAXIMUM]; /* [1..eventMaximum] */
+JE_word levelEnemyMax;
+JE_word levelEnemyFrequency;
+JE_word levelEnemy[40]; /* [1..40] */
+
+char tempstr[21]; /* string [20] */
+
+
+void JE_main( void )
+{
+	loadTitleScreen = TRUE;
+
+	/* Setup Player Items/General Data */
+	fixedExplosions = FALSE;
+	explosionMoveUp = 0;
+	for (z = 0; z < 12; z++)
+	{
+		pItems[z] = 0;
+	}
+	shieldSet = 5;
+
+	/* Setup Graphics */
+	JE_initvga256();
+	JE_updateColorsFast(&black);
+
+	/*debuginfo('Initiating Configuration');*/
+
+
+	/* Setup Input Device */
+	/*JConfigure:=false;*/
+
+	debug = FALSE;
+
+	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
+
+	/*============================GAME ROUTINES=================================*/
+	/* We need to jump to the beginning to make space for the routines          */
+	/*==========================================================================*/
+	goto start_level_first;
+
+	/* TODO */
+
+	start_level_first:
+
+	/*stopsequence;*/
+	/*debuginfo('Setting Master Sound Volume');*/
+	/* TODO JE_setVol(Tyr_musicvolume, fxvolume);*/
+
+	JE_loadCompShapes(&shapes6, &shapes6Size, '1');  /* Items */
+
+	endLevel = FALSE;
+	reallyEndLevel = FALSE;
+	playerEndLevel = FALSE;
+	extraGame = FALSE;
+
+	/*debuginfo('Loading LEVELS.DAT');*/
+
+	doNotSaveBackup = FALSE;
+	/* TODO JE_loadMap();*/
+	/* TODO JE_selectSong (0xC001);*/  /*Fade song out*/
+
+	playerAlive = TRUE;
+	playerAliveB = TRUE;
+	oldDifficultyLevel = difficultyLevel;
+	if (episodeNum == 4)
+	{
+		difficultyLevel--;
+	}
+	if (difficultyLevel < 1)
+	{
+		difficultyLevel = 1;
+	}
+
+	if (loadDestruct)
+	{
+		if (eShapes1 != NULL)
+		{
+			free(eShapes1);
+		}
+		/* TODO JE_destructGame();*/
+		loadDestruct = FALSE;
+		loadTitleScreen = TRUE;
+		goto start_level_first;
+	}
+
+	px = 100;
+	py = 180;
+
+	pxB = 190;
+	pyB = 180;
+
+	playerHNotReady = TRUE;
+
+	lastPXShotMove = px;
+	lastPYShotMove = py;
+
+	if (twoPlayerMode)
+	{
+		JE_loadPic(6, FALSE);
+	} else {
+		JE_loadPic(3, FALSE);
+	}
+
+	tempScreenSeg = VGAScreen;
+	/* TODO JE_drawOptions();*/
+
+	if (twoPlayerMode)
+	{
+		temp = 76;
+	} else {
+		temp = 118;
+	}
+	JE_outText(268, temp, levelName, 12, 4);
+
+	/* TODO */
+
+}
+
 void JE_titleScreen( JE_boolean animate )
 {
 	JE_boolean quit = 0;
@@ -94,7 +213,7 @@ void JE_titleScreen( JE_boolean animate )
 				{
 					JE_fadeBlack(10);
 				}
-				JE_loadPIC(4, FALSE);
+				JE_loadPic(4, FALSE);
 
 				memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
@@ -332,7 +451,7 @@ void JE_openingAnim( void )
 		memset(black, 63, sizeof(black));
 		JE_fadeColors(&colors, &black, 0, 255, 50);
 
-		JE_loadPIC(10, FALSE);
+		JE_loadPic(10, FALSE);
 		JE_showVGA();
 
 		JE_fadeColors(&black, &colors, 0, 255, 50);
@@ -343,7 +462,7 @@ void JE_openingAnim( void )
 
 		JE_fadeBlack(15);
 
-		JE_loadPIC(12, FALSE);
+		JE_loadPic(12, FALSE);
 		JE_showVGA();
 
 		memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
