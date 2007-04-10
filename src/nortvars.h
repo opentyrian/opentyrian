@@ -21,21 +21,20 @@
 #define NORTVARS_H
 
 #include "opentyr.h"
-#include "vga256d.h"
 
-typedef JE_char JE_textbuffer[4096]; /* [1..4096] */
+typedef JE_char JE_TextBuffer[4096]; /* [1..4096] */
 
-struct JE_colorrec {
+struct JE_ColorRec {
 	JE_byte r, g, b;
 };
 
-typedef struct JE_colorrec JE_colortype[256]; /* [0..255] */
+typedef struct JE_ColorRec JE_ColorType[256]; /* [0..255] */
 
-/*typedef JE_byte JE_shapetypeone[168];*/ /* [0..168-1] */ /* defined in vga256d */
-typedef JE_shapetypeone JE_shapetype[304]; /* [1..304] */
+typedef JE_byte JE_ShapeTypeOne[168]; /* [0..168-1] */
+typedef JE_ShapeTypeOne JE_ShapeType[304]; /* [1..304] */
 
-typedef JE_byte JE_newshapetypeone[182]; /* [0..168+14-1] */
-typedef JE_newshapetypeone JE_newshapetype[304]; /* [1..304] */
+typedef JE_byte JE_NewShapeTypeOne[182]; /* [0..168+14-1] */
+typedef JE_NewShapeTypeOne JE_NewShapeType[304]; /* [1..304] */
 
 #ifndef NO_EXTERNS
 extern JE_boolean scanForJoystick;
@@ -46,15 +45,15 @@ extern JE_boolean mouse_threeButton;
 extern JE_word mouseX, mouseY, mouseButton;
 #endif
 
-void JE_loadShapeFile( JE_shapetype *Shapes, JE_char s );
-void JE_loadNewShapeFile( JE_newshapetype *Shapes, JE_char s );
+void JE_loadShapeFile( JE_ShapeType *shapes, JE_char s );
+void JE_loadNewShapeFile( JE_NewShapeType *shapes, JE_char s );
 
 void JE_compressShapeFileC( JE_char s );
-void JE_loadCompShapes( JE_byte **Shapes, JE_word *ShapeSize, JE_char s );
+void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s );
 
-JE_word JE_mousePosition( JE_word *MouseX, JE_word *MouseY );
+JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY );
 JE_boolean JE_buttonPressed( void );
-void JE_setMousePosition( JE_word MouseX, JE_word MouseY );
+void JE_setMousePosition( JE_word mouseX, JE_word mouseY );
 
 JE_boolean JE_anyButton( void );
 
@@ -72,12 +71,12 @@ void JE_wipekey( void );
 void JE_drawansi( JE_string ansiscreen );
 /*JE_boolean JE_waitaction( JE_byte time );*/
 
-void JE_drawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_superDrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_drawShape2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
+void JE_superDrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
+void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *shape );
 
-void JE_drawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_superDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
-void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *Shape );
+void JE_drawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
+void JE_superDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
+void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *shape );
 
 #endif /* NORTVARS_H */

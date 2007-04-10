@@ -25,14 +25,14 @@
 
 #define MAX_PAL 23
 
-typedef JE_colortype JE_paltype[MAX_PAL]; /* [1..maxpal] */
+typedef JE_ColorType JE_PalType[MAX_PAL]; /* [1..maxpal] */
 
 #ifndef NO_EXTERNS
-extern JE_paltype palettes;
-extern JE_word palnum;
+extern JE_PalType palettes;
+extern JE_word palNum;
 #endif
 
-void JE_loadpals( void );
-void JE_ZPal( JE_byte palette );
+void JE_loadPals( void );
+void JE_zPal( JE_byte palette );
 
 #endif /* PALLIB_H */

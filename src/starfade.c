@@ -27,39 +27,39 @@
 #include "starfade.h"
 #undef NO_EXTERNS
 
-JE_colortype black = {{0,0,0}}; /* Rest is filled with 0's too */
-JE_colortype colors, colors2;
+JE_ColorType black = {{0,0,0}}; /* Rest is filled with 0's too */
+JE_ColorType colors, colors2;
 
-void JE_updateColorsFast( JE_colortype *ColorBuffer )
+void JE_updateColorsFast( JE_ColorType *colorBuffer )
 {
 	SDL_Color p[256];
 	int i;
 
 	for (i = 0; i < 256; i++)
 	{
-		p[i].r = (*ColorBuffer)[i].r << 2;
-		p[i].g = (*ColorBuffer)[i].g << 2;
-		p[i].b = (*ColorBuffer)[i].b << 2;
+		p[i].r = (*colorBuffer)[i].r << 2;
+		p[i].g = (*colorBuffer)[i].g << 2;
+		p[i].b = (*colorBuffer)[i].b << 2;
 	}
 
 	SDL_SetColors(VGAScreen, p, 0, 256);
 }
 
-void JE_fadeColors( JE_colortype *FromColors, JE_colortype *ToColors, JE_byte StartCol, JE_byte NoColors, JE_byte NoSteps )
+void JE_fadeColors( JE_ColorType *fromColors, JE_ColorType *toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps )
 {
 	SDL_Color p[256];
 	int s, i;
 
-	for (s = 0; s <= NoSteps; s++)
+	for (s = 0; s <= noSteps; s++)
 	{
 		setdelay(1);
-		for (i = 0; i <= NoColors; i++)
+		for (i = 0; i <= noColors; i++)
 		{
-			p[i].r = ((*FromColors)[i].r + ((((*ToColors)[i].r - (*FromColors)[i].r) * s) / NoSteps)) << 2;
-			p[i].g = ((*FromColors)[i].g + ((((*ToColors)[i].g - (*FromColors)[i].g) * s) / NoSteps)) << 2;
-			p[i].b = ((*FromColors)[i].b + ((((*ToColors)[i].b - (*FromColors)[i].b) * s) / NoSteps)) << 2;
+			p[i].r = ((*fromColors)[i].r + ((((*toColors)[i].r - (*fromColors)[i].r) * s) / noSteps)) << 2;
+			p[i].g = ((*fromColors)[i].g + ((((*toColors)[i].g - (*fromColors)[i].g) * s) / noSteps)) << 2;
+			p[i].b = ((*fromColors)[i].b + ((((*toColors)[i].b - (*fromColors)[i].b) * s) / noSteps)) << 2;
 		}
-		SDL_SetColors(VGAScreen, p, StartCol, NoColors + 1);
+		SDL_SetColors(VGAScreen, p, startCol, noColors + 1);
 		wait_delay();
 	}
 }

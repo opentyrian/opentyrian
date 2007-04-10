@@ -341,7 +341,7 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
 	SDL_SetColors(VGAScreen, &color, col, 1);
 }
 
-void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s )
+void JE_drawgraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )
 {
 	char *vga = VGAScreen->pixels;
 	int i;
@@ -415,19 +415,19 @@ void JE_putimage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
 	printf("!!! STUB: %s:%d:JE_putimage16\n", __FILE__, __LINE__);
 }
-void JE_absDrawGraphic( JE_shapetypeone s )
+void JE_absDrawGraphic( JE_ShapeTypeOne s )
 {
 	printf("!!! STUB: %s:%d:JE_absDrawGraphic\n", __FILE__, __LINE__);
 }
-void JE_drawgraphicover( JE_word x, JE_word y, JE_shapetypeone s )
+void JE_drawgraphicover( JE_word x, JE_word y, JE_ShapeTypeOne s )
 {
 	printf("!!! STUB: %s:%d:JE_drawgraphicover\n", __FILE__, __LINE__);
 }
-void JE_absDrawGraphicOver( JE_shapetypeone s )
+void JE_absDrawGraphicOver( JE_ShapeTypeOne s )
 {
 	printf("!!! STUB: %s:%d:JE_absDrawGraphicOver\n", __FILE__, __LINE__);
 }
-void JE_readgraphic( JE_integer x, JE_integer y, JE_shapetypeone s )
+void JE_readgraphic( JE_integer x, JE_integer y, JE_ShapeTypeOne s )
 {
 	printf("!!! STUB: %s:%d:JE_readgraphic\n", __FILE__, __LINE__);
 }

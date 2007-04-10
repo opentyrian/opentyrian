@@ -24,12 +24,12 @@
 #include "nortvars.h"
 
 #ifndef NO_EXTERNS
-extern JE_colortype black, colors, colors2;
+extern JE_ColorType black, colors, colors2;
 #endif
 
 /*void UpdateColorsSlow( JE_colortype *ColorBuffer );*/
-void JE_updateColorsFast( JE_colortype *ColorBuffer );
-void JE_fadeColors( JE_colortype *FromColors, JE_colortype *ToColors, JE_byte StartCol, JE_byte NoColors, JE_byte NoSteps );
+void JE_updateColorsFast( JE_ColorType *ColorBuffer );
+void JE_fadeColors( JE_ColorType *fromColors, JE_ColorType *toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps );
 void JE_fadeBlack( JE_byte steps );
 void JE_fadeColor( JE_byte steps );
 void JE_fadeWhite( JE_byte steps );

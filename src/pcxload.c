@@ -23,35 +23,36 @@
 #include "pcxload.h"
 #undef NO_EXTERNS
 
-JE_colortype Colors2;
+JE_ColorType colors2;
 JE_word width, depth;
-JE_word Bytes;
+JE_word bytes;
 JE_char c, c2;
-JE_boolean overrideblack = FALSE;
+JE_boolean overrideBlack = FALSE;
 
-void JE_updatePCXColorsSlow( JE_colortype *ColorBuffer )
+void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer )
 {
 	int i;
 	for (i = 0; i < 256; i++)
 	{
-		ColorBuffer[i]->r >>= 2;
-		ColorBuffer[i]->g >>= 2;
-		ColorBuffer[i]->b >>= 2;
+		colorBuffer[i]->r >>= 2;
+		colorBuffer[i]->g >>= 2;
+		colorBuffer[i]->b >>= 2;
 	}
 }
 
-void JE_loadPCX( JE_string Name, JE_boolean storepalette)
+void JE_loadPCX( JE_string name, JE_boolean storePalette)
 {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
-#endif
-	struct JE_pcxheader_rec header;
+	struct JE_PCXHeader_rec header;
 	/* JE_char textbuf[1024]; [1..1024] Unused */
 	FILE *fi;
 	/* FILE *PCXfile; Unused */
 	int i;
 
-	fi = fopen(Name, "rb");
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
+#endif
+
+	fi = fopen(name, "rb");
 	fread(&header.manufacturer, 1, 1, fi);
 	fread(&header.version, 1, 1, fi);
 	fread(&header.encoding, 1, 1, fi);

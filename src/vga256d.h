@@ -21,6 +21,7 @@
 #define VGA256D_H
 
 #include "opentyr.h"
+#include "nortvars.h"
 
 #include "SDL.h"
 
@@ -29,7 +30,7 @@
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 typedef JE_shape16B *JE_shape16;
-typedef JE_byte JE_shapetypeone[168]; /* [0..168-1] originally: JE_word JE_shapetypeone[84]; [1..84] */
+/*typedef JE_byte JE_shapetypeone[168];*/ /* [0..168-1] originally: JE_word JE_shapetypeone[84]; [1..84] */
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
@@ -73,11 +74,11 @@ void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c );
 void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e );
 void JE_getimage16( JE_word a, JE_byte b, JE_shape16B *p );
 void JE_putimage16( JE_word a, JE_byte b, JE_shape16B *p );
-void JE_drawgraphic( JE_word x, JE_word y, JE_shapetypeone s );
-void JE_absDrawGraphic( JE_shapetypeone s );
-void JE_drawgraphicover( JE_word x, JE_word y, JE_shapetypeone s );
-void JE_absDrawGraphicOver( JE_shapetypeone s );
-void JE_readgraphic( JE_integer x, JE_integer y, JE_shapetypeone s );
+void JE_drawgraphic( JE_word x, JE_word y, JE_ShapeTypeOne s );
+void JE_absDrawGraphic( JE_ShapeTypeOne s );
+void JE_drawgraphicover( JE_word x, JE_word y, JE_ShapeTypeOne s );
+void JE_absDrawGraphicOver( JE_ShapeTypeOne s );
+void JE_readgraphic( JE_integer x, JE_integer y, JE_ShapeTypeOne s );
 void JE_getk( JE_char *y );
 void JE_getupk( JE_char *k );
 JE_boolean JE_keypressed( JE_char *kp );

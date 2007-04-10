@@ -26,31 +26,31 @@
 #include "pallib.h"
 #undef NO_EXTERNS
 
-JE_paltype palettes;
-JE_word palnum;
+JE_PalType palettes;
+JE_word palNum;
 
-void JE_loadpals( void )
+void JE_loadPals( void )
 {
 	FILE *f;
 	int i;
 
-	palnum = 0;
+	palNum = 0;
 
 	f = fopen(JE_locateFile("PALETTE.DAT"), "rb");
-	while (palnum < MAX_PAL && !feof(f))
+	while (palNum < MAX_PAL && !feof(f))
 	{
 		for (i = 0; i < 256; i++)
 		{
-			palettes[palnum][i].r = getc(f);
-			palettes[palnum][i].g = getc(f);
-			palettes[palnum][i].b = getc(f);
+			palettes[palNum][i].r = getc(f);
+			palettes[palNum][i].g = getc(f);
+			palettes[palNum][i].b = getc(f);
 		}
-		palnum++;
+		palNum++;
 	}
 	fclose(f);
 }
 
-void JE_ZPal( JE_byte palette )
+void JE_zPal( JE_byte palette )
 {
 	JE_updateColorsFast(&palettes[palette]);
 }

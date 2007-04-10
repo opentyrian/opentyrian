@@ -164,7 +164,7 @@ int main( int argc, char *argv[] )
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/
 
-	JE_loadpals();
+	JE_loadPals();
 
 	SDL_LockSurface(VGAScreen);
 	JE_openingAnim();
