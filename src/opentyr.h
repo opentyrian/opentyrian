@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <math.h> /* For the ROUND() macro */
 
+#define STUB(name) printf("!!! STUB: %s:%d:" #name "\n", __FILE__, __LINE__)
+
 #define ROUND(x) (floor((x)+0.5))
 
 /* Gets number of elements in an array.

@@ -83,57 +83,57 @@ void audio_cb(void *userdata, Uint8 *feedme, int howmuch)
 
 void JE_deinitialize( void )
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_deinitialize);
 }
 
 void JE_play( void )
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_play);
 }
 
 /* SYN: selectSong is called with 0 to disable the current song. Calling it with 1 will start the current song if not playing,
    or restart it if it is. */
 void JE_selectSong( JE_word value )
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_selectSong);
 }
 
 void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_samplePlay);
 }
 
 void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_bigSamplePlay);
 }
 
 /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
 void JE_setVol(JE_word volume, JE_word sample)
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_setVol);
 }
 
 JE_word JE_getVol( void )
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_getVol);
 	return 0;
 }
 
 JE_word JE_getSampleVol( void )
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_getSampleVol);
 	return 0;
 }
 
 void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dmahi)
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_multiSampleInit);
 }
 
 void JE_multiSampleMix( void )
 {
-	/* TODO: Stub function, need to fill in */
+	STUB(JE_multiSampleMix);
 }
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)

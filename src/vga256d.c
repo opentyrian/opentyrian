@@ -84,12 +84,12 @@ void JE_getVGA( void )
 
 void JE_onScreen( void )
 {
-	printf("!!! STUB: %s:%d:JE_onScreen\n", __FILE__, __LINE__);
+	STUB(JE_onScreen);
 }
 
 void JE_offScreen( void )
 {
-	printf("!!! STUB: %s:%d:JE_offScreen\n", __FILE__, __LINE__);
+	STUB(JE_offScreen);
 }
 
 void JE_disable_refresh( void )
@@ -409,33 +409,33 @@ JE_boolean JE_kp( void )
 
 void JE_getimage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
-	printf("!!! STUB: %s:%d:JE_getimage16\n", __FILE__, __LINE__);
+	STUB(JE_getimage16);
 }
 void JE_putimage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
-	printf("!!! STUB: %s:%d:JE_putimage16\n", __FILE__, __LINE__);
+	STUB(JE_putimage16);
 }
 void JE_absDrawGraphic( JE_ShapeTypeOne s )
 {
-	printf("!!! STUB: %s:%d:JE_absDrawGraphic\n", __FILE__, __LINE__);
+	STUB(JE_absDrawGraphic);
 }
 void JE_drawgraphicover( JE_word x, JE_word y, JE_ShapeTypeOne s )
 {
-	printf("!!! STUB: %s:%d:JE_drawgraphicover\n", __FILE__, __LINE__);
+	STUB(JE_drawgraphicover);
 }
 void JE_absDrawGraphicOver( JE_ShapeTypeOne s )
 {
-	printf("!!! STUB: %s:%d:JE_absDrawGraphicOver\n", __FILE__, __LINE__);
+	STUB(JE_absDrawGraphicOver);
 }
 void JE_readgraphic( JE_integer x, JE_integer y, JE_ShapeTypeOne s )
 {
-	printf("!!! STUB: %s:%d:JE_readgraphic\n", __FILE__, __LINE__);
+	STUB(JE_readgraphic);
 }
 void JE_wait( JE_byte min, JE_byte sec, JE_byte hun )
 {
-	printf("!!! STUB: %s:%d:JE_wait\n", __FILE__, __LINE__);
+	STUB(JE_wait);
 }
 void JE_darkenscreen( void )
 {
-	printf("!!! STUB: %s:%d:JE_darkenscreen\n", __FILE__, __LINE__);
+	STUB(JE_darkenscreen);
 }
