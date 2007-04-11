@@ -648,3 +648,16 @@ void JE_loadMainShapeTables( void )
 
 	fclose(f);
 }
+
+/* Draws a message at the bottom text window on the playing screen */
+void JE_drawTextWindow( JE_string text )
+{
+	tempScreenSeg = VGAScreen; /*sega000*/
+	if (textErase > 0)
+	{
+		JE_newDrawCShapeNum(OPTION_SHAPES, 36, 16, 189);
+	}
+	textErase = 100;
+	tempScreenSeg = VGAScreen; /*sega000*/
+	JE_outText(20, 190, text, 0, 4);
+}

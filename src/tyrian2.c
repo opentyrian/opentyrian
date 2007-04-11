@@ -36,6 +36,7 @@
 #include "params.h"
 #include "network.h"
 #include "loudness.h"
+#include "backgrnd.h"
 
 #include "tyrian2.h"
 
@@ -165,6 +166,164 @@ void JE_main( void )
 	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
 
 	/* TODO */
+
+	/* MAPX will already be set correctly */
+	mapy = 300 - 8;
+	mapy2 = 600 - 8;
+	mapy3 = 600 - 8;
+	mapyPos = (mapy * 28) + megaDataOfs - 2; /* TODO */
+	mapy2Pos = (mapy2 * 28) + megaData2Ofs - 2; /* TODO */
+	mapy3Pos = (mapy3 * 30) + megaData3Ofs - 2; /* TODO */
+	mapxPos = 0;
+	mapxOfs = 0;
+	mapx2Pos = 0;
+	mapx3Pos = 0;
+	mapx3Ofs = 0;
+	mapxbpPos = 0;
+	mapx2bpPos = 0;
+	mapx3bpPos = 0;
+
+	map1yDelay = 1;
+	map1yDelayMax = 1;
+	map2yDelay = 1;
+	map2yDelayMax = 1;
+
+	musicFade = FALSE;
+
+	backPos = 0;
+	backPos2 = 0;
+	backPos3 = 0;
+	power = 0;
+	starY = 320;
+
+	/* Setup maximum player speed */
+	/* ==== Mouse Input ==== */
+/*	if (timMode) then begin
+		basespeed = 80;
+		basespeedkeyh = (basespeed / 3) + 1;
+		basespeedkeyv = (basespeed / 4) + 1;
+	} else {*/
+	baseSpeed = 6;
+	baseSpeedKeyH = (baseSpeed / 4) + 1;
+	baseSpeedKeyV = (baseSpeed / 4) + 1;
+/*	}*/
+
+	baseSpeedOld = baseSpeed;
+	baseSpeedOld2 = ROUND(baseSpeed * 0.7f) + 1;
+	baseSpeed2  = 100 - (((baseSpeed + 1) / 4) + 1);
+	baseSpeed2B = 100 + 100 - baseSpeed2;
+	baseSpeed   = 100 - (((baseSpeed + 1) / 4) + 1);
+	baseSpeedB  = 100 + 100 - baseSpeed;
+	shadowyDist = 10;
+
+	/* Setup player ship graphics */
+	/* TODO JE_GetShipInfo();*/
+	tempI     = ROUND(((PX - mouseX) / (100 - baseSpeed)) * 2) * 168;
+	lastTurn  = 0;
+	lastTurnB = 0;
+	lastTurn2 = 0;
+	lastTurnB = 0;
+
+	playerInvulnerable1 = 100;
+	playerInvulnerable2 = 100;
+
+	newkey = FALSE;
+
+	/* Initialize Level Data and Debug Mode */
+	levelEnd = 255;
+	levelEndWarp = -4;
+	levelEndFxWait = 0;
+	warningCol = 120;
+	warningColChange = 1;
+	warningSoundDelay = 0;
+	armorShipDelay = 50;
+
+	bonusLevel = FALSE;
+	readyToEndLevel = FALSE;
+	firstGameOver = TRUE;
+	eventLoc = 1;
+	curLoc = 0;
+	backMove = 1;
+	backMove2 = 2;
+	backMove3 = 3;
+	explodeMove = 640;
+	enemiesActive = TRUE;
+	for(temp = 0; temp < 3; temp++)
+	{
+		button[temp] = FALSE;
+	}
+	stopBackgrounds = FALSE;
+	stopBackgroundNum = 0;
+	background3x1   = FALSE;
+	background3x1b  = FALSE;
+	background3over = 0;
+	background2over = 1;
+	topEnemyOver = FALSE;
+	skyEnemyOverAll = FALSE;
+	smallEnemyAdjust = FALSE;
+	starActive = TRUE;
+	enemyContinualDamage = FALSE;
+	levelEnemyFrequency = 96;
+	quitRequested = FALSE;
+
+	memset(statBar, 0, sizeof(statBar));
+
+	forceEvents = FALSE;  /*Force events to continue if background movement = 0*/
+
+	uniqueEnemy = FALSE;  /*Look in MakeEnemy under shape bank*/
+
+	superEnemy254Jump = 0;   /*When Enemy with PL 254 dies*/
+
+	/* Filter Status */
+	filterActive = TRUE;
+	filterFade = TRUE;
+	filterFadeStart = FALSE;
+	levelFilter = -99;
+	levelBrightness = -14;
+	levelBrightnessChg = 1;
+
+	background2notTransparent = FALSE;
+
+	/* Initially erase power bars */
+	lastPower = power / 10;
+
+	/* Initial Text */
+	JE_drawTextWindow(miscText[20]);
+
+	/* Setup Armor/Shield Data */
+	shieldWait = 1;
+	shield     = shields[pItems[9]-1].mpwr;
+	shieldT    = shields[pItems[9]-1].tpwr * 20;
+	shieldMax  = shield * 2;
+	shield2    = shields[pItemsPlayer2[9]-1].mpwr;
+	shieldMax2 = shield * 2;
+	/* TODO JE_drawShield();*/
+	/* TODO JE_drawArmor();*/
+
+	superBomb[0] = 0;
+	superBomb[2] = 0;
+
+	/* Set cubes to 0 */
+	cubeMax = 0;
+
+	lastPortPower[0] = 0;
+	lastPortPower[1] = 0;
+	lastPortPower[2] = 0;
+	lastPortPower[3] = 0;
+
+	/* Secret Level Display */
+	flash = 0;
+	flashChange = 1;
+	displayTime = 0;
+
+	JE_playSong(levelSong);
+
+	playerFollow = FALSE;
+
+	/*if not JConfigure and (InputDevice=1) then CalibrateJoy;*/
+
+	/* TODO JE_drawPortConfigButtons();*/
+
 }
 
 void JE_titleScreen( JE_boolean animate )
