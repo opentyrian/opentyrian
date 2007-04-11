@@ -27,6 +27,9 @@ extern JE_boolean timMode, richMode, recordDemo, robertWeird, constantPlay, cons
 extern JE_boolean stupidWindows;
 extern JE_boolean isNetworkGame, isNetworkActive;
 extern JE_boolean tyrianXmas;
+extern const char *pars[18][8];
 #endif
+
+void JE_paramCheck( int argc, char *argv[] );
 
 #endif /* PARAMS_H */
