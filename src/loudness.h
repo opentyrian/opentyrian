@@ -24,6 +24,9 @@
 
 #include "SDL.h"
 
+#define SFX_CHANNELS 7
+#define VOLUME_SCALING 2
+
 typedef JE_byte JE_MusicType [20000];
 
 #ifndef NO_EXTERNS
@@ -54,6 +57,8 @@ void JE_multiSampleMix( void );
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
 
 void JE_setVol(JE_word volume, JE_word sample); /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
+/* SYN: TODO: The bit about volume values seems to be inaccurate. I'll fix it later. :( */
+
 JE_word JE_getVol( void );
 JE_word JE_getSampleVol( void );
 

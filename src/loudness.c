@@ -34,24 +34,28 @@ JE_boolean repeated;
 JE_boolean playing;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
-Uint8 *final_audio_buffer;
-Uint8 *audio_pos;
+signed char *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
+signed char *channel_pos [SFX_CHANNELS];
+Uint32 channel_len [SFX_CHANNELS];
+int sound_init_state = FALSE;
 
-/* SYN: These are temporary while I get the bare bones audio working. */
-Uint8 *tmp_buffer;
-Uint8 *tmp_pos;
-Uint32 tmp_len;
-
-void audio_cb(void *userdata, Uint8 *feedme, int howmuch);
+void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
 
 /* SYN: The arguments to this function are probably meaningless now */
 void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror)
 {
     SDL_AudioSpec plz;
+	int i = 0;
+
+	sound_init_state = TRUE;
 	
-	tmp_len = 0;
-	tmp_pos = NULL;
-	tmp_buffer = NULL;
+	/*final_audio_buffer = NULL;
+	audio_pos = NULL;*/
+	for (i = 0; i < SFX_CHANNELS + 1; i++)
+	{
+		channel_buffer[i] = channel_pos[i] = NULL;
+		channel_len[i] = 0;
+	}
 	
     plz.freq = 11025;
     plz.format = AUDIO_S8;
@@ -62,33 +66,48 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 
     if ( SDL_OpenAudio(&plz, NULL) < 0 ) 
 	{
-        printf("WARNING: Failed to initialize audio. Bailing out.\n");
+        printf("WARNING: Failed to initialize SDL audio. Bailing out.\n");
         exit(1);
     }
     SDL_PauseAudio(0);
 }
 
-void audio_cb(void *userdata, Uint8 *feedme, int howmuch)
+void audio_cb(void *userdata, unsigned char *feedme, int howmuch)
 {
-	if (tmp_len == 0) 
-	{
-		return;
-	}
+	int ch, smp, qu;
+	
+	/* SYN: Mix sound channels and shove into audio buffer */
+	for (ch = 0; ch < SFX_CHANNELS; ch++) {
 		
-	howmuch = ( (Uint32) howmuch > tmp_len ? (int) tmp_len : howmuch);
-	SDL_MixAudio(feedme, tmp_pos, howmuch, SDL_MIX_MAXVOLUME);
-	tmp_pos += howmuch;
-	tmp_len -= howmuch;
+		/* SYN: Don't copy more data than is in the channel! */
+		qu = ( (Uint32) howmuch > channel_len[ch] ? (int) channel_len[ch] : howmuch);
+		
+		for (smp = 0; smp < qu; smp++)
+		{
+			feedme[smp] = ((signed char) feedme[smp] + (channel_pos[ch][smp] / VOLUME_SCALING ));
+		}
+		
+		channel_pos[ch] += qu;
+		channel_len[ch] -= qu;
+		
+		/* SYN: If we've emptied a channel buffer, let's free the memory and clear the channel. */
+		if (channel_len == 0)
+		{
+			free(channel_buffer[ch]);
+			channel_buffer[ch] = channel_pos[ch] = NULL;
+		}
+	}
 }
 
 void JE_deinitialize( void )
 {
-	STUB(JE_deinitialize);
+	/* SYN: TODO: Clean up any other audio stuff, if necessary. This should only be called when we're quitting. */
+	SDL_CloseAudio();
 }
 
 void JE_play( void )
 {
-	STUB(JE_play);
+	/* SYN: This proc isn't necessary, because filling the buffer is handled in the SDL callback function.*/
 }
 
 /* SYN: selectSong is called with 0 to disable the current song. Calling it with 1 will start the current song if not playing,
@@ -100,15 +119,18 @@ void JE_selectSong( JE_word value )
 
 void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 {
+	/* SYN: I don't think this function is used. */
 	STUB(JE_samplePlay);
 }
 
 void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 {
+	/* SYN: I don't think this function is used. */
 	STUB(JE_bigSamplePlay);
 }
 
 /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
+/* SYN: Either I'm misunderstanding Andreas's comments, or the information in them is inaccurate. */
 void JE_setVol(JE_word volume, JE_word sample)
 {
 	STUB(JE_setVol);
@@ -128,25 +150,39 @@ JE_word JE_getSampleVol( void )
 
 void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dmahi)
 {
-	STUB(JE_multiSampleInit);
+	/* SYN: I don't know if this function should do anything else. For now, it just checks to see if sound has
+	   been initialized and, if not, calls the main initialize function. */
+	
+	if (!sound_init_state)
+	{
+		JE_initialize(0, 0, 0, 0, 0);
+	}
 }
 
 void JE_multiSampleMix( void )
 {
-	STUB(JE_multiSampleMix);
+	/* SYN: This proc isn't necessary, because the mixing is handled in the SDL callback function.*/
 }
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)
 {
 	int i; 
+	double v = 1;
+	/* v = (vol - 0x100) / ((double) 0xe00); */ /* SYN: Convert Loudness vol to fraction) */
 	
-	tmp_len = size;
-	tmp_buffer = malloc(tmp_len);
-	tmp_pos = tmp_buffer;
+	if (channel_buffer[chan] != NULL)
+	{
+		/* SYN: Something is already playing on this channel, so remove it */
+		free(channel_buffer[chan]);
+	}
+	
+	channel_len[chan] = size;
+	channel_buffer[chan] = malloc(size);
+	channel_pos[chan] = channel_buffer[chan];
 	
 	for (i = 0; i < size; i++)
 	{
-		tmp_buffer[i] = (Uint8) (((signed char) buffer[i]) / 5);
+		channel_buffer[chan][i] = ((signed char) buffer[i]) * v;
 	}
 }
 
