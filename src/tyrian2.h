@@ -23,7 +23,7 @@
 #include "opentyr.h"
 
 void JE_main( void );
-
+void JE_loadMap( void );
 void JE_titleScreen( JE_boolean animate );
 void JE_openingAnim( void );
 

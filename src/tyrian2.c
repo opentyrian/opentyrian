@@ -103,7 +103,7 @@ void JE_main( void )
 	/*debuginfo('Loading LEVELS.DAT');*/
 
 	doNotSaveBackup = FALSE;
-	/* TODO JE_loadMap();*/
+	JE_loadMap();
 	JE_selectSong(0xC001); /*Fade song out*/
 
 	playerAlive = TRUE;
@@ -324,6 +324,85 @@ void JE_main( void )
 
 	JE_drawPortConfigButtons();
 
+	/* TODO */
+}
+
+/*========Load Level/Map Data========*/
+void JE_loadMap( void )
+{
+
+	FILE *lvlFile, *shpFile;
+/*	FILE *tempFile;*/ /*Extract map file from LVL file*/
+
+	JE_byte planetAni, planetAniWait;
+
+	JE_char char_mapFile, char_shapeFile;
+
+	JE_DanCShape shape;
+	JE_boolean shapeBlank;
+
+	JE_real navx, navY, newNavX, newNavY;
+	JE_integer tempNavX, tempNavY;
+	
+	FILE *f;
+/*	FILE *f2;*/
+	JE_char k2, k3;
+	JE_word x, y;
+	JE_integer yy, z, a, b;
+	JE_word megaSh1Ofs, megaSh2Ofs, megaSh3Ofs;
+	JE_word mapSh[3][128]; /* [1..3, 0..127] */
+	JE_word ref[3][128]; /* [1..3, 0..127] */
+	JE_string s;
+	JE_boolean quit, first, loadLevelOk, refade;
+	JE_byte col, planets, shade;
+
+	/* Data used for ItemScreen procedure to indicate items available */
+	JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
+	JE_byte itemAvailMax[9]; /* [1..9] */
+	JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
+	JE_byte planetDots[5]; /* [1..5] */
+	JE_byte currentDotNum, currentDotWait;
+
+	JE_byte newPal, curPal, oldPal;
+	JE_word yLoc;
+	JE_shortint yChg;
+
+	JE_byte mapBuf[15 * 600]; /* [1..15 * 600] */
+	JE_word bufLoc;
+
+	lastCubeMax = cubeMax;
+
+	/*Defaults*/
+	song_buy = DEFAULT_SONG_BUY;  /*Item Screen default song*/
+	
+	if (loadTitleScreen || playDemo)
+	{
+		JE_openingAnim();
+		JE_titleScreen(TRUE);
+		loadTitleScreen = FALSE;
+	}
+	
+	/* Load LEVELS.DAT - Section = MAINLEVEL */
+	saveLevel = mainLevel;
+	
+	new_game:
+	galagaMode  = FALSE;
+	useLastBank = FALSE;
+	extraGame   = FALSE;
+	haltGame = FALSE;
+	if (loadTitleScreen)
+	{
+		/*JE_openingAnim();*/
+		JE_titleScreen(TRUE);
+		loadTitleScreen = FALSE;
+	}
+	
+	gameLoaded = FALSE;
+	
+	
+	first = TRUE;
+
+	/* TODO */
 }
 
 void JE_titleScreen( JE_boolean animate )
