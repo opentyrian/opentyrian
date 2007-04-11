@@ -37,10 +37,10 @@ JE_boolean isNetworkGame, isNetworkActive;
 
 JE_boolean tyrianXmas;
 
-/* YKS: Note: LOOT and SOUND cheats had non letters removed. */
+/* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[18][8] = {
 	"LOOT", "BORDER", "RECORD", "NOJOY", "NOROBERT", "CONSTANT", "DEATH", "NOKEY", "NOSOUND", "JUKEBOX", "MAXVOL",
-	"SOUND", "FLICKER", "JOYMAX", "WEAKJOY", "NOWINCHK", "NOXMAS", "YESXMAS"
+	"SOUND?", "FLICKER", "JOYMAX", "WEAKJOY", "NOWINCHK", "NOXMAS", "YESXMAS"
 };
 
 void JE_paramCheck( int argc, char *argv[] )

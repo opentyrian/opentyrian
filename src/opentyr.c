@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
 
 	/* TODO: Tyrian originally checked availible memory here. */
 
-	/* TODO ParamCheck(); */
+	JE_paramCheck(argc, argv);
 
 	if (scanForJoystick)
 	{
