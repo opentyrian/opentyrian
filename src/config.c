@@ -193,8 +193,8 @@ JE_byte playerDevice1, playerDevice2;
 JE_byte inputDevice1, inputDevice2;
 
 JE_byte secretHint;
-JE_byte background3Over;
-JE_byte background2Over;
+JE_byte background3over;
+JE_byte background2over;
 JE_byte gammaCorrection;
 JE_boolean superPause,
            explosionTransparent,
@@ -204,7 +204,7 @@ JE_boolean superPause,
            background2, smoothScroll, wild, superWild, starActive,
            topEnemyOver,
            skyEnemyOverAll,
-           background2NotTransparent,
+           background2notTransparent,
            tempb;
 JE_byte temp;
 JE_word tempw;

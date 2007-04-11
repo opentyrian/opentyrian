@@ -235,8 +235,8 @@ JE_boolean forceEvents;
 JE_boolean stopBackgrounds;
 JE_byte stopBackgroundNum;
 JE_byte damageRate;  /*Rate at which a player takes damage*/
-JE_boolean background3X1;  /*Background 3 enemies use Background 1 X offset*/
-JE_boolean background3X1B; /*Background 3 enemies moved 8 pixels left*/
+JE_boolean background3x1;  /*Background 3 enemies use Background 1 X offset*/
+JE_boolean background3x1b; /*Background 3 enemies moved 8 pixels left*/
 
 JE_boolean levelTimer;
 JE_word    levelTimerCountdown;
