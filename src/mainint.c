@@ -54,6 +54,38 @@ JE_boolean performSave;
 JE_boolean jumpSection;
 JE_boolean useLastBank; /* See if I want to use the last 16 colors for DisplayText */
 
+/* Draws a message at the bottom text window on the playing screen */
+void JE_drawTextWindow( JE_string text )
+{
+	tempScreenSeg = VGAScreen; /*sega000*/
+	if (textErase > 0)
+	{
+		JE_newDrawCShapeNum(OPTION_SHAPES, 36, 16, 189);
+	}
+	textErase = 100;
+	tempScreenSeg = VGAScreen; /*sega000*/
+	JE_outText(20, 190, text, 0, 4);
+}
+
+void JE_drawPortConfigButtons( void )
+{
+	if (!twoPlayerMode)
+	{
+		if (portConfig[1] == 1)
+		{
+			tempScreenSeg = VGAScreen; /*sega000*/
+			JE_newDrawCShapeNum(OPTION_SHAPES, 18, 285, 44);
+			tempScreenSeg = VGAScreen; /*sega000*/
+			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 302, 44);
+		} else {
+			tempScreenSeg = VGAScreen; /*sega000*/
+			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 285, 44);
+			tempScreenSeg = VGAScreen; /*sega000*/
+			JE_newDrawCShapeNum(OPTION_SHAPES, 18, 302, 44);
+		}
+	}
+}
+
 void JE_helpSystem( JE_byte startTopic )
 {
 	JE_integer page, lastPage = 0;
@@ -647,17 +679,4 @@ void JE_loadMainShapeTables( void )
 	JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
 
 	fclose(f);
-}
-
-/* Draws a message at the bottom text window on the playing screen */
-void JE_drawTextWindow( JE_string text )
-{
-	tempScreenSeg = VGAScreen; /*sega000*/
-	if (textErase > 0)
-	{
-		JE_newDrawCShapeNum(OPTION_SHAPES, 36, 16, 189);
-	}
-	textErase = 100;
-	tempScreenSeg = VGAScreen; /*sega000*/
-	JE_outText(20, 190, text, 0, 4);
 }

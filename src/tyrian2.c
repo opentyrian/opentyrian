@@ -322,7 +322,7 @@ void JE_main( void )
 
 	/*if not JConfigure and (InputDevice=1) then CalibrateJoy;*/
 
-	/* TODO JE_drawPortConfigButtons();*/
+	JE_drawPortConfigButtons();
 
 }
 
