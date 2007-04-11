@@ -193,8 +193,8 @@ JE_byte playerDevice1, playerDevice2;
 JE_byte inputDevice1, inputDevice2;
 
 JE_byte secretHint;
-JE_byte background3OVer;
-JE_byte background2OVer;
+JE_byte background3Over;
+JE_byte background2Over;
 JE_byte gammaCorrection;
 JE_boolean superPause,
            explosionTransparent,

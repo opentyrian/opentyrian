@@ -114,3 +114,5 @@ const char musicTitle[MUSIC_NUM][48] =
 	"Composition in Q",
 	"BEER"
 };
+
+JE_boolean musicFade;
