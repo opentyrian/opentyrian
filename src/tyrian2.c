@@ -165,8 +165,6 @@ void JE_main( void )
 
 	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
 
-	/* TODO */
-
 	/* MAPX will already be set correctly */
 	mapy = 300 - 8;
 	mapy2 = 600 - 8;
@@ -209,7 +207,7 @@ void JE_main( void )
 /*	}*/
 
 	baseSpeedOld = baseSpeed;
-	baseSpeedOld2 = ROUND(baseSpeed * 0.7f) + 1;
+	baseSpeedOld2 = (baseSpeed * 0.7f) + 1;
 	baseSpeed2  = 100 - (((baseSpeed + 1) / 4) + 1);
 	baseSpeed2B = 100 + 100 - baseSpeed2;
 	baseSpeed   = 100 - (((baseSpeed + 1) / 4) + 1);
@@ -218,7 +216,7 @@ void JE_main( void )
 
 	/* Setup player ship graphics */
 	/* TODO JE_GetShipInfo();*/
-	tempI     = ROUND(((PX - mouseX) / (100 - baseSpeed)) * 2) * 168;
+	tempI     = (((PX - mouseX) / (100 - baseSpeed)) * 2) * 168;
 	lastTurn  = 0;
 	lastTurnB = 0;
 	lastTurn2 = 0;
