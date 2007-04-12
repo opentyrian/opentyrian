@@ -253,6 +253,7 @@ void JE_readCryptLn( FILE* f, JE_string s )
 
 	size = getc(f);
 	fread(s, size, 1, f);
+	s[size] = '\0';
 	JE_decryptString(s, size);
 }
 
