@@ -189,7 +189,7 @@ extern JE_word tempBackMove, explodeMove;
 extern JE_byte levelEnd;
 extern JE_word levelEndFxWait;
 extern JE_shortint levelEndWarp;
-extern JE_boolean showMemLeft, endLevel, reallyEndLevel, waitToEndLevel, playerEndLevel, normalBonuslevelCurrent, bonusLevelCurrent, smallEnemyAdjust, readyToEndLevel, quitRequested;
+extern JE_boolean showMemLeft, endLevel, reallyEndLevel, waitToEndLevel, playerEndLevel, normalBonusLevelCurrent, bonusLevelCurrent, smallEnemyAdjust, readyToEndLevel, quitRequested;
 extern JE_byte newPL[10];
 extern JE_word returnLoc;
 extern JE_boolean returnActive;

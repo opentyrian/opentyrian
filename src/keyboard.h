@@ -28,6 +28,7 @@
 
 #ifndef NO_EXTERNS
 extern const char *KeyNames[];
+extern JE_boolean ESCPressed;
 extern JE_boolean newkey, newmouse, keydown, mousedown;
 extern SDLKey lastkey_sym;
 extern SDLMod lastkey_mod;

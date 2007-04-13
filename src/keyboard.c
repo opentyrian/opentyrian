@@ -118,6 +118,8 @@ const char *KeyNames[] = {
 	"F12"
 };
 
+JE_boolean ESCPressed;
+
 JE_boolean newkey, newmouse, keydown, mousedown;
 SDLKey lastkey_sym;
 SDLMod lastkey_mod;

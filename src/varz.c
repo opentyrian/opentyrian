@@ -175,7 +175,7 @@ JE_byte levelEnd;
 JE_word levelEndFxWait;
 JE_shortint levelEndWarp;
 JE_boolean showMemLeft, endLevel, reallyEndLevel, waitToEndLevel, playerEndLevel,
-           normalBonuslevelCurrent, bonusLevelCurrent,
+           normalBonusLevelCurrent, bonusLevelCurrent,
            smallEnemyAdjust, readyToEndLevel, quitRequested;
 
 JE_byte newPL[10]; /* [0..9] */ /*Eventsys event 75 parameter*/
