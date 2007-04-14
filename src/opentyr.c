@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
 
 	JE_scanForEpisodes();
 
-	JE_initvga256();
+	JE_initVGA256();
 	init_keyboard();
 
 	recordFileNum = 1;
@@ -172,7 +172,7 @@ int main( int argc, char *argv[] )
 
 	JE_showVGA();
 
-	JE_closevga256();
+	JE_closeVGA256();
 
 	return 0;
 }

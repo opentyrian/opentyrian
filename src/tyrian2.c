@@ -65,7 +65,7 @@ void JE_main( void )
 	shieldSet = 5;
 
 	/* Setup Graphics */
-	JE_initvga256();
+	JE_initVGA256();
 	JE_updateColorsFast(&black);
 
 	/*debuginfo('Initiating Configuration');*/
@@ -427,7 +427,7 @@ void JE_titleScreen( JE_boolean animate )
 
 	if (haltGame)
 	{
-		/* TODO JE_tyrianHalt(0); */
+		JE_tyrianHalt(0);
 	}
 
 	tempScreenSeg = VGAScreen;
@@ -578,7 +578,7 @@ void JE_titleScreen( JE_boolean animate )
 							{
 								if (netQuit)
 								{
-									/* JE_tyrianHalt(9); */
+									JE_tyrianHalt(9);
 								}
 	
 								if (JE_episodeSelect() && JE_difficultySelect())
@@ -679,7 +679,7 @@ trentWinsGame:
 	JE_fadeBlack(15);
 	if (quit)
 	{
-		/* JE_tyrianHalt(0); */
+		JE_tyrianHalt(0);
 	}
 
 	/* } (IsNetworkActive) */

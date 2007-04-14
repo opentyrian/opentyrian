@@ -41,7 +41,7 @@ JE_word speed; /* JE: holds timer speed for 70Hz */
 JE_byte scancode;
 JE_byte outcol;
 
-void JE_initvga256( void )
+void JE_initVGA256( void )
 {
 	if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||
 	   !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
@@ -53,10 +53,10 @@ void JE_initvga256( void )
 
 void JE_initVGA256X( void )
 {
-	JE_initvga256();
+	JE_initVGA256();
 }
 
-void JE_closevga256( void )
+void JE_closeVGA256( void )
 {
 	/* SDL_QuitSubSystem(SDL_INIT_VIDEO); */
 	SDL_Quit();

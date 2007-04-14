@@ -657,3 +657,92 @@ void JE_drawOptionLevel( void )
 		}
 	}
 }
+
+void JE_tyrianHalt( JE_byte code )
+{
+	/* callBIOSHandler = TRUE; < we don't need this */
+	if (code != 9)
+	{
+		JE_closeVGA256();
+	}
+
+	/* TODO
+	if (isNetworkGame && code != 0 && code != 5)
+	{
+		printf("The network/modem connection has timed out.\n"
+		       "You should check your modem/network settings and physical connections.\n"
+		       "\n"
+		       "(Make sure both computers are using the same baud rate and the cord hasn't\n"
+		       " fallen out.)\n"
+		       "\n"
+		       "Press ENTER to return to the arena.\n");
+		*//* readln; *//*
+	}
+
+	if (isNetworkGame)
+	{
+		if (netQuit)
+		{
+			JE_arenaExit("Other played exited the game.");
+		} else {
+			setNetByte(128);
+
+			do
+			{
+				JE_updateStream();
+			} while (!(JE_scanNetByte(128) || netQuit));
+
+			JE_arenaExit("You have exited the game.");
+		}
+	}
+	*/
+
+	JE_newPurgeShapes(PLANET_SHAPES);
+	JE_newPurgeShapes(FONT_SHAPES);
+	JE_newPurgeShapes(SMALL_FONT_SHAPES);
+	JE_newPurgeShapes(WEAPON_SHAPES);
+	JE_newPurgeShapes(FACE_SHAPES);
+
+	/* YKS: Here the original free'd everythig in the memory.
+	 * Since the OS does this for us I can save some typing. =] */
+
+	/* JE_endMusic(soundeffects); TODO */
+
+	/*
+	if (code != 9) TODO?
+	{
+		JE_drawANSI("EXITMSG.BIN");
+		JE_gotoXY(1,22);
+	}
+	*/
+
+	/* endkeyboard; */
+
+	if (code != 9)
+	{
+		/* OutputString('call=file0002.EXE' + #0'); TODO? */
+	}
+
+	if (code == 5)
+	{
+		code = 0;
+	}
+
+	if (trentWin)
+	{
+		printf("\n"
+		       "\n"
+		       "\n"
+		       "\n"
+		       "Sleep well, Trent, you deserve the rest.\n"
+		       "You now have permission to borrow my ship on your next mission.\n"
+		       "\n"
+		       "Also, you might want to try out the YESXMAS parameter.\n"
+		       "  Type: File0001 YESXMAS\n" /* < TODO? */
+		       "\n"
+		       "You'll need the 2.1 patch, though!\n"
+		       "\n");
+	}
+
+	exit(code);
+}

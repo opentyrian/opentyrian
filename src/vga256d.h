@@ -44,9 +44,9 @@ extern JE_byte scancode;
 extern JE_byte outcol;
 #endif
 
-void JE_initvga256( void );
+void JE_initVGA256( void );
 void JE_initVGA256X( void );
-void JE_closevga256( void );
+void JE_closeVGA256( void );
 void JE_clr256( void );
 void JE_showVGA( void );
 void JE_showVGARetrace( void );
