@@ -94,12 +94,12 @@ void JE_findTyrian( const JE_string filename )
 		dir[0] = '\0';
 	} else {
 		unsigned int i;
+		/* If you ever add a longer dir, increase the magic number. */
 		size_t tmpsize = (strlen(filename)+10) * sizeof (*strbuf);
 
 		/* Let's find it! */
 		printf("Searching for Tyrian files...\n\n");
 
-		/* If you ever add a longer dir, increase the magic number. */
 		strbuf = malloc(tmpsize);
 		for (i = 0; i < COUNTOF(tyrian_searchpaths); i++)
 		{
