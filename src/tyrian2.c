@@ -85,9 +85,9 @@ void JE_main( void )
 
 	/* TODO */
 
-	start_level:
+start_level:
 
-	start_level_first:
+start_level_first:
 
 	/*stopsequence;*/
 	/*debuginfo('Setting Master Sound Volume');*/

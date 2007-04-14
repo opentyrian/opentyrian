@@ -59,6 +59,8 @@ void ( int long_argument_list, int stuff_like_that,
 ||||||||/* This is a
 |||||||| * comment
 |||||||| */
+my_label:
+||||||||/* Don't indent labels! */
 ||||}
 }
 
