@@ -65,7 +65,7 @@ void JE_main( void )
 	shieldSet = 5;
 
 	/* Setup Graphics */
-	JE_initVGA256();
+	/* JE_initVGA256(); This shouldn't be done this because we're already doing it in main() */
 	JE_updateColorsFast(&black);
 
 	/*debuginfo('Initiating Configuration');*/

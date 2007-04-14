@@ -100,10 +100,10 @@ int main( int argc, char *argv[] )
 		/*if (JE_getFileSize("VOICESC.SHP") == 0) tyrianXmas = FALSE;*/
 		if (tyrianXmas)
 		{
-			printf("*****************************\n");
-			printf("Christmas has been detected.\n");
-			printf("  Activate Christmas? (Y/N)\n");
-			printf("*****************************\n");
+			printf("*****************************\n"
+			       "Christmas has been detected.\n"
+			       "  Activate Christmas? (Y/N)\n"
+			       "*****************************\n");
 			wait_input(TRUE,FALSE,FALSE);
 			if (lastkey_sym != SDLK_y)
 			{
@@ -169,8 +169,6 @@ int main( int argc, char *argv[] )
 	SDL_LockSurface(VGAScreen);
 	JE_main();
 	SDL_UnlockSurface(VGAScreen);
-
-	JE_showVGA();
 
 	JE_closeVGA256();
 
