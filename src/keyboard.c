@@ -141,7 +141,7 @@ void flush_events_buffer( void )
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
 	service_SDL_events(FALSE);
-	while (!((keydown || !keyboard) || (mousedown || !mouse) || (button[0] || !joystick)))
+	while (!((keyboard ? keydown : TRUE) && (mouse ? mousedown : TRUE) && (joystick ? button[0] : TRUE)))
 	{
 		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
 		{
@@ -174,6 +174,9 @@ void init_keyboard( void )
 {
 	keysactive = SDL_GetKeyState(&numkeys);
 	SDL_EnableKeyRepeat(500, 60);
+
+	newkey = newmouse = FALSE;
+	keydown = mousedown = FALSE;
 
 #ifdef NDEBUG
 	SDL_WM_GrabInput(SDL_GRAB_ON);

@@ -40,8 +40,12 @@ JE_longint JE_getFileSize( const JE_string filename )
 	FILE *f;
 	JE_longint size = 0;
 
-	if (!(f = fopen(filename, "rb")))
+	ErrorActive = FALSE;
+	f = fopen(JE_locateFile(filename), "rb");
+	ErrorActive = TRUE;
+	if (ErrorOccurred)
 	{
+		ErrorOccurred = FALSE;
 		return 0;
 	}
 
