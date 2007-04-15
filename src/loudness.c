@@ -25,11 +25,6 @@
 #include "loudness.h"
 #undef NO_EXTERNS
 
-/* TODO: Audio isn't really "working" yet. It makes noises but I still neeed to build
-   the mixer and full audio system back here. Also need to add the music. So yeah, I
-   know this code sucks right now. Ignore it, please. */
-
-
 /* SYN: These are externally accessible variables: */
 JE_MusicType musicData;
 JE_boolean repeated;
@@ -57,7 +52,7 @@ void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
 /* SYN: The arguments to this function are probably meaningless now */
 void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror)
 {
-    SDL_AudioSpec plz;
+    SDL_AudioSpec plz, got;
 	int i = 0;
 	
 	sound_init_state = TRUE;
@@ -73,22 +68,27 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
     plz.freq = freq;
 	plz.format = AUDIO_S16SYS;
     plz.channels = 1;
-    plz.samples = 512 * 16;
+    plz.samples = 512;
     plz.callback = audio_cb;
     plz.userdata = NULL;
-
-    if ( SDL_OpenAudio(&plz, NULL) < 0 ) 
+	
+	printf("Requested SDL frequency: %d; SDL buffer size: %d\n", plz.freq, plz.samples);
+	
+    if ( SDL_OpenAudio(&plz, &got) < 0 ) 
 	{
         printf("WARNING: Failed to initialize SDL audio. Bailing out.\n");
         exit(1);
     }
+	
+	printf("Obtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
+	
     SDL_PauseAudio(0);
 }
 
 void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 {
 	long ch, smp, qu, i;
-	long ct = 0;
+	static long ct = 0;
 	long remaining = howmuch / BYTES_PER_SAMPLE;
 	SAMPLE_TYPE *music_pos;
 	long music_samples = howmuch * 1.1;
