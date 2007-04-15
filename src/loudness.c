@@ -95,6 +95,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	SAMPLE_TYPE *feedme = (SAMPLE_TYPE*) sdl_buffer;
 	int extend;
 	int clip;
+	short *shrt;
 	
 	music_buffer = malloc(BYTES_PER_SAMPLE * music_samples); /* SYN: A little extra because I don't trust the adplug code to be exact */
 	music_pos = (SAMPLE_TYPE*) sdl_buffer;
@@ -119,11 +120,12 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	
 	/* SYN: And now we mix in the audio. */
 	/* Actually I'm dumping audio straight into the sdl buffer right now, so this isn't currently needed. */
-	qu = howmuch;
+	qu = howmuch / BYTES_PER_SAMPLE;
+	shrt = (short*) feedme;
 	for (smp = 0; smp < qu; smp++) 
 	{
 		/* printf("> %d\n", music_buffer[smp]); */
-		feedme[smp] = feedme[smp] * 0.75; /* + (music_buffer[smp] * 0.75);*/
+		shrt[smp] = shrt[smp] * 0.5; /* + (music_buffer[smp] * 0.75);*/
 	}
 	
 	/* Bail out, don't mix in sound at the moment. It's broked. */
