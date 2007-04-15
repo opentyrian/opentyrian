@@ -141,7 +141,7 @@ void flush_events_buffer( void )
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
 	service_SDL_events(FALSE);
-	while (!((keyboard ? keydown : TRUE) && (mouse ? mousedown : TRUE) && (joystick ? button[0] : TRUE)))
+	while (!((keyboard ? keydown : FALSE) || (mouse ? mousedown : FALSE) || (joystick ? button[0] : FALSE)))
 	{
 		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
 		{
