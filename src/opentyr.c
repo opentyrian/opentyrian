@@ -131,6 +131,7 @@ int main( int argc, char *argv[] )
 		
 		JE_initialize(0, 0, 0, 0, 0); /* TODO: Fix arguments */
 		
+		soundEffects = TRUE; /* TODO: find a real way to give this a value */
 		if (soundEffects)
 		{
 			JE_multiSampleInit(0, 0, 0, 0); /* TODO: Fix arguments */

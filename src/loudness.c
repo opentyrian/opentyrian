@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "lds_play.h"
+#include "fm_synth.h"
 
 #define NO_EXTERNS
 #include "loudness.h"
@@ -34,10 +36,21 @@ JE_boolean repeated;
 JE_boolean playing;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
-signed char *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
-signed char *channel_pos [SFX_CHANNELS];
+SAMPLE_TYPE *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
+SAMPLE_TYPE *channel_pos [SFX_CHANNELS];
+SAMPLE_TYPE *music_buffer = NULL;
 Uint32 channel_len [SFX_CHANNELS];
 int sound_init_state = FALSE;
+int freq = 11025 * OUTPUT_QUALITY;
+
+/* SYN: TODO: Okay, some sound issues and what I'm going to do about them:
+	- sfx are garbled when music is playing. Something is wrong with my mixing. Fix it.
+	- music speed is wrong. This seems to be corrected by having a larger music buffer; for latency issues, 
+	  this means I need a seperate buffer to play music into that is refilled as needed and copied in smaller
+	  pieces to the main output buffer.
+*/
+
+
 
 void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
 
@@ -46,7 +59,7 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 {
     SDL_AudioSpec plz;
 	int i = 0;
-
+	
 	sound_init_state = TRUE;
 	
 	/*final_audio_buffer = NULL;
@@ -57,10 +70,10 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 		channel_len[i] = 0;
 	}
 	
-    plz.freq = 11025;
-    plz.format = AUDIO_S8;
+    plz.freq = freq;
+	plz.format = AUDIO_S16SYS;
     plz.channels = 1;
-    plz.samples = 512;
+    plz.samples = 512 * 16;
     plz.callback = audio_cb;
     plz.userdata = NULL;
 
@@ -72,19 +85,59 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
     SDL_PauseAudio(0);
 }
 
-void audio_cb(void *userdata, unsigned char *feedme, int howmuch)
+void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 {
-	int ch, smp, qu;
+	long ch, smp, qu, i;
+	long ct = 0;
+	long remaining = howmuch / BYTES_PER_SAMPLE;
+	SAMPLE_TYPE *music_pos;
+	long music_samples = howmuch * 1.1;
+	SAMPLE_TYPE *feedme = (SAMPLE_TYPE*) sdl_buffer;
+	int extend;
+	int clip;
+	
+	music_buffer = malloc(BYTES_PER_SAMPLE * music_samples); /* SYN: A little extra because I don't trust the adplug code to be exact */
+	music_pos = (SAMPLE_TYPE*) sdl_buffer;
+	
+	/* SYN: Simulate the fm synth chip */
+	while(remaining > 0) 
+	{
+		while(ct < 0) 
+		{
+			ct += freq;
+			lds_update(); /* SYN: Do I need to use the return value for anything here? */
+		}
+		
+		/* set i to smaller of data requested by SDL and some stuff. Dunno. */
+		i = ((long) ((ct / REFRESH) + 4) & ~3); /* SYN: I have no idea what those numbers mean. */
+		i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
+		opl_update((short*) music_pos, i);
+		music_pos += (i * BYTES_PER_SAMPLE);
+		remaining -= i;
+		ct -= (long)(REFRESH * i); /* SYN: I have no idea what this calculation means... */
+	}
+	
+	/* SYN: And now we mix in the audio. */
+	/* Actually I'm dumping audio straight into the sdl buffer right now, so this isn't currently needed. */
+	qu = howmuch;
+	for (smp = 0; smp < qu; smp++) 
+	{
+		/* printf("> %d\n", music_buffer[smp]); */
+		feedme[smp] = feedme[smp] * 0.75; /* + (music_buffer[smp] * 0.75);*/
+	}
+	
+	/* Bail out, don't mix in sound at the moment. It's broked. */
+	return;
 	
 	/* SYN: Mix sound channels and shove into audio buffer */
-	for (ch = 0; ch < SFX_CHANNELS; ch++) {
-		
+	for (ch = 0; ch < SFX_CHANNELS; ch++) 
+	{
 		/* SYN: Don't copy more data than is in the channel! */
-		qu = ( (Uint32) howmuch > channel_len[ch] ? (int) channel_len[ch] : howmuch);
-		
-		for (smp = 0; smp < qu; smp++)
+		qu = ( (Uint32) howmuch > channel_len[ch] ? (int) channel_len[ch] : howmuch); /* How many bytes to copy */
+		for (smp = 0; smp < (qu / BYTES_PER_SAMPLE); smp++)
 		{
-			feedme[smp] = ((signed char) feedme[smp] + (channel_pos[ch][smp] / VOLUME_SCALING ));
+			clip = ((int) feedme[smp] + (int) (((SAMPLE_TYPE) channel_pos[ch][smp]) / VOLUME_SCALING ));
+			feedme[smp] = (clip >= 128) ? 127 : (clip <= -128) ? -127 : clip;			
 		}
 		
 		channel_pos[ch] += qu;
@@ -114,7 +167,14 @@ void JE_play( void )
    or restart it if it is. */
 void JE_selectSong( JE_word value )
 {
-	STUB(JE_selectSong);
+	/* TODO: Finish this function! */
+	
+	/* TODO: Stop currently playing song  */
+	if (value != 0)
+	{
+		lds_load((JE_byte*) musicData); /* Load song */
+		/* TODO: Start playing song */
+	}
 }
 
 void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
@@ -166,7 +226,7 @@ void JE_multiSampleMix( void )
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)
 {
-	int i; 
+	int i, ex;
 	double v = 1;
 	/* v = (vol - 0x100) / ((double) 0xe00); */ /* SYN: Convert Loudness vol to fraction) */
 	
@@ -174,15 +234,21 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	{
 		/* SYN: Something is already playing on this channel, so remove it */
 		free(channel_buffer[chan]);
+		channel_buffer[chan] = channel_pos[chan] = NULL;
+		channel_len[chan] = 0;
 	}
 	
-	channel_len[chan] = size;
-	channel_buffer[chan] = malloc(size);
+	channel_len[chan] = size * SAMPLE_SCALING;
+	channel_buffer[chan] = malloc(channel_len[chan]);
 	channel_pos[chan] = channel_buffer[chan];
 	
 	for (i = 0; i < size; i++)
 	{
-		channel_buffer[chan][i] = ((signed char) buffer[i]) * v;
+		for (ex = 0; ex < SAMPLE_SCALING; ex++)
+		{
+			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = (SAMPLE_TYPE) buffer[i]; 
+			/* Should adjust for volume here? */
+		}
 	}
 }
 

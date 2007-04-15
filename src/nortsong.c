@@ -99,7 +99,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 void JE_loadSong( JE_word songnum )
 {
 	JE_word x;
-	FILE *fi;
+	FILE *fi, *test;
 	
 	JE_resetFileExt(&fi, "MUSIC.MUS", FALSE);
 	
@@ -117,6 +117,12 @@ void JE_loadSong( JE_word songnum )
 	   difference in offsets between it and the next song. */
 	fseek(fi, songPos[songnum - 1], SEEK_SET);
 	fread(&musicData, (songPos[songnum] - songPos[songnum - 1]), 1, fi);
+	
+	test = fopen("test.lds", "wb");
+	fwrite(musicData, (songPos[songnum] - songPos[songnum - 1]), 1, test);
+	fclose(test);
+	
+	/* currentSong = songnum; */
 	
 	fclose(fi);
 }
@@ -188,36 +194,43 @@ void JE_loadSndFile( void )
 
 void JE_playSong ( JE_word songnum )
 {
+	#ifndef NDEBUG
+	printf("Loading song number %d...\n", songnum);
+	#endif	
+	if (songnum == 0) /* SYN: Trying to play song 0 was doing strange things D: */
+	{
+		JE_stopSong();
+		currentSong = 0;
+		return;
+	}
 	if (currentSong != songnum && musicActive) /* Original also checked for midiport > 1 */
 	{
-     /*ASM
-     IN   al, $21
-     push ax
-     OR   al, 3
-     out  $21, al
-     END;*/
-		
-     JE_stopSong();
-     JE_loadSong (songnum);
-     repeated = FALSE;
-     playing = TRUE;
-     JE_selectSong (1);
-     /* JE_waitRetrace(); */
-		
-     /*ASM
-     mov al, $36
-     out $43, al
-     mov ax, speed
-     out $40, al
-     mov al, ah
-     out $40, al
-     pop ax
-     out $21, al
-     END;*/
-		
+		 /*ASM
+		 IN   al, $21
+		 push ax
+		 OR   al, 3
+		 out  $21, al
+		 END;*/
+			
+		 JE_stopSong();
+		currentSong = songnum;
+		 JE_loadSong (songnum);
+		 repeated = FALSE;
+		 playing = TRUE;
+		 JE_selectSong (1);
+		 /* JE_waitRetrace(); */
+			
+		 /*ASM
+		 mov al, $36
+		 out $43, al
+		 mov ax, speed
+		 out $40, al
+		 mov al, ah
+		 out $40, al
+		 pop ax
+		 out $21, al
+		 END;*/		
 	}
-	
-	currentSong = songnum;
 }
 
 void JE_stopSong( void )
