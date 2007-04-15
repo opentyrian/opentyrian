@@ -22,9 +22,20 @@
 
 #include "opentyr.h"
 
+#include "helptext.h"
+
+#define CUBE_WIDTH 35
+#define LINE_WIDTH 150
+
+typedef JE_byte JE_MenuChoiceType[MAX_MENU];
+
 void JE_main( void );
 void JE_loadMap( void );
 void JE_titleScreen( JE_boolean animate );
 void JE_openingAnim( void );
+
+JE_longint JE_cashLeft( void );
+void JE_loadCubes( void );
+void JE_itemScreen( void );
 
 #endif /* TYRIAN2_H */

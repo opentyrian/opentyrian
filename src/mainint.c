@@ -680,3 +680,52 @@ void JE_loadMainShapeTables( void )
 
 	fclose(f);
 }
+
+JE_word JE_powerLevelCost( JE_word base, JE_byte level )
+{
+	JE_byte x;
+	JE_word tempCost = 0;
+
+	if (level > 0 && level < 12)
+	{
+		for (x = 1; x <= level; x++)
+		{
+			tempCost += base * x;
+		}
+	}
+
+	return tempCost;
+}
+
+JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
+{
+	switch (itemType)
+	{
+		case 2:
+			if (itemNum > 90)
+			{
+				tempW2 = 100;
+			} else {
+				tempW2 = ships[itemNum].cost;
+			}
+			break;
+		case 3:
+		case 4:
+			tempW2 = weaponPort[itemNum].cost;
+			downgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-2]-1);
+			upgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-2]);
+			break;
+		case 5:
+			tempW2 = shields[itemNum].cost;
+			break;
+		case 6:
+			tempW2 = powerSys[itemNum].cost;
+			break;
+		case 7:
+		case 8:
+			tempW2 = options[itemNum].cost;
+			break;
+	}
+
+	return tempW2;
+}

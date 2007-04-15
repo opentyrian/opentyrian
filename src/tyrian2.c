@@ -43,6 +43,9 @@
 #include <string.h>
 
 /* Level Event Data */
+JE_boolean quit, first, loadLevelOk, refade;
+JE_byte newPal, curPal, oldPal;
+
 struct JE_EventRecType eventRec[EVENT_MAXIMUM]; /* [1..eventMaximum] */
 JE_word levelEnemyMax;
 JE_word levelEnemyFrequency;
@@ -50,6 +53,48 @@ JE_word levelEnemy[40]; /* [1..40] */
 
 char tempstr[21]; /* string [20] */
 
+const JE_word generatorX[5] = { 61, 63, 66, 65, 62 };
+const JE_word generatorY[5] = { 83, 84, 85, 83, 96 };
+
+const JE_byte rearWeaponList[40] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3,
+	4, 0, 5, 6, 0, 0, 7, 0, 0, 2, 1,
+	0, 7, 0, 6, 0, 1, 1, 4, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1
+};
+const JE_word rearWeaponX[7] = { 41, 27,  49,  43, 51, 39, 41 };
+const JE_word rearWeaponY[7] = { 92, 92, 113, 102, 97, 96, 76 };
+
+const JE_byte frontWeaponList[42] = {
+	 5, 10, 4, 9, 3, 6, 11, 2, 0, 0,
+	 0,  0, 8, 9, 0, 0,  1, 0, 5, 1,
+	 0,  0, 4, 0, 5, 0,  5, 0, 0, 0,
+	10,  1, 1, 1, 1, 1,  1, 1, 1, 1,
+	 4, 10
+};
+const JE_word frontWeaponX[12] = { 58, 65, 65, 53, 60, 50, 57, 50, 60, 51, 52, 57 };
+const JE_word frontWeaponY[12] = { 38, 53, 41, 36, 48, 35, 41, 35, 53, 41, 39, 31 };
+
+const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
+const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120, 150, 220, 200, 80,  50, 160,  10,  55,  55,  90,  90,  40 };
+
+const JE_byte tyrian2_weapons[42] = {
+	 1,  2,  3,  4,  5,  6,  7,  8, 9, 10,
+	11, 12, 22,  6, 14,  0, 15, 16, 1, 15,
+	10,  9,  3, 16,  1, 14,  1,  9, 9, 12,
+	 2,  1,  1,  1,  1,  1,  1,  1, 1,  1,
+	 3,  2
+};
+
+const JE_MenuChoiceType menuChoicesDefault = { 7, 9, 8, 0, 0, 11, (SAVE_FILES_NUM / 2) + 2, 0, 0, 6, 4, 6, 7, 5 };
+
+const JE_byte menuEsc[MAX_MENU] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 3, 0 };
+
+const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
+
+const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
+
+const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
 
 void JE_main( void )
 {
@@ -91,7 +136,7 @@ start_level_first:
 
 	/*stopsequence;*/
 	/*debuginfo('Setting Master Sound Volume');*/
-	JE_setVol(0 /*Tyr_musicvolume*/, 0 /*fxvolume*/); /* TODO */
+	JE_setVol(tyr_musicVolume, fxVolume);
 
 	JE_loadCompShapes(&shapes6, &shapes6Size, '1');  /* Items */
 
@@ -351,7 +396,6 @@ void JE_loadMap( void )
 	JE_word mapSh[3][128]; /* [1..3, 0..127] */
 	JE_word ref[3][128]; /* [1..3, 0..127] */
 	JE_string s;
-	JE_boolean quit, first, loadLevelOk, refade;
 	JE_byte col, planets, shade;
 
 	/* Data used for ItemScreen procedure to indicate items available */
@@ -361,7 +405,6 @@ void JE_loadMap( void )
 	JE_byte planetDots[5]; /* [1..5] */
 	JE_byte currentDotNum, currentDotWait;
 
-	JE_byte newPal, curPal, oldPal;
 	JE_word yLoc;
 	JE_shortint yChg;
 
@@ -371,7 +414,7 @@ void JE_loadMap( void )
 	lastCubeMax = cubeMax;
 
 	/*Defaults*/
-	song_buy = DEFAULT_SONG_BUY;  /*Item Screen default song*/
+	songBuy = DEFAULT_SONG_BUY;  /*Item Screen default song*/
 	
 	if (loadTitleScreen || playDemo)
 	{
@@ -719,4 +762,118 @@ void JE_openingAnim( void )
 
 		JE_fadeBlack(10);
 	}
+}
+
+JE_boolean quikSave;
+JE_byte oldMenu;
+JE_boolean backFromHelp;
+JE_byte lastSelect;
+JE_integer lastDirection;
+JE_byte skipMove;
+char tempStr[31];
+JE_byte tempPowerLevel[7];
+JE_boolean firstMenu9, paletteChanged;
+JE_MenuChoiceType menuChoices;
+JE_longint shipValue;
+JE_word curX, curY, curWindow, selectX, selectY, tempX, tempY, tempAvail, x, y, textYPos;
+JE_byte flashDelay;
+JE_integer col, colC;
+JE_byte curAvail, curSelectDat;
+JE_byte lastCurSel;
+JE_word mouseSetY;
+JE_boolean firstRun;
+JE_integer curMenu;
+JE_byte curSel[MAX_MENU];
+JE_byte curItemType, curItem, cursor;
+JE_boolean buyActive, sellActive, sellViewActive, buyViewActive, /*flash,*/ purchase, cannotAfford, slotFull;
+JE_boolean leftPower, rightPower, rightPowerAfford;
+
+char cubeHdr[4][81];
+char cubeText[4][90][CUBE_WIDTH];
+char cubeHdr2[4][13];
+JE_byte faceNum[4];
+JE_word cubeMaxXY[4];
+JE_byte currentCube;
+JE_boolean keyboardUsed;
+JE_word faceX, faceY;
+
+JE_byte currentFaceNum;
+
+JE_longint JE_cashLeft( void )
+{
+	JE_longint templ;
+	JE_byte x;
+	JE_word itemNum;
+
+	templ = score;
+	itemNum = pItems[pItemButtonMap[curSel[2] - 1]];
+
+	templ -= JE_getCost(curSel[2], itemNum);
+
+	tempw = 0;
+
+	switch ((int)curSel)
+	{
+		case 3:
+		case 4:
+			tempW2 = weaponPort[itemNum].cost;
+			for (x = 1; x <= portPower[curSel[2] - 2] - 1; x++)
+			{
+				tempw += tempW2 * x;
+				templ -= tempw;
+			}
+			break;
+	}
+
+	return templ;
+}
+
+void JE_itemScreen( void )
+{
+	/* JE_loadCubes(); TODO */
+
+	/* wipekey */
+
+	tempScreenSeg = VGAScreen;
+
+	memcpy(menuChoices, menuChoicesDefault, sizeof(menuChoices));
+
+	first = TRUE;
+	refade = FALSE;
+
+	joystickWaitMax = 10;
+	joystickWait = 0;
+
+	JE_playSong(songBuy);
+
+	JE_loadPic(1, FALSE);
+
+	newPal = 0;
+	JE_showVGA();
+
+	JE_updateColorsFast(&colors);
+
+	col = 1;
+	gameLoaded = FALSE;
+	curItemType = 1;
+	cursor = 1;
+	curItem = 0;
+
+	for (x = 0; x < MAX_MENU; x++)
+	{
+		curSel[x] = 2;
+	}
+
+	curMenu = 1;
+	curX = 1;
+	curY = 1;
+	curWindow = 1;
+
+	/* TODO */
+/*	for (x = 0; x < 7; x++)
+	{
+		temp = pItemsBack2[pItemButtonMap[x]];
+		temp2 = 0;
+
+		for (*/
 }
