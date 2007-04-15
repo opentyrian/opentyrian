@@ -54,6 +54,8 @@ JE_word fxSize[SOUND_NUM + 9];
 JE_word fxVolume = 128; /* Default value, should be loaded from config */
 JE_word fxPlayVol = (128 - 1) >> 5; /* Same result as calling calcFXVol with default value of fxvolume*/
 
+JE_word tyr_musicVolume;
+
 void setdelay( JE_byte delay )
 {
 	target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */

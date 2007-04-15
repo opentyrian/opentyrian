@@ -85,7 +85,7 @@ const JE_word PGR[21] /* [1..21] */ =
 };
 const JE_byte PAni[21] /* [1..21] */ = {1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1};
 
-const JE_byte PItemButtonMap[7] /* [1..7] */ = {12,1,2,10,6,4,5}; /*Financial Stuff*/
+const JE_byte pItemButtonMap[7] /* [1..7] */ = {12,1,2,10,6,4,5}; /*Financial Stuff*/
 
 const JE_word linkGunWeapons[38] /* [1..38] */ =
 {

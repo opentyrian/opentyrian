@@ -47,6 +47,7 @@ extern JE_byte *digiFx[SOUND_NUM + 9];
 extern JE_word fxSize[SOUND_NUM + 9];
 
 extern JE_word fxVolume, fxPlayVol;
+extern JE_word tyr_musicVolume;
 #endif
 
 void setdelay( JE_byte delay );
