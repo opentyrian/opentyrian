@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "opentyr.h"
+
 int lds_update( void );
 int lds_load( JE_byte* );
 void lds_rewind( int ); /* default value: subsong = -1 */
@@ -57,20 +59,6 @@ typedef struct {
 	unsigned short patnum;
 	unsigned char transpose;
 } Position;
-
-const unsigned short frequency[(13 * 15) - 3];
-const unsigned char vibta[25 + (13 * 3)];
-const unsigned char tremtab[128];
-const unsigned short maxsound, maxpos;
-
-SoundBank *soundbank;
-Channel channel[9];
-Position *positions;
-
-unsigned char fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
-unsigned short posplay, jumppos, *patterns, speed;
-int playing, songlooped;
-unsigned int numpatch, numposi, patterns_size, mainvolume;
 
 void lds_playsound(int inst_number, int channel_number, int tunehigh);
 void lds_setregs(unsigned char reg, unsigned char val);

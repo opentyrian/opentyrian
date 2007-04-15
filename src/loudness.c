@@ -254,7 +254,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 		{
 			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = ((SAMPLE_TYPE) buffer[i]) * 256;
 			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] += ((SAMPLE_TYPE) buffer[i]);
-			/* Should adjust for volume here? */
+			/* TODO: Should adjust for volume here? */
 		}
 	}
 }

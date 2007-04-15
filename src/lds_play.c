@@ -21,8 +21,8 @@
 /* A substantial amount of this code has been copied and adapted from adplug.
    Thanks, guys! Adplug is awesome! :D */
 
-#include "opentyr.h"
 #include "lds_play.h"
+#include "opentyr.h"
 #include "nortsong.h"
 #include "fm_synth.h"
 #include "loudness.h"
@@ -68,6 +68,21 @@ const unsigned char tremtab[] = {
   25, 21, 18, 15, 12, 10, 7, 5, 4, 2, 1, 1, 0
 };
 
+const unsigned short frequency[(13 * 15) - 3];
+const unsigned char vibta[25 + (13 * 3)];
+const unsigned char tremtab[128];
+const unsigned short maxsound, maxpos;
+
+SoundBank *soundbank = NULL;
+Channel channel[9];
+Position *positions = NULL;
+
+unsigned char fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
+unsigned short posplay, jumppos, speed;
+unsigned short *patterns = NULL;
+int playing, songlooped;
+unsigned int numpatch, numposi, patterns_size, mainvolume;
+
 const unsigned short maxsound = 0x3f, maxpos = 0xff;
 unsigned char *read_pos;
 
@@ -106,6 +121,7 @@ int lds_load(JE_byte *music_location)
 	numpatch = *((short int*) pos);
 	pos += 2;
 	
+	if (soundbank != NULL) free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 	
 	for(i = 0; i < numpatch; i++) {
@@ -153,6 +169,8 @@ int lds_load(JE_byte *music_location)
 	/* load positions */
 	numposi = *((short int*) pos);
 	pos += 2;
+	
+	if (positions != NULL) free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
 	
 	for(i = 0; i < numposi; i++)
@@ -172,6 +190,7 @@ int lds_load(JE_byte *music_location)
 	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
 	temp = (songPos[currentSong] - songPos[currentSong - 1]) - (pos - music_location); /* bytes remaining */
 	
+	if (patterns != NULL) free(patterns);
 	patterns = malloc( sizeof(unsigned short) * (temp / 2 + 1));
 	/* patterns = malloc(temp + 1); */
 	for(i = 0; i < (temp / 2 + 1); i++)
