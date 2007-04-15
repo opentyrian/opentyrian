@@ -25,11 +25,12 @@
 #include "SDL.h"
 
 #define SFX_CHANNELS 7
-#define VOLUME_SCALING 4
+#define SAMPLE_VOLUME_SCALING 0.25f
+#define MUSIC_VOLUME_SCALING 0.4f;
 #define OUTPUT_QUALITY 4
 #define BYTES_PER_SAMPLE 2
-#define SAMPLE_SCALING 8
-#define SAMPLE_TYPE signed char
+#define SAMPLE_SCALING OUTPUT_QUALITY
+#define SAMPLE_TYPE signed short int
 
 
 typedef JE_byte JE_MusicType [20000];

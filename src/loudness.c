@@ -33,7 +33,7 @@ JE_boolean playing;
 /* SYN: These shouldn't be used outside this file. Hands off! */
 SAMPLE_TYPE *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
 SAMPLE_TYPE *channel_pos [SFX_CHANNELS];
-SAMPLE_TYPE *music_buffer = NULL;
+/*SAMPLE_TYPE *music_buffer = NULL; */
 Uint32 channel_len [SFX_CHANNELS];
 int sound_init_state = FALSE;
 int freq = 11025 * OUTPUT_QUALITY;
@@ -94,10 +94,9 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	long music_samples = howmuch * 1.1;
 	SAMPLE_TYPE *feedme = (SAMPLE_TYPE*) sdl_buffer;
 	int extend;
-	int clip;
-	short *shrt;
+	long clip;
 	
-	music_buffer = malloc(BYTES_PER_SAMPLE * music_samples); /* SYN: A little extra because I don't trust the adplug code to be exact */
+	/*music_buffer = malloc(BYTES_PER_SAMPLE * music_samples);  SYN: A little extra because I don't trust the adplug code to be exact */
 	music_pos = (SAMPLE_TYPE*) sdl_buffer;
 	
 	/* SYN: Simulate the fm synth chip */
@@ -108,42 +107,47 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 			ct += freq;
 			lds_update(); /* SYN: Do I need to use the return value for anything here? */
 		}
-		
-		/* set i to smaller of data requested by SDL and some stuff. Dunno. */
-		i = ((long) ((ct / REFRESH) + 4) & ~3); /* SYN: I have no idea what those numbers mean. */
+		/* SYN: Okay, about the calculations below. I still don't 100% get what's going on, but... 
+		 - freq is samples/time as output by SDL.
+		 - REFRESH is how often the play proc would have been called in Tyrian. Standard speed is
+		   70Hz, which is the default value of 70.0f
+		 - ct represents the margin between play time (representing # of samples) and tick speed of
+		   the songs (70Hz by default). It keeps track of which one is ahead, because they don't
+		   synch perfectly. */
+			
+		/* set i to smaller of data requested by SDL and a value calculated from the refresh rate */
+		i = ((long) ((ct / REFRESH) + 4) & ~3);
 		i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
 		opl_update((short*) music_pos, i);
-		music_pos += (i * BYTES_PER_SAMPLE);
+		music_pos += i;
 		remaining -= i;
-		ct -= (long)(REFRESH * i); /* SYN: I have no idea what this calculation means... */
+		ct -= (long)(REFRESH * i);
 	}
 	
-	/* SYN: And now we mix in the audio. */
-	/* Actually I'm dumping audio straight into the sdl buffer right now, so this isn't currently needed. */
+	/* Reduce the music volume. */
 	qu = howmuch / BYTES_PER_SAMPLE;
-	shrt = (short*) feedme;
 	for (smp = 0; smp < qu; smp++) 
 	{
-		/* printf("> %d\n", music_buffer[smp]); */
-		shrt[smp] = shrt[smp] * 0.5; /* + (music_buffer[smp] * 0.75);*/
+		feedme[smp] = feedme[smp] * MUSIC_VOLUME_SCALING;
 	}
-	
+
 	/* Bail out, don't mix in sound at the moment. It's broked. */
-	return;
+	
 	
 	/* SYN: Mix sound channels and shove into audio buffer */
 	for (ch = 0; ch < SFX_CHANNELS; ch++) 
 	{
 		/* SYN: Don't copy more data than is in the channel! */
 		qu = ( (Uint32) howmuch > channel_len[ch] ? (int) channel_len[ch] : howmuch); /* How many bytes to copy */
-		for (smp = 0; smp < (qu / BYTES_PER_SAMPLE); smp++)
+		qu /= BYTES_PER_SAMPLE;
+		for (smp = 0; smp < qu; smp++)
 		{
-			clip = ((int) feedme[smp] + (int) (((SAMPLE_TYPE) channel_pos[ch][smp]) / VOLUME_SCALING ));
-			feedme[smp] = (clip >= 128) ? 127 : (clip <= -128) ? -127 : clip;			
+			clip = ((long) feedme[smp] + (long) (( channel_pos[ch][smp]) * SAMPLE_VOLUME_SCALING ));
+			feedme[smp] = (clip > 0xffff) ? 0xffff : (clip <= -0xffff) ? -0xffff : (short) clip;			
 		}
 		
 		channel_pos[ch] += qu;
-		channel_len[ch] -= qu;
+		channel_len[ch] -= qu * BYTES_PER_SAMPLE;
 		
 		/* SYN: If we've emptied a channel buffer, let's free the memory and clear the channel. */
 		if (channel_len == 0)
@@ -240,7 +244,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 		channel_len[chan] = 0;
 	}
 	
-	channel_len[chan] = size * SAMPLE_SCALING;
+	channel_len[chan] = size * BYTES_PER_SAMPLE * SAMPLE_SCALING;
 	channel_buffer[chan] = malloc(channel_len[chan]);
 	channel_pos[chan] = channel_buffer[chan];
 	
@@ -248,7 +252,8 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	{
 		for (ex = 0; ex < SAMPLE_SCALING; ex++)
 		{
-			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = (SAMPLE_TYPE) buffer[i]; 
+			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = ((SAMPLE_TYPE) buffer[i]) * 256;
+			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] += ((SAMPLE_TYPE) buffer[i]);
 			/* Should adjust for volume here? */
 		}
 	}
