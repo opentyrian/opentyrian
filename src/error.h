@@ -28,6 +28,7 @@ extern JE_boolean ErrorActive;
 extern JE_boolean ErrorOccurred;
 #endif
 
+void JE_errorHand( const JE_string s );
 JE_boolean JE_find( const JE_string s );
 void JE_resetFile( FILE **f, const JE_string filename );
 void JE_resetFileExt( FILE **f, const JE_string filename, JE_boolean write );

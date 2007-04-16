@@ -37,6 +37,7 @@
 #include "params.h"
 #include "joystick.h"
 #include "network.h"
+#include "pcxload.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -481,9 +482,13 @@ startepisodeselect:
 					} else {
 						if (sel > 1)
 						{
+							char buf[] = "EPISODE-.PCX";
+
 							JE_playSampleNum(ESC);
 							JE_fadeBlack (10);
-							/*TODO: loadpcx ('EPISODE' + st (sel) + '.PCX', FALSE);*/
+
+							buf[7] = '0' + sel;
+							JE_loadPCX(buf, FALSE);
 							verticalHeight = 9;
 							helpBoxColor = 15;
 							helpBoxBrightness = 4;

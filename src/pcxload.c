@@ -19,9 +19,13 @@
  */
 #include "opentyr.h"
 
+#include "starfade.h"
+
 #define NO_EXTERNS
 #include "pcxload.h"
 #undef NO_EXTERNS
+
+#include "SDL.h"
 
 JE_ColorType colors2;
 JE_word width, depth;
@@ -49,10 +53,10 @@ void JE_loadPCX( JE_string name, JE_boolean storePalette)
 	int i;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
+	printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
 #endif
 
-	fi = fopen(name, "rb");
+	JE_resetFileExt(&fi, name, FALSE);
 	fread(&header.manufacturer, 1, 1, fi);
 	fread(&header.version, 1, 1, fi);
 	fread(&header.encoding, 1, 1, fi);
@@ -74,6 +78,31 @@ printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
 
 	if ((header.manufacturer == 10) && (header.version == 5) && (header.bits_per_pixel == 8) && (header.colour_planes == 1))
 	{
+		fseek(fi, -768, SEEK_END);
+
+		for (i = 0; i < 256; i++)
+		{
+			colors2[i].r = getc(fi);
+			colors2[i].g = getc(fi);
+			colors2[i].b = getc(fi);
+		}
+		JE_updatePCXColorsSlow(&colors2);
+		if (storePalette)
+		{
+			JE_updateColorsFast(&colors2);
+		} else {
+			if (!overrideBlack)
+			{
+				JE_updateColorsFast(&black);
+			} else {
+				overrideBlack = FALSE;
+			}
+		}
+
+		memcpy(colors, colors2, sizeof(colors));
+
 		/* TODO */
 	}
+
+	fclose(fi);
 }

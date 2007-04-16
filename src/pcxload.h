@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 #include "nortvars.h"
+#include "error.h"
 
 struct JE_PCXHeader_rec {
 	JE_byte manufacturer;
@@ -39,10 +40,10 @@ struct JE_PCXHeader_rec {
 };
 
 #ifndef NO_EXTERNS
-extern JE_colortype colors2;
+extern JE_ColorType colors2;
 extern JE_word width, depth;
 extern JE_word bytes;
-extern JE_char c, c2;
+extern JE_char /*c,*/ c2;
 extern JE_boolean overrideBlack;
 #endif
 

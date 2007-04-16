@@ -33,8 +33,6 @@ JE_boolean ErrorOccurred = FALSE;
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
-void JE_errorhand( const JE_string s );
-
 JE_longint JE_getFileSize( const JE_string filename )
 {
 	FILE *f;
@@ -58,7 +56,7 @@ JE_longint JE_getFileSize( const JE_string filename )
 	return size;
 }
 
-void JE_errorhand( const JE_string s )
+void JE_errorHand( const JE_string s )
 {
 	if (ErrorActive)
 	{
@@ -137,7 +135,7 @@ JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentran
 		strcat(buf, filename);
 		if (!JE_find(buf))
 		{
-			JE_errorhand(filename);
+			JE_errorHand(filename);
 		}
 	} else {
 		strcpy(buf, filename);
