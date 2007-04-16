@@ -753,25 +753,20 @@ void JE_loadScreen( void )
 	sel = 1;
 	quit = FALSE;
 	
-	/* vgascreen2^ := vgascreen^; */
+	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 	
-	while (!quit)
+	do
 	{
-		/* SYN: TODO: This is crappy, but the original code seems to rely on stuff being cleared between
-		   frames. Need to find a better way to do this. */
-		JE_loadPic(2, TRUE);
-		
-		
-		/* while (JE_mousePosition(tempx, tempy) != 0)
+		while (mousedown)
 		{
-          ASM
-            sti
-          END;
-		} */
+			service_SDL_events(FALSE);
+			tempX = mouse_x;
+			tempY = mouse_y;
+		}
 		
-		/* vgascreen^ := vgascreen2^; */
+		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 		
-		JE_dString(JE_fontCenter (miscText[38 + screen - 1], FONT_SHAPES), 5, miscText[38 + screen - 1], FONT_SHAPES);
+		JE_dString(JE_fontCenter(miscText[38 + screen - 1], FONT_SHAPES), 5, miscText[38 + screen - 1], FONT_SHAPES);
 		
 		switch (screen)
 		{
@@ -849,7 +844,6 @@ void JE_loadScreen( void )
 		}
 		
 		helpBoxColor = 15;
-		/*JE_helpBox(110, 182, miscText[56 - 1], 26);*/
 		JE_helpBox(110, 182, miscText[56 - 1], 26);
 		
 		JE_showVGA();
@@ -915,5 +909,5 @@ void JE_loadScreen( void )
 			}
 			
 		}
-	}
+	} while (!quit);
 }
