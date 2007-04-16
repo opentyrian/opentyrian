@@ -22,8 +22,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>   /* For the ROUND() macro */
-#include <string.h> /* For strlen, memcpy, etc. */
+#include <math.h> /* For the ROUND() macro */
 
 #define STUB(name) printf("!!! STUB: %s:%d:" #name "\n", __FILE__, __LINE__)
 
