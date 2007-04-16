@@ -47,4 +47,10 @@ typedef char           JE_char;
 
 typedef double         JE_real;
 
+#ifndef NO_EXTERNS
+extern const JE_string opentyrian_str;
+#endif
+
+void opentyrian_menu( void );
+
 #endif /* OPENTYRIAN_H */

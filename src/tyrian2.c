@@ -1163,13 +1163,24 @@ void JE_titleScreen( JE_boolean animate )
 				for (temp = 0; temp < menunum; temp++)
 				{
 					tempX = 104+(temp)*13;
-					tempY = JE_fontCenter(menuText[temp],SMALL_FONT_SHAPES);
+					if (temp == 4) /* OpenTyrian override */
+					{
+						tempY = JE_fontCenter(opentyrian_str, SMALL_FONT_SHAPES);
 
-					JE_outTextAdjust(tempY-1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
-					JE_outTextAdjust(tempY+1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
-					JE_outTextAdjust(tempY+1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
-					JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
-					JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY-1,tempX-1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY+1,tempX+1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY+1,tempX-1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY-1,tempX+1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY,tempX,opentyrian_str,15,-3,SMALL_FONT_SHAPES,FALSE);
+					} else {
+						tempY = JE_fontCenter(menuText[temp],SMALL_FONT_SHAPES);
+
+						JE_outTextAdjust(tempY-1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY+1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY+1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,FALSE);
+						JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SMALL_FONT_SHAPES,FALSE);
+					}
 				}
 				JE_showVGA();
 
@@ -1183,9 +1194,14 @@ void JE_titleScreen( JE_boolean animate )
 
 		for (temp = 0; temp < menunum; temp++)
 		{
-			JE_outTextAdjust(JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES),
-			104+temp*13,
-			menuText[temp], 15, -3+((temp == menu) * 2), SMALL_FONT_SHAPES, FALSE);
+			if (temp == 4) /* OpenTyrian override */
+			{
+				JE_outTextAdjust(JE_fontCenter(opentyrian_str, SMALL_FONT_SHAPES), 104+temp*13,
+				                 opentyrian_str, 15, -3+((temp == menu) * 2), SMALL_FONT_SHAPES, FALSE);
+			} else {
+				JE_outTextAdjust(JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES), 104+temp*13,
+				                 menuText[temp], 15, -3+((temp == menu) * 2), SMALL_FONT_SHAPES, FALSE);
+			}
 		}
 
 		JE_showVGA();
@@ -1304,7 +1320,8 @@ void JE_titleScreen( JE_boolean animate )
 							redraw = TRUE;
 							fadeIn = TRUE;
 							break;
-						case 4: /* Ordering info */
+						case 4: /* Ordering info, now OpenTyrian menu*/
+							opentyrian_menu();
 							break;
 						case 5: /* Demo */
 							/* JE_initPlayerData(); */

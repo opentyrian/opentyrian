@@ -35,12 +35,56 @@
 #include "nortsong.h"
 #include "nortvars.h"
 #include "params.h"
+#include "fonthand.h"
 
 #include "SDL.h"
 
 #include <stdio.h>
 
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
+
+const JE_string opentyrian_str = "OpenTyrian";
+
+void opentyrian_menu( void )
+{
+	int i;
+
+	wait_noinput(TRUE,TRUE,TRUE);
+
+	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+
+	for (i = 8; i < 100-16; i+=12)
+	{
+		setjasondelay(2);
+		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+
+		JE_bar(16,100-i, 304,100+i, 0);
+
+		JE_showVGA();
+		wait_delay();
+	}
+
+	memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+	JE_bar(16,16, 304,184, 0);
+	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 32, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
+
+	JE_showVGA();
+	wait_input(TRUE,TRUE,TRUE);
+
+	for (i = 100-16; i >= 16; i-=12)
+	{
+		setjasondelay(2);
+		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+
+		JE_bar(16,100-i, 304,100+i, 0);
+
+		JE_showVGA();
+		wait_delay();
+	}
+
+	memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+	JE_showVGA();
+}
 
 int main( int argc, char *argv[] )
 {
