@@ -165,7 +165,7 @@ extern JE_SpecialType special;
 extern JE_EnemyDatType enemyDat;
 extern JE_byte episodeNum;
 extern JE_boolean episodeAvail[EPISODE_MAX];
-extern char macroFile[13], CubeFile[13];
+extern char macroFile[13], cubeFile[13];
 extern JE_longint episode1DataLoc;
 extern JE_boolean bonusLevel;
 extern JE_boolean jumpBackToEpisode1;

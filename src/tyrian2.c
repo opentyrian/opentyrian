@@ -38,6 +38,7 @@
 #include "loudness.h"
 #include "backgrnd.h"
 #include "error.h"
+#include "episodes.h"
 
 #include "tyrian2.h"
 
@@ -648,7 +649,7 @@ new_game:
 								}
 
 								/* TODO JE_itemScreen();*/
-                                break;
+								break;
 
 							case 'L':
 								nextLevel = atoi(strnztcpy(buffer, s + 9, 3));
@@ -663,7 +664,7 @@ new_game:
 								bonusLevelCurrent = (strlen(s) > 28) & (s[28] == '$');
 								normalBonusLevelCurrent = (strlen(s) > 27) & (s[27] == '$');
 								gameJustLoaded = FALSE;
-                                break;
+								break;
 
 							case '@':
 								useLastBank = !useLastBank;
@@ -745,7 +746,7 @@ new_game:
 											JE_dString(JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
 										} else {
 											sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
-                                            JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
+											JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
 										}
 
 										if (SANextShip[superArcadeMode] < 7)
@@ -765,7 +766,7 @@ new_game:
 										JE_fadeColor(50);
 										if (!constantPlay)
 										{
-                                            while (!JE_anyButton());
+											while (!JE_anyButton());
 										}
 									}
 
@@ -1424,7 +1425,7 @@ char cubeHdr[4][81];
 char cubeText[4][90][CUBE_WIDTH];
 char cubeHdr2[4][13];
 JE_byte faceNum[4];
-JE_word cubeMaxXY[4];
+JE_word cubeMaxY[4];
 JE_byte currentCube;
 JE_boolean keyboardUsed;
 JE_word faceX, faceY;
@@ -1508,4 +1509,145 @@ void JE_itemScreen( void )
 		temp2 = 0;
 
 		for (*/
+}
+
+void JE_loadCubes( void )
+{
+	char s[256], s2[256], s3[256];
+	JE_byte cube;
+	JE_word x, y;
+	JE_byte startPos, endPos, pos;
+	JE_boolean nextLine;
+	JE_boolean endString;
+	FILE *f;
+	JE_byte lastWidth, curWidth;
+	JE_boolean pastStringLen, pastStringWidth;
+	JE_byte temp;
+
+	char buffer[256];
+
+	memset(cubeText, 0, sizeof(cubeText));
+
+	for (cube = 0; cube < cubeMax; cube++)
+	{
+
+		JE_resetFile(&f, cubeFile);
+	
+		tempw = cubeList[cube];
+	
+		do
+		{
+			do
+			{
+				JE_readCryptLn(f, s);
+			} while (s[0] != '*');
+			tempw--;
+		} while (tempw != 0);
+	
+		faceNum[cube] = atoi(strnztcpy(buffer, s + 4, 2));
+	
+		JE_readCryptLn(f, cubeHdr[cube]);
+		JE_readCryptLn(f, cubeHdr2[cube]);
+	
+		curWidth = 0;
+		x = 5;
+		y = 0;
+		strcpy(s3, "");
+	
+		s2[0] = ' ';
+	
+		do
+		{
+		JE_readCryptLn(f, s2);
+
+			if (s2[0] != '*')
+			{
+
+				sprintf(s, "%s %s", s3, s2);
+
+				pos = 1;
+				endPos = 0;
+				endString = FALSE;
+
+				do
+				{
+					startPos = endPos + 1;
+
+					do
+					{
+						endPos = pos;
+						lastWidth = curWidth;
+						do
+						{
+							temp = s[pos - 1];
+
+							if (temp > 32 && temp < 169 && fontMap[temp] != 255 && (*shapeArray)[5][fontMap[temp]] != NULL)
+							{
+								curWidth =+ shapeX[5][fontMap[temp]] + 1;
+							} else {
+								if (temp == 32)
+								{
+									curWidth += 6;
+								}
+							}
+
+							pos++;
+							if (pos == strlen(s))
+							{
+								endString = TRUE;
+								if ((pos - startPos < CUBE_WIDTH) /*check for string length*/ && (curWidth <= LINE_WIDTH))
+								{
+									endPos = pos + 1;
+									lastWidth = curWidth;
+								}
+							}
+
+						} while (!(s[pos - 1] == ' ' || endString));
+
+						pastStringLen = (pos - startPos > CUBE_WIDTH);
+						pastStringWidth = (curWidth > LINE_WIDTH);
+
+					} while (!(pastStringLen || pastStringWidth || endString));
+
+					if (!endString || pastStringLen || pastStringWidth)
+					{    /*Start new line*/
+						strnztcpy(cubeText[cube][y], s + startPos - 1, endPos - startPos);
+						y++;
+						strnztcpy(s3, s + endPos, 255);
+						curWidth = curWidth - lastWidth;
+						if (s[endPos] == ' ')
+						{
+							curWidth -= 6;
+						}
+					} else {
+						strnztcpy(s3, s + startPos - 1, 255);
+						curWidth = 0;
+					}
+
+                } while (!endString);
+
+				if (strlen(s2) == 0)
+				{
+					if (strlen(s3) != 0)
+					{
+						strcpy(cubeText[cube][y], s3);
+					}
+					y++;
+					strcpy(s3, "");
+				}
+
+			}
+
+		} while (s2[0] != '*');
+
+        strcpy(cubeText[cube][y], s3);
+        while (strcmp(cubeText[cube][y], ""))
+		{
+			y--;
+		}
+		cubeMaxY[cube] = y + 1;
+
+
+		fclose(f);
+	}
 }
