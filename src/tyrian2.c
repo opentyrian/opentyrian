@@ -1306,7 +1306,7 @@ void JE_titleScreen( JE_boolean animate )
 							fadeIn = TRUE;
 							break;
 						case 1: /* Load game */
-							/* JE_loadScreen(); */
+							JE_loadScreen();
 							if (!gameLoaded)
 							{
 								redraw = TRUE;

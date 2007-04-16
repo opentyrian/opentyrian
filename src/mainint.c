@@ -735,3 +735,185 @@ JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 
 	return tempW2;
 }
+
+void JE_loadScreen( void )
+{
+	JE_boolean quit;
+	JE_byte sel, screen, min, max;
+	JE_string tempstr;
+
+	/* TODO: Most of the actual save logic, string handling */
+
+	JE_fadeBlack(10);
+	JE_loadPic(2, FALSE);
+	JE_showVGA();
+	JE_fadeColor(10);
+	
+	screen = 1;
+	sel = 1;
+	quit = FALSE;
+	
+	/* vgascreen2^ := vgascreen^; */
+	
+	while (!quit)
+	{
+		/* SYN: TODO: This is crappy, but the original code seems to rely on stuff being cleared between
+		   frames. Need to find a better way to do this. */
+		JE_loadPic(2, TRUE);
+		
+		
+		/* while (JE_mousePosition(tempx, tempy) != 0)
+		{
+          ASM
+            sti
+          END;
+		} */
+		
+		/* vgascreen^ := vgascreen2^; */
+		
+		JE_dString(JE_fontCenter (miscText[38 + screen - 1], FONT_SHAPES), 5, miscText[38 + screen - 1], FONT_SHAPES);
+		
+		switch (screen)
+		{
+		case 1:
+			min = 1;
+			max = 12;
+			/* {drawshape2x2(290,6 ,281,shapes6ofs,shapes6seg);} */
+			break;
+		case 2:
+			min = 12;
+			max = 23;
+			/* {drawshape2x2( 10,6 ,279,shapes6ofs,shapes6seg);} */
+		}
+		
+		/* {extshade(fontcenter(misctext[56],_TinyFont),192,misctext[56], 15,2,_FullShade);} */
+		
+		for (x = min; x <= max; x++)
+		{
+			tempY = 30 + (x - min) * 13;
+			
+			if (x == max)
+			{
+				tempstr = miscText[34 - 1];
+				if (x == sel)
+				{
+					temp2 = 254;
+				} else {
+					temp2 = 250;
+				}
+			} else {
+				if (x == sel)
+				{
+					temp2 = 254;
+				} else {
+					temp2 = 250; /* - BYTE (saveFiles [x] .level = 0) SHL 1; */
+				}
+				
+				if (FALSE) /* (saveFiles[x].level == 0) */
+				{
+					tempstr = miscText[3 - 1];
+				} else {
+					/* tempstr := '';
+                  FOR y := 1 TO 14 DO
+                    tempstr := tempstr + savefiles [x] .name [y] */
+				}
+			}
+			
+			
+			JE_textShade(10, tempY, "tempstr", 13, (temp2 % 16) - 8, FULL_SHADE);
+			
+			if (x < max)
+			{
+				if (saveFiles[x].level == 0)
+				{
+					/* tempstr = "-----" */
+				} else {
+					/* tempstr := savefiles [x] .levelname; */
+					/* JE_textShade(250, tempY, miscTextB[1] + itoa(saveFiles[x].episode), 5, (temp2 % 16) - 8, FULL_SHADE); */
+					JE_textShade(250, tempY, miscTextB[2 - 1], 5, (temp2 % 16) - 8, FULL_SHADE);
+				}
+				
+				/* JE_textShade(120, tmepY, miscTextB[2] + ' ' + tmpstr, 5, (temp2 % 16) - 8, FULL_SHADE); */
+				JE_textShade(120, tempY, miscTextB[3 - 1], 5, (temp2 % 16) - 8, FULL_SHADE);
+			}
+			
+		}
+		
+		if (screen == 2)
+		{
+			JE_drawShape2x2(90, 180, 279, shapes6);
+		}
+		if (screen == 1)
+		{
+			JE_drawShape2x2(220, 180, 281, shapes6);
+		}
+		
+		helpBoxColor = 15;
+		/*JE_helpBox(110, 182, miscText[56 - 1], 26);*/
+		JE_helpBox(110, 182, miscText[56 - 1], 26);
+		
+		JE_showVGA();
+		
+		tempw = 0;
+		JE_textMenuWait(&tempw, FALSE);
+		
+		
+		if (newkey)
+		{
+			switch (lastkey_sym)
+			{
+			case SDLK_UP:
+				sel--;
+				if (sel < min)
+				{
+					sel = max;
+				}
+				JE_playSampleNum(CURSOR_MOVE);
+				break;
+			case SDLK_DOWN:
+				sel++;
+				if (sel > max)
+				{
+					sel = min;
+				}
+				JE_playSampleNum(CURSOR_MOVE);				
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				if (screen == 1)
+				{
+					screen = 2;
+					sel += 11;
+				} else {
+					screen = 1;
+					sel -= 11;
+				}
+				break;
+			case SDLK_RETURN:
+				if (sel < max)
+				{
+					if (FALSE) /* (saveFiles[sel.level > 0) */
+					{
+                        /*playsamplenum (_Select);
+                        performsave := FALSE;
+                        Operation (sel);*/
+                        quit = TRUE;
+					} else {
+                        JE_playSampleNum (WRONG);
+                    }
+				} else {
+                  quit = TRUE;
+				}
+				
+				
+				break;
+			case SDLK_ESCAPE:
+				quit = TRUE;
+				break;
+			default:
+				break;
+			}
+			
+		}
+	}
+}
