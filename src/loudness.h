@@ -25,8 +25,6 @@
 #include "SDL.h"
 
 #define SFX_CHANNELS 7
-#define SAMPLE_VOLUME_SCALING 0.25f
-#define MUSIC_VOLUME_SCALING 0.4f;
 #define OUTPUT_QUALITY 4
 #define BYTES_PER_SAMPLE 2
 #define SAMPLE_SCALING OUTPUT_QUALITY
@@ -39,6 +37,9 @@ typedef JE_byte JE_MusicType [20000];
 extern JE_MusicType musicData;
 extern JE_boolean repeated;
 extern JE_boolean playing;
+
+extern float sample_volume;
+extern float music_volume;
 #endif
 /* SYN: The arguments to initialize are probably mostly meaningless now */
 void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror); 

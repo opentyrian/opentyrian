@@ -23,7 +23,7 @@
 #include "opentyr.h"
 
 #ifndef NO_EXTERNS
-extern JE_boolean timMode, richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, useBios, NOSOUND, quikJuke, noRetrace, joyMax, forceAveraging, forceMaxVolume, soundInfoReport;
+extern JE_boolean timMode, richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, useBios, noSound, quikJuke, noRetrace, joyMax, forceAveraging, forceMaxVolume, soundInfoReport;
 extern JE_boolean stupidWindows;
 extern JE_boolean isNetworkGame, isNetworkActive;
 extern JE_boolean tyrianXmas;

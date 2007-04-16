@@ -205,6 +205,13 @@ void JE_loadSndFile( void )
 
 void JE_playSong ( JE_word songnum )
 {
+	/* If sound is disabled, bail out */
+	if (noSound)
+	{
+		return;
+	}
+	
+	
 	#ifndef NDEBUG
 	printf("Loading song number %d...\n", songnum);
 	#endif	

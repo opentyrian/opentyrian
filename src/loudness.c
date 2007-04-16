@@ -20,6 +20,7 @@
 #include "opentyr.h"
 #include "lds_play.h"
 #include "fm_synth.h"
+#include "params.h"
 
 #define NO_EXTERNS
 #include "loudness.h"
@@ -29,6 +30,9 @@
 JE_MusicType musicData;
 JE_boolean repeated;
 JE_boolean playing;
+
+float sample_volume = 0.25;
+float music_volume = 0.4f;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
 SAMPLE_TYPE *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
@@ -128,7 +132,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	qu = howmuch / BYTES_PER_SAMPLE;
 	for (smp = 0; smp < qu; smp++) 
 	{
-		feedme[smp] = feedme[smp] * MUSIC_VOLUME_SCALING;
+		feedme[smp] = feedme[smp] * music_volume;
 	}
 
 	/* Bail out, don't mix in sound at the moment. It's broked. */
@@ -142,7 +146,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		qu /= BYTES_PER_SAMPLE;
 		for (smp = 0; smp < qu; smp++)
 		{
-			clip = ((long) feedme[smp] + (long) (( channel_pos[ch][smp]) * SAMPLE_VOLUME_SCALING ));
+			clip = ((long) feedme[smp] + (long) (( channel_pos[ch][smp]) * sample_volume ));
 			feedme[smp] = (clip > 0xffff) ? 0xffff : (clip <= -0xffff) ? -0xffff : (short) clip;			
 		}
 		
