@@ -37,6 +37,7 @@
 #include "network.h"
 #include "loudness.h"
 #include "backgrnd.h"
+#include "error.h"
 
 #include "tyrian2.h"
 
@@ -95,6 +96,12 @@ const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
 const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
 
 const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
+
+char *strnztcpy( char *to, char *from, size_t count )
+{
+	to[count] = '\0';
+	return strncpy(to, from, count);
+}
 
 void JE_main( void )
 {
@@ -395,7 +402,7 @@ void JE_loadMap( void )
 	JE_word megaSh1Ofs, megaSh2Ofs, megaSh3Ofs;
 	JE_word mapSh[3][128]; /* [1..3, 0..127] */
 	JE_word ref[3][128]; /* [1..3, 0..127] */
-	JE_string s;
+	char s[256];
 	JE_byte col, planets, shade;
 
 	/* Data used for ItemScreen procedure to indicate items available */
@@ -410,6 +417,11 @@ void JE_loadMap( void )
 
 	JE_byte mapBuf[15 * 600]; /* [1..15 * 600] */
 	JE_word bufLoc;
+
+	char buffer[256];
+	int i;
+	unsigned char pic_buffer[320*200]; /* screen buffer, 8-bit specific */
+	unsigned char *vga, *pic, *vga2; /* screen pointer, 8-bit specific */
 
 	lastCubeMax = cubeMax;
 
@@ -426,7 +438,7 @@ void JE_loadMap( void )
 	/* Load LEVELS.DAT - Section = MAINLEVEL */
 	saveLevel = mainLevel;
 	
-	new_game:
+new_game:
 	galagaMode  = FALSE;
 	useLastBank = FALSE;
 	extraGame   = FALSE;
@@ -442,6 +454,608 @@ void JE_loadMap( void )
 	
 	
 	first = TRUE;
+
+	if (!playDemo && !loadDestruct)
+	{
+		do
+		{
+			JE_resetFileExt(&lvlFile, macroFile, FALSE);
+
+			x = 0;
+			jumpSection = FALSE;
+			loadLevelOk = FALSE;
+
+			/* Seek Section # Mainlevel */
+			while (x < mainLevel)
+			{
+				JE_readCryptLn(lvlFile, s);
+				if (s[0] == '*')
+				{
+					x++;
+					s[0] = ' ';
+				}
+			}
+			
+			ESCPressed = FALSE;
+
+			do
+			{
+
+				if (gameLoaded)
+				{
+					if (mainLevel == 0)
+					{
+						loadTitleScreen = TRUE;
+					}
+					fclose(lvlFile);
+					goto new_game;
+				}
+
+				sprintf(s, " ");
+				JE_readCryptLn(lvlFile, s);
+
+				switch (s[0])
+				{
+					case ']':
+						switch (s[1])
+						{
+							case 'A':
+								/* TODO JE_playAnim("TYREND.ANM", 1, TRUE, 7);*/
+								break;
+
+							case 'G':
+								mapOrigin = atoi(strnztcpy(buffer, s + 4, 2));
+								mapPNum   = atoi(strnztcpy(buffer, s + 7, 1));
+								for (i = 0; i < mapPNum; i++)
+								{
+									mapPlanet[i] = atoi(strnztcpy(buffer, s + 1 + (i + 1) * 8, 2));
+									mapSection[i] = atoi(strnztcpy(buffer, s + 4 + (i + 1) * 8, 3));
+								}
+								break;
+
+							case '?':
+								temp = atoi(strnztcpy(buffer, s + 4, 2));
+								for (i = 0; i < temp; i++)
+								{
+									cubeList[i] = atoi(strnztcpy(buffer, s + 3 + (i + 1) * 4, 3));
+								}
+								if (cubeMax > temp)
+								{
+									cubeMax = temp;
+								}
+								break;
+
+							case '!':
+								cubeMax = atoi(strnztcpy(buffer, s + 4, 2));    /*Auto set CubeMax*/
+								break;
+							case '+':
+								temp = atoi(strnztcpy(buffer, s + 4, 2));
+								cubeMax += temp;
+								if (cubeMax > 4)
+								{
+									cubeMax = 4;
+								}
+								break;
+
+							case 'g':
+								galagaMode = TRUE;   /*GALAGA mode*/
+								memcpy(&pItemsPlayer2, &pItems, sizeof(pItemsPlayer2));
+								pItemsPlayer2[1] = 15; /*Player 2 starts with 15 - MultiCannon and 2 single shot options*/
+								pItemsPlayer2[3] = 0;
+								pItemsPlayer2[4] = 0;
+								break;
+
+							case 'x':
+								extraGame = TRUE;
+								break;
+
+							case 'e': /*ENGAGE mode*/
+								doNotSaveBackup = TRUE;
+								constantDie = FALSE;
+								onePlayerAction = TRUE;
+								superTyrian = TRUE;
+								twoPlayerMode = FALSE;
+
+								score = 0;
+
+								portPower[0] = 3;
+								portPower[1] = 0;
+								pItems[11] = 13;
+								pItems[ 0] = 39;
+								pItems[ 2] = 255;
+
+								pItems[1] = 0; /*Normally 0 - Rear Weapon*/
+								pItems[3] = 0;
+								pItems[4] = 0;
+								pItems[5] = 2;
+								pItems[6] = 2;
+								pItems[7] = 1;
+								pItems[9] = 4;
+								pItems[10] = 0; /*Secret Weapons*/
+								break;
+
+							case 'J':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));
+								mainLevel = temp;
+								jumpSection = TRUE;
+								break;
+							case '2':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));
+								if (twoPlayerMode || onePlayerAction)
+								{
+									mainLevel = temp;
+									jumpSection = TRUE;
+								}
+								break;
+							case 'w':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));   /*Allowed to go to Time War?*/
+								if (pItems[11] == 13)
+								{
+									mainLevel = temp;
+									jumpSection = TRUE;
+								}
+								break;
+							case 't':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));
+								if (levelTimer && levelTimerCountdown == 0)
+								{
+									mainLevel = temp;
+									jumpSection = TRUE;
+								}
+								break;
+							case 'l':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));
+								if (!playerAlive || (twoPlayerMode && !playerAliveB))
+								{
+									mainLevel = temp;
+									jumpSection = TRUE;
+								}
+								break;
+							case 's':
+								saveLevel = mainLevel;
+								break; /*store savepoint*/
+							case 'b':
+								if (twoPlayerMode)
+								{
+									temp = 22;
+								} else {
+									temp = 11;
+								}
+								/* TODO JE_saveGame(11, "LAST LEVEL    ");*/
+								break;
+
+							case 'i':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));
+								songBuy = temp;
+								break;
+							case 'I': /*Load Items Available Information*/
+
+								memset(&itemAvail, 0, sizeof(itemAvail));
+
+								for (temp = 0; temp < 9; temp++)
+								{
+									JE_readCryptLn(lvlFile, s);
+
+									strcat(strcpy(s, s + 8), " ");
+									temp2 = 0;
+									/* TODO while (JE_getNumber(s, itemAvail[temp][temp2])
+									{
+										temp2++;
+									}*/
+
+									itemAvailMax[temp] = temp2;
+								}
+
+								/* TODO JE_itemScreen();*/
+                                break;
+
+							case 'L':
+								nextLevel = atoi(strnztcpy(buffer, s + 9, 3));
+								strnztcpy(levelName, s + 13, 9);
+								levelSong = atoi(strnztcpy(buffer, s + 22, 2));
+								if (nextLevel == 0)
+								{
+									nextLevel = mainLevel + 1;
+								}
+								lvlFileNum = atoi(strnztcpy(buffer, s + 25, 2));
+								loadLevelOk = TRUE;
+								bonusLevelCurrent = (strlen(s) > 28) & (s[28] == '$');
+								normalBonusLevelCurrent = (strlen(s) > 27) & (s[27] == '$');
+								gameJustLoaded = FALSE;
+                                break;
+
+							case '@':
+								useLastBank = !useLastBank;
+								break;
+
+							case 'Q':
+								ESCPressed = FALSE;
+								temp = secretHint + (random() % 3) * 3;
+
+								if (twoPlayerMode)
+								{
+									sprintf(levelWarningText[0], "%s %ld", miscText[40], score);
+									sprintf(levelWarningText[1], "%s %ld", miscText[41], score2);
+									strcpy(levelWarningText[2], "");
+									levelWarningLines = 3;
+								} else {
+									sprintf(levelWarningText[0], "%s %d", miscText[37], 1337 /* TODO JE_totalScore(score, pItems)*/);
+									strcpy(levelWarningText[1], "");
+									levelWarningLines = 2;
+								}
+
+								for (x = 0; x < temp - 1; x++)
+								{
+									do
+									{
+										JE_readCryptLn(lvlFile, s);
+									} while (s[0] != '#');
+								}
+
+								do
+								{
+									JE_readCryptLn(lvlFile, s);
+									strcpy(levelWarningText[levelWarningLines], s);
+									levelWarningLines++;
+								} while (s[0] != '#');
+								levelWarningLines--;
+
+								/* TODO JE_wipeKey();*/
+								frameCountMax = 4;
+								if (!constantPlay)
+								{
+									/* TODO JE_displayText();*/
+								}
+
+								JE_fadeBlack(15);
+
+								/* TODO tempb = JE_nextEpisode();*/
+
+								if (jumpBackToEpisode1 && !twoPlayerMode)
+								{
+
+									JE_loadPic(1, FALSE);
+									JE_clr256();
+
+									if (superTyrian)
+									{
+										if (initialDifficulty == 8)
+										{
+											superArcadeMode = SA + 1;
+										} else {
+											superArcadeMode = 1;
+										}
+
+										jumpSection = TRUE;
+										loadTitleScreen = TRUE;
+									}
+
+									if (superArcadeMode < SA + 2)
+									{
+										if (SANextShip[superArcadeMode] == 9)
+										{
+											sprintf(buffer, "Or play... %s", specialName[7]);
+											JE_dString(80, 180, buffer, SMALL_FONT_SHAPES);
+										}
+
+										if (SANextShip[superArcadeMode] != 9)
+										{
+											JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
+											JE_dString(JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
+										} else {
+											sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
+                                            JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
+										}
+
+										if (SANextShip[superArcadeMode] < 7)
+										{
+											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]]].shipgraphic, shapes9);
+										} else {
+											if (SANextShip[superArcadeMode] == 7)
+											{
+												trentWin = TRUE;
+											}
+										}
+
+										sprintf(buffer, "Type %s at Title", specialName[SANextShip[superArcadeMode]-1]);
+										JE_dString(JE_fontCenter(buffer, SMALL_FONT_SHAPES), 160, buffer, SMALL_FONT_SHAPES);
+										JE_showVGA();
+
+										JE_fadeColor(50);
+										if (!constantPlay)
+										{
+                                            while (!JE_anyButton());
+										}
+									}
+
+									jumpSection = TRUE;
+									if (isNetworkGame)
+									{
+										/* TODO JE_readTextSync();*/
+									}
+									if (superTyrian)
+									{
+										JE_fadeBlack(10);
+									}
+								}
+								break;
+
+							case 'P':
+								if (!constantPlay)
+								{
+									tempX = atoi(strnztcpy(buffer, s + 3, 3));
+									if (tempX > 900)
+									{
+										memcpy(&colors, &palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
+										JE_clr256();
+										JE_showVGA();
+										JE_fadeColor(1);
+									} else {
+										if (tempX == 0)
+										{
+											/* TODO JE_loadPcx("TSHP2.PCX", FALSE);*/
+										} else {
+											JE_loadPic(tempX, FALSE);
+										}
+										JE_showVGA();
+										JE_fadeColor(10);
+									}
+								}
+								break;
+
+							case 'U':
+								if (!constantPlay)
+								{
+									/* TODO JE_setNetByte(0);*/
+									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+									
+									tempX = atoi(strnztcpy(buffer, s + 3, 3));
+									JE_loadPic(tempX, FALSE);
+									memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
+									
+									service_SDL_events(TRUE);
+									for (z = 0; z <= 199; z++)
+									{
+										service_SDL_events(FALSE);
+										if (!newkey && !ESCPressed)
+										{
+											vga = VGAScreen->pixels;
+											vga2 = VGAScreen2Seg;
+											pic = pic_buffer + (199 - z) * 320;
+
+											setdelay(1); /* attempting to emulate JE_waitRetrace();*/
+											for (y = 0; y < 199; y++)
+											{
+												if (y <= z)
+												{
+													memcpy(vga, pic, 320);
+													pic += 320;
+												} else {
+													memcpy(vga, vga2, 320);
+													vga2 += 320;
+												}
+												vga += VGAScreen->w;
+											}
+											JE_showVGA();
+											wait_delay();
+
+											if (isNetworkGame)
+											{
+												/* TODO JE_updateStream();*/
+												if (netQuit)
+												{
+													JE_tyrianHalt(5);
+												}
+											}
+										}
+									}
+									memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
+								}
+								break;
+
+							case 'V':
+								if (!constantPlay)
+								{
+									/* TODO JE_setNetByte(0);*/
+									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+									
+									tempX = atoi(strnztcpy(buffer, s + 3, 3));
+									JE_loadPic(tempX, FALSE);
+									memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
+									
+									service_SDL_events(TRUE);
+									for (z = 0; z <= 199; z++)
+									{
+										service_SDL_events(FALSE);
+										if (!newkey && !ESCPressed)
+										{
+											vga = VGAScreen->pixels;
+											vga2 = VGAScreen2Seg;
+											pic = pic_buffer;
+
+											setdelay(1); /* attempting to emulate JE_waitRetrace();*/
+											for (y = 0; y < 199; y++)
+											{
+												if (y <= 199 - z)
+												{
+													memcpy(vga, vga2, 320);
+													vga2 += 320;
+												} else {
+													memcpy(vga, pic, 320);
+													pic += 320;
+												}
+												vga += VGAScreen->w;
+											}
+											JE_showVGA();
+											wait_delay();
+
+											if (isNetworkGame)
+											{
+												/* TODO JE_updateStream();*/
+												if (netQuit)
+												{
+													JE_tyrianHalt(5);
+												}
+											}
+										}
+									}
+									memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
+								}
+								break;
+
+							case 'R':
+								if (!constantPlay)
+								{
+									/* TODO JE_setNetByte(0);*/
+									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+
+									tempX = atoi(strnztcpy(buffer, s + 3, 3));
+									JE_loadPic(tempX, FALSE);
+									memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
+
+									service_SDL_events(TRUE);
+									for (z = 0; z <= 318; z++)
+									{
+										service_SDL_events(FALSE);
+										if (!newkey && !ESCPressed)
+										{
+											vga = VGAScreen->pixels;
+											vga2 = VGAScreen2Seg;
+											pic = pic_buffer;
+
+											setdelay(1); /* attempting to emulate JE_waitRetrace();*/
+											for(y = 0; y < 200; y++)
+											{
+												memcpy(vga, vga2 + z, 319 - z);
+												vga += 320 - z;
+												vga2 += 320;
+												memcpy(vga, pic, z + 1);
+												vga += z;
+												pic += 320;
+											}
+											JE_showVGA();
+											wait_delay();
+
+											if (isNetworkGame)
+											{
+												/* TODO JE_UpdateStream();*/
+												if (netQuit)
+												{
+													JE_tyrianHalt(5);
+												}
+											}
+										}
+									}
+									memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
+								}
+								break;
+
+							case 'C':
+								if (!isNetworkGame)
+								{
+									JE_fadeBlack(10);
+								}
+								JE_clr256();
+								JE_showVGA();
+								memcpy(colors, palettes[7], sizeof(colors));
+								JE_updateColorsFast(&colors);
+								break;
+
+							case 'B':
+								if (!isNetworkGame)
+								{
+									JE_fadeBlack(10);
+								}
+								break;
+							case 'F':
+								if (!isNetworkGame)
+								{
+									JE_fadeWhite(100);
+									JE_fadeBlack(30);
+								}
+								JE_clr256();
+								JE_showVGA();
+								break;
+
+							case 'W':
+								if (!constantPlay)
+								{
+									if (!ESCPressed)
+									{
+										/* TODO JE_wipekey();*/
+										warningCol = 14 * 16 + 5;
+										warningColChange = 1;
+										warningSoundDelay = 0;
+										levelWarningDisplay = (s[2] == 'y');
+										levelWarningLines = 0;
+										frameCountMax = atoi(strnztcpy(buffer, s + 4, 2));
+										frameCount2 = 6;
+										warningRed = frameCountMax / 10;
+										frameCountMax = frameCountMax % 10;
+
+										do
+										{
+											JE_readCryptLn(lvlFile, s);
+
+											if (s[0] != '#')
+											{
+												strcpy(levelWarningText[levelWarningLines], s);
+												levelWarningLines++;
+											}
+										} while (!(s[0] == '#'));
+
+										/* TODO JE_displayText();*/
+										newkey = FALSE;
+									}
+								}
+								break;
+
+							case 'H':
+								if (initialDifficulty < 3)
+								{
+									mainLevel = atoi(strnztcpy(buffer, s + 4, 3));
+									jumpSection = TRUE;
+								}
+								break;
+
+							case 'h':
+								if (initialDifficulty > 2)
+								{
+									JE_readCryptLn(lvlFile, s);
+								}
+								break;
+
+							case 'S':
+								if (isNetworkGame)
+								{
+									/* TODO JE_readTextSync();*/
+								}
+								break;
+
+							case 'n':
+								ESCPressed = FALSE;
+								break;
+
+							/* TODO */
+
+							case 'M':
+								temp = atoi(strnztcpy(buffer, s + 3, 3));
+								JE_playSong(temp);
+								break;
+
+							/* TODO */
+						}
+					break;
+				}
+
+
+			} while (!(loadLevelOk || jumpSection));
+
+
+			fclose(lvlFile);
+
+		} while (!loadLevelOk);
+	}
 
 	/* TODO */
 }
