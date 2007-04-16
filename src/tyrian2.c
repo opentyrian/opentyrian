@@ -1620,7 +1620,7 @@ void JE_loadCubes( void )
 	for (cube = 0; cube < cubeMax; cube++)
 	{
 
-		JE_resetFile(&f, cubeFile);
+		JE_resetFileExt(&f, cubeFile, FALSE);
 	
 		tempw = cubeList[cube];
 	
@@ -1730,7 +1730,7 @@ void JE_loadCubes( void )
 		} while (s2[0] != '*');
 
 		strcpy(cubeText[cube][y], s3);
-		while (strcmp(cubeText[cube][y], ""))
+		while (!strcmp(cubeText[cube][y], ""))
 		{
 			y--;
 		}
