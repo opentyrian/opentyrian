@@ -164,6 +164,7 @@ void JE_helpSystem( JE_byte startTopic )
 						JE_dString(JE_fontCenter(topicName[temp], SMALL_FONT_SHAPES), temp * 20 + 40, buf, SMALL_FONT_SHAPES);
 					}
 
+					JE_waitRetrace();
 					JE_showVGA();
 
 					tempw = 0;

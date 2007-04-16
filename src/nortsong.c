@@ -43,6 +43,8 @@ JE_SongPosType songPos;
 
 JE_byte soundEffects = 1; /* TODO: Give this a real value, figure out what they mean. */
 
+JE_word frameCount2, frameCountMax; /* TODO: Remind MXD to remove these later. */
+
 JE_byte currentSong = 0;
 
 JE_byte soundActive = TRUE; /* I'm not sure if these two are ever false. */
@@ -58,9 +60,16 @@ JE_word fxPlayVol = (128 - 1) >> 5; /* Same result as calling calcFXVol with def
 
 JE_word tyr_musicVolume;
 
+int jasondelay = 1000 / (0x1234DC / 0x4300 /*speed*/);
+
 void setdelay( JE_byte delay )
 {
 	target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
+}
+
+void setjasondelay( int delay )
+{
+	target = delay * jasondelay;
 }
 
 int delaycount( void )
