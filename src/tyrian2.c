@@ -648,7 +648,7 @@ new_game:
 									itemAvailMax[temp] = temp2;
 								}
 
-								/* TODO JE_itemScreen();*/
+								JE_itemScreen();
 								break;
 
 							case 'L':
@@ -706,7 +706,7 @@ new_game:
 								frameCountMax = 4;
 								if (!constantPlay)
 								{
-									/* TODO JE_displayText();*/
+									JE_displayText();
 								}
 
 								JE_fadeBlack(15);
@@ -773,7 +773,7 @@ new_game:
 									jumpSection = TRUE;
 									if (isNetworkGame)
 									{
-										/* TODO JE_readTextSync();*/
+										JE_readTextSync();
 									}
 									if (superTyrian)
 									{
@@ -1006,7 +1006,7 @@ new_game:
 											}
 										} while (!(s[0] == '#'));
 
-										/* TODO JE_displayText();*/
+										JE_displayText();
 										newkey = FALSE;
 									}
 								}
@@ -1030,7 +1030,7 @@ new_game:
 							case 'S':
 								if (isNetworkGame)
 								{
-									/* TODO JE_readTextSync();*/
+									JE_readTextSync();
 								}
 								break;
 
@@ -1397,6 +1397,95 @@ void JE_openingAnim( void )
 	}
 }
 
+void JE_readTextSync( void )
+{
+	JE_clr256();
+	JE_showVGA();
+	JE_loadPic(1, TRUE);
+
+	/* TODO JE_barShade(3, 3, 316, 196);*/
+	/* TODO JE_barShade(1, 1, 318, 198);*/
+	JE_dString(10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
+	JE_showVGA();
+
+	/* TODO JE_setNetByte(251);*/
+
+	do
+	{
+		setjasondelay(2);
+
+		/* TODO JE_updateStream();*/
+		if (netQuit)
+		{
+			JE_tyrianHalt(5);
+		}
+
+		while (delaycount());
+
+	} while (0 /* TODO */);
+}
+
+
+void JE_displayText( void )
+{
+	/* Display Warning Text */
+	tempY = 55;
+	if (warningRed)
+	{
+		tempY = 2;
+	}
+	for (temp = 0; temp < levelWarningLines; temp++)
+	{
+		if (!ESCPressed)
+		{
+			/* TODO JE_outCharGlow(10, tempy, levelWarningText[temp]);*/
+
+			if (haltGame)
+			{
+				JE_tyrianHalt(5);
+			}
+
+			tempY += 10;
+		}
+	}
+	if (frameCountMax != 0)
+	{
+		frameCountMax = 6;
+		temp = 1;
+	} else {
+		temp = 0;
+	}
+	textGlowFont = TINY_FONT;
+	tempw = 184;
+	if (warningRed)
+	{
+		tempw = 7 * 16 + 6;
+	}
+
+	/* TODO JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempw, miscText[4]);*/
+
+	do
+	{
+		if (levelWarningDisplay)
+		{
+			JE_updateWarning();
+		}
+
+		setjasondelay(1);
+
+		/* TODO JE_setNetByte(0);*/
+		/* TODO JE_updateStream();*/
+		if (netQuit)
+		{
+			JE_tyrianHalt(5);
+		}
+
+		while (delaycount());
+
+    } while (!(JE_anyButton() || (delaycount() == 0 && temp == 1) || ESCPressed));
+    levelWarningDisplay = FALSE;
+}
+
 JE_boolean quikSave;
 JE_byte oldMenu;
 JE_boolean backFromHelp;
@@ -1463,9 +1552,9 @@ JE_longint JE_cashLeft( void )
 
 void JE_itemScreen( void )
 {
-	/* JE_loadCubes(); TODO */
+	JE_loadCubes();
 
-	/* wipekey */
+	/* TODO JE_wipeKey();*/
 
 	tempScreenSeg = VGAScreen;
 
@@ -1624,7 +1713,7 @@ void JE_loadCubes( void )
 						curWidth = 0;
 					}
 
-                } while (!endString);
+				} while (!endString);
 
 				if (strlen(s2) == 0)
 				{
@@ -1640,8 +1729,8 @@ void JE_loadCubes( void )
 
 		} while (s2[0] != '*');
 
-        strcpy(cubeText[cube][y], s3);
-        while (strcmp(cubeText[cube][y], ""))
+		strcpy(cubeText[cube][y], s3);
+		while (strcmp(cubeText[cube][y], ""))
 		{
 			y--;
 		}

@@ -35,6 +35,8 @@ void JE_main( void );
 void JE_loadMap( void );
 void JE_titleScreen( JE_boolean animate );
 void JE_openingAnim( void );
+void JE_readTextSync( void );
+void JE_displayText( void );
 
 JE_longint JE_cashLeft( void );
 void JE_loadCubes( void );

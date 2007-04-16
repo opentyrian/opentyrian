@@ -20,6 +20,7 @@
 #include "opentyr.h"
 #include "newshape.h"
 #include "vga256d.h"
+#include "nortsong.h"
 
 #define NO_EXTERNS
 #include "fonthand.h"
@@ -624,5 +625,31 @@ JE_char JE_bright( JE_boolean makebright )
 		return '~';
 	} else {
 		return '\0';
+	}
+}
+
+void JE_updateWarning( void )
+{
+	if (frameCount2 == 0)
+    { /*Update Color Bars*/
+
+		warningCol += warningColChange;
+		if (warningCol > 14 * 16 + 10 || warningCol < 14 * 16 + 4)
+		{
+			warningColChange = -warningColChange;
+		}
+		JE_bar(0, 0, 319, 5, warningCol);
+		JE_bar(0, 194, 319, 199, warningCol);
+		JE_showVGA();
+
+		frameCount2 = 6;
+
+		if (warningSoundDelay > 0)
+		{
+			warningSoundDelay++;
+		} else {
+			warningSoundDelay = 14;
+			JE_playSampleNum(17);
+		}
 	}
 }
