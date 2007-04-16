@@ -40,6 +40,8 @@
 #include "SDL.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
@@ -88,6 +90,8 @@ void opentyrian_menu( void )
 
 int main( int argc, char *argv[] )
 {
+	srand(time(NULL));
+
 	SDL_Init( 0 );
 
 	JE_detectCFG();

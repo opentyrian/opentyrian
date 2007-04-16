@@ -672,7 +672,7 @@ new_game:
 
 							case 'Q':
 								ESCPressed = FALSE;
-								temp = secretHint + (random() % 3) * 3;
+								temp = secretHint + (rand() % 3) * 3;
 
 								if (twoPlayerMode)
 								{
