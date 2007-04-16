@@ -52,7 +52,7 @@ void JE_fadeColors( JE_ColorType *fromColors, JE_ColorType *toColors, JE_byte st
 
 	for (s = 0; s <= noSteps; s++)
 	{
-		setdelay(1);
+		setjasondelay(1);
 		for (i = 0; i <= noColors; i++)
 		{
 			p[i].r = ((*fromColors)[i].r + ((((*toColors)[i].r - (*fromColors)[i].r) * s) / noSteps)) << 2;

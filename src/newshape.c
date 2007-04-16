@@ -262,7 +262,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 {
 	if (time > 0)
 	{
-		setdelay(time);
+		setjasondelay(time);
 	}
 	do
 	{

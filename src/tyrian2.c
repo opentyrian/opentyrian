@@ -1148,7 +1148,7 @@ void JE_titleScreen( JE_boolean animate )
 					{
 						int i;
 
-						setdelay(2);
+						setjasondelay(2);
 						memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
 						JE_newDrawCShapeNum(PLANET_SHAPES, 146, 11, temp);
@@ -1360,7 +1360,7 @@ void JE_openingAnim( void )
 		JE_fadeColors(&black, &colors, 0, 255, 50);
 		memset(black, 0, sizeof(black));
 
-		setdelay(200);
+		setjasondelay(200);
 		while(!(delaycount() == 0 || JE_anyButton()));
 
 		JE_fadeBlack(15);
@@ -1371,7 +1371,7 @@ void JE_openingAnim( void )
 		memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
 		JE_fadeColor(10);
 
-		setdelay(200);
+		setjasondelay(200);
 		while(!(delaycount() == 0 || JE_anyButton()));
 
 		JE_fadeBlack(10);
