@@ -60,7 +60,7 @@ JE_word fxPlayVol = (128 - 1) >> 5; /* Same result as calling calcFXVol with def
 
 JE_word tyr_musicVolume;
 
-float jasondelay = 1000.0 / (1193180.0 / 0x4300 /*speed*/);
+float jasondelay = 1000.0f / (1193180.0f / 0x4300);
 
 void setdelay( JE_byte delay )
 {
