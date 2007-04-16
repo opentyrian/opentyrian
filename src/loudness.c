@@ -177,6 +177,12 @@ void JE_play( void )
    or restart it if it is. */
 void JE_selectSong( JE_word value )
 {
+	/* If sound is disabled, bail out */
+	if (noSound)
+	{
+		return;
+	}	
+	
 	/* TODO: Finish this function! */
 	
 	/* TODO: Stop currently playing song  */
