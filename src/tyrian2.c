@@ -42,6 +42,7 @@
 #include "tyrian2.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 /* Level Event Data */
 JE_boolean quit, first, loadLevelOk, refade;
