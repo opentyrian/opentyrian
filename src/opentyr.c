@@ -47,6 +47,12 @@ const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 const JE_string opentyrian_str = "OpenTyrian";
 
+char *strnztcpy( char *to, char *from, size_t count )
+{
+	to[count] = '\0';
+	return strncpy(to, from, count);
+}
+
 void opentyrian_menu( void )
 {
 	int i;

@@ -29,8 +29,6 @@
 
 typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 
-char *strnztcpy( char *to, char *from, size_t count );
-
 void JE_main( void );
 void JE_loadMap( void );
 void JE_titleScreen( JE_boolean animate );

@@ -51,6 +51,8 @@ typedef double         JE_real;
 extern const JE_string opentyrian_str;
 #endif
 
+char *strnztcpy( char *to, char *from, size_t count );
+
 void opentyrian_menu( void );
 
 #endif /* OPENTYRIAN_H */

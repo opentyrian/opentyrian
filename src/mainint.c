@@ -844,7 +844,7 @@ void JE_loadScreen( void )
 		}
 		
 		helpBoxColor = 15;
-		JE_helpBox(110, 182, miscText[56 - 1], 26);
+		JE_helpBox(110, 182, miscText[56 - 1], 25);
 		
 		JE_showVGA();
 		

@@ -99,12 +99,6 @@ const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
 
 const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
 
-char *strnztcpy( char *to, char *from, size_t count )
-{
-	to[count] = '\0';
-	return strncpy(to, from, count);
-}
-
 void JE_main( void )
 {
 	loadTitleScreen = TRUE;

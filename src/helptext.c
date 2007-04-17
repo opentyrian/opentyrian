@@ -88,9 +88,9 @@ void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
 	JE_byte startpos, endpos, pos;
 	JE_boolean endstring;
 
-	char *substring;
+	char substring[256];
 
-	if (message[0] == '\0')
+	if (strlen(message) == 0)
 	{
 		return;
 	}
@@ -109,7 +109,7 @@ void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
 			do
 			{
 				pos++;
-				if (message[pos-1] == '\0')
+				if (pos == strlen(message))
 				{
 					endstring = TRUE;
 					if (pos - startpos < boxwidth)
@@ -118,23 +118,17 @@ void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
 					}
 				}
 
-			} while (!(message[pos-1] != ' ' || endstring));
+			} while (!(message[pos-1] == ' ' || endstring));
 
 		} while (!(pos - startpos > boxwidth || endstring));
 
-		substring = malloc(endpos - startpos + 1);
-		memcpy(substring, message + startpos - 1, endpos - startpos);
-		substring[endpos - startpos] = 0;
-
-		JE_textShade(x, y, substring, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
-
-		free(substring);
+		JE_textShade(x, y, strnztcpy(substring, message + startpos - 1, endpos - startpos), helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 
 		y += verticalHeight;
 
 	} while (!endstring);
 
-	if (endpos != pos)
+	if (endpos != pos + 1)
 	{
 		JE_textShade(x, y, message + endpos, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 	}
