@@ -817,7 +817,7 @@ void JE_loadScreen( void )
 			
 			JE_textShade(10, tempY, "tempstr", 13, (temp2 % 16) - 8, FULL_SHADE);
 			
-			if (x < max)
+			if (x <= max)
 			{
 				if (saveFiles[x].level == 0)
 				{
@@ -844,7 +844,7 @@ void JE_loadScreen( void )
 		}
 		
 		helpBoxColor = 15;
-		JE_helpBox(110, 182, miscText[56 - 1], 25);
+		JE_helpBox(110, 182, miscText[56-1], 25);
 		
 		JE_showVGA();
 		
