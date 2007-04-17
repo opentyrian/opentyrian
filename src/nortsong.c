@@ -34,7 +34,7 @@
 
 const char hexa[17] = "0123456789ABCDEF";
 
-Uint32 target;
+Uint32 target, target2;
 JE_boolean mixEnable = FALSE;
 JE_boolean notYetLoadedSound = TRUE;
 JE_boolean notYetLoadedMusic = TRUE;
@@ -43,7 +43,7 @@ JE_SongPosType songPos;
 
 JE_byte soundEffects = 1; /* TODO: Give this a real value, figure out what they mean. */
 
-JE_word frameCount2, frameCountMax; /* TODO: Remind MXD to remove these later. */
+JE_word frameCountMax; /* TODO: Remind MXD to remove these later. */
 
 JE_byte currentSong = 0;
 
@@ -72,9 +72,19 @@ void setjasondelay( int delay )
 	target = SDL_GetTicks() + delay * jasondelay;
 }
 
+void setjasondelay2( int delay )
+{
+	target2 = SDL_GetTicks() + delay * jasondelay;
+}
+
 int delaycount( void )
 {
 	return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
+}
+
+int delaycount2( void )
+{
+	return (SDL_GetTicks() < target2 ? target2 - SDL_GetTicks() : 0);
 }
 
 void wait_delay( void )

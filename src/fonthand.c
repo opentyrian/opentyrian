@@ -630,7 +630,7 @@ JE_char JE_bright( JE_boolean makebright )
 
 void JE_updateWarning( void )
 {
-	if (frameCount2 == 0)
+	if (delaycount2() == 0)
     { /*Update Color Bars*/
 
 		warningCol += warningColChange;
@@ -642,11 +642,11 @@ void JE_updateWarning( void )
 		JE_bar(0, 194, 319, 199, warningCol);
 		JE_showVGA();
 
-		frameCount2 = 6;
+		setjasondelay2(6);
 
 		if (warningSoundDelay > 0)
 		{
-			warningSoundDelay++;
+			warningSoundDelay--;
 		} else {
 			warningSoundDelay = 14;
 			JE_playSampleNum(17);

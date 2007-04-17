@@ -56,7 +56,9 @@ extern int jasondelay;
 
 void setdelay( JE_byte delay );
 void setjasondelay( int delay );
+void setjasondelay2( int delay );
 int delaycount( void );
+int delaycount2( void );
 void wait_delay( void );
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 

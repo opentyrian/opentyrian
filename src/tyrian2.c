@@ -985,7 +985,7 @@ new_game:
 										levelWarningDisplay = (s[2] == 'y');
 										levelWarningLines = 0;
 										frameCountMax = atoi(strnztcpy(buffer, s + 4, 2));
-										frameCount2 = 6;
+										setjasondelay2(6);
 										warningRed = frameCountMax / 10;
 										frameCountMax = frameCountMax % 10;
 
@@ -1432,7 +1432,7 @@ void JE_displayText( void )
 	{
 		if (!ESCPressed)
 		{
-			/* TODO JE_outCharGlow(10, tempy, levelWarningText[temp]);*/
+			JE_outCharGlow(10, tempY, levelWarningText[temp]);
 
 			if (haltGame)
 			{
@@ -1456,7 +1456,7 @@ void JE_displayText( void )
 		tempw = 7 * 16 + 6;
 	}
 
-	/* TODO JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempw, miscText[4]);*/
+	JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempw, miscText[4]);
 
 	do
 	{
@@ -1476,7 +1476,7 @@ void JE_displayText( void )
 
 		while (delaycount());
 
-    } while (!(JE_anyButton() || (delaycount() == 0 && temp == 1) || ESCPressed));
+    } while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1) || ESCPressed));
     levelWarningDisplay = FALSE;
 }
 
