@@ -842,7 +842,12 @@ void JE_loadScreen( void )
 	JE_boolean quit;
 	JE_byte sel, screen, min, max;
 	JE_string tempstr;
+	JE_string tempstr2;
+	JE_boolean mal_str = FALSE;
+	int len;
 
+	tempstr = NULL;
+	
 	/* TODO: Most of the actual save logic, string handling */
 
 	JE_fadeBlack(10);
@@ -884,53 +889,81 @@ void JE_loadScreen( void )
 		
 		/* {extshade(fontcenter(misctext[56],_TinyFont),192,misctext[56], 15,2,_FullShade);} */
 		
+		/* SYN: Go through text line by line */
 		for (x = min; x <= max; x++)
 		{
 			tempY = 30 + (x - min) * 13;
 			
 			if (x == max)
 			{
+				/* Last line is return to main menu, not a save game */
+				if (mal_str)
+				{
+					free(tempstr);
+					mal_str = FALSE;
+				}
 				tempstr = miscText[34 - 1];
-				if (x == sel)
+				
+				if (x == sel) /* Highlight if selected */
 				{
 					temp2 = 254;
 				} else {
 					temp2 = 250;
 				}
 			} else {
-				if (x == sel)
+				if (x == sel) /* Highlight if selected */
 				{
 					temp2 = 254;
 				} else {
 					temp2 = 250; /* - BYTE (saveFiles [x] .level = 0) SHL 1; */
 				}
 				
-				if (FALSE) /* (saveFiles[x].level == 0) */
+				if (saveFiles[x].level == 0) /* I think this means the save file is unused */
 				{
+					if (mal_str)
+					{
+						free(tempstr);
+						mal_str = FALSE;
+					}
 					tempstr = miscText[3 - 1];
 				} else {
-					/* tempstr := '';
-                  FOR y := 1 TO 14 DO
-                    tempstr := tempstr + savefiles [x] .name [y] */
+					if (mal_str)
+					{
+						free(tempstr);
+						mal_str = FALSE;
+					}
+					/* SYN: TODO: This is probably uninitialized memory right now D: Oh noes. */
+					tempstr = saveFiles[x].name;
 				}
 			}
 			
+			/* Write first column text */
+			JE_textShade(10, tempY, tempstr, 13, (temp2 % 16) - 8, FULL_SHADE);
 			
-			JE_textShade(10, tempY, "tempstr", 13, (temp2 % 16) - 8, FULL_SHADE);
-			
-			if (x <= max)
-			{
+			if (x < max) /* Write additional columns for all but the last row */
+			{	
 				if (saveFiles[x].level == 0)
 				{
-					/* tempstr = "-----" */
+					if (mal_str)
+					{
+						free(tempstr);
+					}
+					tempstr = malloc(7);
+					mal_str = TRUE;
+					strcpy(tempstr, "-----"); /* Unused save slot */
 				} else {
-					/* tempstr := savefiles [x] .levelname; */
-					/* JE_textShade(250, tempY, miscTextB[1] + itoa(saveFiles[x].episode), 5, (temp2 % 16) - 8, FULL_SHADE); */
-					JE_textShade(250, tempY, miscTextB[2 - 1], 5, (temp2 % 16) - 8, FULL_SHADE);
+					tempstr = saveFiles[x].levelName;
+					tempstr2 = malloc(5 + strlen(miscTextB[2-1]));
+					sprintf(tempstr2, "%s %d", miscTextB[2-1], saveFiles[x].episode);
+					JE_textShade(250, tempY, tempstr2, 5, (temp2 % 16) - 8, FULL_SHADE);
+					free(tempstr2);
 				}
 				
-				/* JE_textShade(120, tmepY, miscTextB[2] + ' ' + tmpstr, 5, (temp2 % 16) - 8, FULL_SHADE); */
-				JE_textShade(120, tempY, miscTextB[3 - 1], 5, (temp2 % 16) - 8, FULL_SHADE);
+				len = strlen(miscTextB[3-1]) + 2 + strlen(tempstr);
+				tempstr2 = malloc(len);
+				sprintf(tempstr2, "%s %s", miscTextB[3 - 1], tempstr);
+				JE_textShade(120, tempY, tempstr2, 5, (temp2 % 16) - 8, FULL_SHADE);
+				free(tempstr2);
 			}
 			
 		}
