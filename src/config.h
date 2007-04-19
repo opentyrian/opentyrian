@@ -149,4 +149,8 @@ void JE_loadGame( JE_byte slot );
 
 void JE_decryptString( JE_string s, JE_byte len );
 
+
+void JE_encryptSaveTemp( void );
+void JE_decryptSaveTemp( void );
+
 #endif /* CONFIG_H */

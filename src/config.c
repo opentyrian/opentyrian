@@ -20,6 +20,7 @@
 #include "opentyr.h"
 #include "episodes.h"
 #include "nortsong.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "config.h"
@@ -354,56 +355,93 @@ void JE_initProcessorType( void )
 	background2 = TRUE;
 	displayScore = TRUE;	
 
+  
+	switch (gameSpeed)
+	{
+	case 1:  /* Slug Mode */
+		fastPlay = 3;
+		break;
+	case 2:  /* Slower */
+		fastPlay = 4;
+		break;
+	case 3: /* Slow */
+		fastPlay = 5;
+		break;
+	case 4: /* Normal */
+		fastPlay = 0;
+		break;
+	case 5: /* Pentium Hyper */
+		fastPlay = 1;
+		break;
+	}
+	
 }
 
 void JE_setNewGameSpeed( void )
 {
 	pentiumMode = TRUE;
 	
-/*  CASE FastPlay OF
-    0 : BEGIN
-          speed := $4300;
-          smoothscroll := TRUE;
-          framecountmax := 2;
-        END;
-    1 : BEGIN
-          speed := $3000;
-          smoothscroll := TRUE;
-          framecountmax := 2;
-        END;
-    2 : BEGIN
-          speed := $2000;
-          smoothscroll := FALSE;
-          framecountmax := 2;
-        END;
-    3 : BEGIN
-          speed := $5300;
-          smoothscroll := TRUE;
-          framecountmax := 4;
-        END;
-    4 : BEGIN
-          speed := $4300;
-          smoothscroll := TRUE;
-          framecountmax := 3;
-        END;
-    5 : BEGIN
-          speed := $4300;
-          smoothscroll := TRUE;
-          framecountmax := 2;
-          PentiumMode := TRUE;
-        END;
-  END;*/
+	switch (fastPlay)
+	{
+	case 0:
+		speed = 0x4300;
+		smoothScroll = TRUE;
+		frameCountMax = 2;
+		break;
+	case 1:
+		speed = 0x3000;
+		smoothScroll = TRUE;
+		frameCountMax = 2;
+		break;
+	case 2:
+		speed = 0x2000;
+		smoothScroll = FALSE;
+		frameCountMax = 2;
+		break;
+	case 3:
+		speed = 0x5300;
+		smoothScroll = TRUE;
+		frameCountMax = 4;
+		break;
+	case 4:
+		speed = 0x4300;
+		smoothScroll = TRUE;
+		frameCountMax = 3;
+		break;
+	case 5:
+		speed = 0x4300;
+		smoothScroll = TRUE;
+		frameCountMax = 2;
+		pentiumMode = TRUE;
+		break;
+	}
   
   frameCount = frameCountMax;
   JE_resetTimerInt();
   JE_setTimerInt();	
 }
 
-void JE_loadConfiguration( void );
+void JE_encryptSaveTemp( void )
+{
+	
+}
+
+void JE_decryptSaveTemp( void )
+{
+	
+}
+
+void JE_loadConfiguration( void )
+{
+	
+}
 
 void JE_saveConfiguration( void )
 {
 	
 }
 
-void JE_loadGame( JE_byte slot );
+void JE_loadGame( JE_byte slot )
+{ 
+	
+}
