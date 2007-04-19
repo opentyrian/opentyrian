@@ -56,6 +56,10 @@ JE_word levelEnemy[40]; /* [1..40] */
 
 char tempstr[21]; /* string [20] */
 
+/* Data used for ItemScreen procedure to indicate items available */
+JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
+JE_byte itemAvailMax[9]; /* [1..9] */
+
 const JE_word generatorX[5] = { 61, 63, 66, 65, 62 };
 const JE_word generatorY[5] = { 83, 84, 85, 83, 96 };
 
@@ -401,9 +405,6 @@ void JE_loadMap( void )
 	char s[256];
 	JE_byte col, planets, shade;
 
-	/* Data used for ItemScreen procedure to indicate items available */
-	JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
-	JE_byte itemAvailMax[9]; /* [1..9] */
 	JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
 	JE_byte planetDots[5]; /* [1..5] */
 	JE_byte currentDotNum, currentDotWait;
@@ -1586,12 +1587,33 @@ void JE_itemScreen( void )
 	curWindow = 1;
 
 	/* TODO */
-/*	for (x = 0; x < 7; x++)
+	for (x = 0; x < 7; x++)
 	{
 		temp = pItemsBack2[pItemButtonMap[x]];
 		temp2 = 0;
 
-		for (*/
+		for (y = 0; y < itemAvailMax[itemAvailMap[x]]; y++)
+		{
+			if (itemAvail[itemAvailMap[x]][y] == temp)
+			{
+				temp2 = 1;
+			}
+		}
+
+		if (temp2 == 0)
+		{
+			itemAvailMax[itemAvailMap[x]]++;
+			itemAvail[itemAvailMap[x]][itemAvailMax[itemAvailMap[x]]] = temp;
+		}
+	}
+
+	memcpy(VGAScreen2Seg, VGAScreen, sizeof(VGAScreen2Seg));
+
+	/* TODO */
+
+/*item_screen_start:*/
+
+	/* TODO */
 }
 
 void JE_loadCubes( void )
