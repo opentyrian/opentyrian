@@ -40,7 +40,7 @@ extern JE_boolean notYetLoadedSound, notYetLoadedMusic;
 extern JE_SongPosType songPos;
 extern JE_byte soundEffects;
 
-extern JE_word frameCount2, frameCountMax;
+extern JE_word frameCount, frameCount2, frameCountMax;
 
 extern JE_byte currentSong;
 extern JE_byte soundActive, musicActive;
@@ -63,6 +63,7 @@ void wait_delay( void );
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 
 void JE_resetTimerInt( void );
+void JE_setTimerInt( void );
 void JE_playSong ( JE_word songnum );
 void JE_loadSong( JE_word songnum );
 void JE_endMusic ( JE_byte soundeffects);

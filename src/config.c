@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "episodes.h"
+#include "nortsong.h"
 
 #define NO_EXTERNS
 #include "config.h"
@@ -221,7 +223,7 @@ JE_byte    inputDevice;  /* 0=Mouse   1=Joystick   2=Gravis GamePad */
 JE_byte    gameSpeed;
 JE_byte    processorType;  /* 1=386 2=486 3=Pentium Hyper */
 
-JE_SaveFilesType saveFiles; /*array[1..savefilesnum] of savefiletype;*/
+JE_SaveFilesType saveFiles; /*array[1..saveLevelnum] of savefiletype;*/
 JE_byte *saveFilePointer;
 JE_SaveGameTemp saveTemp;
 JE_byte *saveTempPointer;
@@ -264,3 +266,144 @@ void JE_skipCryptLn( FILE* f )
 	size = getc(f);
 	fseek(f, size, SEEK_CUR);
 }
+
+
+void JE_setupStars( void )
+{
+	int z;
+	
+	for (z = 0; z < MAX_STARS; z++)
+	{
+		starDat[z].sLoc = (rand() % 200) * 320;
+		starDat[z].sMov = (rand() % 3 + 2) * 320;
+		starDat[z].sC = (rand() % 16) + (9 * 16);
+	}
+}
+
+void JE_saveGame( JE_byte slot, JE_string name )
+{
+	int i;
+	
+	saveFiles[slot].initialDifficulty = initialDifficulty;
+	saveFiles[slot].gameHasRepeated = gameHasRepeated;
+	saveFiles[slot].level = saveLevel;
+	
+	pItems[3 - 1] = superArcadeMode;
+	if (superArcadeMode == 0 && onePlayerAction)
+	{
+		pItems[3 - 1] = 255;
+	}
+	if (superTyrian) 
+	{
+		pItems[3 - 1] = 254;
+	}
+	
+	memcpy(saveFiles[slot].items, pItems, sizeof(pItems));
+		
+	if (superArcadeMode > 253) 
+	{
+		pItems[3 - 1] = 0;
+	}
+	if (twoPlayerMode)
+	{
+		memcpy(saveFiles[slot].lastItems, pItemsPlayer2, sizeof(pItemsPlayer2));
+	} else {
+		memcpy(saveFiles[slot].lastItems, pItemsBack2, sizeof(pItemsBack2));
+	}
+	
+	saveFiles[slot].score = score;
+	saveFiles[slot].score2 = score2;
+	memcpy(saveFiles[slot].levelName, lastLevelName, sizeof(lastLevelName));
+	saveFiles[slot].cubes = lastCubeMax;
+
+	if (strcmp(lastLevelName, "Completed") == 0)
+	{
+		temp = episodeNum - 1;
+		if (temp < 1)
+		{
+			temp = 4; /* JE: {Episodemax is 4 for completion purposes} */
+		}
+		saveFiles[slot].episode = temp;
+	} else {
+		saveFiles[slot].episode = episodeNum;
+	}
+		
+	saveFiles[slot].difficulty = difficultyLevel;
+	saveFiles[slot].secretHint = secretHint;
+	saveFiles[slot].input1 = inputDevice1;
+	saveFiles[slot].input2 = inputDevice2;
+
+	memcpy(saveFiles[slot].name, name, sizeof(name));
+
+	saveFiles[slot].power[0] = portPower[0];
+	saveFiles[slot].power[1] = portPower[1];
+
+	JE_saveConfiguration();
+}
+  
+void JE_initProcessorType( void )
+{
+	/* SYN: Originally this proc looked at your hardware specs and chose appropriate options. We don't care, so I'll just set
+	   decent defaults here. */
+	
+	wild = FALSE;
+	superWild = FALSE;
+	smoothScroll = TRUE;
+	explosionTransparent = TRUE;
+	filtrationAvail = TRUE;
+	background2 = TRUE;
+	displayScore = TRUE;	
+
+}
+
+void JE_setNewGameSpeed( void )
+{
+	pentiumMode = TRUE;
+	
+/*  CASE FastPlay OF
+    0 : BEGIN
+          speed := $4300;
+          smoothscroll := TRUE;
+          framecountmax := 2;
+        END;
+    1 : BEGIN
+          speed := $3000;
+          smoothscroll := TRUE;
+          framecountmax := 2;
+        END;
+    2 : BEGIN
+          speed := $2000;
+          smoothscroll := FALSE;
+          framecountmax := 2;
+        END;
+    3 : BEGIN
+          speed := $5300;
+          smoothscroll := TRUE;
+          framecountmax := 4;
+        END;
+    4 : BEGIN
+          speed := $4300;
+          smoothscroll := TRUE;
+          framecountmax := 3;
+        END;
+    5 : BEGIN
+          speed := $4300;
+          smoothscroll := TRUE;
+          framecountmax := 2;
+          PentiumMode := TRUE;
+        END;
+  END;*/
+  
+  frameCount = frameCountMax;
+  JE_resetTimerInt();
+  JE_setTimerInt();	
+}
+
+void JE_loadConfiguration( void );
+
+void JE_saveConfiguration( void )
+{
+	
+}
+
+void JE_loadGame( JE_byte slot );

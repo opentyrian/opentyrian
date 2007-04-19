@@ -43,7 +43,7 @@ JE_SongPosType songPos;
 
 JE_byte soundEffects = 1; /* TODO: Give this a real value, figure out what they mean. */
 
-JE_word frameCountMax; /* TODO: Remind MXD to remove these later. */
+JE_word frameCount, frameCount2, frameCountMax; /* TODO: Remind MXD to remove these later. */
 
 JE_byte currentSong = 0;
 
@@ -283,4 +283,14 @@ void JE_playSampleNum( JE_byte samplenum )
 void JE_calcFXVol( void )
 {
 	fxPlayVol = (fxVolume - 1) >> 5; 
+}
+
+void JE_setTimerInt( void )
+{
+	STUB(JE_setTimerInt);
+}
+
+void JE_resetTimerInt( void )
+{
+	STUB(JE_resetTimerInt);
 }

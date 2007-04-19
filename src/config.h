@@ -44,7 +44,7 @@ typedef struct
 	JE_PItemsType items;
 	JE_longint    score;
 	JE_longint    score2;
-	char          levelName[10]; /* string [9]; */
+	char          levelName[11]; /* string [9]; */ /* SYN: Added one more byte to match lastLevelName below */
 	JE_char       name[14]; /* [1..14] */
 	JE_byte       cubes;
 	JE_byte       power[2]; /* [1..2] */
