@@ -1807,7 +1807,7 @@ void JE_itemScreen( void )
 		}
 	}
 
-	memcpy(VGAScreen2Seg, VGAScreen, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
 	/* TODO */
 

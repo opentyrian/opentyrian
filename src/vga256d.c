@@ -44,7 +44,7 @@ JE_byte outcol;
 void JE_initVGA256( void )
 {
 	if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||
-	   !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF)))
+	   !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE)))
 	{
 		printf("Display initialization failed: %s\n", SDL_GetError());
 		exit(1);
