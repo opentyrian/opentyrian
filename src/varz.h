@@ -102,9 +102,9 @@ typedef JE_char JE_CharString[256]; /* [1..256] */
 
 typedef JE_byte JE_Map1Buffer[24 * 28 * 13 * 4]; /* [1..24*28*13*4] */
 
-typedef JE_word JE_MapType[300][14]; /* [1..300, 1..14] */
-typedef JE_word JE_MapType2[300][14]; /* [1..600, 1..14] */
-typedef JE_word JE_MapType3[600][15]; /* [1..600, 1..15] */
+typedef JE_byte *JE_MapType[300][14]; /* [1..300, 1..14] */
+typedef JE_byte *JE_MapType2[300][14]; /* [1..600, 1..14] */
+typedef JE_byte *JE_MapType3[600][15]; /* [1..600, 1..15] */
 
 struct JE_EventRecType
 {

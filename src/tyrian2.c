@@ -39,6 +39,7 @@
 #include "backgrnd.h"
 #include "error.h"
 #include "episodes.h"
+#include "lvllib.h"
 
 #include "tyrian2.h"
 
@@ -399,9 +400,8 @@ void JE_loadMap( void )
 	JE_char k2, k3;
 	JE_word x, y;
 	JE_integer yy, z, a, b;
-	JE_word megaSh1Ofs, megaSh2Ofs, megaSh3Ofs;
 	JE_word mapSh[3][128]; /* [1..3, 0..127] */
-	JE_word ref[3][128]; /* [1..3, 0..127] */
+	JE_byte *ref[3][128]; /* [1..3, 0..127] */
 	char s[256];
 	JE_byte col, planets, shade;
 
@@ -1054,7 +1054,207 @@ new_game:
 		} while (!loadLevelOk);
 	}
 
-	/* TODO */
+	if (!loadDestruct)
+	{
+
+		if (playDemo)
+		{
+
+			difficultyLevel = 2;
+			sprintf(tempstr, "DEMO.%d", playDemoNum);
+			JE_resetFileExt(&recordFile, tempstr, FALSE);
+
+			bonusLevelCurrent = FALSE;
+
+			temp = fgetc(recordFile);
+			JE_initEpisode(temp);
+			fread(levelName, 1, 10, recordFile); levelName[10] = '\0';
+			lvlFileNum = fgetc(recordFile);
+			fread(pItems, 1, 12, recordFile);
+			fread(portPower, 1, 5, recordFile);
+			levelSong = fgetc(recordFile);
+
+			temp = fgetc(recordFile);
+			temp2 = fgetc(recordFile);
+			lastMoveWait = (temp << 8) | temp2;
+			nextDemoOperation = fgetc(recordFile);
+
+			firstEvent = TRUE;
+
+			/*debuginfo('Demo loaded.');*/
+		} else {
+			JE_fadeColors(&colors, &black, 0, 255, 50);
+		}
+
+
+		JE_resetFileExt(&lvlFile, levelFile, FALSE);
+		fseek(lvlFile, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
+
+		char_mapFile = fgetc(lvlFile);
+		char_shapeFile = fgetc(lvlFile);
+		fread(&mapx,  2, 1, lvlFile);
+		fread(&mapx2, 2, 1, lvlFile);
+		fread(&mapx3, 2, 1, lvlFile);
+
+		fread(&levelEnemyMax, 2, 1, lvlFile);
+		for (x = 0; x < levelEnemyMax; x++)
+		{
+			fread(&levelEnemy[x], 2, 1, lvlFile);
+		}
+
+		fread(&maxEvent, 2, 1, lvlFile);
+		for (x = 0; x < maxEvent; x++)
+		{
+			fread(&eventRec[x].eventTime, sizeof(JE_word), 1, lvlFile);
+			fread(&eventRec[x].eventType, sizeof(JE_byte), 1, lvlFile);
+			fread(&eventRec[x].eventDat,  sizeof(JE_integer), 1, lvlFile);
+			fread(&eventRec[x].eventDat2, sizeof(JE_integer), 1, lvlFile);
+			fread(&eventRec[x].eventDat3, sizeof(JE_shortint), 1, lvlFile);
+			fread(&eventRec[x].eventDat5, sizeof(JE_shortint), 1, lvlFile);
+			fread(&eventRec[x].eventDat6, sizeof(JE_shortint), 1, lvlFile);
+			fread(&eventRec[x].eventDat4, sizeof(JE_byte), 1, lvlFile);
+		}
+		eventRec[x].eventTime = 65500;  /*Not needed but just in case*/
+
+		/*debuginfo('Level loaded.');*/
+
+		/*debuginfo('Loading Map');*/
+
+		/* MAP SHAPE LOOKUP TABLE - Each map is directly after level */
+		fread(mapSh, sizeof(mapSh), 1, lvlFile);
+		for (temp = 0; temp < 3; temp++)
+		{
+			for (temp2 = 0; temp2 < 128; temp2++)
+			{
+				mapSh[temp][temp2] = SDL_SwapBE16(mapSh[temp][temp2]);
+			}
+		}
+
+		/* Read Shapes.DAT */
+		sprintf(tempstr, "SHAPES%c.DAT", char_shapeFile);
+		JE_resetFileExt(&shpFile, tempstr, FALSE);
+
+		for (z = 0; z < 600; z++)
+		{
+			shapeBlank = fgetc(shpFile);
+
+			if (shapeBlank)
+			{
+				memset(shape, 0, sizeof(shape));
+			} else {
+				fread(shape, sizeof(shape), 1, shpFile);
+			}
+
+			/* Match 1 */
+			for (x = 0; x <= 71; x++)
+			{
+				if (mapSh[0][x] == z+1)
+				{
+					memcpy((*megaData1).shapes[x].sh, shape, sizeof(JE_DanCShape));
+
+					ref[0][x] = (JE_byte *)(*megaData1).shapes[x].sh;
+				}
+			}
+
+			/* Match 2 */
+			for (x = 0; x <= 71; x++)
+			{
+				if (mapSh[1][x] == z+1)
+				{
+					if (x != 71 && !shapeBlank)
+					{
+						memcpy((*megaData2).shapes[x].sh, shape, sizeof(JE_DanCShape));
+
+						y = 1;
+						for (yy = 0; yy < (24 * 28) >> 1; yy++)
+						{
+							if (shape[yy] == 0)
+							{
+								y = 0;
+							}
+						}
+
+						(*megaData2).shapes[x].fill = y;
+						ref[1][x] = (JE_byte *)(*megaData2).shapes[x].sh;
+					} else {
+						ref[1][x] = NULL;
+					}
+				}
+			}
+
+			/*Match 3*/
+			for (x = 0; x <= 71; x++)
+			{
+				if (mapSh[2][x] == z+1)
+				{
+					if (x < 70 && !shapeBlank)
+					{
+						memcpy((*megaData3).shapes[x].sh, shape, sizeof(JE_DanCShape));
+
+						y = 1;
+						for (yy = 0; yy < (24 * 28) >> 1; yy++)
+						{
+							if (shape[yy] == 0)
+							{
+								y = 0;
+							}
+						}
+
+						(*megaData3).shapes[x].fill = y;
+						ref[2][x] = (JE_byte *)(*megaData3).shapes[x].sh;
+					} else {
+						ref[2][x] = NULL;
+					}
+				}
+			}
+		}
+
+		fclose(shpFile);
+
+		fread(mapBuf, 1, 14 * 300, lvlFile);
+		bufLoc = 0;              /* MAP NUMBER 1 */
+		for (y = 0; y < 300; y++)
+		{
+			for (x = 0; x < 14; x++)
+			{
+				(*megaData1).mainmap[y][x] = ref[0][mapBuf[bufLoc]];
+				bufLoc++;
+			}
+		}
+
+		fread(mapBuf, 1, 14 * 600, lvlFile);
+		bufLoc = 0;              /* MAP NUMBER 2 */
+		for (y = 0; y < 600; y++)
+		{
+			for (x = 0; x < 14; x++)
+			{
+				(*megaData2).mainmap[y][x] = ref[1][mapBuf[bufLoc]];
+				bufLoc++;
+			}
+		}
+
+		fread(mapBuf, 1, 15 * 600, lvlFile);
+		bufLoc = 0;              /* MAP NUMBER 3 */
+		for (y = 0; y < 600; y++)
+		{
+			for (x = 0; x < 15; x++)
+			{
+				(*megaData3).mainmap[y][x] = ref[2][mapBuf[bufLoc]];
+				bufLoc++;
+			}
+		}
+
+		fclose(lvlFile);
+
+		/* Note: The map data is automatically calculated with the correct mapsh
+		value and then the pointer is calculated using the formula (MAPSH-1)*168.
+		Then, we'll automatically add S2Ofs to get the exact offset location into
+		the shape table! This makes it VERY FAST! */
+
+		/*debuginfo('Map file done.');*/
+		/* End of find loop for LEVEL??.DAT */
+	} /*LoadDestruct?*/
+
 }
 
 void JE_titleScreen( JE_boolean animate )
