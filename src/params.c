@@ -47,7 +47,6 @@ void JE_paramCheck( int argc, char *argv[] )
 {
 	char *tempStr;
 	JE_word x,y;
-	struct tm *broken_time;
 	time_t now;
 
 	robertWeird     = TRUE;
@@ -66,8 +65,7 @@ void JE_paramCheck( int argc, char *argv[] )
 	forceAveraging  = FALSE;
 
 	now = time(NULL);
-	broken_time = localtime(&now);
-	tyrianXmas = broken_time->tm_mon == 12;
+	tyrianXmas = localtime(&now)->tm_mon == 12;
 
 /* JE: Note:
 Parameters are no longer case-sensitive.
