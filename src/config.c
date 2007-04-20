@@ -129,7 +129,10 @@ const JE_EditorItemAvailType initialItemAvail =
  */
 
 
-JE_boolean smoothies[9]; /* [1..9] */
+JE_boolean smoothies[9] = /* [1..9] */
+{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+
 JE_byte starShowVGASpecialCode;
 
 /* Stars */
@@ -186,7 +189,8 @@ JE_boolean galagaMode;
 
 JE_boolean extraGame;
 
-JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian, trentWin;
+JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian;
+JE_boolean trentWin = FALSE;
 JE_byte    superArcadeMode;
 
 JE_byte    superArcadePowerup;
@@ -199,8 +203,8 @@ JE_byte secretHint;
 JE_byte background3over;
 JE_byte background2over;
 JE_byte gammaCorrection;
-JE_boolean superPause,
-           explosionTransparent,
+JE_boolean superPause = FALSE;
+JE_boolean explosionTransparent,
            youAreCheating,
            displayScore,
            soundHasChanged,
@@ -225,14 +229,13 @@ JE_byte    gameSpeed;
 JE_byte    processorType;  /* 1=386 2=486 3=Pentium Hyper */
 
 JE_SaveFilesType saveFiles; /*array[1..saveLevelnum] of savefiletype;*/
-JE_byte *saveFilePointer;
+JE_SaveFilesType *saveFilePointer = &saveFiles;
 JE_SaveGameTemp saveTemp;
-JE_byte *saveTempPointer;
+JE_SaveGameTemp *saveTempPointer = &saveTemp;
 
 JE_word editorLevel;   /*Initial value 800*/
 
 JE_word x;
-
 
 const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 
@@ -341,7 +344,93 @@ void JE_saveGame( JE_byte slot, JE_string name )
 
 	JE_saveConfiguration();
 }
+
+void JE_loadGame( JE_byte slot )
+{ 
+	JE_byte temp5;
+
+	superTyrian = FALSE;
+	onePlayerAction = FALSE;
+	twoPlayerMode = FALSE;
+	extraGame = FALSE;
+	galagaMode = FALSE;
   
+	initialDifficulty = saveFiles[slot].initialDifficulty;
+	gameHasRepeated = saveFiles[slot].gameHasRepeated;
+	twoPlayerMode = slot > 11; /* TODO: Verify this value, may need reindexing! */
+	difficultyLevel = saveFiles[slot].difficulty;
+	memcpy(pItems, saveFiles[slot].items, sizeof(pItems));
+	superArcadeMode = pItems[3 - 1];
+	
+	if (superArcadeMode == 255)
+	{
+		onePlayerAction = TRUE;
+		superArcadeMode = 0;
+		pItems [3 - 1] = 0;
+	} 
+	else if (superArcadeMode == 254)
+	{
+		onePlayerAction = TRUE;
+		superArcadeMode = 0;
+		pItems [3 - 1] = 0;
+		superTyrian = TRUE;
+	} 
+	else if (superArcadeMode > 0)
+	{
+		onePlayerAction = TRUE;
+	}
+  
+	if (twoPlayerMode)
+	{
+		memcpy(pItemsPlayer2, saveFiles[slot].lastItems, sizeof(pItemsPlayer2));
+		onePlayerAction = FALSE;
+	} else {
+		memcpy(pItemsBack2, saveFiles[slot].lastItems, sizeof(pItemsBack2));
+	}
+
+	/* {Compatibility with old version} */
+	/* SYN: TODO: See if any of these need reindexing */
+	if (pItemsPlayer2[7] < 101)
+	{
+		pItemsPlayer2[7] = 101;
+		pItemsPlayer2[8] = pItemsPlayer2[4];
+	}
+	
+	score = saveFiles[slot].score;
+	score2 = saveFiles[slot].score2;
+	mainLevel = saveFiles[slot].level;
+	cubeMax = saveFiles[slot].cubes;
+	lastCubeMax = cubeMax;
+
+	secretHint = saveFiles[slot].secretHint;
+	inputDevice1 = saveFiles[slot].input1;
+	inputDevice2 = saveFiles[slot].input2;
+
+	portPower[temp] = saveFiles[slot].power[0];
+	portPower[temp] = saveFiles[slot].power[1];
+  
+	temp5 = saveFiles[slot].episode;
+	
+	memcpy(levelName, saveFiles[slot].levelName, sizeof(levelName));
+  
+	if (strcmp(lastLevelName, "Completed") == 0)
+	{
+	  if (temp5 == 4)
+	  {
+		temp5 = 1;
+	  }
+	  else if (temp5 < 4)
+	  {
+		temp5++;
+	  }
+	  /* {Increment 1-3 to 2-4.  Episode 4 goes to 1.  Episode 5 stands still.} */
+	}
+  
+	JE_initEpisode(temp5);
+	saveLevel = mainLevel;
+	memcpy(lastLevelName, levelName, sizeof(levelName));
+}
+
 void JE_initProcessorType( void )
 {
 	/* SYN: Originally this proc looked at your hardware specs and chose appropriate options. We don't care, so I'll just set
@@ -423,25 +512,31 @@ void JE_setNewGameSpeed( void )
 
 void JE_encryptSaveTemp( void )
 {
-	
+	STUB(encryptSaveTemp);
 }
 
 void JE_decryptSaveTemp( void )
 {
-	
+	STUB(decryptSaveTemp);
 }
 
 void JE_loadConfiguration( void )
 {
-	
+	STUB(loadConfiguration);
 }
 
 void JE_saveConfiguration( void )
 {
-	
+	STUB(saveConfiguration);
 }
 
-void JE_loadGame( JE_byte slot )
-{ 
-	
-}
+/*
+FUNCTION NextEpisode : BOOLEAN;
+VAR found : BOOLEAN;
+BEGIN
+  found := FindNextEpisode;
+  
+  IF found THEN
+    mainlevel := 0;
+END;
+*/
