@@ -246,3 +246,35 @@ void JE_scanForEpisodes( void )
 		episodeAvail[temp] |= JE_find(buf);
 	}
 }
+
+JE_boolean JE_findNextEpisode( void )
+{
+	JE_boolean found = FALSE;
+	JE_byte newEpisode = episodeNum+1;
+
+	jumpBackToEpisode1 = FALSE;
+
+	while (!found)
+	{
+		if (newEpisode > EPISODE_MAX)
+		{
+			newEpisode = 1;
+			jumpBackToEpisode1 = TRUE;
+		}
+
+		if (episodeAvail[newEpisode])
+		{
+			found = TRUE;
+		}
+
+		newEpisode++;
+
+	}
+
+	if (found)
+	{
+		JE_initEpisode(newEpisode);
+	}
+
+	return found;
+}
