@@ -47,10 +47,9 @@ JE_longint JE_getFileSize( const JE_string filename )
 		return 0;
 	}
 
-	while (fgetc(f) != EOF)
-	{
-		size++;
-	}
+	fseek(f, 0, SEEK_END);
+	size = ftell(f);
+
 	fclose(f);
 
 	return size;
