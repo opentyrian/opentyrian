@@ -21,6 +21,9 @@
 #include "episodes.h"
 #include "nortsong.h"
 #include "vga256d.h"
+#include "error.h"
+#include "loudness.h"
+#include "nortsong.h"
 
 #define NO_EXTERNS
 #include "config.h"
@@ -512,17 +515,249 @@ void JE_setNewGameSpeed( void )
 
 void JE_encryptSaveTemp( void )
 {
-	STUB(encryptSaveTemp);
+	JE_SaveGameTemp s2, s3;
+	char c;
+	JE_word x;
+	JE_byte y, z;
+	
+	memcpy(s3, saveTemp, sizeof(s3));
+	
+	y = 0;
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
+	{
+		y += s3[x];
+	}
+	saveTemp[SAVE_FILE_SIZE + 1 - 1] = y;
+
+	y = 0;
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
+	{
+		y -= s3[x];
+	}
+	saveTemp[SAVE_FILE_SIZE + 2 - 1] = y;
+
+	y = 1;
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
+	{
+		y = (y * s3[x]) + 1;
+	}
+	saveTemp[SAVE_FILE_SIZE + 3 - 1] = y;
+	
+	y = 0;
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
+	{
+		y = y ^ s3[x];
+	}
+	saveTemp[SAVE_FILE_SIZE + 4 - 1] = y;
+	
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
+	{
+		saveTemp[x] = saveTemp[x] ^ cryptKey[x % 10];
+		if (x > 1)
+		{
+			saveTemp[x] = saveTemp[x] ^ saveTemp[x - 1];
+		}
+	}
 }
 
 void JE_decryptSaveTemp( void )
 {
-	STUB(decryptSaveTemp);
+	JE_boolean correct = TRUE;
+	JE_SaveGameTemp s2;
+	/*JE_word x;*/
+	int x;
+	JE_byte y, z;
+	
+	/* Decrypt save game file */
+	for (x = (SAVE_FILE_SIZE - 1); x >= 0; x--)
+	{
+		s2[x] = saveTemp[x] ^ (cryptKey[x % 10]);
+		if (x > 0)
+		{
+			s2[x] = s2[x] ^ saveTemp[x - 1];
+		}
+	}
+	
+	/* Check save file for correctitude */
+	y = 0;
+	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	{
+		y += s2[x];
+	}
+	if (saveTemp[SAVE_FILE_SIZE] != y)
+	{
+		correct = FALSE;
+	}
+
+	y = 0;
+	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	{
+		y -= s2[x];
+	}
+	if (saveTemp[SAVE_FILE_SIZE + 2 - 1] != y)
+	{
+		correct = FALSE;
+	}
+
+	y = 1;
+	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	{
+		y = (y * s2[x]) + 1;
+	}
+	if (saveTemp[SAVE_FILE_SIZE + 3 - 1] != y)
+	{
+		correct = FALSE;
+	}	
+
+	y = 0;
+	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	{
+		y = y ^ s2[x];
+	}
+	if (saveTemp[SAVE_FILE_SIZE + 4 - 1] != y)
+	{
+		correct = FALSE;
+	}		
+	
+	/* Barf and die if save file doesn't validate */
+	if (!correct)
+	{
+		printf("Error reading save file!\n");
+		exit(255);
+	}
+	
+	/* Keep decrypted version */
+	memcpy(saveTemp, s2, sizeof(s2));
 }
 
 void JE_loadConfiguration( void )
 {
-	STUB(loadConfiguration);
+	FILE *fi;
+	
+	ErrorActive = TRUE;
+	
+	if (JE_isCFGThere())
+	{
+		/* ASSIGN (f, 'TYRIAN.CFG');
+		RESET (f, 1);
+		BLOCKREAD (f, Background2, 1);
+		BLOCKREAD (f, GameSpeed  , 1);
+
+		BLOCKREAD (f, InputDevice, 1);
+		InputDevice := 0;
+
+		BLOCKREAD (f, Jconfigure , 1);
+		IF Jconfigure = 0 THEN
+		Jconfigure := 1;
+		BLOCKREAD (f, VersionNum , 1);
+		IF ResetVersion THEN
+		VersionNum := 2;    {Shareware 1.0 and Registered 1.1 = 1}
+		BLOCKREAD (f, Processortype, 1);
+		BLOCKREAD (f, midiport   , 1);
+		BLOCKREAD (f, soundeffects, 1);
+		BLOCKREAD (f, Gammacorrection, 1);
+		BLOCKREAD (f, difficultylevel, 1);
+		BLOCKREAD (f, joybuttonassign, 4);
+
+		BLOCKREAD (f, Tyr_musicvolume, 2);
+		BLOCKREAD (f, FXvolume   , 2);
+
+		BLOCKWRITE (f, InputDevice1, 1);
+		BLOCKWRITE (f, InputDevice2, 1);
+
+		BLOCKREAD (f, keysettings, SIZEOF (keysettings) );
+		CLOSE (f);
+		*/
+	} else {
+		/*
+		joybuttonassign := defaultjoybuttonassign;
+		midiport := 1;
+		soundeffects := 1;
+		Jconfigure := 0;
+		keysettings := defaultkeysettings;
+		Background2 := TRUE;
+		InputDevice := 0;
+		Tyr_musicvolume := 255;
+		FXvolume := 128;
+		Gammacorrection := 0;
+		Processortype := 3;
+		GameSpeed := 4;
+		InputDevice1 := 0;
+		InputDevice2 := 0;
+		*/
+    }
+  
+	/*
+  IF Tyr_musicvolume > 255 THEN
+    Tyr_musicvolume := 255;
+  IF FXvolume > 254 THEN
+    FXvolume := 254;
+  IF FXvolume < 14 THEN
+    FXvolume := 14;*/
+  
+  soundActive = TRUE;
+  musicActive = TRUE;
+  
+  JE_setVol(tyr_musicVolume, fxVolume);
+  
+	/*
+  IF getfilesize ('Tyrian.SAV') <> 0 THEN
+    BEGIN
+      ASSIGN (f, 'TYRIAN.SAV');
+      RESET (f, 1);
+      BLOCKREAD (f, savetemp, SIZEOF (savetemp) );
+      DecryptSaveTemp;
+      
+      editorlevel := btow (savetemp [SIZEOF (savetemp) - 5], savetemp [SIZEOF (savetemp) - 4]);
+      
+      ASM
+        mov dx, ds
+        
+        mov cx, savefilessize
+        
+        mov si, savetempofs
+        mov di, savefilesofs
+        
+        mov ax, savefilesseg
+        mov bx, savetempseg
+        mov ds, bx
+        mov es, ax
+        
+        cld
+        rep movsb
+        
+        mov ds, dx
+      END;
+      
+      CLOSE (f);
+    END 
+  ELSE
+    BEGIN
+      editorlevel := 800;
+      FOR Z := 1 TO 100 DO
+        BEGIN
+          savetemp [SIZEOF (savefiles) + Z] := initialitemavail [Z];
+        END;
+      FOR Z := 1 TO savefilesnum DO
+        BEGIN
+          savefiles [Z] .level := 0;
+          FOR Y := 1 TO 14 DO
+            savefiles [Z] .name [Y] := ' ';
+          savefiles [Z] .highscore1 := (RANDOM (20) + 1) * 1000;
+          IF (Z - 1) MOD 6 > 2 THEN
+            BEGIN
+              savefiles [Z] .highscore2 := (RANDOM (20) + 1) * 1000;
+              savefiles [Z] .highscorename := defaultteamnames [RANDOM (22) + 1];
+            END
+          ELSE
+            savefiles [Z] .highscorename := defaulthighscorenames [RANDOM (34) + 1];
+        END;
+    END;
+  ErrorActive := FALSE;
+  
+  calcFXvol;
+  InitProcessorType;
+  */
 }
 
 void JE_saveConfiguration( void )

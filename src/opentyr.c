@@ -113,7 +113,7 @@ int main( int argc, char *argv[] )
 	playDemoNum = 0;
 	playDemo = FALSE;
 
-	/* TODO: LoadConfiguration(); */
+	JE_loadConfiguration();
 
 	/* TODO: Tyrian originally checked availible memory here. */
 

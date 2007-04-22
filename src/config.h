@@ -29,7 +29,7 @@
 
 #define MAX_STARS 100
 
-#define SAVE_FILE_SIZE  (sizeof(SaveGameTemp) - 4)
+#define SAVE_FILE_SIZE  (sizeof(JE_SaveGameTemp) - 4)
 #define SAVE_FILES_SIZE (sizeof(JE_SaveFilesType))
 
 typedef JE_byte JE_KeySettingType[8]; /* [1..8] */
