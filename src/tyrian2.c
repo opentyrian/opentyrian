@@ -106,6 +106,10 @@ const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 1
 
 void JE_main( void )
 {
+	int i, j, k;
+	JE_byte **bp, *src;
+	unsigned char *s; /* screen pointer, 8-bit specific */
+
 	loadTitleScreen = TRUE;
 
 	/* Setup Player Items/General Data */
@@ -222,9 +226,9 @@ start_level_first:
 	mapy = 300 - 8;
 	mapy2 = 600 - 8;
 	mapy3 = 600 - 8;
-	mapyPos = (mapy * 28) + megaDataOfs - 2; /* TODO */
-	mapy2Pos = (mapy2 * 28) + megaData2Ofs - 2; /* TODO */
-	mapy3Pos = (mapy3 * 30) + megaData3Ofs - 2; /* TODO */
+	mapyPos = &megaData1->mainmap[mapy][0] - 1;
+	mapy2Pos = &megaData2->mainmap[mapy2][0] - 1;
+	mapy3Pos = &megaData3->mainmap[mapy3][0] - 1;
 	mapxPos = 0;
 	mapxOfs = 0;
 	mapx2Pos = 0;
@@ -376,6 +380,131 @@ start_level_first:
 	JE_drawPortConfigButtons();
 
 	/* TODO */
+
+	/* SMOOTHIES! */
+	/* TODO JE_checkSmoothies();*/
+	if (anySmoothies)
+	{
+		memcpy(VGAScreen->pixels, smoothiesScreen, sizeof(smoothiesSeg));
+	}
+
+	/*=======================BACKGROUNDS========================*/
+	/*=======================BACKGROUND 1========================*/
+
+	if (forceEvents && !backMove)
+	{
+		curLoc++;
+	}
+
+	if (map1yDelayMax > 1 && backMove < 2)
+	{
+		if (map1yDelay == 1)
+		{
+			backMove = 1;
+		} else {
+			backMove = 0;
+		}
+	}
+
+	/*Draw background*/
+	if (astralDuration == 0)
+	{
+		/* BP is used by all backgrounds */
+
+		s = (unsigned char *)tempScreenSeg->pixels;
+
+		/* Offset for top */
+		s += 11 * 24;
+		s += mapxPos;
+
+		/* Map location number in BP */
+		bp = mapyPos;
+		bp += mapxbpPos;
+
+		if (backPos)
+		{
+			/*============BACKGROUND 1 TOP=============*/
+			for (i = 12; i; i--)
+			{
+				
+				/* move to previous map X location */
+				bp -= 1;
+				
+				src = *bp;
+				src += (28 - backPos) * 24;
+				
+				for (j = backPos; j; j--)
+				{
+					memcpy(s, src, 24);
+
+					s += 320;
+					src += 24;
+				}
+				
+				s -= backPos * 320 + 24;
+			}
+			
+			s += 24 * 11;
+			s += backPos * 320 + 24;
+			
+			/* Increment Map Location for next line */
+			bp += 14 - 2;   /* (Map Width) */
+			
+		}
+		bp += 14;   /* (Map Width) */
+
+        /*============BACKGROUND 1 CENTER=============*/
+
+		/* Outer loop - Screen 6 lines high */
+		for (i = 6; i; i--)
+		{
+			for (j = 12; j; j--)
+			{
+				/* move to previous map X location */
+				bp -= 1;
+				src = *bp;
+				
+				for (k = 0; k < 28; k++)
+				{
+					memcpy(s, src, 24);
+
+					s += 320;
+					src += 24;
+				}
+
+				s -= 320 * 28 + 24;
+			}
+			
+			/* Increment Map Location for next line */
+			bp += 14 + 14 - 2;  /* (Map Width) */
+			
+			s += 320 * 28 + 24 * 12;
+		}
+
+		if (backPos <= 15)
+		{
+			/*============BACKGROUND 1 BOTTOM=============*/
+			for (i = 12; i; i--)
+			{
+				/* move to previous map X location */
+				bp -= 1;
+				src = *bp;
+
+				for (j = 15 - backPos + 1; j; j--)
+				{
+					memcpy(s, src, 24);
+
+					s += 320;
+					src += 24;
+				}
+				
+				s -= (15 - backPos + 1) * 320 + 24;
+			}
+		}
+	} else {
+		/* TODO */
+	}
+
 }
 
 /*========Load Level/Map Data========*/
