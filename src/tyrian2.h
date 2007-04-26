@@ -40,4 +40,12 @@ JE_longint JE_cashLeft( void );
 void JE_loadCubes( void );
 void JE_itemScreen( void );
 
+void JE_drawMenuHeader( void );
+void JE_drawMenuChoices( void );
+void JE_updateNavScreen( void );
+
+void JE_drawLines( JE_boolean dark );
+void JE_drawDots( void );
+void JE_drawPlanet( JE_byte planetNum );
+
 #endif /* TYRIAN2_H */

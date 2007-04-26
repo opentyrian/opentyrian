@@ -46,6 +46,13 @@
 #include <string.h>
 #include <stdlib.h>
 
+JE_byte planetAni, planetAniWait;
+JE_byte currentDotNum, currentDotWait;
+JE_real navX, navY, newNavX, newNavY;
+JE_integer tempNavX, tempNavY;
+JE_byte planetDots[5]; /* [1..5] */
+JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
+
 /* Level Event Data */
 JE_boolean quit, first, loadLevelOk, refade;
 JE_byte newPal, curPal, oldPal;
@@ -514,15 +521,12 @@ void JE_loadMap( void )
 	FILE *lvlFile, *shpFile;
 /*	FILE *tempFile;*/ /*Extract map file from LVL file*/
 
-	JE_byte planetAni, planetAniWait;
 
 	JE_char char_mapFile, char_shapeFile;
 
 	JE_DanCShape shape;
 	JE_boolean shapeBlank;
 
-	JE_real navx, navY, newNavX, newNavY;
-	JE_integer tempNavX, tempNavY;
 	
 	FILE *f;
 /*	FILE *f2;*/
@@ -534,9 +538,6 @@ void JE_loadMap( void )
 	char s[256];
 	JE_byte col, planets, shade;
 
-	JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
-	JE_byte planetDots[5]; /* [1..5] */
-	JE_byte currentDotNum, currentDotWait;
 
 	JE_word yLoc;
 	JE_shortint yChg;
@@ -1938,11 +1939,184 @@ void JE_itemScreen( void )
 
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
-	/* TODO */
+	keyboardUsed = FALSE;
+	firstMenu9 = FALSE;
+	backFromHelp = FALSE;
 
-/*item_screen_start:*/
+item_screen_start:
 
-	/* TODO */
+	do
+	{
+		/*JE_getShipInfo(); TODO*/
+
+		quit = FALSE;
+
+		/* JE: If curMenu==1 and twoPlayerMode is on, then force move to menu 10 */
+		if (curMenu == 1)
+		{
+			if (twoPlayerMode)
+			{
+				curMenu = 10;
+			}
+			if (isNetworkGame || onePlayerAction)
+			{
+				curMenu = 11;
+			}
+			if (superTyrian)
+			{
+				curMenu = 14;
+			}
+		}
+
+		paletteChanged = FALSE;
+
+		leftPower = FALSE;
+		rightPower = FALSE;
+
+		/* JE: Sort items in merchant inventory */
+		for (x = 0; x < 9; x++)
+		{
+			if (itemAvailMax[x] > 1)
+			{
+				for (temp = 0; temp < itemAvailMax[x] - 1; temp++)
+				{
+					for (temp2 = temp+1; temp2 < itemAvailMax[x]; temp2++)
+					{
+						if (itemAvail[x][temp] == 0 || (itemAvail[x][temp] > itemAvail[x][temp2] && itemAvail[x][temp2] != 0))
+						{
+							temp3 = itemAvail[x][temp];
+							itemAvail[x][temp] = itemAvail[x][temp2];
+							itemAvail[x][temp2] = temp3;
+						}
+					}
+				}
+			}
+		}
+
+		if (curMenu != 9 || firstMenu9)
+		{
+			memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		}
+
+		defaultBrightness = -3;
+
+		/* JE: --- STEP I - Draw the menu --- */
+		if (curMenu == 4)
+		{
+			planetAni = 0;
+			keyboardUsed = FALSE;
+			currentDotNum = 0;
+			currentDotWait = 8;
+			planetAniWait = 3;
+			JE_updateNavScreen();
+		}
+
+		if (curMenu != 5)
+		{
+			JE_drawMenuHeader();
+		}
+
+		if ((curMenu >= 1 && curMenu <= 4) || (curMenu >= 10 || curMenu <= 14))
+		{
+			JE_drawMenuChoices();
+		}
+
+		if (skipMove > 0)
+		{
+			skipMove--;
+		}
+
+		if (curMenu == 1)
+		{
+			for (x = 0; x < cubeMax; x++)
+			{
+				JE_newDrawCShapeDarkenNum(OPTION_SHAPES, 35, 190 + x*18 + 2, 37+1);
+				JE_newDrawCShapeNum(OPTION_SHAPES, 35, 190 + x*18, 37);
+			}
+		}
+
+		if (curMenu == 13)
+		{
+			for (temp = 0; temp < 4; temp++)
+			{
+				JE_textShade(214, 34 + temp*24 - 8, joyButton[joyButtonAssign[temp]], 15, 2, DARKEN);
+			}
+		}
+
+		if (curMenu == 7)
+		{
+			if (twoPlayerMode)
+			{
+				min = 13;
+				max = 24;
+			} else {
+				min = 2;
+				max = 13;
+			}
+
+			for (x = min; x <= max; x++)
+			{
+				if (x - min + 2 == curSel[curMenu])
+				{
+					temp2 = 15;
+				} else {
+					temp2 = 28;
+				}
+
+				if (x == max)
+				{
+					strcpy(tempStr, miscText[6]);
+				} else {
+					if (saveFiles[x-1].level == 0)
+					{
+						strcpy(tempStr, miscText[3]);
+					} else {
+						strcpy(tempStr, "");
+						for (y = 0; y < 14; y++)
+						{
+							/* tempstr := tempstr + savefiles [x - 1] .name [y] TODO */
+						}
+					}
+				}
+
+				tempY = 38 + (x - min)*11;
+
+				JE_textShade(163, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
+
+				if (x - min + 2 == curSel[curMenu])
+				{
+					if (keyboardUsed)
+					{
+						/*JE_setMousePosition(610, 38 + (x - min) * 11); TODO*/
+					}
+				}
+
+				if (x < max)
+				{
+					if (x - min + 2 == curSel[curMenu])
+					{
+						temp2 = 252;
+					} else {
+						temp2 = 250;
+					}
+
+					if (saveFiles[x-1].level == 0)
+					{
+						strcpy(tempStr, "-----");
+					} else {
+						strcpy(tempStr, saveFiles[x-1].levelName);
+						/* JE_textShade(297, tempY, miscTextB[1] CONCAT JE_st(saveFiles[x-1].episode), temp2 / 16, temp2 % 16 - 8, DARKEN); TODO */
+					}
+
+					JE_textShade(245, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
+				}
+
+				JE_drawMenuHeader();
+			}
+		}
+
+		/* TODO */
+	} while (!(quit || gameLoaded || jumpSection));
 }
 
 void JE_loadCubes( void )
@@ -2083,5 +2257,248 @@ void JE_loadCubes( void )
 
 
 		fclose(f);
+	}
+}
+
+void JE_drawMenuHeader( void )
+{
+	switch (curMenu)
+	{
+		case 9:
+			strcpy(tempStr, cubeHdr2[curSel[8]-1]);
+			break;
+		case 8:
+			strcpy(tempStr, menuInt[1][2]);
+			break;
+		case 7:
+			strcpy(tempStr, menuInt[3][performSave + 2]);
+			break;
+		default:
+			strcpy(tempStr, menuInt[curMenu][1]);
+			break;
+	}
+	JE_dString(74 + JE_fontCenter(tempStr, FONT_SHAPES), 10, tempStr, FONT_SHAPES);
+}
+
+void JE_drawMenuChoices( void )
+{
+	JE_byte x;
+
+	for (x = 1; x < menuChoices[curMenu]; x++)
+	{
+		if (curMenu == 13)
+		{
+			tempY = 38 + (x - 1) * 24 - 8;
+		} else {
+			tempY = 38 + (x - 1) * 16;
+		}
+		
+		if (curMenu == 1)
+		{
+			if (x == 7)
+			{
+				tempY += 16;
+			}
+		}
+
+		if (curMenu == 10)
+		{
+			if (x > 3)
+			{
+				tempY += 16;
+			}
+			if (x > 4)
+			{
+				tempY += 16;
+			}
+		}
+
+		if (curMenu == 4 && x == menuChoices[curMenu])
+		{
+			JE_dString(166, tempY, JE_bright(curSel[curMenu] == x) + menuInt[curMenu][x], SMALL_FONT_SHAPES);
+		} else {
+			tempY -= 16;
+			JE_dString(166, tempY, JE_bright(curSel[curMenu] == x) + menuInt[curMenu][x], SMALL_FONT_SHAPES);
+		}
+
+		if (keyboardUsed && curSel[curMenu] == x)
+		{
+			/*JE_setMousePosition(610, tempY + 6); TODO*/
+		}
+	}
+}
+
+void JE_updateNavScreen( void )
+{
+	JE_byte x;
+
+	tempNavX = ROUND(navX);
+	tempNavY = ROUND(navY);
+	JE_bar(19, 16, 135, 169, 2);
+	JE_drawLines(TRUE);
+	JE_drawLines(FALSE);
+	JE_drawDots();
+
+	for (x = 1; x <= 11; x++)
+	{
+		JE_drawPlanet(x);
+	}
+
+	for (x = 1; x < menuChoices[4]; x++)
+	{
+		if (mapPlanet[x-1] > 11)
+		{
+			JE_drawPlanet(mapPlanet[x-1]);
+		}
+	}
+
+	if (mapOrigin > 11)
+	{
+		JE_drawPlanet(mapOrigin);
+	}
+
+	JE_newDrawCShapeNum(OPTION_SHAPES, 29, 0, 0);
+
+	if (curSel[4] < menuChoices[4])
+	{
+		newNavX = (planetX[mapOrigin] - shapeX[PLANET_SHAPES][PGR[mapOrigin]] / 2 + planetX[mapPlanet[curSel[4]-1]] -  shapeX[PLANET_SHAPES][PGR[mapPlanet[curSel[4]-1]]] / 2) / 2.0;
+		newNavY = (planetY[mapOrigin] - shapeY[PLANET_SHAPES][PGR[mapOrigin]] / 2 + planetY[mapPlanet[curSel[4]-1]] -  shapeY[PLANET_SHAPES][PGR[mapPlanet[curSel[4]-1]]] / 2) / 2.0;
+	}
+
+	navX = navX + (newNavX - navX) / 2.0;
+	navY = navY + (newNavY - navY) / 2.0;
+
+	if (abs(newNavX - navX) < 1)
+	{
+		navX = newNavX;
+	}
+	if (abs(newNavY - navY) < 1)
+	{
+		navY = newNavY;
+	}
+
+	JE_bar(314, 0, 319, 199, 230);
+
+	if (planetAniWait > 0)
+	{
+		planetAniWait--;
+	} else {
+		planetAni++;
+		if (planetAni > 14)
+		{
+			planetAni = 0;
+		}
+		planetAniWait = 3;
+	}
+
+	if (currentDotWait > 0)
+	{
+		currentDotWait--;
+	} else {
+		if (currentDotNum < planetDots[curSel[4]-1])
+		{
+			currentDotNum++;
+		}
+		currentDotWait = 5;
+	}
+}
+
+void JE_drawLines( JE_boolean dark )
+{
+	JE_byte x, y;
+	JE_integer tempX, tempY;
+	JE_integer tempX2, tempY2;
+	JE_word tempW, tempW2;
+
+	tempX2 = -10;
+	tempY2 = 0;
+
+	tempW = 0;
+	for (x = 0; x < 20; x++)
+	{
+		tempW += 15;
+		tempX = tempW - tempX2;
+
+		if (tempX > 18 && tempX < 135)
+		{
+			if (dark)
+			{
+				JE_rectangle(tempX + 1, 0, tempX + 1, 199, 32+3);
+			} else {
+				JE_rectangle(tempX, 0, tempX, 199, 32+5);
+			}
+		}
+	}
+
+	tempW = 0;
+	for (y = 0; y < 20; y++)
+	{
+		tempW += 15;
+		tempY = tempW - tempY2;
+
+		if (tempY > 15 && tempY < 169)
+		{
+			if (dark)
+			{
+				JE_rectangle(0, tempY + 1, 319, tempY + 1, 32+3);
+			} else {
+				JE_rectangle(0, tempY, 319, tempY, 32+5);
+			}
+
+			tempW2 = 0;
+
+			for (x = 0; x < 20; x++)
+			{
+				tempW2 += 15;
+				tempX = tempW2 - tempX2;
+				if (tempX > 18 && tempX < 135)
+				{
+					JE_pix3(tempX, tempY, 32+6);
+				}
+			}
+		}
+	}
+}
+
+void JE_drawDots( void )
+{
+	JE_byte x, y;
+	JE_integer tempX, tempY;
+
+	for (x = 1; x <= mapPNum; x++)
+	{
+		for (y = 1; y <= planetDots[x]; y++)
+		{
+			tempX = planetDotX[x][y] - tempNavX + 66 - 2;
+			tempY = planetDotY[x][y] - tempNavY + 85 - 2;
+			if (tempX > 0 && tempX < 140 && tempY > 0 && tempY < 168)
+			{
+				if (x == curSel[4]-1 && y <= currentDotNum)
+				{
+					JE_newDrawCShapeNum(OPTION_SHAPES, 31, tempX, tempY);
+				} else {
+					JE_newDrawCShapeNum(OPTION_SHAPES, 30, tempX, tempY);
+				}
+			}
+		}
+	}
+}
+
+void JE_drawPlanet( JE_byte planetNum )
+{
+	JE_integer tempX, tempY, tempZ;
+
+	tempZ = PGR[planetNum];
+	tempX = planetX[planetNum] + 66 - tempNavX - shapeX[PLANET_SHAPES][tempZ] / 2;
+	tempY = planetY[planetNum] + 85 - tempNavY - shapeY[PLANET_SHAPES][tempZ] / 2;
+
+	if (tempX > -7 && tempX + shapeX[PLANET_SHAPES][tempZ] < 170 && tempY > 0 && tempY < 160)
+	{
+		if (PAni[planetNum])
+		{
+			tempZ += planetAni;
+		}
+		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
+		JE_newDrawCShapeNum(PLANET_SHAPES, tempZ, tempX, tempY);
 	}
 }
