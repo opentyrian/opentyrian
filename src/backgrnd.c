@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "config.h"
+#include "vga256d.h"
+#include "varz.h"
 
 #define NO_EXTERNS
 #include "backgrnd.h"
@@ -45,3 +48,359 @@ JE_word    TSS;       /*Temp smoothies screen*/
 JE_byte    SDAT[9]; /* [1..9] */
 
 JE_byte temp, temp2;
+
+void JE_drawBackground2( void )
+{
+	JE_boolean useBackground1ofs;
+
+	JE_byte **bp, *src;
+	unsigned char *s = NULL; /* screen pointer, 8-bit specific */
+
+	int i, j;
+	int x, y;
+
+	if (map2yDelayMax > 1)
+	{
+		if (backMove2 < 2)
+		{
+			if (map2yDelay == 1)
+			{
+				backMove2 = 1;
+			} else {
+				backMove2 = 0;
+			}
+		}
+	}
+
+	useBackground1ofs = smoothies[1];
+
+	/*Draw background*/
+
+	/* BP is used by all backgrounds */
+
+	if (background2 != 0)
+	{
+
+		/*Offset for top*/
+		s = VGAScreen->pixels;
+		s += 11 * 24;
+
+		if (useBackground1ofs != 0)
+		{
+			s += mapxPos;
+			/* Map location number in BP */
+			bp = mapy2Pos + mapxbpPos;
+		} else {
+			s += mapx2Pos;
+			/* Map location number in BP */
+			bp = mapy2Pos + mapx2bpPos;
+		}
+
+		/* Use DS for MegaDataSeg */
+		src = megaData2->mainmap[0][0];
+
+		/*============BACKGROUND 2 TOP=============*/
+		if (backPos2 != 0)
+		{
+			for (i = 12; i; i--)
+			{
+				/* move to previous map X location */
+				bp--;
+
+				src = *bp;
+				if (src != NULL)
+				{
+					src += (28 - backPos2) * 24;
+
+					for (y = backPos2; y; y--)
+					{
+						for(x = 0; x < 24; x++)
+						{
+							if (src[x])
+							{
+								s[x] = src[x];
+							}
+						}
+
+						s += VGAScreen->w;
+						src += 24;
+					}
+
+					s -= backPos2 * VGAScreen->w;
+				}
+
+				s -= 24;
+			}
+
+			s += backPos2 * VGAScreen->w;
+			s += 24 * 12;
+
+			/* Increment Map Location for next line */
+			bp += 14 - 2;   /* 44+44 +4 (Map Width) */
+		}
+
+		bp += 14;
+
+		/*============BACKGROUND 2 CENTER=============*/
+
+		/* Screen 6 lines high */
+		for (i = 6; i; i--)
+		{
+			for (j = 12; j; j--)
+			{
+				/* move to previous map X location */
+				bp--;
+
+				src = *bp;
+				if (src != NULL)
+				{
+					for (y = 28; y; y--)
+					{
+						for(x = 0; x < 24; x++)
+						{
+							if (src[x])
+							{
+								s[x] = src[x];
+							}
+						}
+
+						s += VGAScreen->w;
+						src += 24;
+					}
+
+					/* AX=320*13+12 for subtracting from DI when done drawing a shape */
+					s -= VGAScreen->w * 28;
+				}
+
+				s -= 24;
+			}
+
+			/* Increment Map Location for next line */
+			bp += 14 + 14 - 2;  /* 44+44 +6 (Map Width) */
+			s += VGAScreen->w * 28 + 24 * 12;
+		}
+
+		if (backPos2 <= 15)
+		{
+			/*============BACKGROUND 2 BOTTOM=============*/
+			for (i = 12; i; i--)
+			{
+				/* move to previous map X location */
+				bp--;
+
+				src = *bp;
+				if (src != NULL)
+				{
+
+					for (y = 15 - backPos2 + 1; y; y--)
+					{
+						for(x = 0; x < 24; x++)
+						{
+							if (src[x])
+							{
+								s[x] = src[x];
+							}
+						}
+
+						s += VGAScreen->w;
+						src += 24;
+					}
+
+					s -= (15 - backPos2 + 1) * VGAScreen->w;
+				}
+
+				s -= 24;
+			}
+		}
+
+	}
+
+	/*Set Movement of background*/
+	if (--map2yDelay == 0)
+	{
+		map2yDelay = map2yDelayMax;
+
+		backPos2 += backMove2;
+
+		if (backPos2 >  27)
+		{
+			backPos2 -= 28;
+			mapy2--;
+			mapy2Pos -= 14;  /*Map Width*/
+		}
+	}
+}
+
+void JE_superBackground2( void )
+{
+	/*=======================BACKGROUNDS========================*/
+	/*=======================BACKGROUND 2========================*/
+	JE_byte **bp, *src;
+	unsigned char *s = NULL; /* screen pointer, 8-bit specific */
+
+	int i, j;
+	int x, y;
+
+	if (map2yDelayMax > 1)
+	{
+		if (backMove2 < 2)
+		{
+			if (map2yDelay == 1)
+			{
+				backMove2 = 1;
+			} else {
+				backMove2 = 0;
+			}
+		}
+	}
+
+	/*Draw background*/
+
+	/* BP is used by all backgrounds */
+
+	/*Offset for top*/
+	s = VGAScreen->pixels;
+	s += 11 * 24;
+
+	s += mapx2Pos;
+	/* Map location number in BP */
+	bp = mapy2Pos + mapx2bpPos;
+
+	/* Use DS for MegaDataSeg */
+	src = megaData2->mainmap[0][0];
+
+	/*============BACKGROUND 2 TOP=============*/
+	if (backPos2 != 0)
+	{
+		for (i = 12; i; i--)
+		{
+			/* move to previous map X location */
+			bp--;
+
+			src = *bp;
+			if (src != NULL)
+			{
+				src += (28 - backPos2) * 24;
+
+				for (y = backPos2; y; y--)
+				{
+					for(x = 0; x < 24; x++)
+					{
+						if (*src != 0)
+						{
+							*s = (((*s & 0x0f) + (*src & 0x0f)) / 2) | (*src & 0xf0);
+						}
+
+						s++;
+						src++;
+					}
+
+					s += VGAScreen->w - 24;
+				}
+
+				s -= backPos2 * VGAScreen->w;
+			}
+
+			s -= 24;
+		}
+
+		s += backPos2 * VGAScreen->w;
+		s += 24 * 12;
+
+		/* Increment Map Location for next line */
+		bp += 14 - 2;   /* 44+44 +4 (Map Width) */
+	}
+
+	bp += 14;
+
+	/*============BACKGROUND 2 CENTER=============*/
+
+	/* Screen 6 lines high */
+	for (i = 6; i; i--)
+	{
+		for (j = 12; j; j--)
+		{
+			/* move to previous map X location */
+			bp--;
+
+			src = *bp;
+			if (src != NULL)
+			{
+				for (y = 28; y; y--)
+				{
+					for(x = 0; x < 24; x++)
+					{
+						if (*src != 0)
+						{
+							*s = (((*s & 0x0f) + (*src & 0x0f)) / 2) | (*src & 0xf0);
+						}
+
+						s++;
+						src++;
+					}
+
+					s += VGAScreen->w - 24;
+				}
+
+				/* AX=320*13+12 for subtracting from DI when done drawing a shape */
+				s -= VGAScreen->w * 28;
+			}
+
+			s -= 24;
+		}
+
+		/* Increment Map Location for next line */
+		bp += 14 + 14 - 2;  /* 44+44 +6 (Map Width) */
+		s += VGAScreen->w * 28 + 24 * 12;
+	}
+
+	if (backPos2 <= 15)
+	{
+		/*============BACKGROUND 2 BOTTOM=============*/
+		for (i = 12; i; i--)
+		{
+			/* move to previous map X location */
+			bp--;
+
+			src = *bp;
+			if (src != NULL)
+			{
+
+				for (y = 15 - backPos2 + 1; y; y--)
+				{
+					for(x = 0; x < 24; x++)
+					{
+						if (*src != 0)
+						{
+							*s = (((*s & 0x0f) + (*src & 0x0f)) / 2) | (*src & 0xf0);
+						}
+
+						s++;
+						src++;
+					}
+
+					s += VGAScreen->w - 24;
+				}
+
+				s -= (15 - backPos2 + 1) * VGAScreen->w;
+			}
+
+			s -= 24;
+		}
+	}
+
+	/*Set Movement of background*/
+	if (--map2yDelay == 0)
+	{
+		map2yDelay = map2yDelayMax;
+
+		backPos2 += backMove2;
+
+		if (backPos2 >  27)
+		{
+			backPos2 -= 28;
+			mapy2--;
+			mapy2Pos -= 14;  /*Map Width*/
+		}
+	}
+}

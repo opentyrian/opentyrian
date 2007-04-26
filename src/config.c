@@ -197,7 +197,7 @@ JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian;
 JE_boolean trentWin = FALSE;
 JE_byte    superArcadeMode;
 
-JE_byte    superArcadePowerup;
+JE_byte    superArcadePowerUp;
 
 JE_real linkGunDirec;
 JE_byte playerDevice1, playerDevice2;

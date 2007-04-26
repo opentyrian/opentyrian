@@ -432,14 +432,14 @@ JE_word neat;
 
 
 /*Repeating Explosions*/
-JE_REXtype REXAvail;
+JE_REXtype REXavail;
 struct
 {
 	JE_byte    delay;
 	JE_word    ex, ey;
 	JE_boolean big;
 	/*JE_byte fill[2] \* [1..2] \* */
-} REXDat[20]; /* [1..20] */
+} REXdat[20]; /* [1..20] */
 
 /*SuperPixels*/
 JE_byte SPZ[MAX_SP + 1]; /* [0..MaxSP] */
@@ -476,8 +476,8 @@ JE_word x, y;
 JE_integer a, b, c, d, z, zz;
 JE_byte playerNum;
 
-JE_word BKWrap1to, BKWrap2To, BKWrap3To,
-        BKWrap1, BKWrap2, BKWrap3;
+JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to,
+        **BKwrap1, **BKwrap2, **BKwrap3;
 
 JE_byte min, max;
 

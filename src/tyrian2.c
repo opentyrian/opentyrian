@@ -45,6 +45,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 JE_byte planetAni, planetAniWait;
 JE_byte currentDotNum, currentDotWait;
@@ -62,7 +63,7 @@ JE_word levelEnemyMax;
 JE_word levelEnemyFrequency;
 JE_word levelEnemy[40]; /* [1..40] */
 
-char tempstr[21]; /* string [20] */
+char tempStr[31];
 
 /* Data used for ItemScreen procedure to indicate items available */
 JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
@@ -386,6 +387,203 @@ start_level_first:
 
 	JE_drawPortConfigButtons();
 
+	/*==============================MAIN LOOP===================================*/
+
+	newkey = FALSE;
+	
+	if (isNetworkGame)
+	{
+		/* TODO 
+		gameQuitDelay = streamLagFrames + 1;
+		JE_clearSpecialRequests();
+		RANDOMIZE;
+		randSeed = 32402394;
+		randomCount = 0;
+		*/
+	}
+
+	JE_setupStars();
+
+	JE_setNewGameSpeed();
+
+	JE_setVol(tyrMusicVolume, fxPlayVol >> 2);
+
+	/*Save backup game*/
+	if (!playDemo && !doNotSaveBackup)
+	{
+		if (twoPlayerMode)
+		{
+			temp = 22;
+		} else {
+			temp = 11;
+		}
+		JE_saveGame(temp, "LAST LEVEL    ");
+	}
+
+	/*Set keyboard to NO BIOS*/
+	/* NOTE callBIOShandler = FALSE; */
+
+	memset(lastKey, 0, sizeof(lastKey));
+	if (recordDemo && !playDemo)
+	{
+		do
+		{
+			sprintf(tempStr, "DEMOREC.%d", recordFileNum);
+			tempb = JE_find(tempStr);
+			if (tempb)
+			{
+				recordFileNum++;
+			}
+		} while (tempb);
+
+		recordFile = fopen(tempStr, "w");
+
+		fwrite(&episodeNum, 1, 1, recordFile);
+		fwrite(levelName, 1, 10, recordFile);
+		fwrite(&lvlFileNum, 1, 1, recordFile);
+		fwrite(pItems, 1, 12, recordFile);
+		fwrite(portPower, 1, 5, recordFile);
+		fwrite(&levelSong, 1, 1, recordFile);
+
+		lastMoveWait = 0;
+	}
+
+	twoPlayerLinked = FALSE;
+	linkGunDirec = M_PI;
+
+	/* TODO JE_calcPurpleBall(1);*/
+	/* TODO JE_calcPurpleBall(2);*/
+
+	damageRate = 2;  /*Normal Rate for Collision Damage*/
+
+	chargeWait   = 5;
+	chargeLevel  = 0;
+	chargeMax    = 5;
+	chargeGr     = 0;
+	chargeGrWait = 3;
+
+	portConfigChange = FALSE;
+
+	makeMouseDelay = FALSE;
+
+	exchangeCount = 0;
+
+	/*Destruction Ratio*/
+	totalEnemy = 0;
+	enemyKilled = 0;
+
+	/*InputDevices*/
+	if (twoPlayerMode && !isNetworkGame)
+	{
+		playerDevice1 = inputDevice1;
+		playerDevice2 = inputDevice2;
+	} else {
+		playerDevice1 = 0;
+		playerDevice2 = 0;
+	}
+
+	astralDuration = 0;
+
+	superArcadePowerUp = 1;
+
+	yourInGameMenuRequest = FALSE;
+
+	constantLastX = -1;
+
+	playerStillExploding = 0;
+	playerStillExploding2 = 0;
+
+	if (isNetworkGame)
+	{
+		/* TODO */
+	}
+
+	if (isNetworkGame)
+	{
+		JE_loadItemDat();
+	}
+
+	memset(enemyAvail,       1, sizeof(enemyAvail));
+	memset(explodeAvail,     0, sizeof(explodeAvail));
+	memset(enemyShotAvail,   1, sizeof(enemyShotAvail));
+
+	/*Initialize Shots*/
+	memset(playerShotData,   0, sizeof(playerShotData));
+	memset(shotAvail,        0, sizeof(shotAvail));
+	memset(shotMultiPos,     0, sizeof(shotMultiPos));
+	memset(shotRepeat,       1, sizeof(shotRepeat));
+
+	memset(button,           0, sizeof(button));
+
+	memset(REXavail,         0, sizeof(REXavail));
+	memset(REXdat,           0, sizeof(REXdat));
+	memset(globalFlags,      0, sizeof(globalFlags));
+
+	/*=====Clear Sound Queue=====*/
+	memset(soundQueue,       0, sizeof(soundQueue));
+	soundQueue[2] = V_GOOD_LUCK;
+
+	memset(enemyShapeTables, 0, sizeof(enemyShapeTables));
+	memset(enemy,            0, sizeof(enemy));
+
+	memset(SFCurrentcode,    0, sizeof(SFCurrentcode));
+	memset(SFExecuted,       0, sizeof(SFExecuted));
+
+	zinglonDuration = 0;
+	specialWait = 0;
+	nextSpecialWait = 0;
+	optionAttachmentMove  = 0;    /*Launch the Attachments!*/
+	optionAttachmentLinked = TRUE;
+
+	editShip1 = FALSE;
+	editShip2 = FALSE;
+
+	memset(smoothies, 0, sizeof(smoothies));
+
+	levelTimer = FALSE;
+	randomExplosions = FALSE;
+
+	lastSP = 0;
+	memset(SPZ, 0, sizeof(SPZ));
+
+	returnActive = FALSE;
+
+	galagaShotFreq = 0;
+
+	if (galagaMode)
+	{
+		difficultyLevel = 2;
+	}
+	galagaLife = 10000;
+
+	JE_drawOptionLevel();
+
+	BKwrap2 = &megaData1->mainmap[0][0];
+	BKwrap2to = &megaData1->mainmap[0][0];
+
+levelloop :
+
+	if (isNetworkGame)
+	{
+		smoothies[8] = FALSE;
+		smoothies[5] = FALSE;
+	} else {
+		starShowVGASpecialCode = smoothies[8] + (smoothies [5] << 1);
+	}
+
+	/*Background Wrapping*/
+	if (mapy2Pos <= BKwrap2)
+	{
+		mapy2Pos = BKwrap2to;
+	}
+
+
+	allPlayersGone = !playerAlive &&
+	                 (!playerAliveB || !twoPlayerMode) &&
+	                 ((portPower[0] == 1 && playerStillExploding == 0) || (!onePlayerAction && !twoPlayerMode)) &&
+	                 ((portPower[1] == 1 && playerStillExploding2 == 0) || !twoPlayerMode);
+
+
 	/* TODO */
 
 	/* SMOOTHIES! */
@@ -435,7 +633,7 @@ start_level_first:
 			{
 				
 				/* move to previous map X location */
-				bp -= 1;
+				bp--;
 				
 				src = *bp;
 				src += (28 - backPos) * 24;
@@ -444,15 +642,15 @@ start_level_first:
 				{
 					memcpy(s, src, 24);
 
-					s += 320;
+					s += tempScreenSeg->w;
 					src += 24;
 				}
 				
-				s -= backPos * 320 + 24;
+				s -= backPos * tempScreenSeg->w + 24;
 			}
 			
 			s += 24 * 11;
-			s += backPos * 320 + 24;
+			s += backPos * tempScreenSeg->w + 24;
 			
 			/* Increment Map Location for next line */
 			bp += 14 - 2;   /* (Map Width) */
@@ -460,7 +658,7 @@ start_level_first:
 		}
 		bp += 14;   /* (Map Width) */
 
-        /*============BACKGROUND 1 CENTER=============*/
+		/*============BACKGROUND 1 CENTER=============*/
 
 		/* Outer loop - Screen 6 lines high */
 		for (i = 6; i; i--)
@@ -468,24 +666,24 @@ start_level_first:
 			for (j = 12; j; j--)
 			{
 				/* move to previous map X location */
-				bp -= 1;
+				bp--;
 				src = *bp;
 				
 				for (k = 0; k < 28; k++)
 				{
 					memcpy(s, src, 24);
 
-					s += 320;
+					s += tempScreenSeg->w;
 					src += 24;
 				}
 
-				s -= 320 * 28 + 24;
+				s -= tempScreenSeg->w * 28 + 24;
 			}
 			
 			/* Increment Map Location for next line */
 			bp += 14 + 14 - 2;  /* (Map Width) */
 			
-			s += 320 * 28 + 24 * 12;
+			s += tempScreenSeg->w * 28 + 24 * 12;
 		}
 
 		if (backPos <= 15)
@@ -494,23 +692,84 @@ start_level_first:
 			for (i = 12; i; i--)
 			{
 				/* move to previous map X location */
-				bp -= 1;
+				bp--;
 				src = *bp;
 
 				for (j = 15 - backPos + 1; j; j--)
 				{
 					memcpy(s, src, 24);
 
-					s += 320;
+					s += tempScreenSeg->w;
 					src += 24;
 				}
 				
-				s -= (15 - backPos + 1) * 320 + 24;
+				s -= (15 - backPos + 1) * tempScreenSeg->w + 24;
 			}
 		}
 	} else {
+		JE_clr256();
+	}
+
+	/*Set Movement of background 1*/
+	if (--map1yDelay == 0)
+	{
+		map1yDelay = map1yDelayMax;
+
+		curLoc += backMove;
+
+		backPos += backMove;
+
+		if (backPos > 27)
+		{
+			backPos -= 28;
+			mapy--;
+			mapyPos -= 14;  /*Map Width*/
+		}
+	}
+
+  /*===========================STARS==========================*/
+  /*DRAWSTARS*/
+	if (starActive || astralDuration > 0)
+	{
 		/* TODO */
 	}
+
+	if (processorType > 1 && smoothies[4])
+	{
+		/* TODO JE_smoothies3();*/
+	}
+
+	/*=======================BACKGROUNDS========================*/
+	/*=======================BACKGROUND 2========================*/
+	if (background2over == 3)
+	{
+		JE_drawBackground2();
+		background2 = TRUE;
+	}
+
+	if (background2over == 0)
+	{
+		if (!(smoothies[1] && processorType < 4) && !(smoothies[0] && processorType == 3))
+		{
+			if (wild && !background2notTransparent)
+			{
+				JE_superBackground2();
+			} else {
+				JE_drawBackground2();
+			}
+		}
+	}
+
+	if (smoothies[0] && processorType > 2 && SDAT[0] == 0)
+	{
+		/* TODO JE_smoothies1();*/
+	}
+	if (smoothies[1] && processorType > 2)
+	{
+		/* TODO JE_smoothies2();*/
+	}
+
+	/* TODO */
 
 }
 
@@ -1191,8 +1450,8 @@ new_game:
 		{
 
 			difficultyLevel = 2;
-			sprintf(tempstr, "DEMO.%d", playDemoNum);
-			JE_resetFileExt(&recordFile, tempstr, FALSE);
+			sprintf(tempStr, "DEMO.%d", playDemoNum);
+			JE_resetFileExt(&recordFile, tempStr, FALSE);
 
 			bonusLevelCurrent = FALSE;
 
@@ -1261,8 +1520,8 @@ new_game:
 		}
 
 		/* Read Shapes.DAT */
-		sprintf(tempstr, "SHAPES%c.DAT", char_shapeFile);
-		JE_resetFileExt(&shpFile, tempstr, FALSE);
+		sprintf(tempStr, "SHAPES%c.DAT", char_shapeFile);
+		JE_resetFileExt(&shpFile, tempStr, FALSE);
 
 		for (z = 0; z < 600; z++)
 		{
@@ -1280,9 +1539,9 @@ new_game:
 			{
 				if (mapSh[0][x] == z+1)
 				{
-					memcpy((*megaData1).shapes[x].sh, shape, sizeof(JE_DanCShape));
+					memcpy(megaData1->shapes[x].sh, shape, sizeof(JE_DanCShape));
 
-					ref[0][x] = (JE_byte *)(*megaData1).shapes[x].sh;
+					ref[0][x] = (JE_byte *)megaData1->shapes[x].sh;
 				}
 			}
 
@@ -1293,7 +1552,7 @@ new_game:
 				{
 					if (x != 71 && !shapeBlank)
 					{
-						memcpy((*megaData2).shapes[x].sh, shape, sizeof(JE_DanCShape));
+						memcpy(megaData2->shapes[x].sh, shape, sizeof(JE_DanCShape));
 
 						y = 1;
 						for (yy = 0; yy < (24 * 28) >> 1; yy++)
@@ -1304,8 +1563,8 @@ new_game:
 							}
 						}
 
-						(*megaData2).shapes[x].fill = y;
-						ref[1][x] = (JE_byte *)(*megaData2).shapes[x].sh;
+						megaData2->shapes[x].fill = y;
+						ref[1][x] = (JE_byte *)megaData2->shapes[x].sh;
 					} else {
 						ref[1][x] = NULL;
 					}
@@ -1319,7 +1578,7 @@ new_game:
 				{
 					if (x < 70 && !shapeBlank)
 					{
-						memcpy((*megaData3).shapes[x].sh, shape, sizeof(JE_DanCShape));
+						memcpy(megaData3->shapes[x].sh, shape, sizeof(JE_DanCShape));
 
 						y = 1;
 						for (yy = 0; yy < (24 * 28) >> 1; yy++)
@@ -1330,8 +1589,8 @@ new_game:
 							}
 						}
 
-						(*megaData3).shapes[x].fill = y;
-						ref[2][x] = (JE_byte *)(*megaData3).shapes[x].sh;
+						megaData3->shapes[x].fill = y;
+						ref[2][x] = (JE_byte *)megaData3->shapes[x].sh;
 					} else {
 						ref[2][x] = NULL;
 					}
@@ -1347,7 +1606,7 @@ new_game:
 		{
 			for (x = 0; x < 14; x++)
 			{
-				(*megaData1).mainmap[y][x] = ref[0][mapBuf[bufLoc]];
+				megaData1->mainmap[y][x] = ref[0][mapBuf[bufLoc]];
 				bufLoc++;
 			}
 		}
@@ -1358,7 +1617,7 @@ new_game:
 		{
 			for (x = 0; x < 14; x++)
 			{
-				(*megaData2).mainmap[y][x] = ref[1][mapBuf[bufLoc]];
+				megaData2->mainmap[y][x] = ref[1][mapBuf[bufLoc]];
 				bufLoc++;
 			}
 		}
@@ -1369,7 +1628,7 @@ new_game:
 		{
 			for (x = 0; x < 15; x++)
 			{
-				(*megaData3).mainmap[y][x] = ref[2][mapBuf[bufLoc]];
+				megaData3->mainmap[y][x] = ref[2][mapBuf[bufLoc]];
 				bufLoc++;
 			}
 		}
@@ -1817,7 +2076,6 @@ JE_boolean backFromHelp;
 JE_byte lastSelect;
 JE_integer lastDirection;
 JE_byte skipMove;
-char tempStr[31];
 JE_byte tempPowerLevel[7];
 JE_boolean firstMenu9, paletteChanged;
 JE_MenuChoiceType menuChoices;
@@ -2074,7 +2332,7 @@ item_screen_start:
 						strcpy(tempStr, "");
 						for (y = 0; y < 14; y++)
 						{
-							/* tempstr := tempstr + savefiles [x - 1] .name [y] TODO */
+							/* tempStr := tempStr + savefiles [x - 1] .name [y] TODO */
 						}
 					}
 				}

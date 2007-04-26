@@ -103,7 +103,7 @@ typedef JE_char JE_CharString[256]; /* [1..256] */
 typedef JE_byte JE_Map1Buffer[24 * 28 * 13 * 4]; /* [1..24*28*13*4] */
 
 typedef JE_byte *JE_MapType[300][14]; /* [1..300, 1..14] */
-typedef JE_byte *JE_MapType2[300][14]; /* [1..600, 1..14] */
+typedef JE_byte *JE_MapType2[600][14]; /* [1..600, 1..14] */
 typedef JE_byte *JE_MapType3[600][15]; /* [1..600, 1..15] */
 
 struct JE_EventRecType
@@ -333,12 +333,12 @@ extern JE_byte chargeWait, chargeLevel, chargeMax, chargeGr, chargeGrWait;
 extern JE_boolean playerHNotReady;
 extern JE_word playerHX[20], playerHY[20];
 extern JE_word neat;
-extern JE_REXtype REXAvail;
+extern JE_REXtype REXavail;
 extern struct {
 	JE_byte delay;
 	JE_word ex, ey;
 	JE_boolean big;
-} REXDat[20];
+} REXdat[20];
 extern JE_byte SPZ[MAX_SP + 1];
 extern struct {
 	JE_word location;
@@ -361,7 +361,7 @@ extern JE_boolean tempSpecial;
 extern JE_word x, y;
 extern JE_integer a, b, c, d, z, zz;
 extern JE_byte playerNum;
-extern JE_word BKWrap1to, BKWrap2To, BKWrap3To, BKWrap1, BKWrap2, BKWrap3;
+extern JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to, **BKwrap1, **BKwrap2, **BKwrap3;
 extern JE_byte min, max;
 extern JE_shortint specialWeaponFilter, specialWeaponFreq;
 extern JE_word specialWeaponWpn;

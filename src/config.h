@@ -110,7 +110,7 @@ extern JE_boolean galagaMode;
 extern JE_boolean extraGame;
 extern JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian, trentWin;
 extern JE_byte superArcadeMode;
-extern JE_byte superArcadePowerup;
+extern JE_byte superArcadePowerUp;
 extern JE_real linkGunDirec;
 extern JE_byte playerDevice1, playerDevice2;
 extern JE_byte inputDevice1, inputDevice2;
