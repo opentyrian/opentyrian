@@ -918,7 +918,7 @@ void JE_loadScreen( void )
 					temp2 = 250; /* - BYTE (saveFiles [x] .level = 0) SHL 1; */
 				}
 				
-				if (saveFiles[x].level == 0) /* I think this means the save file is unused */
+				if (saveFiles[x - 1].level == 0) /* I think this means the save file is unused */
 				{
 					if (mal_str)
 					{
@@ -932,8 +932,7 @@ void JE_loadScreen( void )
 						free(tempstr);
 						mal_str = FALSE;
 					}
-					/* SYN: TODO: This is probably uninitialized memory right now D: Oh noes. */
-					tempstr = saveFiles[x].name;
+					tempstr = saveFiles[x - 1].name;
 				}
 			}
 			
@@ -942,7 +941,7 @@ void JE_loadScreen( void )
 			
 			if (x < max) /* Write additional columns for all but the last row */
 			{	
-				if (saveFiles[x].level == 0)
+				if (saveFiles[x - 1].level == 0)
 				{
 					if (mal_str)
 					{
@@ -952,9 +951,9 @@ void JE_loadScreen( void )
 					mal_str = TRUE;
 					strcpy(tempstr, "-----"); /* Unused save slot */
 				} else {
-					tempstr = saveFiles[x].levelName;
+					tempstr = saveFiles[x - 1].levelName;
 					tempstr2 = malloc(5 + strlen(miscTextB[2-1]));
-					sprintf(tempstr2, "%s %d", miscTextB[2-1], saveFiles[x].episode);
+					sprintf(tempstr2, "%s %d", miscTextB[2-1], saveFiles[x - 1].episode);
 					JE_textShade(250, tempY, tempstr2, 5, (temp2 % 16) - 8, FULL_SHADE);
 					free(tempstr2);
 				}

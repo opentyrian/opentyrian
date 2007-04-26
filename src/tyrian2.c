@@ -148,7 +148,7 @@ start_level_first:
 
 	/*stopsequence;*/
 	/*debuginfo('Setting Master Sound Volume');*/
-	JE_setVol(tyr_musicVolume, fxVolume);
+	JE_setVol(tyrMusicVolume, fxVolume);
 
 	JE_loadCompShapes(&shapes6, &shapes6Size, '1');  /* Items */
 

@@ -45,7 +45,7 @@ typedef struct
 	JE_longint    score;
 	JE_longint    score2;
 	char          levelName[11]; /* string [9]; */ /* SYN: Added one more byte to match lastLevelName below */
-	JE_char       name[14]; /* [1..14] */
+	JE_char       name[15]; /* [1..14] */ /* SYN: Added extra byte for null */
 	JE_byte       cubes;
 	JE_byte       power[2]; /* [1..2] */
 	JE_byte       episode;

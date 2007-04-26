@@ -58,7 +58,7 @@ int allocd_digifx = FALSE;
 JE_word fxVolume = 128; /* Default value, should be loaded from config */
 JE_word fxPlayVol = (128 - 1) >> 5; /* Same result as calling calcFXVol with default value of fxvolume*/
 
-JE_word tyr_musicVolume;
+JE_word tyrMusicVolume;
 
 float jasondelay = 1000.0f / (1193180.0f / 0x4300);
 
