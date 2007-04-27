@@ -451,8 +451,8 @@ start_level_first:
 	twoPlayerLinked = FALSE;
 	linkGunDirec = M_PI;
 
-	/* TODO JE_calcPurpleBall(1);*/
-	/* TODO JE_calcPurpleBall(2);*/
+	JE_calcPurpleBall(1);
+	JE_calcPurpleBall(2);
 
 	damageRate = 2;  /*Normal Rate for Collision Damage*/
 

@@ -553,7 +553,7 @@ void JE_getShipInfo( void )
 	}
 }
 
-JE_word JE_SGR( JE_word ship, JE_byte **ptr)
+JE_word JE_SGR( JE_word ship, JE_byte **ptr )
 {
 	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
 
@@ -567,6 +567,12 @@ JE_word JE_SGR( JE_word ship, JE_byte **ptr)
 	return GR[tempw-1];
 }
 
+void JE_calcPurpleBall( JE_byte playernum )
+{
+	const JE_byte purpleBallMax[12] /* [0..11] */ = {1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50};
+
+	purpleBallsRemaining[playernum-1] = purpleBallMax[portPower[playernum-1]];
+}
 
 void JE_drawOptions( void )
 {
