@@ -307,8 +307,8 @@ extern JE_byte playerStillExploding, playerStillExploding2;
 extern JE_byte *eShapes1, *eShapes2, *eShapes3, *eShapes4, *eShapes5, *eShapes6;
 extern JE_byte *shapesC1, *shapes6, *shapes9, *shapesW2;
 extern JE_word eShapes1Size, eShapes2Size, eShapes3Size, eShapes4Size, eShapes5Size, eShapes6Size, shapesC1Size, shapes6Size, shapes9Size, shapesW2Size;
-extern JE_byte SAni;
-extern JE_integer SAniX, SAniY, SAniXNeg, SAniYNeg;
+extern JE_byte sAni;
+extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;
 extern JE_integer baseSpeedOld, baseSpeedOld2, baseSpeed, baseSpeedB, baseSpeed2, baseSpeed2B, baseSpeedKeyH, baseSpeedKeyV;
 extern JE_boolean keyMoveWait;
 extern JE_boolean makeMouseDelay;
@@ -368,11 +368,11 @@ extern JE_word specialWeaponWpn;
 extern JE_boolean linkToPlayer;
 extern JE_integer baseArmor, baseArmor2;
 extern JE_word shipGR, shipGR2;
-extern JE_word shipGRSeg, shipGROfs, shipGR2Seg, shipGR2Ofs;
+extern JE_byte *shipGRptr, *shipGR2ptr;
 #endif
 
 void JE_getShipInfo( void );
-JE_word JE_SGR( JE_word ship, JE_word *ofs, JE_word *seg );
+JE_word JE_SGR( JE_word ship, JE_byte **ptr );
 
 void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );

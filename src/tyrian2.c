@@ -280,7 +280,7 @@ start_level_first:
 	shadowyDist = 10;
 
 	/* Setup player ship graphics */
-	/* TODO JE_GetShipInfo();*/
+	JE_getShipInfo();
 	tempI     = (((PX - mouseX) / (100 - baseSpeed)) * 2) * 168;
 	lastTurn  = 0;
 	lastTurnB = 0;
@@ -2205,7 +2205,7 @@ item_screen_start:
 
 	do
 	{
-		/*JE_getShipInfo(); TODO*/
+		JE_getShipInfo();
 
 		quit = FALSE;
 

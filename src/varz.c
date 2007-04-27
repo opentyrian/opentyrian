@@ -382,8 +382,8 @@ JE_word eShapes1Size,
         shapes9Size,
         shapesW2Size;
 
-JE_byte SAni;
-JE_integer SAniX, SAniY, SAniXNeg, SAniYNeg;  /* X,Y ranges of field of hit */
+JE_byte sAni;
+JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
 JE_integer baseSpeedOld, baseSpeedOld2, baseSpeed, baseSpeedB, baseSpeed2, baseSpeed2B,
            baseSpeedKeyH, baseSpeedKeyV;
 JE_boolean keyMoveWait;
@@ -487,7 +487,86 @@ JE_boolean  linkToPlayer;
 
 JE_integer baseArmor, baseArmor2;
 JE_word shipGR, shipGR2;
-JE_word shipGRSeg, shipGROfs, shipGR2Seg, shipGR2Ofs;
+JE_byte *shipGRptr, *shipGR2ptr;
+
+void JE_getShipInfo( void )
+{
+	JE_boolean extraShip, extraShip2;
+	JE_byte    base, base2;
+
+	shipGRptr = shapes9;
+	shipGR2ptr = shapes9;
+
+	extraShip = pItems[11] > 90;
+	if (extraShip)
+	{
+		base = (pItems[11] - 91) * 15;
+	}
+
+	powerAdd  = powerSys[pItems[5]].power;
+	if (extraShip)
+	{
+		/* TODO armorLevel = editship.ships [base + 8]; */
+	} else {
+		armorLevel = ships[pItems[12]].dmg;
+	}
+
+	if (extraShip)
+	{
+		shipGR = JE_SGR(pItems[11] - 90, &shipGRptr);
+	} else {
+		shipGR = ships[pItems[11]].shipgraphic;
+	}
+
+	extraShip2 = pItemsPlayer2[11] > 90;
+	if (extraShip2)
+	{
+		base2 = (pItemsPlayer2[11] - 91) * 15;
+		shipGR2 = JE_SGR(pItemsPlayer2[11] - 90, &shipGR2ptr);
+
+		/* TODO baseArmor2 = editship.ships [base2 + 8];*/
+	} else {
+		shipGR2 = 0;
+		armorLevel2 = 10;
+    }
+
+	baseArmor = armorLevel;
+	baseArmor2 = armorLevel2;
+
+	if (extraShip)
+	{
+		sAni = 2;
+	} else {
+		sAni = ships[pItems[11]].ani;
+	}
+	if (sAni == 0)
+	{
+		sAniX = 12;
+		sAniY = 10;
+		sAniXNeg = -12;
+		sAniYNeg = -10;
+	} else {
+		sAniX = 11;
+		sAniY = 14;
+		sAniXNeg = -11;
+		sAniYNeg = -14;
+	}
+}
+
+JE_word JE_SGR( JE_word ship, JE_byte **ptr)
+{
+	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
+
+	JE_word tempw;
+
+	/* TODO tempw = editship.ships [ (ship - 1) * 15 + 1];*/
+	if (tempw > 7)
+	{
+		/* TODO *ptr = extraShape;*/
+	}
+	return GR[tempw-1];
+}
+
 
 void JE_drawOptions( void )
 {
