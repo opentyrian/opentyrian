@@ -528,28 +528,28 @@ void JE_encryptSaveTemp( void )
 	{
 		y += s3[x];
 	}
-	saveTemp[SAVE_FILE_SIZE + 1 - 1] = y;
+	saveTemp[SAVE_FILE_SIZE] = y;
 
 	y = 0;
 	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y -= s3[x];
 	}
-	saveTemp[SAVE_FILE_SIZE + 2 - 1] = y;
+	saveTemp[SAVE_FILE_SIZE+1] = y;
 
 	y = 1;
 	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y = (y * s3[x]) + 1;
 	}
-	saveTemp[SAVE_FILE_SIZE + 3 - 1] = y;
+	saveTemp[SAVE_FILE_SIZE+2] = y;
 	
 	y = 0;
 	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y = y ^ s3[x];
 	}
-	saveTemp[SAVE_FILE_SIZE + 4 - 1] = y;
+	saveTemp[SAVE_FILE_SIZE+3] = y;
 	
 	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
@@ -572,10 +572,10 @@ void JE_decryptSaveTemp( void )
 	/* Decrypt save game file */
 	for (x = (SAVE_FILE_SIZE - 1); x >= 0; x--)
 	{
-		s2[x] = (JE_byte) saveTemp[x] ^ (JE_byte) (cryptKey[(x+1) % 10]);
+		s2[x] = (JE_byte)saveTemp[x] ^ (JE_byte)(cryptKey[(x+1) % 10]);
 		if (x > 0)
 		{
-			s2[x] = (JE_byte) s2[x] ^ (JE_byte) saveTemp[x - 1];
+			s2[x] = (JE_byte)s2[x] ^ (JE_byte)saveTemp[x - 1];
 		}
 		
 	}
@@ -583,44 +583,44 @@ void JE_decryptSaveTemp( void )
 	/* Check save file for correctitude */
 	/* TODO: Figure out why these checks are failing! */
 	y = 0;
-	for (x = 1; x < (int) SAVE_FILE_SIZE; x++)
+	for (x = 1; x < (int)SAVE_FILE_SIZE; x++)
 	{
 		y += s2[x];
 	}
-	if (saveTemp[SAVE_FILE_SIZE + 1 - 1] != y)
+	if (saveTemp[SAVE_FILE_SIZE] != y)
 	{
 		correct = FALSE;
 		/* printf("Failed additive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 1 - 1], y); */
 	}
 
 	y = 0;
-	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	for (x = 0; x < (int)SAVE_FILE_SIZE; x++)
 	{
 		y -= s2[x];
 	}
-	if (saveTemp[SAVE_FILE_SIZE + 2 - 1] != y)
+	if (saveTemp[SAVE_FILE_SIZE+1] != y)
 	{
 		correct = FALSE;
 		/* printf("Failed subtractive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 2 - 1], y); */
 	}
 
 	y = 1;
-	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	for (x = 0; x < (int)SAVE_FILE_SIZE; x++)
 	{
 		y = (y * s2[x]) + 1;
 	}
-	if (saveTemp[SAVE_FILE_SIZE + 3 - 1] != y)
+	if (saveTemp[SAVE_FILE_SIZE+2] != y)
 	{
 		correct = FALSE;
 		/* printf("Failed multiplicative checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 3 - 1], y); */
 	}	
 
 	y = 0;
-	for (x = 0; x < (int) SAVE_FILE_SIZE; x++)
+	for (x = 0; x < (int)SAVE_FILE_SIZE; x++)
 	{
 		y = y ^ s2[x];
 	}
-	if (saveTemp[SAVE_FILE_SIZE + 4 - 1] != y)
+	if (saveTemp[SAVE_FILE_SIZE+3] != y)
 	{
 		correct = FALSE;
 		/* printf("Failed XOR'd checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 4 - 1], y); */
@@ -707,8 +707,8 @@ void JE_loadConfiguration( void )
 	if (tyrMusicVolume > 255)
 	{
 		tyrMusicVolume = 255;
-	}	
-	fxVolume = (fxVolume > 254) ? 254 : (fxVolume < 14) ? 14 : fxVolume;
+	}
+	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
 
 	soundActive = TRUE;
 	musicActive = TRUE;
@@ -731,76 +731,76 @@ void JE_loadConfiguration( void )
 		p = saveTemp;
 		for (z = 0; z < SAVE_FILES_NUM; z++)
 		{
-			saveFiles[z].encode = *((JE_word*) p);
+			saveFiles[z].encode = *((JE_word*)p);
 			p += sizeof(JE_word);
 			
-			saveFiles[z].level = *((JE_word*) p);
+			saveFiles[z].level = *((JE_word*)p);
 			p += sizeof(JE_word);
 
-			memcpy(saveFiles[z].items, ((JE_PItemsType*) p), sizeof(JE_PItemsType));
+			memcpy(saveFiles[z].items, ((JE_PItemsType*)p), sizeof(JE_PItemsType));
 			p += sizeof(JE_PItemsType);
 			
-			saveFiles[z].score = *((JE_longint*) p);
+			saveFiles[z].score = *((JE_longint*)p);
 			p += sizeof(JE_longint);
 			
-			saveFiles[z].score2 = *((JE_longint*) p);
+			saveFiles[z].score2 = *((JE_longint*)p);
 			p += sizeof(JE_longint);
 			
 			/* SYN: Pascal strings are prefixed by a byte holding the length! */
 			p += 1; /* Skip length byte */
-			memcpy(saveFiles[z].levelName, ((char*) p), 9);
+			memcpy(saveFiles[z].levelName, ((char*)p), 9);
 			saveFiles[z].levelName[9] = 0;
 			p += 9;
 			
 			/* This was a BYTE array, not a STRING, in the original. Go fig. */
-			memcpy(saveFiles[z].name, ((char*) p), 14);
+			memcpy(saveFiles[z].name, ((char*)p), 14);
 			saveFiles[z].name[14] = 0;
 			p += 14;
 			
-			saveFiles[z].cubes = *((JE_byte*) p);
+			saveFiles[z].cubes = *((JE_byte*)p);
 			p += sizeof(JE_byte);
 			
-			memcpy(saveFiles[z].power, ((JE_byte*) p), sizeof(JE_byte) * 2);
+			memcpy(saveFiles[z].power, ((JE_byte*)p), sizeof(JE_byte) * 2);
 			p += (sizeof(JE_byte) * 2);
 			
-			saveFiles[z].episode = *((JE_byte*) p);
+			saveFiles[z].episode = *((JE_byte*)p);
 			p += sizeof(JE_byte);
 
 /* printf("|%s|%s| episode %d\n", saveFiles[z].levelName, saveFiles[z].name, saveFiles[z].episode); */
 
-			memcpy(saveFiles[z].lastItems, ((JE_PItemsType*) p), sizeof(JE_PItemsType));
+			memcpy(saveFiles[z].lastItems, ((JE_PItemsType*)p), sizeof(JE_PItemsType));
 			p += sizeof(JE_PItemsType);
 
-			saveFiles[z].difficulty = *((JE_byte*) p);
+			saveFiles[z].difficulty = *((JE_byte*)p);
 			p += sizeof(JE_byte);
 			
-			saveFiles[z].secretHint = *((JE_byte*) p);
+			saveFiles[z].secretHint = *((JE_byte*)p);
 			p += sizeof(JE_byte);
 			
-			saveFiles[z].input1 = *((JE_byte*) p);
+			saveFiles[z].input1 = *((JE_byte*)p);
 			p += sizeof(JE_byte);
 			
-			saveFiles[z].input2 = *((JE_byte*) p);
-			p += sizeof(JE_byte);			
+			saveFiles[z].input2 = *((JE_byte*)p);
+			p += sizeof(JE_byte);
 
-			saveFiles[z].gameHasRepeated = *((JE_boolean*) p);
+			saveFiles[z].gameHasRepeated = *((JE_boolean*)p);
 			p += 1; /* TODO: should be sizeof(JE_boolean) but that is 4 for some reason :(*/
 			
-			saveFiles[z].initialDifficulty = *((JE_byte*) p);
+			saveFiles[z].initialDifficulty = *((JE_byte*)p);
 			p += sizeof(JE_byte);			
 
-			saveFiles[z].highScore1 = *((JE_longint*) p);
+			saveFiles[z].highScore1 = *((JE_longint*)p);
 			p += sizeof(JE_longint);
 			
-			saveFiles[z].highScore2 = *((JE_longint*) p);
+			saveFiles[z].highScore2 = *((JE_longint*)p);
 			p += sizeof(JE_longint);
 			
 			p += 1; /* Skip length byte wheeee */
-			memcpy(saveFiles[z].highScoreName, ((char*) p), 29);
+			memcpy(saveFiles[z].highScoreName, ((char*)p), 29);
 			saveFiles[z].highScoreName[29] = 0;
 			p += 29;
 			
-			saveFiles[z].highScoreDiff = *((JE_byte*) p);
+			saveFiles[z].highScoreDiff = *((JE_byte*)p);
 			p += sizeof(JE_byte);
 		}
 		
@@ -828,7 +828,7 @@ void JE_loadConfiguration( void )
       
       CLOSE (f);
     */
-	
+
 		fclose(fi);
 	} else {
 		editorLevel = 800;
