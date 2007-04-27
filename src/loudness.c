@@ -76,15 +76,15 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
     plz.callback = audio_cb;
     plz.userdata = NULL;
 	
-	printf("Requested SDL frequency: %d; SDL buffer size: %d\n", plz.freq, plz.samples);
+	printf("\tRequested SDL frequency: %d; SDL buffer size: %d\n", plz.freq, plz.samples);
 	
     if ( SDL_OpenAudio(&plz, &got) < 0 ) 
 	{
-        printf("WARNING: Failed to initialize SDL audio. Bailing out.\n");
+        printf("\tWARNING: Failed to initialize SDL audio. Bailing out.\n");
         exit(1);
     }
 	
-	printf("Obtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
+	printf("\tObtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
 	
     SDL_PauseAudio(0);
 }
