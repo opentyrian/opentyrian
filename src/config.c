@@ -583,7 +583,7 @@ void JE_decryptSaveTemp( void )
 	/* Check save file for correctitude */
 	/* TODO: Figure out why these checks are failing! */
 	y = 0;
-	for (x = 1; x < (int)SAVE_FILE_SIZE; x++)
+	for (x = 1; x < SAVE_FILE_SIZE; x++)
 	{
 		y += s2[x];
 	}
@@ -594,7 +594,7 @@ void JE_decryptSaveTemp( void )
 	}
 
 	y = 0;
-	for (x = 0; x < (int)SAVE_FILE_SIZE; x++)
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y -= s2[x];
 	}
@@ -605,7 +605,7 @@ void JE_decryptSaveTemp( void )
 	}
 
 	y = 1;
-	for (x = 0; x < (int)SAVE_FILE_SIZE; x++)
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y = (y * s2[x]) + 1;
 	}
@@ -616,7 +616,7 @@ void JE_decryptSaveTemp( void )
 	}	
 
 	y = 0;
-	for (x = 0; x < (int)SAVE_FILE_SIZE; x++)
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y = y ^ s2[x];
 	}
@@ -654,7 +654,7 @@ void JE_loadConfiguration( void )
 		fread(&gameSpeed, sizeof(gameSpeed), 1, fi);
 		
 		/* Wait what? */
-		/*	
+		/*
 		BLOCKREAD (f, InputDevice, 1);
 		InputDevice := 0; */
 
