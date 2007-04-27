@@ -28,8 +28,8 @@
 
 JE_char dir[12];
 
-JE_boolean ErrorActive = TRUE;
-JE_boolean ErrorOccurred = FALSE;
+JE_boolean errorActive = TRUE;
+JE_boolean errorOccurred = FALSE;
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
@@ -38,12 +38,12 @@ JE_longint JE_getFileSize( const char *filename )
 	FILE *f;
 	JE_longint size = 0;
 
-	ErrorActive = FALSE;
+	errorActive = FALSE;
 	f = fopen(JE_locateFile(filename), "rb");
-	ErrorActive = TRUE;
-	if (ErrorOccurred)
+	errorActive = TRUE;
+	if (errorOccurred)
 	{
-		ErrorOccurred = FALSE;
+		errorOccurred = FALSE;
 		return 0;
 	}
 
@@ -57,7 +57,7 @@ JE_longint JE_getFileSize( const char *filename )
 
 void JE_errorHand( const char *s )
 {
-	if (ErrorActive)
+	if (errorActive)
 	{
 		JE_closeVGA256();
 		printf("WARNING: Unable to find Tyrian data files.\n"
@@ -65,7 +65,7 @@ void JE_errorHand( const char *s )
 		       "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", s);
 		exit(1);
 	} else {
-		ErrorOccurred = 1;
+		errorOccurred = 1;
 	}
 }
 
@@ -125,7 +125,7 @@ char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 
 	if (!JE_find(filename))
 	{
-		if (strcmp(dir, "") == 0 && ErrorActive)
+		if (strcmp(dir, "") == 0 && errorActive)
 		{
 			JE_findTyrian(filename);
 		}

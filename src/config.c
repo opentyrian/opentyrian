@@ -643,7 +643,7 @@ void JE_loadConfiguration( void )
 	int z;
 	JE_byte *p;
 	
-	ErrorActive = TRUE;
+	errorActive = TRUE;
 	
 	if (JE_isCFGThere())
 	{
@@ -855,7 +855,7 @@ void JE_loadConfiguration( void )
         }
 	}
 	
-	ErrorActive = FALSE;
+	errorActive = FALSE;
 
 	JE_calcFXVol();
 	JE_initProcessorType();

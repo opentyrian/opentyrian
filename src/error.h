@@ -24,8 +24,8 @@
 
 #ifndef NO_EXTERNS
 extern JE_char dir[12];
-extern JE_boolean ErrorActive;
-extern JE_boolean ErrorOccurred;
+extern JE_boolean errorActive;
+extern JE_boolean errorOccurred;
 #endif
 
 void JE_errorHand( const char *s );
