@@ -575,22 +575,21 @@ void JE_decryptSaveTemp( void )
 		s2[x] = (JE_byte)saveTemp[x] ^ (JE_byte)(cryptKey[(x+1) % 10]);
 		if (x > 0)
 		{
-			s2[x] = (JE_byte)s2[x] ^ (JE_byte)saveTemp[x - 1];
+			s2[x] ^= (JE_byte)saveTemp[x - 1];
 		}
 		
 	}
-	
+
 	/* Check save file for correctitude */
-	/* TODO: Figure out why these checks are failing! */
 	y = 0;
-	for (x = 1; x < SAVE_FILE_SIZE; x++)
+	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		y += s2[x];
 	}
 	if (saveTemp[SAVE_FILE_SIZE] != y)
 	{
 		correct = FALSE;
-		/* printf("Failed additive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 1 - 1], y); */
+		printf("Failed additive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE], y);
 	}
 
 	y = 0;
@@ -601,7 +600,7 @@ void JE_decryptSaveTemp( void )
 	if (saveTemp[SAVE_FILE_SIZE+1] != y)
 	{
 		correct = FALSE;
-		/* printf("Failed subtractive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 2 - 1], y); */
+		printf("Failed subtractive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE+1], y);
 	}
 
 	y = 1;
@@ -612,7 +611,7 @@ void JE_decryptSaveTemp( void )
 	if (saveTemp[SAVE_FILE_SIZE+2] != y)
 	{
 		correct = FALSE;
-		/* printf("Failed multiplicative checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 3 - 1], y); */
+		printf("Failed multiplicative checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE+2], y);
 	}	
 
 	y = 0;
@@ -623,7 +622,7 @@ void JE_decryptSaveTemp( void )
 	if (saveTemp[SAVE_FILE_SIZE+3] != y)
 	{
 		correct = FALSE;
-		/* printf("Failed XOR'd checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE + 4 - 1], y); */
+		printf("Failed XOR'd checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE+3], y);
 	}
 	
 	/* Barf and die if save file doesn't validate */
@@ -631,7 +630,7 @@ void JE_decryptSaveTemp( void )
 	if (!correct)
 	{
 		printf("Error reading save file!\n");
-		/*exit(255);*/
+		exit(255);
 	}
 	
 	/* Keep decrypted version plz */
@@ -721,7 +720,7 @@ void JE_loadConfiguration( void )
 	if (ftell(fi) != 0)
 	{
 		fseek(fi, 0, SEEK_SET);
-		fread(saveTemp, sizeof(saveTemp), 1, fi);
+		fread(saveTemp, 1, sizeof(saveTemp), fi);
 		JE_decryptSaveTemp();
 		
 		/* SYN: The original mostly blasted the save file into raw memory. However, our lives are not so
