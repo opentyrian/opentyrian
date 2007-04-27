@@ -35,6 +35,10 @@
 #define TRUE 1
 #define FALSE 0
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 typedef signed long    JE_longint;
 typedef signed short   JE_integer;
 typedef signed char    JE_shortint;
