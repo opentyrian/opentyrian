@@ -54,7 +54,7 @@ extern JE_byte mouseGrabShape[24*28];
 extern JE_boolean loadOverride;
 #endif
 
-void JE_newLoadShapes( JE_byte table, JE_string shapefile );
+void JE_newLoadShapes( JE_byte table, char *shapefile );
 void JE_newLoadShapesB( JE_byte table, FILE *f );
 void JE_newCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize );
 void JE_newDrawShape( JE_byte *shape, JE_word xsize, JE_word ysize );

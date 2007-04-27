@@ -76,7 +76,7 @@ void JE_calcFXVol( void );
 void JE_changeVolume( JE_word temp, JE_integer change, JE_word fxvol, JE_integer fxchange );
 void JE_frameDelay( JE_byte delay );
 
-void JE_loadSmpFile ( JE_string name, JE_byte samplenum);
+void JE_loadSmpFile ( char *name, JE_byte samplenum);
 void JE_loadSndFile( void );
 void JE_playSampleNum ( JE_byte samplenum );
 
@@ -86,8 +86,8 @@ void JE_setvol (JE_byte musicvolume, JE_byte sample );
 
 void JE_waitframecount( void );
 
-JE_string JE_hexa2 (JE_byte data );
-JE_string JE_hexa4 (JE_word data );
+char *JE_hexa2 (JE_byte data );
+char *JE_hexa4 (JE_word data );
 
 
 /* SYN: This stuff is probably unneeded, as it deals with sound hardware issues abstracted 

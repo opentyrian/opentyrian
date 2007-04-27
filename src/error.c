@@ -33,7 +33,7 @@ JE_boolean ErrorOccurred = FALSE;
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
-JE_longint JE_getFileSize( const JE_string filename )
+JE_longint JE_getFileSize( const char *filename )
 {
 	FILE *f;
 	JE_longint size = 0;
@@ -55,7 +55,7 @@ JE_longint JE_getFileSize( const JE_string filename )
 	return size;
 }
 
-void JE_errorHand( const JE_string s )
+void JE_errorHand( const char *s )
 {
 	if (ErrorActive)
 	{
@@ -69,7 +69,7 @@ void JE_errorHand( const JE_string s )
 	}
 }
 
-JE_boolean JE_find( const JE_string s )
+JE_boolean JE_find( const char *s )
 {
 	FILE *f;
 
@@ -82,9 +82,9 @@ JE_boolean JE_find( const JE_string s )
 	}
 }
 
-void JE_findTyrian( const JE_string filename )
+void JE_findTyrian( const char *filename )
 {
-	JE_string strbuf;
+	char *strbuf;
 
 	if (JE_find(filename))
 	{
@@ -119,7 +119,7 @@ void JE_findTyrian( const JE_string filename )
 	}
 }
 
-JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentrant !!! */
+char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 {
 	static JE_char buf[1024];
 
@@ -143,24 +143,24 @@ JE_string JE_locateFile( const JE_string filename ) /* !!! WARNING: Non-reentran
 	return buf;
 }
 
-void JE_resetFile( FILE **f, const JE_string filename )
+void JE_resetFile( FILE **f, const char *filename )
 {
 	printf("!!! WARNING: JE_resetfile is deprecated!\n");
 	JE_resetFileExt(f, filename, TRUE);
 }
 
-void JE_resetFileExt( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added. */
+void JE_resetFileExt( FILE **f, const char *filename, JE_boolean write ) /* Newly added. */
 {
 	*f = fopen(JE_locateFile(filename), (write ? "r+b" : "rb"));
 }
 
-void JE_resetText( FILE **f, const JE_string filename )
+void JE_resetText( FILE **f, const char *filename )
 {
 	printf("!!! WARNING: JE_resettext is deprecated!\n");
 	JE_resetTextExt(f, filename, TRUE);
 }
 
-void JE_resetTextExt( FILE **f, const JE_string filename, JE_boolean write ) /* Newly added */
+void JE_resetTextExt( FILE **f, const char *filename, JE_boolean write ) /* Newly added */
 {
 	*f = fopen(JE_locateFile(filename), (write ? "r+" : "r"));
 }

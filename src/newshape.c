@@ -305,7 +305,7 @@ void JE_mouseStart( void )
 
 	JE_word tempw;
 
-	if (mouse_installed)
+	if (mouseInstalled)
 	{
 		tempw = mouseCursorGr[mouseCursor];
 
@@ -332,7 +332,7 @@ void JE_mouseStart( void )
 
 void JE_mouseReplace( void )
 {
-	if (mouse_installed)
+	if (mouseInstalled)
 	{
 		JE_drawShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 	}

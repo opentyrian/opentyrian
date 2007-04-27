@@ -292,4 +292,34 @@ JE_boolean JE_anyButton( void )
 	return newkey || mousedown || button[0];
 }
 
+void JE_setMousePosition( JE_word mouseX, JE_word mouseY )
+{
+	if (mouseInstalled)
+	{
+		SDL_WarpMouse(mouseX, mouseY);
+	}
+}
+
+void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
+{
+	JE_byte z;
+	JE_byte zWait = 2;
+
+	col += 2;
+	
+	for (z = 0; z <= num; z++)
+	{
+		JE_rectangle(x, y-1, x+8, y, col);
+		if (zWait > 0)
+		{
+			zWait--;
+		} else {
+			col++;
+			zWait = 1;
+		}
+		y -= 2;
+	}
+}
+
+
 /* TODO */

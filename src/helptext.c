@@ -78,12 +78,12 @@ char destructHelp[25][22];
 char weaponNames[17][17];          /* [1..17] of string [16] */
 char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] */
 char shipInfo[13][2][256];
-char menuInt[MAX_MENU+1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
+char menuInt[MAX_MENU][11][18];   /* [0..maxmenu, 1..11] of string [17] */
 
 
 JE_byte temp, temp2;
 
-void JE_helpBox( JE_word x, JE_word y, JE_string message, JE_byte boxwidth )
+void JE_helpBox( JE_word x, JE_word y, char *message, JE_byte boxwidth )
 {
 	JE_byte startpos, endpos, pos;
 	JE_boolean endstring;
@@ -176,7 +176,7 @@ void JE_loadHelpText( void )
 
 	for (i = 0; i < 11; i++)
 	{
-		JE_readCryptLn(f,menuInt[6][i]);    /*Key names*/
+		JE_readCryptLn(f,menuInt[5][i]);    /*Key names*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
@@ -206,19 +206,19 @@ void JE_loadHelpText( void )
 
 	for (i = 0; i < 7; i++)
 	{
-		JE_readCryptLn(f,menuInt[1][i]);    /*Menu 1 - Main*/
+		JE_readCryptLn(f,menuInt[0][i]);    /*Menu 1 - Main*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
 	for (i = 0; i < 9; i++)
 	{
-		JE_readCryptLn(f,menuInt[2][i]);    /*Menu 2 - Items*/
+		JE_readCryptLn(f,menuInt[1][i]);    /*Menu 2 - Items*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
 	for (i = 0; i < 8; i++)
 	{
-		JE_readCryptLn(f,menuInt[3][i]);    /*Menu 3 - Options*/
+		JE_readCryptLn(f,menuInt[2][i]);    /*Menu 3 - Options*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
@@ -260,7 +260,7 @@ void JE_loadHelpText( void )
 	
 	for (i = 0; i < 6; i++)
 	{
-		JE_readCryptLn(f,menuInt[10][i]);       /*Menu 10 - 2Player Main*/
+		JE_readCryptLn(f,menuInt[9][i]);       /*Menu 10 - 2Player Main*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
@@ -278,7 +278,7 @@ void JE_loadHelpText( void )
 	
 	for (i = 0; i < 4; i++)
 	{
-		JE_readCryptLn(f,menuInt[11][i]);       /*Menu 11 - 2Player Network*/
+		JE_readCryptLn(f,menuInt[10][i]);       /*Menu 11 - 2Player Network*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
@@ -290,13 +290,13 @@ void JE_loadHelpText( void )
 	
 	for (i = 0; i < 6; i++)
 	{
-		JE_readCryptLn(f,menuInt[12][i]);       /*Menu 12 - Network Options*/
+		JE_readCryptLn(f,menuInt[11][i]);       /*Menu 12 - Network Options*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
 	for (i = 0; i < 7; i++)
 	{
-		JE_readCryptLn(f,menuInt[13][i]);       /*Menu 13 - Joystick*/
+		JE_readCryptLn(f,menuInt[12][i]);       /*Menu 13 - Joystick*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 	
@@ -345,7 +345,7 @@ void JE_loadHelpText( void )
 	
 	for (i = 0; i < 5; i++)
 	{
-		JE_readCryptLn(f,menuInt[14][i]);       /*Menu 12 - Network Options*/
+		JE_readCryptLn(f,menuInt[13][i]);       /*Menu 12 - Network Options*/
 	}
 
 	fclose(f);

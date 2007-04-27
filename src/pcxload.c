@@ -44,7 +44,7 @@ void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer )
 	}
 }
 
-void JE_loadPCX( JE_string name, JE_boolean storePalette)
+void JE_loadPCX( char *name, JE_boolean storePalette)
 {
 	struct JE_PCXHeader_rec header;
 	/* JE_char textbuf[1024]; [1..1024] Unused */

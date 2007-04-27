@@ -56,7 +56,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		}
 
 #ifdef NDEBUG
-		if (mouse_installed)
+		if (mouseInstalled)
 		{
 			if (abs(mouse_y - 100) > 10)
 			{

@@ -56,7 +56,7 @@ JE_boolean jumpSection;
 JE_boolean useLastBank; /* See if I want to use the last 16 colors for DisplayText */
 
 /* Draws a message at the bottom text window on the playing screen */
-void JE_drawTextWindow( JE_string text )
+void JE_drawTextWindow( char *text )
 {
 	tempScreenSeg = VGAScreen; /*sega000*/
 	if (textErase > 0)
@@ -68,13 +68,13 @@ void JE_drawTextWindow( JE_string text )
 	JE_outText(20, 190, text, 0, 4);
 }
 
-void JE_outCharGlow( JE_word x, JE_word y, JE_string s )
+void JE_outCharGlow( JE_word x, JE_word y, char *s )
 {
 	JE_integer maxloc, loc, z;
 	JE_shortint glowcol[60]; /* [1..60] */
 	JE_shortint glowcolc[60]; /* [1..60] */
 	JE_word textloc[60]; /* [1..60] */
-	JE_byte b, bank;
+	JE_byte b = 0, bank;
 
 	setjasondelay2(1);
 
@@ -840,9 +840,9 @@ JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 void JE_loadScreen( void )
 {
 	JE_boolean quit;
-	JE_byte sel, screen, min, max;
-	JE_string tempstr;
-	JE_string tempstr2;
+	JE_byte sel, screen, min = 0, max = 0;
+	char *tempstr;
+	char *tempstr2;
 	JE_boolean mal_str = FALSE;
 	int len;
 
@@ -1043,4 +1043,110 @@ void JE_loadScreen( void )
 			
 		}
 	} while (!quit);
+}
+
+JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems )
+{
+	JE_longint templ = score;
+
+	templ += JE_getValue(2, pItems[12]);
+	templ += JE_getValue(3, pItems[1]);
+	templ += JE_getValue(4, pItems[2]);
+	templ += JE_getValue(5, pItems[10]);
+	templ += JE_getValue(6, pItems[6]);
+	templ += JE_getValue(7, pItems[4]);
+	templ += JE_getValue(8, pItems[5]);
+
+	return templ;
+}
+
+JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
+{
+	JE_longint tempW2 = 0;
+	JE_byte z;
+
+	switch (itemType)
+	{
+		case 2:
+			tempW2 = ships[itemNum].cost;
+			break;
+		case 3:
+		case 4:
+			tempW2 = weaponPort[itemNum].cost;
+			tempW3 = tempW2;
+			for (z = 0; z < portPower[itemType-2]; z++)
+			{
+				tempW2 += JE_powerLevelCost(tempW3, z);
+			}
+			break;
+		case 5:
+			tempW2 = shields[itemNum].cost;
+			break;
+		case 6:
+			tempW2 = powerSys[itemNum].cost;
+			break;
+		case 7:
+		case 8:
+			tempW2 = options[itemNum].cost;
+			break;
+	}
+
+	return tempW2;
+}
+
+JE_boolean JE_nextEpisode( void )
+{
+	STUB(JE_nextEpisode);
+	return FALSE;
+}
+
+void JE_initPlayerData( void )
+{
+	/* JE: New Game Items/Data */
+	pItems[0] = 1;  /* Normally 1 - Front Weapon */
+	pItems[1] = 0;  /* Normally 0 - Rear Weapon */
+	pItems[2] = 0;  /* SuperArcade mode */
+	pItems[3] = 0;  /* Left Option */
+	pItems[4] = 0;  /* Right Option */
+	pItems[5] = 2;  /* Generator */
+	pItems[6] = 2;
+	pItems[7] = 1;
+	pItems[8] = 0;  /* Starting Episode num */
+	pItems[9] = 4;  /* Shields */
+	pItems[10] = 0; /* Secret Weapons - Normally 0 */
+	pItems[11] = 1; /* Normally 1 - Player Ship */
+	memcpy(pItemsBack2, pItems, sizeof(pItems));
+	memcpy(pItemsPlayer2, pItems, sizeof(pItems));
+	pItemsPlayer2[1] = 15; /* Player 2 starts with 15 - MultiCannon and 2 single shot options */
+	pItemsPlayer2[3] = 0;
+	pItemsPlayer2[4] = 0;
+	pItemsPlayer2[6] = 101; /* Player 2  Option Mode 101,102,103 */
+	pItemsPlayer2[7] = 0; /* Player 2  Option Type */
+	for (temp = 0; temp < 2; temp++)
+	{
+		portConfig[temp] = 1;
+	}
+	gameHasRepeated = FALSE;
+	onePlayerAction = FALSE;
+	superArcadeMode = 0;
+	superTyrian = FALSE;
+	/* twoplayerarcade:=false; */
+	twoPlayerMode = FALSE;
+
+	secretHint = (rand()%3) + 1;
+
+	armorLevel = ships[pItems[11]].dmg;
+	portPower[0] = 1;
+	portPower[1] = 1;
+	portConfig[1] = 1;
+
+	mainLevel = FIRST_LEVEL;
+	saveLevel = FIRST_LEVEL;
+
+	strcpy(lastLevelName, miscText[20]);
+}
+
+void JE_sortHighScores( void )
+{
+	STUB(JE_sortHighScores);
 }

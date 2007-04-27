@@ -569,7 +569,7 @@ JE_word JE_SGR( JE_word ship, JE_byte **ptr )
 
 void JE_calcPurpleBall( JE_byte playernum )
 {
-	const JE_byte purpleBallMax[12] /* [0..11] */ = {1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50};
+	static const JE_byte purpleBallMax[12] /* [0..11] */ = {1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50};
 
 	purpleBallsRemaining[playernum-1] = purpleBallMax[portPower[playernum-1]];
 }
@@ -830,4 +830,39 @@ void JE_tyrianHalt( JE_byte code )
 	}
 
 	exit(code);
+}
+
+void JE_drawShield( void )
+{
+	if (twoPlayerMode && !galagaMode)
+	{
+		JE_dBar3(270, 60, ROUND(shield * 0.8), 144);
+		JE_dBar3(270, 194, ROUND(shield2 * 0.8), 144);
+	} else {
+		JE_dBar3(270, 194, shield, 144);
+		if (shield != shieldMax)
+		{
+			JE_rectangle(270, 193 - (shieldMax << 1), 278, 193 - (shieldMax << 1), 68);
+		}
+	}
+}
+
+void JE_drawArmor( void )
+{
+	if (armorLevel > 28)
+	{
+		armorLevel = 28;
+	}
+	if (armorLevel2 > 28)
+	{
+		armorLevel2 = 28;
+	}
+
+	if (twoPlayerMode && !galagaMode)
+	{
+		JE_dBar3(307, 60, ROUND(armorLevel * 0.8), 224);
+		JE_dBar3(307, 194, ROUND(armorLevel2 * 0.8), 224);
+	} else {
+		JE_dBar3(307, 194, armorLevel, 224);
+	}
 }

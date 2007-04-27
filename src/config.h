@@ -139,15 +139,15 @@ void JE_initProcessorType( void );
 void JE_setNewGameSpeed( void );
 void JE_loadConfiguration( void );
 void JE_saveConfiguration( void );
-void JE_readCryptLn( FILE* f, JE_string s );
+void JE_readCryptLn( FILE* f, char *s );
 void JE_skipCryptLn( FILE* f );
 
 void JE_setupStars( void );
 
-void JE_saveGame( JE_byte slot, JE_string name );
+void JE_saveGame( JE_byte slot, char *name );
 void JE_loadGame( JE_byte slot );
 
-void JE_decryptString( JE_string s, JE_byte len );
+void JE_decryptString( char *s, JE_byte len );
 
 
 void JE_encryptSaveTemp( void );

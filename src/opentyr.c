@@ -45,7 +45,7 @@
 
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
-const JE_string opentyrian_str = "OpenTyrian";
+const char *opentyrian_str = "OpenTyrian";
 
 char *strnztcpy( char *to, char *from, size_t count )
 {
@@ -133,7 +133,7 @@ int main( int argc, char *argv[] )
 		joystick_installed = FALSE;
 	}
 
-	if (mouse_installed)
+	if (mouseInstalled)
 	{
 		printf("Mouse Detected.   ");
 		if (mouse_threeButton)

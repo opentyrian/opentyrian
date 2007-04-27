@@ -35,7 +35,7 @@ extern JE_boolean jumpSection;
 extern JE_boolean useLastBank;
 #endif
 
-void JE_drawTextWindow( JE_string text );
+void JE_drawTextWindow( char *text );
 void JE_initPlayerData( void );
 void JE_highScoreScreen( void );
 void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma );
@@ -58,14 +58,14 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum );
 JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems );
 
 void JE_drawPortConfigButtons( void );
-void JE_outCharGlow( JE_word x, JE_word y, JE_string s );
+void JE_outCharGlow( JE_word x, JE_word y, char *s );
 JE_boolean JE_getPassword( void );
 
 void JE_playCredits( void );
 void JE_endLevelAni( void );
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness );
 void JE_handleChat( void );
-JE_boolean JE_getNumber( JE_string s, JE_byte *x );
+JE_boolean JE_getNumber( char *s, JE_byte *x );
 void JE_loadScreen( void );
 void JE_operation( JE_byte slot );
 void JE_inGameDisplays( void );
@@ -76,7 +76,7 @@ void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize );
 
 void JE_loadMainShapeTables( void );
 void JE_mainGamePlayerFunctions( void );
-JE_string JE_getName( JE_byte pnum );
+char *JE_getName( JE_byte pnum );
 
 void JE_playerCollide( JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_integer *lastTurn2,
                        JE_longint *score, JE_integer *armorLevel, JE_shortint *shield, JE_boolean *playerAlive,

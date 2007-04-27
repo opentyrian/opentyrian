@@ -47,7 +47,7 @@ extern JE_char /*c,*/ c2;
 extern JE_boolean overrideBlack;
 #endif
 
-void JE_loadPCX( JE_string name, JE_boolean storePalette );
+void JE_loadPCX( char *name, JE_boolean storePalette );
 void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer );
 
 #endif /* PCXLOAD_H */

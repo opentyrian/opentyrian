@@ -60,15 +60,15 @@ JE_boolean JE_anyButton( void );
 /*void JE_showMouse( void );
 void JE_hideMouse( void );*/
 
-void JE_dbar( JE_word x, JE_word y, JE_word num, JE_word col );
-void JE_dbar2( JE_word x, JE_word y, JE_word num, JE_word col );
-void JE_dbar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col );
-void JE_dbar4( JE_word x, JE_word y, JE_word num, JE_word col );
-void JE_bardraw( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
-void JE_bardrawshadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
-void JE_bardrawdirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
-void JE_wipekey( void );
-void JE_drawansi( JE_string ansiscreen );
+void JE_dBar( JE_word x, JE_word y, JE_word num, JE_word col );
+void JE_dBar2( JE_word x, JE_word y, JE_word num, JE_word col );
+void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col );
+void JE_dBar4( JE_word x, JE_word y, JE_word num, JE_word col );
+void JE_barDraw( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
+void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
+void JE_barDrawDirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
+void JE_wipeKey( void );
+void JE_drawANSI( char *ansiscreen );
 /*JE_boolean JE_waitaction( JE_byte time );*/
 
 void JE_drawShape2( JE_word x, JE_word y, JE_word s, JE_byte *shape );

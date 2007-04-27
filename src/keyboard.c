@@ -27,7 +27,7 @@
 #include "SDL.h"
 
 /* TODO: Decide if this stays or not */
-const char *KeyNames[] = {
+const char *keyNames[] = {
 	"ESC",
 	"1",
 	"2",

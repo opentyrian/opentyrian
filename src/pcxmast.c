@@ -23,7 +23,7 @@
 #include "pcxmast.h"
 #undef NO_EXTERNS
 
-const JE_string pcxfile[PCX_NUM] = /* [1..PCXnum] */
+const char *pcxfile[PCX_NUM] = /* [1..PCXnum] */
 {
 	"INTSHPB.PCX",
 	"SETUP2.PCX",

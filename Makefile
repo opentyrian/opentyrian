@@ -12,7 +12,7 @@ OBJS := backgrnd.o config.o error.o episodes.o fonthand.o helptext.o joystick.o 
 ifeq ($(DEBUG), 1)
 	DEBUG_FLAGS := -g3 -O0 -Wno-unused
 else
-	DEBUG_FLAGS := -O2 -fomit-frame-pointer -DNDEBUG -Wno-unused
+	DEBUG_FLAGS := -g3 -O2 -fomit-frame-pointer -DNDEBUG -Wno-unused -fno-strict-aliasing
 endif
 
 ifeq ($(PLATFORM), WINDOWS)

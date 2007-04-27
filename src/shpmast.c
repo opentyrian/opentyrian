@@ -23,7 +23,7 @@
 #include "shpmast.h"
 #undef NO_EXTERNS
 
-const JE_string shpfile[SHP_NUM] = /* [1..SHPnum] */
+const char *shpfile[SHP_NUM] = /* [1..SHPnum] */
 {
 	"ESTFE.SHP", /*2*/
 	"ESTFD.SHP", /*3*/

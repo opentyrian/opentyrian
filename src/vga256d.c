@@ -29,7 +29,7 @@
 #include <math.h>
 #include <ctype.h>
 
-JE_boolean mouse_installed = TRUE;
+JE_boolean mouseInstalled = TRUE;
 JE_char k;
 
 SDL_Surface *VGAScreen;
@@ -92,12 +92,12 @@ void JE_offScreen( void )
 	STUB(JE_offScreen);
 }
 
-void JE_disable_refresh( void )
+void JE_disableRefresh( void )
 {
 	/* This would normally blank the screen, but since it's hard to implement and not used I'll leave it as a no-op. */
 }
 
-void JE_enable_refresh( void )
+void JE_enableRefresh( void )
 {
 	/* Same as JE_disable_refresh */
 }
@@ -132,7 +132,7 @@ void JE_pix2( JE_word x, JE_word y, JE_byte c )
 	}
 }
 
-void JE_pixcool( JE_word x, JE_word y, JE_byte c )
+void JE_pixCool( JE_word x, JE_word y, JE_byte c )
 {
 	JE_pix3(x,y,c);
 }
@@ -147,7 +147,7 @@ void JE_pix3( JE_word x, JE_word y, JE_byte c )
 	JE_pix2(x,y+1,c);
 }
 
-void JE_pixabs( JE_word x, JE_byte c )
+void JE_pixAbs( JE_word x, JE_byte c )
 {
 	if (x < 320*200)
 	{
@@ -156,7 +156,7 @@ void JE_pixabs( JE_word x, JE_byte c )
 	}
 }
 
-void JE_getpix( JE_word x, JE_word y, JE_byte *c )
+void JE_getPix( JE_word x, JE_word y, JE_byte *c )
 {
 	/* Bad things happen if we don't clip */
 	if (x < 320 && y < 200)
@@ -166,7 +166,7 @@ void JE_getpix( JE_word x, JE_word y, JE_byte *c )
 	}
 }
 
-JE_byte JE_getpixel( JE_word x, JE_word y )
+JE_byte JE_getPixel( JE_word x, JE_word y )
 {
 	/* Bad things happen if we don't clip */
 	if (x < 320 && y < 200)
@@ -225,7 +225,7 @@ void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, 
 	}
 }
 
-void JE_barshade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
 	if (a < 320 && c < 320 && b < 200 && d < 200)
 	{
@@ -246,12 +246,12 @@ void JE_barshade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2
 	}
 }
 
-void JE_barshade2( JE_word a, JE_word b, JE_word c, JE_word d )
+void JE_barShade2( JE_word a, JE_word b, JE_word c, JE_word d )
 {
-	JE_barshade(a+3, b+2, c-3, d-2);
+	JE_barShade(a+3, b+2, c-3, d-2);
 }
 
-void JE_barbright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
 	if (a < 320 && c < 320 && b < 200 && d < 200)
 	{
@@ -341,7 +341,7 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
 	SDL_SetColors(VGAScreen, &color, col, 1);
 }
 
-void JE_drawgraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )
+void JE_drawGraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )
 {
 	char *vga = VGAScreen->pixels;
 	int i;
@@ -355,7 +355,7 @@ void JE_drawgraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )
 	}
 }
 
-void JE_getk( JE_char *k )
+void JE_getK( JE_char *k )
 {
 	SDL_Event ev;
 
@@ -373,14 +373,14 @@ void JE_getk( JE_char *k )
 	}
 }
 
-void JE_getupk( JE_char *k )
+void JE_getUpK( JE_char *k )
 {
 	printf("!!! WARNING: JE_getupk is deprecated! %s:%d\n", __FILE__, __LINE__);
-	JE_getk(k);
+	JE_getK(k);
 	*k = toupper(*k);
 }
 
-JE_boolean JE_keypressed( JE_char *kp )
+JE_boolean JE_keyPressed( JE_char *kp )
 {
 	SDL_Event ev;
 
@@ -407,11 +407,11 @@ JE_boolean JE_kp( void )
 
 /*****************************************/
 
-void JE_getimage16( JE_word a, JE_byte b, JE_shape16B *p )
+void JE_getImage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
 	STUB(JE_getimage16);
 }
-void JE_putimage16( JE_word a, JE_byte b, JE_shape16B *p )
+void JE_putImage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
 	STUB(JE_putimage16);
 }
@@ -419,7 +419,7 @@ void JE_absDrawGraphic( JE_ShapeTypeOne s )
 {
 	STUB(JE_absDrawGraphic);
 }
-void JE_drawgraphicover( JE_word x, JE_word y, JE_ShapeTypeOne s )
+void JE_drawGraphicOver( JE_word x, JE_word y, JE_ShapeTypeOne s )
 {
 	STUB(JE_drawgraphicover);
 }
@@ -427,7 +427,7 @@ void JE_absDrawGraphicOver( JE_ShapeTypeOne s )
 {
 	STUB(JE_absDrawGraphicOver);
 }
-void JE_readgraphic( JE_integer x, JE_integer y, JE_ShapeTypeOne s )
+void JE_readGraphic( JE_integer x, JE_integer y, JE_ShapeTypeOne s )
 {
 	STUB(JE_readgraphic);
 }
@@ -435,7 +435,7 @@ void JE_wait( JE_byte min, JE_byte sec, JE_byte hun )
 {
 	STUB(JE_wait);
 }
-void JE_darkenscreen( void )
+void JE_darkenScreen( void )
 {
 	STUB(JE_darkenscreen);
 }

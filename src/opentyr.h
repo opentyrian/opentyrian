@@ -41,14 +41,11 @@ typedef signed char    JE_shortint;
 typedef unsigned short JE_word;
 typedef unsigned char  JE_byte;
 typedef int            JE_boolean;
-
-typedef char          *JE_string;
 typedef char           JE_char;
-
 typedef double         JE_real;
 
 #ifndef NO_EXTERNS
-extern const JE_string opentyrian_str;
+extern const char *opentyrian_str;
 #endif
 
 char *strnztcpy( char *to, char *from, size_t count );
