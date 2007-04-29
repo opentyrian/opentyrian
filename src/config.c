@@ -947,11 +947,21 @@ void JE_saveConfiguration( void )
 	
 	JE_encryptSaveTemp();
 	f = fopen("TYRIAN.SAV", "wb");
+	if (!f)
+	{
+		printf("Error opening TYRIAN.SAV for writing.\n");
+		exit(1);
+	}
 	fwrite(saveTemp, 1, sizeof(saveTemp), f);
 	fclose(f);
 	JE_decryptSaveTemp();
 	
 	f = fopen("TYRIAN.CFG", "wb");
+	if (!f)
+	{
+		printf("Error opening TYRIAN.CFG for writing.\n");
+		exit(1);
+	}
 	fwrite(&background2, 1, 1, f);
 	fwrite(&gameSpeed, 1, 1, f);
 	fwrite(&inputDevice, 1, 1, f);
