@@ -587,7 +587,7 @@ levelloop :
 	/* TODO */
 
 	/* SMOOTHIES! */
-	/* TODO JE_checkSmoothies();*/
+	JE_checkSmoothies();
 	if (anySmoothies)
 	{
 		memcpy(VGAScreen->pixels, smoothiesScreen, sizeof(smoothiesSeg));
@@ -736,7 +736,7 @@ levelloop :
 
 	if (processorType > 1 && smoothies[4])
 	{
-		/* TODO JE_smoothies3();*/
+		JE_smoothies3();
 	}
 
 	/* --- BACKGROUNDS --- */
@@ -762,15 +762,78 @@ levelloop :
 
 	if (smoothies[0] && processorType > 2 && SDAT[0] == 0)
 	{
-		/* TODO JE_smoothies1();*/
+		JE_smoothies1();
 	}
 	if (smoothies[1] && processorType > 2)
 	{
-		/* TODO JE_smoothies2();*/
+		JE_smoothies2();
 	}
 
+	/*-----------------------Ground Enemy------------------------*/
 	/* TODO */
 
+	if (smoothies[0] && processorType > 2 && SDAT[0] > 0)
+	{
+		JE_smoothies1();
+	}
+
+	if (superWild)
+	{
+		neat += 3;
+		JE_darkenBackground(neat);
+	}
+
+	/*-----------------------BACKGROUNDS------------------------*/
+	/*-----------------------BACKGROUND 2------------------------*/
+	if (!(smoothies[1] && processorType < 4) &&
+	    !(smoothies[0] && processorType == 3))
+	{
+		if (background2over == 1)
+		{
+			if (wild && !background2notTransparent)
+			{
+				JE_superBackground2();
+			} else {
+				JE_drawBackground2();
+			}
+		}
+	}
+
+	if (superWild)
+	{
+		neat++;
+		JE_darkenBackground(neat);
+	}
+
+	if (background3over == 2)
+	{
+		JE_drawBackground3();
+	}
+
+	/* New Enemy */
+	/* TODO */
+
+	if (processorType > 1 && smoothies[2])
+	{
+		JE_smoothies3();
+	}
+	if (processorType > 1 && smoothies[3])
+	{
+		JE_smoothies4();
+	}
+
+	/* Draw Sky Enemy */
+	/* TODO */
+
+	if (background3over == 0)
+	{
+		JE_drawBackground3();
+	}
+
+	/* Draw Top Enemy */
+	/* TODO */
+
+	/* TODO */
 }
 
 /* --- Load Level/Map Data --- */
