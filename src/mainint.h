@@ -51,6 +51,14 @@ void JE_doInGameSetup( void );
 JE_boolean JE_inGameSetup( void );
 void JE_inGameHelp( void );
 void JE_sortHighScores( void );
+void JE_highScoreCheck( void );
+void JE_setNewGameVol( void );
+void JE_changeDifficulty( void );
+void JE_doDemoKeys( void );
+void JE_readDemoKeys( void );
+void JE_sfCodes( void );
+void JE_func( JE_byte col );
+void JE_sort( void );
 
 JE_word JE_powerLevelCost( JE_word base, JE_byte level );
 JE_longint JE_getCost( JE_byte itemType, JE_word itemNum );
@@ -81,5 +89,6 @@ char *JE_getName( JE_byte pnum );
 void JE_playerCollide( JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_integer *lastTurn2,
                        JE_longint *score, JE_integer *armorLevel, JE_shortint *shield, JE_boolean *playerAlive,
                        JE_byte *playerStillExploding, JE_byte playerNum, JE_byte playerInvulnerable );
+
 
 #endif /* MAININT_H */

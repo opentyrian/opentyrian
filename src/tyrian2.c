@@ -1961,7 +1961,7 @@ void JE_titleScreen( JE_boolean animate )
 							fadeIn = TRUE;
 							break;
 						case 2: /* High scores */
-							/* JE_highScoreScreen(); */
+							JE_highScoreScreen();
 							fadeIn = TRUE;
 							break;
 						case 3: /* Instructions */

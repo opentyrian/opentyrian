@@ -1150,3 +1150,157 @@ void JE_sortHighScores( void )
 {
 	STUB(JE_sortHighScores);
 }
+
+void JE_highScoreScreen( void )
+{
+	STUB(JE_highScoreScreen);
+}
+
+void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma )
+{
+	STUB(JE_gammaCorrect);
+}
+
+JE_boolean JE_gammaCheck( void )
+{
+	STUB(JE_gammaCheck);
+	
+	return FALSE;
+}
+
+/* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
+void JE_loadOrderingInfo( void )
+{
+	STUB(JE_loadOrderingInfo);
+}
+
+void JE_doInGameSetup( void )
+{
+	STUB(JE_doInGameSetup);
+}
+
+JE_boolean JE_inGameSetup( void )
+{
+	STUB(JE_inGameSetup);
+	
+	return FALSE;
+}
+
+void JE_inGameHelp( void )
+{
+	STUB(JE_inGameHelp);
+}
+
+void JE_highScoreCheck( void )
+{
+	STUB(JE_highScoreCheck);
+}
+
+void JE_setNewGameVol( void )
+{
+	STUB(JE_setNewGameVol);
+}
+
+void JE_changeDifficulty( void )
+{
+	STUB(JE_changeDifficulty);
+}
+
+void JE_doDemoKeys( void )
+{
+	STUB(JE_doDemoKeys);
+}
+
+void JE_readDemoKeys( void )
+{
+	STUB(JE_readDemoKeys);
+}
+
+void JE_sfCodes( void )
+{
+	STUB(JE_sfCodes);
+}
+
+void JE_func( JE_byte col )
+{
+	STUB(JE_func);
+}
+
+void JE_sort( void )
+{
+	STUB(JE_sort);
+}
+
+JE_boolean JE_getPassword( void )
+{
+	STUB(JE_getPassword);
+	
+	return FALSE;
+}
+
+void JE_playCredits( void )
+{
+	STUB(JE_playCredits);
+}
+
+void JE_endLevelAni( void )
+{
+	STUB(JE_endLevelAni);
+}
+
+void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+{
+	STUB(JE_gammaCorrect);
+}
+
+void JE_handleChat( void )
+{
+	STUB(JE_handleChat);
+}
+
+JE_boolean JE_getNumber( char *s, JE_byte *x )
+{
+	STUB(JE_getNumber);
+	
+	return FALSE;
+}
+
+void JE_operation( JE_byte slot )
+{
+	STUB(JE_operation);
+}
+
+void JE_inGameDisplays( void )
+{
+	STUB(JE_inGameDisplays);
+}
+
+void JE_mainKeyboardInput( void )
+{
+	STUB(JE_mainKeyboardInput);
+}
+
+void JE_pauseGame( void )
+{
+	STUB(JE_pauseGame);
+}
+
+void JE_mainGamePlayerFunctions( void )
+{
+	STUB(JE_mainGamePlayerfunctions);
+}
+
+char *JE_getName( JE_byte pnum )
+{
+	STUB(JE_getName);
+	
+	return NULL;
+}
+
+void JE_playerCollide( JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_integer *lastTurn2,
+                       JE_longint *score, JE_integer *armorLevel, JE_shortint *shield, JE_boolean *playerAlive,
+                       JE_byte *playerStillExploding, JE_byte playerNum, JE_byte playerInvulnerable )
+{
+	STUB(JE_playerCollide);
+}
+
