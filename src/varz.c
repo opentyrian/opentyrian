@@ -508,7 +508,7 @@ void JE_getShipInfo( void )
 	{
 		/* TODO armorLevel = editship.ships [base + 8]; */
 	} else {
-		armorLevel = ships[pItems[12]].dmg;
+		armorLevel = ships[pItems[11]].dmg;
 	}
 
 	if (extraShip)
