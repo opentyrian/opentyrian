@@ -2421,8 +2421,12 @@ item_screen_start:
 					{
 						strcpy(tempStr, "-----");
 					} else {
+						char buf[20];
+
 						strcpy(tempStr, saveFiles[x-1].levelName);
-						/* JE_textShade(297, tempY, miscTextB[1] CONCAT JE_st(saveFiles[x-1].episode), temp2 / 16, temp2 % 16 - 8, DARKEN); TODO */
+
+						snprintf(buf, sizeof buf, "%s%d", miscTextB[1], saveFiles[x-1].episode);
+						JE_textShade(297, tempY, buf, temp2 / 16, temp2 % 16 - 8, DARKEN);
 					}
 
 					JE_textShade(245, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
@@ -2464,7 +2468,6 @@ item_screen_start:
 			menuChoices[5] = 10;
 		}
 
-		/* TODO
 		if (curMenu == 4)
 		{
 			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][curSel[5]]) > score)
@@ -2486,8 +2489,146 @@ item_screen_start:
 			} else {
 				pItems[pItemButtonMap[curSel[1]-1]] = itemAvail[itemAvailMap[curSel[1]-1]][curSel[4]-1];
 			}
-		TODO */
 
+			if ((curSel[1] == 3 && curSel[4] < menuChoices[4]) || (curSel[1] == 4 && curSel[4] < menuChoices[4]-1))
+			{
+				if (curSel[1] == 3)
+				{
+					temp = portPower[0];
+				} else {
+					temp = portPower[1];
+				}
+
+				/* JE: Only needed if change */
+				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][curSel[5]-1]);
+
+				leftPower  = portPower[curSel[1] - 2] > 1;
+				rightPower = portPower[curSel[1] - 2] < 11;
+
+				if (rightPower)
+				{
+					rightPowerAfford = JE_cashLeft() >= upgradeCost;
+				}
+			} else {
+				leftPower = FALSE;
+				rightPower = FALSE;
+			}
+
+			JE_dString(74 + JE_fontCenter(menuInt[1][curSel[1]], FONT_SHAPES), 10, menuInt[1][curSel[1]], FONT_SHAPES);
+			temp2 = pItems[pItemButtonMap[curSel[1]]];
+
+			for (tempW = 0; tempW < menuChoices[curMenu]; tempW++)
+			{
+				tempY = 40 + (tempW - 1) * 26;
+
+				if (tempW < menuChoices[4])
+				{
+					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][tempW]);
+				} else {
+					tempW3 = 0;
+				}
+
+				if (tempW > score)
+				{
+					temp4 = 4;
+				} else {
+					temp4 = 0;
+				}
+
+				temp = itemAvail[itemAvailMap[curSel[1]-1]][tempW];
+				switch (curSel[1])
+				{
+					case 1:
+						if (temp > 90)
+						{
+							snprintf(tempStr, sizeof tempStr, "Custom Ship %d", temp - 90);
+							/*strcpy(tempStr, "Custom Ship " + JE_st(temp - 90));*/
+						} else {
+							strcpy(tempStr, ships[temp].name);
+						}
+						break;
+					case 2:
+					case 3:
+						strcpy(tempStr, weaponPort[temp].name);
+						break;
+					case 4:
+						strcpy(tempStr, shields[temp].name);
+						break;
+					case 5:
+						strcpy(tempStr, powerSys[temp].name);
+						break;
+					case 6:
+					case 7:
+						strcpy(tempStr, options[temp].name);
+						break;
+				}
+				if (tempW == curSel[curMenu]-1)
+				{
+					if (keyboardUsed)
+					{
+						JE_setMousePosition(610, tempY+10);
+					}
+					temp2 = 15;
+				} else {
+					temp2 = 28;
+				}
+
+				JE_getShipInfo();
+
+				if (temp == pItemsBack[pItemButtonMap[curSel[1]]] && temp != 0 && tempW != menuChoices[curMenu]-1)
+				{
+					JE_bar(160, tempY+7, 300, tempY+11, 227);
+					JE_drawShape2(298, tempY+2, 247, shapes9);
+				}
+
+				if (tempW == menuChoices[curMenu]-1)
+				{
+					strcpy(tempStr, miscText[14]);
+				}
+				JE_textShade(185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
+
+				if (tempW < menuChoices[curMenu]-1)
+				{
+					/*JE_drawItem(curSel[1]-1, temp, 160, tempY-4); TODO*/
+				}
+
+				if (tempW == curSel[curMenu]-1)
+				{
+					temp2 = 15;
+				} else {
+					temp2 = 28;
+				}
+
+				if (tempW != menuChoices[curMenu]-1)
+				{
+					char buf[20];
+
+					snprintf(buf, sizeof buf, "Cost: %d", tempW3);
+					JE_textShade(187, tempY-10, buf, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
+				}
+			}
+		}
+
+		if (curMenu == 4 && (curSel[1] >= 2 && curSel[1] <= 7 && curSel[1] != 4))
+		{
+			joystickWaitMax = 20;
+		} else {
+			joystickWaitMax = 10;
+		}
+
+		/* YKS: Ouch */
+		if ((curMenu == 0 || curMenu == 1 || curMenu == 6) || ((curMenu == 10 || curMenu == 11) && onePlayerAction) || ((curMenu == 3 || curMenu == 6) && !twoPlayerMode) || (curMenu == 5 && (curSel[1] >= 1 && curSel[1] <= 6)))
+		{
+			if (curMenu != 4)
+			{
+				char buf[20];
+
+				snprintf(buf, sizeof buf, "%ld", score);
+				JE_textShade(65, 173, buf, 1, 6, DARKEN);
+			}
+			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
+			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9]].mpwr * 2, 2, 13);
+		}
 
 		/* TODO */
 		service_SDL_events(FALSE);
