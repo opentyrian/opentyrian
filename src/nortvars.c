@@ -43,6 +43,11 @@ JE_word mouseX, mouseY, mouseButton;
 
 JE_word z, y;
 
+JE_word JE_btow(JE_byte a, JE_byte b)
+{
+	return (JE_word) (((short) b) * 256 + a);
+}
+
 void JE_loadShapeFile( JE_ShapeType *shapes, JE_char s )
 {
 	FILE *f;

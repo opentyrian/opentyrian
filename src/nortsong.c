@@ -46,6 +46,7 @@ JE_byte soundEffects = 1; /* TODO: Give this a real value, figure out what they 
 JE_word frameCount, frameCount2, frameCountMax; /* TODO: Remind MXD to remove these later. */
 
 JE_byte currentSong = 0;
+JE_byte jConfigure = 0;
 
 JE_byte soundActive = TRUE; /* I'm not sure if these two are ever false. */
 JE_byte musicActive = TRUE; /* TODO: Make sure these get proper values. */

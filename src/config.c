@@ -23,7 +23,7 @@
 #include "vga256d.h"
 #include "error.h"
 #include "loudness.h"
-#include "nortsong.h"
+#include "nortvars.h"
 #include "joystick.h"
 
 #define NO_EXTERNS
@@ -579,6 +579,8 @@ void JE_decryptSaveTemp( void )
 		}
 		
 	}
+	
+	/*for (x = 0; x < SAVE_FILE_SIZE; x++) printf("%c", s2[x]);*/
 
 	/* Check save file for correctitude */
 	y = 0;
@@ -626,7 +628,6 @@ void JE_decryptSaveTemp( void )
 	}
 	
 	/* Barf and die if save file doesn't validate */
-	/* But because the save file validation is currently broken, we won't die today. */
 	if (!correct)
 	{
 		printf("Error reading save file!\n");
@@ -642,6 +643,8 @@ void JE_loadConfiguration( void )
 	FILE *fi;
 	int z;
 	JE_byte *p;
+	JE_byte junk;
+	int y;
 	
 	errorActive = TRUE;
 	
@@ -653,15 +656,14 @@ void JE_loadConfiguration( void )
 		fread(&gameSpeed, sizeof(gameSpeed), 1, fi);
 		
 		/* Wait what? */
-		/*
-		BLOCKREAD (f, InputDevice, 1);
-		InputDevice := 0; */
-
+		fread(&inputDevice, sizeof(inputDevice), 1, fi);
 		inputDevice = 0;
 		
-		/* BLOCKREAD (f, Jconfigure , 1);
-		IF Jconfigure = 0 THEN
-		Jconfigure := 1; */
+		fread(&jConfigure, sizeof(jConfigure), 1, fi);
+		if (jConfigure == 0)
+		{
+			jConfigure = 1;
+		}
 		
 		fread(&versionNum, sizeof(versionNum), 1, fi);
 		if (resetVersion)
@@ -670,11 +672,11 @@ void JE_loadConfiguration( void )
 		}
 		
 		fread(&processorType, sizeof(processorType), 1, fi);
-		/* BLOCKREAD (f, midiport   , 1); */
+		fread(&junk, sizeof(junk), 1, fi); /* Unused variable -- was "BLOCKREAD (f, midiport   , 1);" */
 		fread(&soundEffects, sizeof(soundEffects), 1, fi);
 		fread(&gammaCorrection, sizeof(gammaCorrection), 1, fi);
 		fread(&difficultyLevel, sizeof(difficultyLevel), 1, fi);
-		fread(&joyButtonAssign, sizeof(joyButtonAssign), 1, fi);
+		fread(joyButtonAssign, sizeof(*joyButtonAssign), 1, fi);
 		
 		fread(&tyrMusicVolume, sizeof(tyrMusicVolume), 1, fi);
 		fread(&fxVolume, sizeof(fxVolume), 1, fi);
@@ -682,7 +684,7 @@ void JE_loadConfiguration( void )
 		fread(&inputDevice1, sizeof(inputDevice1), 1, fi);
 		fread(&inputDevice2, sizeof(inputDevice2), 1, fi);
 		
-		fread(&keySettings, sizeof(keySettings), 1, fi);
+		fread(keySettings, sizeof(*keySettings), 1, fi);
 		
 		fclose(fi);
 		
@@ -690,7 +692,7 @@ void JE_loadConfiguration( void )
 		memcpy(joyButtonAssign, defaultJoyButtonAssign, sizeof(joyButtonAssign));
 		/*midiPort = 1;*/ /* We don't care about this. */
 		soundEffects = 1;
-		/* jConfigure = 0; */ /* TODO: Figure out what this is */
+		jConfigure = 0; /* TODO: Figure out what this is */
 		memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
 		background2 = TRUE;
 		inputDevice = 0;
@@ -703,10 +705,7 @@ void JE_loadConfiguration( void )
 		inputDevice2 = 0;
     }
   
-	if (tyrMusicVolume > 255)
-	{
-		tyrMusicVolume = 255;
-	}
+	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
 	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
 
 	soundActive = TRUE;
@@ -714,10 +713,10 @@ void JE_loadConfiguration( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
   
-	JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);
-	fseek(fi, 0, SEEK_END);
+	fi = fopen("TYRIAN.SAV", "rb");
+	/* SYN: This function kills the program if file not found JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);  */
 	
-	if (ftell(fi) != 0)
+	if (fi != 0)
 	{
 		fseek(fi, 0, SEEK_SET);
 		fread(saveTemp, 1, sizeof(saveTemp), fi);
@@ -764,9 +763,7 @@ void JE_loadConfiguration( void )
 			
 			saveFiles[z].episode = *((JE_byte*)p);
 			p += sizeof(JE_byte);
-
-/* printf("|%s|%s| episode %d\n", saveFiles[z].levelName, saveFiles[z].name, saveFiles[z].episode); */
-
+			
 			memcpy(saveFiles[z].lastItems, ((JE_PItemsType*)p), sizeof(JE_PItemsType));
 			p += sizeof(JE_PItemsType);
 
@@ -783,7 +780,7 @@ void JE_loadConfiguration( void )
 			p += sizeof(JE_byte);
 
 			saveFiles[z].gameHasRepeated = *((JE_boolean*)p);
-			p += 1; /* TODO: should be sizeof(JE_boolean) but that is 4 for some reason :(*/
+			p += 1; /* TODO: should be sizeof(JE_boolean) but that is 4 for some reason :( */
 			
 			saveFiles[z].initialDifficulty = *((JE_byte*)p);
 			p += sizeof(JE_byte);			
@@ -803,55 +800,39 @@ void JE_loadConfiguration( void )
 			p += sizeof(JE_byte);
 		}
 		
-    /*  
-      editorlevel := btow (savetemp [SIZEOF (savetemp) - 5], savetemp [SIZEOF (savetemp) - 4]);
-      
-      ASM
-        mov dx, ds
-        
-        mov cx, savefilessize
-        
-        mov si, savetempofs
-        mov di, savefilesofs
-        
-        mov ax, savefilesseg
-        mov bx, savetempseg
-        mov ds, bx
-        mov es, ax
-        
-        cld
-        rep movsb
-        
-        mov ds, dx
-      END;
-      
-      CLOSE (f);
-    */
+		/* SYN: This is truncating to bytes. I have no idea what this is doing or why. */
+		/* TODO: Figure out what this is about and make sure it isn't broked. */
+		editorLevel = JE_btow((JE_byte) (SIZEOF_SAVEGAMETEMP - 6), (JE_byte) (SIZEOF_SAVEGAMETEMP - 5));
 
 		fclose(fi);
 	} else {
+		/* We didn't have a save file! Let's make up random stuff! */
 		editorLevel = 800;
 		
 		for (z = 0; z < 100; z++)
 		{
-          /* savetemp [SIZEOF (savefiles) + Z] := initialitemavail [Z]; */
+			saveTemp[SAVE_FILES_SIZE + z] = initialItemAvail[z];
 		}
 		
 		for (z = 0; z < SAVE_FILES_NUM; z++)
 		{
-			/*
-          savefiles [Z] .level := 0;
-          FOR Y := 1 TO 14 DO
-            savefiles [Z] .name [Y] := ' ';
-          savefiles [Z] .highscore1 := (RANDOM (20) + 1) * 1000;
-          IF (Z - 1) MOD 6 > 2 THEN
-            BEGIN
-              savefiles [Z] .highscore2 := (RANDOM (20) + 1) * 1000;
-              savefiles [Z] .highscorename := defaultteamnames [RANDOM (22) + 1];
-            END
-          ELSE
-            savefiles [Z] .highscorename := defaulthighscorenames [RANDOM (34) + 1];
-			*/
+			saveFiles[z].level = 0;
+			
+			for (y = 0; y < 14; y++)
+			{
+				saveFiles[z].name[y] = ' ';
+			}
+			saveFiles[z].name[14] = 0;
+			
+			saveFiles[z].highScore1 = ((rand() % 20) + 1) * 1000;
+			
+			if (z % 6 > 2)
+			{
+				saveFiles[z].highScore2 = ((rand() % 20) + 1) * 1000;
+				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 22]);
+			} else {
+				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
+			}          
         }
 	}
 	
@@ -863,16 +844,111 @@ void JE_loadConfiguration( void )
 
 void JE_saveConfiguration( void )
 {
-	STUB(saveConfiguration);
-}
+	FILE *f;
+	JE_byte *p, junk = 0;
+	int z;
+	
+	p = saveTemp;
+	for (z = 0; z < SAVE_FILES_NUM; z++)
+	{
+		*((JE_word*)p) = saveFiles[z].encode;
+		p += sizeof(JE_word);
+		
+		*((JE_word*)p) = saveFiles[z].level;
+		p += sizeof(JE_word);
 
-/*
-FUNCTION NextEpisode : BOOLEAN;
-VAR found : BOOLEAN;
-BEGIN
-  found := FindNextEpisode;
-  
-  IF found THEN
-    mainlevel := 0;
-END;
-*/
+		memcpy(((JE_PItemsType*)p), saveFiles[z].items, sizeof(JE_PItemsType));
+		p += sizeof(JE_PItemsType);
+		
+		*((JE_longint*)p) = saveFiles[z].score ;
+		p += sizeof(JE_longint);
+		
+		*((JE_longint*)p) = saveFiles[z].score2;
+		p += sizeof(JE_longint);
+		
+		/* SYN: Pascal strings are prefixed by a byte holding the length! */
+		*((JE_byte*)p) = strlen(saveFiles[z].levelName);
+		p += 1;
+		memcpy(((char*)p), saveFiles[z].levelName, 9);
+		p += 9;
+		
+		/* This was a BYTE array, not a STRING, in the original. Go fig. */
+		memcpy(((char*)p), saveFiles[z].name, 14);
+		p += 14;
+		
+		*((JE_byte*)p) = saveFiles[z].cubes;
+		p += sizeof(JE_byte);
+		
+		memcpy(((JE_byte*)p), saveFiles[z].power, sizeof(JE_byte) * 2);
+		p += (sizeof(JE_byte) * 2);
+		
+		*((JE_byte*)p) = saveFiles[z].episode ;
+		p += sizeof(JE_byte);
+		
+		memcpy(((JE_PItemsType*)p), saveFiles[z].lastItems, sizeof(JE_PItemsType));
+		p += sizeof(JE_PItemsType);
+
+		*((JE_byte*)p) = saveFiles[z].difficulty;
+		p += sizeof(JE_byte);
+		
+		*((JE_byte*)p) = saveFiles[z].secretHint ;
+		p += sizeof(JE_byte);
+		
+		*((JE_byte*)p) = saveFiles[z].input1;
+		p += sizeof(JE_byte);
+		
+		*((JE_byte*)p) = saveFiles[z].input2;
+		p += sizeof(JE_byte);
+
+		*((JE_boolean*)p) = saveFiles[z].gameHasRepeated ;
+		p += 1; /* TODO: should be sizeof(JE_boolean) but that is 4 for some reason :( */
+		
+		*((JE_byte*)p) = saveFiles[z].initialDifficulty;
+		p += sizeof(JE_byte);			
+
+		*((JE_longint*)p) = saveFiles[z].highScore1;
+		p += sizeof(JE_longint);
+		
+		*((JE_longint*)p) = saveFiles[z].highScore2 ;
+		p += sizeof(JE_longint);
+		
+		p += 1; /* Skip length byte wheeee */
+		memcpy(((char*)p), saveFiles[z].highScoreName, 29);
+		p += 29;
+		
+		*((JE_byte*)p) = saveFiles[z].highScoreDiff ;
+		p += sizeof(JE_byte);
+	}	
+	
+	saveTemp[SIZEOF_SAVEGAMETEMP - 6] = editorLevel >> 8;
+	saveTemp[SIZEOF_SAVEGAMETEMP - 5] = editorLevel;
+	
+	JE_encryptSaveTemp();
+	f = fopen("TYRIAN.SAV", "wb");
+	fwrite(saveTemp, 1, sizeof(saveTemp), f);
+	fclose(f);
+	JE_decryptSaveTemp();
+	
+	f = fopen("TYRIAN.CFG", "wb");
+	fwrite(&background2, 1, sizeof(background2), f);
+	fwrite(&gameSpeed, 1, sizeof(gameSpeed), f);
+	fwrite(&inputDevice, 1, sizeof(inputDevice), f);
+	fwrite(&jConfigure, 1, sizeof(jConfigure), f);
+	fwrite(&versionNum, 1, sizeof(versionNum), f);
+	fwrite(&processorType, 1, sizeof(processorType), f);
+	fwrite(&junk, 1, sizeof(junk), f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
+	fwrite(&soundEffects, 1, sizeof(soundEffects), f);
+	fwrite(&gammaCorrection, 1, sizeof(gammaCorrection), f);
+	fwrite(&difficultyLevel, 1, sizeof(difficultyLevel), f);
+	fwrite(joyButtonAssign, 1, sizeof(*joyButtonAssign), f);
+	
+	fwrite(&tyrMusicVolume, 1, sizeof(tyrMusicVolume), f);
+	fwrite(&fxVolume, 1, sizeof(fxVolume), f);
+	
+	fwrite(&inputDevice1, 1, sizeof(inputDevice1), f);
+	fwrite(&inputDevice2, 1, sizeof(inputDevice2), f);
+	
+	fwrite(keySettings, 1, sizeof(*keySettings), f);
+ 
+	fclose(f);
+}

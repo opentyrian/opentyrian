@@ -38,7 +38,9 @@ extern JE_boolean mixEnable;
 
 extern JE_boolean notYetLoadedSound, notYetLoadedMusic;
 extern JE_SongPosType songPos;
+
 extern JE_byte soundEffects;
+extern JE_byte jConfigure;
 
 extern JE_word frameCount, frameCount2, frameCountMax;
 

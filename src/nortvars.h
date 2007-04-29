@@ -51,6 +51,8 @@ void JE_loadNewShapeFile( JE_NewShapeType *shapes, JE_char s );
 void JE_compressShapeFileC( JE_char s );
 void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s );
 
+JE_word JE_btow(JE_byte a, JE_byte b);
+
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY );
 JE_boolean JE_buttonPressed( void );
 void JE_setMousePosition( JE_word mouseX, JE_word mouseY );

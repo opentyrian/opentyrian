@@ -29,10 +29,14 @@
 
 #define MAX_STARS 100
 
-/*#define SAVE_FILE_SIZE  (sizeof(JE_SaveGameTemp) - 4)
-#define SAVE_FILES_SIZE (sizeof(JE_SaveFilesType))*/
-#define SAVE_FILES_SIZE (2502 - 4)
-#define SAVE_FILE_SIZE (SAVE_FILES_SIZE)
+/* These are necessary because the size of the structure has changed from the original, but we 
+   need to know the original sizes in order to find things in TYRIAN.SAV */
+#define SAVE_FILES_SIZE 2398
+#define SIZEOF_SAVEGAMETEMP SAVE_FILES_SIZE + 4 + 100
+#define SAVE_FILE_SIZE (SIZEOF_SAVEGAMETEMP - 4)
+
+/*#define SAVE_FILES_SIZE (2502 - 4)
+#define SAVE_FILE_SIZE (SAVE_FILES_SIZE)*/
 
 typedef JE_byte JE_KeySettingType[8]; /* [1..8] */
 typedef JE_byte JE_PItemsType[12]; /* [1..12] */
@@ -67,7 +71,7 @@ typedef struct
 } JE_SaveFileType;
 
 typedef JE_SaveFileType JE_SaveFilesType[SAVE_FILES_NUM]; /* [1..savefilesnum] */
-typedef JE_byte JE_SaveGameTemp[sizeof(JE_SaveFilesType) + 4 + 100]; /* [1..sizeof(savefilestype) + 4 + 100] */
+typedef JE_byte JE_SaveGameTemp[SAVE_FILES_SIZE + 4 + 100]; /* [1..sizeof(savefilestype) + 4 + 100] */
 
 typedef JE_byte JE_PortPowerType[7]; /* [1..7] */
 
