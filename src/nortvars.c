@@ -171,11 +171,15 @@ void JE_drawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *shape )
 {
 	JE_byte *p; /* shape pointer */
 	unsigned char *s; /* screen pointer, 8-bit specific */
+	unsigned char *s_limit; /* buffer boundary */
 
 	int i;
 
 	s = (unsigned char *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
+
+	s_limit = (unsigned char *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->w;
 
 	p = shape + ((s_ - 1) * 2);
 	p = shape + *(short *)p;
@@ -189,6 +193,8 @@ void JE_drawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *shape )
 			while (i--)
 			{
 				p++;
+				if (s >= s_limit)
+					return;
 				*s = *p;
 				s++;
 			}
@@ -204,11 +210,15 @@ void JE_superDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *shape )
 {
 	JE_byte *p; /* shape pointer */
 	unsigned char *s; /* screen pointer, 8-bit specific */
+	unsigned char *s_limit; /* buffer boundary */
 
 	int i;
 
 	s = (unsigned char *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
+
+	s_limit = (unsigned char *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->w;
 
 	p = shape + ((s_ - 1) * 2);
 	p = shape + *(short *)p;
@@ -222,6 +232,8 @@ void JE_superDrawShape2( JE_word x, JE_word y, JE_word s_, JE_byte *shape )
 			while (i--)
 			{
 				p++;
+				if (s >= s_limit)
+					return;
 				*s = (((*p & 0x0f) + (*s & 0x0f)) >> 1) | (*p & 0xf0);
 				s++;
 			}
@@ -237,11 +249,15 @@ void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *shape )
 {
 	JE_byte *p; /* shape pointer */
 	unsigned char *s; /* screen pointer, 8-bit specific */
+	unsigned char *s_limit; /* buffer boundary */
 
 	int i;
 
 	s = (unsigned char *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
+
+	s_limit = (unsigned char *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->w;
 
 	p = shape + ((s_ - 1) * 2);
 	p = shape + *(short *)p;
@@ -255,6 +271,8 @@ void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s_, JE_byte *shape )
 			while (i--)
 			{
 				p++;
+				if (s >= s_limit)
+					return;
 				*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
 				s++;
 			}
