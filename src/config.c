@@ -33,6 +33,23 @@
 #include <stdio.h>
 #include <string.h>
 
+/******** MAJOR TODO:
+  SYN: High score data is stored one per save file slot. That makes 2 * 11 = 22 high scores.
+  Each episode has six high scores. 6 * 4 = 24 OH SHI--
+  
+  I have no idea what is up with this, but I'm going to have to change substantial amounts and
+  possibly partially break compatibility with the original. This will also get sorted out 
+  if/when we add support for Tyrian2000 data files, as I'll have to figure out what its save
+  file format is (besides a couple kilobytes larger...).
+  
+  As it stands high scores are going to be broked for episode 4 (nevermind 5) and there's not 
+  much I can do about it. *emo tear* :'(
+  
+  I hope there aren't any other surprises like this waiting. We are using the code for v2.0,
+  right? Right? :|
+*/
+
+
 /* Configuration Load/Save handler */
 
 const JE_byte cryptKey[10] = /* [1..10] */
@@ -529,7 +546,7 @@ void JE_encryptSaveTemp( void )
 		y += s3[x];
 	}
 	saveTemp[SAVE_FILE_SIZE] = y;
-
+	
 	y = 0;
 	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
@@ -554,7 +571,7 @@ void JE_encryptSaveTemp( void )
 	for (x = 0; x < SAVE_FILE_SIZE; x++)
 	{
 		saveTemp[x] = saveTemp[x] ^ cryptKey[(x+1) % 10];
-		if (x > 1)
+		if (x > 0)
 		{
 			saveTemp[x] = saveTemp[x] ^ saveTemp[x - 1];
 		}
@@ -580,7 +597,7 @@ void JE_decryptSaveTemp( void )
 		
 	}
 	
-	/*for (x = 0; x < SAVE_FILE_SIZE; x++) printf("%c", s2[x]);*/
+	/* for (x = 0; x < SAVE_FILE_SIZE; x++) printf("%c", s2[x]); */
 
 	/* Check save file for correctitude */
 	y = 0;
@@ -652,39 +669,42 @@ void JE_loadConfiguration( void )
 	{
 		JE_resetFileExt(&fi, "TYRIAN.CFG", FALSE);
 		
-		fread(&background2, sizeof(background2), 1, fi);
-		fread(&gameSpeed, sizeof(gameSpeed), 1, fi);
+		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed 
+		   anyways, so it's not like they'll change. */
+		background2 = 0;
+		fread(&background2, 1, 1, fi);
+		fread(&gameSpeed, 1, 1, fi);
 		
 		/* Wait what? */
-		fread(&inputDevice, sizeof(inputDevice), 1, fi);
+		fread(&inputDevice, 1, 1, fi);
 		inputDevice = 0;
 		
-		fread(&jConfigure, sizeof(jConfigure), 1, fi);
-		if (jConfigure == 0)
+		fread(&jConfigure, 1, 1, fi);
+		if (jConfigure == 0) /* Dunno what this is about. */
 		{
 			jConfigure = 1;
 		}
 		
-		fread(&versionNum, sizeof(versionNum), 1, fi);
+		fread(&versionNum, 1, 1, fi);
 		if (resetVersion)
 		{
 			versionNum = 2; /* JE: {Shareware 1.0 and Registered 1.1 = 1} */
 		}
 		
-		fread(&processorType, sizeof(processorType), 1, fi);
-		fread(&junk, sizeof(junk), 1, fi); /* Unused variable -- was "BLOCKREAD (f, midiport   , 1);" */
-		fread(&soundEffects, sizeof(soundEffects), 1, fi);
-		fread(&gammaCorrection, sizeof(gammaCorrection), 1, fi);
-		fread(&difficultyLevel, sizeof(difficultyLevel), 1, fi);
-		fread(joyButtonAssign, sizeof(*joyButtonAssign), 1, fi);
+		fread(&processorType, 1, 1, fi);
+		fread(&junk, 1, 1, fi); /* Unused variable -- was "BLOCKREAD (f, midiport   , 1);" */
+		fread(&soundEffects, 1, 1, fi);
+		fread(&gammaCorrection, 1, 1, fi);
+		fread(&difficultyLevel, 1, 1, fi);
+		fread(joyButtonAssign, 4, 1, fi); /* 4 bytes */
 		
-		fread(&tyrMusicVolume, sizeof(tyrMusicVolume), 1, fi);
-		fread(&fxVolume, sizeof(fxVolume), 1, fi);
+		fread(&tyrMusicVolume, 2, 1, fi);
+		fread(&fxVolume, 2, 1, fi);
 		
-		fread(&inputDevice1, sizeof(inputDevice1), 1, fi);
-		fread(&inputDevice2, sizeof(inputDevice2), 1, fi);
+		fread(&inputDevice1, 1, 1, fi);
+		fread(&inputDevice2, 1, 1, fi);
 		
-		fread(keySettings, sizeof(*keySettings), 1, fi);
+		fread(keySettings, 8, 1, fi);
 		
 		fclose(fi);
 		
@@ -795,6 +815,8 @@ void JE_loadConfiguration( void )
 			memcpy(saveFiles[z].highScoreName, ((char*)p), 29);
 			saveFiles[z].highScoreName[29] = 0;
 			p += 29;
+			
+			/* printf("%s, %ld / %ld\n", saveFiles[z].highScoreName, saveFiles[z].highScore1, saveFiles[z].highScore2); */
 			
 			saveFiles[z].highScoreDiff = *((JE_byte*)p);
 			p += sizeof(JE_byte);
@@ -930,25 +952,25 @@ void JE_saveConfiguration( void )
 	JE_decryptSaveTemp();
 	
 	f = fopen("TYRIAN.CFG", "wb");
-	fwrite(&background2, 1, sizeof(background2), f);
-	fwrite(&gameSpeed, 1, sizeof(gameSpeed), f);
-	fwrite(&inputDevice, 1, sizeof(inputDevice), f);
-	fwrite(&jConfigure, 1, sizeof(jConfigure), f);
-	fwrite(&versionNum, 1, sizeof(versionNum), f);
-	fwrite(&processorType, 1, sizeof(processorType), f);
-	fwrite(&junk, 1, sizeof(junk), f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
-	fwrite(&soundEffects, 1, sizeof(soundEffects), f);
-	fwrite(&gammaCorrection, 1, sizeof(gammaCorrection), f);
-	fwrite(&difficultyLevel, 1, sizeof(difficultyLevel), f);
-	fwrite(joyButtonAssign, 1, sizeof(*joyButtonAssign), f);
+	fwrite(&background2, 1, 1, f);
+	fwrite(&gameSpeed, 1, 1, f);
+	fwrite(&inputDevice, 1, 1, f);
+	fwrite(&jConfigure, 1, 1, f);
+	fwrite(&versionNum, 1, 1, f);
+	fwrite(&processorType, 1, 1, f);
+	fwrite(&junk, 1, 1, f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
+	fwrite(&soundEffects, 1, 1, f);
+	fwrite(&gammaCorrection, 1, 1, f);
+	fwrite(&difficultyLevel, 1, 1, f);
+	fwrite(joyButtonAssign, 1, 4, f);
 	
-	fwrite(&tyrMusicVolume, 1, sizeof(tyrMusicVolume), f);
-	fwrite(&fxVolume, 1, sizeof(fxVolume), f);
+	fwrite(&tyrMusicVolume, 1, 2, f);
+	fwrite(&fxVolume, 1, 2, f);
 	
-	fwrite(&inputDevice1, 1, sizeof(inputDevice1), f);
-	fwrite(&inputDevice2, 1, sizeof(inputDevice2), f);
+	fwrite(&inputDevice1, 1, 1, f);
+	fwrite(&inputDevice2, 1, 1, f);
 	
-	fwrite(keySettings, 1, sizeof(*keySettings), f);
+	fwrite(keySettings, 1, 8, f);
  
 	fclose(f);
 }

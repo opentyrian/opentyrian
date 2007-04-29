@@ -1153,7 +1153,141 @@ void JE_sortHighScores( void )
 
 void JE_highScoreScreen( void )
 {
-	STUB(JE_highScoreScreen);
+	int min = 1;
+	int max = 1;
+	
+	int x, y, z;
+	short int chg;
+	int quit;
+	char scoretemp[32];
+	
+	JE_fadeBlack(10);
+	JE_loadPic(2, FALSE);
+	JE_showVGA();
+	JE_fadeColor(10);
+	tempScreenSeg = VGAScreen;
+	
+	while (max < EPISODE_MAX && episodeAvail[max+1])
+	{
+		max++;
+	}
+	
+	max = 3; /* TODO: Ep. 4 high scores are broked! */
+	
+	quit = FALSE;
+	x = 1;
+	chg = 1;
+	
+	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	
+	do
+	{
+		if (episodeAvail[x])
+		{
+			memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+			
+			JE_dString( JE_fontCenter( miscText[51 - 1], FONT_SHAPES), 03, miscText[51 - 1], FONT_SHAPES);
+			JE_dString( JE_fontCenter( episodeName[x], SMALL_FONT_SHAPES), 30, episodeName[x], SMALL_FONT_SHAPES);
+			
+			/* Player 1 */
+			temp = (x * 6) - 6;
+			
+			JE_dString( JE_fontCenter( miscText[47 - 1], SMALL_FONT_SHAPES), 55, miscText[47 - 1], SMALL_FONT_SHAPES);
+			
+			for (z = 0; z < 3; z++)
+			{
+				temp5 = saveFiles[temp + z].highScoreDiff;
+				if (temp5 > 9)
+				{
+					saveFiles[temp + z].highScoreDiff = 0;
+					temp5 = 0;
+				}
+				sprintf(scoretemp, "~#%d:~ %ld", z + 1, saveFiles[temp+z].highScore1);
+				JE_textShade(250, ((z+1) * 10) + 65 , difficultyNameB[temp5], 15, temp5 + ((JE_byte) (temp5 == 0)) - 1, FULL_SHADE);
+				JE_textShade(20, ((z+1) * 10) + 65 , scoretemp, 15, 0, FULL_SHADE);
+				JE_textShade(110, ((z+1) * 10) + 65 , saveFiles[temp + z].highScoreName, 15, 2, FULL_SHADE);
+			}
+			
+			/* Player 2 */
+			temp += 3;
+			
+			JE_dString( JE_fontCenter( miscText[48 - 1], SMALL_FONT_SHAPES), 120, miscText[48 - 1], SMALL_FONT_SHAPES);
+			
+			/*{        textshade(20,125,misctext[49],15,3,_FullShade);
+			  textshade(80,125,misctext[50],15,3,_FullShade);}*/
+			
+			for (z = 0; z < 3; z++)
+			{
+				temp5 = saveFiles[temp + z].highScoreDiff;
+				if (temp5 > 9)
+				{
+					saveFiles[temp + z].highScoreDiff = 0;
+					temp5 = 0;
+				}
+				sprintf(scoretemp, "~#%d:~ %ld", z + 1, saveFiles[temp+z].highScore1); /* Not .highScore2 for some reason */
+				JE_textShade(250, ((z+1) * 10) + 125 , difficultyNameB[temp5], 15, temp5 + ((JE_byte) (temp5 == 0)) - 1, FULL_SHADE);
+				JE_textShade(20, ((z+1) * 10) + 125 , scoretemp, 15, 0, FULL_SHADE);
+				JE_textShade(110, ((z+1) * 10) + 125 , saveFiles[temp + z].highScoreName, 15, 2, FULL_SHADE);
+			}
+			
+			if (x > 1)
+			{
+				JE_drawShape2x2( 90, 180, 279, shapes6);
+			}
+			
+			if ( ( (x < 2) && episodeAvail[2] ) || ( (x < 3) && episodeAvail[3] ) )
+			{
+				JE_drawShape2x2( 220, 180, 281, shapes6);
+			}
+			
+			helpBoxColor = 15;
+			JE_helpBox(110, 182, miscText[57 - 1], 25);
+			
+			/* {Dstring(fontcenter(misctext[57],_SmallFontShapes),190,misctext[57],_SmallFontShapes);} */
+			
+			JE_showVGA();
+			
+			tempw = 0;
+			JE_textMenuWait(&tempw, FALSE);
+			
+			if (newkey)
+			{
+				switch (lastkey_sym)
+				{
+				case SDLK_LEFT:
+					x--;
+					chg = -1;
+					break;
+				case SDLK_RIGHT:
+					x++;
+					chg = 1;
+					break;
+				default:
+					break;
+				}
+			}
+			
+		} else {
+			x += chg;
+		}
+      
+		x = ( x < min ) ? max : ( x > max ) ? min : x;
+		
+		if (newkey)
+		{
+			switch (lastkey_sym)
+			{
+			case SDLK_RETURN:
+			case SDLK_ESCAPE:
+				quit = TRUE;
+				break;
+			default:
+				break;
+			}
+		}
+		
+	} while (!quit);
+
 }
 
 void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma )

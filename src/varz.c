@@ -793,13 +793,16 @@ void JE_tyrianHalt( JE_byte code )
 
 	/* JE_endMusic(soundeffects); TODO */
 
-	/*
-	if (code != 9) TODO?
+	
+	if (code != 9) 
 	{
+		/*
+		TODO?
 		JE_drawANSI("EXITMSG.BIN");
-		JE_gotoXY(1,22);
+		JE_gotoXY(1,22);*/
+		
+		JE_saveConfiguration();
 	}
-	*/
 
 	/* endkeyboard; */
 
