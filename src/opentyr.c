@@ -50,7 +50,7 @@
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 const char *opentyrian_str = "OpenTyrian";
-const char *opentyrian_menu_items[32] = 
+const char *opentyrian_menu_items[] = 
 {
 	"About OpenTyrian",
 	"Setup",
@@ -68,8 +68,7 @@ char *strnztcpy( char *to, char *from, size_t count )
 void opentyrian_menu( void )
 {
 	
-	JE_byte maxSel;
-	int sel;
+	int sel, maxSel, i;
 	JE_boolean quit;
 	
 	JE_loadPic(13, FALSE); /* 2, 5, or 13? */
@@ -82,15 +81,20 @@ void opentyrian_menu( void )
 	JE_playSong(currentJukeboxSong);
 
 	sel = 0;
-	maxSel = (sizeof(opentyrian_menu_items) / 32) - 1;
+	maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	
 	do
 	{
 		JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
 		
-		for (temp = 0; temp <= maxSel; temp++)
+		for (i = 0; i <= maxSel; i++)
 		{
-			JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[temp], SMALL_FONT_SHAPES), temp < maxSel ? (temp * 16 + 32) : 118, opentyrian_menu_items[temp], 15, - 4 + ((sel == temp) << 1), SMALL_FONT_SHAPES, TRUE);
+			if (i != maxSel)
+			{
+				JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES), i * 16 + 32, opentyrian_menu_items[i], 15, -4+((sel == i) << 1), SMALL_FONT_SHAPES, TRUE);
+			} else {
+				JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES), 118, opentyrian_menu_items[i], 15, -4+((sel == i) << 1), SMALL_FONT_SHAPES, TRUE);
+			}
 		}
 		
 		JE_showVGA();
@@ -117,37 +121,26 @@ void opentyrian_menu( void )
 					JE_playSampleNum(CURSOR_MOVE);
 					break;
 				case SDLK_RETURN:
-					if (strcmp(opentyrian_menu_items[sel], "Return to Main Menu") == 0)
+					switch (sel)
 					{
-						quit = TRUE;
-						JE_playSampleNum(ESC);
-					} 
-					else if (strcmp(opentyrian_menu_items[sel], "Setup") == 0)
-					{
-						/* TODO: Implement this */
-						JE_playSampleNum(WRONG);
-					}
-					else if (strcmp(opentyrian_menu_items[sel], "About OpenTyrian") == 0)
-					{
-						/* TODO: Implement this */
-						JE_playSampleNum(WRONG);
-					}					
-					else if (strcmp(opentyrian_menu_items[sel], "Jukebox") == 0)
-					{
-						if (TRUE) /*!noSound) */ /* TODO: When finished testing, fix this conditional */
-						{
+						case 0: /* About */
+							/* TODO: Implement this */
+							JE_playSampleNum(WRONG);
+							break;
+						case 1: /* Setup */
+							/* TODO: Implement this */
+							JE_playSampleNum(WRONG);
+							break;
+						case 2: /* Jukebox */
 							JE_playSampleNum(SELECT);	
 							JE_jukeboxGo();
 							JE_loadPic(13, FALSE);
 							JE_fadeColor(20);
-						} else {
-							JE_playSampleNum(WRONG); /* It's the thought that counts */
-						}
-					}
-					else if (strcmp(opentyrian_menu_items[sel], "Play Destruct") == 0)
-					{
-						/* TODO: Implement this */
-						JE_playSampleNum(WRONG);						
+							break;
+						default: /* Return to main menu */
+							quit = TRUE;
+							JE_playSampleNum(ESC);
+							break;
 					}
 					break;
 				case SDLK_ESCAPE:
@@ -159,47 +152,7 @@ void opentyrian_menu( void )
 					break;
 			}
 		}
-
 	} while (!quit);
-	
-/*	
-	int i;
-
-	wait_noinput(TRUE,TRUE,TRUE);
-
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
-
-	for (i = 8; i < 100-16; i+=12)
-	{
-		setjasondelay(2);
-		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
-
-		JE_bar(16,100-i, 304,100+i, 0);
-
-		JE_showVGA();
-		wait_delay();
-	}
-
-	memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
-	JE_bar(16,16, 304,184, 0);
-	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 32, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
-
-	JE_showVGA();
-	wait_input(TRUE,TRUE,TRUE);
-
-	for (i = 100-16; i >= 16; i-=12)
-	{
-		setjasondelay(2);
-		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
-
-		JE_bar(16,100-i, 304,100+i, 0);
-
-		JE_showVGA();
-		wait_delay();
-	}
-
-	memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
-	JE_showVGA();*/
 }
 
 int main( int argc, char *argv[] )
