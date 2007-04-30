@@ -180,14 +180,19 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 {
 	FILE *f;
 
-	JE_resetFileExt(&f, "TYRIAN.CFG", TRUE);
+	JE_resetFileExt(&f, "TYRIAN.CFG", FALSE);
 
-	if (new_file || get_stream_size(f) == 28)
+	if (f)
 	{
-		fclose(f);
-		return FALSE;
+		if (get_stream_size(f) == 28)
+		{
+			fclose(f);
+			return FALSE;
+		} else {
+			printf("\nInvalid TYRIAN.CFG! Try deleting it.\n"); /* TODO: Re-word? Erm.. =S */
+			exit(1);
+		}
 	} else {
-		printf("\nInvalid TYRIAN.CFG! Try deleting it.\n"); /* TODO: Re-word? Erm.. =S */
-		exit(1);
+		return TRUE;
 	}
 }

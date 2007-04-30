@@ -665,7 +665,7 @@ void JE_loadConfiguration( void )
 	
 	errorActive = TRUE;
 	
-	if (JE_isCFGThere())
+	if (!JE_isCFGThere())
 	{
 		JE_resetFileExt(&fi, "TYRIAN.CFG", FALSE);
 		
@@ -733,10 +733,9 @@ void JE_loadConfiguration( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
   
-	JE_resetFileExt(&fi, "TYRIAN.SAV", TRUE);
-	/* SYN: This function kills the program if file not found JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);  */
+	JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);
 	
-	if (!new_file)
+	if (fi)
 	{
 		fseek(fi, 0, SEEK_SET);
 		fread(saveTemp, 1, sizeof(saveTemp), fi);
@@ -854,7 +853,7 @@ void JE_loadConfiguration( void )
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 22]);
 			} else {
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
-			}          
+			}
         }
 	}
 	
