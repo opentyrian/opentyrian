@@ -145,19 +145,18 @@ void JE_jukeboxGo( void )
 		if (weirdMusic)
 		{ 
 			/*
-          IF framecount2 = 0 THEN
-            BEGIN
-              framecount2 := weirdspeed;
-              
-              IF weirdcurrent THEN
-                nortsong.setvol (tempvolume SHR 1, FXvolume)
-              ELSE
-                nortsong.setvol (tempvolume, FXvolume);
-              
-              weirdcurrent := NOT weirdcurrent;
-            END;
-          
-        */
+			IF framecount2 = 0 THEN
+			BEGIN
+				framecount2 := weirdspeed;
+
+				IF weirdcurrent THEN
+					nortsong.setvol (tempvolume SHR 1, FXvolume)
+				ELSE
+					nortsong.setvol (tempvolume, FXvolume);
+
+				weirdcurrent := NOT weirdcurrent;
+			END;
+			*/
 		}
       
 		if (repeated && !repeatedFade)
