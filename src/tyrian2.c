@@ -1986,6 +1986,7 @@ void JE_titleScreen( JE_boolean animate )
 							quit = TRUE;
 							break;
 					}
+					redraw = TRUE;
 					break;
 				case SDLK_ESCAPE:
 					quit = TRUE;
