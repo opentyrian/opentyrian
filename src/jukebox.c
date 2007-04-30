@@ -17,21 +17,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef SETUP_H
-#define SETUP_H
+ 
+ #include "opentyr.h"
 
-#include "opentyr.h"
+#define NO_EXTERNS
+#include "jukebox.h"
+#undef NO_EXTERNS
+ 
+JE_boolean continuousPlay = FALSE;
+static JE_word currentJukeboxSong = 0; /* SYN: used to be currentsong, but that name conflicted with elsewhere */
 
-#ifndef NO_EXTERNS
-JE_boolean volumeActive, fx;
-JE_word fxNum;
-#endif
+void JE_playNewSelection( void )
+{
+	currentSong = ( rand() % MUSIC_NUM );
+	playSong(currentSong);
+}
+	
+void JE_selectSong( JE_word song )
+{
+	STUB(JE_selectsong);
+/*
+	  player.selectsong (song);
+  repeated := FALSE;
+  playing := TRUE;
+*/
+}
 
-void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma );
+void JE_checkEndOfSong( void )
+{
+	if (!continuousPlay && (repeated || !playing) )
+	{
+		JE_playNewSelection();
+		repeated = FALSE;
+	}
+	if (continuousPlay && !playing)
+	{
+		JE_selectSong(1);
+	}
+}
 
-void JE_jukeboxGo( void );
-void JE_newSpeed( void );
-void JE_playNewSong( void );
-/* TODO */
-
-#endif /* SETUP_H */

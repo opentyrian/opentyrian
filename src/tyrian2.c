@@ -1149,7 +1149,7 @@ new_game:
 								} while (s[0] != '#');
 								levelWarningLines--;
 
-								/* TODO JE_wipeKey();*/
+								JE_wipeKey();
 								frameCountMax = 4;
 								if (!constantPlay)
 								{
@@ -1431,7 +1431,7 @@ new_game:
 								{
 									if (!ESCPressed)
 									{
-										/* TODO JE_wipekey();*/
+										JE_wipeKey();
 										warningCol = 14 * 16 + 5;
 										warningColChange = 1;
 										warningSoundDelay = 0;
@@ -1971,6 +1971,8 @@ void JE_titleScreen( JE_boolean animate )
 							break;
 						case 4: /* Ordering info, now OpenTyrian menu*/
 							opentyrian_menu();
+							redraw = TRUE;
+							fadeIn = TRUE;
 							break;
 						case 5: /* Demo */
 							JE_initPlayerData();
@@ -2200,7 +2202,7 @@ void JE_itemScreen( void )
 {
 	JE_loadCubes();
 
-	/* TODO JE_wipeKey();*/
+	JE_wipeKey();
 
 	tempScreenSeg = VGAScreen;
 

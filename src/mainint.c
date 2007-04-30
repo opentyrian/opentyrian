@@ -915,7 +915,7 @@ void JE_loadScreen( void )
 				{
 					temp2 = 254;
 				} else {
-					temp2 = 250; /* - BYTE (saveFiles [x] .level = 0) SHL 1; */
+					temp2 = 250 - ((saveFiles[x - 1].level == 0) << 1);
 				}
 				
 				if (saveFiles[x - 1].level == 0) /* I think this means the save file is unused */
@@ -1019,11 +1019,11 @@ void JE_loadScreen( void )
 			case SDLK_RETURN:
 				if (sel < max)
 				{
-					if (FALSE) /* (saveFiles[sel.level > 0) */
+					if (saveFiles[sel - 1].level > 0)
 					{
-                        /*playsamplenum (_Select);
-                        performsave := FALSE;
-                        Operation (sel);*/
+                        JE_playSampleNum (SELECT);
+						performSave = FALSE;
+                        JE_operation(sel);
                         quit = TRUE;
 					} else {
                         JE_playSampleNum (WRONG);

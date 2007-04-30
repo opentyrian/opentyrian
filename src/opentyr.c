@@ -36,6 +36,10 @@
 #include "nortvars.h"
 #include "params.h"
 #include "fonthand.h"
+#include "picload.h"
+#include "starfade.h"
+#include "setup.h"
+#include "jukebox.h"
 
 #include "SDL.h"
 
@@ -46,6 +50,14 @@
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 const char *opentyrian_str = "OpenTyrian";
+const char *opentyrian_menu_items[32] = 
+{
+	"About OpenTyrian",
+	"Setup",
+	/* "Play Destruct", */
+	"Jukebox",
+	"Return to Main Menu"
+};
 
 char *strnztcpy( char *to, char *from, size_t count )
 {
@@ -55,6 +67,102 @@ char *strnztcpy( char *to, char *from, size_t count )
 
 void opentyrian_menu( void )
 {
+	
+	JE_byte maxSel;
+	int sel;
+	JE_boolean quit;
+	
+	JE_loadPic(13, FALSE); /* 2, 5, or 13? */
+	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	JE_showVGA();
+	JE_fadeColor(20);
+	quit = FALSE;
+	
+	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
+	JE_playSong(currentJukeboxSong);
+
+	sel = 0;
+	maxSel = (sizeof(opentyrian_menu_items) / 32) - 1;
+	
+	do
+	{
+		JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
+		
+		for (temp = 0; temp <= maxSel; temp++)
+		{
+			JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[temp], SMALL_FONT_SHAPES), temp < maxSel ? (temp * 16 + 32) : 118, opentyrian_menu_items[temp], 15, - 4 + ((sel == temp) << 1), SMALL_FONT_SHAPES, TRUE);
+		}
+		
+		JE_showVGA();
+		tempw = 0;
+		JE_textMenuWait(&tempw, FALSE);
+		
+		if (newkey) {
+			switch (lastkey_sym)
+			{
+				case SDLK_UP:
+					sel--;
+					if (sel < 0)
+					{
+						sel = maxSel;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_DOWN:
+					sel++;
+					if (sel > maxSel)
+					{
+						sel = 0;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_RETURN:
+					if (strcmp(opentyrian_menu_items[sel], "Return to Main Menu") == 0)
+					{
+						quit = TRUE;
+						JE_playSampleNum(ESC);
+					} 
+					else if (strcmp(opentyrian_menu_items[sel], "Setup") == 0)
+					{
+						/* TODO: Implement this */
+						JE_playSampleNum(WRONG);
+					}
+					else if (strcmp(opentyrian_menu_items[sel], "About OpenTyrian") == 0)
+					{
+						/* TODO: Implement this */
+						JE_playSampleNum(WRONG);
+					}					
+					else if (strcmp(opentyrian_menu_items[sel], "Jukebox") == 0)
+					{
+						if (TRUE) /*!noSound) */ /* TODO: When finished testing, fix this conditional */
+						{
+							JE_playSampleNum(SELECT);	
+							JE_jukeboxGo();
+							JE_loadPic(13, FALSE);
+							JE_fadeColor(20);
+						} else {
+							JE_playSampleNum(WRONG); /* It's the thought that counts */
+						}
+					}
+					else if (strcmp(opentyrian_menu_items[sel], "Play Destruct") == 0)
+					{
+						/* TODO: Implement this */
+						JE_playSampleNum(WRONG);						
+					}
+					break;
+				case SDLK_ESCAPE:
+					quit = TRUE;
+					JE_playSampleNum(ESC);
+					return;
+					break;
+				default:
+					break;
+			}
+		}
+
+	} while (!quit);
+	
+/*	
 	int i;
 
 	wait_noinput(TRUE,TRUE,TRUE);
@@ -91,7 +199,7 @@ void opentyrian_menu( void )
 	}
 
 	memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
-	JE_showVGA();
+	JE_showVGA();*/
 }
 
 int main( int argc, char *argv[] )

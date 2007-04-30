@@ -368,4 +368,9 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 	}
 }
 
+void JE_wipeKey( void )
+{
+	STUB(JE_wipeKey);
+}
+
 /* TODO */

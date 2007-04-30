@@ -17,21 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef SETUP_H
-#define SETUP_H
+
+#ifndef JUKEBOX_H
+#define JUKEBOX_H
 
 #include "opentyr.h"
 
 #ifndef NO_EXTERNS
-JE_boolean volumeActive, fx;
-JE_word fxNum;
+JE_boolean continuousPlay;
+JE_word currentJukeboxSong;
 #endif
 
-void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma );
+void JE_playNewSelection( void );
+void JE_selectSong( JE_word song );
+void JE_checkEndOfSong( void );
 
-void JE_jukeboxGo( void );
-void JE_newSpeed( void );
-void JE_playNewSong( void );
-/* TODO */
-
-#endif /* SETUP_H */
+#endif /* JUKEBOX_H */
