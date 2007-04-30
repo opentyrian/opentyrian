@@ -28,17 +28,16 @@ extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
 #endif
 
+long get_stream_size( FILE *f );
+
 void JE_errorHand( const char *s );
 JE_boolean JE_find( const char *s );
-void JE_resetFile( FILE **f, const char *filename );
 void JE_resetFileExt( FILE **f, const char *filename, JE_boolean write );
-void JE_resetText( FILE **f, const char *filename );
 void JE_resetTextExt( FILE **f, const char *filename, JE_boolean write );
-char *JE_locateFile( const char *filename );
+char *JE_locateFile( const char *filename, JE_boolean data );
 void JE_findTyrian( const char *filename );
 JE_boolean JE_isCFGThere( void );
 /* void JE_OutputString( char *s ); Obscure DOS trick (?) */
-void JE_detectCFG( void );
 JE_longint JE_getFileSize( const char *filename );
 
 #endif /* ERROR_H */

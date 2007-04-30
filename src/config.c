@@ -733,7 +733,7 @@ void JE_loadConfiguration( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
   
-	fi = fopen("TYRIAN.SAV", "rb");
+	JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);
 	/* SYN: This function kills the program if file not found JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);  */
 	
 	if (fi != 0)
@@ -946,22 +946,12 @@ void JE_saveConfiguration( void )
 	saveTemp[SIZEOF_SAVEGAMETEMP - 5] = editorLevel;
 	
 	JE_encryptSaveTemp();
-	f = fopen("TYRIAN.SAV", "wb");
-	if (!f)
-	{
-		printf("Error opening TYRIAN.SAV for writing.\n");
-		exit(1);
-	}
+	JE_resetFileExt(&f, "TYRIAN.SAV", TRUE);
 	fwrite(saveTemp, 1, sizeof(saveTemp), f);
 	fclose(f);
 	JE_decryptSaveTemp();
 	
-	f = fopen("TYRIAN.CFG", "wb");
-	if (!f)
-	{
-		printf("Error opening TYRIAN.CFG for writing.\n");
-		exit(1);
-	}
+	JE_resetFileExt(&f, "TYRIAN.CFG", TRUE);
 	fwrite(&background2, 1, 1, f);
 	fwrite(&gameSpeed, 1, 1, f);
 	fwrite(&inputDevice, 1, 1, f);

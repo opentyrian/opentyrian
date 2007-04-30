@@ -436,7 +436,7 @@ start_level_first:
 			}
 		} while (tempb);
 
-		recordFile = fopen(tempStr, "w");
+		JE_resetFileExt(&recordFile, tempStr, TRUE);
 
 		fwrite(&episodeNum, 1, 1, recordFile);
 		fwrite(levelName, 1, 10, recordFile);

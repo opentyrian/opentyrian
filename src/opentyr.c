@@ -100,7 +100,7 @@ int main( int argc, char *argv[] )
 
 	SDL_Init( 0 );
 
-	JE_detectCFG();
+	/* JE_detectCFG(); YKS: Removed */
 
 	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
 
