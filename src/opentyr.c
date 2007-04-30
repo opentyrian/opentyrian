@@ -68,36 +68,42 @@ char *strnztcpy( char *to, char *from, size_t count )
 void opentyrian_menu( void )
 {
 	
-	int sel, maxSel, i;
+	int sel = 0;
+	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
+	int i;
 	JE_boolean quit;
 	
+	JE_fadeBlack(10);
 	JE_loadPic(13, FALSE); /* 2, 5, or 13? */
+
+	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
+	
+	for (i = 0; i <= maxSel; i++)
+	{
+		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES),
+		                 (i != maxSel) ? (i * 16 + 32) : 118, opentyrian_menu_items[i],
+		                 15, -4, SMALL_FONT_SHAPES, TRUE);
+	}
+
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 	JE_showVGA();
 	JE_fadeColor(20);
+	wait_noinput(TRUE, FALSE, FALSE);
 	quit = FALSE;
 	
 	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
 	JE_playSong(currentJukeboxSong);
 
-	sel = 0;
-	maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	
 	do
 	{
-		JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
-		
-		for (i = 0; i <= maxSel; i++)
-		{
-			if (i != maxSel)
-			{
-				JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES), i * 16 + 32, opentyrian_menu_items[i], 15, -4+((sel == i) << 1), SMALL_FONT_SHAPES, TRUE);
-			} else {
-				JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES), 118, opentyrian_menu_items[i], 15, -4+((sel == i) << 1), SMALL_FONT_SHAPES, TRUE);
-			}
-		}
+		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[sel], SMALL_FONT_SHAPES),
+		                 (sel != maxSel) ? (sel * 16 + 32) : 118, opentyrian_menu_items[sel],
+		                 15, -2, SMALL_FONT_SHAPES, TRUE);
 		
 		JE_showVGA();
+
 		tempw = 0;
 		JE_textMenuWait(&tempw, FALSE);
 		
