@@ -1986,10 +1986,6 @@ void JE_titleScreen( JE_boolean animate )
 							quit = TRUE;
 							break;
 					}
-					if (menu != 4) /* Tweak added to prevent fadeIn when selecting Ordering Info. */
-					{
-						redraw = TRUE;
-					}
 					break;
 				case SDLK_ESCAPE:
 					quit = TRUE;
