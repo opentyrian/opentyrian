@@ -35,6 +35,23 @@ JE_boolean new_file = FALSE;
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
+void copy_file( const char *src, const char *dst )
+{
+	FILE *s, *d;
+	int c;
+
+	s = fopen(src, "r");
+	d = fopen(dst, "w");
+
+	while ((c = getc(s)) != EOF)
+	{
+		putc(c, d);
+	}
+
+	fclose(s);
+	fclose(d);
+}
+
 long get_stream_size( FILE *f )
 {
 	long size = 0;
@@ -142,14 +159,14 @@ char *JE_locateFile( const char *filename, JE_boolean data ) /* !!! WARNING: Non
 	{
 		strcpy(buf, filename);
 	} else {
+		if (strcmp(dir, "") == 0 && errorActive)
+		{
+			JE_findTyrian(filename);
+		}
+
+		snprintf(buf, sizeof buf, "%s%s", dir, filename);
 		if (data)
 		{
-			if (strcmp(dir, "") == 0 && errorActive)
-			{
-				JE_findTyrian(filename);
-			}
-
-			snprintf(buf, sizeof buf, "%s%s", dir, filename);
 			if (!JE_find(buf))
 			{
 				errorActive = TRUE;
@@ -158,22 +175,27 @@ char *JE_locateFile( const char *filename, JE_boolean data ) /* !!! WARNING: Non
 		} else {
 			/* If anyone wants to know */
 			new_file = TRUE;
+			if (JE_find(buf))
+			{
+				copy_file(buf, filename);
+			} else {
+				fclose(fopen(filename, "w"));
+			}
 			strcpy(buf, filename);
-			fclose(fopen(buf, "w"));
 		}
 	}
 	
 	return buf;
 }
 
-void JE_resetFileExt( FILE **f, const char *filename, JE_boolean write ) /* Newly added. */
+void JE_resetFileExt( FILE **f, const char *filename, JE_boolean not_data ) /* Newly added. */
 {
-	*f = fopen(JE_locateFile(filename, !write), (write ? "r+b" : "rb"));
+	*f = fopen(JE_locateFile(filename, !not_data), (not_data ? "r+b" : "rb"));
 }
 
-void JE_resetTextExt( FILE **f, const char *filename, JE_boolean write ) /* Newly added */
+void JE_resetTextExt( FILE **f, const char *filename, JE_boolean not_data ) /* Newly added. */
 {
-	*f = fopen(JE_locateFile(filename, !write), (write ? "r+" : "r"));
+	*f = fopen(JE_locateFile(filename, !not_data), (not_data ? "r+" : "r"));
 }
 
 JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the config file exists */

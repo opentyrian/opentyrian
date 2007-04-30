@@ -733,10 +733,11 @@ void JE_loadConfiguration( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
   
-	JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);
+	JE_resetFileExt(&fi, "TYRIAN.SAV", TRUE);
 	/* SYN: This function kills the program if file not found JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);  */
 	
-	if (fi != 0)
+	printf((new_file ? "new_file\n" : "not new_file\n"));
+	if (!new_file)
 	{
 		fseek(fi, 0, SEEK_SET);
 		fread(saveTemp, 1, sizeof(saveTemp), fi);
