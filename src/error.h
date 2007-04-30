@@ -29,7 +29,6 @@ extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
 #endif
 
-void copy_file( const char *src, const char *dst );
 long get_stream_size( FILE *f );
 
 void JE_errorHand( const char *s );

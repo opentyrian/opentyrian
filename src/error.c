@@ -35,23 +35,6 @@ JE_boolean new_file = FALSE;
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
-void copy_file( const char *src, const char *dst )
-{
-	FILE *s, *d;
-	int c;
-
-	s = fopen(src, "r");
-	d = fopen(dst, "w");
-
-	while ((c = getc(s)) != EOF)
-	{
-		putc(c, d);
-	}
-
-	fclose(s);
-	fclose(d);
-}
-
 long get_stream_size( FILE *f )
 {
 	long size = 0;
@@ -175,12 +158,7 @@ char *JE_locateFile( const char *filename, JE_boolean data ) /* !!! WARNING: Non
 		} else {
 			/* If anyone wants to know */
 			new_file = TRUE;
-			if (JE_find(buf))
-			{
-				copy_file(buf, filename);
-			} else {
-				fclose(fopen(filename, "w"));
-			}
+			fclose(fopen(filename, "w"));
 			strcpy(buf, filename);
 		}
 	}
