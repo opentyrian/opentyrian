@@ -1973,7 +1973,7 @@ void JE_titleScreen( JE_boolean animate )
 							opentyrian_menu();
 							break;
 						case 5: /* Demo */
-							/* JE_initPlayerData(); */
+							JE_initPlayerData();
 							playDemo = TRUE;
 							if (playDemoNum++ > 4)
 							{
