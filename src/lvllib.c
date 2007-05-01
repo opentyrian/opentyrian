@@ -34,7 +34,7 @@ void JE_analyzeLevel( void )
 	JE_word x;
 	FILE *f;
 
-	JE_resetFileExt(&f, levelFile, FALSE);
+	JE_resetFile(&f, levelFile);
 	fread(&lvlNum, 2, 1, f);
 	for (x = 0; x < lvlNum; x++)
 	{

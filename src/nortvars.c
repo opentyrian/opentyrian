@@ -57,7 +57,7 @@ void JE_loadShapeFile( JE_ShapeType *shapes, JE_char s )
 	char buffer[12];
 	sprintf(buffer, "SHAPES%c.DAT", s);
 
-	JE_resetFileExt(&f, buffer, FALSE);
+	JE_resetFile(&f, buffer);
 
 	for (x = 0; x < 304; x++)
 	{
@@ -87,7 +87,7 @@ void JE_loadNewShapeFile( JE_NewShapeType *shapes, JE_char s )
 	char buffer[12];
 	sprintf(buffer, "SHAPES%c.DAT", s);
 
-	JE_resetFileExt(&f, buffer, FALSE);
+	JE_resetFile(&f, buffer);
 
 	for (z = 0; z < 304; z++)
 	{
@@ -154,7 +154,7 @@ void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 		free(*shapes);
 	}
 
-	JE_resetFileExt(&f, buffer, FALSE);
+	JE_resetFile(&f, buffer);
 
 	fseek(f, 0, SEEK_END);
 	*shapeSize = ftell(f);

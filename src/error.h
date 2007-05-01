@@ -23,19 +23,21 @@
 #include "opentyr.h"
 
 #ifndef NO_EXTERNS
-extern JE_boolean new_file;
+extern JE_boolean dont_die;
 extern JE_char dir[12];
 extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
+extern char err_msg[128];
 #endif
 
 long get_stream_size( FILE *f );
+FILE *fopen_check( const char *file, const char *mode );
 
 void JE_errorHand( const char *s );
 JE_boolean JE_find( const char *s );
-void JE_resetFileExt( FILE **f, const char *filename, JE_boolean write );
-void JE_resetTextExt( FILE **f, const char *filename, JE_boolean write );
-char *JE_locateFile( const char *filename, JE_boolean data );
+void JE_resetFile( FILE **f, const char *filename );
+void JE_resetText( FILE **f, const char *filename );
+char *JE_locateFile( const char *filename );
 void JE_findTyrian( const char *filename );
 JE_boolean JE_isCFGThere( void );
 /* void JE_OutputString( char *s ); Obscure DOS trick (?) */

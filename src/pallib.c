@@ -36,7 +36,7 @@ void JE_loadPals( void )
 
 	palNum = 0;
 
-	JE_resetFileExt(&f, "PALETTE.DAT", FALSE);
+	JE_resetFile(&f, "PALETTE.DAT");
 	while (palNum < MAX_PAL && !feof(f))
 	{
 		for (i = 0; i < 256; i++)

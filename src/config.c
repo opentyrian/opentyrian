@@ -667,7 +667,7 @@ void JE_loadConfiguration( void )
 	
 	if (!JE_isCFGThere())
 	{
-		JE_resetFileExt(&fi, "TYRIAN.CFG", FALSE);
+		JE_resetFile(&fi, "TYRIAN.CFG");
 		
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed 
 		   anyways, so it's not like they'll change. */
@@ -733,10 +733,13 @@ void JE_loadConfiguration( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
   
-	JE_resetFileExt(&fi, "TYRIAN.SAV", FALSE);
+	dont_die = TRUE;
+	JE_resetFile(&fi, "TYRIAN.SAV");
+	dont_die = FALSE;
 	
 	if (fi)
 	{
+
 		fseek(fi, 0, SEEK_SET);
 		fread(saveTemp, 1, sizeof(saveTemp), fi);
 		JE_decryptSaveTemp();
@@ -853,7 +856,7 @@ void JE_loadConfiguration( void )
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 22]);
 			} else {
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
-			}
+			}          
         }
 	}
 	
@@ -945,31 +948,37 @@ void JE_saveConfiguration( void )
 	saveTemp[SIZEOF_SAVEGAMETEMP - 5] = editorLevel;
 	
 	JE_encryptSaveTemp();
-	JE_resetFileExt(&f, "TYRIAN.SAV", TRUE);
-	fwrite(saveTemp, 1, sizeof(saveTemp), f);
-	fclose(f);
+	f = fopen_check("TYRIAN.SAV", "wb");
+	if (f)
+	{
+		fwrite(saveTemp, 1, sizeof(saveTemp), f);
+		fclose(f);
+	}
 	JE_decryptSaveTemp();
 	
-	JE_resetFileExt(&f, "TYRIAN.CFG", TRUE);
-	fwrite(&background2, 1, 1, f);
-	fwrite(&gameSpeed, 1, 1, f);
-	fwrite(&inputDevice, 1, 1, f);
-	fwrite(&jConfigure, 1, 1, f);
-	fwrite(&versionNum, 1, 1, f);
-	fwrite(&processorType, 1, 1, f);
-	fwrite(&junk, 1, 1, f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
-	fwrite(&soundEffects, 1, 1, f);
-	fwrite(&gammaCorrection, 1, 1, f);
-	fwrite(&difficultyLevel, 1, 1, f);
-	fwrite(joyButtonAssign, 1, 4, f);
-	
-	fwrite(&tyrMusicVolume, 1, 2, f);
-	fwrite(&fxVolume, 1, 2, f);
-	
-	fwrite(&inputDevice1, 1, 1, f);
-	fwrite(&inputDevice2, 1, 1, f);
-	
-	fwrite(keySettings, 1, 8, f);
- 
-	fclose(f);
+	f = fopen_check("TYRIAN.CFG", "wb");
+	if (f)
+	{
+		fwrite(&background2, 1, 1, f);
+		fwrite(&gameSpeed, 1, 1, f);
+		fwrite(&inputDevice, 1, 1, f);
+		fwrite(&jConfigure, 1, 1, f);
+		fwrite(&versionNum, 1, 1, f);
+		fwrite(&processorType, 1, 1, f);
+		fwrite(&junk, 1, 1, f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
+		fwrite(&soundEffects, 1, 1, f);
+		fwrite(&gammaCorrection, 1, 1, f);
+		fwrite(&difficultyLevel, 1, 1, f);
+		fwrite(joyButtonAssign, 1, 4, f);
+		
+		fwrite(&tyrMusicVolume, 1, 2, f);
+		fwrite(&fxVolume, 1, 2, f);
+		
+		fwrite(&inputDevice1, 1, 1, f);
+		fwrite(&inputDevice2, 1, 1, f);
+		
+		fwrite(keySettings, 1, 8, f);
+	 
+		fclose(f);
+	}
 }

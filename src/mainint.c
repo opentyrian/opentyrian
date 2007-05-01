@@ -744,9 +744,9 @@ void JE_loadMainShapeTables( void )
 
 	if (tyrianXmas)
 	{
-		JE_resetFileExt(&f, "TYRIANC.SHP", FALSE);
+		JE_resetFile(&f, "TYRIANC.SHP");
 	} else {
-		JE_resetFileExt(&f, "TYRIAN.SHP", FALSE);
+		JE_resetFile(&f, "TYRIAN.SHP");
 	}
 
 	fread(&shpNumb, 2, 1, f);

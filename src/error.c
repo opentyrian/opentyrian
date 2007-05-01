@@ -25,13 +25,16 @@
 #undef NO_EXTERNS
 
 #include <stdio.h>
+#include <errno.h>
 
 JE_char dir[12];
 
 JE_boolean errorActive = TRUE;
 JE_boolean errorOccurred = FALSE;
 
-JE_boolean new_file = FALSE;
+JE_boolean dont_die = FALSE;
+
+char err_msg[128] = "No error?!?!";
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
@@ -50,6 +53,30 @@ long get_stream_size( FILE *f )
 	return size;
 }
 
+FILE *fopen_check( const char *file, const char *mode )
+{
+	char buf[64];
+	FILE *f;
+
+	f = fopen(file, mode);
+	if (!f)
+	{
+		switch (errno)
+		{
+			case EACCES:
+				strcpy(buf, "Access denied");
+				break;
+			default:
+				strcpy(buf, "Unknown error");
+				break;
+		}
+		snprintf(err_msg, sizeof err_msg, "ERROR opening %s: %s\n", file, buf);
+		printf("%s", err_msg);
+		return NULL;
+	}
+
+	return f;
+}
 
 
 JE_longint JE_getFileSize( const char *filename )
@@ -58,7 +85,7 @@ JE_longint JE_getFileSize( const char *filename )
 	JE_longint size = 0;
 
 	errorActive = FALSE;
-	f = fopen(JE_locateFile(filename, TRUE), "rb");
+	f = fopen(JE_locateFile(filename), "rb");
 	errorActive = TRUE;
 	if (errorOccurred)
 	{
@@ -132,11 +159,9 @@ void JE_findTyrian( const char *filename )
 	}
 }
 
-char *JE_locateFile( const char *filename, JE_boolean data ) /* !!! WARNING: Non-reentrant !!! */
+char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 {
 	static JE_char buf[1024];
-
-	new_file = FALSE;
 
 	if (JE_find(filename))
 	{
@@ -148,51 +173,51 @@ char *JE_locateFile( const char *filename, JE_boolean data ) /* !!! WARNING: Non
 		}
 
 		snprintf(buf, sizeof buf, "%s%s", dir, filename);
-		if (data)
+		if (!JE_find(buf))
 		{
-			if (!JE_find(buf))
+			if (dont_die)
 			{
-				errorActive = TRUE;
-				JE_errorHand(filename);
+				return NULL;
 			}
-		} else {
-			/* If anyone wants to know */
-			new_file = TRUE;
-			fclose(fopen(filename, "w"));
-			strcpy(buf, filename);
+			errorActive = TRUE;
+			JE_errorHand(filename);
 		}
+
 	}
 	
 	return buf;
 }
 
-void JE_resetFileExt( FILE **f, const char *filename, JE_boolean not_data ) /* Newly added. */
+void JE_resetFile( FILE **f, const char *filename )
 {
-	*f = fopen(JE_locateFile(filename, !not_data), (not_data ? "r+b" : "rb"));
+	char *tmp;
+
+	tmp = JE_locateFile(filename);
+	*f = tmp ? fopen_check(tmp, "rb") : NULL;
 }
 
-void JE_resetTextExt( FILE **f, const char *filename, JE_boolean not_data ) /* Newly added. */
+void JE_resetText( FILE **f, const char *filename )
 {
-	*f = fopen(JE_locateFile(filename, !not_data), (not_data ? "r+" : "r"));
+	char *tmp;
+
+	tmp = JE_locateFile(filename);
+	*f = tmp ? fopen_check(tmp, "r") : NULL;
 }
 
 JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the config file exists */
 {
 	FILE *f;
 
-	JE_resetFileExt(&f, "TYRIAN.CFG", FALSE);
+	dont_die = TRUE; /* Disabled barf'n'die */
+	JE_resetFile(&f, "TYRIAN.CFG");
+	dont_die = FALSE;
 
-	if (f)
+	if (f && get_stream_size(f) == 28)
 	{
-		if (get_stream_size(f) == 28)
-		{
-			fclose(f);
-			return FALSE;
-		} else {
-			printf("\nInvalid TYRIAN.CFG! Try deleting it.\n"); /* TODO: Re-word? Erm.. =S */
-			exit(1);
-		}
+		fclose(f);
+		return FALSE;
 	} else {
+		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n");
 		return TRUE;
 	}
 }

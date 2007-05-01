@@ -56,7 +56,7 @@ void JE_loadPCX( char *name, JE_boolean storePalette)
 	printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
 #endif
 
-	JE_resetFileExt(&fi, name, FALSE);
+	JE_resetFile(&fi, name);
 	fread(&header.manufacturer, 1, 1, fi);
 	fread(&header.version, 1, 1, fi);
 	fread(&header.encoding, 1, 1, fi);

@@ -436,7 +436,11 @@ start_level_first:
 			}
 		} while (tempb);
 
-		JE_resetFileExt(&recordFile, tempStr, TRUE);
+		JE_resetFile(&recordFile, tempStr);
+		if (!recordFile)
+		{
+			exit(1);
+		}
 
 		fwrite(&episodeNum, 1, 1, recordFile);
 		fwrite(levelName, 1, 10, recordFile);
@@ -908,7 +912,7 @@ new_game:
 	{
 		do
 		{
-			JE_resetFileExt(&lvlFile, macroFile, FALSE);
+			JE_resetFile(&lvlFile, macroFile);
 
 			x = 0;
 			jumpSection = FALSE;
@@ -1514,7 +1518,7 @@ new_game:
 
 			difficultyLevel = 2;
 			sprintf(tempStr, "DEMO.%d", playDemoNum);
-			JE_resetFileExt(&recordFile, tempStr, FALSE);
+			JE_resetFile(&recordFile, tempStr);
 
 			bonusLevelCurrent = FALSE;
 
@@ -1539,7 +1543,7 @@ new_game:
 		}
 
 
-		JE_resetFileExt(&lvlFile, levelFile, FALSE);
+		JE_resetFile(&lvlFile, levelFile);
 		fseek(lvlFile, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
 
 		char_mapFile = fgetc(lvlFile);
@@ -1584,7 +1588,7 @@ new_game:
 
 		/* Read Shapes.DAT */
 		sprintf(tempStr, "SHAPES%c.DAT", char_shapeFile);
-		JE_resetFileExt(&shpFile, tempStr, FALSE);
+		JE_resetFile(&shpFile, tempStr);
 
 		for (z = 0; z < 600; z++)
 		{
@@ -2655,7 +2659,7 @@ void JE_loadCubes( void )
 	for (cube = 0; cube < cubeMax; cube++)
 	{
 
-		JE_resetFileExt(&f, cubeFile, FALSE);
+		JE_resetFile(&f, cubeFile);
 	
 		tempw = cubeList[cube];
 	
