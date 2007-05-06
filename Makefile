@@ -7,7 +7,7 @@ PROFILE := 0
 # END SETTINGS #####################################
 
 TARGET := tyrian
-OBJS := backgrnd.o config.o error.o episodes.o fonthand.o helptext.o joystick.o keyboard.o lvllib.o loudness.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o picload.o setup.o pcxload.o pcxmast.o shpmast.o sndmast.o starfade.o tyrian2.o varz.o vga256d.o lds_play.o fm_synth.o adlibemu.o
+OBJS := backgrnd.o config.o error.o episodes.o fonthand.o helptext.o joystick.o keyboard.o lvllib.o loudness.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o picload.o setup.o pcxload.o pcxmast.o shpmast.o sndmast.o starfade.o tyrian2.o varz.o vga256d.o lds_play.o fm_synth.o adlibemu.o starlib.o jukebox.o
 
 ifeq ($(DEBUG), 1)
 	DEBUG_FLAGS := -g3 -O0 -Wno-unused

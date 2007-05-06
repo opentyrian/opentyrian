@@ -38,7 +38,8 @@
 
 #include "SDL.h"
 
-JE_boolean volumeActive, fx;
+JE_boolean volumeActive = TRUE;
+JE_boolean fx;
 JE_word fxNum;
 JE_byte tempVolume;
 JE_boolean repeatedFade, continuousPlay;
@@ -142,7 +143,7 @@ void JE_jukeboxGo( void )
 	{
 		tempScreenSeg = VGAScreen; /*sega000*/
 		
-		if (weirdMusic)
+		if (weirdMusic) /* TODO: Not sure what this is about, figure it out */
 		{ 
 			/*
 			IF framecount2 = 0 THEN
@@ -172,19 +173,16 @@ void JE_jukeboxGo( void )
 		}
 
 		frameCount = 1;
-		/*k = 0;
-		scanCode = 0;*/
 
-		/* JE: {STARFIELD processing} */
-
-		/* starlib.main; */
+		JE_starlib_main();
 
 		if (lastSong != currentSong)
 		{
 		  lastSong = currentSong;
 		  JE_bar(50, 190, 250, 198, 0); /* vga256c.BAR (50, 190, 250, 198, 0); */
 		}
-
+		
+		JE_bar(30, 170, 270, 198, 0);
 		if (drawText)
 		{
 			/* TODO: Put in actual song titles here */
@@ -215,30 +213,28 @@ void JE_jukeboxGo( void )
 		
 		if (fade)
 		{
-		/*
-          IF volumeactive THEN
-            IF tempvolume > 5 THEN
-              BEGIN
-                DEC (tempvolume, 1);
-                nortsong.setvol (tempvolume, FXvolume)
-              END 
-            ELSE
-              BEGIN
-                fade := FALSE;
-              END
-          ELSE
-          IF vga256d.speed < $E000 THEN
-            INC (vga256d.speed, $800) 
-          ELSE
-            BEGIN
-              vga256d.speed := $E000;
-              fade := FALSE;
-            END;
-          resettimerint;
-          nortsong.settimerint;
-        */
+			if (volumeActive)
+			{
+				if (tempVolume > 5)
+				{
+					tempVolume -= 2;
+					JE_setVol(tempVolume, fxVolume);
+				} else {
+					fade = FALSE;
+				}
+			}
+			else if (speed < 0xE000)
+			{
+				speed += 0x800;
+			} else {
+				speed = 0xE000;
+				fade = FALSE;
+			}
+			JE_resetTimerInt();
+			JE_setTimerInt();
 		}
       
+		/* TODO: Make this stuff work */
 		/*
       joystick2;
       IF (mouseposition (x, y) > 0) OR button [1] THEN
@@ -250,12 +246,12 @@ void JE_jukeboxGo( void )
 		
 		JE_showVGA();
 	
-		tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);
+		/*tempw = 0;
+		JE_textMenuWait(&tempw, FALSE);*/
+		service_SDL_events(TRUE);
 	
 		if (newkey) {
 			JE_newSpeed();
-			
 			switch (lastkey_sym)
 			{
 			case SDLK_ESCAPE: /* quit jukebox */
@@ -263,7 +259,7 @@ void JE_jukeboxGo( void )
 				quit = TRUE;
 				break;
 			case SDLK_r: /* restart song */
-				JE_selectSong(1);
+				JE_jukebox_selectSong(1);
 				break;
 			case SDLK_n: /* toggle continuous play */
 				continuousPlay = !continuousPlay;
@@ -271,7 +267,7 @@ void JE_jukeboxGo( void )
 			case SDLK_v:
 				volumeActive = !volumeActive;
 				break;
-			case SDLK_t: /* No idea what this is doing :( */
+			case SDLK_t: /* No idea what this is doing -- possibly resetting to default speed? */
 				speed = 0x4300;
 				JE_resetTimerInt();
 				JE_setTimerInt();
@@ -291,53 +287,41 @@ void JE_jukeboxGo( void )
 			case SDLK_SEMICOLON:
 				JE_playSampleNum(fxNum);
 				break;
-/*
-            #13 : BEGIN
-                    INC (currentsong);
-                    playnewsong;
-                    youstopped := FALSE;
-                  END;
-*/			
+			case SDLK_RETURN:
+				currentJukeboxSong++;
+				JE_playNewSong();
+				youStopped = FALSE;
+				break;
 			case SDLK_s:
-				JE_selectSong(0);
+				JE_jukebox_selectSong(0);
 				youStopped = TRUE;
 				break;
-		/*
-          CASE UPCASE (k) OF
-            'W' : IF NOT weirdmusic THEN
-                    BEGIN
-                      weirdmusic := TRUE;
-                      weirdspeed := 10;
-                    END 
-                  ELSE
-                  IF weirdspeed > 1 THEN
-                    DEC (weirdspeed) 
-                  ELSE
-                    BEGIN
-                      weirdmusic := FALSE;
-                      IF NOT fade THEN
-                        nortsong.setvol (tempvolume, FXvolume);
-                    END;
-            ' ' : BEGIN
-                    drawtext := NOT drawtext;
-                    IF NOT drawtext THEN
-                      vga256c.BAR (30, 170, 270, 198, 0);
-                  END;
-          END;
-          
-          CASE scancode OF
-            75, 72 : BEGIN
-                       DEC (currentsong);
-                       playnewsong;
-                       youstopped := FALSE;
-                     END;
-            77, 80 : BEGIN
-                       INC (currentsong);
-                       playnewsong;
-                       youstopped := FALSE;
-                     END;
-          END;
-		*/
+			case SDLK_w:
+				if (!weirdMusic)
+				{
+					weirdMusic = TRUE;
+					weirdSpeed = 10;
+				} 
+				else if (weirdSpeed > 1)
+				{
+					weirdSpeed--;
+				}
+				else
+				{
+					weirdMusic = FALSE;
+					if (!fade)
+					{
+						JE_setVol(tempVolume, fxVolume);
+					}
+				}
+				break;
+			case SDLK_SPACE:
+				drawText = !drawText;
+				if (!drawText)
+				{
+					JE_bar(30, 170, 270, 198, 0);
+				}
+				break;
 			case SDLK_LEFT:
 			case SDLK_UP:
 				currentJukeboxSong--;
@@ -357,10 +341,12 @@ void JE_jukeboxGo( void )
 	} while (!quit);
 
 	JE_fadeBlack(10);
+	JE_setVol(255, fxVolume);
 }
 
 void JE_newSpeed( void )
 {
+	/* TODO: Figure out what to do with this function. The timing system has changed a lot. */
 		/*
           vga256d.speed := $5300 - starlib.speed * $800;
           IF starlib.speed > 5 THEN

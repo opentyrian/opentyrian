@@ -19,6 +19,8 @@
  */
  
  #include "opentyr.h"
+ #include "nortsong.h"
+ #include "loudness.h"
 
 #define NO_EXTERNS
 #include "jukebox.h"
@@ -30,17 +32,14 @@ static JE_word currentJukeboxSong = 0; /* SYN: used to be currentsong, but that 
 void JE_playNewSelection( void )
 {
 	currentSong = ( rand() % MUSIC_NUM );
-	playSong(currentSong);
+	JE_playSong(currentSong);
 }
 	
-void JE_selectSong( JE_word song )
+void JE_jukebox_selectSong( JE_word song )
 {
-	STUB(JE_selectsong);
-/*
-	  player.selectsong (song);
-  repeated := FALSE;
-  playing := TRUE;
-*/
+	JE_selectSong(song);
+	repeated = FALSE;
+	playing = TRUE;
 }
 
 void JE_checkEndOfSong( void )
@@ -52,7 +51,7 @@ void JE_checkEndOfSong( void )
 	}
 	if (continuousPlay && !playing)
 	{
-		JE_selectSong(1);
+		JE_jukebox_selectSong(1);
 	}
 }
 

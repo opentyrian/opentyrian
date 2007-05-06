@@ -29,7 +29,7 @@ JE_word currentJukeboxSong;
 #endif
 
 void JE_playNewSelection( void );
-void JE_selectSong( JE_word song );
+void JE_jukebox_selectSong( JE_word song );
 void JE_checkEndOfSong( void );
 
 #endif /* JUKEBOX_H */
