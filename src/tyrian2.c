@@ -837,7 +837,162 @@ levelloop :
 	/* Draw Top Enemy */
 	/* TODO */
 
+	/* Player Shot Images */
+	for (z = 0; z < MAX_PWEAPON; z++)
+	{
+		if (shotAvail[z] != 0)
+		{
+			shotAvail[z]--;
+			if (z != MAX_PWEAPON - 1)
+			{
+
+				playerShotData[z].shotXM += playerShotData[z].shotXC;
+				playerShotData[z].shotX += playerShotData[z].shotXM;
+				tempI4 = playerShotData[z].shotXM;
+	
+				if (playerShotData[z].shotXM > 100)
+				{
+					if (playerShotData[z].shotXM == 101)
+					{
+						playerShotData[z].shotX -= 101;
+						playerShotData[z].shotX += PXChange;
+						playerShotData[z].shotY += PYChange;
+					} else {
+						playerShotData[z].shotX -= 120;
+						playerShotData[z].shotX += PXChange;
+					}
+				}
+	
+				playerShotData[z].shotYM += playerShotData[z].shotYC;
+				playerShotData[z].shotY += playerShotData[z].shotYM;
+	
+				if (playerShotData[z].shotXM > 100)
+				{
+					playerShotData[z].shotY -= 120;
+					playerShotData[z].shotY += PYChange;
+				}
+	
+				if (playerShotData[z].shotComplicated != 0)
+				{
+					playerShotData[z].shotDevX += playerShotData[z].shotDirX;
+					playerShotData[z].shotX += playerShotData[z].shotDevX;
+					
+					if (abs(playerShotData[z].shotDevX) == playerShotData[z].shotCirSizeX)
+					{
+						playerShotData[z].shotDirX = -playerShotData[z].shotDirX;
+					}
+					
+					playerShotData[z].shotDevY += playerShotData[z].shotDirY;
+					playerShotData[z].shotY += playerShotData[z].shotDevY;
+					
+					if (abs(playerShotData[z].shotDevY) == playerShotData[z].shotCirSizeY)
+					{
+						playerShotData[z].shotDirY = -playerShotData[z].shotDirY;
+					}
+					/*Double Speed Circle Shots - add a second copy of above loop*/
+				}
+				
+				tempShotX = playerShotData[z].shotX;
+				tempShotY = playerShotData[z].shotY;
+				
+				if (playerShotData[z].shotX < -34 || playerShotData[z].shotX > 290 || 
+				    playerShotData[z].shotY < -15 || playerShotData[z].shotY > 190)
+				{
+					shotAvail[z] = 0;
+					goto drawplayershotloopend;
+				}
+					
+				if (playerShotData[z].shotTrail != 255)
+				{
+					if (playerShotData[z].shotTrail == 98)
+					{
+						/* TODO JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, playerShotData[z].shotTrail);*/
+					} else {
+						/* TODO JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);*/
+					}
+				}
+
+				if (playerShotData[z].aimAtEnemy != 0)
+				{
+					if (--playerShotData[z].aimDelay == 0) {
+						playerShotData[z].aimDelay = playerShotData[z].aimDelayMax;
+
+						if (enemyAvail[playerShotData[z].aimAtEnemy] != 1)
+						{
+							if (playerShotData[z].shotX < enemy[playerShotData[z].aimAtEnemy].ex)
+							{
+								playerShotData[z].shotXM++;
+							} else {
+								playerShotData[z].shotXM--;
+							}
+							if (playerShotData[z].shotY < enemy[playerShotData[z].aimAtEnemy].ey)
+							{
+								playerShotData[z].shotYM++;
+							} else {
+								playerShotData[z].shotYM--;
+							}
+						} else {
+							if (playerShotData[z].shotXM > 0)
+							{
+								playerShotData[z].shotXM++;
+							} else {
+								playerShotData[z].shotXM--;
+							}
+						}
+					}
+				}
+				
+				tempw = playerShotData[z].shotGR + playerShotData[z].shotAni;
+				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
+				{
+					playerShotData[z].shotAni = 0;
+				}
+				
+				tempI2 = playerShotData[z].shotDmg;
+				temp2 = playerShotData[z].shotBlastFilter;
+				chain = playerShotData[z].chainReaction;
+				playerNum = playerShotData[z].playerNumber;
+				
+				tempSpecial = tempw > 60000;
+
+				if (tempSpecial)
+				{
+					JE_newDrawCShapeTrickNum(OPTION_SHAPES, tempw - 60000 - 1, tempShotX+1, tempShotY);
+					tempX2 = shapeX[OPTION_SHAPES][tempw - 60000 - 1] >> 1;
+					tempY2 = shapeY[OPTION_SHAPES][tempw - 60000 - 1] >> 1;
+				} else {
+					if (tempw > 1000)
+					{
+						/* TODO JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempw / 1000) << 4);*/
+						tempw = tempw % 1000;
+					}
+					if (tempw > 500)
+					{
+						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
+						{
+							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempw - 500, shapesW2);
+						}
+						JE_drawShape2(tempShotX+1, tempShotY, tempw - 500, shapesW2);
+					} else {
+						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
+						{
+							JE_drawShape2Shadow (tempShotX+1, tempShotY + shadowyDist, tempw, shapesC1);
+						}
+						JE_drawShape2(tempShotX+1, tempShotY, tempw, shapesC1);
+					}
+				}
+
+			}
+				
+			/* TODO */
+				
+drawplayershotloopend:
+			;
+		}
+	}
+
 	/* TODO */
+
 }
 
 /* --- Load Level/Map Data --- */

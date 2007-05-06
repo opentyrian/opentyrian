@@ -835,6 +835,217 @@ void JE_tyrianHalt( JE_byte code )
 	exit(code);
 }
 
+void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum )
+{
+	const JE_byte soundChannel[11] /* [1..11] */ = {0, 2, 4, 4, 2, 2, 5, 5, 1, 4, 1};
+
+	if (portNum <= PORT_NUM)
+	{
+		if (wpNum > 0 && wpNum <= WEAP_NUM)
+		{
+			if (power >= weaponPort[portNum].poweruse)
+			{
+
+				power -= weaponPort[portNum].poweruse;
+
+				if (weapons[wpNum].sound > 0)
+				{
+					soundQueue[soundChannel[temp-1]] = weapons[wpNum].sound;
+				}
+
+				/*Rot*/
+				for (tempw = 1; tempw <= weapons[wpNum].multi; tempw++)
+				{
+
+					for (b = 0; b < MAX_PWEAPON; b++)
+					{
+						if (shotAvail[b] == 0)
+						{
+							break;
+						}
+					}
+					if (b == MAX_PWEAPON)
+					{
+						return;
+					}
+
+					if (shotMultiPos[temp-1] == max || shotMultiPos[temp-1] > 8)
+					{
+						shotMultiPos[temp-1] = 1;
+					} else {
+						shotMultiPos[temp-1]++;
+					}
+
+					playerShotData[b].chainReaction = 0;
+
+					playerShotData[b].playerNumber = playerNum;
+
+					playerShotData[b].shotAni = 0;
+
+					playerShotData[b].shotComplicated = weapons[wpNum].circlesize != 0;
+
+					if (weapons[wpNum].circlesize == 0)
+					{
+						playerShotData[b].shotDevX = 0;
+						playerShotData[b].shotDirX = 0;
+						playerShotData[b].shotDevY = 0;
+						playerShotData[b].shotDirY = 0;
+						playerShotData[b].shotCirSizeX = 0;
+						playerShotData[b].shotCirSizeY = 0;
+					} else {
+						temp2 = weapons[wpNum].circlesize;
+
+						if (temp2 > 19)
+						{
+							temp3 = temp2 % 20;
+							playerShotData[b].shotCirSizeX = temp3;
+							playerShotData[b].shotDevX = temp3 >> 1;
+
+							temp2 = temp2 / 20;
+							playerShotData[b].shotCirSizeY = temp2;
+							playerShotData[b].shotDevY = temp2 >> 1;
+						} else {
+							playerShotData[b].shotCirSizeX = temp2;
+							playerShotData[b].shotCirSizeY = temp2;
+							playerShotData[b].shotDevX = temp2 >> 1;
+							playerShotData[b].shotDevY = temp2 >> 1;
+						}
+						playerShotData[b].shotDirX = 1;
+						playerShotData[b].shotDirY = -1;
+					}
+
+					playerShotData[b].shotTrail = weapons[wpNum].trail;
+
+					if (weapons[wpNum].attack[shotMultiPos[temp-1]-1] > 99 && weapons[wpNum].attack[shotMultiPos[temp-1]-1] < 250)
+					{
+						playerShotData[b].chainReaction = weapons[wpNum].attack[shotMultiPos[temp-1]-1] - 100;
+						playerShotData[b].shotDmg = 1;
+					} else {
+						playerShotData[b].shotDmg = weapons[wpNum].attack[shotMultiPos[temp-1]-1];
+					}
+
+					playerShotData[b].shotBlastFilter = weapons[wpNum].shipblastfilter;
+
+					tempI = weapons[wpNum].by[shotMultiPos[temp-1]-1];
+
+					/*Note: Only front selection used for player shots...*/
+
+					playerShotData[b].shotX = PX + weapons[wpNum].bx[shotMultiPos[temp-1]-1];
+
+					playerShotData[b].shotY = PY + tempI;
+					playerShotData[b].shotYC = -weapons[wpNum].acceleration;
+					playerShotData[b].shotXC = weapons[wpNum].accelerationx;
+
+					playerShotData[b].shotXM = weapons[wpNum].sx[shotMultiPos[temp-1]-1];
+
+					temp2 = weapons[wpNum].del[shotMultiPos[temp-1]-1];
+
+					if (temp2 == 121)
+					{
+						playerShotData[b].shotTrail = 0;
+						temp2 = 255;
+					}
+
+					playerShotData[b].shotGR = weapons[wpNum].sg[shotMultiPos[temp]];
+					if (playerShotData[b].shotGR == 0)
+					{
+						shotAvail[b] = 0;
+					} else {
+						shotAvail[b] = temp2;
+					}
+					if (temp2 > 100 && temp2 < 120)
+					{
+						playerShotData[b].shotAniMax = (temp2 - 100 + 1);
+					} else {
+						playerShotData[b].shotAniMax = weapons[wpNum].weapani + 1;
+					}
+
+					if (temp2 == 99 || temp2 == 98)
+					{
+						tempI = PX - mouseX;
+						if (tempI < -5)
+						{
+							tempI = -5;
+						}
+						if (tempI > 5)
+						{
+							tempI = 5;
+						}
+						playerShotData[b].shotXM += tempI;
+					}
+
+
+					if (temp2 == 99 || temp2 == 100)
+					{
+						tempI = PY - mouseY - weapons[wpNum].sy[shotMultiPos[temp-1]-1];
+						if (tempI < -4)
+						{
+							tempI = -4;
+						}
+						if (tempI > 4)
+						{
+							tempI = 4;
+						}
+						playerShotData[b].shotYM = tempI;
+					} else {
+						if (weapons[wpNum].sy[shotMultiPos[temp-1]-1] == 98)
+						{
+							playerShotData[b].shotYM = 0;
+							playerShotData[b].shotYC = -1;
+						} else {
+							if (weapons[wpNum].sy[shotMultiPos[temp-1]-1] > 100)
+							{
+								playerShotData[b].shotYM = weapons[wpNum].sy[shotMultiPos[temp-1]-1];
+								playerShotData[b].shotY -= PYChange;
+							} else {
+								playerShotData[b].shotYM = -weapons[wpNum].sy[shotMultiPos[temp-1]-1];
+							}
+						}
+					}
+
+					if (weapons[wpNum].sx[shotMultiPos[temp-1]-1] > 100)
+					{
+						playerShotData[b].shotXM = weapons[wpNum].sx[shotMultiPos[temp-1]-1];
+						playerShotData[b].shotX -= PXChange;
+						if (playerShotData[b].shotXM == 101)
+						{
+							playerShotData[b].shotY -= PYChange;
+						}
+					}
+
+
+					if (weapons[wpNum].aim > 5)
+					{  /*Guided Shot*/
+
+						tempW3 = 65000;
+						temp3 = 0;
+						/*Find Closest Enemy*/
+						for (x = 0; x < 100; x++)
+						{
+							if (enemyAvail[x] != 1 && !enemy[x].scoreitem)
+							{
+								y = abs(enemy[x].ex - playerShotData[b].shotX) + abs(enemy[x].ey - playerShotData[b].shotY);
+								if (y < tempW3)
+								{
+									tempW3 = y;
+									temp3 = x + 1;
+								}
+							}
+						}
+						playerShotData[b].aimAtEnemy = temp3;
+						playerShotData[b].aimDelay = 5;
+						playerShotData[b].aimDelayMax = weapons[wpNum].aim - 5;
+					} else {
+						playerShotData[b].aimAtEnemy = 0;
+					}
+
+					shotRepeat[temp-1] = weapons[wpNum].shotrepeat;
+				}
+			}
+		}
+	}
+}
+
 void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)

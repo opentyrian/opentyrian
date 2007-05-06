@@ -284,7 +284,7 @@ void JE_jukeboxGo( void )
 				break;
 			case SDLK_PERIOD: /* inc sound effect */
 				fxNum = (fxNum + 1 > SOUND_NUM + 9) ? 1 : fxNum + 1;
-				break;			
+				break;
 			case SDLK_SLASH: /* switch to sfx mode */
 				fx = !fx;
 				break;
