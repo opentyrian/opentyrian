@@ -41,7 +41,6 @@
 JE_boolean volumeActive = TRUE;
 JE_boolean fx;
 JE_word fxNum;
-JE_byte tempVolume;
 JE_boolean repeatedFade, continuousPlay;
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
@@ -112,6 +111,7 @@ void JE_jukeboxGo( void )
 	char tempStr[64];
 	
 	JE_byte lastSong;
+	JE_byte tempVolume;
 	JE_boolean youStopped, drawText, quit, fade;
 	
 	

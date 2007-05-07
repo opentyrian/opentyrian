@@ -24,8 +24,8 @@
 #include "opentyr.h"
 
 #ifndef NO_EXTERNS
-JE_boolean continuousPlay;
-JE_word currentJukeboxSong;
+extern JE_boolean continuousPlay;
+extern JE_word currentJukeboxSong;
 #endif
 
 void JE_playNewSelection( void );

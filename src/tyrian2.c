@@ -588,7 +588,48 @@ levelloop :
 	                 ((portPower[1] == 1 && playerStillExploding2 == 0) || !twoPlayerMode);
 
 
-	/* TODO */
+	/*-----MUSIC FADE------*/
+	if (musicFade)
+	{
+		if (tempVolume > 10)
+		{
+			tempVolume--;
+			JE_setVol(tempVolume, fxVolume);
+		} else {
+			musicFade = FALSE;
+		}
+	}
+
+	if (!allPlayersGone && levelEnd > 0 && endLevel)
+	{
+		JE_playSong(10);
+		musicFade = FALSE;
+	} else {
+		if (!playing && musicActive && firstGameOver)
+		{
+			JE_playSong(levelSong);
+			playing = TRUE;
+		}
+	}
+
+
+
+	if (!endLevel)
+	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
+		/* TODO */
+	}    /*MAIN DRAWING IS STOPPED ENDING   HERE*/
+
+	/*---------------------------EVENTS-------------------------*/
+	while (eventRec[eventLoc].eventTime <= curLoc && eventLoc <= maxEvent)
+	{
+		/* TODO JE_eventSystem();*/
+	}
+
+	if (isNetworkGame && reallyEndLevel)
+	{
+		/* TODO goto startlevel;*/
+	}
+
 
 	/* SMOOTHIES! */
 	JE_checkSmoothies();

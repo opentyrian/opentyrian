@@ -38,8 +38,8 @@
 #include "fonthand.h"
 #include "picload.h"
 #include "starfade.h"
-#include "setup.h"
 #include "jukebox.h"
+#include "setup.h"
 
 #include "SDL.h"
 

@@ -51,6 +51,7 @@ extern JE_byte *digiFx[SOUND_NUM + 9];
 extern JE_word fxSize[SOUND_NUM + 9];
 
 extern JE_word fxVolume, fxPlayVol;
+extern JE_word tempVolume;
 extern JE_word tyrMusicVolume;
 
 extern int jasondelay;
