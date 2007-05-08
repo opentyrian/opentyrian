@@ -525,7 +525,7 @@ start_level_first:
 
 	/* --- Clear Sound Queue --- */
 	memset(soundQueue,       0, sizeof(soundQueue));
-	soundQueue[2] = V_GOOD_LUCK;
+	soundQueue[3] = V_GOOD_LUCK;
 
 	memset(enemyShapeTables, 0, sizeof(enemyShapeTables));
 	memset(enemy,            0, sizeof(enemy));
@@ -772,7 +772,7 @@ levelloop :
 		}
 	}
 
-	/* --- STARS --- */
+	/*---------------------------STARS--------------------------*/
 	/* DRAWSTARS */
 	if (starActive || astralDuration > 0)
 	{
@@ -784,8 +784,8 @@ levelloop :
 		JE_smoothies3();
 	}
 
-	/* --- BACKGROUNDS --- */
-	/* --- BACKGROUND 2 --- */
+	/*-----------------------BACKGROUNDS------------------------*/
+	/*-----------------------BACKGROUND 2------------------------*/
 	if (background2over == 3)
 	{
 		JE_drawBackground2();
@@ -856,7 +856,10 @@ levelloop :
 	}
 
 	/* New Enemy */
-	/* TODO */
+	if (enemiesActive && rand() % 100 > levelEnemyFrequency)
+	{
+		/* TODO */
+	}
 
 	if (processorType > 1 && smoothies[2])
 	{
@@ -868,7 +871,10 @@ levelloop :
 	}
 
 	/* Draw Sky Enemy */
-	/* TODO */
+	if (!skyEnemyOverAll)
+	{
+		/* TODO */
+	}
 
 	if (background3over == 0)
 	{
@@ -876,7 +882,10 @@ levelloop :
 	}
 
 	/* Draw Top Enemy */
-	/* TODO */
+	if (!topEnemyOver)
+	{
+		/* TODO */
+	}
 
 	/* Player Shot Images */
 	for (z = 0; z < MAX_PWEAPON; z++)
@@ -1032,6 +1041,135 @@ drawplayershotloopend:
 		}
 	}
 
+	/* Player movement indicators for shots that track your ship */
+	lastPXShotMove = PX;
+	lastPYShotMove = PY;
+
+	/*=================================*/
+	/*=======Collisions Detection======*/
+	/*=================================*/
+
+	if (playerAlive && !endLevel)
+	{
+		JE_playerCollide(&PX, &PY, &lastTurn, &lastTurn2, &score, &armorLevel, &shield, &playerAlive,
+		                 &playerStillExploding, 1, playerInvulnerable1);
+    }
+
+	if (twoPlayerMode && playerAliveB && !endLevel)
+		JE_playerCollide(&PXB, &PYB, &lastTurnB, &lastTurn2B, &score2, &armorLevel2, &shield2, &playerAliveB,
+		                 &playerStillExploding2, 2, playerInvulnerable2);
+
+	if (firstGameOver)
+	{
+		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
+	}
+
+	/*Network Check #1*/
+	netSuccess = FALSE;
+
+	if (!endLevel)
+	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
+
+		/* Draw Enemy Shots */
+		/* TODO */
+	}
+
+	if (background3over == 1)
+	{
+		JE_drawBackground3();
+	}
+
+	/* Draw Top Enemy */
+	if (topEnemyOver)
+	{
+		/* TODO */
+	}
+
+	/* Draw Sky Enemy */
+	if (skyEnemyOverAll)
+	{
+		/* TODO */
+	}
+
+	/*-------------------------- Sequenced Explosions -------------------------*/
+	enemyStillExploding = FALSE;
+	for (tempREX = 0; tempREX < 20; tempREX++)
+	{
+		if (REXavail[tempREX] != 0)
+		{
+			enemyStillExploding = TRUE;
+			if (REXdat[tempREX].delay > 0)
+			{
+				REXdat[tempREX].delay--;
+			} else {
+				REXdat[tempREX].ey += backMove2 + 1;
+				tempX = REXdat[tempREX].ex + (rand() % 24) - 12;
+				tempY = REXdat[tempREX].ey + (rand() % 27) - 24;
+				if (REXdat[tempREX].big)
+				{
+					JE_setupExplosionLarge(FALSE, 2, tempX, tempY);
+					if (REXavail[tempREX] == 1 || rand() % 5 == 1)
+					{
+						soundQueue[7] = 11;
+					} else {
+						soundQueue[6] = 9;
+					}
+					REXdat[tempREX].delay = 4 + (rand() % 3);
+				} else {
+					JE_setupExplosion(tempX, tempY, 1);
+					soundQueue[5] = 4;
+					REXdat[tempREX].delay = 3;
+				}
+				REXavail[tempREX]--;
+			}
+		}
+	}
+
+	/*---------------------------- Draw Explosions ----------------------------*/
+	/* TODO	*/
+
+	if (!portConfigChange)
+	{
+		portConfigDone = TRUE;
+	}
+
+
+	/*-----------------------BACKGROUNDS------------------------*/
+	/*-----------------------BACKGROUND 2------------------------*/
+	if (!(smoothies[1] && processorType < 4) &&
+	    !(smoothies[0] && processorType == 3))
+	{
+		if (background2over == 2)
+		{
+			if (wild && !background2notTransparent)
+			{
+				JE_superBackground2();
+			} else {
+				JE_drawBackground2();
+			}
+		}
+	}
+
+	/*-------------------------Warning---------------------------*/
+	if ((playerAlive && armorLevel < 6) ||
+	    (twoPlayerMode && !galagaMode && playerAliveB && armorLevel2 < 6))
+	{
+		/* TODO */
+	}
+
+	/*------- Random Explosions --------*/
+	if (randomExplosions)
+	{
+		if (rand() % 10 == 1)
+		{
+			JE_setupExplosionLarge(FALSE, 20, rand() % 280, rand() % 180);
+		}
+	}
+
+
+	/*=================================*/
+	/*=======The Sound Routine=========*/
+	/*=================================*/
 	/* TODO */
 
 }

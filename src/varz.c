@@ -1046,6 +1046,16 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 	}
 }
 
+void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodetype )
+{
+	STUB(JE_setupExplosion);
+}
+
+void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y )
+{
+	STUB(JE_setupExplosionLarge);
+}
+
 void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)
