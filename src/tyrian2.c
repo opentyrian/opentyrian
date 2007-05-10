@@ -1461,12 +1461,12 @@ new_game:
 
 								if (twoPlayerMode)
 								{
-									sprintf(levelWarningText[0], "%s %ld", miscText[40], score);
-									sprintf(levelWarningText[1], "%s %ld", miscText[41], score2);
+									sprintf(levelWarningText[0], "%s %d", miscText[40], score);
+									sprintf(levelWarningText[1], "%s %d", miscText[41], score2);
 									strcpy(levelWarningText[2], "");
 									levelWarningLines = 3;
 								} else {
-									sprintf(levelWarningText[0], "%s %ld", miscText[37], JE_totalScore(score, pItems));
+									sprintf(levelWarningText[0], "%s %d", miscText[37], JE_totalScore(score, pItems));
 									strcpy(levelWarningText[1], "");
 									levelWarningLines = 2;
 								}
@@ -2960,7 +2960,7 @@ item_screen_start:
 			{
 				char buf[20];
 
-				snprintf(buf, sizeof buf, "%ld", score);
+				snprintf(buf, sizeof buf, "%d", score);
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);

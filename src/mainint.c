@@ -1202,7 +1202,7 @@ void JE_highScoreScreen( void )
 					saveFiles[temp + z].highScoreDiff = 0;
 					temp5 = 0;
 				}
-				sprintf(scoretemp, "~#%d:~ %ld", z + 1, saveFiles[temp+z].highScore1);
+				sprintf(scoretemp, "~#%d:~ %d", z + 1, saveFiles[temp+z].highScore1);
 				JE_textShade(250, ((z+1) * 10) + 65 , difficultyNameB[temp5], 15, temp5 + ((JE_byte) (temp5 == 0)) - 1, FULL_SHADE);
 				JE_textShade(20, ((z+1) * 10) + 65 , scoretemp, 15, 0, FULL_SHADE);
 				JE_textShade(110, ((z+1) * 10) + 65 , saveFiles[temp + z].highScoreName, 15, 2, FULL_SHADE);
@@ -1224,7 +1224,7 @@ void JE_highScoreScreen( void )
 					saveFiles[temp + z].highScoreDiff = 0;
 					temp5 = 0;
 				}
-				sprintf(scoretemp, "~#%d:~ %ld", z + 1, saveFiles[temp+z].highScore1); /* Not .highScore2 for some reason */
+				sprintf(scoretemp, "~#%d:~ %d", z + 1, saveFiles[temp+z].highScore1); /* Not .highScore2 for some reason */
 				JE_textShade(250, ((z+1) * 10) + 125 , difficultyNameB[temp5], 15, temp5 + ((JE_byte) (temp5 == 0)) - 1, FULL_SHADE);
 				JE_textShade(20, ((z+1) * 10) + 125 , scoretemp, 15, 0, FULL_SHADE);
 				JE_textShade(110, ((z+1) * 10) + 125 , saveFiles[temp + z].highScoreName, 15, 2, FULL_SHADE);

@@ -20,6 +20,8 @@
 #ifndef OPENTYRIAN_H
 #define OPENTYRIAN_H
 
+#include "SDL_stdinc.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h> /* For the ROUND() macro */
@@ -39,14 +41,14 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-typedef signed long    JE_longint;
-typedef signed short   JE_integer;
-typedef signed char    JE_shortint;
-typedef unsigned short JE_word;
-typedef unsigned char  JE_byte;
-typedef int            JE_boolean;
-typedef char           JE_char;
-typedef double         JE_real;
+typedef Sint32 JE_longint;
+typedef Sint16 JE_integer;
+typedef Sint8  JE_shortint;
+typedef Uint16 JE_word;
+typedef Uint8  JE_byte;
+typedef int    JE_boolean;
+typedef char   JE_char;
+typedef double JE_real;
 
 #ifndef NO_EXTERNS
 extern const char *opentyrian_str;
