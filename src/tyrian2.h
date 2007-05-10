@@ -36,8 +36,12 @@ void JE_openingAnim( void );
 void JE_readTextSync( void );
 void JE_displayText( void );
 
+JE_boolean JE_searchFor( JE_byte PLType );
+void JE_eventSystem( void );
+
 JE_longint JE_cashLeft( void );
 void JE_loadCubes( void );
+void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y );
 void JE_itemScreen( void );
 
 void JE_drawMenuHeader( void );

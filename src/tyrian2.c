@@ -622,7 +622,7 @@ levelloop :
 	/*---------------------------EVENTS-------------------------*/
 	while (eventRec[eventLoc].eventTime <= curLoc && eventLoc <= maxEvent)
 	{
-		/* TODO JE_eventSystem();*/
+		JE_eventSystem();
 	}
 
 	if (isNetworkGame && reallyEndLevel)
@@ -2470,6 +2470,37 @@ void JE_displayText( void )
     levelWarningDisplay = FALSE;
 }
 
+
+JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
+{
+	JE_boolean tempb = FALSE;
+	JE_byte temp;
+
+	for (temp = 0; temp < 100; temp++)
+	{
+		if (enemyAvail[temp] == 0 && enemy[temp].linknum == PLType)
+		{
+			temp5 = temp + 1;
+			if (galagaMode)
+			{
+				enemy[temp].evalue += enemy[temp].evalue;
+			}
+			tempb = TRUE;
+		}
+	}
+	return tempb;
+}
+
+void JE_eventSystem( void )
+{
+	JE_boolean tempb;
+
+	/* TODO */
+
+	eventLoc++;
+}
+
+
 JE_boolean quikSave;
 JE_byte oldMenu;
 JE_boolean backFromHelp;
@@ -2926,7 +2957,7 @@ item_screen_start:
 
 				if (tempW < menuChoices[curMenu]-1)
 				{
-					/*JE_drawItem(curSel[1]-1, temp, 160, tempY-4); TODO*/
+					JE_drawItem(curSel[1]-1, temp, 160, tempY-4);
 				}
 
 				if (tempW == curSel[curMenu]-1)
@@ -3111,6 +3142,49 @@ void JE_loadCubes( void )
 
 
 		fclose(f);
+	}
+}
+
+void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
+{
+	JE_word tempw;
+
+	if (itemNum > 0)
+	{
+		switch (itemType)
+		{
+			case 2:
+			case 3:
+				tempw = weaponPort[itemNum].itemgraphic;
+				break;
+			case 5:
+				tempw = powerSys[itemNum].itemgraphic;
+				break;
+			case 6:
+			case 7:
+				tempw = options[itemNum].itemgraphic;
+				break;
+			case 4:
+				tempw = shields[itemNum].itemgraphic;
+				break;
+		}
+
+		if (itemType == 1)
+		{
+			if (itemNum > 90)
+			{
+				shipGRptr = shapes9;
+				shipGR = JE_SGR(itemNum - 90, &shipGRptr);
+				JE_drawShape2x2(x, y, shipGR, shipGRptr);
+			} else {
+				JE_drawShape2x2(x, y, ships[itemNum].shipgraphic, shapes9);
+			}
+		} else {
+			if (tempw > 0)
+			{
+				JE_drawShape2x2(x, y, tempw, shapes6);
+			}
+		}
 	}
 }
 
