@@ -2998,6 +2998,94 @@ item_screen_start:
 			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9]].mpwr * 2, 2, 13);
 		}
 
+		if (((curMenu >= 1 && curMenu <= 3) || curMenu == 6 || curMenu == 7 || (curMenu >= 10 && curMenu <= 12) || curMenu == 14) || (curMenu == 5 && (curSel[1] == 2 || curSel[1] == 5)))
+		{
+			if (twoPlayerMode)
+			{
+				char buf[50];
+
+				snprintf(buf, sizeof buf, "%s %d", miscText[41], score);
+				JE_textShade(25, 50, buf, 15, 0, FULL_SHADE);
+
+				snprintf(buf, sizeof buf, "%s %d", miscText[42], score2);
+				JE_textShade(25, 60, buf, 15, 0, FULL_SHADE);
+			} else if (superArcadeMode > 0 || superTyrian) {
+				helpBoxColor = 15;
+				helpBoxBrightness = 4;
+				if (!superTyrian)
+				{
+					JE_helpBox(35, 25, superShips[superArcadeMode], 18);
+				} else {
+					JE_helpBox(35, 25, superShips[SA+3], 18);
+				}
+				helpBoxBrightness = 1;
+
+				JE_textShade(25, 50, superShips[SA+1], 15, 0, FULL_SHADE);
+				JE_helpBox(25, 60, weaponPort[pItems[1]].name, 22);
+				JE_textShade(25, 120, superShips[SA+1], 15, 0, FULL_SHADE);
+				JE_helpBox(25, 130, special[pItems[11]].name, 22);
+			} else {
+				if (pItems[12] > 90)
+				{
+					temp = 32;
+				} else if (pItems[12] > 0) {
+					temp = ships[pItems[12]].bigshipgraphic;
+				} else {
+					temp = ships[pItemsBack[12]].bigshipgraphic;
+				}
+
+				switch (temp)
+				{
+					case 32:
+						tempW = 35;
+						tempW2 = 33;
+						break;
+					case 28:
+						tempW = 31;
+						tempW2 = 36;
+						break;
+					case 33:
+						tempW = 31;
+						tempW2 = 35;
+						break;
+				}
+
+				JE_newDrawCShapeNum(OPTION_SHAPES, temp, tempW, tempW2);
+
+				temp = pItems[6];
+
+				if (temp > 1)
+				{
+					temp--;
+				}
+				JE_newDrawCShapeNum(WEAPON_SHAPES, temp + 16, generatorX[temp]+1, generatorY[temp]+1);
+
+				if (pItems[1] > 0)
+				{
+					temp = tyrian2_weapons[pItems[1]];
+					temp2 = frontWeaponList[pItems[1]];
+					JE_newDrawCShapeNum(WEAPON_SHAPES, temp, frontWeaponX[temp2]+1, frontWeaponY[temp2]);
+				}
+				if (pItems[2] > 0)
+				{
+					temp = tyrian2_weapons[pItems[2]];
+					temp2 = rearWeaponList[pItems[2]];
+					JE_newDrawCShapeNum(WEAPON_SHAPES, temp, rearWeaponX[temp2], rearWeaponY[temp2]);
+				}
+
+				JE_drawItem(6, pItems[4], 3, 84);
+				JE_drawItem(7, pItems[5], 129, 84);
+				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[10]].mpwr - 10);
+			}
+		}
+
+		if ((curMenu == 3) || (curMenu == 12))
+		{
+			JE_barDrawShadow(225, 70, 1, 16, tyrMusicVolume / 12, 3, 13);
+			JE_barDrawShadow(225, 86, 1, 16, fxVolume / 12, 3, 13);
+		}
+
+
 		/* TODO */
 		service_SDL_events(FALSE);
 		JE_showVGA();
