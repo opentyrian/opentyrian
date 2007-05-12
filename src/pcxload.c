@@ -52,10 +52,6 @@ void JE_loadPCX( char *name, JE_boolean storePalette)
 	/* FILE *PCXfile; Unused */
 	int i;
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	printf("%s doesn't support big-endian processors yet. =[\n", __FILE__); exit(1);
-#endif
-
 	JE_resetFile(&fi, name);
 	efread(&header.manufacturer, 1, 1, fi);
 	efread(&header.version, 1, 1, fi);
