@@ -196,7 +196,7 @@ extern JE_boolean returnActive;
 extern JE_word galagaShotFreq;
 extern JE_longint galagaLife;
 extern JE_boolean debug;
-extern JE_word debugTime, lastDebugTime;
+extern Uint32 debugTime, lastDebugTime;
 extern JE_longint debugHistCount;
 extern JE_real debugHist;
 extern JE_word curLoc;

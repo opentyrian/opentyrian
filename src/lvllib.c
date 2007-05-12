@@ -35,10 +35,10 @@ void JE_analyzeLevel( void )
 	FILE *f;
 
 	JE_resetFile(&f, levelFile);
-	fread(&lvlNum, 2, 1, f);
+	efread(&lvlNum, sizeof(JE_word), 1, f);
 	for (x = 0; x < lvlNum; x++)
 	{
-		fread(&lvlPos[x], sizeof(lvlPos[x]), 1, f);
+		efread(&lvlPos[x], sizeof(JE_longint), 1, f);
 	}
 	fseek(f, 0, SEEK_END);
 	lvlPos[lvlNum] = ftell(f);

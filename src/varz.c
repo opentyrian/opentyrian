@@ -185,7 +185,7 @@ JE_word galagaShotFreq;
 JE_longint galagaLife;
 
 JE_boolean debug; /*Debug Mode*/
-JE_word debugTime, lastDebugTime;
+Uint32 debugTime, lastDebugTime;
 JE_longint debugHistCount;
 JE_real debugHist;
 JE_word curLoc; /*Current Pixel location of background 1*/

@@ -728,7 +728,7 @@ JE_boolean JE_difficultySelect( void )
 void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
 {
 	*shapes = malloc(shapeSize);
-	fread(*shapes, 1, shapeSize, f);
+	efread(*shapes, sizeof(JE_byte), shapeSize, f);
 }
 
 void JE_loadMainShapeTables( void )
@@ -749,10 +749,10 @@ void JE_loadMainShapeTables( void )
 		JE_resetFile(&f, "TYRIAN.SHP");
 	}
 
-	fread(&shpNumb, 2, 1, f);
+	efread(&shpNumb, sizeof(JE_word), 1, f);
 	for (x = 0; x < shpNumb; x++)
 	{
-		fread(&shpPos[x], sizeof(shpPos[x]), 1, f);
+		efread(&shpPos[x], sizeof(JE_longint), 1, f);
 	}
 	fseek(f, 0, SEEK_END);
 	shpPos[shpNumb] = ftell(f);

@@ -29,6 +29,8 @@
 
 typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 
+void JE_starShowVGA( void );
+
 void JE_main( void );
 void JE_loadMap( void );
 void JE_titleScreen( JE_boolean animate );

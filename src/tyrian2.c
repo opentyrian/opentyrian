@@ -112,11 +112,57 @@ const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
 
 const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
 
+void JE_starShowVGA( void )
+{
+	JE_byte *src;
+	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
+
+	int y;
+
+	if (!playerEndLevel && !skipStarShowVGA)
+	{
+
+		s = VGAScreen->pixels;
+
+		src = VGAScreen->pixels; /*!*/
+		src += 24;
+
+		if (smoothScroll != 0 && thisPlayerNum != 2)
+		{
+			while (delaycount() != 0)
+				if (delaycount() > 16) /* MXD: time slicer releaser */
+					SDL_Delay(16);     /*      remove if causing undesired delay */
+			setjasondelay(frameCountMax);
+		}
+
+		if (starShowVGASpecialCode == 1)
+		{
+			/* TODO FlippedOut */
+		} else if (starShowVGASpecialCode == 2 && processorType >= 2) {
+			/* TODO LightBulb */
+		} else {
+			for (y = 0; y < 184; y++)
+			{
+				memcpy(s, src, 264);
+				s += VGAScreen->w;
+				src += VGAScreen->w;
+			}
+		}
+		JE_showVGA();
+	}
+
+	quitRequested = FALSE;
+	skipStarShowVGA = FALSE;
+}
+
+
 void JE_main( void )
 {
 	int i, j, k;
 	JE_byte **bp, *src;
 	unsigned char *s; /* screen pointer, 8-bit specific */
+
+	char buffer[256];
 
 	loadTitleScreen = TRUE;
 
@@ -442,12 +488,12 @@ start_level_first:
 			exit(1);
 		}
 
-		fwrite(&episodeNum, 1, 1, recordFile);
-		fwrite(levelName, 1, 10, recordFile);
-		fwrite(&lvlFileNum, 1, 1, recordFile);
-		fwrite(pItems, 1, 12, recordFile);
-		fwrite(portPower, 1, 5, recordFile);
-		fwrite(&levelSong, 1, 1, recordFile);
+		efwrite(&episodeNum, 1, 1, recordFile);
+		efwrite(levelName, 1, 10, recordFile);
+		efwrite(&lvlFileNum, 1, 1, recordFile);
+		efwrite(pItems, 1, 12, recordFile);
+		efwrite(portPower, 1, 5, recordFile);
+		efwrite(&levelSong, 1, 1, recordFile);
 
 		lastMoveWait = 0;
 	}
@@ -1172,6 +1218,106 @@ drawplayershotloopend:
 	/*=================================*/
 	/* TODO */
 
+	/*-------      DEbug      ---------*/
+	debugTime = SDL_GetTicks();
+	tempw = lastmouse_but;
+	tempX = mouse_x;
+	tempY = mouse_y;
+  
+	if (debug /** /!\ **/ || 1)
+	{
+
+		strcpy(tempStr, "");
+		for (temp = 0; temp < 9; temp++)
+		{
+			sprintf(tempStr, "%s%c", tempStr,  smoothies[temp] + 48);
+		}
+		sprintf(buffer, "SM = %s", tempStr);
+		JE_outText(30, 70, buffer, 4, 0);
+
+		sprintf(buffer, "Memory left = %d", -1);
+		JE_outText(30, 80, buffer, 4, 0);
+		sprintf(buffer, "Enemies onscreen = %d", enemyOnScreen);
+		JE_outText(30, 90, buffer, 6, 0);
+
+		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
+		debugHistCount++;
+		sprintf(tempStr, "%2.3f", 1000.0f / ROUND(debugHist / debugHistCount));
+		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapx - 1) * 12 + PX, curLoc, tempStr, lastTurn2, lastTurn, PX, PY);
+		JE_outText(45, 175, buffer, 15, 3);
+		lastDebugTime = debugTime;
+	}
+
+	if (displayTime > 0)
+	{
+		displayTime--;
+		JE_outTextAndDarken(90, 10, miscText[59], 15, (JE_byte)flash - 8, FONT_SHAPES);
+		flash += flashChange;
+		if (flash > 4 || flash == 0)
+		{
+			flashChange = -flashChange;
+		}
+	}
+
+	/*Pentium Speed Mode?*/
+	if (pentiumMode)
+	{
+		if (frameCountMax == 2)
+		{
+			frameCountMax = 3;
+		} else {
+			frameCountMax = 2;
+		}
+	}
+
+	/*--------  Level Timer    ---------*/
+	if (levelTimer)
+	{
+		if (levelTimerCountdown > 0)
+		{
+			levelTimerCountdown--;
+			if (levelTimerCountdown == 0)
+			{
+				/*TODO JE_eventJump(levelTimerJumpTo);*/
+			}
+
+			if (levelTimerCountdown > 200)
+			{
+				if (levelTimerCountdown % 100 == 0)
+				{
+					soundQueue[7] = 17;
+				}
+
+				if (levelTimerCountdown % 10 == 0)
+				{
+					soundQueue[6] = 24;  /*28 or 24*/
+				}
+            } else {
+				if (levelTimerCountdown % 20 == 0)
+				{
+					soundQueue[7] = 17;
+				}
+			}
+
+			JE_textShade (140, 6, miscText[66], 7, (levelTimerCountdown % 20) / 3, FULL_SHADE);
+			sprintf(buffer, "%.1f", levelTimerCountdown / 100.0f);
+			JE_dString (100, 2, buffer, SMALL_FONT_SHAPES);
+		}
+	}
+
+/* TODO */
+
+	JE_inGameDisplays();
+
+	JE_starShowVGA();
+
+/* TODO */
+
+	if (reallyEndLevel)
+	{
+		/* TODO goto startlevel;*/
+	}
+	goto levelloop;
 }
 
 /* --- Load Level/Map Data --- */
@@ -1858,10 +2004,10 @@ new_game:
 
 			temp = fgetc(recordFile);
 			JE_initEpisode(temp);
-			fread(levelName, 1, 10, recordFile); levelName[10] = '\0';
+			efread(levelName, 1, 10, recordFile); levelName[10] = '\0';
 			lvlFileNum = fgetc(recordFile);
-			fread(pItems, 1, 12, recordFile);
-			fread(portPower, 1, 5, recordFile);
+			efread(pItems, sizeof(JE_byte), 12, recordFile);
+			efread(portPower, sizeof(JE_byte), 5, recordFile);
 			levelSong = fgetc(recordFile);
 
 			temp = fgetc(recordFile);
@@ -1882,27 +2028,27 @@ new_game:
 
 		char_mapFile = fgetc(lvlFile);
 		char_shapeFile = fgetc(lvlFile);
-		fread(&mapx,  2, 1, lvlFile);
-		fread(&mapx2, 2, 1, lvlFile);
-		fread(&mapx3, 2, 1, lvlFile);
+		efread(&mapx,  sizeof(JE_word), 1, lvlFile);
+		efread(&mapx2, sizeof(JE_word), 1, lvlFile);
+		efread(&mapx3, sizeof(JE_word), 1, lvlFile);
 
-		fread(&levelEnemyMax, 2, 1, lvlFile);
+		efread(&levelEnemyMax, sizeof(JE_word), 1, lvlFile);
 		for (x = 0; x < levelEnemyMax; x++)
 		{
-			fread(&levelEnemy[x], 2, 1, lvlFile);
+			efread(&levelEnemy[x], sizeof(JE_word), 1, lvlFile);
 		}
 
-		fread(&maxEvent, 2, 1, lvlFile);
+		efread(&maxEvent, sizeof(JE_word), 1, lvlFile);
 		for (x = 0; x < maxEvent; x++)
 		{
-			fread(&eventRec[x].eventTime, sizeof(JE_word), 1, lvlFile);
-			fread(&eventRec[x].eventType, sizeof(JE_byte), 1, lvlFile);
-			fread(&eventRec[x].eventDat,  sizeof(JE_integer), 1, lvlFile);
-			fread(&eventRec[x].eventDat2, sizeof(JE_integer), 1, lvlFile);
-			fread(&eventRec[x].eventDat3, sizeof(JE_shortint), 1, lvlFile);
-			fread(&eventRec[x].eventDat5, sizeof(JE_shortint), 1, lvlFile);
-			fread(&eventRec[x].eventDat6, sizeof(JE_shortint), 1, lvlFile);
-			fread(&eventRec[x].eventDat4, sizeof(JE_byte), 1, lvlFile);
+			efread(&eventRec[x].eventTime, sizeof(JE_word), 1, lvlFile);
+			efread(&eventRec[x].eventType, sizeof(JE_byte), 1, lvlFile);
+			efread(&eventRec[x].eventDat,  sizeof(JE_integer), 1, lvlFile);
+			efread(&eventRec[x].eventDat2, sizeof(JE_integer), 1, lvlFile);
+			efread(&eventRec[x].eventDat3, sizeof(JE_shortint), 1, lvlFile);
+			efread(&eventRec[x].eventDat5, sizeof(JE_shortint), 1, lvlFile);
+			efread(&eventRec[x].eventDat6, sizeof(JE_shortint), 1, lvlFile);
+			efread(&eventRec[x].eventDat4, sizeof(JE_byte), 1, lvlFile);
 		}
 		eventRec[x].eventTime = 65500;  /*Not needed but just in case*/
 
@@ -1911,12 +2057,12 @@ new_game:
 		/*debuginfo('Loading Map');*/
 
 		/* MAP SHAPE LOOKUP TABLE - Each map is directly after level */
-		fread(mapSh, sizeof(mapSh), 1, lvlFile);
+		efread(mapSh, sizeof(JE_word), sizeof(mapSh) / sizeof(JE_word), lvlFile);
 		for (temp = 0; temp < 3; temp++)
 		{
 			for (temp2 = 0; temp2 < 128; temp2++)
 			{
-				mapSh[temp][temp2] = SDL_SwapBE16(mapSh[temp][temp2]);
+				mapSh[temp][temp2] = SDL_Swap16(mapSh[temp][temp2]);
 			}
 		}
 
@@ -1932,7 +2078,7 @@ new_game:
 			{
 				memset(shape, 0, sizeof(shape));
 			} else {
-				fread(shape, sizeof(shape), 1, shpFile);
+				efread(shape, sizeof(JE_byte), sizeof(shape), shpFile);
 			}
 
 			/* Match 1 */
@@ -2001,7 +2147,7 @@ new_game:
 
 		fclose(shpFile);
 
-		fread(mapBuf, 1, 14 * 300, lvlFile);
+		efread(mapBuf, sizeof(JE_byte), 14 * 300, lvlFile);
 		bufLoc = 0;              /* MAP NUMBER 1 */
 		for (y = 0; y < 300; y++)
 		{
@@ -2012,7 +2158,7 @@ new_game:
 			}
 		}
 
-		fread(mapBuf, 1, 14 * 600, lvlFile);
+		efread(mapBuf, sizeof(JE_byte), 14 * 600, lvlFile);
 		bufLoc = 0;              /* MAP NUMBER 2 */
 		for (y = 0; y < 600; y++)
 		{
@@ -2023,7 +2169,7 @@ new_game:
 			}
 		}
 
-		fread(mapBuf, 1, 15 * 600, lvlFile);
+		efread(mapBuf, sizeof(JE_byte), 15 * 600, lvlFile);
 		bufLoc = 0;              /* MAP NUMBER 3 */
 		for (y = 0; y < 600; y++)
 		{

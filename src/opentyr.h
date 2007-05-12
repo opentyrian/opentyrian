@@ -56,6 +56,9 @@ extern const char *opentyrian_str;
 
 char *strnztcpy( char *to, char *from, size_t count );
 
+int efread( void *buffer, size_t size, size_t num, FILE *stream );
+int efwrite( void *buffer, size_t size, size_t num, FILE *stream );
+
 void opentyrian_menu( void );
 
 #endif /* OPENTYRIAN_H */

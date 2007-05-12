@@ -279,7 +279,7 @@ void JE_readCryptLn( FILE* f, char *s )
 	int size;
 
 	size = getc(f);
-	fread(s, size, 1, f);
+	efread(s, 1, size, f);
 	s[size] = '\0';
 	JE_decryptString(s, size);
 }
@@ -672,39 +672,39 @@ void JE_loadConfiguration( void )
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed 
 		   anyways, so it's not like they'll change. */
 		background2 = 0;
-		fread(&background2, 1, 1, fi);
-		fread(&gameSpeed, 1, 1, fi);
+		efread(&background2, 1, 1, fi);
+		efread(&gameSpeed, 1, 1, fi);
 		
 		/* Wait what? */
-		fread(&inputDevice, 1, 1, fi);
+		efread(&inputDevice, 1, 1, fi);
 		inputDevice = 0;
 		
-		fread(&jConfigure, 1, 1, fi);
+		efread(&jConfigure, 1, 1, fi);
 		if (jConfigure == 0) /* Dunno what this is about. */
 		{
 			jConfigure = 1;
 		}
 		
-		fread(&versionNum, 1, 1, fi);
+		efread(&versionNum, 1, 1, fi);
 		if (resetVersion)
 		{
 			versionNum = 2; /* JE: {Shareware 1.0 and Registered 1.1 = 1} */
 		}
 		
-		fread(&processorType, 1, 1, fi);
-		fread(&junk, 1, 1, fi); /* Unused variable -- was "BLOCKREAD (f, midiport   , 1);" */
-		fread(&soundEffects, 1, 1, fi);
-		fread(&gammaCorrection, 1, 1, fi);
-		fread(&difficultyLevel, 1, 1, fi);
-		fread(joyButtonAssign, 4, 1, fi); /* 4 bytes */
+		efread(&processorType, 1, 1, fi);
+		efread(&junk, 1, 1, fi); /* Unused variable -- was "BLOCKREAD (f, midiport   , 1);" */
+		efread(&soundEffects, 1, 1, fi);
+		efread(&gammaCorrection, 1, 1, fi);
+		efread(&difficultyLevel, 1, 1, fi);
+		efread(joyButtonAssign, 4, 1, fi); /* 4 bytes */
 		
-		fread(&tyrMusicVolume, 2, 1, fi);
-		fread(&fxVolume, 2, 1, fi);
+		efread(&tyrMusicVolume, 2, 1, fi);
+		efread(&fxVolume, 2, 1, fi);
 		
-		fread(&inputDevice1, 1, 1, fi);
-		fread(&inputDevice2, 1, 1, fi);
+		efread(&inputDevice1, 1, 1, fi);
+		efread(&inputDevice2, 1, 1, fi);
 		
-		fread(keySettings, 8, 1, fi);
+		efread(keySettings, 8, 1, fi);
 		
 		fclose(fi);
 		
@@ -741,7 +741,7 @@ void JE_loadConfiguration( void )
 	{
 
 		fseek(fi, 0, SEEK_SET);
-		fread(saveTemp, 1, sizeof(saveTemp), fi);
+		efread(saveTemp, 1, sizeof(saveTemp), fi);
 		JE_decryptSaveTemp();
 		
 		/* SYN: The original mostly blasted the save file into raw memory. However, our lives are not so
@@ -951,7 +951,7 @@ void JE_saveConfiguration( void )
 	f = fopen_check("TYRIAN.SAV", "wb");
 	if (f)
 	{
-		fwrite(saveTemp, 1, sizeof(saveTemp), f);
+		efwrite(saveTemp, 1, sizeof(saveTemp), f);
 		fclose(f);
 	}
 	JE_decryptSaveTemp();
@@ -959,25 +959,25 @@ void JE_saveConfiguration( void )
 	f = fopen_check("TYRIAN.CFG", "wb");
 	if (f)
 	{
-		fwrite(&background2, 1, 1, f);
-		fwrite(&gameSpeed, 1, 1, f);
-		fwrite(&inputDevice, 1, 1, f);
-		fwrite(&jConfigure, 1, 1, f);
-		fwrite(&versionNum, 1, 1, f);
-		fwrite(&processorType, 1, 1, f);
-		fwrite(&junk, 1, 1, f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
-		fwrite(&soundEffects, 1, 1, f);
-		fwrite(&gammaCorrection, 1, 1, f);
-		fwrite(&difficultyLevel, 1, 1, f);
-		fwrite(joyButtonAssign, 1, 4, f);
+		efwrite(&background2, 1, 1, f);
+		efwrite(&gameSpeed, 1, 1, f);
+		efwrite(&inputDevice, 1, 1, f);
+		efwrite(&jConfigure, 1, 1, f);
+		efwrite(&versionNum, 1, 1, f);
+		efwrite(&processorType, 1, 1, f);
+		efwrite(&junk, 1, 1, f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
+		efwrite(&soundEffects, 1, 1, f);
+		efwrite(&gammaCorrection, 1, 1, f);
+		efwrite(&difficultyLevel, 1, 1, f);
+		efwrite(joyButtonAssign, 1, 4, f);
 		
-		fwrite(&tyrMusicVolume, 1, 2, f);
-		fwrite(&fxVolume, 1, 2, f);
+		efwrite(&tyrMusicVolume, 1, 2, f);
+		efwrite(&fxVolume, 1, 2, f);
 		
-		fwrite(&inputDevice1, 1, 1, f);
-		fwrite(&inputDevice2, 1, 1, f);
+		efwrite(&inputDevice1, 1, 1, f);
+		efwrite(&inputDevice2, 1, 1, f);
 		
-		fwrite(keySettings, 1, 8, f);
+		efwrite(keySettings, 1, 8, f);
 	 
 		fclose(f);
 	}

@@ -64,7 +64,7 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 	JE_word tempw;
 	JE_word z;
 
-	fread(&tempw, 2, 1, f);
+	efread(&tempw, sizeof(JE_word), 1, f);
 	maxShape[table] = tempw;
 
 	if (!loadOverride)
@@ -77,17 +77,17 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 	{
 		for (z = 0; z < min-1; z++)
 		{
-			fread(&shapeExist[table][z], 1, 1, f);
+			shapeExist[table][z] = getc(f);
 
 			if (shapeExist[table][z])
 			{
-				fread(&shapeX   [table][z], 2, 1, f);
-				fread(&shapeY   [table][z], 2, 1, f);
-				fread(&shapeSize[table][z], 2, 1, f);
+				efread(&shapeX   [table][z], sizeof(JE_word), 1, f);
+				efread(&shapeY   [table][z], sizeof(JE_word), 1, f);
+				efread(&shapeSize[table][z], sizeof(JE_word), 1, f);
 
-				(*shapeArray)[table][z] = malloc(shapeX[table][z]*shapeY[table][z]);
+				(*shapeArray)[table][z] = malloc(shapeX[table][z] * shapeY[table][z]);
 
-				fread((*shapeArray)[table][z], shapeSize[table][z], 1, f);
+				efread((*shapeArray)[table][z], sizeof(JE_byte), shapeSize[table][z], f);
 
 				free((*shapeArray)[table][z]);
 			}
@@ -97,17 +97,17 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 	for (z = min-1; z < max; z++)
 	{
 		tempw = z-min+1;
-		fread(&shapeExist[table][tempw], 1, 1, f);
+		shapeExist[table][tempw] = getc(f);
 
 		if (shapeExist[table][tempw])
 		{
-			fread(&shapeX   [table][tempw], 2, 1, f);
-			fread(&shapeY   [table][tempw], 2, 1, f);
-			fread(&shapeSize[table][tempw], 2, 1, f);
+			efread(&shapeX   [table][tempw], sizeof(JE_word), 1, f);
+			efread(&shapeY   [table][tempw], sizeof(JE_word), 1, f);
+			efread(&shapeSize[table][tempw], sizeof(JE_word), 1, f);
 
 			(*shapeArray)[table][tempw] = malloc(shapeX[table][tempw]*shapeY[table][tempw]);
 
-			fread((*shapeArray)[table][tempw], shapeSize[table][tempw], 1, f);
+			efread((*shapeArray)[table][tempw], sizeof(JE_byte), shapeSize[table][tempw], f);
 		}
 	}
 }

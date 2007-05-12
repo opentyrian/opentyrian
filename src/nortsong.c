@@ -132,8 +132,8 @@ void JE_loadSong( JE_word songnum )
 	{
 		/* SYN: We're loading offsets into MUSIC.MUS for each song here. */
 		notYetLoadedMusic = FALSE;
-		fread(&x, sizeof(x), 1, fi);
-		fread(songPos, sizeof(songPos), 1, fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
+		efread(&x, sizeof(x), 1, fi);
+		efread(songPos, sizeof(songPos), 1, fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
 		fseek(fi, 0, SEEK_END);
 		songPos[MUSIC_NUM] = ftell(fi); /* Store file size */
 	}
@@ -141,7 +141,7 @@ void JE_loadSong( JE_word songnum )
 	/* SYN: Now move to the start of the song we want, and load the number of bytes given by the
 	   difference in offsets between it and the next song. */
 	fseek(fi, songPos[songnum - 1], SEEK_SET);
-	fread(&musicData, (songPos[songnum] - songPos[songnum - 1]), 1, fi);
+	efread(&musicData, 1, songPos[songnum] - songPos[songnum - 1], fi);
 	
 	/* currentSong = songnum; */
 	
@@ -159,11 +159,11 @@ void JE_loadSndFile( void )
 
 	/* SYN: Loading offsets into TYRIAN.SND */
 	JE_resetFile(&fi, "TYRIAN.SND");
-	fread(&sndNum, sizeof(sndNum), 1, fi);
+	efread(&sndNum, sizeof(sndNum), 1, fi);
 	
 	for (x = 0; x < sndNum; x++)
 	{
-		fread(&sndPos[0][x], sizeof(sndPos[0][x]), 1, fi);
+		efread(&sndPos[0][x], sizeof(sndPos[0][x]), 1, fi);
 	}
 	fseek(fi, 0, SEEK_END);
 	sndPos[1][sndNum] = ftell(fi); /* Store file size */
@@ -174,7 +174,7 @@ void JE_loadSndFile( void )
 		fxSize[z] = (sndPos[0][z+1] - sndPos[0][z]); /* Store sample sizes */
 		if (allocd_digifx) free(digiFx[z]);
 		digiFx[z] = malloc(fxSize[z]);
-		fread(digiFx[z], fxSize[z], 1, fi); /* JE: Load sample to buffer */
+		efread(digiFx[z], 1, fxSize[z], fi); /* JE: Load sample to buffer */
 	}
 	allocd_digifx = TRUE;
 	
@@ -187,11 +187,11 @@ void JE_loadSndFile( void )
 	} else {
 		JE_resetFile(&fi, "VOICES.SND");
 	}
-	fread(&sndNum, sizeof(sndNum), 1, fi);
+	efread(&sndNum, sizeof(sndNum), 1, fi);
 
 	for (x = 0; x < sndNum; x++)
 	{
-		fread(&sndPos[1][x], sizeof(sndPos[1][x]), 1, fi);
+		efread(&sndPos[1][x], sizeof(sndPos[1][x]), 1, fi);
 	}
 	fseek(fi, 0, SEEK_END);
 	sndPos[1][sndNum] = ftell(fi); /* Store file size */
@@ -206,7 +206,7 @@ void JE_loadSndFile( void )
 		if (templ < 1) templ = 1;
 		fxSize[z + y] = templ; /* Store sample sizes */
 		digiFx[z + y] = malloc(fxSize[z + y]);
-		fread(digiFx[z + y], fxSize[z + y], 1, fi); /* JE: Load sample to buffer */
+		efread(digiFx[z + y], 1, fxSize[z + y], fi); /* JE: Load sample to buffer */
 	}
 	
 	fclose(fi);

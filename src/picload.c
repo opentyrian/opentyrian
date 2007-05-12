@@ -55,17 +55,17 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 	if (notYetLoadedPCX)
 	{
 		notYetLoadedPCX = FALSE;
-		fread(&x, 2, 1, PCXfile);
+		efread(&x, sizeof(JE_word), 1, PCXfile);
 		for (x = 0; x < PCX_NUM; x++)
 		{
-			fread(&pcxpos[x], sizeof(pcxpos[x]), 1, PCXfile);
+			efread(&pcxpos[x], sizeof(JE_longint), 1, PCXfile);
 		}
 		fseek(PCXfile, 0, SEEK_END);
 		pcxpos[PCX_NUM] = ftell(PCXfile);
 	}
 
 	fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
-	fread(buf, 1, pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
+	efread(buf, sizeof(JE_byte), pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
 	fclose(PCXfile);
 
 	p = (JE_byte *)buf;

@@ -65,7 +65,7 @@ void JE_loadShapeFile( JE_ShapeType *shapes, JE_char s )
 
 		if (active)
 		{
-			fread((*shapes)[x], 1, sizeof(*(*shapes)[x]), f);
+			efread((*shapes)[x], sizeof(JE_byte), sizeof(*(*shapes)[x]), f);
 		} else {
 			memset((*shapes)[x], 0, sizeof(*(*shapes)[x]));
 		}
@@ -95,7 +95,7 @@ void JE_loadNewShapeFile( JE_NewShapeType *shapes, JE_char s )
 
 		if (active)
 		{
-			fread(tempshape, 1, sizeof(tempshape), f);
+			efread(tempshape, sizeof(JE_byte), sizeof(tempshape), f);
 
 			for (y = 0; y <= 13; y++)
 			{
@@ -162,7 +162,7 @@ void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 
 	*shapes = malloc(*shapeSize);
 
-	fread(*shapes, 1, *shapeSize, f);
+	efread(*shapes, sizeof(JE_byte), *shapeSize, f);
 
 	fclose(f);
 }

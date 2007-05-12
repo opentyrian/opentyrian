@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <assert.h>
 
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
@@ -59,10 +60,87 @@ const char *opentyrian_menu_items[] =
 	"Return to Main Menu"
 };
 
+/* zero-terminated strncpy */
 char *strnztcpy( char *to, char *from, size_t count )
 {
 	to[count] = '\0';
 	return strncpy(to, from, count);
+}
+
+/* endian-swapping fread */
+int efread( void *buffer, size_t size, size_t num, FILE *stream )
+{
+	int i, f = fread(buffer, size, num, stream);
+
+	switch (size)
+	{
+		case 2:
+			for (i = 0; i < num; i++)
+			{
+				((Uint16 *)buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
+			}
+			break;
+		case 4:
+			for (i = 0; i < num; i++)
+			{
+				((Uint32 *)buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
+			}
+			break;
+		case 8:
+			for (i = 0; i < num; i++)
+			{
+				((Uint64 *)buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
+			}
+			break;
+		default:
+			break;
+	}
+
+	return f;
+}
+
+/* endian-swapping fwrite */
+int efwrite( void *buffer, size_t size, size_t num, FILE *stream )
+{
+	void *swap_buffer;
+	int i, f;
+
+	switch (size)
+	{
+		case 2:
+			swap_buffer = malloc(size * num);
+			for (i = 0; i < num; i++)
+			{
+				((Uint16 *)swap_buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
+			}
+			break;
+		case 4:
+			swap_buffer = malloc(size * num);
+			for (i = 0; i < num; i++)
+			{
+				((Uint32 *)swap_buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
+			}
+			break;
+		case 8:
+			swap_buffer = malloc(size * num);
+			for (i = 0; i < num; i++)
+			{
+				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
+			}
+			break;
+		default:
+			swap_buffer = buffer;
+			break;
+	}
+
+	f = fwrite(swap_buffer, size, num, stream);
+
+	if (swap_buffer != buffer)
+	{
+		free(swap_buffer);
+	}
+
+	return f;
 }
 
 void opentyrian_menu( void )

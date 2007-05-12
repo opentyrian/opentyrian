@@ -57,24 +57,24 @@ void JE_loadPCX( char *name, JE_boolean storePalette)
 #endif
 
 	JE_resetFile(&fi, name);
-	fread(&header.manufacturer, 1, 1, fi);
-	fread(&header.version, 1, 1, fi);
-	fread(&header.encoding, 1, 1, fi);
-	fread(&header.bits_per_pixel, 1, 1, fi);
-	fread(&header.xmin, 2, 1, fi);
-	fread(&header.ymin, 2, 1, fi);
-	fread(&header.xmax, 2, 1, fi);
-	fread(&header.ymax, 2, 1, fi);
-	fread(&header.hres, 2, 1, fi);
-	fread(&header.vres, 2, 1, fi);
+	efread(&header.manufacturer, 1, 1, fi);
+	efread(&header.version, 1, 1, fi);
+	efread(&header.encoding, 1, 1, fi);
+	efread(&header.bits_per_pixel, 1, 1, fi);
+	efread(&header.xmin, 2, 1, fi);
+	efread(&header.ymin, 2, 1, fi);
+	efread(&header.xmax, 2, 1, fi);
+	efread(&header.ymax, 2, 1, fi);
+	efread(&header.hres, 2, 1, fi);
+	efread(&header.vres, 2, 1, fi);
 	for (i = 0; i < 48; i++)
 	{
-		fread(&header.palette[i], 1, 1, fi);
+		efread(&header.palette[i], 1, 1, fi);
 	}
-	fread(&header.reserved, 1, 1, fi);
-	fread(&header.colour_planes, 1, 1, fi);
-	fread(&header.bytes_per_line, 2, 1, fi);
-	fread(&header.palette_type, 2, 1, fi);
+	efread(&header.reserved, 1, 1, fi);
+	efread(&header.colour_planes, 1, 1, fi);
+	efread(&header.bytes_per_line, 2, 1, fi);
+	efread(&header.palette_type, 2, 1, fi);
 
 	if ((header.manufacturer == 10) && (header.version == 5) && (header.bits_per_pixel == 8) && (header.colour_planes == 1))
 	{
