@@ -41,11 +41,21 @@ OBJS := $(foreach obj, $(OBJS), obj/$(obj))
 $(TARGET) : $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
+ifneq ($(MAKECMDGOALS), clean)
+-include $(OBJS:.o=.d)
+endif
+
+obj/%.d : src/%.c
+	@echo 'Generating dependencies for file $<'
+	@set -e; $(CC) -MM -MT obj/$*.o $(CFLAGS) $< \
+	    | sed 's/obj\/\($*\)\.o[ :]*/obj\/\1.o obj\/$*\.d : /g' > $@; \
+	    [ -s $@ ] || rm -f $@
+
 obj/%.o : src/%.c
 	$(CC) -o $@ -c $(CFLAGS) $<
 
 .PHONY : clean
 
 clean :
-	rm -f obj/*.o
+	rm -f obj/*.o obj/*.d
 	rm -f $(TARGET)
