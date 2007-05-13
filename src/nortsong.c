@@ -133,7 +133,7 @@ void JE_loadSong( JE_word songnum )
 		/* SYN: We're loading offsets into MUSIC.MUS for each song here. */
 		notYetLoadedMusic = FALSE;
 		efread(&x, sizeof(x), 1, fi);
-		efread(songPos, sizeof(JE_lontint), sizeof(songPos) / sizeof(JE_lontint), fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
+		efread(songPos, sizeof(JE_longint), sizeof(songPos) / sizeof(JE_longint), fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
 		fseek(fi, 0, SEEK_END);
 		songPos[MUSIC_NUM] = ftell(fi); /* Store file size */
 	}
