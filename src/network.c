@@ -44,8 +44,8 @@ JE_word tempw;
 
 JE_byte gameQuitDelay;  /* Make sure the game doesn't quit within the first few frames of starting */
 
-JE_byte outputData[10];
-JE_byte inputData[10];
+JE_byte outputData[10]; /* [1..10] */
+JE_byte inputData[10]; /* [1..10] */
 
 /* Special Requests */
 JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
@@ -57,5 +57,21 @@ JE_byte exchangeCount;
 
 /* Network Stuff */
 JE_boolean netSuccess;
+
+void JE_updateStream( void )
+{
+	STUB(JE_updateStream);
+}
+
+void JE_setNetByte( JE_byte send)
+{
+	STUB(JE_setNetByte);
+}
+
+JE_boolean JE_scanNetByte( JE_byte scan )
+{
+	STUB(JE_scanNetByte);
+	return TRUE;
+}
 
 /* TODO */

@@ -38,6 +38,7 @@
 #include "joystick.h"
 #include "network.h"
 #include "pcxload.h"
+#include "backgrnd.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -78,7 +79,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 
 	setjasondelay2(1);
 
-	/* TODO JE_setNetByte(0);*/
+	JE_setNetByte(0);
 
 	if (useLastBank)
 	{
@@ -125,7 +126,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 				{
 					setjasondelay(frameCountMax);
 
-					/* TODO JE_updateStream();*/
+					JE_updateStream();
 					if (netQuit)
 					{
 						return;
@@ -155,13 +156,13 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 					{
 						frameCountMax = 0;
 					}
-					do
+					do {
 						if (levelWarningDisplay)
 						{
 							JE_updateWarning();
 						}
-						/* TODO JE_updateStream();*/
-					while (!(delaycount() == 0 || ESCPressed));
+						JE_updateStream();
+					} while (!(delaycount() == 0 || ESCPressed));
 					JE_showVGA();
 				}
 			}
@@ -1419,9 +1420,104 @@ void JE_pauseGame( void )
 	STUB(JE_pauseGame);
 }
 
+void JE_playerMovement( JE_byte inputDevice,
+                        JE_byte playerNum,
+                        JE_word shipGr,
+                        JE_byte *shapes9ptr,
+                        JE_integer *armorLevel, JE_integer *baseArmor,
+                        JE_shortint *shield, JE_shortint *shieldMax,
+                        JE_word *playerInvulnerable,
+                        JE_integer *PX, JE_integer *PY,
+                        JE_integer *lastPX, JE_integer *lastPY,
+                        JE_integer *lastPX2, JE_integer *lastPY2,
+                        JE_integer *PXChange, JE_integer *PYChange,
+                        JE_integer *lastTurn, JE_integer *lastTurn2, JE_integer *tempLastTurn2,
+                        JE_byte *stopWaitX, JE_byte *stopWaitY,
+                        JE_word *mouseX, JE_word *mouseY,
+                        JE_boolean *playerAlive,
+                        JE_byte *playerStillExploding,
+                        JE_PItemsType pItems )
+{
+	STUB(JE_playerMovement);
+}
+
+
 void JE_mainGamePlayerFunctions( void )
 {
-	STUB(JE_mainGamePlayerfunctions);
+	/*PLAYER MOVEMENT/MOUSE ROUTINES*/
+
+	useButtonAssign = TRUE;
+
+	if (endLevel && levelEnd > 0)
+	{
+		levelEnd--;
+		levelEndWarp++;
+	}
+
+	/*Reset Street-Fighter commands*/
+	memset(SFExecuted, 0, sizeof(SFExecuted));
+
+	makeMouseDelay = TRUE;
+	portConfigChange = FALSE;
+	
+	if (twoPlayerMode)
+	{
+	
+		JE_playerMovement(playerDevice1 * !galagaMode, 1, shipGr, shipGrPtr,
+		                  &armorLevel, &baseArmor,
+		                  &shield, &shieldMax,
+		                  &playerInvulnerable1,
+		                  &PX, &PY, &lastPX, &lastPY, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &lastTurn, &lastTurn2, &tempLastTurn2, &stopWaitX, &stopWaitY,
+		                  &mouseX, &mouseY,
+		                  &playerAlive, &playerStillExploding, pItems);
+		JE_playerMovement(playerDevice2 * !galagaMode, 2, shipGr2, shipGr2ptr,
+		                  &armorLevel2, &baseArmor2,
+		                  &shield2, &shieldMax2,
+		                  &playerInvulnerable2,
+		                  &PXB, &PYB, &lastPXB, &lastPYB, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
+		                  &lastTurnB, &lastTurn2B, &tempLastTurn2B, &stopWaitXB, &stopWaitYB,
+		                  &mouseXB, &mouseYB,
+		                  &playerAliveB, &playerStillExploding2, pItemsPlayer2);
+	} else {
+		JE_playerMovement(0, 1, shipGr, shipGrPtr,
+		                  &armorLevel, &baseArmor,
+		                  &shield, &shieldMax,
+		                  &playerInvulnerable1,
+		                  &PX, &PY, &lastPX, &lastPY, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &lastTurn, &lastTurn2, &tempLastTurn2, &stopWaitX, &stopWaitY,
+		                  &mouseX, &mouseY,
+		                  &playerAlive, &playerStillExploding, pItems);
+	}
+
+	/*-----Horizontal Map Scrolling-----*/
+	if (twoPlayerMode)
+	{
+		tempX = (PX + PXB) / 2;
+	} else {
+		tempX = PX;
+	}
+
+	tempw = floor((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
+	mapX3Ofs   = tempw;
+	mapX3Pos   = mapX3Ofs % 24;
+	mapX3bpPos = 1 - (mapX3Ofs / 24);
+
+	mapX2Ofs   = (tempw * 2) / 3;
+	mapX2Pos   = mapX2Ofs % 24;
+	mapX2bpPos = 1 - (mapX2Ofs / 24);
+
+	oldMapXOfs = mapXOfs;
+	mapXOfs    = mapX2Ofs / 2;
+	mapXPos    = mapXOfs % 24;
+	mapXbpPos  = 1 - (mapXOfs / 24);
+
+	if (background3x1)
+	{
+		mapX3Ofs = mapXOfs;
+		mapX3Pos = mapXPos;
+		mapX3bpPos = mapXbpPos - 1;
+	}
 }
 
 char *JE_getName( JE_byte pnum )

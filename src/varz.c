@@ -486,16 +486,16 @@ JE_word     specialWeaponWpn;
 JE_boolean  linkToPlayer;
 
 JE_integer baseArmor, baseArmor2;
-JE_word shipGR, shipGR2;
-JE_byte *shipGRptr, *shipGR2ptr;
+JE_word shipGr, shipGr2;
+JE_byte *shipGrPtr, *shipGr2ptr;
 
 void JE_getShipInfo( void )
 {
 	JE_boolean extraShip, extraShip2;
 	JE_byte    base, base2;
 
-	shipGRptr = shapes9;
-	shipGR2ptr = shapes9;
+	shipGrPtr = shapes9;
+	shipGr2ptr = shapes9;
 
 	extraShip = pItems[11] > 90;
 	if (extraShip)
@@ -513,20 +513,20 @@ void JE_getShipInfo( void )
 
 	if (extraShip)
 	{
-		shipGR = JE_SGR(pItems[11] - 90, &shipGRptr);
+		shipGr = JE_SGr(pItems[11] - 90, &shipGrPtr);
 	} else {
-		shipGR = ships[pItems[11]].shipgraphic;
+		shipGr = ships[pItems[11]].shipgraphic;
 	}
 
 	extraShip2 = pItemsPlayer2[11] > 90;
 	if (extraShip2)
 	{
 		base2 = (pItemsPlayer2[11] - 91) * 15;
-		shipGR2 = JE_SGR(pItemsPlayer2[11] - 90, &shipGR2ptr);
+		shipGr2 = JE_SGr(pItemsPlayer2[11] - 90, &shipGr2ptr);
 
 		/* TODO baseArmor2 = editship.ships [base2 + 8];*/
 	} else {
-		shipGR2 = 0;
+		shipGr2 = 0;
 		armorLevel2 = 10;
     }
 
@@ -553,7 +553,7 @@ void JE_getShipInfo( void )
 	}
 }
 
-JE_word JE_SGR( JE_word ship, JE_byte **ptr )
+JE_word JE_SGr( JE_word ship, JE_byte **ptr )
 {
 	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
 

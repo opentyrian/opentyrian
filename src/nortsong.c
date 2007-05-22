@@ -43,7 +43,7 @@ JE_SongPosType songPos;
 
 JE_byte soundEffects = 1; /* TODO: Give this a real value, figure out what they mean. */
 
-JE_word frameCount, frameCount2, frameCountMax; /* TODO: Remind MXD to remove these later. */
+JE_word frameCount, frameCount2, frameCountMax;
 
 JE_byte currentSong = 0;
 JE_byte jConfigure = 0;

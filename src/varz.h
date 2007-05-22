@@ -367,12 +367,12 @@ extern JE_shortint specialWeaponFilter, specialWeaponFreq;
 extern JE_word specialWeaponWpn;
 extern JE_boolean linkToPlayer;
 extern JE_integer baseArmor, baseArmor2;
-extern JE_word shipGR, shipGR2;
-extern JE_byte *shipGRptr, *shipGR2ptr;
+extern JE_word shipGr, shipGr2;
+extern JE_byte *shipGrPtr, *shipGr2ptr;
 #endif
 
 void JE_getShipInfo( void );
-JE_word JE_SGR( JE_word ship, JE_byte **ptr );
+JE_word JE_SGr( JE_word ship, JE_byte **ptr );
 
 void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );

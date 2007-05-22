@@ -130,8 +130,8 @@ void JE_starShowVGA( void )
 		if (smoothScroll != 0 && thisPlayerNum != 2)
 		{
 			while (delaycount() != 0)
-				if (delaycount() > 16) /* MXD: time slicer releaser */
-					SDL_Delay(16);     /*      remove if causing undesired delay */
+				if (delaycount() > 16) /* <MXD> time slice releaser */
+					SDL_Delay(16);     /*       remove if causing undesired delay */
 			setjasondelay(frameCountMax);
 		}
 
@@ -158,7 +158,7 @@ void JE_starShowVGA( void )
 
 void JE_main( void )
 {
-	int i, j, k;
+	int i, j, l;
 	JE_byte **bp, *src;
 	unsigned char *s; /* screen pointer, 8-bit specific */
 
@@ -196,7 +196,104 @@ void JE_main( void )
 
 	/* TODO */
 
+	/*------------------------------GAME LOOP-----------------------------------*/
+
+
+	/* Startlevel is called after a previous level is over.  If the first level
+	   is started for a gaming session, startlevelfirst is called instead and
+	   this code is skipped.  The code here finishes the level and prepares for
+	   the loadmap function. */
+
 start_level:
+
+	if (galagaMode)
+	{
+		twoPlayerMode = FALSE;
+	}
+	
+	if (playDemo)
+	{
+		JE_selectSong(0);
+	}
+	
+	useButtonAssign = TRUE; /*Joystick button remapping*/
+	
+	/*Set keyboard to NO BIOS*/
+	/* TODO callBIOShandler = TRUE; */
+	/* TODO JE_clearKeyboard(); */
+	
+	if (eShapes1 != NULL)
+		free(eShapes1);
+	if (eShapes2 != NULL)
+		free(eShapes2);
+	if (eShapes3 != NULL)
+		free(eShapes3);
+	if (eShapes4 != NULL)
+		free(eShapes4);
+  
+	/* Normal speed */
+	if (fastPlay != 0)
+	{
+		smoothScroll = TRUE;
+		speed = 0x4300;
+		JE_resetTimerInt();
+		/* TODO nortsong.settimerint;*/
+	}
+
+	if (recordDemo || playDemo)
+	{
+		fclose(recordFile);
+		if (playDemo)
+		{
+			JE_fadeBlack(10);
+			/* TODO JE_wipekey();*/
+		}
+	}
+
+	if (isNetworkGame)
+	{
+		netQuit = FALSE;
+	}
+
+	difficultyLevel = oldDifficultyLevel;   /*Return difficulty to normal*/
+
+	if (!playDemo)
+	{
+		if (((playerAlive || (twoPlayerMode && playerAliveB))
+		   || normalBonusLevelCurrent || bonusLevelCurrent)
+		   && !playerEndLevel)
+		{
+			mainLevel = nextLevel;
+			JE_endLevelAni();
+			JE_selectSong(0xC001);  /*Fade song out*/
+
+		} else {
+
+			outputData[0] = 127;   /*Send 127 value if Game ends before next level*/
+			/* TODO JE_exchangePacket(1);*/
+			JE_selectSong(0xC001);  /*Fade song out*/
+
+			JE_fadeBlack(10);
+			if (twoPlayerMode)
+			{
+				temp = 22;
+			} else {
+				temp = 11;
+			}
+			JE_loadGame(temp);
+			if (doNotSaveBackup)
+			{
+				superTyrian = FALSE;
+				onePlayerAction = FALSE;
+				pItems[2] = 0;
+            }
+			if (bonusLevelCurrent && !playerEndLevel)
+			{
+				mainLevel = nextLevel;
+			}
+		}
+	}
+	doNotSaveBackup = FALSE;
 
 start_level_first:
 
@@ -277,25 +374,25 @@ start_level_first:
 	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
 
 	/* MAPX will already be set correctly */
-	mapy = 300 - 8;
-	mapy2 = 600 - 8;
-	mapy3 = 600 - 8;
-	mapyPos = &megaData1->mainmap[mapy][0] - 1;
-	mapy2Pos = &megaData2->mainmap[mapy2][0] - 1;
-	mapy3Pos = &megaData3->mainmap[mapy3][0] - 1;
-	mapxPos = 0;
-	mapxOfs = 0;
-	mapx2Pos = 0;
-	mapx3Pos = 0;
-	mapx3Ofs = 0;
-	mapxbpPos = 0;
-	mapx2bpPos = 0;
-	mapx3bpPos = 0;
+	mapY = 300 - 8;
+	mapY2 = 600 - 8;
+	mapY3 = 600 - 8;
+	mapYPos = &megaData1->mainmap[mapY][0] - 1;
+	mapY2Pos = &megaData2->mainmap[mapY2][0] - 1;
+	mapY3Pos = &megaData3->mainmap[mapY3][0] - 1;
+	mapXPos = 0;
+	mapXOfs = 0;
+	mapX2Pos = 0;
+	mapX3Pos = 0;
+	mapX3Ofs = 0;
+	mapXbpPos = 0;
+	mapX2bpPos = 0;
+	mapX3bpPos = 0;
 
-	map1yDelay = 1;
-	map1yDelayMax = 1;
-	map2yDelay = 1;
-	map2yDelayMax = 1;
+	map1YDelay = 1;
+	map1YDelayMax = 1;
+	map2YDelay = 1;
+	map2YDelayMax = 1;
 
 	musicFade = FALSE;
 
@@ -611,7 +708,7 @@ start_level_first:
 	BKwrap2 = &megaData1->mainmap[0][0];
 	BKwrap2to = &megaData1->mainmap[0][0];
 
-levelloop :
+level_loop:
 
 	if (isNetworkGame)
 	{
@@ -622,9 +719,9 @@ levelloop :
 	}
 
 	/*Background Wrapping*/
-	if (mapy2Pos <= BKwrap2)
+	if (mapY2Pos <= BKwrap2)
 	{
-		mapy2Pos = BKwrap2to;
+		mapY2Pos = BKwrap2to;
 	}
 
 
@@ -673,7 +770,7 @@ levelloop :
 
 	if (isNetworkGame && reallyEndLevel)
 	{
-		/* TODO goto startlevel;*/
+		goto start_level;
 	}
 
 
@@ -692,9 +789,9 @@ levelloop :
 		curLoc++;
 	}
 
-	if (map1yDelayMax > 1 && backMove < 2)
+	if (map1YDelayMax > 1 && backMove < 2)
 	{
-		if (map1yDelay == 1)
+		if (map1YDelay == 1)
 		{
 			backMove = 1;
 		} else {
@@ -711,11 +808,11 @@ levelloop :
 
 		/* Offset for top */
 		s += 11 * 24;
-		s += mapxPos;
+		s += mapXPos;
 
 		/* Map location number in BP */
-		bp = mapyPos;
-		bp += mapxbpPos;
+		bp = mapYPos;
+		bp += mapXbpPos;
 
 		if (backPos)
 		{
@@ -760,7 +857,7 @@ levelloop :
 				bp--;
 				src = *bp;
 				
-				for (k = 0; k < 28; k++)
+				for (l = 0; l < 28; l++)
 				{
 					memcpy(s, src, 24);
 
@@ -802,9 +899,9 @@ levelloop :
 	}
 
 	/*Set Movement of background 1*/
-	if (--map1yDelay == 0)
+	if (--map1YDelay == 0)
 	{
-		map1yDelay = map1yDelayMax;
+		map1YDelay = map1YDelayMax;
 
 		curLoc += backMove;
 
@@ -813,8 +910,8 @@ levelloop :
 		if (backPos > 27)
 		{
 			backPos -= 28;
-			mapy--;
-			mapyPos -= 14;  /*Map Width*/
+			mapY--;
+			mapYPos -= 14;  /*Map Width*/
 		}
 	}
 
@@ -1243,7 +1340,7 @@ drawplayershotloopend:
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
 		sprintf(tempStr, "%2.3f", 1000.0f / ROUND(debugHist / debugHistCount));
-		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapx - 1) * 12 + PX, curLoc, tempStr, lastTurn2, lastTurn, PX, PY);
+		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + PX, curLoc, tempStr, lastTurn2, lastTurn, PX, PY);
 		JE_outText(45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
 	}
@@ -1305,19 +1402,189 @@ drawplayershotloopend:
 		}
 	}
 
-/* TODO */
+	/*GAME OVER*/
+	if (!constantPlay && !constantDie)
+	{
+		if (allPlayersGone)
+		{
+			if (!(playerStillExploding == 0 && playerStillExploding2 == 0))
+			{
+				if (galagaMode)
+				{
+					playerStillExploding2 = 0;
+				}
+				musicFade = TRUE;
+			} else {
+				if (playDemo || normalBonusLevelCurrent || bonusLevelCurrent)
+				{
+					reallyEndLevel = TRUE;
+				} else {
+					JE_dString(120, 60, miscText[21], FONT_SHAPES);
+				}
+				JE_setMousePosition(159, 100); /* <MXD> scale? */
+				if (firstGameOver)
+				{
+					if (!playDemo)
+					{
+						JE_playSong(SONG_GAMEOVER);
+						JE_setVol(tyrMusicVolume, fxVolume);
+					}
+					firstGameOver = FALSE;
+				}
+
+				if (!playDemo)
+				{
+					service_SDL_events(TRUE);
+					JE_joystick2();
+					if (playDemo ||
+					   (newkey || button[0] || button[1] || button[2]) ||
+					   (newmouse))
+					{
+						reallyEndLevel = TRUE;
+					}
+				}
+
+				if (isNetworkGame)
+				{
+					JE_setNetByte(0);
+					for (x = 0; x < 1/* TODO streamLagFrames*/; x++)
+					{
+						JE_updateStream();
+					}
+					JE_setNetByte(253);
+					do
+					{
+						JE_updateStream();
+						if (netQuit)
+						{
+							/* TODO JE_arenaExit("*Other player stopped responding");*/
+							JE_tyrianHalt(5);
+						}
+					} while (!JE_scanNetByte(253));
+					reallyEndLevel = TRUE;
+				}
+
+			}
+		}
+	}
+
+	/* Call Keyboard input handler */
+	service_SDL_events(TRUE);
+	if (playDemo)
+	{
+		if (newkey || JE_anyButton() || button[0])
+		{
+			reallyEndLevel = TRUE;
+			stoppedDemo = TRUE;
+		}
+	} else {
+		if (newkey)
+		{
+			skipStarShowVGA = FALSE;
+			JE_mainKeyboardInput();
+			newkey = FALSE;
+			if (useBios)
+			{
+				while (JE_keyPressed(&k));
+			}
+			if (skipStarShowVGA)
+			{
+				goto level_loop;
+			}
+		}
+    }
+
+	/*Network Update*/
+	if (isNetworkGame)
+	{
+		/* TODO JE_doNetwork();*/
+	}
+
+	/** Test **/
+	/* TODO JE_drawSP();*/
+
+	/*Filtration*/
+	if (filterActive)
+	{
+		/* TODO JE_filterScreen(levelFilter, levelBrightness);*/
+	}
+
+	/** Statbar **/
+	if (statBar[0] > 0 || statBar[2] > 0)
+	{
+		/* TODO JE_doStatBar();*/
+	}
 
 	JE_inGameDisplays();
 
 	JE_starShowVGA();
 
-/* TODO */
+	/*??*/
+	if (repause && superPause)
+	{
+		repause = FALSE;
+		JE_pauseGame();
+		keysactive[SDLK_p] = FALSE;
+	}
+
+	/*Start backgrounds if no enemies on screen
+	  End level if number of enemies left to kill equals 0.*/
+	if (stopBackgroundNum == 9 && backMove == 0 && !enemyStillExploding)
+	{
+		backMove = 1;
+		backMove2 = 2;
+		backMove3 = 3;
+		explodeMove = 640;
+		stopBackgroundNum = 0;
+		stopBackgrounds = FALSE;
+		if (waitToEndLevel)
+		{
+			endLevel = TRUE;
+			levelEnd = 40;
+		}
+		if (allPlayersGone)
+		{
+			reallyEndLevel = TRUE;
+		}
+    }
+
+	if (!endLevel && enemyOnScreen == 0)
+	{
+		if (readyToEndLevel && !enemyStillExploding)
+		{
+			if (levelTimerCountdown > 0)
+			{
+				levelTimer = FALSE;
+			}
+			readyToEndLevel = FALSE;
+			endLevel = TRUE;
+			levelEnd = 40;
+			if (allPlayersGone)
+			{
+				reallyEndLevel = TRUE;
+			}
+		}
+		if (stopBackgrounds)
+		{
+			stopBackgrounds = FALSE;
+			backMove = 1;
+			backMove2 = 2;
+			backMove3 = 3;
+			explodeMove = 640;
+		}
+	}
+
+
+	exchangeCount = 20;
+
+	/*Other Network Functions*/
+	JE_handleChat();
 
 	if (reallyEndLevel)
 	{
-		/* TODO goto startlevel;*/
+		goto start_level;
 	}
-	goto levelloop;
+	goto level_loop;
 }
 
 /* --- Load Level/Map Data --- */
@@ -1739,7 +2006,7 @@ new_game:
 							case 'U':
 								if (!constantPlay)
 								{
-									/* TODO JE_setNetByte(0);*/
+									JE_setNetByte(0);
 									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 									
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
@@ -1774,7 +2041,7 @@ new_game:
 
 											if (isNetworkGame)
 											{
-												/* TODO JE_updateStream();*/
+												JE_updateStream();
 												if (netQuit)
 												{
 													JE_tyrianHalt(5);
@@ -1789,7 +2056,7 @@ new_game:
 							case 'V':
 								if (!constantPlay)
 								{
-									/* TODO JE_setNetByte(0);*/
+									JE_setNetByte(0);
 									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 									
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
@@ -1824,7 +2091,7 @@ new_game:
 
 											if (isNetworkGame)
 											{
-												/* TODO JE_updateStream();*/
+												JE_updateStream();
 												if (netQuit)
 												{
 													JE_tyrianHalt(5);
@@ -1839,7 +2106,7 @@ new_game:
 							case 'R':
 								if (!constantPlay)
 								{
-									/* TODO JE_setNetByte(0);*/
+									JE_setNetByte(0);
 									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
@@ -1871,7 +2138,7 @@ new_game:
 
 											if (isNetworkGame)
 											{
-												/* TODO JE_UpdateStream();*/
+												JE_updateStream();
 												if (netQuit)
 												{
 													JE_tyrianHalt(5);
@@ -2028,9 +2295,9 @@ new_game:
 
 		char_mapFile = fgetc(lvlFile);
 		char_shapeFile = fgetc(lvlFile);
-		efread(&mapx,  sizeof(JE_word), 1, lvlFile);
-		efread(&mapx2, sizeof(JE_word), 1, lvlFile);
-		efread(&mapx3, sizeof(JE_word), 1, lvlFile);
+		efread(&mapX,  sizeof(JE_word), 1, lvlFile);
+		efread(&mapX2, sizeof(JE_word), 1, lvlFile);
+		efread(&mapX3, sizeof(JE_word), 1, lvlFile);
 
 		efread(&levelEnemyMax, sizeof(JE_word), 1, lvlFile);
 		for (x = 0; x < levelEnemyMax; x++)
@@ -2538,13 +2805,13 @@ void JE_readTextSync( void )
 	JE_dString(10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
 	JE_showVGA();
 
-	/* TODO JE_setNetByte(251);*/
+	JE_setNetByte(251);
 
 	do
 	{
 		setjasondelay(2);
 
-		/* TODO JE_updateStream();*/
+		JE_updateStream();
 		if (netQuit)
 		{
 			JE_tyrianHalt(5);
@@ -2603,8 +2870,8 @@ void JE_displayText( void )
 
 		setjasondelay(1);
 
-		/* TODO JE_setNetByte(0);*/
-		/* TODO JE_updateStream();*/
+		JE_setNetByte(0);
+		JE_updateStream();
 		if (netQuit)
 		{
 			JE_tyrianHalt(5);
@@ -3407,9 +3674,9 @@ void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 		{
 			if (itemNum > 90)
 			{
-				shipGRptr = shapes9;
-				shipGR = JE_SGR(itemNum - 90, &shipGRptr);
-				JE_drawShape2x2(x, y, shipGR, shipGRptr);
+				shipGrPtr = shapes9;
+				shipGr = JE_SGr(itemNum - 90, &shipGrPtr);
+				JE_drawShape2x2(x, y, shipGr, shipGrPtr);
 			} else {
 				JE_drawShape2x2(x, y, ships[itemNum].shipgraphic, shapes9);
 			}

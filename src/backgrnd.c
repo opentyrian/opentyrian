@@ -34,11 +34,11 @@ JE_word backMove, backMove2, backMove3;
 
 /*Main Maps*/
 JE_word megaDataSeg, megaDataOfs, megaData2Seg, megaData2Ofs, megaData3Seg, megaData3Ofs;
-JE_word mapx, mapy, mapx2, mapx3, mapy2, mapy3;
-JE_byte **mapyPos, **mapy2Pos, **mapy3Pos;
-JE_word mapxPos, oldmapxOfs, mapxOfs, mapx2Ofs, mapx2Pos, mapx3Pos, oldMapx3Ofs, mapx3Ofs, tempMapxOfs,
-        mapxbpPos, mapx2bpPos, mapx3bpPos;
-JE_byte map1yDelay, map1yDelayMax, map2yDelay, map2yDelayMax;
+JE_word mapX, mapY, mapX2, mapX3, mapY2, mapY3;
+JE_byte **mapYPos, **mapY2Pos, **mapY3Pos;
+JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs, mapX3Ofs, tempMapXOfs;
+unsigned int mapXbpPos, mapX2bpPos, mapX3bpPos;
+JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 
 
 void      *smoothiesScreen;
@@ -64,11 +64,11 @@ void JE_drawBackground2( void )
 	int i, j;
 	int x, y;
 
-	if (map2yDelayMax > 1)
+	if (map2YDelayMax > 1)
 	{
 		if (backMove2 < 2)
 		{
-			if (map2yDelay == 1)
+			if (map2YDelay == 1)
 			{
 				backMove2 = 1;
 			} else {
@@ -92,13 +92,13 @@ void JE_drawBackground2( void )
 
 		if (useBackground1ofs != 0)
 		{
-			s += mapxPos;
+			s += mapXPos;
 			/* Map location number in BP */
-			bp = mapy2Pos + mapxbpPos;
+			bp = mapY2Pos + mapXbpPos;
 		} else {
-			s += mapx2Pos;
+			s += mapX2Pos;
 			/* Map location number in BP */
-			bp = mapy2Pos + mapx2bpPos;
+			bp = mapY2Pos + mapX2bpPos;
 		}
 
 		/* Use DS for MegaDataSeg */
@@ -221,17 +221,17 @@ void JE_drawBackground2( void )
 	}
 
 	/*Set Movement of background*/
-	if (--map2yDelay == 0)
+	if (--map2YDelay == 0)
 	{
-		map2yDelay = map2yDelayMax;
+		map2YDelay = map2YDelayMax;
 
 		backPos2 += backMove2;
 
 		if (backPos2 >  27)
 		{
 			backPos2 -= 28;
-			mapy2--;
-			mapy2Pos -= 14;  /*Map Width*/
+			mapY2--;
+			mapY2Pos -= 14;  /*Map Width*/
 		}
 	}
 }
@@ -246,11 +246,11 @@ void JE_superBackground2( void )
 	int i, j;
 	int x, y;
 
-	if (map2yDelayMax > 1)
+	if (map2YDelayMax > 1)
 	{
 		if (backMove2 < 2)
 		{
-			if (map2yDelay == 1)
+			if (map2YDelay == 1)
 			{
 				backMove2 = 1;
 			} else {
@@ -267,9 +267,9 @@ void JE_superBackground2( void )
 	s = VGAScreen->pixels;
 	s += 11 * 24;
 
-	s += mapx2Pos;
+	s += mapX2Pos;
 	/* Map location number in BP */
-	bp = mapy2Pos + mapx2bpPos;
+	bp = mapY2Pos + mapX2bpPos;
 
 	/* Use DS for MegaDataSeg */
 	src = megaData2->mainmap[0][0];
@@ -395,17 +395,17 @@ void JE_superBackground2( void )
 	}
 
 	/*Set Movement of background*/
-	if (--map2yDelay == 0)
+	if (--map2YDelay == 0)
 	{
-		map2yDelay = map2yDelayMax;
+		map2YDelay = map2YDelayMax;
 
 		backPos2 += backMove2;
 
 		if (backPos2 >  27)
 		{
 			backPos2 -= 28;
-			mapy2--;
-			mapy2Pos -= 14;  /*Map Width*/
+			mapY2--;
+			mapY2Pos -= 14;  /*Map Width*/
 		}
 	}
 }
@@ -424,18 +424,18 @@ void JE_drawBackground3( void )
 	if (backPos3 > 27)
 	{
 		backPos3 -= 28;
-		mapy3--;
-		mapy3Pos -= 15;   /*Map Width*/
+		mapY3--;
+		mapY3Pos -= 15;   /*Map Width*/
 	}
 
 	/* Offset for top*/
 	s = VGAScreen->pixels;
 	s += 11 * 24;
 
-	s += mapx3Pos;
+	s += mapX3Pos;
 
 	/* Map location number in BP */
-	bp = mapy3Pos + mapx3bpPos;
+	bp = mapY3Pos + mapX3bpPos;
 
 	/* Use DS for MegaDataSeg */
 	src = megaData3->mainmap[0][0];

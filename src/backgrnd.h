@@ -26,9 +26,11 @@
 extern JE_word backPos, backPos2, backPos3;
 extern JE_word backMove, backMove2, backMove3;
 extern JE_word megaDataSeg, megaDataOfs, megaData2Seg, megaData2Ofs, megaData3Seg, megaData3Ofs;
-extern JE_word mapx, mapy, mapx2, mapx3, mapy2, mapy3, mapxPos, oldmapxOfs, mapxOfs, mapx2Ofs, mapx2Pos, mapx3Pos, oldMapx3Ofs, mapx3Ofs, tempMapxOfs, mapxbpPos, mapx2bpPos, mapx3bpPos;
-extern JE_byte **mapyPos, **mapy2Pos, **mapy3Pos;
-extern JE_byte map1yDelay, map1yDelayMax, map2yDelay, map2yDelayMax;
+extern JE_word mapX, mapY, mapX2, mapX3, mapY2, mapY3;
+extern JE_byte **mapYPos, **mapY2Pos, **mapY3Pos;
+extern JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs, mapX3Ofs, tempMapXOfs;
+extern unsigned int mapXbpPos, mapX2bpPos, mapX3bpPos;
+extern JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 extern void *smoothiesScreen;
 extern JE_word smoothiesSeg;
 extern JE_boolean anySmoothies;
