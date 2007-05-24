@@ -182,8 +182,8 @@ void opentyrian_menu( void )
 		
 		JE_showVGA();
 
-		tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);
+		tempW = 0;
+		JE_textMenuWait(&tempW, FALSE);
 		
 		if (newkey) {
 			switch (lastkey_sym)

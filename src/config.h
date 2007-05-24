@@ -125,8 +125,6 @@ extern JE_byte background3over;
 extern JE_byte background2over;
 extern JE_byte gammaCorrection;
 extern JE_boolean superPause, explosionTransparent, youAreCheating, displayScore, soundHasChanged, background2, smoothScroll, wild, superWild, starActive, topEnemyOver, skyEnemyOverAll, background2notTransparent, tempb;
-extern JE_byte temp;
-extern JE_word tempw;
 extern JE_byte versionNum;
 extern JE_byte fastPlay;
 extern JE_boolean pentiumMode;

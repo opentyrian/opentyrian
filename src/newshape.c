@@ -61,11 +61,11 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 	JE_word min = 0,
 	        max = 0;
 
-	JE_word tempw;
+	JE_word tempW;
 	JE_word z;
 
-	efread(&tempw, sizeof(JE_word), 1, f);
-	maxShape[table] = tempw;
+	efread(&tempW, sizeof(JE_word), 1, f);
+	maxShape[table] = tempW;
 
 	if (!loadOverride)
 	{
@@ -96,18 +96,18 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 
 	for (z = min-1; z < max; z++)
 	{
-		tempw = z-min+1;
-		shapeExist[table][tempw] = getc(f);
+		tempW = z-min+1;
+		shapeExist[table][tempW] = getc(f);
 
-		if (shapeExist[table][tempw])
+		if (shapeExist[table][tempW])
 		{
-			efread(&shapeX   [table][tempw], sizeof(JE_word), 1, f);
-			efread(&shapeY   [table][tempw], sizeof(JE_word), 1, f);
-			efread(&shapeSize[table][tempw], sizeof(JE_word), 1, f);
+			efread(&shapeX   [table][tempW], sizeof(JE_word), 1, f);
+			efread(&shapeY   [table][tempW], sizeof(JE_word), 1, f);
+			efread(&shapeSize[table][tempW], sizeof(JE_word), 1, f);
 
-			(*shapeArray)[table][tempw] = malloc(shapeX[table][tempw]*shapeY[table][tempw]);
+			(*shapeArray)[table][tempW] = malloc(shapeX[table][tempW]*shapeY[table][tempW]);
 
-			efread((*shapeArray)[table][tempw], sizeof(JE_byte), shapeSize[table][tempw], f);
+			efread((*shapeArray)[table][tempW], sizeof(JE_byte), shapeSize[table][tempW], f);
 		}
 	}
 }
@@ -303,11 +303,11 @@ void JE_mouseStart( void )
 {
 	const JE_word mouseCursorGr[3] /* [1..3] */ = {273, 275, 277};
 
-	JE_word tempw;
+	JE_word tempW;
 
 	if (mouseInstalled)
 	{
-		tempw = mouseCursorGr[mouseCursor];
+		tempW = mouseCursorGr[mouseCursor];
 
 		service_SDL_events(FALSE);
 		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
@@ -325,8 +325,8 @@ void JE_mouseStart( void )
 
 		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 
-		/*JE_drawShape2x2shadow(lastmousex+2,lastmousey+2,tempw,shapes6);*/
-		JE_drawShape2x2(lastMouseX, lastMouseY, tempw, shapes6);
+		/*JE_drawShape2x2shadow(lastmousex+2,lastmousey+2,tempW,shapes6);*/
+		JE_drawShape2x2(lastMouseX, lastMouseY, tempW, shapes6);
 	 }
 }
 

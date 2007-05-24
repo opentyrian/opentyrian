@@ -25,6 +25,7 @@
 #include "loudness.h"
 #include "nortvars.h"
 #include "joystick.h"
+#include "varz.h"
 
 #define NO_EXTERNS
 #include "config.h"
@@ -234,8 +235,6 @@ JE_boolean explosionTransparent,
            skyEnemyOverAll,
            background2notTransparent,
            tempb;
-JE_byte temp;
-JE_word tempw;
 
 JE_byte versionNum;   /* SW 1.0 and SW/Reg 1.1 = 0 or 1
                        * EA 1.2 = 2 */

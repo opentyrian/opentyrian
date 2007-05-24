@@ -40,8 +40,6 @@ JE_boolean moveOk;
 JE_boolean firstTime;
 JE_boolean netResult;
 
-JE_word tempw;
-
 JE_byte gameQuitDelay;  /* Make sure the game doesn't quit within the first few frames of starting */
 
 JE_byte outputData[10]; /* [1..10] */

@@ -39,6 +39,7 @@
 #include "network.h"
 #include "pcxload.h"
 #include "backgrnd.h"
+#include "nortvars.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
@@ -270,8 +271,8 @@ void JE_helpSystem( JE_byte startTopic )
 					JE_waitRetrace();
 					JE_showVGA();
 
-					tempw = 0;
-					JE_textMenuWait(&tempw, FALSE);
+					tempW = 0;
+					JE_textMenuWait(&tempW, FALSE);
 					if (newkey)
 					{
 						switch (lastkey_sym)
@@ -460,8 +461,8 @@ JE_boolean JE_playerSelect( void )
 		/*  JE_Dstring(JE_FontCenter(misctext[34], FONT_SHAPES), 170, misctext[34], FONT_SHAPES);*/
 
 		JE_showVGA();
-		tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);
+		tempW = 0;
+		JE_textMenuWait(&tempW, FALSE);
 
 		if (newkey)
 		{
@@ -550,8 +551,8 @@ startepisodeselect:
 		/*JE_Dstring(JE_fontCenter(misctext[34], FONT_SHAPES), 170, misctext[34], FONT_SHAPES);*/
 
 		JE_showVGA();
-		tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);
+		tempW = 0;
+		JE_textMenuWait(&tempW, FALSE);
 
 		if (newkey)
 		{
@@ -649,8 +650,8 @@ JE_boolean JE_difficultySelect( void )
 		/*  JE_Dstring(JE_FontCenter(misctext[34], FONT_SHAPES), 170, misctext[34], FONT_SHAPES);*/
 
 		JE_showVGA();
-		tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);
+		tempW = 0;
+		JE_textMenuWait(&tempW, FALSE);
 
 		if (keysactive[SDLK_l] && keysactive[SDLK_o] && keysactive[SDLK_r] && keysactive[SDLK_d])
 		{
@@ -982,8 +983,8 @@ void JE_loadScreen( void )
 		
 		JE_showVGA();
 		
-		tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);
+		tempW = 0;
+		JE_textMenuWait(&tempW, FALSE);
 		
 		
 		if (newkey)
@@ -1048,17 +1049,17 @@ void JE_loadScreen( void )
 
 JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems )
 {
-	JE_longint templ = score;
+	JE_longint tempL = score;
 
-	templ += JE_getValue(2, pItems[12]);
-	templ += JE_getValue(3, pItems[1]);
-	templ += JE_getValue(4, pItems[2]);
-	templ += JE_getValue(5, pItems[10]);
-	templ += JE_getValue(6, pItems[6]);
-	templ += JE_getValue(7, pItems[4]);
-	templ += JE_getValue(8, pItems[5]);
+	tempL += JE_getValue(2, pItems[12]);
+	tempL += JE_getValue(3, pItems[1]);
+	tempL += JE_getValue(4, pItems[2]);
+	tempL += JE_getValue(5, pItems[10]);
+	tempL += JE_getValue(6, pItems[6]);
+	tempL += JE_getValue(7, pItems[4]);
+	tempL += JE_getValue(8, pItems[5]);
 
-	return templ;
+	return tempL;
 }
 
 JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
@@ -1248,8 +1249,8 @@ void JE_highScoreScreen( void )
 			
 			JE_showVGA();
 			
-			tempw = 0;
-			JE_textMenuWait(&tempw, FALSE);
+			tempW = 0;
+			JE_textMenuWait(&tempW, FALSE);
 			
 			if (newkey)
 			{
@@ -1271,7 +1272,7 @@ void JE_highScoreScreen( void )
 		} else {
 			x += chg;
 		}
-      
+		
 		x = ( x < min ) ? max : ( x > max ) ? min : x;
 		
 		if (newkey)
@@ -1343,12 +1344,56 @@ void JE_changeDifficulty( void )
 
 void JE_doDemoKeys( void )
 {
-	STUB(JE_doDemoKeys);
+	if (lastKey[0] > 0)
+	{
+		PY -= CURRENT_KEY_SPEED;
+	}
+	if (lastKey[1] > 0)
+	{
+		PY += CURRENT_KEY_SPEED;
+	}
+	if (lastKey[2] > 0)
+	{
+		PX -= CURRENT_KEY_SPEED;
+	}
+	if (lastKey[3] > 0)
+	{
+		PX += CURRENT_KEY_SPEED;
+	}
+	if (lastKey[4] > 0)
+	{
+		button[0] = TRUE;
+	}
+	if (lastKey[5] > 0)
+	{
+		button[3] = TRUE;
+	}
+	if (lastKey[6] > 0)
+	{
+		button[1] = TRUE;
+	}
+	if (lastKey[7] > 0)
+	{
+		button[2] = TRUE;
+	}
 }
 
 void JE_readDemoKeys( void )
 {
-	STUB(JE_readDemoKeys);
+	temp = nextDemoOperation;
+
+	lastKey[0] = (temp & 0x01) > 0;
+	lastKey[1] = (temp & 0x02) > 0;
+	lastKey[2] = (temp & 0x04) > 0;
+	lastKey[3] = (temp & 0x08) > 0;
+	lastKey[4] = (temp & 0x10) > 0;
+	lastKey[6] = (temp & 0x40) > 0;
+	lastKey[7] = (temp & 0x80) > 0;
+
+	temp = getc(recordFile);
+	temp2 = getc(recordFile);
+	lastMoveWait = temp << 8 | temp2;
+	nextDemoOperation = getc(recordFile);
 }
 
 void JE_sfCodes( void )
@@ -1420,27 +1465,31 @@ void JE_pauseGame( void )
 	STUB(JE_pauseGame);
 }
 
-void JE_playerMovement( JE_byte inputDevice,
-                        JE_byte playerNum,
-                        JE_word shipGr,
-                        JE_byte *shapes9ptr,
-                        JE_integer *armorLevel, JE_integer *baseArmor,
-                        JE_shortint *shield, JE_shortint *shieldMax,
-                        JE_word *playerInvulnerable,
-                        JE_integer *PX, JE_integer *PY,
-                        JE_integer *lastPX, JE_integer *lastPY,
-                        JE_integer *lastPX2, JE_integer *lastPY2,
-                        JE_integer *PXChange, JE_integer *PYChange,
-                        JE_integer *lastTurn, JE_integer *lastTurn2, JE_integer *tempLastTurn2,
-                        JE_byte *stopWaitX, JE_byte *stopWaitY,
-                        JE_word *mouseX, JE_word *mouseY,
-                        JE_boolean *playerAlive,
-                        JE_byte *playerStillExploding,
-                        JE_PItemsType pItems )
+void JE_playerMovement( JE_byte inputDevice_,
+                        JE_byte playerNum_,
+                        JE_word shipGr_,
+                        JE_byte *shapes9ptr_,
+                        JE_integer *armorLevel_, JE_integer *baseArmor_,
+                        JE_shortint *shield_, JE_shortint *shieldMax_,
+                        JE_word *playerInvulnerable_,
+                        JE_integer *PX_, JE_integer *PY_,
+                        JE_integer *lastPX_, JE_integer *lastPY_,
+                        JE_integer *lastPX2_, JE_integer *lastPY2_,
+                        JE_integer *PXChange_, JE_integer *PYChange_,
+                        JE_integer *lastTurn_, JE_integer *lastTurn2_, JE_integer *tempLastTurn2_,
+                        JE_byte *stopWaitX_, JE_byte *stopWaitY_,
+                        JE_word *mouseX_, JE_word *mouseY_,
+                        JE_boolean *playerAlive_,
+                        JE_byte *playerStillExploding_,
+                        JE_PItemsType pItems_ )
 {
+	JE_integer mouseXC, mouseYC;
+	JE_integer accelXC, accelYC;
+	JE_byte leftOptionIsSpecial;
+	JE_byte rightOptionIsSpecial;
+
 	STUB(JE_playerMovement);
 }
-
 
 void JE_mainGamePlayerFunctions( void )
 {
@@ -1498,12 +1547,12 @@ void JE_mainGamePlayerFunctions( void )
 		tempX = PX;
 	}
 
-	tempw = floor((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
-	mapX3Ofs   = tempw;
+	tempW = floor((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
+	mapX3Ofs   = tempW;
 	mapX3Pos   = mapX3Ofs % 24;
 	mapX3bpPos = 1 - (mapX3Ofs / 24);
 
-	mapX2Ofs   = (tempw * 2) / 3;
+	mapX2Ofs   = (tempW * 2) / 3;
 	mapX2Pos   = mapX2Ofs % 24;
 	mapX2bpPos = 1 - (mapX2Ofs / 24);
 

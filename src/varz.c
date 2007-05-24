@@ -557,14 +557,14 @@ JE_word JE_SGr( JE_word ship, JE_byte **ptr )
 {
 	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
 
-	JE_word tempw;
+	JE_word tempW;
 
-	/* TODO tempw = editship.ships [ (ship - 1) * 15 + 1];*/
-	if (tempw > 7)
+	/* TODO tempW = editship.ships [ (ship - 1) * 15 + 1];*/
+	if (tempW > 7)
 	{
 		/* TODO *ptr = extraShape;*/
 	}
-	return GR[tempw-1];
+	return GR[tempW-1];
 }
 
 void JE_calcPurpleBall( JE_byte playernum )
@@ -854,7 +854,7 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 				}
 
 				/*Rot*/
-				for (tempw = 1; tempw <= weapons[wpNum].multi; tempw++)
+				for (tempW = 1; tempW <= weapons[wpNum].multi; tempW++)
 				{
 
 					for (b = 0; b < MAX_PWEAPON; b++)
@@ -869,7 +869,7 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 						return;
 					}
 
-					if (shotMultiPos[temp-1] == max || shotMultiPos[temp-1] > 8)
+					if (shotMultiPos[temp-1] == weapons[wpNum].max || shotMultiPos[temp-1] > 8)
 					{
 						shotMultiPos[temp-1] = 1;
 					} else {
@@ -946,7 +946,7 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 						temp2 = 255;
 					}
 
-					playerShotData[b].shotGR = weapons[wpNum].sg[shotMultiPos[temp]];
+					playerShotData[b].shotGR = weapons[wpNum].sg[shotMultiPos[temp-1]-1];
 					if (playerShotData[b].shotGR == 0)
 					{
 						shotAvail[b] = 0;

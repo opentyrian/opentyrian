@@ -507,7 +507,7 @@ start_level_first:
 	JE_drawArmor();
 
 	superBomb[0] = 0;
-	superBomb[2] = 0;
+	superBomb[1] = 0;
 
 	/* Set cubes to 0 */
 	cubeMax = 0;
@@ -1135,7 +1135,7 @@ level_loop:
 					}
 				}
 				
-				tempw = playerShotData[z].shotGR + playerShotData[z].shotAni;
+				tempW = playerShotData[z].shotGR + playerShotData[z].shotAni;
 				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
 				{
 					playerShotData[z].shotAni = 0;
@@ -1146,32 +1146,32 @@ level_loop:
 				chain = playerShotData[z].chainReaction;
 				playerNum = playerShotData[z].playerNumber;
 				
-				tempSpecial = tempw > 60000;
+				tempSpecial = tempW > 60000;
 
 				if (tempSpecial)
 				{
-					JE_newDrawCShapeTrickNum(OPTION_SHAPES, tempw - 60000 - 1, tempShotX+1, tempShotY);
-					tempX2 = shapeX[OPTION_SHAPES][tempw - 60000 - 1] >> 1;
-					tempY2 = shapeY[OPTION_SHAPES][tempw - 60000 - 1] >> 1;
+					JE_newDrawCShapeTrickNum(OPTION_SHAPES, tempW - 60000 - 1, tempShotX+1, tempShotY);
+					tempX2 = shapeX[OPTION_SHAPES][tempW - 60000 - 1] >> 1;
+					tempY2 = shapeY[OPTION_SHAPES][tempW - 60000 - 1] >> 1;
 				} else {
-					if (tempw > 1000)
+					if (tempW > 1000)
 					{
-						/* TODO JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempw / 1000) << 4);*/
-						tempw = tempw % 1000;
+						/*JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempW / 1000) << 4);*/
+						tempW = tempW % 1000;
 					}
-					if (tempw > 500)
+					if (tempW > 500)
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
 						{
-							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempw - 500, shapesW2);
+							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
 						}
-						JE_drawShape2(tempShotX+1, tempShotY, tempw - 500, shapesW2);
+						JE_drawShape2(tempShotX+1, tempShotY, tempW - 500, shapesW2);
 					} else {
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
 						{
-							JE_drawShape2Shadow (tempShotX+1, tempShotY + shadowyDist, tempw, shapesC1);
+							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
 						}
-						JE_drawShape2(tempShotX+1, tempShotY, tempw, shapesC1);
+						JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
 					}
 				}
 
@@ -1317,7 +1317,7 @@ drawplayershotloopend:
 
 	/*-------      DEbug      ---------*/
 	debugTime = SDL_GetTicks();
-	tempw = lastmouse_but;
+	tempW = lastmouse_but;
 	tempX = mouse_x;
 	tempY = mouse_y;
   
@@ -2853,13 +2853,13 @@ void JE_displayText( void )
 		temp = 0;
 	}
 	textGlowFont = TINY_FONT;
-	tempw = 184;
+	tempW = 184;
 	if (warningRed)
 	{
-		tempw = 7 * 16 + 6;
+		tempW = 7 * 16 + 6;
 	}
 
-	JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempw, miscText[4]);
+	JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempW, miscText[4]);
 
 	do
 	{
@@ -2950,16 +2950,16 @@ JE_byte currentFaceNum;
 
 JE_longint JE_cashLeft( void )
 {
-	JE_longint templ;
+	JE_longint tempL;
 	JE_byte x;
 	JE_word itemNum;
 
-	templ = score;
+	tempL = score;
 	itemNum = pItems[pItemButtonMap[curSel[1] - 2]];
 
-	templ -= JE_getCost(curSel[1], itemNum);
+	tempL -= JE_getCost(curSel[1], itemNum);
 
-	tempw = 0;
+	tempW = 0;
 
 	switch (curSel[1])
 	{
@@ -2968,13 +2968,13 @@ JE_longint JE_cashLeft( void )
 			tempW2 = weaponPort[itemNum].cost;
 			for (x = 1; x < portPower[curSel[1] - 3]; x++)
 			{
-				tempw += tempW2 * x;
-				templ -= tempw;
+				tempW += tempW2 * x;
+				tempL -= tempW;
 			}
 			break;
 	}
 
-	return templ;
+	return tempL;
 }
 
 void JE_itemScreen( void )
@@ -3527,7 +3527,7 @@ void JE_loadCubes( void )
 
 		JE_resetFile(&f, cubeFile);
 	
-		tempw = cubeList[cube];
+		tempW = cubeList[cube];
 	
 		do
 		{
@@ -3535,8 +3535,8 @@ void JE_loadCubes( void )
 			{
 				JE_readCryptLn(f, s);
 			} while (s[0] != '*');
-			tempw--;
-		} while (tempw != 0);
+			tempW--;
+		} while (tempW != 0);
 	
 		faceNum[cube] = atoi(strnztcpy(buffer, s + 4, 2));
 	
@@ -3648,7 +3648,7 @@ void JE_loadCubes( void )
 
 void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 {
-	JE_word tempw;
+	JE_word tempW;
 
 	if (itemNum > 0)
 	{
@@ -3656,17 +3656,17 @@ void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 		{
 			case 2:
 			case 3:
-				tempw = weaponPort[itemNum].itemgraphic;
+				tempW = weaponPort[itemNum].itemgraphic;
 				break;
 			case 5:
-				tempw = powerSys[itemNum].itemgraphic;
+				tempW = powerSys[itemNum].itemgraphic;
 				break;
 			case 6:
 			case 7:
-				tempw = options[itemNum].itemgraphic;
+				tempW = options[itemNum].itemgraphic;
 				break;
 			case 4:
-				tempw = shields[itemNum].itemgraphic;
+				tempW = shields[itemNum].itemgraphic;
 				break;
 		}
 
@@ -3681,9 +3681,9 @@ void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 				JE_drawShape2x2(x, y, ships[itemNum].shipgraphic, shapes9);
 			}
 		} else {
-			if (tempw > 0)
+			if (tempW > 0)
 			{
-				JE_drawShape2x2(x, y, tempw, shapes6);
+				JE_drawShape2x2(x, y, tempW, shapes6);
 			}
 		}
 	}

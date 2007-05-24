@@ -246,8 +246,8 @@ void JE_jukeboxGo( void )
 		
 		JE_showVGA();
 	
-		/*tempw = 0;
-		JE_textMenuWait(&tempw, FALSE);*/
+		/*tempW = 0;
+		JE_textMenuWait(&tempW, FALSE);*/
 		service_SDL_events(TRUE);
 	
 		if (newkey) {
