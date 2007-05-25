@@ -1135,7 +1135,7 @@ level_loop:
 					}
 				}
 				
-				tempW = playerShotData[z].shotGR + playerShotData[z].shotAni;
+				tempW = playerShotData[z].shotGr + playerShotData[z].shotAni;
 				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
 				{
 					playerShotData[z].shotAni = 0;
@@ -1469,7 +1469,7 @@ drawplayershotloopend:
 	}
 
 	/* Call Keyboard input handler */
-	service_SDL_events(TRUE);
+	service_SDL_events(FALSE);
 	if (playDemo)
 	{
 		if (newkey || JE_anyButton() || button[0])

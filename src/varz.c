@@ -335,7 +335,7 @@ struct
 	JE_integer  shotCirSizeX;
 	JE_integer  shotCirSizeY;
 	JE_byte     shotTrail;
-	JE_word     shotGR;
+	JE_word     shotGr;
 	JE_word     shotAni;          /*30*/
 	JE_word     shotAniMax;
 	JE_shortint shotDmg;
@@ -946,8 +946,8 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 						temp2 = 255;
 					}
 
-					playerShotData[b].shotGR = weapons[wpNum].sg[shotMultiPos[temp-1]-1];
-					if (playerShotData[b].shotGR == 0)
+					playerShotData[b].shotGr = weapons[wpNum].sg[shotMultiPos[temp-1]-1];
+					if (playerShotData[b].shotGr == 0)
 					{
 						shotAvail[b] = 0;
 					} else {
@@ -1089,4 +1089,20 @@ void JE_drawArmor( void )
 	} else {
 		JE_dBar3(307, 194, armorLevel, 224);
 	}
+}
+
+void JE_resetPlayerH( void )
+{
+	for (temp = 0; temp < 20; temp++)
+	{
+		if (twoPlayerMode)
+        {
+			playerHX[temp] = PXB - (20 - temp);
+			playerHY[temp] = PYB - 18;
+		} else {
+			playerHX[temp] = PX - (20 - temp);
+			playerHY[temp] = PY - 18;
+		}
+	}
+	playerHNotReady = FALSE;
 }

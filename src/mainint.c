@@ -1488,7 +1488,1213 @@ void JE_playerMovement( JE_byte inputDevice_,
 	JE_byte leftOptionIsSpecial;
 	JE_byte rightOptionIsSpecial;
 
-	STUB(JE_playerMovement);
+	if (playerNum_ == 2 || !twoPlayerMode)
+	{
+		if (playerNum_ == 2)
+		{
+			tempW = weaponPort[pItemsPlayer2[2-1]].opnum;
+		} else {
+			tempW = weaponPort[pItems_[2-1]].opnum;
+		}
+		if (portConfig[2-1] > tempW)
+		{
+			portConfig[2-1] = 1;
+		}
+	}
+
+redo:
+
+	if (isNetworkGame && thisPlayerNum == playerNum_)
+	{
+		/* TODO
+		Outpacket^.Data [0] := 0;
+		Outpacket^.Data [1] := 0;
+		Outpacket^.Data [2] := 0;
+		Outpacket^.Data [3] := 0;
+		Outpacket^.Data [4] := 0;
+		*/
+	}
+
+	if (isNetworkGame)
+	{
+		inputDevice_ = 0;
+	}
+
+	mouseXC = 0;
+	mouseYC = 0;
+	accelXC = 0;
+	accelYC = 0;
+
+	/* Draw Player */
+	if (!*playerAlive_)
+	{
+		if (*playerStillExploding_ > 0)
+		{
+
+			(*playerStillExploding_)--;
+
+			if (levelEndFxWait > 0)
+			{
+				levelEndFxWait--;
+			} else {
+				levelEndFxWait = (rand() % 6) + 3;
+				if ((rand() % 3) == 1)
+					soundQueue[6] = 9;
+				else
+					soundQueue[5] = 11;
+			}
+			tempW = *PX_ + (rand() % 32) - 16;
+			tempW2 = *PY_ + (rand() % 32) - 16;
+
+			JE_setupExplosionLarge(FALSE, 0, *PX_ + (rand() % 32) - 16, *PY_ + (rand() % 32) - 16 + 7);
+			JE_setupExplosionLarge(FALSE, 0, *PX_, *PY_ + 7);
+
+			if (levelEnd > 0)
+				levelEnd--;
+		} else {
+
+			if (twoPlayerMode || onePlayerAction)
+			{
+				if (portPower[playerNum_-1] > 1)
+				{
+					reallyEndLevel = FALSE;
+					shotMultiPos[playerNum_-1] = 0;
+					portPower[playerNum_-1]--;
+					JE_calcPurpleBall(playerNum_);
+					twoPlayerLinked = FALSE;
+					if (galagaMode)
+						twoPlayerMode = FALSE;
+					*PY_ = 160;
+					*playerInvulnerable_ = 100;
+					*playerAlive_ = TRUE;
+					endLevel = FALSE;
+					
+					if (galagaMode || episodeNum == 4)
+						*armorLevel_ = *baseArmor_;
+					else
+						*armorLevel_ = *baseArmor_ / 2;
+					
+					if (galagaMode)
+						*shield_ = 0;
+					else
+						*shield_ = *shieldMax_ / 2;
+					
+					JE_drawArmor();
+					JE_drawShield();
+					goto redo;
+				} else {
+					if (galagaMode)
+						twoPlayerMode = FALSE;
+					if (allPlayersGone && isNetworkGame)
+						reallyEndLevel = TRUE;
+				}
+
+			}
+		}
+	} else
+	if (constantDie)
+	{
+		if (*playerStillExploding_ == 0)
+		{
+
+			*shield_ = 0;
+			if (*armorLevel_ > 0)
+				(*armorLevel_)--;
+			else {
+				gameQuitDelay = 60;
+				*playerAlive_ = FALSE;
+				*playerStillExploding_ = 60;
+				levelEnd = 40;
+			}
+
+			/* TODO JE_wipeShieldArmorBars();*/
+			JE_drawArmor();
+			if (portPower[1-1] < 11)
+				portPower[1-1]++;
+		}
+	}
+	
+	
+	if (*playerAlive_)
+	{  /*Global throughout entire remaining part of routine*/
+		if (!endLevel)
+		{
+			
+			*mouseX_ = *PX_;
+			*mouseY_ = *PY_;
+			button[1-1] = FALSE;
+			button[2-1] = FALSE;
+			button[3-1] = FALSE;
+			button[4-1] = FALSE;
+			
+			/* --- Movement Routine Beginning --- */
+			
+			if (!isNetworkGame || playerNum_ == thisPlayerNum)
+			{
+				
+				if (endLevel)
+					*PY_ -= 2;
+				else {
+					service_SDL_events(FALSE);
+					/* ---- Mouse Input ---- */
+					if ((inputDevice_ == 2 || inputDevice_ == 0)
+					    && !playDemo && mouseInstalled && !recordDemo)
+					{
+						/* Get Mouse Status */
+						button[1-1] = mouse_pressed[0];
+						button[2-1] = mouse_pressed[1];
+						button[3-1] = mouse_threeButton ? mouse_pressed[2] : mouse_pressed[1];
+						
+						mouseXC = mouse_x - 159; /* <MXD> scale? */
+						mouseYC = mouse_y - 100;
+						
+						if (( inputDevice_ == 2 || inputDevice_ == 0 ) && mouseInstalled
+						    && (!isNetworkGame || playerNum_ == thisPlayerNum)
+						    && (!galagaMode || (playerNum_ == 2 || !twoPlayerMode || playerStillExploding2 > 0)))
+							JE_setMousePosition((159 * 2) + 1, 100); /* <MXD> scale? */
+						
+					}
+					
+					memcpy(tempButton, button, sizeof(button));
+					
+					/* End of Mouse Routine */
+					
+					/* ==== Joystick Input ==== */
+					if ((inputDevice_ == 3 || inputDevice_ == 0)
+					    && joystick_installed && !playDemo && !recordDemo)
+					{  /* Start of Joystick Routine */
+						JE_joystick1();
+						JE_updateButtons();
+						
+						button[1-1] = button[1-1] | tempButton[1-1];
+						button[2-1] = button[2-1] | tempButton[2-1];
+						button[3-1] = button[3-1] | tempButton[3-1];
+						
+						if (joyY < jCenterY / 2)
+							*PY_ -= CURRENT_KEY_SPEED;
+						if (joyY > jCenterY + jCenterY / 2)
+							*PY_ += CURRENT_KEY_SPEED;
+						
+						if (joyX < jCenterX / 2)
+							*PX_ -= CURRENT_KEY_SPEED;
+						if (joyX > jCenterX + jCenterX / 2)
+							*PX_ += CURRENT_KEY_SPEED;
+					}
+					
+					
+					/* ---- Keyboard Input ---- */
+					if (inputDevice_ == 1 || inputDevice_ == 0)
+					{
+						
+						if (playDemo)
+						{
+							if (feof(recordFile))
+							{
+								endLevel = TRUE;
+								levelEnd = 40;
+							} else {
+								
+								JE_doDemoKeys();
+								if (lastMoveWait > 1)
+									lastMoveWait--;
+								else {
+									JE_readDemoKeys();
+								}
+								
+							}
+							
+						} else {
+							if (keysactive[keySettings[1-1]])
+								*PY_ -= CURRENT_KEY_SPEED;
+							if (keysactive[keySettings[2-1]])
+								*PY_ += CURRENT_KEY_SPEED;
+							
+							if (keysactive[keySettings[3-1]])
+								*PX_ -= CURRENT_KEY_SPEED;
+							if (keysactive[keySettings[4-1]])
+								*PX_ += CURRENT_KEY_SPEED;
+							
+							if (keysactive[keySettings[5-1]])
+								button[1-1] = TRUE;
+							if (keysactive[keySettings[6-1]])
+								button[4-1] = TRUE;
+							if (keysactive[keySettings[7-1]])
+								button[2-1] = TRUE;
+							if (keysactive[keySettings[8-1]])
+								button[3-1] = TRUE;
+						}
+						
+						if (constantPlay)
+						{
+							button[1-1] = TRUE;
+							button[2-1] = TRUE;
+							button[3-1] = TRUE;
+							button[4-1] = TRUE;
+							(*PY_)++;
+							*PX_ += constantLastX;
+						}
+						
+						
+						if (recordDemo)
+						{
+							tempB = FALSE;
+							for (temp = 0; temp < 8; temp++)
+								if (lastKey[temp] != keysactive[keySettings[temp]])
+									tempB = TRUE;
+							
+							lastMoveWait++;
+							if (tempB)
+							{
+								fputc(lastMoveWait >> 8, recordFile);
+								fputc(lastMoveWait && 0xff, recordFile);
+								
+								for (temp = 0; temp < 8; temp++)
+									lastKey[temp] = keysactive[keySettings[temp]];
+								temp = (lastKey[1-1]     ) + (lastKey[2-1] << 1) + (lastKey[3-1] << 2) + (lastKey[4-1] << 3) +
+								       (lastKey[5-1] << 4) + (lastKey[6-1] << 5) + (lastKey[7-1] << 6) + (lastKey[8-1] << 7);
+								
+								fputc(temp, recordFile);
+								
+								lastMoveWait = 0;
+							}
+						}
+					}
+					
+					if (smoothies[9-1])
+					{
+						*mouseY_ = *PY_ - (*mouseY_ - *PY_);
+						mouseYC = -mouseYC;
+					}
+					
+					accelXC += *PX_ - *mouseX_;
+					accelYC += *PY_ - *mouseY_;
+					
+					if (mouseXC > 30)
+						mouseXC = 30;
+					else
+						if (mouseXC < -30)
+							mouseXC = -30;
+					if (mouseYC > 30)
+						mouseYC = 30;
+					else
+						if (mouseYC < -30)
+							mouseYC = -30;
+					
+					if (mouseXC > 0)
+						*PX_ += (mouseXC + 3 ) / 4;
+					else
+						if (mouseXC < 0)
+							*PX_ += (mouseXC - 3 ) / 4;
+					if (mouseYC > 0)
+						*PY_ += (mouseYC + 3 ) / 4;
+					else
+						if (mouseYC < 0)
+							*PY_ += (mouseYC - 3 ) / 4;
+					
+					if (makeMouseDelay)
+					{
+						if (mouseXC > 3)
+							accelXC++;
+						else
+							if (mouseXC < -2)
+								accelXC--;
+						if (mouseYC > 2)
+							accelYC++;
+						else
+							if (mouseYC < -2)
+								accelYC--;
+					}
+					
+				}   /*endLevel*/
+				
+				if (isNetworkGame && playerNum_ == thisPlayerNum)
+				{
+					/* TODO */;
+				}
+			}  /*isNetworkGame*/
+			
+			/* --- Movement Routine Ending --- */
+			
+			moveOk = TRUE;
+			
+			if (isNetworkGame)
+			{
+				/* TODO */;
+			}
+			
+			/*Street-Fighter codes*/
+			/* TODO JE_SFCodes();*/
+			
+			if (moveOk)
+			{
+				
+				/* END OF MOVEMENT ROUTINES */
+				
+				/*Linking Routines*/
+				
+				if (twoPlayerMode && !twoPlayerLinked && *PX_ == *mouseX_ && *PY_ == *mouseY_
+				    && abs(PX - PXB) < 8 && abs(PY - PYB) < 8
+				    && playerAlive && playerAliveB && !galagaMode)
+				{
+					twoPlayerLinked = TRUE;
+				}
+				
+				if (playerNum_ == 1 && (button[3-1] || button[2-1]) && !galagaMode)
+					twoPlayerLinked = FALSE;
+				
+				if (twoPlayerMode && twoPlayerLinked && playerNum_ == 2
+				    && (*PX_ != *mouseX_ || *PY_ != *mouseY_))
+				{
+					
+					if (button[1-1])
+					{
+						if (abs(*PX_ - *mouseX_) > abs(*PY_ - *mouseY_))
+						{
+							if (*PX_ - *mouseX_ > 0)
+								tempR = 1.570796;
+							else
+								tempR = 4.712388;
+						} else {
+							if (*PY_ - *mouseY_ > 0)
+								tempR = 0;
+							else
+								tempR = 3.14159265;
+						}
+						
+						tempR2 = linkGunDirec - tempR;
+						
+						if (abs(linkGunDirec - tempR) < 0.3)
+							linkGunDirec = tempR;
+						else {
+							
+							if (linkGunDirec < tempR && linkGunDirec - tempR > -3.24)
+								linkGunDirec += 0.2;
+							else
+								if (linkGunDirec - tempR < M_PI)
+									linkGunDirec -= 0.2;
+								else
+									linkGunDirec += 0.2;
+							
+						}
+						
+						if (linkGunDirec >= 2 * M_PI)
+							linkGunDirec -= 2 * M_PI;
+						if (linkGunDirec <  0)
+							linkGunDirec += 2 * M_PI;
+						
+					} else
+					if (!galagaMode)
+						twoPlayerLinked = FALSE;
+				}
+				
+				leftOptionIsSpecial  = options[option1Item].tr;
+				rightOptionIsSpecial = options[option2Item].tr;
+				
+			} /*if (*playerAlive_) ...*/
+		} /*if (!endLevel) ...*/
+
+
+		if (levelEnd > 0 &&
+		    !*playerAlive_ && (!twoPlayerMode || !playerAliveB))
+			reallyEndLevel = TRUE;
+		/* End Level Fade-Out */
+		if (*playerAlive_ && endLevel)
+		{
+			
+			if (levelEnd == 0)
+				reallyEndLevel = TRUE;
+			else {
+				*PY_ -= levelEndWarp;
+				if (*PY_ < -200)
+					reallyEndLevel = TRUE;
+				
+				tempI = 1;
+				tempW2 = *PY_;
+				tempI2 = abs(41 - levelEnd);
+				if (tempI2 > 20)
+					tempI2 = 20;
+				
+				for (z = 1; z <= tempI2; z++)
+				{
+					tempW2 += tempI;
+					tempI++;
+				}
+				
+				for (z = 1; z <= tempI2; z++)
+				{
+					tempW2 -= tempI;
+					tempI--;
+					if (tempW2 > 0 && tempW2 < 170)
+					{
+						if (shipGr_ == 0)
+						{
+							JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 13, shapes9ptr_);
+							JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 51, shapes9ptr_);
+						} else
+							if (shipGr_ == 1)
+							{
+								JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 220, shapes9ptr_);
+								JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 222, shapes9ptr_);
+							} else
+								JE_drawShape2x2(*PX_ - 5, tempW2 - 7, shipGr_, shapes9ptr_);
+					}
+				}
+				
+			}
+		}
+		
+		if (playDemo)
+			JE_dString(115, 10, miscText[8-1], SMALL_FONT_SHAPES);
+		
+		if (*playerAlive_ && !endLevel)
+		{
+			
+			if (!twoPlayerLinked || playerNum_ < 2)
+			{
+				
+				if (!twoPlayerMode || shipGr2 != 0)
+				{
+					option1X = *mouseX_ - 14;
+					option1Y = *mouseY_;
+					
+					if (rightOptionIsSpecial == 0)
+					{
+						option2X = *mouseX_ + 16;
+						option2Y = *mouseY_;
+					}
+				}
+				
+				if (*stopWaitX_ > 0)
+					(*stopWaitX_)--;
+				else {
+					*stopWaitX_ = 2;
+					if (*lastTurn_ < 0)
+						(*lastTurn_)++;
+					else
+						if (*lastTurn_ > 0)
+							(*lastTurn_)--;
+				}
+				
+				if (*stopWaitY_ > 0)
+					(*stopWaitY_)--; 
+				else {
+					*stopWaitY_ = 1;
+					if (*lastTurn2_ < 0)
+						(*lastTurn2_)++;
+					else
+						if (*lastTurn2_ > 0)
+							(*lastTurn2_)--;
+				}
+				
+				*lastTurn_ += accelYC;
+				*lastTurn2_ += accelXC;
+				
+				if (*lastTurn2_ < -4)
+					*lastTurn2_ = -4;
+				if (*lastTurn2_ > 4)
+					*lastTurn2_ = 4;
+				if (*lastTurn_ < -4)
+					*lastTurn_ = -4;
+				if (*lastTurn_ > 4)
+					*lastTurn_ = 4;
+				
+				*PX_ += *lastTurn2_;
+				*PY_ += *lastTurn_;
+				
+				
+				/*Option History for special new sideships*/
+				if (playerHNotReady)
+					JE_resetPlayerH();
+				else
+					if ((playerNum_ == 1 && !twoPlayerMode)
+					    || (playerNum_ == 2 && twoPlayerMode))
+						if (*PX_ - *mouseX_ != 0 || *PY_ - *mouseY_ != 0)
+						{ /*Option History*/
+							for (temp = 0; temp < 19; temp++)
+							{
+								playerHX[temp] = playerHX[temp + 1];
+								playerHY[temp] = playerHY[temp + 1];
+							}
+							playerHX[20-1] = *PX_;
+							playerHY[20-1] = *PY_;
+						}
+				
+			} else {  /*twoPlayerLinked*/
+				if (shipGr_ == 0)
+					*PX_ = PX - 1;
+				else
+					*PX_ = PX;
+				*PY_ = PY + 8;
+				*lastTurn2_ = lastTurn2;
+				*lastTurn_ = 4;
+				
+				shotMultiPos[5-1] = 0;
+				JE_initPlayerShot(0, 5, *PX_ + 1 + ROUND(sin(linkGunDirec + 0.2) * 26), *PY_ + ROUND(cos(linkGunDirec + 0.2) * 26),
+				                  *mouseX_, *mouseY_, 148, playerNum_);
+				shotMultiPos[5-1] = 0;
+				JE_initPlayerShot(0, 5, *PX_ + 1 + ROUND(sin(linkGunDirec - 0.2) * 26), *PY_ + ROUND(cos(linkGunDirec - 0.2) * 26),
+				                  *mouseX_, *mouseY_, 148, playerNum_);
+				shotMultiPos[5-1] = 0;
+				JE_initPlayerShot(0, 5, *PX_ + 1 + ROUND(sin(linkGunDirec) * 26), *PY_ + ROUND(cos(linkGunDirec) * 26),
+				                  *mouseX_, *mouseY_, 147, playerNum_);
+				
+				if (shotRepeat[2-1] > 0)
+					shotRepeat[2-1]--;
+				else
+					if (button[1-1])
+					{
+						shotMultiPos[2-1] = 0;
+						JE_initPlayerShot(0, 2, *PX_ + 1 + ROUND(sin(linkGunDirec) * 20), *PY_ + ROUND(cos(linkGunDirec) * 20),
+						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[2-1]-1], playerNum_);
+						playerShotData[b-1].shotXM = -ROUND(sin(linkGunDirec) * playerShotData[b-1].shotYM);
+						playerShotData[b-1].shotYM = -ROUND(cos(linkGunDirec) * playerShotData[b-1].shotYM);
+						
+						switch (pItems_[2-1])
+						{
+							case 27:
+							case 32:
+							case 10:
+								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
+								playerShotData[b-1].shotGr = linkMultiGr[temp];
+								break;
+							case 28:
+							case 33:
+							case 11:
+								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
+								playerShotData[b-1].shotGr = linkSonicGr[temp];
+								break;
+							case 30:
+							case 35:
+							case 14:
+								if (linkGunDirec > M_PI / 2 && linkGunDirec < M_PI + M_PI / 2)
+								{
+									playerShotData[b-1].shotYC = 1;
+								}
+								break;
+							case 38:
+							case 22:
+								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
+								playerShotData[b-1].shotGr = linkMult2Gr[temp];
+								break;
+						}
+						
+					}
+			}
+			
+		}  /*moveOK*/
+		
+		if (!endLevel)
+		{
+			if (*PX_ > 256)
+			{
+				*PX_ = 256;
+				constantLastX = -constantLastX;
+			}
+			if (*PX_ < 40)
+			{
+				*PX_ = 40;
+				constantLastX = -constantLastX;
+			}
+			
+			if (isNetworkGame && playerNum_ == 1)
+			{
+				if (*PY_ > 154)
+					*PY_ = 154;
+			} else {
+				if (*PY_ > 160)
+					*PY_ = 160;
+			}
+			
+			if (*PY_ < 10)
+				*PY_ = 10;
+			
+			tempI2 = *lastTurn2_ / 2;
+			tempI2 += (*PX_ - *mouseX_) / 6;
+			
+			if (tempI2 < -2)
+				tempI2 = -2;
+			else
+				if (tempI2 > 2)
+					tempI2 = 2;
+			
+			
+			tempI  = tempI2 * 2 + shipGr_;
+			
+			tempI4 = *PY_ - *lastPY2_;
+			if (tempI4 < 1)
+				tempI4 = 0;
+			explosionFollowAmount = *PX_ - *lastPX2_ + tempI4 * 320;
+			*lastPX2_ = *PX_;
+			*lastPY2_ = *PY_;
+			
+			if (shipGr_ == 0)
+			{
+				if (background2)
+				{
+					JE_drawShape2x2Shadow(*PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
+					JE_drawShape2x2Shadow(*PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
+					if (superWild)
+					{
+						JE_drawShape2x2Shadow(*PX_ - 16 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
+						JE_drawShape2x2Shadow(*PX_ + 6 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
+					}
+				}
+			} else
+				if (shipGr_ == 1)
+				{
+					if (background2)
+					{
+						JE_drawShape2x2Shadow(*PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 220, shapes9ptr_);
+						JE_drawShape2x2Shadow(*PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 222, shapes9ptr_);
+					}
+				} else {
+					if (background2)
+					{
+						JE_drawShape2x2Shadow(*PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
+						if (superWild)
+						{
+							JE_drawShape2x2Shadow(*PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
+						}
+					}
+				}
+			
+			if (*playerInvulnerable_ > 0)
+			{
+				(*playerInvulnerable_)--;
+				
+				if (shipGr_ == 0)
+				{
+					JE_superDrawShape2x2(*PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
+					JE_superDrawShape2x2(*PX_ + 7 , *PY_ - 7, tempI + 51, shapes9ptr_);
+				} else
+					if (shipGr_ == 1)
+					{
+						JE_superDrawShape2x2(*PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
+						JE_superDrawShape2x2(*PX_ + 7 , *PY_ - 7, 222, shapes9ptr_);
+					} else
+						JE_superDrawShape2x2(*PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
+				
+			} else {
+				if (shipGr_ == 0)
+				{
+					JE_drawShape2x2(*PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
+					JE_drawShape2x2(*PX_ + 7, *PY_ - 7, tempI + 51, shapes9ptr_);
+				} else
+					if (shipGr_ == 1)
+					{
+						JE_drawShape2x2(*PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
+						JE_drawShape2x2(*PX_ + 7, *PY_ - 7, 222, shapes9ptr_);
+						switch (tempI)
+						{
+							case 5:
+								JE_drawShape2(*PX_ - 17, *PY_ + 7, 40, shapes9ptr_);
+								tempW = *PX_ - 7;
+								tempI2 = -2;
+								break;
+							case 3:
+								JE_drawShape2(*PX_ - 17, *PY_ + 7, 39, shapes9ptr_);
+								tempW = *PX_ - 7;
+								tempI2 = -1;
+								break;
+							case 1:
+								tempI2 = 0;
+								break;
+							case -1:
+								JE_drawShape2(*PX_ + 19, *PY_ + 7, 58, shapes9ptr_);
+								tempW = *PX_ + 9;
+								tempI2 = 1;
+								break;
+							case -3:
+								JE_drawShape2(*PX_ + 19, *PY_ + 7, 59, shapes9ptr_);
+								tempW = *PX_ + 9;
+								tempI2 = 2;
+								break;
+						}
+						if (tempI2 != 0)
+						{  /*NortSparks*/
+							if (shotRepeat[10-1] > 0)
+								shotRepeat[10-1]--;
+							else {
+									JE_initPlayerShot(0, 10, tempW + (rand() % 8) - 4, (*PY_) + (rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
+									shotRepeat[10-1] = abs(tempI2) - 1;
+							}
+						}
+					} else
+						JE_drawShape2x2(*PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
+			}
+		}  /*endLevel*/
+		
+		/*Options Location*/
+		if (playerNum_ == 2 && shipGr_ == 0)
+		{
+			if (rightOptionIsSpecial == 0)
+			{
+				option2X = *PX_ + 17 + tempI;
+				option2Y = *PY_;
+			}
+			
+			option1X = *PX_ - 14 + tempI;
+			option1Y = *PY_;
+		}
+		
+		if (moveOk)
+		{
+			
+			if (*playerAlive_)
+			{
+				if (!endLevel)
+				{
+					*PXChange_ = *PX_ - lastPYShotMove;
+					*PYChange_ = *PY_ - lastPYShotMove;
+					
+					/* PLAYER SHOT Change */
+					if (button[4-1])
+					{
+						portConfigChange = TRUE;
+						if (portConfigDone)
+						{
+							
+							shotMultiPos[2-1] = 0;
+							
+							if (superArcadeMode > 0 && superArcadeMode <= SA)
+							{
+								shotMultiPos[9-1] = 0;
+								shotMultiPos[11-1] = 0;
+								if (pItems[11-1] == SASpecialWeapon[superArcadeMode-1])
+								{
+									pItems[11-1] = SASpecialWeaponB[superArcadeMode-1];
+									portConfig[2-1] = 2;
+								} else {
+									pItems[11-1] = SASpecialWeapon[superArcadeMode-1];
+									portConfig[2-1] = 1;
+								}
+							} else {
+								portConfig[2-1]++;
+								/* TODO JE_portConfigs();*/
+								if (portConfig[2-1] > tempW)
+								{
+									portConfig[2-1] = 1;
+								}
+							
+							}
+							
+							JE_drawPortConfigButtons();
+							portConfigDone = FALSE;
+						}
+					}
+					
+					/* PLAYER SHOT Creation */
+					
+					/*SpecialShot*/
+					if (!galagaMode)
+						/* TODO JE_doSpecialShot(playerNum_, armorLevel_, shield_)*/;
+					
+					/*Normal Main Weapons*/
+					if (!(twoPlayerLinked && playerNum_ == 2))
+					{
+						if (!twoPlayerMode)
+						{
+							min = 1;
+							max = 2;
+						} else
+							switch (playerNum_)
+							{
+								case 1:
+									min = 1;
+									max = 1;
+									break;
+								case 2:
+									min = 2;
+									max = 2;
+									break;
+							}
+							for (temp = min; temp < max; temp++)
+								if (pItems_[temp-1] > 0)
+								{
+									if (shotRepeat[temp-1] > 0)
+										shotRepeat[temp-1]--;
+									else
+										if (button[1-1])
+power = 10000; /** <-- free energy machine **/
+											JE_initPlayerShot(pItems_[temp-1], temp, *PX_, *PY_, *mouseX_, *mouseY_,
+											                  weaponPort[pItems_[temp-1]].op[portConfig[temp-1]-1]
+											                  [portPower[temp-1] * !galagaMode + galagaMode - 1],
+											                  playerNum_);
+								}
+					}
+					
+					/*Super Charge Weapons*/
+					if (playerNum_ == 2)
+					{
+						
+						if (!twoPlayerLinked)
+							JE_drawShape2(*PX_ + (shipGr_ == 0) + 1, *PY_ - 13, 77 + chargeLevel + chargeGr * 19,
+							              eShapes6);
+						
+						if (chargeGrWait > 0)
+							chargeGrWait--;
+						else
+						{
+							chargeGr++;
+							if (chargeGr == 4)
+								chargeGr = 0;
+							chargeGrWait = 3;
+						}
+						
+						if (chargeLevel > 0)
+							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* NOTE vga256c*/
+						
+						if (chargeWait > 0)
+						{
+							chargeWait--;
+						} else {
+							if (chargeLevel < chargeMax)
+								chargeLevel++;
+							chargeWait = 28 - portPower[2-1] * 2;
+							if (difficultyLevel > 3)
+								chargeWait -= 5;
+						}
+						
+						if (chargeLevel > 0)
+							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204); /* NOTE vga256c*/
+						
+						if (shotRepeat[6-1] > 0)
+							shotRepeat[6-1]--;
+						else
+							if (button[1-1]
+							    && (!twoPlayerLinked || chargeLevel > 0))
+							{
+								shotMultiPos[6-1] = 0;
+								JE_initPlayerShot(16, 6, *PX_, *PY_, *mouseX_, *mouseY_,
+								                  chargeGunWeapons[pItemsPlayer2[2-1]-1] + chargeLevel, playerNum_);
+								
+								if (chargeLevel > 0)
+									JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* NOTE vga256c*/
+								
+								chargeLevel = 0;
+								chargeWait = 30 - portPower[2-1] * 2;
+							}
+					}
+					
+					
+					/*SUPER BOMB*/
+					temp = playerNum_;
+					if (temp == 0)
+						temp = 1;  /*Get whether player 1 or 2*/
+					
+/* TODO					IF superbomb [temp] > 0 THEN
+					BEGIN
+						IF shotrepeat [temp + 6] > 0 THEN
+							DEC (shotrepeat [temp + 6]) 
+						ELSE
+						BEGIN
+							IF button [3] OR button [2] THEN
+							BEGIN
+								DEC (superbomb [temp]);
+								shotmultipos [temp + 6] := 0;
+								initplayershot (16, temp + 6, (*PX_), (*PY_), (*mouseX_), (*mouseY_), 535, playerNum_);
+							END;
+						END;
+						
+					END;*/
+					
+					
+					
+					/*Special option following*/
+					switch (leftOptionIsSpecial)
+					{
+						case 1:
+						case 3:
+							option1X = playerHX[10-1];
+							option1Y = playerHY[10-1];
+							break;
+						case 2:
+							option1X = *PX_;
+							option1Y = *PY_ - 20;
+							if (option1Y < 10)
+								option1Y = 10;
+							break;
+						case 4:
+							if (rightOptionIsSpecial == 4)
+								optionSatelliteRotate += 0.2;
+							else
+								optionSatelliteRotate += 0.15;
+							option1X = *PX_ + ROUND(sin(optionSatelliteRotate) * 20);
+							option1Y = *PY_ + ROUND(cos(optionSatelliteRotate) * 20);
+							break;
+					}
+					
+					
+					switch (rightOptionIsSpecial)
+					{
+	                    case 4:
+							if (leftOptionIsSpecial != 4)
+								optionSatelliteRotate += 0.15;
+							option2X = *PX_ - ROUND(sin(optionSatelliteRotate) * 20);
+							option2Y = *PY_ - ROUND(cos(optionSatelliteRotate) * 20);
+							break;
+						case 1:
+						case 3:
+							option2X = playerHX[1-1];
+							option2Y = playerHY[1-1];
+							break;
+						case 2:
+							if (!optionAttachmentLinked)
+							{
+								option2Y += optionAttachmentMove / 2;
+								if (optionAttachmentMove >= -2)
+								{
+									
+									if (optionAttachmentReturn)
+										temp = 2;
+									else
+										temp = 0;
+									if (option2Y > (*PY_ - 20) + 5)
+									{
+										temp = 2;
+										optionAttachmentMove -= 1 + optionAttachmentReturn;
+									} else
+										if (option2Y > (*PY_ - 20) - 0)
+										{
+											temp = 3;
+											if (optionAttachmentMove > 0)
+												optionAttachmentMove--;
+											else
+												optionAttachmentMove++;
+										} else
+											if (option2Y > (*PY_ - 20) - 5)
+											{
+												temp = 2;
+												optionAttachmentMove++;
+											} else
+												if (optionAttachmentMove < 2 + optionAttachmentReturn * 4)
+													optionAttachmentMove += 1 + optionAttachmentReturn;
+												
+									if (optionAttachmentReturn)
+										temp = temp * 2;
+									if (abs(option2X - *PX_ < temp))
+										temp = 1;
+									
+									if (option2X > *PX_)
+										option2X -= temp;
+									else
+										if (option2X < *PX_)
+											option2X += temp;
+									
+									if (abs(option2Y - (*PY_ - 20)) + abs(option2X - *PX_) < 8)
+									{
+										optionAttachmentLinked = TRUE;
+										soundQueue[3-1] = 23;
+									}
+									
+									if (button[3-1])
+										optionAttachmentReturn = TRUE;
+								} else {
+									optionAttachmentMove += 1 + optionAttachmentReturn;
+									JE_setupExplosion(option2X + 1, option2Y + 10, 0);
+								}
+								
+							} else {
+								option2X = *PX_;
+								option2Y = *PY_ - 20;
+								if (button[3-1])
+								{
+									optionAttachmentLinked = FALSE;
+									optionAttachmentReturn = FALSE;
+									optionAttachmentMove = -20;
+									soundQueue[3] = 26;
+								}
+							}
+								
+							if (option2Y < 10)
+								option2Y = 10;
+							break;
+					}
+					
+					if (playerNum_ == 2 || !twoPlayerMode)
+					{
+						if (options[option1Item].wport > 0)
+						{
+							if (shotRepeat[3-1] > 0)
+								shotRepeat[3-1]--;
+							else {
+								
+								if (option1Ammo >= 0)
+								{
+									if (option1AmmoRechargeWait > 0)
+										option1AmmoRechargeWait--;
+									else {
+										option1AmmoRechargeWait = option1AmmoRechargeWaitMax;
+										if (option1Ammo < options[option1Item].ammo)
+											option1Ammo++;
+										/* TODO JE_barDrawDirect (284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/ /*Option1Ammo*/
+									}
+								}
+								
+								if (option1Ammo > 0)
+								{
+									if (button[2-1])
+									{
+										JE_initPlayerShot(options[option1Item].wport, 3,
+														option1X, option1Y,
+														*mouseX_, *mouseY_,
+														options[option1Item].wpnum + optionCharge1,
+														playerNum_);
+										if (optionCharge1 > 0)
+											shotMultiPos[3-1] = 0;
+										optionAni1Go = TRUE;
+										optionCharge1Wait = 20;
+										optionCharge1 = 0;
+										option1Ammo--;
+										JE_bar(284, option1Draw + 13, 312, option1Draw + 15, 0); /* NOTE vga256c */
+										/* TODO JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
+									}
+								} else
+									if (option1Ammo < 0)
+									{
+										if (button[1-1] || button[2-1])
+										{
+											JE_initPlayerShot(options[option1Item].wport, 3,
+															option1X, option1Y,
+															*mouseX_, *mouseY_,
+															options[option1Item].wpnum + optionCharge1,
+															playerNum_);
+											if (optionCharge1 > 0)
+												shotMultiPos[3-1] = 0;
+											optionCharge1Wait = 20;
+											optionCharge1 = 0;
+											optionAni1Go = TRUE;
+										}
+									}
+							}
+						}
+						
+						if (options[option2Item].wport > 0)
+						{
+							if (shotRepeat[4-1] > 0)
+								shotRepeat[4-1]--;
+							else {
+							
+								if (option2Ammo >= 0)
+								{
+									if (option2AmmoRechargeWait > 0)
+										option2AmmoRechargeWait--;
+									else {
+										option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
+										if (option2Ammo < options[option2Item].ammo)
+											option2Ammo++;
+										/* TODO JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+									}
+								}
+								
+								if (option2Ammo > 0)
+								{
+									if (button[3-1])
+									{
+										JE_initPlayerShot(options[option2Item].wport, 4, option2X, option2Y,
+														*mouseX_, *mouseY_,
+														options[option2Item].wpnum + optionCharge2,
+														playerNum_);
+										if (optionCharge2 > 0)
+										{
+											shotMultiPos[4-1] = 0;
+											optionCharge2 = 0;
+										}
+										optionCharge2Wait = 20;
+										optionCharge2 = 0;
+										optionAni2Go = TRUE;
+										option2Ammo--;
+										JE_bar(284, option2Draw + 13, 312, option2Draw + 15, 0); /* NOTE vga256c */
+										/* TODO JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+									}
+								} else
+									if (option2Ammo < 0)
+										if (button[1-1] || button[3-1])
+										{
+											JE_initPlayerShot(options[option2Item].wport, 4, option2X, option2Y,
+														*mouseX_, *mouseY_,
+														options[option2Item].wpnum + optionCharge2,
+														playerNum_);
+											if (optionCharge2 > 0)
+											{
+												shotMultiPos[4-1] = 0;
+												optionCharge2 = 0;
+											}
+											optionCharge2Wait = 20;
+											optionAni2Go = TRUE;
+										}
+							}
+						}
+					}
+				}  /* !endLevel */
+			}
+			
+		}
+		
+		/* Draw Floating Options */
+		if ((playerNum_ == 2 || !twoPlayerMode) && !endLevel)
+		{
+			if (options[option1Item].option > 0)
+			{
+				
+				if (optionAni1Go)
+				{
+					optionAni1++;
+					if (optionAni1 > options[option1Item].ani)
+					{
+						optionAni1 = 1;
+						optionAni1Go = options[option1Item].option == 1;
+					}
+				}
+				
+				if (leftOptionIsSpecial == 1 || leftOptionIsSpecial == 2)
+					JE_drawShape2x2(option1X - 6, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
+					                eShapes6);
+				else
+					JE_drawShape2(option1X, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
+					              shapes9);
+			}
+			
+			if (options[option2Item].option > 0)
+			{
+				
+				if (optionAni2Go)
+				{
+					optionAni2++;
+					if (optionAni2 > options[option2Item].ani)
+					{
+						optionAni2 = 1;
+						optionAni2Go = options[option2Item].option == 1;
+					}
+				}
+				
+				if (rightOptionIsSpecial == 1 || rightOptionIsSpecial == 2)
+					JE_drawShape2x2(option2X - 6, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
+					                eShapes6);
+				else
+					JE_drawShape2(option2X, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
+					              shapes9);
+			}
+			
+			optionCharge1Wait--;
+			if (optionCharge1Wait == 0)
+			{
+				if (optionCharge1 < options[option1Item].pwr)
+					optionCharge1++;
+				optionCharge1Wait = 20;
+			}
+			optionCharge2Wait--;
+			if (optionCharge2Wait == 0)
+			{
+				if (optionCharge2 < options[option2Item].pwr)
+					optionCharge2++;
+				optionCharge2Wait = 20;
+			}
+		}
+
+	} else
+		explosionFollowAmount = 0; /*if (*playerAlive_)...*/
+
 }
 
 void JE_mainGamePlayerFunctions( void )
