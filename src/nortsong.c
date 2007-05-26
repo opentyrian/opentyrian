@@ -32,6 +32,23 @@
 
 #include "SDL.h"
 
+JE_word w1;
+JE_AweType * awe_data;
+JE_word tempw;
+JE_word w2;
+JE_byte sberror;
+JE_byte sysintcount;
+JE_byte sbint;
+JE_AweType * awe_code;
+void * oldvector;
+JE_byte midiport;
+JE_byte sysintwait;
+JE_word sbport;
+JE_DigiMixType * digimix;
+JE_byte midierror;
+JE_longint address;
+JE_word intcount;
+JE_word dspversion;
 const char hexa[17] = "0123456789ABCDEF";
 
 Uint32 target, target2;
@@ -295,4 +312,9 @@ void JE_setTimerInt( void )
 void JE_resetTimerInt( void )
 {
 	STUB(JE_resetTimerInt);
+}
+
+void JE_timerInt( void )
+{
+	STUB(JE_timerInt);
 }

@@ -17,40 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef PCXLOAD_H
-#define PCXLOAD_H
 
-#include "opentyr.h"
+
+#include "starfade.h"
+#include "vga256d.h"
+#include "pcxmast.h"
 #include "nortvars.h"
-#include "error.h"
 
-struct JE_PCXHeader_rec {
-	JE_byte manufacturer;
-	JE_byte version;
-	JE_byte encoding;
-	JE_byte bits_per_pixel;
-	JE_word xmin, ymin;
-	JE_word xmax, ymax;
-	JE_word hres, vres;
-	JE_byte palette[48];  /* [0..47] */
-	JE_byte reserved;
-	JE_byte colour_planes;
-	JE_word bytes_per_line;
-	JE_word palette_type;
-};
+#define NO_EXTERNS
+#include "picload2.h"
+#undef NO_EXTERNS
 
-#ifndef NO_EXTERNS
+JE_ColorType colors2;
+JE_boolean overrideblack;
+JE_char c2;
 
-extern JE_ColorType colors2;
-extern JE_word width, depth;
-extern JE_word bytes;
-extern JE_char /*c,*/ c2;
-extern JE_boolean overrideBlack;
-#endif
+/* JE_loadPic is found in picload.c */
 
-/*void JE_unpackPCX( void );*/
+/*void JE_updatePCXColorsSlow ( void* colorbuffer )
+{
+	STUB(JE_updatePCXColorsSlow );
+}*/
 
-void JE_loadPCX( char *name, JE_boolean storePalette );
-void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer );
+void JE_unpackPCX( void )
+{
+	STUB(JE_unpackPCX);
+}
 
-#endif /* PCXLOAD_H */
+void JE_analyzePic( void )
+{
+	STUB(JE_analyzePic);
+}

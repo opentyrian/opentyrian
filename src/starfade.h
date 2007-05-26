@@ -24,6 +24,12 @@
 #include "nortvars.h"
 
 #ifndef NO_EXTERNS
+
+extern JE_word nocolorsx3;
+
+extern JE_ColorType dummysub;
+
+extern JE_ColorType dummypalette;
 extern JE_ColorType black, colors, colors2;
 #endif
 

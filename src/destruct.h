@@ -17,40 +17,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef PCXLOAD_H
-#define PCXLOAD_H
+
+
+#ifndef DESTRUCT_H
+#define DESTRUCT_H
 
 #include "opentyr.h"
-#include "nortvars.h"
-#include "error.h"
 
-struct JE_PCXHeader_rec {
-	JE_byte manufacturer;
-	JE_byte version;
-	JE_byte encoding;
-	JE_byte bits_per_pixel;
-	JE_word xmin, ymin;
-	JE_word xmax, ymax;
-	JE_word hres, vres;
-	JE_byte palette[48];  /* [0..47] */
-	JE_byte reserved;
-	JE_byte colour_planes;
-	JE_word bytes_per_line;
-	JE_word palette_type;
-};
-
-#ifndef NO_EXTERNS
-
-extern JE_ColorType colors2;
-extern JE_word width, depth;
-extern JE_word bytes;
-extern JE_char /*c,*/ c2;
-extern JE_boolean overrideBlack;
+ #ifndef NO_EXTERNS
+extern JE_word tempscreenseg;
+extern JE_byte enddelay;
+extern JE_boolean died;
+extern JE_boolean firsttime;
 #endif
 
-/*void JE_unpackPCX( void );*/
+void JE_introScreen( void );
 
-void JE_loadPCX( char *name, JE_boolean storePalette );
-void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer );
+void JE_makeExplosion( JE_word tempx, JE_word tempy, JE_byte shottype );
 
-#endif /* PCXLOAD_H */
+void JE_tempScreenChecking( void );
+
+void JE_aliasDirt( void );
+
+void JE_generateTerrain( void );
+
+void JE_modeSelect( void );
+
+void JE_destructGame( void );
+
+void JE_destructMain( void );
+
+JE_byte JE_placementPosition( JE_word x, JE_byte width );
+
+JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y );
+
+void JE_helpScreen( void );
+
+void JE_eSound( JE_byte sound );
+
+void JE_pauseScreen( void );
+
+void JE_superPixel( JE_word loc );
+
+#endif

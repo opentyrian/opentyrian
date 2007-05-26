@@ -349,3 +349,13 @@ void newshape_init( void )
 	}
 	shapeArray = malloc(sizeof(JE_ShapeArrayType));
 }
+
+void JE_drawNext( JE_byte draw )
+{
+	STUB(JE_drawNext);
+}
+
+void JE_drawNShape (void *shape, JE_word xsize, JE_word ysize)
+{
+	STUB(JE_drawNShape);
+}

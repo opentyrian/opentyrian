@@ -31,6 +31,7 @@
 
 #include <string.h>
 
+JE_boolean notyetloadedpcx;
 JE_boolean notYetLoadedPCX = TRUE;
 
 void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
@@ -93,3 +94,8 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 		JE_updateColorsFast(&colors);
 	}
 }
+
+/*void JE_unpackPCX( void )
+{
+	STUB(JE_unpackPCX);
+}*/

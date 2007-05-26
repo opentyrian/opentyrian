@@ -102,3 +102,8 @@ void JE_loadPCX( char *name, JE_boolean storePalette)
 
 	fclose(fi);
 }
+
+/*void JE_unpackPCX( void )
+{
+	STUB(JE_unpackPCX);
+}*/

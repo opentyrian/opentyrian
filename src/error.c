@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+JE_word randomcount;
 JE_char dir[12];
 
 JE_boolean errorActive = TRUE;
@@ -220,4 +221,14 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n");
 		return TRUE;
 	}
+}
+
+void JE_DetectCFG( void )
+{
+	STUB(JE_DetectCFG);
+}
+
+void JE_outputString( JE_char* s )
+{
+	STUB(JE_outputString);
 }

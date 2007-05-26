@@ -23,12 +23,17 @@
 #include "opentyr.h"
 
 #ifndef NO_EXTERNS
+extern JE_word randomcount;
 extern JE_boolean dont_die;
 extern JE_char dir[12];
 extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
 extern char err_msg[128];
 #endif
+
+void JE_outputString( JE_char* s );
+
+void JE_DetectCFG( void );
 
 long get_stream_size( FILE *f );
 FILE *fopen_check( const char *file, const char *mode );

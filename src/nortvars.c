@@ -27,6 +27,8 @@
 #include "nortvars.h"
 #undef NO_EXTERNS
 
+/*JE_word z;*/
+JE_word y;
 /* File constants for Saving ShapeFile */
 const JE_byte NV_shapeactive   = 0x01;
 const JE_byte NV_shapeinactive = 0x00;
@@ -374,3 +376,27 @@ void JE_wipeKey( void )
 }
 
 /* TODO */
+
+
+/* 
+these are all located in editship.c
+
+void JE_startNewShape( void )
+{
+	STUB(JE_startNewShape);
+}
+
+void JE_endShape( void )
+{
+	STUB(JE_endShape);
+}
+
+void JE_add( JE_byte nextbyte )
+{
+	STUB(JE_add);
+}
+
+void JE_buildRec( void )
+{
+	STUB(JE_buildRec);
+}*/

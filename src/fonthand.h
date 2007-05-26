@@ -29,6 +29,7 @@
 #define NO_SHADE 255
 
 #ifndef NO_EXTERNS
+
 extern const JE_byte fontMap[136];
 extern JE_integer defaultBrightness;
 extern JE_byte textGlowFont, textGlowBrightness;

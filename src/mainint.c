@@ -2789,3 +2789,8 @@ void JE_playerCollide( JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_
 	STUB(JE_playerCollide);
 }
 
+
+/*void JE_textMenuWait ( JE_word waittime, JE_boolean dogamma )
+{
+	STUB(JE_textMenuWait );
+}*/

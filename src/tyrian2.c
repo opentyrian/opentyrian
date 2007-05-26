@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+JE_word statdmg [2];
 JE_byte planetAni, planetAniWait;
 JE_byte currentDotNum, currentDotWait;
 JE_real navX, navY, newNavX, newNavY;
@@ -3939,4 +3940,122 @@ void JE_drawPlanet( JE_byte planetNum )
 		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
 		JE_newDrawCShapeNum(PLANET_SHAPES, tempZ, tempX, tempY);
 	}
+}
+
+void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 )
+{
+	STUB(JE_scaleBitmap );
+}
+
+void JE_initWeaponView( void )
+{
+	STUB(JE_initWeaponView);
+}
+
+void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
+{
+	STUB(JE_barX );
+}
+
+void JE_computeDots( void )
+{
+	STUB(JE_computeDots);
+}
+
+JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist )
+{
+	STUB(JE_partWay);
+	return -1;
+}
+
+void JE_doFunkyScreen( void )
+{
+	STUB(JE_doFunkyScreen);
+}
+
+void JE_drawMainMenuHelpText( void )
+{
+	STUB(JE_drawMainMenuHelpText);
+}
+
+void JE_whoa( void )
+{
+	STUB(JE_whoa);
+}
+
+JE_boolean JE_quitRequest( JE_boolean usemouse )
+{
+	STUB(JE_quitRequest);
+	return FALSE;
+}
+
+void JE_doStatBar( void )
+{
+	STUB(JE_doStatBar);
+}
+
+void JE_drawScore( void )
+{
+	STUB(JE_drawScore);
+}
+
+void JE_menuFunction( JE_byte select )
+{
+	STUB(JE_menuFunction);
+}
+
+void JE_eventJump( JE_word jump )
+{
+	STUB(JE_eventJump);
+}
+
+void JE_drawJoystick( void )
+{
+	STUB(JE_drawJoystick);
+}
+
+void JE_funkyScreen( void )
+{
+	STUB(JE_funkyScreen);
+}
+
+void JE_weaponSimUpdate( void )
+{
+	STUB(JE_weaponSimUpdate);
+}
+
+void JE_makeEnemy( struct JE_SingleEnemyType enemy )
+{
+	STUB(JE_makeEnemy);
+}
+
+void JE_doNetwork( void )
+{
+	STUB(JE_doNetwork);
+}
+
+void JE_weaponViewFrame( JE_byte testshotnum )
+{
+	STUB(JE_weaponViewFrame);
+}
+
+/* located in backgrnd.c
+void JE_drawBackground3( void )
+{
+	STUB(JE_drawBackground3);
+}*/
+
+void JE_genItemMenu( JE_byte itemnum )
+{
+	STUB(JE_genItemMenu);
+}
+
+void JE_createNewEventEnemy( JE_byte enemytypeofs, JE_word enemyoffset )
+{
+	STUB(JE_createNewEventEnemy);
+}
+
+void JE_scaleInPicture( void )
+{
+	STUB(JE_scaleInPicture);
 }

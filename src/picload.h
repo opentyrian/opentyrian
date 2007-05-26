@@ -22,6 +22,13 @@
 
 #include "opentyr.h"
 
+#ifndef NO_EXTERNS
+
+extern JE_boolean notyetloadedpcx;
+#endif
+
+/*void JE_unpackPCX( void );*/
+
 void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal );
 
 #endif /* PICLOAD_H */

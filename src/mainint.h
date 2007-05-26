@@ -35,6 +35,8 @@ extern JE_boolean jumpSection;
 extern JE_boolean useLastBank;
 #endif
 
+/*void JE_textMenuWait ( JE_word waittime, JE_boolean dogamma );*/
+
 void JE_drawTextWindow( char *text );
 void JE_initPlayerData( void );
 void JE_highScoreScreen( void );

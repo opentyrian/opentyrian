@@ -585,3 +585,8 @@ void JE_smoothies6( void )
 {
 	STUB(JE_smoothies6);
 }
+
+void JE_initSmoothies( void )
+{
+	STUB(JE_initSmoothies);
+}

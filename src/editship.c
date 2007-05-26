@@ -17,40 +17,59 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef PCXLOAD_H
-#define PCXLOAD_H
 
-#include "opentyr.h"
-#include "nortvars.h"
+
 #include "error.h"
+#include "config.h"
+#include "nortvars.h"
 
-struct JE_PCXHeader_rec {
-	JE_byte manufacturer;
-	JE_byte version;
-	JE_byte encoding;
-	JE_byte bits_per_pixel;
-	JE_word xmin, ymin;
-	JE_word xmax, ymax;
-	JE_word hres, vres;
-	JE_byte palette[48];  /* [0..47] */
-	JE_byte reserved;
-	JE_byte colour_planes;
-	JE_word bytes_per_line;
-	JE_word palette_type;
-};
+#define NO_EXTERNS
+#include "editship.h"
+#undef NO_EXTERNS
 
-#ifndef NO_EXTERNS
+JE_boolean extraavail;
+JE_word extrashapeofs;
+JE_ShipsType ships;
+void * extrashapes;
+JE_word extrashapeseg;
+JE_word extrashapesize;
 
-extern JE_ColorType colors2;
-extern JE_word width, depth;
-extern JE_word bytes;
-extern JE_char /*c,*/ c2;
-extern JE_boolean overrideBlack;
-#endif
+void JE_endShape( void )
+{
+	STUB(JE_endShape);
+}
 
-/*void JE_unpackPCX( void );*/
+void JE_decryptShips( void )
+{
+	STUB(JE_decryptShips);
+}
 
-void JE_loadPCX( char *name, JE_boolean storePalette );
-void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer );
+void JE_compressShapeFile( void )
+{
+	STUB(JE_compressShapeFile);
+}
 
-#endif /* PCXLOAD_H */
+void JE_loadExtraShapes( void )
+{
+	STUB(JE_loadExtraShapes);
+}
+
+void JE_add( JE_byte nextbyte )
+{
+	STUB(JE_add);
+}
+
+void JE_encryptShips( void )
+{
+	STUB(JE_encryptShips);
+}
+
+void JE_buildRec( void )
+{
+	STUB(JE_buildRec);
+}
+
+void JE_startNewShape( void )
+{
+	STUB(JE_startNewShape);
+}

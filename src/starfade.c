@@ -27,6 +27,9 @@
 #include "starfade.h"
 #undef NO_EXTERNS
 
+JE_word nocolorsx3;
+JE_ColorType dummysub;
+JE_ColorType dummypalette;
 JE_ColorType black = {{0,0,0}}; /* Rest is filled with 0's too */
 JE_ColorType colors, colors2;
 

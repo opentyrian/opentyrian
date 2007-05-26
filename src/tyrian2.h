@@ -21,11 +21,62 @@
 #define TYRIAN2_H
 
 #include "opentyr.h"
-
+#include "varz.h"
 #include "helptext.h"
 
 #define CUBE_WIDTH 35
 #define LINE_WIDTH 150
+
+#ifndef NO_EXTERNS
+
+extern JE_word statdmg [2];
+#endif
+
+void JE_scaleInPicture( void );
+
+void JE_createNewEventEnemy( JE_byte enemytypeofs, JE_word enemyoffset );
+
+void JE_genItemMenu( JE_byte itemnum );
+
+/*void JE_drawBackground3( void );*/
+
+void JE_weaponViewFrame( JE_byte testshotnum );
+
+void JE_doNetwork( void );
+
+void JE_makeEnemy( struct JE_SingleEnemyType enemy );
+
+void JE_weaponSimUpdate( void );
+
+void JE_funkyScreen( void );
+
+void JE_drawJoystick( void );
+
+void JE_eventJump( JE_word jump );
+
+void JE_menuFunction( JE_byte select );
+
+void JE_drawScore( void );
+
+void JE_doStatBar( void );
+
+JE_boolean JE_quitRequest( JE_boolean usemouse );
+
+void JE_whoa( void );
+
+void JE_drawMainMenuHelpText( void );
+
+void JE_doFunkyScreen( void );
+
+JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist );
+
+void JE_computeDots( void );
+
+void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col );
+
+void JE_initWeaponView( void );
+
+void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 );
 
 typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 
