@@ -104,20 +104,20 @@ void JE_updateButtons( void ) /* Uses ButtonAssign to find out */
 		switch (joyButtonAssign[i])
 		{
 			case 1:
-				button[1] |= joyButton[i];
+				button[1-1] |= joyButton[i];
 				break;
 			case 2:
-				button[2] |= joyButton[i];
+				button[2-1] |= joyButton[i];
 				break;
 			case 3:
-				button[3] |= joyButton[i];
+				button[3-1] |= joyButton[i];
 				break;
 			case 4:
-				button[2] |= joyButton[i];
-				button[3] |= joyButton[i];
+				button[2-1] |= joyButton[i];
+				button[3-1] |= joyButton[i];
 				break;
 			case 5:
-				button[4] |= joyButton[i];
+				button[4-1] |= joyButton[i];
 				break;
 		}
 	}

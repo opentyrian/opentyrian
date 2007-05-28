@@ -45,7 +45,7 @@
 /*! typedef JE_longint JE_LvlPosType[LVLNum + 2];*/ /* [1..LVLnum + 2] */
 
 #ifndef NO_EXTERNS
-extern const JE_char ShapeFile[34]; /* [1..34] */
+extern const JE_char shapeFile[34]; /* [1..34] */
 extern const char lvlFile[LVL_NUM][9]; /* [1..LVLnum] of string [8] */
 extern const char lvlFile2[LVL_NUM_2][9]; /* [1..LVLnum2] of string [8] */
 extern const char lvlFile3[LVL_NUM_3][9]; /* [1..LVLnum3] of string [8] */

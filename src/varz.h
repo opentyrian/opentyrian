@@ -108,11 +108,11 @@ typedef JE_byte *JE_MapType3[600][15]; /* [1..600, 1..15] */
 
 struct JE_EventRecType
 {
-	JE_word     eventTime;
-	JE_byte     eventType;
-	JE_integer  eventDat, eventDat2;
-	JE_shortint eventDat3, eventDat5, eventDat6;
-	JE_byte     eventDat4;
+	JE_word     eventtime;
+	JE_byte     eventtype;
+	JE_integer  eventdat, eventdat2;
+	JE_shortint eventdat3, eventdat5, eventdat6;
+	JE_byte     eventdat4;
 };
 
 struct JE_MegaDataType1

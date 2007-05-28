@@ -40,6 +40,7 @@
 #include "error.h"
 #include "episodes.h"
 #include "lvllib.h"
+#include "lvlmast.h"
 
 #include "tyrian2.h"
 
@@ -224,13 +225,25 @@ start_level:
 	/* TODO JE_clearKeyboard(); */
 	
 	if (eShapes1 != NULL)
+	{
 		free(eShapes1);
+		eShapes1 = NULL;
+	}
 	if (eShapes2 != NULL)
+	{
 		free(eShapes2);
+		eShapes2 = NULL;
+	}
 	if (eShapes3 != NULL)
+	{
 		free(eShapes3);
+		eShapes3 = NULL;
+	}
 	if (eShapes4 != NULL)
+	{
 		free(eShapes4);
+		eShapes4 = NULL;
+	}
   
 	/* Normal speed */
 	if (fastPlay != 0)
@@ -764,7 +777,7 @@ level_loop:
 	}    /*MAIN DRAWING IS STOPPED ENDING   HERE*/
 
 	/*---------------------------EVENTS-------------------------*/
-	while (eventRec[eventLoc].eventTime <= curLoc && eventLoc <= maxEvent)
+	while (eventRec[eventLoc].eventtime <= curLoc && eventLoc <= maxEvent)
 	{
 		JE_eventSystem();
 	}
@@ -1511,7 +1524,7 @@ drawplayershotloopend:
 	}
 
 	/** Statbar **/
-	if (statBar[0] > 0 || statBar[2] > 0)
+	if (statBar[0] > 0 || statBar[1] > 0)
 	{
 		/* TODO JE_doStatBar();*/
 	}
@@ -2309,16 +2322,16 @@ new_game:
 		efread(&maxEvent, sizeof(JE_word), 1, lvlFile);
 		for (x = 0; x < maxEvent; x++)
 		{
-			efread(&eventRec[x].eventTime, sizeof(JE_word), 1, lvlFile);
-			efread(&eventRec[x].eventType, sizeof(JE_byte), 1, lvlFile);
-			efread(&eventRec[x].eventDat,  sizeof(JE_integer), 1, lvlFile);
-			efread(&eventRec[x].eventDat2, sizeof(JE_integer), 1, lvlFile);
-			efread(&eventRec[x].eventDat3, sizeof(JE_shortint), 1, lvlFile);
-			efread(&eventRec[x].eventDat5, sizeof(JE_shortint), 1, lvlFile);
-			efread(&eventRec[x].eventDat6, sizeof(JE_shortint), 1, lvlFile);
-			efread(&eventRec[x].eventDat4, sizeof(JE_byte), 1, lvlFile);
+			efread(&eventRec[x].eventtime, sizeof(JE_word), 1, lvlFile);
+			efread(&eventRec[x].eventtype, sizeof(JE_byte), 1, lvlFile);
+			efread(&eventRec[x].eventdat,  sizeof(JE_integer), 1, lvlFile);
+			efread(&eventRec[x].eventdat2, sizeof(JE_integer), 1, lvlFile);
+			efread(&eventRec[x].eventdat3, sizeof(JE_shortint), 1, lvlFile);
+			efread(&eventRec[x].eventdat5, sizeof(JE_shortint), 1, lvlFile);
+			efread(&eventRec[x].eventdat6, sizeof(JE_shortint), 1, lvlFile);
+			efread(&eventRec[x].eventdat4, sizeof(JE_byte), 1, lvlFile);
 		}
-		eventRec[x].eventTime = 65500;  /*Not needed but just in case*/
+		eventRec[x].eventtime = 65500;  /*Not needed but just in case*/
 
 		/*debuginfo('Level loaded.');*/
 
@@ -2489,12 +2502,20 @@ void JE_titleScreen( JE_boolean animate )
 	}
 
 	tempScreenSeg = VGAScreen;
+	
+	playDemo = FALSE;
+	
+	stoppedDemo = FALSE;
 
-	joystickWaitMax = 80;
-	joystickWait = 0;
+	first  = TRUE;
+	redraw = TRUE;
+	fadeIn = FALSE;
 
 	gameLoaded = FALSE;
 	jumpSection = FALSE;
+
+	joystickWaitMax = 80;
+	joystickWait = 0;
 
 	/* If IsNetworkActive { TODO } else { */
 

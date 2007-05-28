@@ -1362,19 +1362,19 @@ void JE_doDemoKeys( void )
 	}
 	if (lastKey[4] > 0)
 	{
-		button[0] = TRUE;
+		button[1-1] = TRUE;
 	}
 	if (lastKey[5] > 0)
 	{
-		button[3] = TRUE;
+		button[4-1] = TRUE;
 	}
 	if (lastKey[6] > 0)
 	{
-		button[1] = TRUE;
+		button[2-1] = TRUE;
 	}
 	if (lastKey[7] > 0)
 	{
-		button[2] = TRUE;
+		button[3-1] = TRUE;
 	}
 }
 
@@ -1651,7 +1651,7 @@ redo:
 						if (( inputDevice_ == 2 || inputDevice_ == 0 ) && mouseInstalled
 						    && (!isNetworkGame || playerNum_ == thisPlayerNum)
 						    && (!galagaMode || (playerNum_ == 2 || !twoPlayerMode || playerStillExploding2 > 0)))
-							JE_setMousePosition((159 * 2) + 1, 100); /* <MXD> scale? */
+							JE_setMousePosition(159, 100);
 						
 					}
 					
@@ -2308,14 +2308,14 @@ redo:
 									max = 2;
 									break;
 							}
-							for (temp = min; temp < max; temp++)
+power = 10000; /** <-- free energy machine **/
+							for (temp = min; temp <= max; temp++)
 								if (pItems_[temp-1] > 0)
 								{
 									if (shotRepeat[temp-1] > 0)
 										shotRepeat[temp-1]--;
 									else
 										if (button[1-1])
-power = 10000; /** <-- free energy machine **/
 											JE_initPlayerShot(pItems_[temp-1], temp, *PX_, *PY_, *mouseX_, *mouseY_,
 											                  weaponPort[pItems_[temp-1]].op[portConfig[temp-1]-1]
 											                  [portPower[temp-1] * !galagaMode + galagaMode - 1],
@@ -2382,22 +2382,19 @@ power = 10000; /** <-- free energy machine **/
 					if (temp == 0)
 						temp = 1;  /*Get whether player 1 or 2*/
 					
-/* TODO					IF superbomb [temp] > 0 THEN
-					BEGIN
-						IF shotrepeat [temp + 6] > 0 THEN
-							DEC (shotrepeat [temp + 6]) 
-						ELSE
-						BEGIN
-							IF button [3] OR button [2] THEN
-							BEGIN
-								DEC (superbomb [temp]);
-								shotmultipos [temp + 6] := 0;
-								initplayershot (16, temp + 6, (*PX_), (*PY_), (*mouseX_), (*mouseY_), 535, playerNum_);
-							END;
-						END;
-						
-					END;*/
-					
+					if (superBomb[temp-1] > 0)
+					{
+						if (shotRepeat[temp-1 + 6] > 0)
+							shotRepeat[temp-1 + 6]--;
+						else {
+							if (button[3-1] || button[2-1])
+							{
+								superBomb[temp-1]--;
+								shotMultiPos[temp-1 + 6] = 0;
+								JE_initPlayerShot(16, temp + 6, *PX_, *PY_, *mouseX_, *mouseY_, 535, playerNum_);
+							}
+						}
+					}
 					
 					
 					/*Special option following*/
