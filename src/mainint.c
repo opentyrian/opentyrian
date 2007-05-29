@@ -1430,7 +1430,11 @@ void JE_endLevelAni( void )
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
-	STUB(JE_drawCube);
+	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1],
+	  shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
+	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1],
+	  shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
+	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26 - 1, x, y, filter, brightness);	
 }
 
 void JE_handleChat( void )
