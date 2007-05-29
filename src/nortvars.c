@@ -322,7 +322,8 @@ void JE_setMousePosition( JE_word mouseX, JE_word mouseY )
 {
 	if (mouseInstalled)
 	{
-		SDL_WarpMouse(mouseX, mouseY);
+		/* YKS: Added X scaling from 640 to 320. For some reason Y doesn't needs to be scaled. */
+		SDL_WarpMouse((mouseX*320.)/640., mouseY);
 	}
 }
 
