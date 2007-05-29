@@ -1073,7 +1073,7 @@ level_loop:
 				playerShotData[z].shotYM += playerShotData[z].shotYC;
 				playerShotData[z].shotY += playerShotData[z].shotYM;
 	
-				if (playerShotData[z].shotXM > 100)
+				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
 					playerShotData[z].shotY += PYChange;

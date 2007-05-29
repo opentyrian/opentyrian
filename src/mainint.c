@@ -2244,7 +2244,7 @@ redo:
 			{
 				if (!endLevel)
 				{
-					*PXChange_ = *PX_ - lastPYShotMove;
+					*PXChange_ = *PX_ - lastPXShotMove;
 					*PYChange_ = *PY_ - lastPYShotMove;
 					
 					/* PLAYER SHOT Change */
