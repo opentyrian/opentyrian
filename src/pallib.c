@@ -52,5 +52,5 @@ void JE_loadPals( void )
 
 void JE_zPal( JE_byte palette )
 {
-	JE_updateColorsFast(&palettes[palette]);
+	JE_updateColorsFast(&palettes[palette - 1]);
 }

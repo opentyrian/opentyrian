@@ -34,7 +34,7 @@
 
 JE_word w1;
 JE_AweType * awe_data;
-JE_word tempw;
+/*JE_word tempw;*/
 JE_word w2;
 JE_byte sberror;
 JE_byte sysintcount;
@@ -317,4 +317,14 @@ void JE_resetTimerInt( void )
 void JE_timerInt( void )
 {
 	STUB(JE_timerInt);
+}
+
+void JE_changeVolume( JE_word temp, JE_integer change, JE_word fxvol, JE_integer fxchange )
+{
+	STUB(JE_changeVolume);
+}
+
+void JE_waitFrameCount( void )
+{
+	/* TODO: I'm not sure how long this function should wait. Leaving it blank for now, it doesn't seem to hurt much... */
 }

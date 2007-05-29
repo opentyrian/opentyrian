@@ -189,6 +189,7 @@ void service_SDL_events( JE_boolean clear_new )
 
 	if (clear_new)
 	{
+		/*if (newkey) printf("clearing newkey\n");*/
 		newkey = newmouse = FALSE;
 	}
 	while (SDL_PollEvent(&ev))
@@ -257,4 +258,9 @@ void sleep_game( void )
 			return;
 		}
 	}
+}
+
+void JE_clearKeyboard( void )
+{
+	STUB(JE_clearKeyboard);
 }

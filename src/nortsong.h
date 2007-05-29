@@ -33,7 +33,7 @@ typedef JE_byte JE_AweType [35000];
 #ifndef NO_EXTERNS
 extern JE_word w1;
 extern JE_AweType * awe_data;
-extern JE_word tempw;
+/*extern JE_word tempw;*/
 extern JE_word w2;
 extern JE_byte sberror;
 extern JE_byte sysintcount;
@@ -107,7 +107,7 @@ void JE_fxDestruct ( JE_byte samplenum );
 
 void JE_setvol (JE_byte musicvolume, JE_byte sample );
 
-void JE_waitframecount( void );
+void JE_waitFrameCount( void );
 
 char *JE_hexa2 (JE_byte data );
 char *JE_hexa4 (JE_word data );

@@ -32,6 +32,7 @@
 #include "loudness.h"
 #include "mainint.h"
 #include "musmast.h"
+#include "network.h"
 #include "nortsong.h"
 #include "nortvars.h"
 #include "params.h"

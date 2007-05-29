@@ -375,6 +375,12 @@ void JE_wipeKey( void )
 	STUB(JE_wipeKey);
 }
 
+JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
+{
+	STUB(JE_mousePosition);
+	return 0;
+}
+
 /* TODO */
 
 

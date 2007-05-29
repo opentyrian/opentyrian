@@ -101,6 +101,7 @@ void JE_drawMenuHeader( void );
 void JE_drawMenuChoices( void );
 void JE_updateNavScreen( void );
 
+void JE_drawNavLines( JE_boolean dark );
 void JE_drawLines( JE_boolean dark );
 void JE_drawDots( void );
 void JE_drawPlanet( JE_byte planetNum );

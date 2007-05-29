@@ -1430,7 +1430,7 @@ void JE_endLevelAni( void )
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
-	STUB(JE_gammaCorrect);
+	STUB(JE_drawCube);
 }
 
 void JE_handleChat( void )

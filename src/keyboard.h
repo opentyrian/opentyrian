@@ -47,4 +47,6 @@ void init_keyboard( void );
 void service_SDL_events( JE_boolean clear_new );
 void sleep_game( void );
 
+void JE_clearKeyboard( void );
+
 #endif /* KEYBOARD_H */
