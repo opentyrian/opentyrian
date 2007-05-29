@@ -2756,7 +2756,7 @@ void JE_titleScreen( JE_boolean animate )
 							playDemo = TRUE;
 							if (playDemoNum++ > 4)
 							{
-								playDemoNum = 0;
+								playDemoNum = 1;
 							}
 							break;
 						case 6: /* Quit */
