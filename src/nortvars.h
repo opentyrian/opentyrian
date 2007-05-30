@@ -82,12 +82,12 @@ void JE_wipeKey( void );
 void JE_drawANSI( char *ansiscreen );
 /*JE_boolean JE_waitaction( JE_byte time );*/
 
-void JE_drawShape2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
-void JE_superDrawShape2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
-void JE_drawShape2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *shape );
+void JE_drawShape2( int x, int y, int s, JE_byte *shape );
+void JE_superDrawShape2( int x, int y, int s, JE_byte *shape );
+void JE_drawShape2Shadow( int x, int y, int s, JE_byte *shape );
 
-void JE_drawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
-void JE_superDrawShape2x2( JE_word x, JE_word y, JE_word s, JE_byte *shape );
-void JE_drawShape2x2Shadow( JE_word x, JE_word y, JE_word s, JE_byte *shape );
+void JE_drawShape2x2( int x, int y, int s, JE_byte *shape );
+void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape );
+void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape );
 
 #endif /* NORTVARS_H */

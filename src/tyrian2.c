@@ -1073,16 +1073,16 @@ level_loop:
 						playerShotData[z].shotX += PXChange;
 					}
 				}
-	
+				
 				playerShotData[z].shotYM += playerShotData[z].shotYC;
 				playerShotData[z].shotY += playerShotData[z].shotYM;
-	
+				
 				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
 					playerShotData[z].shotY += PYChange;
 				}
-	
+				
 				if (playerShotData[z].shotComplicated != 0)
 				{
 					playerShotData[z].shotDevX += playerShotData[z].shotDirX;
@@ -1122,12 +1122,12 @@ level_loop:
 						/* TODO JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);*/
 					}
 				}
-
+				
 				if (playerShotData[z].aimAtEnemy != 0)
 				{
 					if (--playerShotData[z].aimDelay == 0) {
 						playerShotData[z].aimDelay = playerShotData[z].aimDelayMax;
-
+						
 						if (enemyAvail[playerShotData[z].aimAtEnemy] != 1)
 						{
 							if (playerShotData[z].shotX < enemy[playerShotData[z].aimAtEnemy].ex)
