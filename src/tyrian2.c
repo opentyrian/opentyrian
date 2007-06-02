@@ -726,6 +726,12 @@ start_level_first:
 	BKwrap2 = &megaData1->mainmap[0][0];
 	BKwrap2to = &megaData1->mainmap[0][0];
 
+/* TODO <MXD> remove these */
+debugHist = 1;
+debugHistCount = 1;
+lastDebugTime = SDL_GetTicks();
+/* </MXD> */
+
 level_loop:
 
 	if (isNetworkGame)
@@ -1117,9 +1123,9 @@ level_loop:
 				{
 					if (playerShotData[z].shotTrail == 98)
 					{
-						/* TODO JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, playerShotData[z].shotTrail);*/
+						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, playerShotData[z].shotTrail);
 					} else {
-						/* TODO JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);*/
+						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);
 					}
 				}
 				
@@ -1331,7 +1337,36 @@ drawplayershotloopend:
 	/*=================================*/
 	/*=======The Sound Routine=========*/
 	/*=================================*/
-	/* TODO */
+	if (soundEffects > 1 && soundActive && firstGameOver)
+	{
+		temp = 0;
+		for (temp2 = 0; temp2 <= 7; temp2++)
+		{
+			if (soundQueue[temp2] > 0)
+			{
+				temp = soundQueue[temp2];
+				if (temp2 == 3)
+				{
+					temp3 = fxPlayVol;
+				} else {
+					if (temp == 15)
+					{
+						temp3 = fxPlayVol / 4;
+					} else {   /*Lightning*/
+						temp3 = fxPlayVol / 2;
+					}
+				}
+				JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
+				soundQueue[temp2] = 0;
+			}
+		}
+	}
+
+	if (returnActive && enemyOnScreen == 0)
+	{
+		JE_eventJump (65535);
+		returnActive = FALSE;
+	}
 
 	/*-------      DEbug      ---------*/
 	debugTime = SDL_GetTicks();

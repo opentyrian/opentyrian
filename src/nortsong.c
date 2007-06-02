@@ -68,8 +68,8 @@ JE_byte jConfigure = 0;
 JE_byte soundActive = TRUE; /* I'm not sure if these two are ever false. */
 JE_byte musicActive = TRUE; /* TODO: Make sure these get proper values. */
 
-JE_byte *digiFx[SOUND_NUM + 9];
-JE_word fxSize[SOUND_NUM + 9];
+JE_byte *digiFx[SOUND_NUM + 9]; /* [1..soundnum + 9] */
+JE_word fxSize[SOUND_NUM + 9]; /* [1..soundnum + 9] */
 int allocd_digifx = FALSE;
 
 
