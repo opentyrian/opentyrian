@@ -24,6 +24,32 @@
 #include "starlib.h"
 #undef NO_EXTERNS
 
+JE_boolean run;
+struct JE_StarType star[starlib_MAX_STARS];
+
+JE_byte setup;
+JE_word stepCounter;
+
+JE_word nsp2;
+JE_shortint nspVar2Inc;
+
+/* JE: new sprite pointer */
+JE_real nsp;
+JE_real nspVarInc;
+JE_real nspVarVarInc;
+
+JE_word changeTime;
+JE_boolean doChange;
+
+JE_boolean grayB;
+
+JE_integer x;
+
+JE_integer speed;
+JE_shortint speedChange;
+
+JE_byte pColor;
+
 
 void JE_starlib_main( void )
 {
@@ -37,12 +63,13 @@ void JE_makeGray( void )
 
 void JE_wackyCol( void )
 {
-	STUB(JE_wackyCol);	
+	JE_byte a, b, c;
+	/* YKS: Does nothing */
 }
 
 void JE_starlib_init( void )
 {
-	STUB(JE_starlib_init);	
+	STUB(JE_starlib_init);
 }
 
 void JE_resetValues( void )
