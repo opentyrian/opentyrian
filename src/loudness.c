@@ -34,7 +34,7 @@ JE_boolean playing;
 float sample_volume = 0.25;
 float music_volume = 0.4f;
 
-SDL_mutex *soundmutex;
+SDL_mutex *soundmutex = NULL;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
 SAMPLE_TYPE *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
@@ -65,9 +65,9 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 	
 	soundmutex = SDL_CreateMutex();
 
-	if (SDL_mutexP(soundmutex) == -1)
+	if (soundmutex == NULL)
 	{
-		printf("Couldn't lock mutex! Argh!\n");
+		printf("Couldn't create mutex! Oh noes!\n");
 		exit(-1);
 	}
 	
@@ -95,12 +95,6 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
     }
 	
 	printf("\tObtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
-	
-	if (SDL_mutexV(soundmutex) == -1)
-	{
-		printf("Couldn't unlock mutex! Argh!\n");
-		exit(-1);
-	}
 	
     SDL_PauseAudio(0);
 }
@@ -291,6 +285,12 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	double v = 1;
 	/* v = (vol - 0x100) / ((double) 0xe00); */ /* SYN: Convert Loudness vol to fraction) */
 
+	if (noSound) 
+	{
+		/* no sound, so let's leave */
+		return;
+	}
+	
 	/*printf("play sound on channel %d, of size %d\n", chan, size);*/
 	
 	/* Making sure that we don't mess with sound buffers when someone else is using them! */
