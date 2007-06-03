@@ -161,9 +161,6 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		feedme[smp] = feedme[smp] * music_volume;
 	}
 
-	/* Bail out, don't mix in sound at the moment. It's broked. */
-	
-	
 	/* SYN: Mix sound channels and shove into audio buffer */
 	for (ch = 0; ch < SFX_CHANNELS; ch++) 
 	{
@@ -180,7 +177,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		channel_len[ch] -= qu * BYTES_PER_SAMPLE;
 		
 		/* SYN: If we've emptied a channel buffer, let's free the memory and clear the channel. */
-		if (channel_len == 0)
+		if (channel_len[ch] == 0)
 		{
 			free(channel_buffer[ch]);
 			channel_buffer[ch] = channel_pos[ch] = NULL;
@@ -251,8 +248,13 @@ void JE_setVol(JE_word volume, JE_word sample)
 {
 	/* TODO: Make this function actually work properly? */
 	printf("JE_setVol: music vol: %d, sfx vol: %d\n", volume, sample);
+	/* TODO: Disabling this because the volume is messed up. Must fix!
 	music_volume = 0.4 * ( (float) volume / 256.0 );
-	sample_volume = 0.25 * ( (float) sample / 128.0 );
+	sample_volume = 0.25 * ( (float) sample / 128.0 ); */
+	
+	music_volume = 0.4;
+	sample_volume = 0.25;
+	
 }
 
 JE_word JE_getVol( void )

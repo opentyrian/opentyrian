@@ -1337,7 +1337,7 @@ drawplayershotloopend:
 	/*=================================*/
 	/*=======The Sound Routine=========*/
 	/*=================================*/
-	if (soundEffects > 1 && soundActive && firstGameOver)
+	if (soundEffects > 0 && soundActive && firstGameOver)
 	{
 		temp = 0;
 		for (temp2 = 0; temp2 <= 7; temp2++)
