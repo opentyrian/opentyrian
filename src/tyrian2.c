@@ -5002,7 +5002,7 @@ item_screen_start:
 					if (1 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 86) AND (mousey <= 98)*/)
 					{
 						soundActive = TRUE;
-						curSel[2] = 4.
+						curSel[2] = 4;
 						/* TODO temp := (mousex - 221) DIV 4 * 12; */
 						if (abs(fxVolume - temp) < 12)
 						{
