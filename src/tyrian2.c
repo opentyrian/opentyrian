@@ -4947,172 +4947,174 @@ item_screen_start:
 		if (mouseButton > 0)
 		{
 				  
-                /*  
-                  lastdirection := 1;
+				lastDirection = 1;
+
+				/* TODO mousebutton := mouseposition (mousex, mousey); */
                   
-                  mousebutton := mouseposition (mousex, mousey);
-                  
-                  IF (curmenu = 8) AND (cubemax = 0) THEN
-                    BEGIN
-                      curmenu := 1;
-                      playsamplenum (_ESC);
-                      newpal := 1;
-                      wipekey;
-                    END;
-                  
-                  IF curmenu = 9 THEN
-                    IF (mousex > 258) AND (mousex < 290) AND (mousey > 159) AND (mousey < 171) THEN
-                      BEGIN
-                        curmenu := 8;
-                        playsamplenum (_ESC);
-                      END;
-                  
-                  tempb := TRUE;
-                  IF (curmenu = 3) OR (curmenu = 12) THEN
-                    BEGIN   {Options}
-                      IF (mousex >= 221) AND (mousex <= 303) AND (mousey >= 70) AND (mousey <= 82) THEN
-                        BEGIN
-                          IF NOT musicactive THEN
-                            BEGIN
-                              musicactive := TRUE;
-                              temp := currentsong;
-                              currentsong := 0;
-                              playsong (temp);
-                            END;
-                          cursel [3] := 4;
-                          temp := (mousex - 221) DIV 4 * 12;
-                          IF ABS (Tyr_musicvolume - temp) < 12 THEN
-                            Tyr_musicvolume := temp 
-                          ELSE
-                          IF Tyr_musicvolume < temp THEN
-                            INC (Tyr_musicvolume, 12) 
-                          ELSE
-                            DEC (Tyr_musicvolume, 12);
-                          tempb := FALSE;
-                        END;
-                      IF (mousex >= 221) AND (mousex <= 303) AND (mousey >= 86) AND (mousey <= 98) THEN
-                        BEGIN
-                          soundactive := TRUE;
-                          cursel [3] := 5;
-                          temp := (mousex - 221) DIV 4 * 12;
-                          tempb := FALSE;
-                          IF ABS (fxvolume - temp) < 12 THEN
-                            fxvolume := temp 
-                          ELSE
-                          IF fxvolume < temp THEN
-                            INC (fxvolume, 12) 
-                          ELSE
-                            DEC (fxvolume, 12);
-                        END;
-                      IF fxvolume > 254 THEN
-                        fxvolume := 254;
-                      calcfxvol;
-                      setvol (Tyr_musicvolume, FXplayvol);
-                      playsamplenum (_Cursormove);
-                    END;
-                  
-                  IF (tempb) AND (mousey > 20) AND (mousex > 170) AND (mousex < 308) AND (curmenu <> 9) THEN
-                    BEGIN
-                      tempi := (mousey - 38) DIV mouseselectionY [curmenu] + 2;
-                      
-                      IF curmenu = 10 THEN
-                        BEGIN
-                          IF tempi > 5 THEN
-                            DEC (tempi);
-                          IF tempi > 3 THEN
-                            DEC (tempi);
-                        END;
-						
-                      
-                      IF curmenu = 1 THEN
-                        BEGIN
-                          IF tempi > 7 THEN
-                            tempi := 7;
-                        END;
-                      
-                      IF curmenu = 4 THEN
-                        BEGIN
-                          IF tempi = menuchoices [curmenu] + 1 THEN
-                            tempi := menuchoices [curmenu];
-                        END;
-                      
-                      IF tempi <= menuchoices [curmenu] THEN
-                        BEGIN
-                          IF (curmenu = 5) AND (tempi = menuchoices [5]) THEN
-                            BEGIN
-                              score := CashLeft;
-                              curmenu := 2;
-                              playsamplenum (_Item);
-                            END 
-                          ELSE
-                            BEGIN
-                              playsamplenum (_Click);
-                              IF cursel [curmenu] = tempi THEN
-                                BEGIN
-                                  menufunction (cursel [curmenu]);
-                                END 
-                              ELSE
-                                BEGIN
-                                  IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
-                                    temppowerlevel [cursel [5] - 1] := portpower [cursel [2] - 2];
-                                  
-                                  IF (curmenu = 5) AND
-                                    (getcost (cursel [2], Itemavail [itemavailmap [cursel [2] - 1], tempi - 1]) > score)
-                                    THEN
-                                    playsamplenum (_Wrong) 
-                                  ELSE
-                                    BEGIN
-                                      IF cursel [2] = 4 THEN
-                                        portconfig [2] := 1;
-                                      cursel [curmenu] := tempi;
-                                    END;
-                                  
-                                  IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
-                                    portpower [cursel [2] - 2] := temppowerlevel [cursel [5] - 1];
-                                END;
-                            END;
-                        END;
-                      REPEAT
-                          mousebutton := mouseposition (tempx, tempy) UNTIL mousebutton = 0;
-                    END;
-                  
-                  IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
-                    BEGIN
-                      IF (mousex >= 23) AND (mousex <= 36) AND (mousey >= 149) AND (mousey <= 168) THEN
-                        BEGIN
-                          playsamplenum (_Cursormove);
-                          CASE cursel [2] OF
-                            3 : IF leftpower THEN
-                                  DEC (portpower [1]) 
-                                ELSE
-                                  playsamplenum (_Wrong);
-                            4 : IF leftpower THEN
-                                  DEC (portpower [2]) 
-                                ELSE
-                                  playsamplenum (_Wrong);
-                          END;
-                          wipekey;
-                        END;
-                      IF (mousex >= 119) AND (mousex <= 131) AND (mousey >= 149) AND (mousey <= 168) THEN
-                        BEGIN
-                          playsamplenum (_Cursormove);
-                          CASE cursel [2] OF
-                            3 : IF rightpower AND rightpowerafford THEN
-                                  INC (portpower [1]) 
-                                ELSE
-                                  playsamplenum (_Wrong);
-                            4 : IF rightpower AND rightpowerafford THEN
-                                  INC (portpower [2]) 
-                                ELSE
-                                  playsamplenum (_Wrong);
-                          END;
-                          wipekey;
-                        END;
-                    END;
-                  
-                  
-                  
-                */
+				if (curMenu == 7 && cubeMax == 0)
+				{
+					curMenu = 0;
+					JE_playSampleNum(ESC);
+					newPal = 1;
+					JE_wipeKey();
+				}
+
+				if (curMenu == 8)
+				{
+					if (0 /*TODO (mousex > 258) AND (mousex < 290) AND (mousey > 159) AND (mousey < 171) */)
+					{
+						curMenu = 7;
+						JE_playSampleNum(ESC);
+					}
+				}
+
+				tempB = TRUE;
+
+				if (curMenu == 2 || curMenu == 11)
+				{
+					if (0 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 70) AND (mousey <= 82)*/)
+					{
+						if (!musicActive)
+						{
+							musicActive = TRUE;
+							temp = currentSong;
+							currentSong = 0;
+							JE_playSong(temp);
+						}
+
+						curSel[2] = 3;
+						/* temp := (mousex - 221) DIV 4 * 12; */
+
+						if (abs(tyrMusicVolume - temp) < 12)
+						{
+							tyrMusicVolume = temp;
+						} else {
+							if (tyrMusicVolume < temp)
+							{
+								tyrMusicVolume += 12;
+							} else {
+								tyrMusicVolume -= 12;
+							}
+						}
+						tempB = FALSE;
+					}
+
+					if (1 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 86) AND (mousey <= 98)*/)
+					{
+						soundActive = TRUE;
+						curSel[2] = 4.
+						/* TODO temp := (mousex - 221) DIV 4 * 12; */
+						if (abs(fxVolume - temp) < 12)
+						{
+							fxVolume = temp;
+						} else {
+							if (fxVolume < temp)
+							{
+								fxVolume += 12;
+							} else {
+								fxVolume -= 12;
+							}
+						}
+					}
+
+					if (fxVolume > 254)
+					{
+						fxVolume = 254;
+					}
+
+					JE_calcFXVol();
+					JE_setVol(tyrMusicVolume, fxPlayVol);
+					JE_playSampleNum(CURSOR_MOVE);
+				}
+
+					/*
+				IF (tempb) AND (mousey > 20) AND (mousex > 170) AND (mousex < 308) AND (curmenu <> 9) THEN BEGIN
+					tempi := (mousey - 38) DIV mouseselectionY [curmenu] + 2;
+
+					IF curmenu = 10 THEN BEGIN
+						IF tempi > 5 THEN
+							DEC (tempi);
+						IF tempi > 3 THEN
+							DEC (tempi);
+					END;
+
+					IF curmenu = 1 THEN BEGIN
+						IF tempi > 7 THEN
+							tempi := 7;
+					END;
+
+					IF curmenu = 4 THEN BEGIN
+						IF tempi = menuchoices [curmenu] + 1 THEN
+							tempi := menuchoices [curmenu];
+					END;
+
+					IF tempi <= menuchoices [curmenu] THEN BEGIN
+						IF (curmenu = 5) AND (tempi = menuchoices [5]) THEN BEGIN
+							score := CashLeft;
+							curmenu := 2;
+							playsamplenum (_Item);
+						END 
+					ELSE BEGIN
+						playsamplenum (_Click);
+						IF cursel [curmenu] = tempi THEN BEGIN
+							menufunction (cursel [curmenu]);
+						END ELSE BEGIN
+							IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
+								temppowerlevel [cursel [5] - 1] := portpower [cursel [2] - 2];
+
+							IF (curmenu = 5) AND (getcost (cursel [2], Itemavail [itemavailmap [cursel [2] - 1], tempi - 1]) > score) THEN
+								playsamplenum (_Wrong) 
+							ELSE BEGIN
+								IF cursel [2] = 4 THEN
+									portconfig [2] := 1;
+								cursel [curmenu] := tempi;
+							END;
+
+							IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
+								portpower [cursel [2] - 2] := temppowerlevel [cursel [5] - 1];
+						END;
+					END;
+				END;
+			REPEAT
+				mousebutton := mouseposition (tempx, tempy)
+			UNTIL mousebutton = 0;
+		END;
+
+		IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN BEGIN
+			IF (mousex >= 23) AND (mousex <= 36) AND (mousey >= 149) AND (mousey <= 168) THEN BEGIN
+				playsamplenum (_Cursormove);
+				CASE cursel [2] OF
+					3 :
+						IF leftpower THEN
+							DEC (portpower [1]) 
+						ELSE
+							playsamplenum (_Wrong);
+					4 :
+						IF leftpower THEN
+							DEC (portpower [2]) 
+						ELSE
+							playsamplenum (_Wrong);
+				END;
+				wipekey;
+			END;
+			IF (mousex >= 119) AND (mousex <= 131) AND (mousey >= 149) AND (mousey <= 168) THEN BEGIN
+				playsamplenum (_Cursormove);
+				CASE cursel [2] OF
+					3 :
+						IF rightpower AND rightpowerafford THEN
+							INC (portpower [1]) 
+						ELSE
+							playsamplenum (_Wrong);
+					4 :
+						IF rightpower AND rightpowerafford THEN
+							INC (portpower [2]) 
+						ELSE
+							playsamplenum (_Wrong);
+				END;
+				wipekey;
+			END;
+		END;
+		*/
 		}
 		else
 		{
@@ -5450,7 +5452,7 @@ item_screen_start:
 					break;
 					
 				default:
-					break;					
+					break;
 				}
 			}
 		}
