@@ -87,6 +87,12 @@ void scroller3d( char *text[] )
 	{
 		int start_line = cur_line, i, max = min(text_len, cur_line+MAX_LINES+1);
 
+		if (wait++ < 60)
+		{
+			JE_showVGA();
+			continue;
+		}
+
 		memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
 
 		for (i = cur_line; i < max; i++)
@@ -102,7 +108,7 @@ void scroller3d( char *text[] )
 			quit = TRUE;
 		}
 
-		if (wait++ >= 15)
+		if (wait >= 60)
 		{
 			wait = 0;
 
@@ -117,6 +123,9 @@ void scroller3d( char *text[] )
 			{
 				cur_line = 0;
 			}
+		} else {
+			JE_showVGA();
+			continue;
 		}
 
 		memset(surf, 0, sizeof(VGAScreen2Seg));
@@ -129,13 +138,13 @@ void scroller3d( char *text[] )
 			double step = 320./(double)total_w;
 			int scr_x = 320/2-total_w/2;
 			Uint8 *s = VGAScreen->pixels;
-
 			double cur_x = 0.;
+			double ratio = (i-HORIZON)/(total_w/320.);
 
 			while (total_w--)
 			{
 				int j;
-				double color = surf[i*320+(int)cur_x];
+				double color = surf[(int)(ratio)*320+(int)cur_x];
 
 /*				for (j = cur_x; j < cur_x+step; j++)
 				{
