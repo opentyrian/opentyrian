@@ -56,7 +56,21 @@ JE_byte pColor;
 
 void JE_starlib_main( void )
 {
-	STUB(JE_starlib_main);
+	JE_wackyCol();
+
+	grayB = FALSE;
+
+	speed += speedChange;
+
+	goto star_loop;
+
+	/* Subroutines */
+gray_pixel:
+	;
+star_loop:
+	;
+
+	/* TODO */
 }
 
 void JE_makeGray( void )

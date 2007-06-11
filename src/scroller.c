@@ -87,28 +87,13 @@ void scroller3d( char *text[] )
 	{
 		int start_line = cur_line, i, max = min(text_len, cur_line+MAX_LINES+1);
 
-		if (wait++ < 60)
-		{
-			JE_showVGA();
-			continue;
-		}
-
-		memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
-
-		for (i = cur_line; i < max; i++)
-		{
-			int txt_x = JE_fontCenter(text[i], SMALL_FONT_SHAPES);
-
-			JE_outTextAdjust(txt_x, (i-cur_line)*TEXT_HEIGHT-line_off+TEXT_HEIGHT, text[i], 15, -3, SMALL_FONT_SHAPES, FALSE);
-		}
-
 		service_SDL_events(TRUE);
 		if (keydown)
 		{
 			quit = TRUE;
 		}
 
-		if (wait >= 60)
+		if (wait++ >= 60)
 		{
 			wait = 0;
 
@@ -126,6 +111,15 @@ void scroller3d( char *text[] )
 		} else {
 			JE_showVGA();
 			continue;
+		}
+
+		memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
+
+		for (i = cur_line; i < max; i++)
+		{
+			int txt_x = JE_fontCenter(text[i], SMALL_FONT_SHAPES);
+
+			JE_outTextAdjust(txt_x, (i-cur_line)*TEXT_HEIGHT-line_off+TEXT_HEIGHT, text[i], 15, -3, SMALL_FONT_SHAPES, FALSE);
 		}
 
 		memset(surf, 0, sizeof(VGAScreen2Seg));
