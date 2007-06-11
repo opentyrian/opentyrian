@@ -41,6 +41,7 @@
 #include "starfade.h"
 #include "jukebox.h"
 #include "setup.h"
+#include "scroller.h"
 
 #include "SDL.h"
 
@@ -209,15 +210,17 @@ void opentyrian_menu( void )
 					switch (sel)
 					{
 						case 0: /* About */
-							/* TODO: Implement this */
-							JE_playSampleNum(WRONG);
+							JE_playSampleNum(SELECT);
+							scroller3d(about_text);
+							JE_loadPic(13, FALSE);
+							JE_fadeColor(20);
 							break;
 						case 1: /* Setup */
 							/* TODO: Implement this */
 							JE_playSampleNum(WRONG);
 							break;
 						case 2: /* Jukebox */
-							JE_playSampleNum(SELECT);	
+							JE_playSampleNum(SELECT);
 							JE_jukeboxGo();
 							JE_loadPic(13, FALSE);
 							JE_fadeColor(20);
