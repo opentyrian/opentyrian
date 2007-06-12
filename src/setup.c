@@ -18,25 +18,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "vga256d.h"
-#include "keyboard.h"
-#include "joystick.h"
-#include "nortvars.h"
-#include "nortsong.h"
-#include "network.h"
-#include "starfade.h"
-#include "loudness.h"
-#include "starlib.h"
-#include "fonthand.h"
-#include "newshape.h"
+
 #include "config.h"
+#include "fonthand.h"
+#include "joystick.h"
 #include "jukebox.h"
+#include "keyboard.h"
+#include "loudness.h"
+#include "network.h"
+#include "newshape.h"
+#include "nortsong.h"
+#include "nortvars.h"
+#include "starfade.h"
+#include "starlib.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "setup.h"
 #undef NO_EXTERNS
 
 #include "SDL.h"
+
 
 JE_boolean volumeActive = TRUE;
 JE_boolean fx;

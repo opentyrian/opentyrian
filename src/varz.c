@@ -18,14 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "episodes.h"
+
 #include "config.h"
+#include "episodes.h"
 #include "newshape.h"
 #include "vga256d.h"
 
 #define NO_EXTERNS
 #include "varz.h"
 #undef NO_EXTERNS
+
 
 JE_byte fromTime;
 JE_integer tempDat, tempDat2, tempDat3;

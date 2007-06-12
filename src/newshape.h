@@ -24,6 +24,7 @@
 
 #include "SDL.h"
 
+
 #define OLD_BLACK         0
 #define NEW_BLACK         253
 

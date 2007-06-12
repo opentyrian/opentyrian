@@ -21,8 +21,10 @@
 #define PCXLOAD_H
 
 #include "opentyr.h"
+
 #include "nortvars.h"
 #include "error.h"
+
 
 struct JE_PCXHeader_rec {
 	JE_byte manufacturer;

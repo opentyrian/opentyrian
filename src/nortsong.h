@@ -21,10 +21,12 @@
 #define NORTSONG_H
 
 #include "opentyr.h"
+
 #include "musmast.h"
 #include "sndmast.h"
 
 #include "SDL.h"
+
 
 typedef JE_longint JE_SongPosType [MUSIC_NUM + 1]; /* [1..Musicnum + 1] */
 typedef JE_byte JE_DigiMixType [0x4ff];

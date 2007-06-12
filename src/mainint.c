@@ -18,32 +18,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "varz.h"
-#include "fonthand.h"
-#include "vga256d.h"
-#include "helptext.h"
-#include "picload.h"
-#include "starfade.h"
-#include "newshape.h"
-#include "nortsong.h"
-#include "keyboard.h"
+
+#include "backgrnd.h"
 #include "config.h"
 #include "episodes.h"
-#include "setup.h"
-#include "helptext.h"
-#include "sndmast.h"
-#include "shpmast.h"
 #include "error.h"
-#include "params.h"
+#include "fonthand.h"
+#include "helptext.h"
+#include "helptext.h"
 #include "joystick.h"
+#include "keyboard.h"
 #include "network.h"
-#include "pcxload.h"
-#include "backgrnd.h"
+#include "newshape.h"
+#include "nortsong.h"
 #include "nortvars.h"
+#include "params.h"
+#include "pcxload.h"
+#include "picload.h"
+#include "setup.h"
+#include "shpmast.h"
+#include "sndmast.h"
+#include "starfade.h"
+#include "varz.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "mainint.h"
 #undef NO_EXTERNS
+
 
 #define MAX_PAGE 8
 #define TOPICS 6

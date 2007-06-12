@@ -17,14 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef OPENTYRIAN_H
-#define OPENTYRIAN_H
+#ifndef OPENTYR_H
+#define OPENTYR_H
 
 #include "SDL_stdinc.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h> /* For the ROUND() macro */
+
 
 #define STUB(name) printf("!!! STUB: %s:%d:" #name "\n", __FILE__, __LINE__)
 
@@ -61,4 +62,4 @@ int efwrite( void *buffer, size_t size, size_t num, FILE *stream );
 
 void opentyrian_menu( void );
 
-#endif /* OPENTYRIAN_H */
+#endif /* OPENTYR_H */

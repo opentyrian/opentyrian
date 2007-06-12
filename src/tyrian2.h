@@ -21,8 +21,10 @@
 #define TYRIAN2_H
 
 #include "opentyr.h"
+
 #include "varz.h"
 #include "helptext.h"
+
 
 #define CUBE_WIDTH 35
 #define LINE_WIDTH 150

@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #define MAX_HELP_MESSAGE 39
 #define MAX_MENU 14
 

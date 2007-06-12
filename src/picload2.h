@@ -17,15 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef PICLOAD2_H
 #define PICLOAD2_H
 
 #include "opentyr.h"
+
 #include "pcxmast.h"
 
- #ifndef NO_EXTERNS
+
+#ifndef NO_EXTERNS
 extern JE_ColorType colors2;
 extern JE_boolean overrideblack;
 extern JE_char c2;
@@ -39,4 +39,4 @@ void JE_unpackPCX( void );
 
 /*void JE_loadPic( JE_byte pcxnumber, JE_boolean storepalette );*/
 
-#endif
+#endif /* PICLOAD2_H */

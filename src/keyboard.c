@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
 #include "joystick.h"
 
 #define NO_EXTERNS
@@ -25,6 +26,7 @@
 #undef NO_EXTERNS
 
 #include "SDL.h"
+
 
 /* TODO: Decide if this stays or not */
 const char *keyNames[] = {

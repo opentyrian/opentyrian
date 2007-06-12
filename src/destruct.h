@@ -17,14 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef DESTRUCT_H
 #define DESTRUCT_H
 
 #include "opentyr.h"
 
- #ifndef NO_EXTERNS
+
+#ifndef NO_EXTERNS
 extern JE_word tempscreenseg;
 extern JE_byte enddelay;
 extern JE_boolean died;
@@ -59,4 +58,4 @@ void JE_pauseScreen( void );
 
 void JE_superPixel( JE_word loc );
 
-#endif
+#endif /* DESTRUCT_H */

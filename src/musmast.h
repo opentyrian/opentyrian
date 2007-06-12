@@ -20,6 +20,9 @@
 #ifndef MUSMAST_H
 #define MUSMAST_H
 
+#include "opentyr.h"
+
+
 #define DEFAULT_SONG_BUY 3
 #define SONG_LEVELEND    10
 #define SONG_GAMEOVER    11

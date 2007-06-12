@@ -17,14 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef ANIMLIB_H
 #define ANIMLIB_H
 
 #include "opentyr.h"
 
- #ifndef NO_EXTERNS
+
+#ifndef NO_EXTERNS
 extern JE_word currentpageofs;
 extern JE_word currentpageseg;
 #endif
@@ -45,4 +44,4 @@ void JE_drawFrame( JE_word framenumber );
 
 void JE_loadPage( JE_word pagenumber );
 
-#endif
+#endif /* ANIMLIB_H */

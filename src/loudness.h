@@ -24,12 +24,12 @@
 
 #include "SDL.h"
 
+
 #define SFX_CHANNELS 7
 #define OUTPUT_QUALITY 4
 #define BYTES_PER_SAMPLE 2
 #define SAMPLE_SCALING OUTPUT_QUALITY
 #define SAMPLE_TYPE signed short int
-
 
 typedef JE_byte JE_MusicType [20000];
 

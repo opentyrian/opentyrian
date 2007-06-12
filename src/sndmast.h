@@ -20,6 +20,9 @@
 #ifndef SNDMAST_H
 #define SNDMAST_H
 
+#include "opentyr.h"
+
+
 #define SOUND_NUM 29
 
 #define CLICK        24

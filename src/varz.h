@@ -21,7 +21,9 @@
 #define VARZ_H
 
 #include "opentyr.h"
+
 #include "episodes.h"
+
 
 #define SA 7
 

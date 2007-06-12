@@ -21,10 +21,11 @@
 #define STARFADE_H
 
 #include "opentyr.h"
+
 #include "nortvars.h"
 
-#ifndef NO_EXTERNS
 
+#ifndef NO_EXTERNS
 extern JE_word nocolorsx3;
 
 extern JE_ColorType dummysub;

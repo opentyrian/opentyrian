@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef CIRCVARS_H
 #define CIRCVARS_H
 
 #include "opentyr.h"
 
+
 #ifndef NO_EXTERNS
 #endif
 
-
-
-#endif
+#endif /* CIRCVARS_H */

@@ -17,19 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef SHPLIB_H
 #define SHPLIB_H
 
 #include "opentyr.h"
+
 #include "shpmast.h"
 
- #ifndef NO_EXTERNS
+
+#ifndef NO_EXTERNS
 extern JE_word shpnumb;
 extern JE_shppostype shppos;
 #endif
 
 void JE_analyzeShp( void );
 
-#endif
+#endif /* SHPLIB_H */

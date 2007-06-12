@@ -20,12 +20,13 @@
 
 /* A substantial amount of this code has been copied and adapted from adplug.
    Thanks, guys! Adplug is awesome! :D */
-
-#include "lds_play.h"
 #include "opentyr.h"
-#include "nortsong.h"
+
 #include "fm_synth.h"
+#include "lds_play.h"
 #include "loudness.h"
+#include "nortsong.h"
+
 
 /* Note frequency table (16 notes / octave) */
 const unsigned short frequency[] = {

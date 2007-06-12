@@ -23,6 +23,7 @@
 #include "pcxmast.h"
 #undef NO_EXTERNS
 
+
 const char *pcxfile[PCX_NUM] = /* [1..PCXnum] */
 {
 	"INTSHPB.PCX",

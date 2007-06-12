@@ -21,7 +21,9 @@
 #define EPISODES_H
 
 #include "opentyr.h"
+
 #include "lvlmast.h"
+
 
 /* Episodes and general data */
 

@@ -7,7 +7,9 @@ PROFILE := 0
 # END SETTINGS #####################################
 
 TARGET := tyrian
-OBJS := backgrnd.o config.o error.o episodes.o fonthand.o helptext.o joystick.o keyboard.o lvllib.o loudness.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o picload.o setup.o pcxload.o pcxmast.o shpmast.o sndmast.o starfade.o tyrian2.o varz.o vga256d.o lds_play.o fm_synth.o adlibemu.o starlib.o jukebox.o animlib.o destruct.o shplib2.o shplib.o picload2.o editship.o scroller.o
+#OBJS := backgrnd.o config.o error.o episodes.o fonthand.o helptext.o joystick.o keyboard.o lvllib.o loudness.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o picload.o setup.o pcxload.o pcxmast.o shpmast.o sndmast.o starfade.o tyrian2.o varz.o vga256d.o lds_play.o fm_synth.o adlibemu.o starlib.o jukebox.o animlib.o destruct.o shplib2.o shplib.o picload2.o editship.o scroller.o
+
+OBJS := adlibemu.o animlib.o backgrnd.o config.o destruct.o editship.o episodes.o error.o fm_synth.o fonthand.o helptext.o joystick.o jukebox.o keyboard.o lds_play.o loudness.o lvllib.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o pcxload.o pcxmast.o picload.o picload2.o scroller.o setup.o shplib.o shplib2.o shpmast.o sndmast.o starfade.o starlib.o tyrian2.o varz.o vga256d.o 
 
 ifeq ($(DEBUG), 1)
 	DEBUG_FLAGS := -g3 -O0
@@ -39,7 +41,7 @@ all : $(TARGET)
 OBJS := $(foreach obj, $(OBJS), obj/$(obj))
 
 $(TARGET) : $(OBJS)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(OBJS:.o=.d)

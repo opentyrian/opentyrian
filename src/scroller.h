@@ -22,9 +22,10 @@
 
 #include "opentyr.h"
 
-extern char *about_text[];
 
-void scroller3d( char *text[] );
+extern const char *about_text[];
+
+void scroller3d( const char *text[] );
 
 #endif /* SCROLLER_H */
 

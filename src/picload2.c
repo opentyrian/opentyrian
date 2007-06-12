@@ -17,16 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "opentyr.h"
 
-
+#include "nortvars.h"
+#include "pcxmast.h"
 #include "starfade.h"
 #include "vga256d.h"
-#include "pcxmast.h"
-#include "nortvars.h"
 
 #define NO_EXTERNS
 #include "picload2.h"
 #undef NO_EXTERNS
+
 
 JE_ColorType colors2;
 JE_boolean overrideblack;

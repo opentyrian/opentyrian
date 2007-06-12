@@ -21,7 +21,9 @@
 #define PALLIB_H
 
 #include "opentyr.h"
+
 #include "nortvars.h"
+
 
 #define MAX_PAL 23
 

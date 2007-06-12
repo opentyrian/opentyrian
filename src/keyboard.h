@@ -24,6 +24,7 @@
 
 #include "SDL.h"
 
+
 #define SDL_POLL_INTERVAL 5
 
 #ifndef NO_EXTERNS

@@ -23,9 +23,10 @@
 #include "params.h"
 #undef NO_EXTERNS
 
-#include <time.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
+
 
 JE_boolean timMode, richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, useBios, noSound, quikJuke, noRetrace, joyMax, forceAveraging, forceMaxVolume, soundInfoReport, stupidWindows;
 

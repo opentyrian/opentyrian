@@ -23,6 +23,7 @@
 #include "shpmast.h"
 #undef NO_EXTERNS
 
+
 const char *shpfile[SHP_NUM] = /* [1..SHPnum] */
 {
 	"ESTFE.SHP", /*2*/

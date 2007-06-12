@@ -18,37 +18,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "vga256d.h"
-#include "error.h"
-#include "pallib.h"
-#include "newshape.h"
-#include "shpmast.h"
-#include "tyrian2.h"
-#include "helptext.h"
-#include "keyboard.h"
-#include "joystick.h"
+
 #include "episodes.h"
-#include "varz.h"
+#include "error.h"
+#include "fonthand.h"
+#include "helptext.h"
+#include "joystick.h"
+#include "jukebox.h"
+#include "keyboard.h"
 #include "loudness.h"
 #include "mainint.h"
 #include "musmast.h"
 #include "network.h"
+#include "newshape.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "pallib.h"
 #include "params.h"
-#include "fonthand.h"
 #include "picload.h"
-#include "starfade.h"
-#include "jukebox.h"
-#include "setup.h"
 #include "scroller.h"
+#include "setup.h"
+#include "shpmast.h"
+#include "starfade.h"
+#include "tyrian2.h"
+#include "varz.h"
+#include "vga256d.h"
 
 #include "SDL.h"
-
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <assert.h>
+
 
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 

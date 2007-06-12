@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #ifndef NO_EXTERNS
 extern JE_word randomcount;
 extern JE_boolean dont_die;

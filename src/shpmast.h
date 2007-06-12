@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #define SHP_NUM 12
 
 typedef JE_longint JE_shppostype[SHP_NUM + 1]; /* [1..SHPnum + 1] */

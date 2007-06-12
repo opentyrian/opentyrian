@@ -17,14 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef SHPLIB2_H
 #define SHPLIB2_H
 
 #include "opentyr.h"
 
- #ifndef NO_EXTERNS
+
+#ifndef NO_EXTERNS
 extern JE_word shapex [MAXIMUM_SHAPE];
 extern JE_longint memory;
 extern JE_word shapey [MAXIMUM_SHAPE];
@@ -46,4 +45,4 @@ void JE_drawShapeNumS( JE_word shape, JE_word x, JE_word y );
 
 void JE_purgeShapes( void );
 
-#endif
+#endif /* SHPLIB2_H */

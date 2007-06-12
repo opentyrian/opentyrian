@@ -18,14 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
 #include "episodes.h"
-#include "nortsong.h"
-#include "vga256d.h"
 #include "error.h"
-#include "loudness.h"
-#include "nortvars.h"
 #include "joystick.h"
+#include "loudness.h"
+#include "nortsong.h"
+#include "nortvars.h"
 #include "varz.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "config.h"
@@ -33,6 +34,7 @@
 
 #include <stdio.h>
 #include <string.h>
+
 
 /******** MAJOR TODO:
   SYN: High score data is stored one per save file slot. That makes 2 * 11 = 22 high scores.

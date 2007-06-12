@@ -23,6 +23,7 @@
 #include "sndmast.h"
 #undef NO_EXTERNS
 
+
 const char soundTitle[SOUND_NUM + 9][9] = /* [1..soundnum + 9] of string [8] */
 {
 	"SCALEDN2", /*1*/

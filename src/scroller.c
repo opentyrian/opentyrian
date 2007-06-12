@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 #include "opentyr.h"
 
 #include "fonthand.h"
@@ -25,18 +24,19 @@
 #include "keyboard.h"
 #include "newshape.h"
 #include "nortsong.h"
-#include "picload.h"
-#include "vga256d.h"
 #include "nortvars.h"
+#include "picload.h"
 #include "varz.h"
+#include "vga256d.h"
 
 #include "scroller.h"
 
 #include "SDL.h"
 
+
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
-char *about_text[] =
+const char *about_text[] =
 {
 "","","","","","", /* Filler */
 "","","","","","",
@@ -60,7 +60,7 @@ NULL
 #define BEER_SHAPE 241
 
 /* Text is an array of strings terminated by a NULL */
-void scroller3d( char *text[] )
+void scroller3d( const char *text[] )
 {
 #	define TEXT_HEIGHT 15
 #	define HORIZON 30

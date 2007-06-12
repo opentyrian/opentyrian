@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #define EVENT_MAXIMUM 2500
 
 #define WEAP_NUM    780

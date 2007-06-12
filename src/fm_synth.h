@@ -17,8 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef FM_SYNTH_H
+#define FM_SYNTH_H
 
 #include "opentyr.h"
+
 
 #ifndef NO_EXTERNS
 unsigned short note_table[12];	/* standard adlib note table */
@@ -28,3 +31,5 @@ unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
 void opl_update( short*, long );
 void opl_init( void );
 void opl_write(int, int);
+
+#endif /* FM_SYNTH_H */

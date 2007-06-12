@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #ifndef NO_EXTERNS
 JE_boolean volumeActive, fx;
 JE_word fxNum;

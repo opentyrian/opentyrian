@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 typedef JE_boolean JE_ButtonType[4]; /* [1..4] */
 typedef JE_byte JE_ButtonAssign[4]; /* [1..4] */
 

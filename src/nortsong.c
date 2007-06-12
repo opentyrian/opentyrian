@@ -18,19 +18,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "keyboard.h"
-#include "joystick.h"
-#include "loudness.h"
+
 #include "error.h"
-#include "sndmast.h"
+#include "joystick.h"
+#include "keyboard.h"
+#include "loudness.h"
 #include "musmast.h"
 #include "params.h"
+#include "sndmast.h"
 
 #define NO_EXTERNS
 #include "nortsong.h"
 #undef NO_EXTERNS
 
 #include "SDL.h"
+
 
 JE_word w1;
 JE_AweType * awe_data;

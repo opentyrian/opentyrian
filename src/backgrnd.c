@@ -18,13 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
 #include "config.h"
-#include "vga256d.h"
 #include "varz.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "backgrnd.h"
 #undef NO_EXTERNS
+
 
 /*Special Background 2 and Background 3*/
 

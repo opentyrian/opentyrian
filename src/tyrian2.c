@@ -18,35 +18,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "newshape.h"
-#include "fonthand.h"
-#include "vga256d.h"
-#include "picload.h"
-#include "starfade.h"
-#include "helptext.h"
-#include "nortsong.h"
-#include "pallib.h"
-#include "pcxmast.h"
-#include "keyboard.h"
-#include "varz.h"
-#include "joystick.h"
-#include "setup.h"
-#include "mainint.h"
-#include "sndmast.h"
-#include "params.h"
-#include "network.h"
-#include "loudness.h"
+
 #include "backgrnd.h"
-#include "error.h"
 #include "episodes.h"
+#include "error.h"
+#include "fonthand.h"
+#include "helptext.h"
+#include "joystick.h"
+#include "keyboard.h"
+#include "loudness.h"
 #include "lvllib.h"
 #include "lvlmast.h"
+#include "mainint.h"
+#include "network.h"
+#include "newshape.h"
+#include "nortsong.h"
+#include "pallib.h"
+#include "params.h"
+#include "pcxmast.h"
+#include "picload.h"
+#include "setup.h"
+#include "sndmast.h"
+#include "starfade.h"
+#include "varz.h"
+#include "vga256d.h"
 
 #include "tyrian2.h"
 
-#include <string.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 JE_word statdmg [2];
 JE_byte planetAni, planetAniWait;

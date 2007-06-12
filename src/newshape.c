@@ -18,18 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-#include "vga256d.h"
-#include "nortvars.h"
-#include "keyboard.h"
-#include "varz.h"
-#include "nortsong.h"
+
 #include "joystick.h"
-#include "params.h"
+#include "keyboard.h"
 #include "network.h"
+#include "nortsong.h"
+#include "nortvars.h"
+#include "params.h"
+#include "varz.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "newshape.h"
 #undef NO_EXTERNS
+
 
 SDL_Surface *tempScreenSeg = NULL;
 

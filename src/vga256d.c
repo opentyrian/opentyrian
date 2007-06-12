@@ -24,10 +24,11 @@
 #undef NO_EXTERNS
 
 #include "SDL.h"
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include <ctype.h>
+
 
 JE_boolean mouseInstalled = TRUE;
 JE_char k;

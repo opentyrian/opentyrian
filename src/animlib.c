@@ -17,20 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "opentyr.h"
 
-
-#include "pcxload.h"
-#include "nortsong.h"
-#include "starfade.h"
 #include "error.h"
 #include "joystick.h"
-#include "vga256d.h"
 #include "network.h"
+#include "nortsong.h"
 #include "nortvars.h"
+#include "pcxload.h"
+#include "starfade.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "animlib.h"
 #undef NO_EXTERNS
+
 
 JE_word currentpageofs;
 JE_word currentpageseg;

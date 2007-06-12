@@ -17,12 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-
 #ifndef EDITSHIP_H
 #define EDITSHIP_H
 
 #include "opentyr.h"
+
 
 typedef int JE_ShipsType; /* TODO: FIX THIS! just a placeholder! */
 
@@ -51,4 +50,4 @@ void JE_decryptShips( void );
 
 void JE_endShape( void );
 
-#endif
+#endif /* EDITSHIP_H */

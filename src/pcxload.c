@@ -27,6 +27,7 @@
 
 #include "SDL.h"
 
+
 JE_ColorType colors2;
 JE_word width, depth;
 JE_word bytes;

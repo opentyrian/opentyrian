@@ -17,27 +17,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "opentyr.h"
 
-
-#include "pcxload.h"
-#include "nortsong.h"
-#include "starfade.h"
-#include "picload2.h"
-#include "keyboard.h"
+#include "circvars.h"
+#include "config.h"
 #include "fonthand.h"
 #include "helptext.h"
-#include "circvars.h"
-#include "picload.h"
-#include "config.h"
-#include "varz.h"
+#include "keyboard.h"
 #include "newshape.h"
+#include "nortsong.h"
+#include "nortvars.h"
+#include "pcxload.h"
+#include "picload.h"
+#include "picload2.h"
+#include "starfade.h"
+#include "varz.h"
 /* #include "vga256c.h" */
 #include "vga256d.h"
-#include "nortvars.h"
 
 #define NO_EXTERNS
 #include "destruct.h"
 #undef NO_EXTERNS
+
 
 JE_word tempscreenseg;
 JE_byte enddelay;

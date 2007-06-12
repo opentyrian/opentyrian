@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #ifndef NO_EXTERNS
 extern JE_word backPos, backPos2, backPos3;
 extern JE_word backMove, backMove2, backMove3;

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "nortvars.h"
 
+
 #ifndef NO_EXTERNS
 extern JE_shortint constantLastX;
 extern JE_word textErase;

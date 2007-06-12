@@ -21,9 +21,11 @@
 #define VGA256D_H
 
 #include "opentyr.h"
+
 #include "nortvars.h"
 
 #include "SDL.h"
+
 
 #define CRT_ADDRESS 0x3D4
 #define STATUS_REG 0x3DA

@@ -23,6 +23,7 @@
 #include "musmast.h"
 #undef NO_EXTERNS
 
+
 JE_byte songBuy;
 
 const char musicFile[MUSIC_NUM][13] = 

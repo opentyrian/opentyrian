@@ -17,11 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 #ifndef STARLIB_H
 #define STARLIB_H
 
 #include "opentyr.h"
+
 
 #define starlib_MAX_STARS 1000
 #define MAX_TYPES 14

@@ -18,13 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+
 #include "error.h"
-#include "lvlmast.h"
 #include "lvllib.h"
+#include "lvlmast.h"
 
 #define NO_EXTERNS
 #include "episodes.h"
 #undef NO_EXTERNS
+
 
 /* MAIN Weapons Data */
 JE_WeaponPortType weaponPort;

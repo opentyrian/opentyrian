@@ -23,6 +23,7 @@
 #include "network.h"
 #undef NO_EXTERNS
 
+
 JE_longint startTime;
 JE_longint frames;
 

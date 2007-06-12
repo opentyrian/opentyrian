@@ -17,17 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "opentyr.h"
 
-
+#include "newshape.h"
 #include "pcxload.h"
 #include "starfade.h"
-#include "newshape.h"
 /*#include "vga256c.h"*/
 #include "vga256d.h"
 
 #define NO_EXTERNS
 #include "shplib2.h"
 #undef NO_EXTERNS
+
 
 JE_word shapex [MAXIMUM_SHAPE];
 JE_longint memory;

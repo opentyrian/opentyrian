@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 typedef JE_char JE_TextBuffer[4096]; /* [1..4096] */
 
 struct JE_ColorRec {

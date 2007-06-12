@@ -17,14 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
- #include "opentyr.h"
- #include "nortsong.h"
- #include "loudness.h"
+#include "opentyr.h"
+
+#include "loudness.h"
+#include "nortsong.h"
 
 #define NO_EXTERNS
 #include "jukebox.h"
 #undef NO_EXTERNS
+
 
 JE_boolean continuousPlay = FALSE;
 JE_word currentJukeboxSong = 0; /* SYN: used to be currentsong, but that name conflicted with elsewhere */

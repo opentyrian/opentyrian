@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+
 #define PACKET_MAXIMUM 3
 
 typedef struct
