@@ -109,36 +109,37 @@ void JE_jukeboxGo( void )
 	JE_boolean weirdMusic, weirdCurrent;
 	JE_byte weirdSpeed;
 	char tempStr[64];
-	
+
 	JE_byte lastSong;
 	JE_byte tempVolume;
 	JE_boolean youStopped, drawText, quit, fade;
-	
-	
+
+
 	weirdMusic = FALSE;
 	weirdCurrent = TRUE;
 	drawText = TRUE;
-	
+
 	fx = FALSE;
 	fxNum = 1;
-	
+
 	lastSong = currentJukeboxSong;
-	
+
 	/*JE_fadeBlack(10);
 	JE_initVGA256();
 	JE_fadeColor(10);*/
-	
+
 	JE_initVGA256();
-	
+	JE_starlib_init();
+
 	quit = FALSE;
 	fade = FALSE;
 	repeatedFade = FALSE;
-	
+
 	tempVolume = tyrMusicVolume;
 	youStopped = FALSE;
-	
+
 	JE_wipeKey();
-	
+
 	do 
 	{
 		tempScreenSeg = VGAScreen; /*sega000*/
@@ -172,7 +173,7 @@ void JE_jukeboxGo( void )
 		  JE_playNewSong();
 		}
 
-		frameCount = 1;
+		setdelay(1);
 
 		JE_starlib_main();
 
@@ -197,17 +198,14 @@ void JE_jukeboxGo( void )
 			}
 		}
 	
-		/* TODO: figure out what this loop was about, and where the value of frameCount would have been changed. It doesn't work as-is. */
-		/*do
-		{*/
-			if (drawText)
-			{
-				tempScreenSeg = VGAScreen; /*sega000*/
-				JE_outText(JE_fontCenter("Press ESC to quit the jukebox.", TINY_FONT), 170, "Press ESC to quit the jukebox.", 1, 0);
-				tempScreenSeg = VGAScreen; /*sega000*/
-				JE_outText(JE_fontCenter("Arrow keys change the song being played.", TINY_FONT), 180, "Arrow keys change the song being played.", 1, 0);
-			}
-		/*} while (frameCount != 0);*/
+		if (drawText)
+		{
+			tempScreenSeg = VGAScreen; /*sega000*/
+			JE_outText(JE_fontCenter("Press ESC to quit the jukebox.", TINY_FONT), 170, "Press ESC to quit the jukebox.", 1, 0);
+			tempScreenSeg = VGAScreen; /*sega000*/
+			JE_outText(JE_fontCenter("Arrow keys change the song being played.", TINY_FONT), 180, "Arrow keys change the song being played.", 1, 0);
+		}
+		wait_delay();
 		
 		JE_showVGA();
 		

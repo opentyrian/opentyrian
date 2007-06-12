@@ -20,9 +20,14 @@
  
 #include "opentyr.h"
 
+#include "keyboard.h"
+#include "vga256d.h"
+
 #define NO_EXTERNS
 #include "starlib.h"
 #undef NO_EXTERNS
+
+#include <ctype.h>
 
 JE_boolean run;
 struct JE_StarType star[starlib_MAX_STARS];
@@ -48,7 +53,7 @@ JE_boolean grayB;
 
 JE_integer x;
 
-JE_integer speed;
+JE_integer starlib_speed;
 JE_shortint speedChange;
 
 JE_byte pColor;
@@ -56,21 +61,237 @@ JE_byte pColor;
 
 void JE_starlib_main( void )
 {
+	int off;
+	JE_word i;
+	JE_integer tempZ;
+	JE_byte tempCol;
+	struct JE_StarType *stars;
+	Uint8 *surf;
+
 	JE_wackyCol();
 
 	grayB = FALSE;
 
-	speed += speedChange;
+	starlib_speed += speedChange;
 
-	goto star_loop;
-
-	/* Subroutines */
-gray_pixel:
-	;
+	/* ASM starts */
+	/* ***START THE LOOP*** */
 star_loop:
-	;
+	stars = star;
+	i = starlib_MAX_STARS;
 
-	/* TODO */
+	/* ***START OF EACH PIXEL*** */
+next_star:
+	off = (stars->lastX)+(stars->lastY)*320;
+
+	/* ***CLEAR PIXEL*** */
+	surf = VGAScreen->pixels;
+
+	if (off >= 640 && off < (320*200)-640)
+	{
+		surf[off] = 0; /* Shade Level 0 */
+
+		surf[off-1] = 0; /* Shade Level 1, 2 */
+		surf[off+1] = 0;
+		surf[off-2] = 0;
+		surf[off+2] = 0;
+
+		surf[off-320] = 0;
+		surf[off+320] = 0;
+		surf[off-640] = 0;
+		surf[off+640] = 0;
+	}
+
+	tempZ = stars->spZ;
+
+	/* Here's the StarType offsets:
+	 *
+	 * SPX   0
+	 * SPY   2
+	 * SPZ   4
+	 * LastX 6
+	 * LastY 8
+	 */
+
+	tempX = (stars->spX / tempZ) + 160;
+	tempY = (stars->spY / tempZ) + 100;
+
+	tempZ -= starlib_speed;
+
+	if (tempZ <= 0)
+	{
+		goto new_star;
+	}
+
+	if (tempY == 0 || tempY > 198)
+	{
+		goto new_star;
+	}
+
+	if (tempX > 318 || tempX < 1)
+	{
+		goto new_star;
+	}
+
+	/* Update current star */
+	stars->lastX = tempX;
+	stars->lastY = tempY;
+	stars->spZ = tempZ;
+
+	/* Now, WriteSuperPixel */
+	/* Let's find the location */
+	off = tempX+tempY*320;
+
+	if (grayB)
+	{
+		tempCol = tempZ >> 1;
+	} else {
+		tempCol = pColor+((tempZ >> 4) & 31);
+	}
+
+draw_pixel:
+	/* Draw the pixel! */
+	if (off >= 640 && off < (320*200)-640)
+	{
+		surf[off] = tempCol;
+
+		tempCol += 72;
+		surf[off-1] = tempCol;
+		surf[off+1] = tempCol;
+		surf[off-320] = tempCol;
+		surf[off+320] = tempCol;
+
+		tempCol += 72;
+		surf[off-2] = tempCol;
+		surf[off+2] = tempCol;
+		surf[off-640] = tempCol;
+		surf[off+640] = tempCol;
+	}
+
+	goto star_end;
+
+new_star:
+	stars->spZ = 500;
+
+	JE_newStar();
+
+	stars->spX = tempX;
+	stars->spY = tempY;
+
+star_end:
+	stars++;
+	i--;
+	if (i > 0)
+	{
+		goto next_star;
+	}
+
+	/* ASM ends */
+
+	if (newkey)
+	{
+		switch (toupper(lastkey_char))
+		{
+			case '+':
+				starlib_speed++;
+				speedChange = 0;
+				break;
+			case '-':
+				starlib_speed--;
+				speedChange = 0;
+				break;
+			case '1':
+				JE_changeSetup(1);
+				break;
+			case '2':
+				JE_changeSetup(2);
+				break;
+			case '3':
+				JE_changeSetup(3);
+				break;
+			case '4':
+				JE_changeSetup(4);
+				break;
+			case '5':
+				JE_changeSetup(5);
+				break;
+			case '6':
+				JE_changeSetup(6);
+				break;
+			case '7':
+				JE_changeSetup(7);
+				break;
+			case '8':
+				JE_changeSetup(8);
+				break;
+			case '9':
+				JE_changeSetup(9);
+				break;
+			case '0':
+				JE_changeSetup(10);
+				break;
+			case '!':
+				JE_changeSetup(11);
+				break;
+			case '@':
+				JE_changeSetup(12);
+				break;
+			case '#':
+				JE_changeSetup(13);
+				break;
+			case '$':
+				JE_changeSetup(14);
+				break;
+
+			case 'C':
+				JE_resetValues();
+				break;
+			case 'S':
+				nspVarVarInc = (rand()/(float)RAND_MAX) * 0.01 - 0.005;
+				break;
+			case 'X':
+			case 27:
+				run = FALSE;
+				break;
+			case '[':
+				pColor--;
+				break;
+			case ']':
+				pColor++;
+				break;
+			case '{':
+				pColor -= 72;
+				break;
+			case '}':
+				pColor += 72;
+				break;
+			case '`': /* ` */
+				doChange = !doChange;
+				break;
+			case 'P':
+				wait_noinput(TRUE,FALSE,FALSE);
+				wait_input(TRUE,FALSE,FALSE);
+				break;
+			default:
+				break;
+		}
+	}
+
+	if (doChange)
+	{
+		stepCounter++;
+		if (stepCounter > changeTime)
+		{
+			JE_changeSetup(0);
+		}
+	}
+
+	if ((rand() % 1000) == 1)
+	{
+		nspVarVarInc = (rand()/(float)RAND_MAX) * 0.01 - 0.005;
+	}
+
+	nspVarInc += nspVarVarInc;
 }
 
 void JE_makeGray( void )
@@ -87,12 +308,23 @@ void JE_wackyCol( void )
 
 void JE_starlib_init( void )
 {
-	/* RANDOMIZE; */
-	for (x = 0; x < starlib_MAX_STARS; x++)
+	static JE_boolean initialized = FALSE;
+
+	if (!initialized)
 	{
-		star[x].spX = (rand() % 64000) - 32000;
-		star[x].spY = (rand() % 40000) - 20000;
-		star[x].spZ = x+1;
+		initialized = TRUE;
+
+		JE_resetValues();
+		JE_changeSetup(2);
+		doChange = TRUE;
+
+		/* RANDOMIZE; */
+		for (x = 0; x < starlib_MAX_STARS; x++)
+		{
+			star[x].spX = (rand() % 64000) - 32000;
+			star[x].spY = (rand() % 40000) - 20000;
+			star[x].spZ = x+1;
+		}
 	}
 }
 
@@ -104,7 +336,7 @@ void JE_resetValues( void )
 	nspVarVarInc = 0.0001;
 	nsp = 0;
 	pColor = 32;
-	speed = 2;
+	starlib_speed = 2;
 	speedChange = 0;
 }
 
