@@ -32,6 +32,7 @@ extern JE_boolean ESCPressed;
 extern JE_boolean newkey, newmouse, keydown, mousedown;
 extern SDLKey lastkey_sym;
 extern SDLMod lastkey_mod;
+extern unsigned char lastkey_char;
 extern Uint8 lastmouse_but;
 extern Uint16 lastmouse_x, lastmouse_y;
 extern JE_boolean mouse_pressed[3];

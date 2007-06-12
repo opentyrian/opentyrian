@@ -123,6 +123,7 @@ JE_boolean ESCPressed;
 JE_boolean newkey, newmouse, keydown, mousedown;
 SDLKey lastkey_sym;
 SDLMod lastkey_mod;
+unsigned char lastkey_char;
 Uint8 lastmouse_but;
 Uint16 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {FALSE, FALSE, FALSE};
@@ -178,6 +179,8 @@ void init_keyboard( void )
 	newkey = newmouse = FALSE;
 	keydown = mousedown = FALSE;
 
+	SDL_EnableUNICODE(1);
+
 #ifdef NDEBUG
 	SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif
@@ -206,6 +209,7 @@ void service_SDL_events( JE_boolean clear_new )
 				newkey = TRUE;
 				lastkey_sym = ev.key.keysym.sym;
 				lastkey_mod = ev.key.keysym.mod;
+				lastkey_char = ev.key.keysym.unicode;
 				keydown = TRUE;
 				break;
 			case SDL_KEYUP:
