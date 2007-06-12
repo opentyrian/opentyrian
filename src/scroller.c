@@ -76,6 +76,7 @@ void scroller3d( char *text[] )
 	}
 
 	JE_loadPic(4, FALSE); /* Steal palette for now. */
+	memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
 
 	surf = malloc(sizeof(VGAScreen2Seg));
 
