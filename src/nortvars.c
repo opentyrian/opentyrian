@@ -174,15 +174,15 @@ void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 void JE_drawShape2( int x, int y, int s_, JE_byte *shape )
 {
 	JE_byte *p; /* shape pointer */
-	unsigned char *s; /* screen pointer, 8-bit specific */
-	unsigned char *s_limit; /* buffer boundary */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	int i;
 
-	s = (unsigned char *)VGAScreen->pixels;
+	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
 
-	s_limit = (unsigned char *)VGAScreen->pixels;
+	s_limit = (Uint8 *)VGAScreen->pixels;
 	s_limit += VGAScreen->h * VGAScreen->w;
 
 	p = shape + ((s_ - 1) * 2);
@@ -214,15 +214,15 @@ void JE_drawShape2( int x, int y, int s_, JE_byte *shape )
 void JE_superDrawShape2( int x, int y, int s_, JE_byte *shape )
 {
 	JE_byte *p; /* shape pointer */
-	unsigned char *s; /* screen pointer, 8-bit specific */
-	unsigned char *s_limit; /* buffer boundary */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	int i;
 
-	s = (unsigned char *)VGAScreen->pixels;
+	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
 
-	s_limit = (unsigned char *)VGAScreen->pixels;
+	s_limit = (Uint8 *)VGAScreen->pixels;
 	s_limit += VGAScreen->h * VGAScreen->w;
 
 	p = shape + ((s_ - 1) * 2);
@@ -254,15 +254,15 @@ void JE_superDrawShape2( int x, int y, int s_, JE_byte *shape )
 void JE_drawShape2Shadow( int x, int y, int s_, JE_byte *shape )
 {
 	JE_byte *p; /* shape pointer */
-	unsigned char *s; /* screen pointer, 8-bit specific */
-	unsigned char *s_limit; /* buffer boundary */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	int i;
 
-	s = (unsigned char *)VGAScreen->pixels;
+	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
 
-	s_limit = (unsigned char *)VGAScreen->pixels;
+	s_limit = (Uint8 *)VGAScreen->pixels;
 	s_limit += VGAScreen->h * VGAScreen->w;
 
 	p = shape + ((s_ - 1) * 2);

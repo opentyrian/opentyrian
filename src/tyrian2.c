@@ -163,14 +163,361 @@ void JE_starShowVGA( void )
 	skipStarShowVGA = FALSE;
 }
 
+void JE_drawEnemy( int enemyAvailOfs )
+{
+	int i, j;
+	
+	JE_byte *p; /* shape pointer */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
+	
+	PX -= 25;
+	
+	for (i = enemyAvailOfs - 25; i < enemyAvailOfs; i++)
+	{
+		if (enemyAvail[i] != 1)
+		{
+			enemy[i].mapoffset = tempMapXOfs;
+			
+			if (enemy[i].xaccel && enemy[i].xaccel - 89 > rand() % 11)
+			{
+				if (PX > enemy[i].ex)
+				{
+					if (enemy[i].exc < enemy[i].xaccel - 89)
+					{
+						enemy[i].exc++;
+					}
+				} else {
+					if (enemy[i].exc >= 0 || -enemy[i].exc < enemy[i].xaccel - 89)
+					{
+						enemy[i].exc--;
+					}
+				}
+			}
+			
+			if (enemy[i].yaccel && enemy[i].yaccel - 89 > rand() % 11)
+			{
+				if (PY > enemy[i].ey)
+				{
+					if (enemy[i].eyc < enemy[i].yaccel - 89)
+					{
+						enemy[i].eyc++;
+					}
+				} else {
+					if (enemy[i].eyc >= 0 || -enemy[i].eyc < enemy[i].yaccel - 89)
+					{
+						enemy[i].eyc--;
+					}
+				}
+			}
+			
+ 			if (enemy[i].ex + tempMapXOfs > -29 && enemy[i].ex + tempMapXOfs < 300)
+			{
+				if (enemy[i].aniactive == 1)
+				{
+					enemy[i].enemycycle++;
+					
+					if (enemy[i].enemycycle == enemy[i].animax)
+					{
+						enemy[i].aniactive = enemy[i].aniwhenfire;
+					} else {
+						if (enemy[i].enemycycle > enemy[i].ani)
+						{
+							enemy[i].enemycycle = enemy[i].animin;
+						}
+					}
+				}
+				
+				if (enemy[i].egr[enemy[i].enemycycle - 1] == 999)
+				{
+					goto enemy_gone;
+				}
+				
+				if (enemy[i].size == 1)
+				{
+					/* -------------------------  LARGE ENEMY -- Draw a 2x2 enemy ---------- */
+					
+					if (enemy[i].ey > -13)
+					{
+						s = (Uint8 *)VGAScreen->pixels;
+						s += (enemy[i].ey - 7) * VGAScreen->w + (enemy[i].ex - 6) + tempMapXOfs;
+						
+						s_limit = (Uint8 *)VGAScreen->pixels;
+						s_limit += VGAScreen->h * VGAScreen->w;
+						
+						p = enemy[i].shapeseg;
+						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1];
+						
+						while (*p != 0x0f)
+						{
+							s += *p & 0x0f;
+							j = (*p & 0xf0) >> 4;
+							if (j)
+							{
+								while (j--)
+								{
+									p++;
+									if (s >= s_limit)
+										goto enemy_draw_overflow;
+									if ((void *)s >= VGAScreen->pixels)
+										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
+									s++;
+								}
+							} else {
+								s -= 12;
+								s += VGAScreen->w;
+							}
+							p++;
+						}
+						
+						s = (Uint8 *)VGAScreen->pixels;
+						s += (enemy[i].ey - 7) * VGAScreen->w + (enemy[i].ex + 6) + tempMapXOfs;
+						
+						s_limit = (Uint8 *)VGAScreen->pixels;
+						s_limit += VGAScreen->h * VGAScreen->w;
+						
+						p = enemy[i].shapeseg;
+						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1]];
+						
+						while (*p != 0x0f)
+						{
+							s += *p & 0x0f;
+							j = (*p & 0xf0) >> 4;
+							if (j)
+							{
+								while (j--)
+								{
+									p++;
+									if (s >= s_limit)
+										goto enemy_draw_overflow;
+									if ((void *)s >= VGAScreen->pixels)
+										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
+									s++;
+								}
+							} else {
+								s -= 12;
+								s += VGAScreen->w;
+							}
+							p++;
+						}
+					}
+					
+					if (enemy[i].ey > -26 && enemy[i].ey < 182)
+					{
+						s = (Uint8 *)VGAScreen->pixels;
+						s += (enemy[i].ey + 7) * VGAScreen->w + (enemy[i].ex - 6) + tempMapXOfs;
+						
+						s_limit = (Uint8 *)VGAScreen->pixels;
+						s_limit += VGAScreen->h * VGAScreen->w;
+						
+						p = enemy[i].shapeseg;
+						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 18];
+						
+						while (*p != 0x0f)
+						{
+							s += *p & 0x0f;
+							j = (*p & 0xf0) >> 4;
+							if (j)
+							{
+								while (j--)
+								{
+									p++;
+									if (s >= s_limit)
+										goto enemy_draw_overflow;
+									if ((void *)s >= VGAScreen->pixels)
+										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
+									s++;
+								}
+							} else {
+								s -= 12;
+								s += VGAScreen->w;
+							}
+							p++;
+						}
+						
+						s = (Uint8 *)VGAScreen->pixels;
+						s += (enemy[i].ey + 7) * VGAScreen->w + (enemy[i].ex + 6) + tempMapXOfs;
+						
+						s_limit = (Uint8 *)VGAScreen->pixels;
+						s_limit += VGAScreen->h * VGAScreen->w;
+						
+						p = enemy[i].shapeseg;
+						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 19];
+						
+						while (*p != 0x0f)
+						{
+							s += *p & 0x0f;
+							j = (*p & 0xf0) >> 4;
+							if (j)
+							{
+								while (j--)
+								{
+									p++;
+									if (s >= s_limit)
+										goto enemy_draw_overflow;
+									if ((void *)s >= VGAScreen->pixels)
+										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
+									s++;
+								}
+							} else {
+								s -= 12;
+								s += VGAScreen->w;
+							}
+							p++;
+						}
+					}
+					
+				} else {
+					if (enemy[i].ey > -13)
+					{
+						s = (Uint8 *)VGAScreen->pixels;
+						s += enemy[i].ey * VGAScreen->w + enemy[i].ex + tempMapXOfs;
+						
+						s_limit = (Uint8 *)VGAScreen->pixels;
+						s_limit += VGAScreen->h * VGAScreen->w;
+						
+						p = enemy[i].shapeseg;
+						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1];
+						
+						while (*p != 0x0f)
+						{
+							s += *p & 0x0f;
+							j = (*p & 0xf0) >> 4;
+							if (j)
+							{
+								while (j--)
+								{
+									p++;
+									if (s >= s_limit)
+										goto enemy_draw_overflow;
+									if ((void *)s >= VGAScreen->pixels)
+										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
+									s++;
+								}
+							} else {
+								s -= 12;
+								s += VGAScreen->w;
+							}
+							p++;
+						}
+					}
+				}
+enemy_draw_overflow:
+				enemy[i].filter = 0;
+			}
+			
+			if (enemy[i].excc)
+			{
+				enemy[i].exccw--;
+				if (enemy[i].exccw <= 0)
+				{
+					if (enemy[i].exc == enemy[i].exrev)
+					{
+						enemy[i].excc = -enemy[i].excc;
+						enemy[i].exrev = -enemy[i].exrev;
+						enemy[i].exccadd = -enemy[i].exccadd;
+					} else {
+						enemy[i].exc += enemy[i].exccadd;
+						enemy[i].exccw = enemy[i].exccwmax;
+						if (enemy[i].exc == enemy[i].exrev)
+						{
+							enemy[i].excc = -enemy[i].excc;
+							enemy[i].exrev = -enemy[i].exrev;
+							enemy[i].exccadd = -enemy[i].exccadd;
+						}
+					}
+				}
+			}
+			
+			if (enemy[i].eycc)
+			{
+				enemy[i].eyccw--;
+				if (enemy[i].eyccw <= 0)
+				{
+					if (enemy[i].eyc == enemy[i].eyrev)
+					{
+						enemy[i].eycc = -enemy[i].eycc;
+						enemy[i].eyrev = -enemy[i].eyrev;
+						enemy[i].eyccadd = -enemy[i].eyccadd;
+					} else {
+						enemy[i].eyc += enemy[i].eyccadd;
+						enemy[i].eyccw = enemy[i].eyccwmax;
+						if (enemy[i].eyc == enemy[i].eyrev)
+						{
+							enemy[i].eycc = -enemy[i].eycc;
+							enemy[i].eyrev = -enemy[i].eyrev;
+							enemy[i].eyccadd = -enemy[i].eyccadd;
+						}
+					}
+				}
+			}
+			
+			enemy[i].ey += enemy[i].fixedmovey;
+			
+			enemy[i].ex += enemy[i].exc;
+			if (enemy[i].ex < -80 || enemy[i].ex > 340)
+			{
+				goto enemy_gone;
+			}
+			
+			enemy[i].ey += enemy[i].eyc;
+			if (enemy[i].ey < -112 || enemy[i].ey > 190)
+			{
+				goto enemy_gone;
+			}
+			
+			goto enemy_still_exists;
+			
+enemy_gone:
+			/* TODO ? */
+			enemyAvail[i] = 1;
+			goto draw_enemy_end;
+			
+enemy_still_exists:
+			
+			/*X bounce*/
+			if (enemy[i].ex <= enemy[i].xminbounce || enemy[i].ex >= enemy[i].xmaxbounce)
+			{
+				enemy[i].exc = -enemy[i].exc;
+			}
+			
+			/*Y bounce*/
+			if (enemy[i].ey <= enemy[i].yminbounce || enemy[i].ey >= enemy[i].ymaxbounce)
+			{
+				enemy[i].eyc = -enemy[i].eyc;
+			}
+			
+			/* Evalue != 0 - score item at boundary */
+			if (enemy[i].scoreitem)
+			{
+				if (enemy[i].ex < -5)
+				{
+					enemy[i].ex++;
+				}
+				if (enemy[i].ex > 245)
+				{
+					enemy[i].ex--;
+				}
+			}
+			
+			enemy[i].ey += tempBackMove;
+		}
+draw_enemy_end:
+		;
+	}
+	
+	PX += 25;
+}
 
 void JE_main( void )
 {
 	int i, j, l;
 	JE_byte **bp, *src;
-	unsigned char *s; /* screen pointer, 8-bit specific */
+	Uint8 *s; /* screen pointer, 8-bit specific */
 
 	char buffer[256];
+	
+	int lastEnemyOnScreen;
 
 	loadTitleScreen = TRUE;
 
@@ -786,10 +1133,15 @@ level_loop:
 	if (!endLevel)
 	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
 		/* TODO */
+		
+		oldMapX3Ofs = mapX3Ofs;
+		
+		enemyOnScreen = 0;
+				
 	}    /*MAIN DRAWING IS STOPPED ENDING   HERE*/
 
 	/*---------------------------EVENTS-------------------------*/
-	while (eventRec[eventLoc].eventtime <= curLoc && eventLoc <= maxEvent)
+	while (eventRec[eventLoc-1].eventtime <= curLoc && eventLoc <= maxEvent)
 	{
 		JE_eventSystem();
 	}
@@ -830,7 +1182,7 @@ level_loop:
 	{
 		/* BP is used by all backgrounds */
 
-		s = (unsigned char *)tempScreenSeg->pixels;
+		s = (Uint8 *)tempScreenSeg->pixels;
 
 		/* Offset for top */
 		s += 11 * 24;
@@ -984,8 +1336,21 @@ level_loop:
 	}
 
 	/*-----------------------Ground Enemy------------------------*/
-	/* TODO */
-
+	lastEnemyOnScreen = enemyOnScreen;
+	
+	tempMapXOfs = mapXOfs;
+	tempBackMove = backMove;
+	JE_drawEnemy(50);
+	JE_drawEnemy(100);
+	
+	if (enemyOnScreen == 0 || enemyOnScreen == lastEnemyOnScreen)
+	{
+		if (stopBackgroundNum == 1)
+		{
+			stopBackgroundNum = 9;
+		}
+	}
+	
 	if (smoothies[0] && processorType > 2 && SDAT[0] > 0)
 	{
 		JE_smoothies1();
@@ -1042,7 +1407,19 @@ level_loop:
 	/* Draw Sky Enemy */
 	if (!skyEnemyOverAll)
 	{
-		/* TODO */
+		lastEnemyOnScreen = enemyOnScreen;
+		
+		tempMapXOfs = mapX2Ofs;
+		tempBackMove = 0;
+		JE_drawEnemy(25);
+		
+		if (enemyOnScreen == lastEnemyOnScreen)
+		{
+			if (stopBackgroundNum == 2)
+			{
+				stopBackgroundNum = 9;
+			}
+		}
 	}
 
 	if (background3over == 0)
@@ -1053,7 +1430,9 @@ level_loop:
 	/* Draw Top Enemy */
 	if (!topEnemyOver)
 	{
-		/* TODO */
+		tempMapXOfs = (background3x1 == 0) ? oldMapX3Ofs : mapXOfs;
+		tempBackMove = backMove3;
+		JE_drawEnemy(75);
 	}
 
 	/* Player Shot Images */
@@ -1251,13 +1630,27 @@ drawplayershotloopend:
 	/* Draw Top Enemy */
 	if (topEnemyOver)
 	{
-		/* TODO */
+		tempMapXOfs = (background3x1 == 0) ? oldMapX3Ofs : oldMapXOfs;
+		tempBackMove = backMove3;
+		JE_drawEnemy(75);
 	}
 
 	/* Draw Sky Enemy */
 	if (skyEnemyOverAll)
 	{
-		/* TODO */
+		lastEnemyOnScreen = enemyOnScreen;
+		
+		tempMapXOfs = mapX2Ofs;
+		tempBackMove = 0;
+		JE_drawEnemy(25);
+		
+		if (enemyOnScreen == lastEnemyOnScreen)
+		{
+			if (stopBackgroundNum == 2)
+			{
+				stopBackgroundNum = 9;
+			}
+		}
 	}
 
 	/*-------------------------- Sequenced Explosions -------------------------*/
@@ -1430,7 +1823,7 @@ drawplayershotloopend:
 			levelTimerCountdown--;
 			if (levelTimerCountdown == 0)
 			{
-				/*TODO JE_eventJump(levelTimerJumpTo);*/
+				JE_eventJump(levelTimerJumpTo);
 			}
 
 			if (levelTimerCountdown > 200)
@@ -1675,8 +2068,8 @@ void JE_loadMap( void )
 
 	char buffer[256];
 	int i;
-	unsigned char pic_buffer[320*200]; /* screen buffer, 8-bit specific */
-	unsigned char *vga, *pic, *vga2; /* screen pointer, 8-bit specific */
+	Uint8 pic_buffer[320*200]; /* screen buffer, 8-bit specific */
+	Uint8 *vga, *pic, *vga2; /* screen pointer, 8-bit specific */
 
 	lastCubeMax = cubeMax;
 
@@ -2947,6 +3340,431 @@ void JE_displayText( void )
 }
 
 
+void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
+{
+	JE_byte temp;
+	
+	if (superArcadeMode > 0 && tempW == 534)
+	{
+		tempW = 533;
+	}
+	
+	enemyShapeTables[5-1] = 21;   /*Coins&Gems*/
+	enemyShapeTables[6-1] = 26;   /*Two-Player Stuff*/
+	
+	if (uniqueEnemy)
+	{
+		temp = tempI2;
+		uniqueEnemy = FALSE;
+	} else {
+		temp = enemyDat[tempW].shapebank;
+	}
+	
+	for (a = 0; a < 6; a++)
+	{
+		if (temp == enemyShapeTables[a])
+		{
+			switch (a)
+			{
+				case 0:
+					enemy->shapeseg = eShapes1;
+					break;
+				case 1:
+					enemy->shapeseg = eShapes2;
+					break;
+				case 2:
+					enemy->shapeseg = eShapes3;
+					break;
+				case 3:
+					enemy->shapeseg = eShapes4;
+					break;
+				case 4:
+					enemy->shapeseg = eShapes5;
+					break;
+				case 5:
+					enemy->shapeseg = eShapes6;
+					break;
+			}
+		}
+	}
+	
+	enemy->enemydatofs = &enemyDat[tempW];
+	
+	enemy->mapoffset = 0;
+	
+	for (a = 0; a < 3; a++)
+	{
+		enemy->eshotmultipos[a] = 0;
+	}
+	
+	temp4 = enemyDat[tempW].explosiontype;
+	enemy->enemyground = ((temp4 & 0x01) == 0);
+	enemy->explonum = temp4 / 2;
+	
+	enemy->launchfreq = enemyDat[tempW].elaunchfreq;
+	enemy->launchwait = enemyDat[tempW].elaunchfreq;
+	enemy->launchtype = enemyDat[tempW].elaunchtype % 1000;
+	enemy->launchspecial = enemyDat[tempW].elaunchtype / 1000;
+	
+	enemy->xaccel = enemyDat[tempW].xaccel;
+	enemy->yaccel = enemyDat[tempW].yaccel;
+	
+	enemy->xminbounce = -10000;
+	enemy->xmaxbounce = 10000;
+	enemy->yminbounce = -10000;
+	enemy->ymaxbounce = 10000;
+	/*Far enough away to be impossible to reach*/
+	
+	for (a = 0; a < 3; a++)
+	{
+		enemy->tur[a] = enemyDat[tempW].tur[a];
+	}
+	
+	enemy->ani = enemyDat[tempW].ani;
+	enemy->animin = 1;
+	
+	switch (enemyDat[tempW].animate)
+	{
+		case 0:
+			enemy->enemycycle = 1;
+			enemy->aniactive = 0;
+			enemy->animax = 0;
+			enemy->aniwhenfire = 0;
+			break;
+		case 1:
+			enemy->enemycycle = 0;
+			enemy->aniactive = 1;
+			enemy->animax = 0;
+			enemy->aniwhenfire = 0;
+			break;
+		case 2:
+			enemy->enemycycle = 1;
+			enemy->aniactive = 2;
+			enemy->animax = enemy->ani;
+			enemy->aniwhenfire = 2;
+			break;
+	}
+	
+	if (enemyDat[tempW].startxc != 0)
+	{
+		enemy->ex = enemyDat[tempW].startx + (rand() % (enemyDat[tempW].startxc * 2)) - enemyDat[tempW].startxc + 1;
+	} else {
+		enemy->ex = enemyDat[tempW].startx + 1;
+	}
+	
+	if (enemyDat[tempW].startyc != 0)
+	{
+		enemy->ey = enemyDat[tempW].starty + (rand() % (enemyDat[tempW].startyc * 2)) - enemyDat[tempW].startyc + 1;
+	} else {
+		enemy->ey = enemyDat[tempW].starty + 1;
+	}
+	
+	enemy->exc = enemyDat[tempW].xmove;
+	enemy->eyc = enemyDat[tempW].ymove;
+	enemy->excc = enemyDat[tempW].xcaccel;
+	enemy->eycc = enemyDat[tempW].ycaccel;
+	enemy->exccw = abs(enemy->excc);
+	enemy->exccwmax = enemy->exccw;
+	enemy->eyccw = abs(enemy->eycc);
+	enemy->eyccwmax = enemy->eyccw;
+	if (enemy->excc > 0)
+	{
+		enemy->exccadd = 1;
+	} else {
+		enemy->exccadd = -1;
+	}
+	if (enemy->eycc > 0)
+	{
+		enemy->eyccadd = 1;
+	} else {
+		enemy->eyccadd = -1;
+	}
+	
+	enemy->special = FALSE;
+	enemy->iced = 0;
+	
+	if (enemyDat[tempW].xrev == 0)
+	{
+		enemy->exrev = 100;
+	} else {
+		if (enemyDat[tempW].xrev == -99)
+		{
+			enemy->exrev = 0;
+		} else {
+			enemy->exrev = enemyDat[tempW].xrev;
+		}
+	}
+	if (enemyDat[tempW].yrev == 0)
+	{
+		enemy->eyrev = 100;
+	} else {
+		if (enemyDat[tempW].yrev == -99)
+		{
+			enemy->eyrev = 0;
+		} else {
+			enemy->eyrev = enemyDat[tempW].yrev;
+		}
+	}
+	if (enemy->xaccel > 0)
+	{
+		enemy->exca = 1;
+	} else {
+		enemy->exca = -1;
+	}
+	if (enemy->yaccel > 0)
+	{
+		enemy->eyca = 1;
+	} else {
+		enemy->eyca = - 1;
+	}
+	
+	enemy->enemytype = tempW;
+	
+	for (a = 0; a < 3; a++)
+	{
+		if (enemy->tur[a] == 252)
+		{
+			enemy->eshotwait[a] = 1;
+		} else {
+			if (enemy->tur[a] > 0)
+			{
+				enemy->eshotwait[a] = 20;
+			} else {
+				enemy->eshotwait[a] = 255;
+			}
+		}
+	}
+	for (a = 0; a < 20; a++)
+	{
+		enemy->egr[a] = enemyDat[tempW].egraphic[a];
+	}
+	enemy->size = enemyDat[tempW].esize;
+	enemy->linknum = 0;
+	if (enemyDat[tempW].dani < 0)
+	{
+		enemy->edamaged = TRUE;
+	} else {
+		enemy->edamaged = FALSE;
+	}
+	enemy->enemydie = enemyDat[tempW].eenemydie;
+	
+	enemy->freq[1-1] = enemyDat[tempW].freq[1-1];
+	enemy->freq[2-1] = enemyDat[tempW].freq[2-1];
+	enemy->freq[3-1] = enemyDat[tempW].freq[3-1];
+	
+	enemy->edani   = enemyDat[tempW].dani;
+	enemy->edgr    = enemyDat[tempW].dgr;
+	enemy->edlevel = enemyDat[tempW].dlevel;
+	
+	enemy->fixedmovey = 0;
+	
+	enemy->filter = 0x00;
+	
+	if (enemyDat[tempW].value > 1 && enemyDat[tempW].value < 10000)
+	{
+		switch (difficultyLevel)
+		{
+			case -1:
+			case 0:
+				tempW = enemyDat[tempW].value * 0.75;
+				break;
+			case 1:
+			case 2:
+				tempW = enemyDat[tempW].value;
+				break;
+			case 3:
+				tempW = enemyDat[tempW].value * 1.125;
+				break;
+			case 4:
+				tempW = enemyDat[tempW].value * 1.5;
+				break;
+			case 5:
+				tempW = enemyDat[tempW].value * 2;
+				break;
+			case 6:
+				tempW = enemyDat[tempW].value * 2.5;
+				break;
+			case 7:
+			case 8:
+				tempW = enemyDat[tempW].value * 4;
+				break;
+			case 9:
+			case 10:
+				tempW = enemyDat[tempW].value * 8;
+				break;
+		}
+		if (tempW > 10000)
+		{
+			tempW = 10000;
+		}
+		enemy->evalue = tempW;
+	} else {
+		enemy->evalue = enemyDat[tempW].value;
+	}
+	
+	tempW = 1;
+	if (enemyDat[tempW].armor > 0)
+	{
+		
+		if (enemyDat[tempW].armor != 255)
+		{
+			
+			switch (difficultyLevel)
+			{
+				case -1:
+				case 0:
+					tempW = enemyDat[tempW].armor * 0.5 + 1;
+					break;
+				case 1:
+					tempW = enemyDat[tempW].armor * 0.75 + 1;
+					break;
+				case 2:
+					tempW = enemyDat[tempW].armor;
+					break;
+				case 3:
+					tempW = enemyDat[tempW].armor * 1.2;
+					break;
+				case 4:
+					tempW = enemyDat[tempW].armor * 1.5;
+					break;
+				case 5:
+					tempW = enemyDat[tempW].armor * 1.8;
+					break;
+				case 6:
+					tempW = enemyDat[tempW].armor * 2;
+					break;
+				case 7:
+					tempW = enemyDat[tempW].armor * 3;
+					break;
+				case 8:
+					tempW = enemyDat[tempW].armor * 4;
+					break;
+				case 9:
+				case 10:
+					tempW = enemyDat[tempW].armor * 8;
+					break;
+			}
+			
+			if (tempW > 254)
+			{
+				tempW = 254;
+			}
+			
+		} else {
+			tempW = 255;
+		}
+		
+		enemy->armorleft = tempW;
+		
+		a = 0;
+		enemy->scoreitem = FALSE;
+	} else {
+		a = 2;
+		enemy->armorleft = 255;
+		if (enemy->evalue != 0)
+		{
+			enemy->scoreitem = TRUE;
+		}
+	}
+	/*The returning A value indicates what to set ENEMYAVAIL to */
+	
+	if (!enemy->scoreitem)
+	{
+		totalEnemy++;  /*Destruction ratio*/
+	}
+}
+
+void JE_createNewEventEnemy( JE_byte enemyTypeOfs, JE_word enemyOffset )
+{
+	int i;
+	
+	b = 0;
+	
+	for(i = enemyOffset; i < enemyOffset + 25; i++)
+	{
+		if (enemyAvail[i] == 1)
+		{
+			b = i + 1;
+			break;
+		}
+	}
+	
+	if (b == 0)
+	{
+		return;
+	}
+	
+	tempW = eventRec[eventLoc-1].eventdat + enemyTypeOfs;
+	
+	JE_makeEnemy(&enemy[b-1]);
+	
+	enemyAvail[b-1] = a;
+	
+	if (eventRec[eventLoc-1].eventdat2 != -99)
+	{
+		switch (enemyOffset)
+		{
+			case 0:
+				enemy[b-1].ex = eventRec[eventLoc-1].eventdat2 - (mapX - 1) * 24;
+				enemy[b-1].ey -= backMove2;
+				break;
+			case 25:
+			case 75:
+				enemy[b-1].ex = eventRec[eventLoc-1].eventdat2 - (mapX - 1) * 24 - 12;
+				enemy[b-1].ey -= backMove;
+				break;
+			case 50:
+				if (background3x1)
+				{
+					enemy[b-1].ex = eventRec[eventLoc-1].eventdat2 - (mapX - 1) * 24 - 12;
+				} else {
+					enemy[b-1].ex = eventRec[eventLoc-1].eventdat2 - mapX3 * 24 - 24 * 2 + 6;
+				}
+				enemy[b-1].ey -= backMove3;
+				
+				if (background3x1b)
+				{
+					enemy[b-1].ex -= 6;
+				}
+				break;
+		}
+		enemy[b-1].ey = -28;
+		if (background3x1b && enemyOffset == 50)
+		{
+			enemy[b-1].ey += 4;
+		}
+	}
+	
+	if (smallEnemyAdjust && enemy[b-1].size == 0)
+	{
+		enemy[b-1].ex -= 10;
+		enemy[b-1].ey -= 7;
+	}
+	
+	enemy[b-1].ey += eventRec[eventLoc-1].eventdat5;
+	enemy[b-1].eyc += eventRec[eventLoc-1].eventdat3;
+	enemy[b-1].linknum = eventRec[eventLoc-1].eventdat4;
+	enemy[b-1].fixedmovey = eventRec[eventLoc-1].eventdat6;
+}
+
+void JE_eventJump( JE_word jump )
+{
+	JE_word tempW;
+
+	if (jump == 65535)
+	{
+		curLoc = returnLoc;
+	} else {
+		returnLoc = curLoc + 1;
+		curLoc = jump;
+	}
+	tempW = 0;
+	do {
+		tempW++;
+	} while (!(eventRec[tempW-1].eventtime >= curLoc));
+	eventLoc = tempW - 1;
+}
+
 JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 {
 	JE_boolean tempb = FALSE;
@@ -2970,7 +3788,7 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 void JE_eventSystem( void )
 {
 	JE_boolean tempb;
-
+	
 	switch (eventRec[eventLoc-1].eventtype)
 	{
 		case 1:
@@ -2981,7 +3799,7 @@ void JE_eventSystem( void )
 			map1YDelayMax = 1;
 			map2YDelay = 1;
 			map2YDelayMax = 1;
-
+			
 			backMove = eventRec[eventLoc-1].eventdat;
 			backMove2 = eventRec[eventLoc-1].eventdat2;
 			if (backMove2 > 0)
@@ -3124,7 +3942,7 @@ void JE_eventSystem( void )
 			enemiesActive = TRUE;
 			break;
 		case 15: /* Sky Enemy */
-			JE_createNewEventEnemy (0, 0);
+			JE_createNewEventEnemy(0, 0);
 			break;
 		case 16:
 			JE_drawTextWindow(outputs[eventRec[eventLoc-1].eventdat-1]);
@@ -6619,11 +7437,6 @@ void JE_menuFunction( JE_byte select )
 	
 }
 
-void JE_eventJump( JE_word jump )
-{
-	STUB(JE_eventJump);
-}
-
 void JE_drawJoystick( void )
 {
 	STUB(JE_drawJoystick);
@@ -7107,11 +7920,6 @@ void JE_genItemMenu( JE_byte itemNum )
 */				
 }
 
-void JE_makeEnemy( struct JE_SingleEnemyType enemy )
-{
-	STUB(JE_makeEnemy);
-}
-
 void JE_doNetwork( void )
 {
 	STUB(JE_doNetwork);
@@ -7122,11 +7930,6 @@ void JE_drawBackground3( void )
 {
 	STUB(JE_drawBackground3);
 }*/
-
-void JE_createNewEventEnemy( JE_byte enemytypeofs, JE_word enemyoffset )
-{
-	STUB(JE_createNewEventEnemy);
-}
 
 void JE_scaleInPicture( void )
 {

@@ -242,7 +242,7 @@ void JE_scanForEpisodes( void )
 	for (temp = 0; temp < EPISODE_MAX; temp++)
 	{
 		sprintf(buf, "TYRIAN%d.LVL", temp + 1);
-		episodeAvail[temp] = (dir != "") & JE_find(buf);
+		episodeAvail[temp] = strcmp(dir, "") & JE_find(buf);
 
 		sprintf(buf, "%sTYRIAN%d.LVL", dir, temp + 1);
 		episodeAvail[temp] |= JE_find(buf);

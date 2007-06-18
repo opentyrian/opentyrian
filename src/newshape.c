@@ -119,9 +119,9 @@ void JE_newDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )
 	JE_word x = 2, y = 2;
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p; /* shape pointer */
-	unsigned char *s; /* screen pointer, 8-bit specific */
+	Uint8 *s; /* screen pointer, 8-bit specific */
 
-	s = (unsigned char *)tempScreenSeg->pixels;
+	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
 
 	for (p = shape; yloop < ysize; p++)
@@ -159,7 +159,7 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 	JE_word xsize, ysize;
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p; /* shape pointer */
-	unsigned char *s; /* screen pointer, 8-bit specific */
+	Uint8 *s; /* screen pointer, 8-bit specific */
 
 	/*printf("%d, %d\n", x, y);*/
 	
@@ -170,7 +170,7 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 
 	xsize = shapeX[table][shape]; ysize = shapeY[table][shape];
 
-	s = (unsigned char *)tempScreenSeg->pixels;
+	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
 
 	for (p = (*shapeArray)[table][shape]; yloop < ysize; p++)
@@ -224,9 +224,9 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p = shape; /* shape pointer */
-	unsigned char *s;   /* screen pointer, 8-bit specific */
+	Uint8 *s;   /* screen pointer, 8-bit specific */
 
-	s = (unsigned char *)VGAScreen->pixels;
+	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
 
 	for (yloop = 0; yloop < 28; yloop++)
@@ -245,9 +245,9 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p = shape; /* shape pointer */
-	unsigned char *s;   /* screen pointer, 8-bit specific */
+	Uint8 *s;   /* screen pointer, 8-bit specific */
 
-	s = (unsigned char *)VGAScreen->pixels;
+	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
 
 	for (yloop = 0; yloop < 28; yloop++)

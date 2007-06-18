@@ -46,9 +46,9 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 
 	int i;
 	JE_byte *p;
-	unsigned char *s; /* screen pointer, 8-bit specific */
+	Uint8 *s; /* screen pointer, 8-bit specific */
 
-	s = (unsigned char *)VGAScreen->pixels;
+	s = (Uint8 *)VGAScreen->pixels;
 
 	PCXnumber--;
 

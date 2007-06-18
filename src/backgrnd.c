@@ -61,7 +61,7 @@ void JE_drawBackground2( void )
 	JE_boolean useBackground1ofs;
 
 	JE_byte **bp, *src;
-	unsigned char *s = NULL; /* screen pointer, 8-bit specific */
+	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
 
 	int i, j;
 	int x, y;
@@ -243,7 +243,7 @@ void JE_superBackground2( void )
 	/*=======================BACKGROUNDS========================*/
 	/*=======================BACKGROUND 2========================*/
 	JE_byte **bp, *src;
-	unsigned char *s = NULL; /* screen pointer, 8-bit specific */
+	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
 
 	int i, j;
 	int x, y;
@@ -415,7 +415,7 @@ void JE_superBackground2( void )
 void JE_drawBackground3( void )
 {
 	JE_byte **bp, *src;
-	unsigned char *s = NULL; /* screen pointer, 8-bit specific */
+	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
 
 	int i, j;
 	int x, y;

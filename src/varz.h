@@ -53,11 +53,11 @@ struct JE_SingleEnemyType
 	JE_byte     aniactive;
 	JE_byte     animax;
 	JE_byte     aniwhenfire;
-	JE_word     shapeseg;
+	void       *shapeseg;
 	JE_shortint exrev, eyrev;
 	JE_integer  exccadd, eyccadd;
 	JE_byte     exccwmax, eyccwmax;
-	JE_word     enemydatofs;
+	void       *enemydatofs;
 	JE_boolean  edamaged;
 	JE_word     enemytype;
 	JE_byte     animin;

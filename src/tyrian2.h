@@ -46,7 +46,7 @@ void JE_weaponViewFrame( JE_byte testshotnum );
 
 void JE_doNetwork( void );
 
-void JE_makeEnemy( struct JE_SingleEnemyType enemy );
+void JE_makeEnemy( struct JE_SingleEnemyType *enemy );
 
 void JE_weaponSimUpdate( void );
 
@@ -82,6 +82,7 @@ void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word 
 
 typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 
+void JE_drawEnemy( int enemyAvailOfs );
 void JE_starShowVGA( void );
 
 void JE_main( void );
