@@ -5003,22 +5003,22 @@ item_screen_start:
 		/* keyboard settings menu */
 		if (curMenu == 5)
 		{
-			for (x = 1; x < 11; x++)
+			for (x = 2; x <= 11; x++)
 			{
 				if (x == curSel[curMenu])
 				{
 					temp2 = 15;
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(610, 38 + (x - 1)*12);
+						JE_setMousePosition(610, 38 + (x - 2)*12);
 					}
 				} else {
 					temp2 = 28;
 				}
 
-				JE_textShade(166, 38 + (x - 1)*12, menuInt[curMenu][x], temp2 / 16, temp2 % 16 - 8, DARKEN);
+				JE_textShade(166, 38 + (x - 2)*12, menuInt[curMenu][x-1], temp2 / 16, temp2 % 16 - 8, DARKEN);
 
-				if (x < 9)
+				if (x < 10) /* 10 = reset to defaults, 11 = done */
 				{
 					if (x == curSel[curMenu])
 					{
@@ -5026,16 +5026,17 @@ item_screen_start:
 					} else {
 						temp2 = 250;
 					}
-					JE_textShade(236, 38 + (x - 1)*12, keyNames[keySettings[x-1]], temp2 / 16, temp2 % 16 - 8, DARKEN);
+					JE_textShade(236, 38 + (x - 2)*12, keyNames[keySettings[x-1]], temp2 / 16, temp2 % 16 - 8, DARKEN);
 				}
 			}
 
-			menuChoices[5] = 10;
+			menuChoices[5] = 11;
 		}
 	
 		/* Upgrade weapon submenus, with weapon sim */
 		if (curMenu == 4)
 		{
+			/* Move cursor until we hit either "Done" or a weapon the player can afford */
 			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][curSel[5]]) > score)
 			{
 				curSel[4] += lastDirection;
@@ -5049,62 +5050,71 @@ item_screen_start:
 				}
 			}
 			
-			if (curSel[4] == menuChoices[4])
+			if (curSel[4] == menuChoices[4]) 
 			{
+				/* If cursor on "Done", use previous weapon */
 				pItems[pItemButtonMap[curSel[1]-1] - 1] = pItemsBack[pItemButtonMap[curSel[2]-1] - 1];
 			} else {
+				/* Otherwise display the selected weapon */
 				pItems[pItemButtonMap[curSel[1]-1] - 1] = itemAvail[itemAvailMap[curSel[1]-1]][curSel[4]-1];
 			}
 			
+			/* Get power level info for front and rear weapons */
 			if ((curSel[1] == 3 && curSel[4] < menuChoices[4]) || (curSel[1] == 4 && curSel[4] < menuChoices[4]-1))
 			{
 				if (curSel[1] == 3)
 				{
-					temp = portPower[0];
+					temp = portPower[0]; /* Front weapon */
 				} else {
-					temp = portPower[1];
+					temp = portPower[1]; /* Rear weapon */
 				}
 				
 				/* JE: Only needed if change */
 				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][curSel[5]-1]);
 				
-				leftPower  = portPower[curSel[1] - 2] > 1;
-				rightPower = portPower[curSel[1] - 2] < 11;
+				leftPower  = portPower[curSel[1] - 2] > 1; /* Can downgrade */
+				rightPower = portPower[curSel[1] - 2] < 11; /* Can upgrade */
 				
 				if (rightPower)
 				{
-					rightPowerAfford = JE_cashLeft() >= upgradeCost;
+					rightPowerAfford = JE_cashLeft() >= upgradeCost; /* Can player afford an upgrade? */
 				}
 			} else {
+				/* Nothing else can be upgraded / downgraded */
 				leftPower = FALSE;
 				rightPower = FALSE;
 			}
 			
+			/* Write title for which submenu this is, e.g., "Left Sidekick" */
 			JE_dString(74 + JE_fontCenter(menuInt[1][curSel[1]-1], FONT_SHAPES), 10, menuInt[1][curSel[1]-1], FONT_SHAPES);
-			temp2 = pItems[pItemButtonMap[curSel[1]] - 1];
 			
-			for (tempW = 0; tempW < menuChoices[curMenu]; tempW++)
+			temp2 = pItems[pItemButtonMap[curSel[1]-2]-1]; /* get index into pItems for current submenu  */
+			
+			/* Iterate through all submenu options */
+			for (tempW = 0; tempW < menuChoices[curMenu] - 1; tempW++)
 			{
-				tempY = 40 + (tempW - 1) * 26;
+				tempY = 40 + tempW * 26; /* Calculate y position */
 				
-				if (tempW < menuChoices[4])
+				if (tempW < (menuChoices[4] - 2)) 
 				{
+					/* Get base cost for choice */
 					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][tempW]);
 				} else {
+					/* "Done" is free :) */
 					tempW3 = 0;
 				}
 				
-				if (tempW > score)
+				if (tempW > score) /* Can player afford current weapon at all */
 				{
 					temp4 = 4;
 				} else {
 					temp4 = 0;
 				}
 				
-				temp = itemAvail[itemAvailMap[curSel[1]-1]][tempW];
+				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW];
 				switch (curSel[1])
 				{
-					case 1:
+					case 1: /* ship */
 						if (temp > 90)
 						{
 							snprintf(tempStr, sizeof tempStr, "Custom Ship %d", temp - 90);
@@ -5113,17 +5123,17 @@ item_screen_start:
 							strcpy(tempStr, ships[temp].name);
 						}
 						break;
-					case 2:
-					case 3:
+					case 2: /* front and rear weapon */
+					case 3: 
 						strcpy(tempStr, weaponPort[temp].name);
 						break;
-					case 4:
+					case 4: /* shields */
 						strcpy(tempStr, shields[temp].name);
 						break;
-					case 5:
+					case 5: /* generator */
 						strcpy(tempStr, powerSys[temp].name);
 						break;
-					case 6:
+					case 6: /* sidekicks */
 					case 7:
 						strcpy(tempStr, options[temp].name);
 						break;
@@ -5261,7 +5271,7 @@ item_screen_start:
 				{
 					temp--;
 				}
-				temp -= 1; /* reindex */
+				
 				JE_newDrawCShapeNum(WEAPON_SHAPES, temp + 16, generatorX[temp]+1, generatorY[temp]+1);
 
 				if (pItems[1 - 1] > 0)
@@ -6841,7 +6851,7 @@ void JE_drawMainMenuHelpText( void )
 		}
 		else
 		{
-			memcpy(tempStr, mainMenuHelp[17 + curMenu - 3 - 1], sizeof(tempStr));
+			memcpy(tempStr, mainMenuHelp[17 + curMenu - 3], sizeof(tempStr));
 		}
 	}
 	JE_textShade(10, 187, tempStr, 14, 1, DARKEN);
