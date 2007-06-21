@@ -187,7 +187,7 @@ char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 		}
 
 	}
-	
+
 	return buf;
 }
 

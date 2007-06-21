@@ -94,9 +94,9 @@ int lds_load(JE_byte *music_location)
 	unsigned int temp;
 	JE_byte *pos;
 	float templ;
-	
+
 	pos = music_location;
-	
+
 	/* load header */
 	mode = *(pos++);
 	if ( mode > 2) 
@@ -105,7 +105,7 @@ int lds_load(JE_byte *music_location)
 		/* printf("Error loading music! %d\n", mode);
 		return FALSE; */
 	}
-	
+
 	speed = *((short int*) pos);
 	pos += 2;
 	tempo = *(pos++);
@@ -115,16 +115,16 @@ int lds_load(JE_byte *music_location)
 	{
 		chandelay[i] = *(pos++);;
 	}
-	
+
 	regbd = *(pos++);
 
 	/* load patches */
 	numpatch = *((short int*) pos);
 	pos += 2;
-	
+
 	if (soundbank != NULL) free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
-	
+
 	for(i = 0; i < numpatch; i++) {
 		sb = &soundbank[i];
 		sb->mod_misc = *(pos++);
@@ -170,10 +170,10 @@ int lds_load(JE_byte *music_location)
 	/* load positions */
 	numposi = *((short int*) pos);
 	pos += 2;
-	
+
 	if (positions != NULL) free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
-	
+
 	for(i = 0; i < numposi; i++)
 	for(j = 0; j < 9; j++) {
 		/*
@@ -190,7 +190,7 @@ int lds_load(JE_byte *music_location)
 	/* load patterns */
 	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
 	temp = (songPos[currentSong] - songPos[currentSong - 1]) - (pos - music_location); /* bytes remaining */
-	
+
 	if (patterns != NULL) free(patterns);
 	patterns = malloc( sizeof(unsigned short) * (temp / 2 + 1));
 	/* patterns = malloc(temp + 1); */
@@ -199,15 +199,15 @@ int lds_load(JE_byte *music_location)
 		patterns[i] = *((short int*) pos);
 		pos += 2;
 	}
-	
+
 	lds_rewind(-1);
-	
+
 	/*templ = 0.0f;
 	while(lds_update() && templ < 600000) templ += 1000.0f / REFRESH;
-	printf("> %f\n", templ);	
-	
+	printf("> %f\n", templ);
+
 	lds_rewind(-1);*/
-	
+
 	return TRUE;
 }
 
@@ -321,7 +321,7 @@ int lds_update( void )
 				unsigned short patnum = positions[posplay * 9 + chan].patnum;
 				unsigned char transpose = positions[posplay * 9 + chan].transpose;
 				/*printf("> %p", positions);*/
-				
+
 				comword = patterns[patnum + c->packpos];
 				comhi = comword >> 8; comlo = comword & 0xff;
 				if(comword) {
@@ -338,29 +338,29 @@ int lds_update( void )
 								if(fmchip[0xc0 + chan] & 1)
 								c->volmod = (((c->volmod & 0x3f) * comlo) >> 6) & 0x3f;
 								break;
-								
+
 							case 0xfe:
 								tempo = comword & 0x3f;
 								break;
-								
+
 							case 0xfd:
 								c->nextvol = comlo;
 								break;
-								
+
 							case 0xfc:
 								playing = FALSE;
 								/* in real player there's also full keyoff here, but we don't need it */
 								break;
-								
+
 							case 0xfb:
 								c->keycount = 1;
 								break;
-								
+
 							case 0xfa:
 								vbreak = TRUE;
 								jumppos = (posplay + 1) & maxpos;
 								break;
-								
+
 							case 0xf9:
 								vbreak = TRUE;
 								jumppos = comlo & maxpos;
@@ -370,26 +370,26 @@ int lds_update( void )
 									songlooped = TRUE;
 								}
 								break;
-								
+
 							case 0xf8:
 								c->lasttune = 0;
 								break;
-								
+
 							case 0xf7:
 								c->vibwait = 0;
 								/* PASCAL: c->vibspeed = ((comlo >> 4) & 15) + 2; */
 								c->vibspeed = (comlo >> 4) + 2;
 								c->vibrate = (comlo & 15) + 1;
 								break;
-								
+
 							case 0xf6:
 								c->glideto = comlo;
 								break;
-								
+
 							case 0xf5:
 								c->finetune = comlo;
 								break;
-								
+
 							case 0xf4:
 								if(!hardfade) 
 								{
@@ -397,26 +397,26 @@ int lds_update( void )
 									fadeonoff = 0;
 								}
 								break;
-								
+
 							case 0xf3:
 								if(!hardfade) 
 								{
 									fadeonoff = comlo;
 								}
 								break;
-								
+
 							case 0xf2:
 								c->trmstay = comlo;
 								break;
-								
+
 							case 0xf1:	/* panorama */
-								
+
 							case 0xf0:	/* progch */
 								/* MIDI commands (unhandled) */
 								/*AdPlug_LogWrite("CldsPlayer(): not handling MIDI command 0x%x, "
 									"value = 0x%x\n", comhi);*/
 								break;
-								
+
 							default:
 								if(comhi < 0xa0)
 								{
@@ -426,7 +426,7 @@ int lds_update( void )
 									  " value = 0x%x\n", comhi, comlo);*/
 								}
 								break;
-							}	
+							}
 						} else {
 							unsigned char	sound;
 							unsigned short	high;
@@ -439,12 +439,12 @@ int lds_update( void )
 							 * in C, we just duplicate the 7th bit into the 8th one and
 							 * discard the 8th one completely.
 							 */
-							
+
 							if(transpose & 64) 
 							{
 								transp |= 128;
 							}
-							
+
 							if(transpose & 128) 
 							{
 								sound = (comlo + transp) & maxsound;
@@ -453,7 +453,7 @@ int lds_update( void )
 								sound = comlo & maxsound;
 								high = (comhi + transp) << 4;
 							}
-								
+
 							  /*
 							PASCAL:
 							  sound = comlo & maxsound;
@@ -470,7 +470,7 @@ int lds_update( void )
 						}
 					}
 				}
-					
+
 				c->packpos++;
 			} else {
 			c->packwait--;

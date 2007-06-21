@@ -338,7 +338,7 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 	JE_byte zWait = 2;
 
 	col += 2;
-	
+
 	for (z = 0; z <= num; z++)
 	{
 		JE_rectangle(x, y-1, x+8, y, col);

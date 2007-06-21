@@ -62,9 +62,9 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 {
     SDL_AudioSpec plz, got;
 	int i = 0;
-	
+
 	sound_init_state = TRUE;
-	
+
 	soundmutex = SDL_CreateMutex();
 
 	if (soundmutex == NULL)
@@ -72,7 +72,7 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 		printf("Couldn't create mutex! Oh noes!\n");
 		exit(-1);
 	}
-	
+
 	/*final_audio_buffer = NULL;
 	audio_pos = NULL;*/
 	for (i = 0; i < SFX_CHANNELS; i++)
@@ -80,24 +80,24 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 		channel_buffer[i] = channel_pos[i] = NULL;
 		channel_len[i] = 0;
 	}
-	
+
     plz.freq = freq;
 	plz.format = AUDIO_S16SYS;
     plz.channels = 1;
     plz.samples = 512;
     plz.callback = audio_cb;
     plz.userdata = soundmutex;
-	
+
 	printf("\tRequested SDL frequency: %d; SDL buffer size: %d\n", plz.freq, plz.samples);
-	
+
     if ( SDL_OpenAudio(&plz, &got) < 0 ) 
 	{
         printf("\tWARNING: Failed to initialize SDL audio. Bailing out.\n");
         exit(1);
     }
-	
+
 	printf("\tObtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
-	
+
     SDL_PauseAudio(0);
 }
 
@@ -114,17 +114,17 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	SDL_mutex *mut;
 
 	mut = (SDL_mutex *) userdata;
-	
+
 	/* Making sure that we don't mess with sound buffers when someone else is using them! */
 	if (SDL_mutexP(mut) == -1)
 	{
 		printf("Couldn't lock mutex! Argh!\n");
 		exit(-1);
 	}
-	
+
 	/*music_buffer = malloc(BYTES_PER_SAMPLE * music_samples);  SYN: A little extra because I don't trust the adplug code to be exact */
 	music_pos = (SAMPLE_TYPE*) sdl_buffer;
-	
+
 	/* SYN: Simulate the fm synth chip */
 	while(remaining > 0) 
 	{
@@ -140,7 +140,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		 - ct represents the margin between play time (representing # of samples) and tick speed of
 		   the songs (70Hz by default). It keeps track of which one is ahead, because they don't
 		   synch perfectly. */
-			
+
 		/* set i to smaller of data requested by SDL and a value calculated from the refresh rate */
 		i = ((long) ((ct / REFRESH) + 4) & ~3);
 		i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
@@ -149,7 +149,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		remaining -= i;
 		ct -= (long)(REFRESH * i);
 	}
-	
+
 	/* Reduce the music volume. */
 	qu = howmuch / BYTES_PER_SAMPLE;
 	for (smp = 0; smp < qu; smp++) 
@@ -166,12 +166,12 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		for (smp = 0; smp < qu; smp++)
 		{
 			clip = ((long) feedme[smp] + (long) (( channel_pos[ch][smp]) * sample_volume ));
-			feedme[smp] = (clip > 0xffff) ? 0xffff : (clip <= -0xffff) ? -0xffff : (short) clip;			
+			feedme[smp] = (clip > 0xffff) ? 0xffff : (clip <= -0xffff) ? -0xffff : (short) clip;
 		}
-		
+
 		channel_pos[ch] += qu;
 		channel_len[ch] -= qu * BYTES_PER_SAMPLE;
-		
+
 		/* SYN: If we've emptied a channel buffer, let's free the memory and clear the channel. */
 		if (channel_len[ch] == 0)
 		{
@@ -179,7 +179,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 			channel_buffer[ch] = channel_pos[ch] = NULL;
 		}
 	}
-	
+
 	SDL_mutexV(mut); /* release mutex */
 }
 
@@ -202,27 +202,27 @@ void JE_selectSong( JE_word value )
 	if (noSound)
 	{
 		return;
-	}	
-	
+	}
+
 	/* TODO: Finish this function! */
-	
+
 	/* TODO: Stop currently playing song  */
-	
+
 	/* TODO: The mutex'd region could possibly be smaller, but I wanted to keep it in this file. */
-	
+
 	/* Making sure that we don't mess with sound buffers when someone else is using them! */
 	if (SDL_mutexP(soundmutex) == -1)
 	{
 		printf("Couldn't lock mutex! Argh!\n");
 		exit(-1);
 	}
-	
+
 	if (value != 0)
 	{
 		lds_load((JE_byte*) musicData); /* Load song */
 		/* TODO: Start playing song */
 	}
-	
+
 	SDL_mutexV(soundmutex); /* release mutex */
 }
 
@@ -247,10 +247,10 @@ void JE_setVol(JE_word volume, JE_word sample)
 	/* TODO: Disabling this because the volume is messed up. Must fix!
 	music_volume = 0.4 * ( (float) volume / 256.0 );
 	sample_volume = 0.25 * ( (float) sample / 128.0 ); */
-	
+
 	music_volume = 0.4;
 	sample_volume = 0.25;
-	
+
 }
 
 JE_word JE_getVol( void )
@@ -269,7 +269,7 @@ void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dma
 {
 	/* SYN: I don't know if this function should do anything else. For now, it just checks to see if sound has
 	   been initialized and, if not, calls the main initialize function. */
-	
+
 	if (!sound_init_state)
 	{
 		JE_initialize(0, 0, 0, 0, 0);
@@ -292,16 +292,16 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 		/* no sound, so let's leave */
 		return;
 	}
-	
+
 	/*printf("play sound on channel %d, of size %d\n", chan, size);*/
-	
+
 	/* Making sure that we don't mess with sound buffers when someone else is using them! */
 	if (SDL_mutexP(soundmutex) == -1)
 	{
 		printf("Couldn't lock mutex! Argh!\n");
 		exit(-1);
 	}
-	
+
 	if (channel_buffer[chan] != NULL)
 	{
 		/*printf("clearing sample in channel %d\n", chan);*/
@@ -310,11 +310,11 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 		channel_buffer[chan] = channel_pos[chan] = NULL;
 		channel_len[chan] = 0;
 	}
-	
+
 	channel_len[chan] = size * BYTES_PER_SAMPLE * SAMPLE_SCALING;
 	channel_buffer[chan] = malloc(channel_len[chan]);
 	channel_pos[chan] = channel_buffer[chan];
-	
+
 	for (i = 0; i < size; i++)
 	{
 		for (ex = 0; ex < SAMPLE_SCALING; ex++)
@@ -324,7 +324,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 			/* TODO: Should adjust for volume here? */
 		}
 	}
-	
+
 	SDL_mutexV(soundmutex); /* release mutex */
 }
 

@@ -228,7 +228,7 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
 		{
 			vga[i] = e;
 		}
-		
+
 		/* Right line */
 		for (i=(b+1)*320+c; i < (d*320+c); i += 320)
 		{
@@ -379,7 +379,7 @@ void JE_drawGraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )
 	int i;
 
 	vga += y*320+x;
-	
+
 	for (i = 0; i <14; i++)
 	{
 		memcpy(vga, s, 12);

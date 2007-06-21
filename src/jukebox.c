@@ -35,7 +35,7 @@ void JE_playNewSelection( void )
 	currentSong = ( rand() % MUSIC_NUM );
 	JE_playSong(currentSong);
 }
-	
+
 void JE_jukebox_selectSong( JE_word song )
 {
 	JE_selectSong(song);

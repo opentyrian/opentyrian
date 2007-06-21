@@ -162,7 +162,7 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 	Uint8 *s; /* screen pointer, 8-bit specific */
 
 	/*printf("%d, %d\n", x, y);*/
-	
+
 	if ((shape > maxShape[table]) || (!shapeExist[table][shape]) || (shape == 255))
 	{
 		exit(99); /* pascalism */
@@ -271,7 +271,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 		frameCount = time;
 	}
 	setjasondelay(frameCount);
-	
+
 	do
 	{
 		service_SDL_events(TRUE);

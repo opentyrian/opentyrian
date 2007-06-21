@@ -145,7 +145,7 @@ void JE_jukeboxGo( void )
 	do 
 	{
 		tempScreenSeg = VGAScreen; /*sega000*/
-		
+
 		if (weirdMusic) /* TODO: Not sure what this is about, figure it out */
 		{ 
 			/*
@@ -184,7 +184,7 @@ void JE_jukeboxGo( void )
 		  lastSong = currentSong;
 		  JE_bar(50, 190, 250, 198, 0); /* vga256c.BAR (50, 190, 250, 198, 0); */
 		}
-		
+
 		JE_bar(30, 170, 270, 198, 0);
 		if (drawText)
 		{
@@ -199,7 +199,7 @@ void JE_jukeboxGo( void )
 				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
 			}
 		}
-	
+
 		if (drawText)
 		{
 			tempScreenSeg = VGAScreen; /*sega000*/
@@ -208,9 +208,9 @@ void JE_jukeboxGo( void )
 			JE_outText(JE_fontCenter("Arrow keys change the song being played.", TINY_FONT), 180, "Arrow keys change the song being played.", 1, 0);
 		}
 		wait_delay();
-		
+
 		JE_showVGA();
-		
+
 		if (fade)
 		{
 			if (volumeActive)
@@ -243,13 +243,13 @@ void JE_jukeboxGo( void )
           wipekey;
         END;
       */
-		
+
 		JE_showVGA();
-	
+
 		/*tempW = 0;
 		JE_textMenuWait(&tempW, FALSE);*/
 		service_SDL_events(TRUE);
-	
+
 		if (newkey) {
 			JE_newSpeed();
 			switch (lastkey_sym)
@@ -332,7 +332,7 @@ void JE_jukeboxGo( void )
 			case SDLK_DOWN:
 				currentJukeboxSong++;
 				JE_playNewSong();
-				youStopped = FALSE;			
+				youStopped = FALSE;
 				break;
 			default:
 				break;

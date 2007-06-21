@@ -148,17 +148,17 @@ int efwrite( void *buffer, size_t size, size_t num, FILE *stream )
 
 void opentyrian_menu( void )
 {
-	
+
 	int sel = 0;
 	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	int i;
 	JE_boolean quit;
-	
+
 	JE_fadeBlack(10);
 	JE_loadPic(13, FALSE); /* 2, 5, or 13? */
 
 	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
-	
+
 	for (i = 0; i <= maxSel; i++)
 	{
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES),
@@ -171,23 +171,23 @@ void opentyrian_menu( void )
 	JE_fadeColor(20);
 	wait_noinput(TRUE, FALSE, FALSE);
 	quit = FALSE;
-	
+
 	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
 	JE_playSong(currentJukeboxSong);
 
-	
+
 	do
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[sel], SMALL_FONT_SHAPES),
 		                 (sel != maxSel) ? (sel * 16 + 32) : 118, opentyrian_menu_items[sel],
 		                 15, -2, SMALL_FONT_SHAPES, TRUE);
-		
+
 		JE_showVGA();
 
 		tempW = 0;
 		JE_textMenuWait(&tempW, FALSE);
-		
+
 		if (newkey) {
 			switch (lastkey_sym)
 			{
@@ -324,9 +324,9 @@ int main( int argc, char *argv[] )
 	showMemLeft = FALSE;
 	playerPasswordInput = TRUE;
 
-	printf("Initializing SDL audio...\n");		
+	printf("Initializing SDL audio...\n");
 	JE_loadSong(1);
-	
+
 	if ( noSound ) /* TODO: Check if sound is enabled, handle either appropriately */
 	{
 		/* TODO: Do we actually need to do anything here? */
@@ -335,23 +335,23 @@ int main( int argc, char *argv[] )
 		/* SYN: This code block doesn't really resemble the original, because the
 			underlying sound code is very different. I've left out some stuff that
 		    checked hardware values and stuff here. */
-		
+
 		JE_initialize(0, 0, 0, 0, 0); /* TODO: Fix arguments */
-		
+
 		soundEffects = TRUE; /* TODO: find a real way to give this a value */
 		if (soundEffects)
 		{
 			JE_multiSampleInit(0, 0, 0, 0); /* TODO: Fix arguments */
-			
+
 			/* I don't think these messages matter, but I'll replace them with more useful stuff if I can. */
 			/*if (soundEffects == 2) printf("SoundBlaster active");
 			printf ("DSP Version ***\n");
 			printf ("SB port ***\n");
 			printf ("Interrupt ***\n");*/
-			
+
 			JE_loadSndFile();
 		}
-		
+
 	}
 
 	if (recordDemo)

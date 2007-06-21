@@ -144,9 +144,9 @@ void JE_loadSong( JE_word songnum )
 {
 	JE_word x;
 	FILE *fi, *test;
-	
+
 	JE_resetFile(&fi, "MUSIC.MUS");
-	
+
 	if (notYetLoadedMusic)
 	{
 		/* SYN: We're loading offsets into MUSIC.MUS for each song here. */
@@ -156,14 +156,14 @@ void JE_loadSong( JE_word songnum )
 		fseek(fi, 0, SEEK_END);
 		songPos[MUSIC_NUM] = ftell(fi); /* Store file size */
 	}
-	
+
 	/* SYN: Now move to the start of the song we want, and load the number of bytes given by the
 	   difference in offsets between it and the next song. */
 	fseek(fi, songPos[songnum - 1], SEEK_SET);
 	efread(&musicData, 1, songPos[songnum] - songPos[songnum - 1], fi);
-	
+
 	/* currentSong = songnum; */
-	
+
 	fclose(fi);
 }
 
@@ -179,7 +179,7 @@ void JE_loadSndFile( void )
 	/* SYN: Loading offsets into TYRIAN.SND */
 	JE_resetFile(&fi, "TYRIAN.SND");
 	efread(&sndNum, sizeof(sndNum), 1, fi);
-	
+
 	for (x = 0; x < sndNum; x++)
 	{
 		efread(&sndPos[0][x], sizeof(sndPos[0][x]), 1, fi);
@@ -196,9 +196,9 @@ void JE_loadSndFile( void )
 		efread(digiFx[z], 1, fxSize[z], fi); /* JE: Load sample to buffer */
 	}
 	allocd_digifx = TRUE;
-	
+
 	fclose(fi);
-	
+
 	/* SYN: Loading offsets into VOICES.SND */
 	if (tyrianXmas) 
 	{
@@ -214,24 +214,24 @@ void JE_loadSndFile( void )
 	}
 	fseek(fi, 0, SEEK_END);
 	sndPos[1][sndNum] = ftell(fi); /* Store file size */
-	
+
 	z = SOUND_NUM;
-	
+
 	for (y = 0; y < sndNum; y++)
 	{
 		fseek(fi, sndPos[1][y], SEEK_SET);
-		
+
 		templ = (sndPos[1][y+1] - sndPos[1][y]) - 100; /* SYN: I'm not entirely sure what's going on here. */
 		if (templ < 1) templ = 1;
 		fxSize[z + y] = templ; /* Store sample sizes */
 		digiFx[z + y] = malloc(fxSize[z + y]);
 		efread(digiFx[z + y], 1, fxSize[z + y], fi); /* JE: Load sample to buffer */
 	}
-	
+
 	fclose(fi);
-	
+
 	notYetLoadedSound = FALSE;
-	
+
 }
 
 void JE_playSong ( JE_word songnum )
@@ -241,11 +241,11 @@ void JE_playSong ( JE_word songnum )
 	{
 		return;
 	}
-	
-	
+
+
 	#ifndef NDEBUG
 	printf("Loading song number %d...\n", songnum);
-	#endif	
+	#endif
 	if (songnum == 0) /* SYN: Trying to play song 0 was doing strange things D: */
 	{
 		JE_stopSong();
@@ -260,7 +260,7 @@ void JE_playSong ( JE_word songnum )
 		 OR   al, 3
 		 out  $21, al
 		 END;*/
-			
+
 		 JE_stopSong();
 		currentSong = songnum;
 		 JE_loadSong (songnum);
@@ -268,7 +268,7 @@ void JE_playSong ( JE_word songnum )
 		 playing = TRUE;
 		 JE_selectSong (1);
 		 /* JE_waitRetrace(); */
-			
+
 		 /*ASM
 		 mov al, $36
 		 out $43, al
@@ -278,7 +278,7 @@ void JE_playSong ( JE_word songnum )
 		 out $40, al
 		 pop ax
 		 out $21, al
-		 END;*/		
+		 END;*/
 	}
 }
 
