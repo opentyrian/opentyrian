@@ -98,6 +98,9 @@ void JE_loadPCX( char *name, JE_boolean storePalette)
 
 		memcpy(colors, colors2, sizeof(colors));
 
+		fclose(fi);
+
+
 		/* TODO */
 	}
 

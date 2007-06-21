@@ -28,7 +28,7 @@ JE_longint startTime;
 JE_longint frames;
 
 JE_integer netPlayers,     /* Number of net players: 0, 1 or 2 */
-           thisPlayerNum,  /* Player number on this PC (1 or 2) */
+           thisPlayerNum = 0,  /* Player number on this PC (1 or 2) */
            otherPlayerNum; /* Player number on remote PC (1 or 2) */
 
 /* TODO UseOutPacket : SMALL_PACKET;*/   /* This is the original player's packet - time lag */
@@ -71,6 +71,15 @@ JE_boolean JE_scanNetByte( JE_byte scan )
 {
 	STUB(JE_scanNetByte);
 	return TRUE;
+}
+
+void JE_clearSpecialRequests( void )
+{
+	pauseRequest = FALSE;
+	inGameMenuRequest = FALSE;
+	skipLevelRequest = FALSE;
+	helpRequest = FALSE;
+	nortShipRequest = FALSE;
 }
 
 /* TODO */

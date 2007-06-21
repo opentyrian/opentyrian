@@ -19,7 +19,6 @@
  */
 #include "opentyr.h"
 
-#include "circvars.h"
 #include "config.h"
 #include "fonthand.h"
 #include "helptext.h"

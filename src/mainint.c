@@ -1152,7 +1152,13 @@ void JE_initPlayerData( void )
 
 void JE_sortHighScores( void )
 {
-	STUB(JE_sortHighScores);
+	JE_byte x, temp = 0;
+
+	for (x = 0; x < 6; x++)
+	{
+		JE_sort();
+		temp += 3;
+	}
 }
 
 void JE_highScoreScreen( void )
@@ -1309,6 +1315,7 @@ JE_boolean JE_gammaCheck( void )
 /* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
 void JE_loadOrderingInfo( void )
 {
+	/* YKS: Unused on the port */
 	STUB(JE_loadOrderingInfo);
 }
 
@@ -1336,12 +1343,109 @@ void JE_highScoreCheck( void )
 
 void JE_setNewGameVol( void )
 {
-	STUB(JE_setNewGameVol);
+	if (!soundActive)
+	{
+		temp = 5;
+	} else {
+		temp = fxVolume;
+	}
+	if (!musicActive)
+	{
+		temp2 = 15;
+	} else {
+		temp2 = tyrMusicVolume;
+	}
+
+	/* TODO nortsong.JE_setvol(temp2, temp); */
 }
 
 void JE_changeDifficulty( void )
 {
-	STUB(JE_changeDifficulty);
+	JE_byte newDifficultyLevel;
+	JE_longint temp;
+
+	if (twoPlayerMode)
+	{
+		temp = score + score2;
+	} else {
+		temp = JE_totalScore(score, pItems);
+	}
+
+	switch (initialDifficulty)
+	{
+		case 1:
+			temp = ROUND(temp * 0.4);
+			break;
+		case 2:
+			temp = ROUND(temp * 0.8);
+			break;
+		case 3:
+			temp = ROUND(temp * 1.3);
+			break;
+		case 4:
+			temp = ROUND(temp * 1.6);
+			break;
+		case 5:
+		case 6:
+			temp = ROUND(temp * 2);
+			break;
+		case 7:
+		case 8:
+		case 9:
+			temp = ROUND(temp * 3);
+			break;
+	}
+
+	if (twoPlayerMode)
+	{
+		if (temp < 10000)
+		{
+			newDifficultyLevel = 1; /* Easy */
+		} else if (temp < 20000) {
+			newDifficultyLevel = 2; /* Normal */
+		} else if (temp < 50000) {
+			newDifficultyLevel = 3; /* Hard */
+		} else if (temp < 80000) {
+			newDifficultyLevel = 4; /* Impossible */
+		} else if (temp < 125000) {
+			newDifficultyLevel = 5; /* Impossible B */
+		} else if (temp < 200000) {
+			newDifficultyLevel = 6; /* Suicide */
+		} else if (temp < 400000) {
+			newDifficultyLevel = 7; /* Maniacal */
+		} else if (temp < 600000) {
+			newDifficultyLevel = 8; /* Zinglon */
+		} else {
+			newDifficultyLevel = 9; /* Nortaneous */
+		}
+	} else {
+		if (temp < 40000)
+		{
+			newDifficultyLevel = 1; /* Easy */
+		} else if (temp < 70000) {
+			newDifficultyLevel = 2; /* Normal */
+		} else if (temp < 150000) {
+			newDifficultyLevel = 3; /* Hard */
+		} else if (temp < 300000) {
+			newDifficultyLevel = 4; /* Impossible */
+		} else if (temp < 600000) {
+			newDifficultyLevel = 5; /* Impossible B */
+		} else if (temp < 1000000) {
+			newDifficultyLevel = 6; /* Suicide */
+		} else if (temp < 2000000) {
+			newDifficultyLevel = 7; /* Maniacal */
+		} else if (temp < 3000000) {
+			newDifficultyLevel = 8; /* Zinglon */
+		} else {
+			newDifficultyLevel = 9; /* Nortaneous */
+		}
+	}
+
+	if (newDifficultyLevel > difficultyLevel)
+	{
+		difficultyLevel = newDifficultyLevel;
+	}
+		
 }
 
 void JE_doDemoKeys( void )
@@ -1410,7 +1514,32 @@ void JE_func( JE_byte col )
 
 void JE_sort( void )
 {
-	STUB(JE_sort);
+	JE_byte a, b;
+
+	for (a = 0; a < 2; a++)
+	{
+		for (b = a+1; b < 3; b++)
+		{
+			if (saveFiles[temp+a].highScore1 < saveFiles[temp+b].highScore1)
+			{
+				JE_longint tempLI;
+				char tempStr[30];
+				JE_byte tempByte;
+
+				tempLI = saveFiles[temp+a].highScore1;
+				saveFiles[temp+a].highScore1 = saveFiles[temp+b].highScore1;
+				saveFiles[temp+b].highScore1 = tempLI;
+
+				strcpy(tempStr, saveFiles[temp+a].highScoreName);
+				strcpy(saveFiles[temp+a].highScoreName, saveFiles[temp+b].highScoreName);
+				strcpy(saveFiles[temp+b].highScoreName, tempStr);
+
+				tempByte = saveFiles[temp+a].highScoreDiff;
+				saveFiles[temp+a].highScoreDiff = saveFiles[temp+b].highScoreDiff;
+				saveFiles[temp+b].highScoreDiff = tempByte;
+			}
+		}
+	}
 }
 
 JE_boolean JE_getPassword( void )
