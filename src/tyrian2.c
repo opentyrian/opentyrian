@@ -3089,6 +3089,14 @@ void JE_titleScreen( JE_boolean animate )
 		waitForDemo = 2000;
 		JE_textMenuWait(&waitForDemo, FALSE);
 
+		if (waitForDemo == 1)
+		{
+			playDemo = TRUE;
+			playDemoNum++;
+			if (playDemoNum > 5)
+				playDemoNum = 1;
+		}
+		
 		/* TODO: Crapload of stuff */
 
 		if (newkey)
