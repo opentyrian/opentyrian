@@ -59,7 +59,7 @@ void JE_loadShapeFile( JE_ShapeType *shapes, JE_char s )
 	JE_boolean active;
 
 	char buffer[12];
-	sprintf(buffer, "SHAPES%c.DAT", s);
+	sprintf(buffer, "shapes%c.dat", tolower(s));
 
 	JE_resetFile(&f, buffer);
 
@@ -89,7 +89,7 @@ void JE_loadNewShapeFile( JE_NewShapeType *shapes, JE_char s )
 	JE_byte black, color;
 
 	char buffer[12];
-	sprintf(buffer, "SHAPES%c.DAT", s);
+	sprintf(buffer, "shapes%c.dat", tolower(s));
 
 	JE_resetFile(&f, buffer);
 
@@ -151,7 +151,7 @@ void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 	FILE *f;
 
 	char buffer[11];
-	sprintf(buffer, "NEWSH%c.SHP", s);
+	sprintf(buffer, "newsh%c.shp", tolower(s));
 
 	if (*shapes != NULL)
 	{

@@ -145,7 +145,7 @@ void JE_loadSong( JE_word songnum )
 	JE_word x;
 	FILE *fi, *test;
 
-	JE_resetFile(&fi, "MUSIC.MUS");
+	JE_resetFile(&fi, "music.mus");
 
 	if (notYetLoadedMusic)
 	{
@@ -177,7 +177,7 @@ void JE_loadSndFile( void )
 	JE_word sndNum;
 
 	/* SYN: Loading offsets into TYRIAN.SND */
-	JE_resetFile(&fi, "TYRIAN.SND");
+	JE_resetFile(&fi, "tyrian.snd");
 	efread(&sndNum, sizeof(sndNum), 1, fi);
 
 	for (x = 0; x < sndNum; x++)
@@ -202,9 +202,9 @@ void JE_loadSndFile( void )
 	/* SYN: Loading offsets into VOICES.SND */
 	if (tyrianXmas) 
 	{
-		JE_resetFile(&fi, "VOICESC.SND");
+		JE_resetFile(&fi, "voicesc.snd");
 	} else {
-		JE_resetFile(&fi, "VOICES.SND");
+		JE_resetFile(&fi, "voices.snd");
 	}
 	efread(&sndNum, sizeof(sndNum), 1, fi);
 

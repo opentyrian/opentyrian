@@ -20,11 +20,13 @@
 #ifndef OPENTYR_H
 #define OPENTYR_H
 
-#include "SDL_stdinc.h"
+#include "SDL.h"
+#include "SDL_endian.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h> /* For the ROUND() macro */
+#include <string.h>
 
 
 #define STUB(name) printf("!!! STUB: %s:%d:" #name "\n", __FILE__, __LINE__)

@@ -668,7 +668,7 @@ void JE_loadConfiguration( void )
 
 	if (!JE_isCFGThere())
 	{
-		JE_resetFile(&fi, "TYRIAN.CFG");
+		JE_resetFile(&fi, "tyrian.cfg");
 
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed 
 		   anyways, so it's not like they'll change. */
@@ -735,7 +735,7 @@ void JE_loadConfiguration( void )
 	JE_setVol(tyrMusicVolume, fxVolume);
   
 	dont_die = TRUE;
-	JE_resetFile(&fi, "TYRIAN.SAV");
+	JE_resetFile(&fi, "tyrian.sav");
 	dont_die = FALSE;
 
 	if (fi)
@@ -949,7 +949,7 @@ void JE_saveConfiguration( void )
 	saveTemp[SIZEOF_SAVEGAMETEMP - 5] = editorLevel;
 
 	JE_encryptSaveTemp();
-	f = fopen_check("TYRIAN.SAV", "wb");
+	f = fopen_check("tyrian.sav", "wb");
 	if (f)
 	{
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
@@ -957,7 +957,7 @@ void JE_saveConfiguration( void )
 	}
 	JE_decryptSaveTemp();
 
-	f = fopen_check("TYRIAN.CFG", "wb");
+	f = fopen_check("tyrian.cfg", "wb");
 	if (f)
 	{
 		efwrite(&background2, 1, 1, f);

@@ -67,7 +67,7 @@ void JE_loadItemDat( void )
 		JE_resetFile(&lvlFile, levelFile);
 		fseek(lvlFile, lvlPos[lvlNum], SEEK_SET);
 	} else {
-		JE_resetFile(&lvlFile, "TYRIAN.HDT");
+		JE_resetFile(&lvlFile, "tyrian.hdt");
 		efread(&episode1DataLoc, sizeof(JE_longint), 1, lvlFile);
 		fseek(lvlFile, episode1DataLoc, SEEK_SET);
 	}
@@ -222,9 +222,9 @@ void JE_initEpisode( JE_byte newEpisode )
 	{
 		episodeNum = newEpisode;
 
-		sprintf(levelFile, "TYRIAN%d.LVL", episodeNum);
-		sprintf(cubeFile,  "CUBETXT%d.DAT", episodeNum);
-		sprintf(macroFile, "LEVELS%d.DAT", episodeNum);
+		sprintf(levelFile, "tyrian%d.lvl", episodeNum);
+		sprintf(cubeFile,  "cubetxt%d.dat", episodeNum);
+		sprintf(macroFile, "levels%d.dat", episodeNum);
 
 		JE_analyzeLevel();
 		JE_loadItemDat();
@@ -237,15 +237,12 @@ void JE_scanForEpisodes( void )
 
 	char buf[sizeof(dir) + 11];
 
-	JE_findTyrian("TYRIAN1.LVL"); /* need to know where to scan */
+	JE_findTyrian("tyrian1.lvl"); /* need to know where to scan */
 
 	for (temp = 0; temp < EPISODE_MAX; temp++)
 	{
-		sprintf(buf, "TYRIAN%d.LVL", temp + 1);
-		episodeAvail[temp] = strcmp(dir, "") & JE_find(buf);
-
-		sprintf(buf, "%sTYRIAN%d.LVL", dir, temp + 1);
-		episodeAvail[temp] |= JE_find(buf);
+		sprintf(buf, "%styrian%d.lvl", dir, temp + 1);
+		episodeAvail[temp] = JE_find(buf);
 	}
 }
 

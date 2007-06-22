@@ -587,7 +587,7 @@ startepisodeselect:
 					} else {
 						if (sel > 1)
 						{
-							char buf[] = "EPISODE-.PCX";
+							char buf[] = "episode-.pcx";
 
 							JE_playSampleNum(ESC);
 							JE_fadeBlack (10);
@@ -748,9 +748,9 @@ void JE_loadMainShapeTables( void )
 
 	if (tyrianXmas)
 	{
-		JE_resetFile(&f, "TYRIANC.SHP");
+		JE_resetFile(&f, "tyrianc.shp");
 	} else {
-		JE_resetFile(&f, "TYRIAN.SHP");
+		JE_resetFile(&f, "tyrian.shp");
 	}
 
 	efread(&shpNumb, sizeof(JE_word), 1, f);

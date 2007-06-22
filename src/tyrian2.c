@@ -501,6 +501,22 @@ enemy_still_exists:
 			}
 
 			enemy[i].ey += tempBackMove;
+			
+			if (enemy[i].ex <= -24 || enemy[i].ex >= 296)
+				goto draw_enemy_end;
+			
+			tempX = enemy[i].ex;
+			tempY = enemy[i].ey;
+			
+			temp = enemy[i].enemytype;
+			
+			/* Enemy Shots */
+			if (enemy[i].edamaged == 1)
+				goto draw_enemy_end;
+			
+			enemyOnScreen++;
+					
+			/* TODO */
 		}
 draw_enemy_end:
 		;
@@ -938,7 +954,7 @@ start_level_first:
 	{
 		do
 		{
-			sprintf(tempStr, "DEMOREC.%d", recordFileNum);
+			sprintf(tempStr, "demorec.%d", recordFileNum);
 			tempb = JE_find(tempStr);
 			if (tempb)
 			{
@@ -2148,7 +2164,7 @@ new_game:
 						switch (s[1])
 						{
 							case 'A':
-								/* TODO JE_playAnim("TYREND.ANM", 1, TRUE, 7);*/
+								/* TODO JE_playAnim("tyrend.anm", 1, TRUE, 7);*/
 								break;
 
 							case 'G':
@@ -2441,7 +2457,7 @@ new_game:
 									} else {
 										if (tempX == 0)
 										{
-											/* TODO JE_loadPcx("TSHP2.PCX", FALSE);*/
+											/* TODO JE_loadPcx("tshp2.pcx", FALSE);*/
 										} else {
 											JE_loadPic(tempX, FALSE);
 										}
@@ -2712,7 +2728,7 @@ new_game:
 		{
 
 			difficultyLevel = 2;
-			sprintf(tempStr, "DEMO.%d", playDemoNum);
+			sprintf(tempStr, "demo.%d", playDemoNum);
 			JE_resetFile(&recordFile, tempStr);
 
 			bonusLevelCurrent = FALSE;
@@ -2782,7 +2798,7 @@ new_game:
 		}
 
 		/* Read Shapes.DAT */
-		sprintf(tempStr, "SHAPES%c.DAT", char_shapeFile);
+		sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
 		JE_resetFile(&shpFile, tempStr);
 
 		for (z = 0; z < 600; z++)

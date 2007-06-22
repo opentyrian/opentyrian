@@ -28,7 +28,6 @@
 #include <errno.h>
 #include <stdio.h>
 
-
 JE_word randomcount;
 JE_char dir[12];
 
@@ -212,7 +211,7 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 	FILE *f;
 
 	dont_die = TRUE; /* Disabled barf'n'die */
-	JE_resetFile(&f, "TYRIAN.CFG");
+	JE_resetFile(&f, "tyrian.cfg");
 	dont_die = FALSE;
 
 	if (f && get_stream_size(f) == 28)

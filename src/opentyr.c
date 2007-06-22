@@ -45,6 +45,7 @@
 #include "vga256d.h"
 
 #include "SDL.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -297,11 +298,11 @@ int main( int argc, char *argv[] )
 
 	if (tyrianXmas)
 	{
-		if (JE_getFileSize("TYRIANC.SHP") == 0)
+		if (JE_getFileSize("tyrianc.shp") == 0)
 		{
 			tyrianXmas = FALSE;
 		}
-		/*if (JE_getFileSize("VOICESC.SHP") == 0) tyrianXmas = FALSE;*/
+		/*if (JE_getFileSize("voicesc.shp") == 0) tyrianXmas = FALSE;*/
 		if (tyrianXmas)
 		{
 			printf("*****************************\n"
