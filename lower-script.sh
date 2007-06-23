@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 read -n 1 -p 'Will lowercase all files in ./data directory. Continue? [y/N] ' confirm
 echo
