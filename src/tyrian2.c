@@ -151,7 +151,7 @@ void JE_starShowVGA( void )
 		} else {
 			for (y = 0; y < 184; y++)
 			{
-				memcpy(s, src, 264);
+				memmove(s, src, 264);
 				s += VGAScreen->w;
 				src += VGAScreen->w;
 			}
@@ -1513,7 +1513,7 @@ level_loop:
 				    playerShotData[z].shotY < -15 || playerShotData[z].shotY > 190)
 				{
 					shotAvail[z] = 0;
-					goto drawplayershotloopend;
+					goto draw_player_shot_loop_end;
 				}
 
 				if (playerShotData[z].shotTrail != 255)
@@ -1600,7 +1600,7 @@ level_loop:
 
 			/* TODO */
 
-drawplayershotloopend:
+draw_player_shot_loop_end:
 			;
 		}
 	}
@@ -6826,12 +6826,35 @@ void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word 
 
 void JE_initWeaponView( void )
 {
-	STUB(JE_initWeaponView);
+	JE_bar(8, 8, 144, 177, 0);
+	
+	option1X = 72 - 15;
+	option1Y = 120;
+	option2X = 72 + 15;
+	option2Y = 120;
+	
+	PX    = 72;
+	PY    = 110;
+	PXChange = 0;
+	PYChange = 0;
+	lastPX = 72;
+	lastPY = 110;
+	lastPX2 = 72;
+	lastPY2 = 110;
+	power = 500;
+	lastPower = 500;
+	
+	memset(shotAvail, sizeof(shotAvail), 0);
+	
+	memset(shotRepeat, sizeof(shotRepeat), 1);
+	memset(shotMultiPos, sizeof(shotMultiPos), 0);
+	
+	JE_setupStars();
 }
 
 void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
 {
-	STUB(JE_barX );
+	STUB(JE_barX);
 }
 
 void JE_computeDots( void )
@@ -7541,6 +7564,7 @@ void JE_weaponSimUpdate( void )
 
 void JE_weaponViewFrame( JE_byte testshotnum )
 {
+	int z;
 
 	JE_bar(8, 8, 143, 182, 0);
 
@@ -7670,166 +7694,98 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 		}
 	}
 
-	/* SYN: oh god no its more asm whyyyyyy meeeee */
-
-  /*
-  (* Player Shot Images *)
-  ASM
-	jmp @PlayerShotStart
-	@PlayerShotClear :
-	pop di
-	pop cx
-
-	mov BYTE PTR ds : [di - 1], 0
-
-	OR  cl, cl
-	jnz drawplayershotloop
-	jmp drawplayershotstop
-
-	@PlayerShotStart :
-	mov cx, MaxPweapon     (*Number of things to try*)
-	mov di, OFFSET shotavail
-	drawplayershotloop :
-	mov ax, ds
-	mov es, ax
-	sub ax, ax
-	repe scasb
-	je  drawplayershotstop
-	DEC BYTE PTR ds : [di - 1]
-	mov ax, MaxPweapon
-	sub ax, cx
-	cmp ax, MaxPweapon
-	je  drawplayershotstop
-	mov Z, ax
-	push cx
-	push di
-	DEC ax
-
-	SHL ax, 3    {AX=AX*40}
-	mov cx, ax
-	SHL ax, 2
-	add ax, cx
-
-	add ax, OFFSET PlayerShotData
-	mov si, ax
-
-	mov cx, ds : [si + 0]    {CX:ShotX  DX:ShotY  AX:ShotXM  BX:ShotYM}
-	mov DX, ds : [si + 2]
-
-	mov ax, ds : [si + 4]
-	add ax, ds : [si + 8]
-	mov ds : [si + 4], ax
-
-	cmp ax, 100
-	jg  @NoXMove
-	add cx, ax
-	@NoXMove :
-
-	mov bx, ds : [si + 6 ]
-	add bx, ds : [si + 10]
-	mov ds : [si + 6], bx
-	add DX, bx
-	cmp bx, 100
-	jle @NoYTrack
-	sub DX, 120
-	add DX, pychange
-	@NoYTrack :
-
-	cmp BYTE PTR ds : [si + 12], 0
-	je  @NoCircleMove
-
-	(*inc(shotdevx,shotdirx);
-if abs(shotdevx)=shotcirsizeX then shotdirx:=-shotdirx;
-inc(tempshotX,shotdevx);*)
-	mov di, ds : [si + 13]
-	add di, ds : [si + 15]
-	mov ds : [si + 13], di
-	add cx, di
-
-	cmp di, 0
-	jge @NoNegX
-	neg di
-	@NoNegX :
-
-	cmp di, ds : [si + 21]
-	jne @NoDirXRev
-	neg WORD PTR ds : [si + 15]
-	@NoDirXRev :
-
-	{inc(shotdevy,shotdiry);
-if abs(shotdevy)=shotcirsizeY then shotdiry:=-shotdiry;
-inc(tempshotY,shotdevy);}
-	mov di, ds : [si + 17]
-	add di, ds : [si + 19]
-	mov ds : [si + 17], di
-	add DX, di
-
-	cmp di, 0
-	jge @NoNegY
-	neg di
-	@NoNegY :
-
-	cmp di, ds : [si + 23]
-	jne @NoDirYRev
-	neg WORD PTR ds : [si + 19]
-	@NoDirYRev :
-	(*Double Speed Circle Shots - add a second copy of above loop*)
-
-	@NoCircleMove :
-
-	mov tempshotX, cx
-	mov tempshotY, DX
-	mov ds : [si + 0], cx
-	mov ds : [si + 2], DX
-
-	cmp cx, 0
-	jl  @PlayerShotClear
-	cmp cx, 140
-	jg  @PlayerShotClear
-	cmp DX, 0
-	jl  @PlayerShotClear
-	cmp DX, 170
-	jg  @PlayerShotClear
-
-	mov ax, ds : [si + 26]
-	mov bx, ds : [si + 28]
-	add ax, bx
-	mov tempw, ax
-
-	INC bx
-	cmp bx, ds : [si + 30]
-	jne @NoClearAni
-	sub bx, bx
-	@NoClearAni :
-	mov ds : [si + 28], bx
-  END;
-  */
-  
-	if (tempW < 60000) /* Magic numbers ahoy! */
+	/* Player Shot Images */
+	for (z = 0; z < MAX_PWEAPON; z++)
 	{
-		if (tempW > 1000)
+		if (shotAvail[z] != 0)
 		{
-			tempW = tempW % 1000;
-		}
-		if (tempW > 500)
-		{
-			JE_drawShape2(tempShotX+1, tempShotY, tempW - 500, shapesW2);
-		} else {
-			JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
+			shotAvail[z]--;
+			if (z != MAX_PWEAPON - 1)
+			{
+
+				playerShotData[z].shotXM += playerShotData[z].shotXC;
+
+				if (playerShotData[z].shotXM <= 100)
+				{
+					playerShotData[z].shotX += playerShotData[z].shotXM;
+				}
+
+				playerShotData[z].shotYM += playerShotData[z].shotYC;
+				playerShotData[z].shotY += playerShotData[z].shotYM;
+
+				if (playerShotData[z].shotYM > 100)
+				{
+					playerShotData[z].shotY -= 120;
+					playerShotData[z].shotY += PYChange;
+				}
+
+				if (playerShotData[z].shotComplicated != 0)
+				{
+					playerShotData[z].shotDevX += playerShotData[z].shotDirX;
+					playerShotData[z].shotX += playerShotData[z].shotDevX;
+
+					if (abs(playerShotData[z].shotDevX) == playerShotData[z].shotCirSizeX)
+					{
+						playerShotData[z].shotDirX = -playerShotData[z].shotDirX;
+					}
+
+					playerShotData[z].shotDevY += playerShotData[z].shotDirY;
+					playerShotData[z].shotY += playerShotData[z].shotDevY;
+
+					if (abs(playerShotData[z].shotDevY) == playerShotData[z].shotCirSizeY)
+					{
+						playerShotData[z].shotDirY = -playerShotData[z].shotDirY;
+					}
+					/*Double Speed Circle Shots - add a second copy of above loop*/
+				}
+
+				tempShotX = playerShotData[z].shotX;
+				tempShotY = playerShotData[z].shotY;
+
+				if (playerShotData[z].shotX < 0 || playerShotData[z].shotX > 140 || 
+				    playerShotData[z].shotY < 0 || playerShotData[z].shotY > 170)
+				{
+					shotAvail[z] = 0;
+					goto draw_player_shot_loop_end;
+				}
+
+/*				if (playerShotData[z].shotTrail != 255)
+				{
+					if (playerShotData[z].shotTrail == 98)
+					{
+						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, playerShotData[z].shotTrail);
+					} else {
+						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);
+					}
+				}*/
+
+				tempW = playerShotData[z].shotGr + playerShotData[z].shotAni;
+				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
+				{
+					playerShotData[z].shotAni = 0;
+				}
+
+				if (tempW < 6000)
+				{
+					if (tempW > 1000)
+					{
+						tempW = tempW % 1000;
+					}
+					if (tempW > 500)
+					{
+						JE_drawShape2(tempShotX+1, tempShotY, tempW - 500, shapesW2);
+					} else {
+						JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
+					}
+				}
+
+			}
+
+draw_player_shot_loop_end:
+			;
 		}
 	}
-  
-
-  /*  
-  ASM
-	pop di
-	pop cx
-	OR  cl, cl
-	jnz drawplayershotloop
-	drawplayershotstop :
-  END;
-		*/
-  
+	
 	JE_newDrawCShapeNum(OPTION_SHAPES, 13 - 1, 0, 0);
 
 
