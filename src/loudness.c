@@ -63,6 +63,13 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
     SDL_AudioSpec plz, got;
 	int i = 0;
 
+	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
+	{
+		printf("Failed to initialize audio: %s\n", SDL_GetError());
+		noSound = TRUE;
+		return;
+	}
+
 	sound_init_state = TRUE;
 
 	soundmutex = SDL_CreateMutex();
@@ -187,6 +194,7 @@ void JE_deinitialize( void )
 {
 	/* SYN: TODO: Clean up any other audio stuff, if necessary. This should only be called when we're quitting. */
 	SDL_CloseAudio();
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 void JE_play( void )

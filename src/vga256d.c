@@ -61,7 +61,7 @@ void JE_initVGA256( void )
 	if (!initd)
 	{
 		initd = TRUE;
-		if ((SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) ||
+		if (SDL_InitSubSystem(SDL_INIT_VIDEO) ||
 		   !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE)))
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
@@ -90,8 +90,7 @@ void JE_initVGA256X( void )
 
 void JE_closeVGA256( void )
 {
-	/* SDL_QuitSubSystem(SDL_INIT_VIDEO); */
-	SDL_Quit();
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void JE_clr256( void )

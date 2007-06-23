@@ -256,7 +256,10 @@ void JE_joystickInit( void )
 
 	if (scanForJoystick)
 	{
-		SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+		if (SDL_InitSubSystem(SDL_INIT_JOYSTICK))
+		{
+			printf("Failed to initialize joystick: %s\n", SDL_GetError());
+		}
 		if (SDL_NumJoysticks())
 		{
 			joystick = SDL_JoystickOpen(0);
