@@ -23,7 +23,7 @@ ifeq ($(PLATFORM), WINDOWS)
 	SDL_CFLAGS := -I/mingw/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
 	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -mwindows
 else ifeq ($(PLATFORM), GP2X)
-	SDL_CFLAGS := -I$(GP2X_DEVKIT)/include/SDL -D_GNU_SOURCE=1 -static -DTARGET_GP2X
+	SDL_CFLAGS := -I$(GP2X_DEVKIT)/include/SDL -D_GNU_SOURCE=1 -DTARGET_GP2X
 	SDL_LDFLAGS := -L$(GP2X_DEVKIT)/lib -lpthread -lSDLmain -lSDL -static
 	CC := $(GP2X_CC)
 	STRIP := $(GP2X_STRIP)
