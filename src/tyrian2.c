@@ -124,17 +124,17 @@ void JE_starShowVGA( void )
 {
 	JE_byte *src;
 	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
-
+	
 	int y;
-
+	
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
-
+		
 		s = VGAScreen->pixels;
-
+		
 		src = VGAScreen->pixels; /*!*/
 		src += 24;
-
+		
 		if (smoothScroll != 0 && thisPlayerNum != 2)
 		{
 			while (delaycount() != 0)
@@ -142,7 +142,7 @@ void JE_starShowVGA( void )
 					SDL_Delay(16);     /*       remove if causing undesired delay */
 			setjasondelay(frameCountMax);
 		}
-
+		
 		if (starShowVGASpecialCode == 1)
 		{
 			/* TODO FlippedOut */
@@ -1088,8 +1088,8 @@ start_level_first:
 
 	JE_drawOptionLevel();
 
-	BKwrap2 = &megaData1->mainmap[0][0];
-	BKwrap2to = &megaData1->mainmap[0][0];
+	BKwrap2 = &megaData2->mainmap[0][0];
+	BKwrap2to = &megaData2->mainmap[0][0];
 
 /* TODO <MXD> remove these */
 debugHist = 1;
