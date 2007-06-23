@@ -69,6 +69,11 @@ void JE_initVGA256( void )
 		}
 	}
 
+#ifdef TARGET_GP2X
+	/* Remove the cursor from the top-left corner of the screen  */
+	SDL_ShowCursor(0);
+#endif
+
 	col_buf = malloc(sizeof(SDL_Color)*256);
 
 	for (i = 0, j = 0; j < 256; i+=3, j++)
