@@ -28,6 +28,7 @@
 #include "nortvars.h"
 #undef NO_EXTERNS
 
+#include <ctype.h>
 
 /*JE_word z;*/
 JE_word y;

@@ -22,9 +22,13 @@
 
 #include "opentyr.h"
 
-
+#ifndef TARGET_GP2X
 typedef JE_boolean JE_ButtonType[4]; /* [1..4] */
 typedef JE_byte JE_ButtonAssign[4]; /* [1..4] */
+#else
+typedef JE_boolean JE_ButtonType[19];
+typedef JE_byte JE_ButtonAssign[19];
+#endif
 
 #ifndef NO_EXTERNS
 extern const JE_ButtonAssign defaultJoyButtonAssign;
