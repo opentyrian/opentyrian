@@ -91,13 +91,7 @@ void JE_joystick1( void ) /* procedure to get x and y */
 	for (i = 0; i < COUNTOF(joyButton); i++)
 	{
 		joyButton[i] = SDL_JoystickGetButton(joystick, i);
-#ifdef TARGET_GP2X
-		printf("%d ", joyButton[i]);
-#endif
 	}
-#ifdef TARGET_GP2X
-        printf("\n");
-#endif
 
 #ifndef TARGET_GP2X
 	joyX = SDL_JoystickGetAxis(joystick, 0);
@@ -314,10 +308,14 @@ void JE_joystickInit( void )
 
 			if (joystick)
 			{
+#ifndef TARGET_GP2X
 				if (SDL_JoystickNumButtons(joystick) >= 4 && SDL_JoystickNumAxes(joystick) >= 2)
 				{
 					joystick_installed = TRUE;
 				}
+#else
+				joystick_installed = TRUE;
+#endif
 			}
 		}
 	}
