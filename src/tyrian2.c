@@ -3591,23 +3591,23 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 		{
 			case -1:
 			case 0:
-				tempW = enemyDat[tempW].value * 0.75;
+				tempW = enemyDat[tempW].value * 0.75f;
 				break;
 			case 1:
 			case 2:
 				tempW = enemyDat[tempW].value;
 				break;
 			case 3:
-				tempW = enemyDat[tempW].value * 1.125;
+				tempW = enemyDat[tempW].value * 1.125f;
 				break;
 			case 4:
-				tempW = enemyDat[tempW].value * 1.5;
+				tempW = enemyDat[tempW].value * 1.5f;
 				break;
 			case 5:
 				tempW = enemyDat[tempW].value * 2;
 				break;
 			case 6:
-				tempW = enemyDat[tempW].value * 2.5;
+				tempW = enemyDat[tempW].value * 2.5f;
 				break;
 			case 7:
 			case 8:
@@ -3638,22 +3638,22 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 			{
 				case -1:
 				case 0:
-					tempW = enemyDat[tempW].armor * 0.5 + 1;
+					tempW = enemyDat[tempW].armor * 0.5f + 1;
 					break;
 				case 1:
-					tempW = enemyDat[tempW].armor * 0.75 + 1;
+					tempW = enemyDat[tempW].armor * 0.75f + 1;
 					break;
 				case 2:
 					tempW = enemyDat[tempW].armor;
 					break;
 				case 3:
-					tempW = enemyDat[tempW].armor * 1.2;
+					tempW = enemyDat[tempW].armor * 1.2f;
 					break;
 				case 4:
-					tempW = enemyDat[tempW].armor * 1.5;
+					tempW = enemyDat[tempW].armor * 1.5f;
 					break;
 				case 5:
-					tempW = enemyDat[tempW].armor * 1.8;
+					tempW = enemyDat[tempW].armor * 1.8f;
 					break;
 				case 6:
 					tempW = enemyDat[tempW].armor * 2;

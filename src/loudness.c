@@ -33,7 +33,7 @@ JE_MusicType musicData;
 JE_boolean repeated;
 JE_boolean playing;
 
-float sample_volume = 0.25;
+float sample_volume = 0.25f;
 float music_volume = 0.4f;
 
 SDL_mutex *soundmutex = NULL;
@@ -116,7 +116,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	static long ct = 0;
 	long remaining = howmuch / BYTES_PER_SAMPLE;
 	SAMPLE_TYPE *music_pos;
-	long music_samples = howmuch * 1.1;
+	long music_samples = howmuch * 1.1f;
 	SAMPLE_TYPE *feedme = (SAMPLE_TYPE*) sdl_buffer;
 	int extend;
 	long clip;
@@ -259,8 +259,8 @@ void JE_setVol(JE_word volume, JE_word sample)
 	music_volume = 0.4 * ( (float) volume / 256.0 );
 	sample_volume = 0.25 * ( (float) sample / 128.0 ); */
 
-	music_volume = 0.4;
-	sample_volume = 0.25;
+	music_volume = 0.4f;
+	sample_volume = 0.25f;
 
 }
 

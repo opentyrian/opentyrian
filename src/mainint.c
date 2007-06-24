@@ -1374,16 +1374,16 @@ void JE_changeDifficulty( void )
 	switch (initialDifficulty)
 	{
 		case 1:
-			temp = ROUND(temp * 0.4);
+			temp = ROUND(temp * 0.4f);
 			break;
 		case 2:
-			temp = ROUND(temp * 0.8);
+			temp = ROUND(temp * 0.8f);
 			break;
 		case 3:
-			temp = ROUND(temp * 1.3);
+			temp = ROUND(temp * 1.3f);
 			break;
 		case 4:
-			temp = ROUND(temp * 1.6);
+			temp = ROUND(temp * 1.6f);
 			break;
 		case 5:
 		case 6:

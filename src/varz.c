@@ -1062,8 +1062,8 @@ void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(270, 60, ROUND(shield * 0.8), 144);
-		JE_dBar3(270, 194, ROUND(shield2 * 0.8), 144);
+		JE_dBar3(270, 60, ROUND(shield * 0.8f), 144);
+		JE_dBar3(270, 194, ROUND(shield2 * 0.8f), 144);
 	} else {
 		JE_dBar3(270, 194, shield, 144);
 		if (shield != shieldMax)
@@ -1086,8 +1086,8 @@ void JE_drawArmor( void )
 
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(307, 60, ROUND(armorLevel * 0.8), 224);
-		JE_dBar3(307, 194, ROUND(armorLevel2 * 0.8), 224);
+		JE_dBar3(307, 60, ROUND(armorLevel * 0.8f), 224);
+		JE_dBar3(307, 194, ROUND(armorLevel2 * 0.8f), 224);
 	} else {
 		JE_dBar3(307, 194, armorLevel, 224);
 	}
