@@ -29,7 +29,7 @@
 
 
 /* Note frequency table (16 notes / octave) */
-const unsigned short frequency[] = {
+const Uint16 frequency[] = {
   343, 344, 345, 347, 348, 349, 350, 352, 353, 354, 356, 357, 358,
   359, 361, 362, 363, 365, 366, 367, 369, 370, 371, 373, 374, 375,
   377, 378, 379, 381, 382, 384, 385, 386, 388, 389, 391, 392, 393,
@@ -48,7 +48,7 @@ const unsigned short frequency[] = {
 };
 
 /* Vibrato (sine) table */
-const unsigned char vibtab[] = {
+const Uint8 vibtab[] = {
   0, 13, 25, 37, 50, 62, 74, 86, 98, 109, 120, 131, 142, 152, 162,
   171, 180, 189, 197, 205, 212, 219, 225, 231, 236, 240, 244, 247,
   250, 252, 254, 255, 255, 255, 254, 252, 250, 247, 244, 240, 236,
@@ -57,7 +57,7 @@ const unsigned char vibtab[] = {
 };
 
 /* Tremolo (sine * sine) table */
-const unsigned char tremtab[] = {
+const Uint8 tremtab[] = {
   0, 0, 1, 1, 2, 4, 5, 7, 10, 12, 15, 18, 21, 25, 29, 33, 37, 42, 47,
   52, 57, 62, 67, 73, 79, 85, 90, 97, 103, 109, 115, 121, 128, 134,
   140, 146, 152, 158, 165, 170, 176, 182, 188, 193, 198, 203, 208,
@@ -69,29 +69,30 @@ const unsigned char tremtab[] = {
   25, 21, 18, 15, 12, 10, 7, 5, 4, 2, 1, 1, 0
 };
 
-const unsigned short frequency[(13 * 15) - 3];
-const unsigned char vibta[25 + (13 * 3)];
-const unsigned char tremtab[128];
-const unsigned short maxsound, maxpos;
+const Uint16 frequency[(13 * 15) - 3];
+const Uint8 vibta[25 + (13 * 3)];
+const Uint8 tremtab[128];
+const Uint16 maxsound, maxpos;
 
 SoundBank *soundbank = NULL;
 Channel channel[9];
 Position *positions = NULL;
 
-unsigned char fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
-unsigned short posplay, jumppos, speed;
-unsigned short *patterns = NULL;
+Uint8 fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
+Uint16 posplay, jumppos, speed;
+Uint16 *patterns = NULL;
 int playing, songlooped;
-unsigned int numpatch, numposi, patterns_size, mainvolume;
+Uint32 numpatch, numposi, patterns_size, mainvolume;
 
-const unsigned short maxsound = 0x3f, maxpos = 0xff;
-unsigned char *read_pos;
+const Uint16 maxsound = 0x3f, maxpos = 0xff;
+Uint8 *read_pos;
 
 int lds_load(JE_byte *music_location)
 {
-	unsigned int	i, j;
+	Uint32	i, j;
 	SoundBank	*sb;
-	unsigned int temp;
+	int remaining;
+	Uint16 temp;
 	JE_byte *pos;
 	float templ;
 
@@ -106,7 +107,7 @@ int lds_load(JE_byte *music_location)
 		return FALSE; */
 	}
 
-	speed = *((short int*) pos);
+	memcpy(&speed, pos, sizeof(Uint16));
 	pos += 2;
 	tempo = *(pos++);
 	pattlen = *(pos++);
@@ -119,7 +120,7 @@ int lds_load(JE_byte *music_location)
 	regbd = *(pos++);
 
 	/* load patches */
-	numpatch = *((short int*) pos);
+	memcpy(&numpatch, pos, sizeof(Uint16));
 	pos += 2;
 
 	if (soundbank != NULL) free(soundbank);
@@ -130,7 +131,7 @@ int lds_load(JE_byte *music_location)
 		sb->mod_misc = *(pos++);
 		sb->mod_vol = *(pos++);
 		sb->mod_ad = *(pos++);
-		sb->mod_sr = *(pos++);;
+		sb->mod_sr = *(pos++);
 		sb->mod_wave = *(pos++);
 		sb->car_misc = *(pos++);
 		sb->car_vol = *(pos++); 
@@ -152,12 +153,12 @@ int lds_load(JE_byte *music_location)
 		{
 			sb->arp_tab[j] = *(pos++);
 		}
-		sb->start = *((short int*) pos);
+		memcpy(&sb->start, pos, sizeof(Uint16));
 		pos += 2;
-		sb->size = *((short int*) pos);
+		memcpy(&sb->size, pos, sizeof(Uint16));
 		pos += 2;
 		sb->fms = *(pos++);
-		sb->transp = *((short int*) pos);
+		memcpy(&sb->transp, pos, sizeof(Uint16));
 		pos += 2;
 		sb->midinst = *(pos++);
 		sb->midvelo = *(pos++);
@@ -168,7 +169,7 @@ int lds_load(JE_byte *music_location)
 	}
 
 	/* load positions */
-	numposi = *((short int*) pos);
+	memcpy(&numposi, pos, sizeof(Uint16));
 	pos += 2;
 
 	if (positions != NULL) free(positions);
@@ -181,7 +182,7 @@ int lds_load(JE_byte *music_location)
 		* word fields anyway, so it ought to be an even number (hopefully) and
 		* we can just divide it by 2 to get our array index of 16bit words.
 		*/
-		temp = *((short int*) pos);
+		memcpy(&temp, pos, sizeof(Uint16));
 		pos += 2;
 		positions[i * 9 + j].patnum = temp / 2;
 		positions[i * 9 + j].transpose = *(pos++);
@@ -189,14 +190,14 @@ int lds_load(JE_byte *music_location)
 
 	/* load patterns */
 	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
-	temp = (songPos[currentSong] - songPos[currentSong - 1]) - (pos - music_location); /* bytes remaining */
+	remaining = (songPos[currentSong] - songPos[currentSong - 1]) - (pos - music_location); /* bytes remaining */
 
 	if (patterns != NULL) free(patterns);
-	patterns = malloc( sizeof(unsigned short) * (temp / 2 + 1));
+	patterns = malloc(sizeof(Uint16) * (remaining / 2 + 1));
 	/* patterns = malloc(temp + 1); */
-	for(i = 0; i < (temp / 2 + 1); i++)
+	for(i = 0; i < (remaining / 2 + 1); i++)
 	{
-		patterns[i] = *((short int*) pos);
+		memcpy(&patterns[i], pos, sizeof(Uint16));
 		pos += 2;
 	}
 
@@ -246,7 +247,7 @@ void lds_rewind(int subsong)
 	}
 }
 
-void lds_setregs(unsigned char reg, unsigned char val)
+void lds_setregs(Uint8 reg, Uint8 val)
 {
 	if(fmchip[reg] == val) return;
 
@@ -254,16 +255,16 @@ void lds_setregs(unsigned char reg, unsigned char val)
 	opl_write(reg, val);
 }
 
-void lds_setregs_adv(unsigned char reg, unsigned char mask, unsigned char val)
+void lds_setregs_adv(Uint8 reg, Uint8 mask, Uint8 val)
 {
 	lds_setregs(reg, (fmchip[reg] & mask) | val);
 }
 
 int lds_update( void )
 {
-	unsigned short comword, freq, octave, chan, tune, wibc, tremc, arpreg;
+	Uint16 comword, freq, octave, chan, tune, wibc, tremc, arpreg;
 	int vbreak;
-	unsigned char level, regnum, comhi, comlo;
+	Uint8 level, regnum, comhi, comlo;
 	int i;
 	Channel *c;
 
@@ -290,7 +291,7 @@ int lds_update( void )
 			}
 
 		} else {
-			if( (unsigned char) ((allvolume + (0x100 - fadeonoff)) & 0xff) <= mainvolume)
+			if( (Uint8) ((allvolume + (0x100 - fadeonoff)) & 0xff) <= mainvolume)
 			{
 				allvolume += 0x100 - fadeonoff;
 			} else {
@@ -318,8 +319,8 @@ int lds_update( void )
 		{
 			c = &channel[chan];
 			if(!c->packwait) {
-				unsigned short patnum = positions[posplay * 9 + chan].patnum;
-				unsigned char transpose = positions[posplay * 9 + chan].transpose;
+				Uint16 patnum = positions[posplay * 9 + chan].patnum;
+				Uint8 transpose = positions[posplay * 9 + chan].transpose;
 				/*printf("> %p", positions);*/
 
 				comword = patterns[patnum + c->packpos];
@@ -428,9 +429,9 @@ int lds_update( void )
 								break;
 							}
 						} else {
-							unsigned char	sound;
-							unsigned short	high;
-							signed char	transp = transpose & 127;
+							Uint8	sound;
+							Uint16	high;
+							Sint8	transp = transpose & 127;
 							/*
 							 * Originally, in assembler code, the player first shifted
 							 * logically left the transpose byte by 1 and then shifted
@@ -674,16 +675,16 @@ void lds_playsound(int inst_number, int channel_number, int tunehigh)
 { 
   Channel		*c = &channel[channel_number];		/* current channel */
   SoundBank		*i = &soundbank[inst_number];		/* current instrument */
-  unsigned int		regnum = op_table[channel_number];	/* channel's OPL2 register */
-  unsigned char		volcalc, octave;
-  unsigned short	freq;
+  Uint32		regnum = op_table[channel_number];	/* channel's OPL2 register */
+  Uint8		volcalc, octave;
+  Uint16	freq;
 
   /* set fine tune */
   tunehigh += ((i->finetune + c->finetune + 0x80) & 0xff) - 0x80;
 
   /* arpeggio handling */
   if(!i->arpeggio) {
-    unsigned short	arpcalc = i->arp_tab[0] << 4;
+    Uint16	arpcalc = i->arp_tab[0] << 4;
 
     if(arpcalc > 0x800)
       tunehigh = tunehigh - (arpcalc ^ 0xff0) - 16;

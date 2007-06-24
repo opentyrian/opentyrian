@@ -186,10 +186,10 @@ void JE_joystick2( void )
 			joystickRight = joyX > (jCenterX + jCenterX / 5);
 		}
 #else
-	joystickLeft  = joyButton[GP2X_VK_LEFT]  || joyButton[GP2X_VK_UP_LEFT]  || joyButton[GP2X_VK_DOWN_LEFT];
-	joystickRight = joyButton[GP2X_VK_RIGHT] || joyButton[GP2X_VK_UP_RIGHT] || joyButton[GP2X_VK_DOWN_RIGHT];
-	joystickUp    = joyButton[GP2X_VK_UP]   || joyButton[GP2X_VK_UP_LEFT]   || joyButton[GP2X_VK_UP_LEFT];
-	joystickDown  = joyButton[GP2X_VK_DOWN] || joyButton[GP2X_VK_DOWN_LEFT] || joyButton[GP2X_VK_DOWN_RIGHT];
+		joystickLeft  = joyButton[GP2X_VK_LEFT]  || joyButton[GP2X_VK_UP_LEFT]  || joyButton[GP2X_VK_DOWN_LEFT];
+		joystickRight = joyButton[GP2X_VK_RIGHT] || joyButton[GP2X_VK_UP_RIGHT] || joyButton[GP2X_VK_DOWN_RIGHT];
+		joystickUp    = joyButton[GP2X_VK_UP]   || joyButton[GP2X_VK_UP_LEFT]   || joyButton[GP2X_VK_UP_LEFT];
+		joystickDown  = joyButton[GP2X_VK_DOWN] || joyButton[GP2X_VK_DOWN_LEFT] || joyButton[GP2X_VK_DOWN_RIGHT];
 #endif
 
 		joystickInput = joystickUp | joystickDown | joystickLeft | joystickRight | button[0] | button[1] | button[2] | button[3];
