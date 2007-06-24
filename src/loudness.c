@@ -60,26 +60,26 @@ void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
 /* SYN: The arguments to this function are probably meaningless now */
 void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror)
 {
-    SDL_AudioSpec plz, got;
+	SDL_AudioSpec plz, got;
 	int i = 0;
-
+	
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
 	{
 		printf("Failed to initialize audio: %s\n", SDL_GetError());
 		noSound = TRUE;
 		return;
 	}
-
+	
 	sound_init_state = TRUE;
-
+	
 	soundmutex = SDL_CreateMutex();
-
+	
 	if (soundmutex == NULL)
 	{
 		printf("Couldn't create mutex! Oh noes!\n");
 		exit(-1);
 	}
-
+	
 	/*final_audio_buffer = NULL;
 	audio_pos = NULL;*/
 	for (i = 0; i < SFX_CHANNELS; i++)
@@ -87,25 +87,27 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 		channel_buffer[i] = channel_pos[i] = NULL;
 		channel_len[i] = 0;
 	}
-
-    plz.freq = freq;
+	
+	opl_init();
+	
+	plz.freq = freq;
 	plz.format = AUDIO_S16SYS;
-    plz.channels = 1;
-    plz.samples = 512;
-    plz.callback = audio_cb;
-    plz.userdata = soundmutex;
-
+	plz.channels = 1;
+	plz.samples = 512;
+	plz.callback = audio_cb;
+	plz.userdata = soundmutex;
+	
 	printf("\tRequested SDL frequency: %d; SDL buffer size: %d\n", plz.freq, plz.samples);
-
-    if ( SDL_OpenAudio(&plz, &got) < 0 ) 
+	
+	if ( SDL_OpenAudio(&plz, &got) < 0 ) 
 	{
-        printf("\tWARNING: Failed to initialize SDL audio. Bailing out.\n");
-        exit(1);
-    }
-
+		printf("\tWARNING: Failed to initialize SDL audio. Bailing out.\n");
+		exit(1);
+	}
+	
 	printf("\tObtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
-
-    SDL_PauseAudio(0);
+	
+	SDL_PauseAudio(0);
 }
 
 void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
@@ -193,6 +195,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 void JE_deinitialize( void )
 {
 	/* SYN: TODO: Clean up any other audio stuff, if necessary. This should only be called when we're quitting. */
+	opl_deinit();
 	SDL_CloseAudio();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }

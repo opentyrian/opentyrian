@@ -19,7 +19,7 @@
  */
 #include "opentyr.h"
 
-#include "adlibemu.h"
+#include "fmopl.h"
 #include "loudness.h"
 
 #define NO_EXTERNS
@@ -30,57 +30,60 @@
 const unsigned short note_table[12] = {363, 385, 408, 432, 458, 485, 514, 544, 577, 611, 647, 686};
 const unsigned char op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
+int use16bit, stereo;
+FM_OPL	*opl; /* holds emulator data */
 
 void opl_update( short* buf, long samples)
 {
-	samples *= BYTES_PER_SAMPLE;
-	/*if(stereo) samples *= 2;*/
-	adlibgetsample((unsigned char*)buf, samples);
+	int i;
+	
+	if (use16bit) {
+		YM3812UpdateOne(opl, buf, samples);
+		
+		if (stereo)
+			for(i = samples - 1; i >= 0; i--) {
+				buf[i*2] = buf[i];
+				buf[i*2+1] = buf[i];
+			}
+  	} else {
+		short *tempbuf = malloc(sizeof(short) * (stereo ? samples * 2 : samples));
+		int i;
+	
+		YM3812UpdateOne(opl, tempbuf, samples);
+	
+		if (stereo)
+			for (i = samples - 1; i >= 0; i--) {
+				tempbuf[i*2] = tempbuf[i];
+				tempbuf[i*2+1] = tempbuf[i];
+			}
+	
+		for (i = 0; i < (stereo ? samples * 2 : samples); i++)
+			((char *)buf)[i] = (tempbuf[i] >> 8) ^ 0x80;
+	
+		free(tempbuf);
+	}
 }
-
 
 void opl_init( void )
 {
-	/* adlibinit(rate, usestereo ? 2 : 1, bit16 ? 2 : 1); */
-	adlibinit((11025 * OUTPUT_QUALITY), 1, BYTES_PER_SAMPLE);
-	/*adlibinit(44100, 1, 2);*/
+	use16bit = (BYTES_PER_SAMPLE == 2);
+	stereo = 0;
+
+	opl = OPLCreate(OPL_TYPE_YM3812, 3579545, (11025 * OUTPUT_QUALITY));
+}
+
+void opl_deinit( void )
+{
+	OPLDestroy(opl);
+}
+
+void opl_reset( void )
+{
+	OPLResetChip(opl);
 }
 
 void opl_write(int reg, int val)
 {
-	/*if(currChip == 0)*/
-	adlib0(reg, val);
+  OPLWrite(opl, 0, reg);
+  OPLWrite(opl, 1, val);
 }
-
-
-/*
-class CKemuopl: public Copl
-{
-public:
-  CKemuopl(int rate, bool bit16, bool usestereo)
-    : use16bit(bit16), stereo(usestereo)
-    {
-      adlibinit(rate, usestereo ? 2 : 1, bit16 ? 2 : 1);
-      currType = TYPE_OPL2;
-    };
-
-  void update(short *buf, int samples)
-    {
-      if(use16bit) samples *= 2;
-      if(stereo) samples *= 2;
-      adlibgetsample(buf, samples);
-    }
-
-  // template methods
-  void write(int reg, int val)
-    {
-      if(currChip == 0)
-	adlib0(reg, val);
-    };
-
-  void init() {};
-
-private:
-  bool	use16bit,stereo;
-};
-*/

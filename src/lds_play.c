@@ -225,7 +225,7 @@ void lds_rewind(int subsong)
 	memset(fmchip, 0, sizeof(fmchip));
 
 	/* OPL2 init */
-	opl_init();				/* Reset OPL chip */
+	opl_reset();				/* Reset OPL chip */
 	opl_write(1, 0x20);
 	opl_write(8, 0);
 	opl_write(0xbd, regbd);

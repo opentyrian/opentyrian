@@ -30,6 +30,8 @@ unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
 
 void opl_update( short*, long );
 void opl_init( void );
+void opl_deinit( void );
+void opl_reset( void );
 void opl_write(int, int);
 
 #endif /* FM_SYNTH_H */
