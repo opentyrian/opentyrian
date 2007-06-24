@@ -31,7 +31,7 @@ const unsigned short note_table[12] = {363, 385, 408, 432, 458, 485, 514, 544, 5
 const unsigned char op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
 int use16bit, stereo;
-FM_OPL	*opl; /* holds emulator data */
+#define opl 0
 
 void opl_update( short* buf, long samples)
 {
@@ -69,21 +69,21 @@ void opl_init( void )
 	use16bit = (BYTES_PER_SAMPLE == 2);
 	stereo = 0;
 
-	opl = OPLCreate(OPL_TYPE_YM3812, 3579545, (11025 * OUTPUT_QUALITY));
+	YM3812Init(1, 3579545, (11025 * OUTPUT_QUALITY));
 }
 
 void opl_deinit( void )
 {
-	OPLDestroy(opl);
+	YM3812Shutdown();
 }
 
 void opl_reset( void )
 {
-	OPLResetChip(opl);
+	YM3812ResetChip(opl);
 }
 
 void opl_write(int reg, int val)
 {
-  OPLWrite(opl, 0, reg);
-  OPLWrite(opl, 1, val);
+  YM3812Write(opl, 0, reg);
+  YM3812Write(opl, 1, val);
 }
