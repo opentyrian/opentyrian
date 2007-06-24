@@ -11,7 +11,7 @@ GP2X_STRIP := gp2x-strip
 # END SETTINGS #####################################
 
 TARGET := tyrian
-OBJS := adlibemu.o animlib.o backgrnd.o config.o destruct.o editship.o episodes.o error.o fm_synth.o fonthand.o helptext.o joystick.o jukebox.o keyboard.o lds_play.o loudness.o lvllib.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o pcxload.o pcxmast.o picload.o picload2.o scroller.o setup.o shplib.o shplib2.o shpmast.o sndmast.o starfade.o starlib.o tyrian2.o varz.o vga256d.o 
+OBJS := animlib.o backgrnd.o config.o destruct.o editship.o episodes.o error.o fm_synth.o fmopl.o fonthand.o helptext.o joystick.o jukebox.o keyboard.o lds_play.o loudness.o lvllib.o lvlmast.o mainint.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o pallib.o params.o pcxload.o pcxmast.o picload.o picload2.o scroller.o setup.o shplib.o shplib2.o shpmast.o sndmast.o starfade.o starlib.o tyrian2.o varz.o vga256d.o 
 
 ifeq ($(DEBUG), 1)
 	DEBUG_FLAGS := -g3 -O0
