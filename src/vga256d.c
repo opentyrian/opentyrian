@@ -350,7 +350,7 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
 
 	for (z = 0; z <= v; z++)
 	{
-		vga[(int)(ROUND(x)+ROUND(y)*320)] = e;
+		vga[(int)(ROUND(x)+ROUND(y)*320.0)] = e;
 		x += g; y += h;
 	}
 }
