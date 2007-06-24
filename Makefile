@@ -2,7 +2,6 @@
 DEBUG := 1
 # Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
-PROFILE := 0
 # If building for the GP2X
 GP2X_DEVKIT := /stuff/devkit-gp2x
 GP2X_CC := gp2x-gcc
@@ -22,12 +21,14 @@ endif
 ifeq ($(PLATFORM), WINDOWS)
 	SDL_CFLAGS := -I/mingw/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
 	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -mwindows
-else ifeq ($(PLATFORM), GP2X)
+endif
+ifeq ($(PLATFORM), GP2X)
 	SDL_CFLAGS := -I$(GP2X_DEVKIT)/include/SDL -D_GNU_SOURCE=1 -DTARGET_GP2X
 	SDL_LDFLAGS := -L$(GP2X_DEVKIT)/lib -lpthread -lSDL -static
 	CC := $(GP2X_CC)
 	STRIP := $(GP2X_STRIP)
-else
+endif
+ifeq ($(PLATFORM), UNIX)
 	SDL_CFLAGS := $(shell sdl-config --cflags)
 	SDL_LDFLAGS := $(shell sdl-config --libs)
 endif
@@ -35,11 +36,6 @@ endif
 
 CFLAGS := -ansi -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wno-unused -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
 LDFLAGS := $(SDL_LDFLAGS) -lm
-
-ifeq ($(PROFILE), 1)
-	CFLAGS += -pg
-	LDFLAGS += -pg
-endif
 
 ####################################################
 
