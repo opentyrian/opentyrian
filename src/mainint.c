@@ -1620,8 +1620,8 @@ void JE_playerMovement( JE_byte inputDevice_,
 {
 	JE_integer mouseXC, mouseYC;
 	JE_integer accelXC, accelYC;
-	JE_byte leftOptionIsSpecial;
-	JE_byte rightOptionIsSpecial;
+	JE_byte leftOptionIsSpecial = 0;
+	JE_byte rightOptionIsSpecial = 0;
 
 	if (playerNum_ == 2 || !twoPlayerMode)
 	{

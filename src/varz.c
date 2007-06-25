@@ -559,7 +559,7 @@ JE_word JE_SGr( JE_word ship, JE_byte **ptr )
 {
 	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
 
-	JE_word tempW;
+	JE_word tempW = 1;
 
 	/* TODO tempW = editship.ships [ (ship - 1) * 15 + 1];*/
 	if (tempW > 7)

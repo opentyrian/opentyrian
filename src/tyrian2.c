@@ -6461,7 +6461,7 @@ void JE_loadCubes( void )
 
 void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 {
-	JE_word tempW;
+	JE_word tempW = 0;
 
 	if (itemNum > 0)
 	{

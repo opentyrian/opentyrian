@@ -3,9 +3,8 @@ DEBUG := 1
 # Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
 # If building for the GP2X
-GP2X_DEVKIT := /stuff/devkit-gp2x
-GP2X_CC := gp2x-gcc
-GP2X_STRIP := gp2x-strip
+GP2X_CHAINPREFIX := /opt/open2x/gcc-4.1.1-glibc-2.3.6
+GP2X_CHAIN := $(GP2X_CHAINPREFIX)/bin/arm-open2x-linux-
 
 # END SETTINGS #####################################
 
@@ -23,10 +22,10 @@ ifeq ($(PLATFORM), WINDOWS)
 	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -mwindows
 endif
 ifeq ($(PLATFORM), GP2X)
-	SDL_CFLAGS := -I$(GP2X_DEVKIT)/include/SDL -D_GNU_SOURCE=1 -DTARGET_GP2X
-	SDL_LDFLAGS := -L$(GP2X_DEVKIT)/lib -lpthread -lSDL -static
-	CC := $(GP2X_CC)
-	STRIP := $(GP2X_STRIP)
+	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math -funroll-loops -std=c99
+	SDL_LDFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --libs` -static -L$(GP2X_CHAINPREFIX)/lib
+	CC := $(GP2X_CHAIN)gcc
+	STRIP := $(GP2X_CHAIN)strip
 endif
 ifeq ($(PLATFORM), UNIX)
 	SDL_CFLAGS := $(shell sdl-config --cflags)
