@@ -31,6 +31,7 @@
 #include "nortvars.h"
 #include "starfade.h"
 #include "starlib.h"
+#include "varz.h"
 #include "vga256d.h"
 
 #define NO_EXTERNS
@@ -177,6 +178,7 @@ void JE_jukeboxGo( void )
 		}
 
 		setdelay(1);
+		service_SDL_events(TRUE);
 
 		JE_starlib_main();
 
@@ -186,7 +188,6 @@ void JE_jukeboxGo( void )
 		  JE_bar(50, 190, 250, 198, 0); /* vga256c.BAR (50, 190, 250, 198, 0); */
 		}
 
-		JE_bar(30, 170, 270, 198, 0);
 		if (drawText)
 		{
 			/* TODO: Put in actual song titles here */
@@ -246,10 +247,6 @@ void JE_jukeboxGo( void )
       */
 
 		JE_showVGA();
-
-		/*tempW = 0;
-		JE_textMenuWait(&tempW, FALSE);*/
-		service_SDL_events(TRUE);
 
 		if (newkey) {
 			JE_newSpeed();
