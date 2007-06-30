@@ -1575,9 +1575,32 @@ void JE_handleChat( void )
 
 JE_boolean JE_getNumber( char *s, JE_byte *x )
 {
-	STUB(JE_getNumber);
+	JE_boolean getNumber = FALSE;
+	JE_integer code;
+	char buf[256];
 
-	return FALSE;
+	while (strlen(s) > 0)
+	{
+		if (s[0] == ' ')
+		{
+			strcpy(buf, s+1);
+			strcpy(s, buf);
+		} else {
+			char *tmp;
+
+			*x = strtol(s, &tmp, 10);
+			if (s != tmp)
+			{
+				getNumber = TRUE;
+			}
+			strcpy(buf, tmp);
+			strcpy(s, buf);
+			goto end_loop;
+		}
+	}
+
+end_loop:
+	return getNumber;
 }
 
 void JE_operation( JE_byte slot )

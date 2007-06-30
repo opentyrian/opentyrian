@@ -2286,7 +2286,7 @@ new_game:
 								} else {
 									temp = 11;
 								}
-								/* TODO JE_saveGame(11, "LAST LEVEL    ");*/
+								JE_saveGame(11, "LAST LEVEL    ");
 								break;
 
 							case 'i':
@@ -2303,10 +2303,10 @@ new_game:
 
 									strcat(strcpy(s, s + 8), " ");
 									temp2 = 0;
-									/* TODO while (JE_getNumber(s, itemAvail[temp][temp2])
+									while (JE_getNumber(s, &itemAvail[temp][temp2]))
 									{
 										temp2++;
-									}*/
+									}
 
 									itemAvailMax[temp] = temp2;
 								}
@@ -4973,11 +4973,11 @@ item_screen_start:
 				/* Write save game slot */
 				if (x == max)
 				{
-					strcpy(tempStr, miscText[6]);
+					strcpy(tempStr, miscText[5]);
 				} else {
 					if (saveFiles[x-1].level == 0)
 					{
-						strcpy(tempStr, miscText[3]);
+						strcpy(tempStr, miscText[2]);
 					} else {
 						strcpy(tempStr, saveFiles[x-1].name);
 					}
@@ -5116,7 +5116,8 @@ item_screen_start:
 			temp2 = pItems[pItemButtonMap[curSel[1]-2]-1]; /* get index into pItems for current submenu  */
 
 			/* Iterate through all submenu options */
-			for (tempW = 0; tempW < menuChoices[curMenu] - 1; tempW++)
+			printf("CHOICES NUM: %d\n", menuChoices[curMenu]);
+			for (tempW = 0; tempW < menuChoices[curMenu]-1; tempW++)
 			{
 				tempY = 40 + tempW * 26; /* Calculate y position */
 
@@ -5125,7 +5126,7 @@ item_screen_start:
 					/* Get base cost for choice */
 					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][tempW]);
 				} else {
-					/* "Done" is free :) */
+					/* "None" is free :) */
 					tempW3 = 0;
 				}
 
@@ -5143,7 +5144,6 @@ item_screen_start:
 						if (temp > 90)
 						{
 							snprintf(tempStr, sizeof tempStr, "Custom Ship %d", temp - 90);
-							/*strcpy(tempStr, "Custom Ship " + JE_st(temp - 90));*/
 						} else {
 							strcpy(tempStr, ships[temp].name);
 						}
@@ -5205,7 +5205,7 @@ item_screen_start:
 					char buf[20];
 
 					snprintf(buf, sizeof buf, "Cost: %d", tempW3);
-					JE_textShade(187, tempY-10, buf, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
+					JE_textShade(187, tempY+10, buf, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
 				}
 			}
 		} /* /weapon upgrade */
@@ -7851,7 +7851,7 @@ void JE_genItemMenu( JE_byte itemNum )
 
 	strcpy(menuInt[4][0], menuInt[1][itemNum - 1]);
 
-	for (tempW = 1; tempW <= itemAvailMax[itemAvailMap[itemNum-2] -1]; tempW++)
+	for (tempW = 1; tempW < itemAvailMax[itemAvailMap[itemNum-2]]; tempW++)
 	{
 		temp = itemAvail[itemAvailMap[itemNum-2]-1][tempW];
 		switch (itemNum)
@@ -7861,13 +7861,18 @@ void JE_genItemMenu( JE_byte itemNum )
 			break;
 		case 3:
 		case 4:
+			strcpy(tempStr, weaponPort[temp].name);
+			tempPowerLevel[tempW] = 1;
 			break;
 		case 5:
+			strcpy(tempStr, shields[temp].name);
 			break;
 		case 6:
+			strcpy(tempStr, powerSys[temp].name);
 			break;
 		case 7:
 		case 8:
+			strcpy(tempStr, options[temp].name);
 			break;
 		}
 		if (temp == temp2)
@@ -7875,40 +7880,18 @@ void JE_genItemMenu( JE_byte itemNum )
 			temp3 = tempW + 1;
 		}
 		strcpy(menuInt[4][tempW], tempStr);
+
+		if (itemNum == 3 || itemNum == 4)
+		{
+			tempW++;
+			tempPowerLevel[tempW] = portPower[itemNum-3];
+			if (tempPowerLevel[tempW] < 1)
+			{
+				tempPowerLevel[tempW] = 1;
+			}
+		}
+		curSel[5] = temp3;
 	}
-
-/*
-	FOR tempw := 1 TO Itemavailmax [itemavailmap [itemnum - 1] ] DO
-	BEGIN
-	  temp := Itemavail   [itemavailmap [itemnum - 1], tempw];
-	  CASE itemnum OF
-		2   : tempstr := ships^     [temp] .name;
-		3, 4 : BEGIN
-				 tempstr := weaponport^ [temp] .name;
-				 temppowerlevel [tempw] := 1;
-			   END;
-		5   : tempstr := shields^   [temp] .name;
-		6   : tempstr := powersys^  [temp] .name;
-		7, 8 : tempstr := options^   [temp] .name;
-	  END;
-	  IF temp = temp2 THEN
-		temp3 := tempw + 1;
-	  menuint [5, tempw] := tempstr;
-	END;
-
-	menuint [5, tempw + 1] := misctext [14];
-
-	IF itemnum IN [3, 4] THEN
-	BEGIN
-	  INC (tempw);
-	  temppowerlevel [tempw] := portpower [itemnum - 2];
-	  IF temppowerlevel [tempw] < 1 THEN
-		temppowerlevel [tempw] := 1;
-	END;
-	cursel [5] := temp3;
-
-	END;
-*/
 }
 
 void JE_doNetwork( void )
