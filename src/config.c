@@ -707,7 +707,8 @@ void JE_loadConfiguration( void )
 		efread(&inputDevice1, 1, 1, fi);
 		efread(&inputDevice2, 1, 1, fi);
 
-		efread(keySettings, 8, 1, fi);
+		/* efread(keySettings, 8, 1, fi); Fixed because we're using SDLKey now */
+		efread(keySettings, sizeof(keySettings), 1, fi);
 
 		fclose(fi);
 
@@ -980,7 +981,8 @@ void JE_saveConfiguration( void )
 		efwrite(&inputDevice1, 1, 1, f);
 		efwrite(&inputDevice2, 1, 1, f);
 
-		efwrite(keySettings, 1, 8, f);
+		/* efwrite(keySettings, 1, 8, f); */
+		efwrite(keySettings, 1, sizeof(keySettings), f);
 	 
 		fclose(f);
 	}

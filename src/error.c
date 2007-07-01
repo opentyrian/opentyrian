@@ -19,6 +19,7 @@
  */
 #include "opentyr.h"
 
+#include "config.h"
 #include "vga256d.h"
 
 #define NO_EXTERNS
@@ -214,7 +215,7 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 	JE_resetFile(&f, "tyrian.cfg");
 	dont_die = FALSE;
 
-	if (f && get_stream_size(f) == 28)
+	if (f && get_stream_size(f) == 20+sizeof(keySettings))
 	{
 		fclose(f);
 		return FALSE;
