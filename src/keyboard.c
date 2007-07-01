@@ -183,6 +183,8 @@ void init_keyboard( void )
 
 	SDL_EnableUNICODE(1);
 
+	SDL_WM_SetCaption("Ctrl-Pause to kill", NULL);
+
 #ifdef NDEBUG
 	SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif
@@ -194,7 +196,6 @@ void service_SDL_events( JE_boolean clear_new )
 
 	if (clear_new)
 	{
-		/*if (newkey) printf("clearing newkey\n");*/
 		newkey = newmouse = FALSE;
 	}
 	while (SDL_PollEvent(&ev))
@@ -208,6 +209,12 @@ void service_SDL_events( JE_boolean clear_new )
 				mouse_yrel = ev.motion.yrel;
 				break;
 			case SDL_KEYDOWN:
+				/* Emergency kill: Ctrl+Pause */
+				if (ev.key.keysym.sym == SDLK_PAUSE && (ev.key.keysym.mod & KMOD_CTRL))
+				{
+					puts("\n\n\nCtrl+Pause pressed. Doing emergency quit.\n");
+					exit(1);
+				}
 				newkey = TRUE;
 				lastkey_sym = ev.key.keysym.sym;
 				lastkey_mod = ev.key.keysym.mod;
