@@ -2487,7 +2487,7 @@ new_game:
 					goto new_game;
 				}
 
-				sprintf(s, " ");
+				strcpy(s, " ");
 				JE_readCryptLn(lvlFile, s);
 
 				switch (s[0])
@@ -5393,16 +5393,17 @@ item_screen_start:
 		if (curMenu == 4)
 		{
 			/* Move cursor until we hit either "Done" or a weapon the player can afford */
-			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][curSel[5]]) > score)
+			/* DEBUG! printf("curSel1: %d -- curSel4: %d\n", curSel[1], curSel[4]); */
+			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]]][curSel[4]]) > score)
 			{
 				curSel[4] += lastDirection;
-				if (curSel[4] < 1)
+				if (curSel[4] <= 1)
 				{
 					curSel[4] = menuChoices[4];
 				}
 				if (curSel[4] > menuChoices[4])
 				{
-					curSel[4] = 1;
+					curSel[4] = 0;
 				}
 			}
 
@@ -5447,29 +5448,29 @@ item_screen_start:
 			temp2 = pItems[pItemButtonMap[curSel[1]-2]-1]; /* get index into pItems for current submenu  */
 
 			/* Iterate through all submenu options */
-			printf("CHOICES NUM: %d\n", menuChoices[curMenu]);
-			for (tempW = 0; tempW < menuChoices[curMenu]-1; tempW++)
+			for (tempW = 1; tempW <= menuChoices[curMenu]-1; tempW++)
 			{
-				tempY = 40 + tempW * 26; /* Calculate y position */
+				tempY = 40 + (tempW-1) * 26; /* Calculate y position */
 
-				if (tempW < (menuChoices[4] - 2)) 
+				if (tempW < menuChoices[4] - 1) 
 				{
 					/* Get base cost for choice */
-					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][tempW]);
+					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]]][tempW-1]);
+					/* DEBUG! printf("%d\n", tempW3);*/
 				} else {
 					/* "None" is free :) */
 					tempW3 = 0;
 				}
 
-				if (tempW > score) /* Can player afford current weapon at all */
+				if (tempW3 > score) /* Can player afford current weapon at all */
 				{
 					temp4 = 4;
 				} else {
 					temp4 = 0;
 				}
 
-				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW];
-				switch (curSel[1])
+				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1];
+				switch (curSel[1]-1)
 				{
 					case 1: /* ship */
 						if (temp > 90)
@@ -5507,6 +5508,7 @@ item_screen_start:
 
 				JE_getShipInfo();
 
+				/* On-Ship item bar */
 				if (temp == pItemsBack[pItemButtonMap[curSel[1]] - 1] && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
@@ -5515,15 +5517,17 @@ item_screen_start:
 
 				if (tempW == menuChoices[curMenu]-1)
 				{
-					strcpy(tempStr, miscText[14]);
+					strcpy(tempStr, miscText[13]);
 				}
 				JE_textShade(185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
 
+				/* Draw icon if not None or DONE */
 				if (tempW < menuChoices[curMenu]-1)
 				{
 					JE_drawItem(curSel[1]-1, temp, 160, tempY-4);
 				}
 
+				/* Make selected text brigther */
 				if (tempW == curSel[curMenu]-1)
 				{
 					temp2 = 15;
@@ -5531,6 +5535,7 @@ item_screen_start:
 					temp2 = 28;
 				}
 
+				/* Draw Cost: if it's not the DONE option */
 				if (tempW != menuChoices[curMenu]-1)
 				{
 					char buf[20];
@@ -6932,7 +6937,7 @@ void JE_updateNavScreen( void )
 		JE_drawPlanet(x-1);
 	}
 
-	for (x = 1; x < menuChoices[4]; x++)
+	for (x = 1; x < menuChoices[3]; x++)
 	{
 		if (mapPlanet[x-1] > 11)
 		{
@@ -7514,7 +7519,7 @@ void JE_menuFunction( JE_byte select )
 			curMenu = 0;
 			newPal = 1;
 		} else {
-			mainLevel = mapSection[curSelect - 1];
+			mainLevel = mapSection[curSelect - 2];
 			jumpSection = TRUE;
 		}
 		break;
