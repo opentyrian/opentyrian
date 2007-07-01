@@ -1947,6 +1947,7 @@ redo:
 						}
 					}
 
+#ifdef NDEBUG
 					if (smoothies[9-1])
 					{
 						*mouseY_ = *PY_ - (*mouseY_ - *PY_);
@@ -1991,6 +1992,7 @@ redo:
 							if (mouseYC < -2)
 								accelYC--;
 					}
+#endif
 
 				}   /*endLevel*/
 

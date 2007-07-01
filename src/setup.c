@@ -48,10 +48,8 @@ JE_boolean repeatedFade, continuousPlay;
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
-#ifdef NDEBUG /* Disable mouse grabbing/etc in debug builds */
-	SDL_WarpMouse(160, 100);
-#endif
-
+	JE_setMousePosition(160, 100);
+	
 	do
 	{
 		JE_showVGA();

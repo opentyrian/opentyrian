@@ -2217,7 +2217,7 @@ draw_player_shot_loop_end:
 				} else {
 					JE_dString(120, 60, miscText[21], FONT_SHAPES);
 				}
-				JE_setMousePosition(159, 100); /* <MXD> scale? */
+				JE_setMousePosition(159, 100);
 				if (firstGameOver)
 				{
 					if (!playDemo)
@@ -5323,7 +5323,7 @@ item_screen_start:
 				{
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(610, 38 + (x - min) * 11);
+						JE_setMousePosition(305, 38 + (x - min) * 11);
 					}
 				}
 
@@ -5366,7 +5366,7 @@ item_screen_start:
 					temp2 = 15;
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(610, 38 + (x - 2)*12);
+						JE_setMousePosition(305, 38 + (x - 2)*12);
 					}
 				} else {
 					temp2 = 28;
@@ -5499,7 +5499,7 @@ item_screen_start:
 				{
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(610, tempY+10);
+						JE_setMousePosition(305, tempY+10);
 					}
 					temp2 = 15;
 				} else {
@@ -5685,7 +5685,7 @@ item_screen_start:
 						{
 							if (keyboardUsed)
 							{
-								JE_setMousePosition(610, 38 + (x - 1) * 28 + 6);
+								JE_setMousePosition(305, 38 + (x - 1) * 28 + 6);
 							}
 							temp2 = 252;
 						} else {
@@ -5702,7 +5702,7 @@ item_screen_start:
 					{
 						if (keyboardUsed)
 						{
-							JE_setMousePosition(610, 38 + (x - 1) * 28 + 6);
+							JE_setMousePosition(305, 38 + (x - 1) * 28 + 6);
 						}
 						temp2 = 252;
 					} else {
@@ -6910,7 +6910,7 @@ void JE_drawMenuChoices( void )
 
 		if (keyboardUsed && curSel[curMenu] == x)
 		{
-			JE_setMousePosition(610, tempY + 6);
+			JE_setMousePosition(305, tempY + 6);
 		}
 	}
 }
