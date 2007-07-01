@@ -291,15 +291,15 @@ JE_integer explosionMoveUp;
 
 /*EnemyShotData*/
 JE_boolean fireButtonHeld;
-JE_boolean enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
+JE_byte /*boolean*/ enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
 struct
 {
-	JE_integer Sx, Sy;
-	JE_integer SxM, SyM;
-	JE_shortint SxC, SyC;
-	JE_byte Tx, Ty;
-	JE_word SGR;
-	JE_byte SDMG;
+	JE_integer sx, sy;
+	JE_integer sxm, sym;
+	JE_shortint sxc, syc;
+	JE_byte tx, ty;
+	JE_word sgr;
+	JE_byte sdmg;
 	JE_byte duration;
 	JE_word animate;
 	JE_word animax;
@@ -840,7 +840,7 @@ void JE_tyrianHalt( JE_byte code )
 void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum )
 {
 	const JE_byte soundChannel[11] /* [1..11] */ = {0, 2, 4, 4, 2, 2, 5, 5, 1, 4, 1};
-
+	
 	if (portNum <= PORT_NUM)
 	{
 		if (wpNum > 0 && wpNum <= WEAP_NUM)

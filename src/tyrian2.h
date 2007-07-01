@@ -82,7 +82,8 @@ void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word 
 
 typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 
-void JE_drawEnemy( int enemyAvailOfs );
+void JE_newEnemy( int enemyOfs );
+void JE_drawEnemy( int enemyOffset );
 void JE_starShowVGA( void );
 
 void JE_main( void );
