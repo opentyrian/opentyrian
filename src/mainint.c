@@ -1832,8 +1832,10 @@ redo:
 						button[2-1] = mouse_pressed[1];
 						button[3-1] = mouse_threeButton ? mouse_pressed[2] : mouse_pressed[1];
 
-						mouseXC = mouse_x - 159; /* <MXD> scale? */
+#ifdef NDEBUG
+						mouseXC = mouse_x - 159;
 						mouseYC = mouse_y - 100;
+#endif
 
 						if (( inputDevice_ == 2 || inputDevice_ == 0 ) && mouseInstalled
 						    && (!isNetworkGame || playerNum_ == thisPlayerNum)
@@ -1947,7 +1949,6 @@ redo:
 						}
 					}
 
-#ifdef NDEBUG
 					if (smoothies[9-1])
 					{
 						*mouseY_ = *PY_ - (*mouseY_ - *PY_);
@@ -1992,7 +1993,6 @@ redo:
 							if (mouseYC < -2)
 								accelYC--;
 					}
-#endif
 
 				}   /*endLevel*/
 
