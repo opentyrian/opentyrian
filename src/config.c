@@ -60,9 +60,11 @@ const JE_byte cryptKey[10] = /* [1..10] */
 	15, 50, 89, 240, 147, 34, 86, 9, 32, 208
 };
 
+/* What TODO with this? */
 const JE_KeySettingType defaultKeySettings =
 {
-	72, 80, 75, 77, 57, 28, 29, 56
+	SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_SPACE, SDLK_RETURN, SDLK_LCTRL, SDLK_LALT
+/*	72, 80, 75, 77, 57, 28, 29, 56*/
 };
 
 const char defaultHighScoreNames[34][23] = /* [1..34] of string [22] */

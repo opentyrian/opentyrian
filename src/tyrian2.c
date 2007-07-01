@@ -5382,7 +5382,8 @@ item_screen_start:
 					} else {
 						temp2 = 250;
 					}
-					JE_textShade(236, 38 + (x - 2)*12, keyNames[keySettings[x-1]], temp2 / 16, temp2 % 16 - 8, DARKEN);
+					/*JE_textShade(236, 38 + (x - 2)*12, keyNames[keySettings[x-2]], temp2 / 16, temp2 % 16 - 8, DARKEN);*/
+					JE_textShade(236, 38 + (x - 2)*12, SDL_GetKeyName(keySettings[x-2]), temp2 / 16, temp2 % 16 - 8, DARKEN);
 				}
 			}
 
@@ -7562,7 +7563,8 @@ void JE_menuFunction( JE_byte select )
 		{
 			temp2 = 254;
 			tempY = 38 + (curSelect - 2) * 12;
-			JE_textShade(236, tempY, keyNames[keySettings[curSelect - 1]], (temp2 / 16), (temp2 % 16) - 8, DARKEN);
+			/*JE_textShade(236, tempY, keyNames[keySettings[curSelect-2]], (temp2 / 16), (temp2 % 16) - 8, DARKEN);*/
+			JE_textShade(236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
 			JE_showVGA();
 
 			col = 248;
@@ -7608,7 +7610,7 @@ void JE_menuFunction( JE_byte select )
 				 tempB )
 			{
 				JE_playSampleNum(CLICK);
-				keySettings[curSelect - 1] = lastkey_sym;
+				keySettings[curSelect-2] = lastkey_sym;
 				curSelect++;
 			}
 			/* callBIOSHandler = TRUE; */
