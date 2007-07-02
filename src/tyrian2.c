@@ -665,7 +665,7 @@ enemy_still_exists:
 									enemy[i].aniactive = 1;
 								}
 								
-								if (++enemy[i].eshotmultipos[j-1] >= tempPos)
+								if (++enemy[i].eshotmultipos[j-1] > tempPos)
 								{
 									enemy[i].eshotmultipos[j-1] = 1;
 								}
@@ -722,7 +722,7 @@ enemy_still_exists:
 									}
 									
 									tempX2 = PX;
-									tempX2 = PY;
+									tempY2 = PY;
 									
 									if (twoPlayerMode)
 									{
@@ -740,7 +740,7 @@ enemy_still_exists:
 										if (temp == 1)
 										{
 											tempX2 = PXB - 25;
-											tempX2 = PYB;
+											tempY2 = PYB;
 										}
 									}
 									
@@ -760,8 +760,8 @@ enemy_still_exists:
 									} else {
 										tempI3 = abs(tempI2);
 									}
-									enemyShot[b].sxm = ROUND((tempI / tempI3) * temp4);
-									enemyShot[b].sym = ROUND((tempI2 / tempI3) * temp4);
+									enemyShot[b].sxm = ROUND((tempI * temp4) / tempI3);
+									enemyShot[b].sym = ROUND((tempI2 * temp4) / tempI3);
 								}
 							}
 							
@@ -860,8 +860,11 @@ draw_enemy_end:
 void JE_main( void )
 {
 	int i, j, l;
-	JE_byte **bp, *src;
+	JE_byte **bp;
+	
+	JE_byte *p; /* source/shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	char buffer[256];
 
@@ -1549,15 +1552,15 @@ level_loop:
 				/* move to previous map X location */
 				bp--;
 
-				src = *bp;
-				src += (28 - backPos) * 24;
+				p = *bp;
+				p += (28 - backPos) * 24;
 
 				for (j = backPos; j; j--)
 				{
-					memcpy(s, src, 24);
+					memcpy(s, p, 24);
 
 					s += tempScreenSeg->w;
-					src += 24;
+					p += 24;
 				}
 
 				s -= backPos * tempScreenSeg->w + 24;
@@ -1581,14 +1584,14 @@ level_loop:
 			{
 				/* move to previous map X location */
 				bp--;
-				src = *bp;
+				p = *bp;
 
 				for (l = 0; l < 28; l++)
 				{
-					memcpy(s, src, 24);
+					memcpy(s, p, 24);
 
 					s += tempScreenSeg->w;
-					src += 24;
+					p += 24;
 				}
 
 				s -= tempScreenSeg->w * 28 + 24;
@@ -1607,14 +1610,14 @@ level_loop:
 			{
 				/* move to previous map X location */
 				bp--;
-				src = *bp;
+				p = *bp;
 
 				for (j = 15 - backPos + 1; j; j--)
 				{
-					memcpy(s, src, 24);
+					memcpy(s, p, 24);
 
 					s += tempScreenSeg->w;
-					src += 24;
+					p += 24;
 				}
 
 				s -= (15 - backPos + 1) * tempScreenSeg->w + 24;
@@ -1967,7 +1970,106 @@ draw_player_shot_loop_end:
 	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
 
 		/* Draw Enemy Shots */
-		/* TODO */
+		for (z = 0; z < ENEMY_SHOT_MAX; z++)
+		{
+			if (enemyShotAvail[z] == 0)
+			{
+				enemyShot[z].sxm += enemyShot[z].sxc;
+				enemyShot[z].sx += enemyShot[z].sxm;
+				
+				if (enemyShot[z].tx != 0)
+				{
+					if (enemyShot[z].sx > PX)
+					{
+						if (enemyShot[z].sxm > -enemyShot[z].tx)
+						{
+							enemyShot[z].sxm--;
+						}
+					} else {
+						if (enemyShot[z].sxm < enemyShot[z].tx)
+						{
+							enemyShot[z].sxm++;
+						}
+					}
+				}
+				
+				enemyShot[z].sym += enemyShot[z].syc;
+				enemyShot[z].sy += enemyShot[z].sym;
+				
+				if (enemyShot[z].ty != 0)
+				{
+					if (enemyShot[z].sy > PY)
+					{
+						if (enemyShot[z].sym > -enemyShot[z].ty)
+						{
+							enemyShot[z].sym--;
+						}
+					} else {
+						if (enemyShot[z].sym < enemyShot[z].ty)
+						{
+							enemyShot[z].sym++;
+						}
+					}
+				}
+				
+				if (enemyShot[z].sy > 190 || enemyShot[z].sy <= -14 || enemyShot[z].sx > 275 || enemyShot[z].sx <= 0)
+				{
+					enemyShotAvail[z] = 1;
+				} else {
+					
+					/* TODO */
+					
+					s = (Uint8 *)VGAScreen->pixels;
+					s += enemyShot[z].sy * VGAScreen->w + enemyShot[z].sx;
+					
+					s_limit = (Uint8 *)VGAScreen->pixels;
+					s_limit += VGAScreen->h * VGAScreen->w;
+					
+					if (enemyShot[z].animax != 0)
+					{
+						if (++enemyShot[z].animate >= enemyShot[z].animax)
+						{
+							enemyShot[z].animate = 0;
+						}
+					}
+					
+					if (enemyShot[z].sgr >= 500)
+					{
+						p = shapesW2;
+						p += ((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 500 - 1];
+					} else {
+						p = shapesC1;
+						p += ((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 1];
+					}
+					
+					while (*p != 0x0f)
+					{
+						s += *p & 0x0f;
+						i = (*p & 0xf0) >> 4;
+						if (i)
+						{
+							while (i--)
+							{
+								p++;
+								if (s >= s_limit)
+									goto enemy_shot_draw_overflow;
+								if ((void *)s >= VGAScreen->pixels)
+									*s = *p;
+								s++;
+							}
+						} else {
+							s -= 12;
+							s += VGAScreen->w;
+						}
+						p++;
+					}
+					
+				}
+				
+enemy_shot_draw_overflow:
+				;
+			}
+		}
 	}
 
 	if (background3over == 1)
