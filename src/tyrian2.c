@@ -271,7 +271,7 @@ void JE_drawEnemy( int enemyOffset )
 						s_limit += VGAScreen->h * VGAScreen->w;
 						
 						p = enemy[i].shapeseg;
-						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1];
+						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1]);
 						
 						while (*p != 0x0f)
 						{
@@ -298,11 +298,8 @@ void JE_drawEnemy( int enemyOffset )
 						s = (Uint8 *)VGAScreen->pixels;
 						s += (enemy[i].ey - 7) * VGAScreen->w + (enemy[i].ex + 6) + tempMapXOfs;
 						
-						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->w;
-						
 						p = enemy[i].shapeseg;
-						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1]];
+						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1]]);
 						
 						while (*p != 0x0f)
 						{
@@ -336,7 +333,7 @@ void JE_drawEnemy( int enemyOffset )
 						s_limit += VGAScreen->h * VGAScreen->w;
 						
 						p = enemy[i].shapeseg;
-						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 18];
+						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 18]);
 						
 						while (*p != 0x0f)
 						{
@@ -363,11 +360,8 @@ void JE_drawEnemy( int enemyOffset )
 						s = (Uint8 *)VGAScreen->pixels;
 						s += (enemy[i].ey + 7) * VGAScreen->w + (enemy[i].ex + 6) + tempMapXOfs;
 						
-						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->w;
-						
 						p = enemy[i].shapeseg;
-						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 19];
+						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 19]);
 						
 						while (*p != 0x0f)
 						{
@@ -402,7 +396,7 @@ void JE_drawEnemy( int enemyOffset )
 						s_limit += VGAScreen->h * VGAScreen->w;
 						
 						p = enemy[i].shapeseg;
-						p += ((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1];
+						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1]);
 						
 						while (*p != 0x0f)
 						{
@@ -2036,10 +2030,10 @@ draw_player_shot_loop_end:
 					if (enemyShot[z].sgr >= 500)
 					{
 						p = shapesW2;
-						p += ((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 500 - 1];
+						p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 500 - 1]);
 					} else {
 						p = shapesC1;
-						p += ((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 1];
+						p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 1]);
 					}
 					
 					while (*p != 0x0f)
