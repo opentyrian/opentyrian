@@ -2007,7 +2007,7 @@ draw_player_shot_loop_end:
 					}
 				}
 				
-				if (enemyShot[z].sy > 190 || enemyShot[z].sy <= -14 || enemyShot[z].sx > 275 || enemyShot[z].sx <= 0)
+				if (enemyShot[z].duration-- == 0 || enemyShot[z].sy > 190 || enemyShot[z].sy <= -14 || enemyShot[z].sx > 275 || enemyShot[z].sx <= 0)
 				{
 					enemyShotAvail[z] = 1;
 				} else {
