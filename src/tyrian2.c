@@ -823,8 +823,8 @@ enemy_still_exists:
 								} else {
 									tempI3 = abs(tempI5);
 								}
-								enemy[b-1].exc = ROUND((tempI4 / tempI3) * enemy[b-1].launchtype);
-								enemy[b-1].eyc = ROUND((tempI5 / tempI3) * enemy[b-1].launchtype);
+								enemy[b-1].exc = ROUND((tempI4 * enemy[b-1].launchtype) / tempI3);
+								enemy[b-1].eyc = ROUND((tempI5 * enemy[b-1].launchtype) / tempI3);
 							}
 						}
 						
