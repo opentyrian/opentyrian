@@ -5529,8 +5529,8 @@ item_screen_start:
 				/* JE: Only needed if change */
 				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[5]-2]);
 
-				leftPower  = portPower[curSel[1] - 2] > 1; /* Can downgrade */
-				rightPower = portPower[curSel[1] - 2] < 11; /* Can upgrade */
+				leftPower  = portPower[curSel[1] - 3] > 1; /* Can downgrade */
+				rightPower = portPower[curSel[1] - 3] < 11; /* Can upgrade */
 
 				if (rightPower)
 				{
@@ -6636,7 +6636,7 @@ item_screen_start:
 						case 3:
 							if (leftPower)
 							{
-								portPower[1]--;
+								portPower[0]--;
 							} else {
 								JE_playSampleNum(WRONG);
 							}
@@ -6644,7 +6644,7 @@ item_screen_start:
 						case 4:
 							if (leftPower)
 							{
-								portPower[2 - 1]--;
+								portPower[1]--;
 							} else {
 								JE_playSampleNum(WRONG);
 							}
@@ -6724,7 +6724,7 @@ item_screen_start:
 						case 3:
 							if (rightPower && rightPowerAfford)
 							{
-								portPower[1]++;
+								portPower[0]++;
 							} else {
 								JE_playSampleNum(WRONG);
 							}
@@ -6732,7 +6732,7 @@ item_screen_start:
 						case 4:
 							if (rightPower && rightPowerAfford)
 							{
-								portPower[2 - 1]++;
+								portPower[1]++;
 							} else {
 								JE_playSampleNum(WRONG);
 							}

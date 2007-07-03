@@ -823,8 +823,8 @@ JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 		case 3:
 		case 4:
 			tempW2 = weaponPort[itemNum].cost;
-			downgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-2]-1);
-			upgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-2]);
+			downgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-3]-1);
+			upgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-3]);
 			break;
 		case 5:
 			tempW2 = shields[itemNum].cost;
