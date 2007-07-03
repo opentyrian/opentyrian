@@ -2478,16 +2478,16 @@ redo:
 									break;
 							}
 power = 10000; /** <-- free energy machine **/
-							for (temp = min; temp <= max; temp++)
-								if (pItems_[temp-1] > 0)
+							for (temp = min - 1; temp < max; temp++)
+								if (pItems_[temp] > 0)
 								{
-									if (shotRepeat[temp-1] > 0)
-										shotRepeat[temp-1]--;
+									if (shotRepeat[temp] > 0)
+										shotRepeat[temp]--;
 									else
 										if (button[1-1])
-											JE_initPlayerShot(pItems_[temp-1], temp, *PX_, *PY_, *mouseX_, *mouseY_,
-											                  weaponPort[pItems_[temp-1]].op[portConfig[temp-1]-1]
-											                  [portPower[temp-1] * !galagaMode + galagaMode - 1],
+											JE_initPlayerShot(pItems_[temp], temp + 1, *PX_, *PY_, *mouseX_, *mouseY_,
+											                  weaponPort[pItems_[temp]].op[portConfig[temp]-1]
+											                  [portPower[temp] * !galagaMode + galagaMode - 1],
 											                  playerNum_);
 								}
 					}

@@ -8081,10 +8081,10 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 	(*    pop ds*)
   END;
   */
-  
+	
 	mouseX = PX;
 	mouseY = PY;
-
+	
 	/* JE: (* PLAYER SHOT Creation *) */
 	for (temp = 0; temp <= 1; temp++)
 	{
@@ -8093,7 +8093,7 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 			shotRepeat[temp]--;
 		} else {
 			JE_initPlayerShot(pItems[temp], temp + 1, PX, PY, mouseX, mouseY, 
-			  weaponPort[pItems[temp]].op[portConfig[temp]][portPower[temp]], 1);
+			  weaponPort[pItems[temp]].op[portConfig[temp] - 1][portPower[temp] - 1], 1);
 		}
 	}
   
@@ -8131,7 +8131,7 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 			  mouseX, mouseY, options[pItems[5-1]].wpnum, 1);
 		}
 	}
-
+	
 	/* Player Shot Images */
 	for (z = 0; z < MAX_PWEAPON; z++)
 	{
@@ -8140,43 +8140,43 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 			shotAvail[z]--;
 			if (z != MAX_PWEAPON - 1)
 			{
-
+				
 				playerShotData[z].shotXM += playerShotData[z].shotXC;
-
+				
 				if (playerShotData[z].shotXM <= 100)
 				{
 					playerShotData[z].shotX += playerShotData[z].shotXM;
 				}
-
+				
 				playerShotData[z].shotYM += playerShotData[z].shotYC;
 				playerShotData[z].shotY += playerShotData[z].shotYM;
-
+				
 				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
 					playerShotData[z].shotY += PYChange;
 				}
-
+				
 				if (playerShotData[z].shotComplicated != 0)
 				{
 					playerShotData[z].shotDevX += playerShotData[z].shotDirX;
 					playerShotData[z].shotX += playerShotData[z].shotDevX;
-
+					
 					if (abs(playerShotData[z].shotDevX) == playerShotData[z].shotCirSizeX)
 					{
 						playerShotData[z].shotDirX = -playerShotData[z].shotDirX;
 					}
-
+					
 					playerShotData[z].shotDevY += playerShotData[z].shotDirY;
 					playerShotData[z].shotY += playerShotData[z].shotDevY;
-
+					
 					if (abs(playerShotData[z].shotDevY) == playerShotData[z].shotCirSizeY)
 					{
 						playerShotData[z].shotDirY = -playerShotData[z].shotDirY;
 					}
 					/*Double Speed Circle Shots - add a second copy of above loop*/
 				}
-
+				
 				tempShotX = playerShotData[z].shotX;
 				tempShotY = playerShotData[z].shotY;
 
@@ -8186,7 +8186,7 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 					shotAvail[z] = 0;
 					goto draw_player_shot_loop_end;
 				}
-
+				
 /*				if (playerShotData[z].shotTrail != 255)
 				{
 					if (playerShotData[z].shotTrail == 98)
@@ -8196,13 +8196,13 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);
 					}
 				}*/
-
+				
 				tempW = playerShotData[z].shotGr + playerShotData[z].shotAni;
 				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
 				{
 					playerShotData[z].shotAni = 0;
 				}
-
+				
 				if (tempW < 6000)
 				{
 					if (tempW > 1000)
@@ -8216,27 +8216,27 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 						JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
 					}
 				}
-
+				
 			}
-
+			
 draw_player_shot_loop_end:
 			;
 		}
 	}
 	
 	JE_newDrawCShapeNum(OPTION_SHAPES, 13 - 1, 0, 0);
-
-
-  /*(*========================Power Bar=========================*)*/
-
+	
+	
+	/*========================Power Bar=========================*/
+	
 	power = power + powerAdd;
 	if (power > 900)
 	{
 		power = 900;
 	}
-
+	
 	temp = power / 10;
-
+	
 	for (temp = 147 - temp; temp <= 146; temp++)
 	{
 		temp2 = 113 + (146 - temp) / 9 + 2;
@@ -8249,32 +8249,32 @@ draw_player_shot_loop_end:
 		{
 			temp2 += 2;
 		}
-
+		
 		JE_pix(141, temp, temp2 - 3);
 		JE_pix(142, temp, temp2 - 3);
 		JE_pix(143, temp, temp2 - 2);
 		JE_pix(144, temp, temp2 - 1);
 		JE_bar(145, temp, 149, temp, temp2);
-
+		
 		if (temp2 - 3 < 112)
 		{
 			temp2++;
 		}
-
+		
 	}
-
+	
 	temp = 147 - (power / 10);
 	temp2 = 113 + (146 - temp) / 9 + 4;
-
+	
 	JE_pix(141, temp - 1, temp2 - 1);
 	JE_pix(142, temp - 1, temp2 - 1);
 	JE_pix(143, temp - 1, temp2 - 1);
 	JE_pix(144, temp - 1, temp2 - 1);
-
+	
 	JE_bar(145, temp-1, 149, temp-1, temp2);
-
+	
 	lastPower = temp;
-
+	
 	JE_waitFrameCount();
 }
 
