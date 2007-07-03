@@ -650,6 +650,7 @@ enemy_still_exists:
 									do {
 										temp = rand() % 8;
 									} while (temp == 3);
+									soundQueue[temp] = weapons[temp3].sound;
 								}
 								
 								tempPos = weapons[temp3].max;
@@ -830,7 +831,7 @@ enemy_still_exists:
 						do {
 							temp = rand() % 8;
 						} while (temp == 3);
-						soundQueue[temp] = randomEnemyLaunchSounds[(rand() % 3) + 1];
+						soundQueue[temp] = randomEnemyLaunchSounds[(rand() % 3)];
 						
 						if (enemy[i].launchspecial == 1
 							&& enemy[i].linknum < 100)
