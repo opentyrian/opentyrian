@@ -5666,7 +5666,7 @@ item_screen_start:
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
-			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9 - 1]].mpwr * 2, 2, 13);
+			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9]-1].mpwr * 2, 2, 13);
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
@@ -5936,9 +5936,9 @@ item_screen_start:
 					{
 						if (mouseY > 100)
 						{
-							mouseCursor = 3;
-						} else {
 							mouseCursor = 2;
+						} else {
+							mouseCursor = 1;
 						}
 					}
 

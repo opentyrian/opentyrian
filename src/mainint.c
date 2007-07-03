@@ -810,26 +810,6 @@ JE_word JE_powerLevelCost( JE_word base, JE_byte level )
 
 JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 {
-	/* DEBUG!
-	static int once = 1;
-	if (once)
-	{
-		FILE *debug;
-		int i;
-
-		once = 0;
-
-		debug = fopen("ship_cost.txt", "w");
-		for (i = 0; i <= SHIP_NUM; i++)
-		{
-			fprintf(debug, "%d-%s: %d\n", i, ships[i].name, ships[i].cost);
-		}
-		fclose(debug);
-	}
-
-
-	printf("COSTOF: itemType: %d, itemNum: %d\n", itemType, itemNum);
-	*/
 	switch (itemType)
 	{
 		case 2:
@@ -1635,7 +1615,7 @@ void JE_inGameDisplays( void )
 
 void JE_mainKeyboardInput( void )
 {
-	/* DEBUG!
+	/* DEBUG!*/
 	if (keysactive[SDLK_PAGEUP])
 	{
 		levelTimer = TRUE;
@@ -1643,7 +1623,7 @@ void JE_mainKeyboardInput( void )
 		endLevel = TRUE;
 		levelEnd = 40;
 	}
-	*/
+	/**/
 	STUB(JE_mainKeyboardInput);
 }
 
