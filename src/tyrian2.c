@@ -2726,11 +2726,14 @@ new_game:
 
 								for (temp = 0; temp < 9; temp++)
 								{
+									char buf[256];
+
 									JE_readCryptLn(lvlFile, s);
 
-									strcat(strcpy(s, s + 8), " ");
+									sprintf(buf, "%s ", s+8);
+									/*strcat(strcpy(s, s + 8), " ");*/
 									temp2 = 0;
-									while (JE_getNumber(s, &itemAvail[temp][temp2]))
+									while (JE_getNumber(buf, &itemAvail[temp][temp2]))
 									{
 										temp2++;
 									}
@@ -5237,9 +5240,9 @@ void JE_itemScreen( void )
 		temp = pItemsBack2[pItemButtonMap[x] - 1];
 		temp2 = 0;
 
-		for (y = 0; y < itemAvailMax[itemAvailMap[x]]; y++)
+		for (y = 0; y < itemAvailMax[itemAvailMap[x]-1]; y++)
 		{
-			if (itemAvail[itemAvailMap[x]][y] == temp)
+			if (itemAvail[itemAvailMap[x]-1][y] == temp)
 			{
 				temp2 = 1;
 			}
@@ -5247,8 +5250,8 @@ void JE_itemScreen( void )
 
 		if (temp2 == 0)
 		{
-			itemAvailMax[itemAvailMap[x]]++;
-			itemAvail[itemAvailMap[x]][itemAvailMax[itemAvailMap[x]]] = temp;
+			itemAvailMax[itemAvailMap[x]-1]++;
+			itemAvail[itemAvailMap[x]-1][itemAvailMax[itemAvailMap[x]-1]-1] = temp;
 		}
 	}
 
@@ -5304,7 +5307,7 @@ item_screen_start:
 			{
 				for (temp = 0; temp < itemAvailMax[x] - 1; temp++)
 				{
-					for (temp2 = temp+1; temp2 < itemAvailMax[x]; temp2++)
+					for (temp2 = temp; temp2 < itemAvailMax[x]; temp2++)
 					{
 						if (itemAvail[x][temp] == 0 || (itemAvail[x][temp] > itemAvail[x][temp2] && itemAvail[x][temp2] != 0))
 						{
@@ -5490,17 +5493,16 @@ item_screen_start:
 		if (curMenu == 4)
 		{
 			/* Move cursor until we hit either "Done" or a weapon the player can afford */
-			/* DEBUG! printf("curSel1: %d -- curSel4: %d\n", curSel[1], curSel[4]); */
-			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]]][curSel[4]]) > score)
+			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2]) > score)
 			{
 				curSel[4] += lastDirection;
-				if (curSel[4] <= 1)
+				if (curSel[4] < 1)
 				{
 					curSel[4] = menuChoices[4];
 				}
 				if (curSel[4] > menuChoices[4])
 				{
-					curSel[4] = 0;
+					curSel[4] = 1;
 				}
 			}
 
@@ -5510,7 +5512,7 @@ item_screen_start:
 				pItems[pItemButtonMap[curSel[1]-1] - 1] = pItemsBack[pItemButtonMap[curSel[2]-1] - 1];
 			} else {
 				/* Otherwise display the selected weapon */
-				pItems[pItemButtonMap[curSel[1]-1] - 1] = itemAvail[itemAvailMap[curSel[1]-1]][curSel[4]-1];
+				pItems[pItemButtonMap[curSel[1]-1] - 1] = itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2];
 			}
 
 			/* Get power level info for front and rear weapons */
@@ -5524,7 +5526,7 @@ item_screen_start:
 				}
 
 				/* JE: Only needed if change */
-				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-1]][curSel[5]-1]);
+				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[5]-2]);
 
 				leftPower  = portPower[curSel[1] - 2] > 1; /* Can downgrade */
 				rightPower = portPower[curSel[1] - 2] < 11; /* Can upgrade */
@@ -5545,15 +5547,15 @@ item_screen_start:
 			temp2 = pItems[pItemButtonMap[curSel[1]-2]-1]; /* get index into pItems for current submenu  */
 
 			/* Iterate through all submenu options */
-			for (tempW = 1; tempW <= menuChoices[curMenu]-1; tempW++)
+			for (tempW = 1; tempW < menuChoices[curMenu]; tempW++)
 			{
 				tempY = 40 + (tempW-1) * 26; /* Calculate y position */
 
+				/* Is this a item or None/DONE? */
 				if (tempW < menuChoices[4] - 1) 
 				{
 					/* Get base cost for choice */
-					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]]][tempW-1]);
-					/* DEBUG! printf("%d\n", tempW3);*/
+					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]);
 				} else {
 					/* "None" is free :) */
 					tempW3 = 0;
@@ -5566,7 +5568,7 @@ item_screen_start:
 					temp4 = 0;
 				}
 
-				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1];
+				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]; /* Item ID */
 				switch (curSel[1]-1)
 				{
 					case 1: /* ship */
@@ -5606,7 +5608,7 @@ item_screen_start:
 				JE_getShipInfo();
 
 				/* On-Ship item bar */
-				if (temp == pItemsBack[pItemButtonMap[curSel[1]] - 1] && temp != 0 && tempW != menuChoices[curMenu]-1)
+				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu])
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
 					JE_drawShape2(298, tempY+2, 247, shapes9);
@@ -5619,7 +5621,7 @@ item_screen_start:
 				JE_textShade(185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
 
 				/* Draw icon if not None or DONE */
-				if (tempW < menuChoices[curMenu]-1)
+				if (tempW < menuChoices[curMenu])
 				{
 					JE_drawItem(curSel[1]-1, temp, 160, tempY-4);
 				}
@@ -7624,7 +7626,7 @@ void JE_menuFunction( JE_byte select )
 	case 4:
 		if (curSel[4] < menuChoices[4] && robertWeird)
 		{
-			tempPowerLevel[curSel[4] - 1] = portPower[curSel[1] - 2];
+			tempPowerLevel[curSel[4] - 2] = portPower[curSel[1] - 2];
 			curSel[4] = menuChoices[4];
 		} else {
 			if (curSel[4] == menuChoices[4] && !robertWeird)
