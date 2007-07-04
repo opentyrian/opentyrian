@@ -174,8 +174,8 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
 	
-	s_limit = (Uint8 *)VGAScreen->pixels;
-	s_limit += VGAScreen->h * VGAScreen->w;
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
 	
 	for (p = (*shapeArray)[table][shape]; yloop < ysize; p++)
 	{
@@ -195,7 +195,7 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 			default:  /* set a pixel */
 				if (s >= s_limit)
 					{ tempScreenSeg = VGAScreen; return; }
-				if ((void *)s >= VGAScreen->pixels)
+				if ((void *)s >= tempScreenSeg->pixels)
 					*s = *p;
 				s++; xloop++;
 				break;

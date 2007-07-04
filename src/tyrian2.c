@@ -126,21 +126,20 @@ void JE_starShowVGA( void )
 	JE_byte *src;
 	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
 	
-	int y;
+	int y, delaycount_temp;
 	
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
 		
 		s = VGAScreen->pixels;
 		
-		src = VGAScreen->pixels; /*!*/
+		src = game_screen->pixels;
 		src += 24;
 		
 		if (smoothScroll != 0 && thisPlayerNum != 2)
 		{
-			while (delaycount() != 0)
-				if (delaycount() > 16) /* <MXD> time slice releaser */
-					SDL_Delay(16);     /*       remove if causing undesired delay */
+			while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+				SDL_Delay(delaycount_temp);
 			setjasondelay(frameCountMax);
 		}
 		
@@ -860,6 +859,8 @@ void JE_main( void )
 	JE_byte *p; /* source/shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
+	
+	SDL_Surface *swapper;
 
 	char buffer[256];
 
@@ -1427,8 +1428,10 @@ debugHistCount = 1;
 lastDebugTime = SDL_GetTicks();
 /* </MXD> */
 
-level_loop:
+	tempScreenSeg = game_screen; /* side-effect of game_screen */
 
+level_loop:
+	
 	if (isNetworkGame)
 	{
 		smoothies[8] = FALSE;
@@ -1478,6 +1481,18 @@ level_loop:
 
 	if (!endLevel)
 	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
+
+		/*=======================Message Bar========================*/
+		if (textErase > 0)
+		{
+			if (--textErase == 0)
+			{
+				tempScreenSeg = VGAScreen;
+				JE_newDrawCShapeNum(OPTION_SHAPES, 36, 16, 189);
+				tempScreenSeg = game_screen; /* side-effect of game_screen */
+			}
+		}
+		
 		/* TODO */
 
 		oldMapX3Ofs = mapX3Ofs;
@@ -1496,6 +1511,11 @@ level_loop:
 	{
 		goto start_level;
 	}
+
+	/* swap the buffers for all the generic drawing functions */
+	swapper = VGAScreen;
+	VGAScreen = game_screen;
+	game_screen = swapper;
 
 
 	/* SMOOTHIES! */
@@ -2204,7 +2224,7 @@ enemy_shot_draw_overflow:
 
 	if (returnActive && enemyOnScreen == 0)
 	{
-		JE_eventJump (65535);
+		JE_eventJump(65535);
 		returnActive = FALSE;
 	}
 
@@ -2214,9 +2234,8 @@ enemy_shot_draw_overflow:
 	tempX = mouse_x;
 	tempY = mouse_y;
   
-	if (debug /** /!\ **/ || 1)
+	if (debug)
 	{
-
 		strcpy(tempStr, "");
 		for (temp = 0; temp < 9; temp++)
 		{
@@ -2224,12 +2243,12 @@ enemy_shot_draw_overflow:
 		}
 		sprintf(buffer, "SM = %s", tempStr);
 		JE_outText(30, 70, buffer, 4, 0);
-
+		
 		sprintf(buffer, "Memory left = %d", -1);
 		JE_outText(30, 80, buffer, 4, 0);
 		sprintf(buffer, "Enemies onscreen = %d", enemyOnScreen);
 		JE_outText(30, 90, buffer, 6, 0);
-
+		
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
 		sprintf(tempStr, "%2.3f", 1000.0f / ROUND(debugHist / debugHistCount));
@@ -2401,17 +2420,22 @@ enemy_shot_draw_overflow:
 	{
 		/* TODO JE_filterScreen(levelFilter, levelBrightness);*/
 	}
-
+	
+	/* swap the buffers back */
+	swapper = VGAScreen;
+	VGAScreen = game_screen;
+	game_screen = swapper;
+	
 	/** Statbar **/
 	if (statBar[0] > 0 || statBar[1] > 0)
 	{
-		/* TODO JE_doStatBar();*/
+		JE_doStatBar();
 	}
-
+	
 	JE_inGameDisplays();
-
+	
 	JE_starShowVGA();
-
+	
 	/*??*/
 	if (repause && superPause)
 	{
@@ -4402,6 +4426,7 @@ void JE_eventSystem( void )
 			break;
 		case 16:
 			JE_drawTextWindow(outputs[eventRec[eventLoc-1].eventdat-1]);
+			tempScreenSeg = game_screen; /* side-effect of game_screen */
 			soundQueue[3] = windowTextSamples[eventRec[eventLoc-1].eventdat-1];
 			break;
 		case 17: /* Ground Bottom */
@@ -7427,12 +7452,12 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
             } else {
 				JE_showVGA();
 			}
-          
+			
 			temp = useMouse;
 
 		} while (!JE_waitAction(0, FALSE)); /* JE: {Use previous framecount} */
-      
-      
+		
+		
 		if (mouseButton > 0 && useMouse)
 		{
 			if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)

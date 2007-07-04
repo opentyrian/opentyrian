@@ -179,14 +179,14 @@ void JE_drawPortConfigButtons( void )
 	{
 		if (portConfig[1] == 1)
 		{
-			tempScreenSeg = VGAScreen; /*sega000*/
+			tempScreenSeg = VGAScreenSeg;
 			JE_newDrawCShapeNum(OPTION_SHAPES, 18, 285, 44);
-			tempScreenSeg = VGAScreen; /*sega000*/
+			tempScreenSeg = VGAScreenSeg;
 			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 302, 44);
 		} else {
-			tempScreenSeg = VGAScreen; /*sega000*/
+			tempScreenSeg = VGAScreenSeg;
 			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 285, 44);
-			tempScreenSeg = VGAScreen; /*sega000*/
+			tempScreenSeg = VGAScreenSeg;
 			JE_newDrawCShapeNum(OPTION_SHAPES, 18, 302, 44);
 		}
 	}

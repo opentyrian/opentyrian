@@ -33,7 +33,7 @@
 JE_boolean mouseInstalled = TRUE;
 JE_char k;
 
-SDL_Surface *VGAScreen;
+SDL_Surface *VGAScreen, *VGAScreenSeg, *game_screen;
 Uint8 VGAScreen2Seg[320*200];
 
 /* JE: From Nortsong */
@@ -62,11 +62,13 @@ void JE_initVGA256( void )
 	{
 		initd = TRUE;
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) ||
-		   !(VGAScreen = SDL_SetVideoMode(320,200,8, SDL_SWSURFACE | SDL_HWPALETTE)))
+		   !(VGAScreen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE)))
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
 		}
+		VGAScreenSeg = VGAScreen;
+		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 	}
 
 #ifdef TARGET_GP2X
