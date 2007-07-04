@@ -6051,14 +6051,13 @@ item_screen_start:
 					/* IF (curmenu = 5) AND (cursel [2] IN [3, 4, 6, 7, 8]) */
 					if (curMenu == 4 && ( curSel[1] == 3 || curSel[1] == 4 || ( curSel[1] >= 6 && curSel[1] <= 8) ) )
 					{
+						setdelay(3);
 						JE_weaponSimUpdate();
 						JE_drawScore();
-						frameCount = 3;
 						/* JE_waitRetrace(); */
 
 						/* TODO: waitRetrace doesn't work, not sure how framecount = 3 factors in 
 						   either. this will probably need tuning */
-						setdelay(1);
 						service_SDL_events(FALSE);
 
 						if (newPal > 0)
@@ -6085,7 +6084,7 @@ item_screen_start:
 						}
 
 						JE_mouseReplace();
-						JE_waitFrameCount();
+						wait_delay();
 					} else { /* current menu is anything but weapon sim or datacube */
 
 						if (curMenu == 8) /* SYN: menu 8 is a datacube... this should never happen?! */
