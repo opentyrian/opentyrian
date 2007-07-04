@@ -5174,7 +5174,7 @@ JE_longint JE_cashLeft( void )
 	JE_word itemNum;
 
 	tempL = score;
-	itemNum = pItems[pItemButtonMap[curSel[1] - 2] - 1]; /* SYN: This might not need reindexing? */
+	itemNum = pItems[pItemButtonMap[curSel[1] - 2] - 1];
 
 	tempL -= JE_getCost(curSel[1], itemNum);
 
@@ -5522,23 +5522,23 @@ item_screen_start:
 			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2]) > score)
 			{
 				curSel[4] += lastDirection;
-				if (curSel[4] < 1)
+				if (curSel[4] < 2)
 				{
 					curSel[4] = menuChoices[4];
 				}
 				if (curSel[4] > menuChoices[4])
 				{
-					curSel[4] = 1;
+					curSel[4] = 2;
 				}
 			}
 
 			if (curSel[4] == menuChoices[4]) 
 			{
 				/* If cursor on "Done", use previous weapon */
-				pItems[pItemButtonMap[curSel[1]-1] - 1] = pItemsBack[pItemButtonMap[curSel[2]-1] - 1];
+				pItems[pItemButtonMap[curSel[1]-2]-1] = pItemsBack[pItemButtonMap[curSel[1]-2]-1];
 			} else {
 				/* Otherwise display the selected weapon */
-				pItems[pItemButtonMap[curSel[1]-1] - 1] = itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2];
+				pItems[pItemButtonMap[curSel[1]-2]-1] = itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2];
 			}
 
 			/* Get power level info for front and rear weapons */
@@ -5634,20 +5634,21 @@ item_screen_start:
 				JE_getShipInfo();
 
 				/* On-Ship item bar */
-				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu])
+				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
 					JE_drawShape2(298, tempY+2, 247, shapes9);
 				}
 
+				/* Draw DONE */
 				if (tempW == menuChoices[curMenu]-1)
 				{
 					strcpy(tempStr, miscText[13]);
 				}
 				JE_textShade(185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
 
-				/* Draw icon if not None or DONE */
-				if (tempW < menuChoices[curMenu])
+				/* Draw icon if not DONE. NOTE: None is a normal item with a blank icon. */
+				if (tempW < menuChoices[curMenu]-1)
 				{
 					JE_drawItem(curSel[1]-1, temp, 160, tempY-4);
 				}
@@ -5691,7 +5692,7 @@ item_screen_start:
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
-			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9]-1].mpwr * 2, 2, 13);
+			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9]].mpwr * 2, 2, 13);
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
@@ -8302,7 +8303,6 @@ draw_player_shot_loop_end:
 	JE_waitFrameCount();
 }
 
-/* SYN: TODO: HOLY CRAP this isn't done. I should finish it but I need to go to bed. :( */
 void JE_genItemMenu( JE_byte itemNum )
 {
 	menuChoices[4] = itemAvailMax[itemAvailMap[itemNum - 2] - 1] + 2;
