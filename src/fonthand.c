@@ -88,15 +88,19 @@ void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font )
 	}
 }
 
-void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_shortint brightness )
+void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_shortint brightness )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
-
+	Uint8 *s_limit; /* buffer boundary */
+	
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	filter <<= 4;
 
 	for (p = shape; yloop < ysize; p++)
@@ -115,7 +119,10 @@ void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 				s++; xloop++;
 				break;
 			default: /* set a pixel */
-				*s = ((*p & 0x0f) | filter) + brightness;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = ((*p & 0x0f) | filter) + brightness;
 				s++; xloop++;
 				break;
 		}
@@ -128,15 +135,19 @@ void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 	}
 }
 
-void JE_newDrawCShapeShadow( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y )
+void JE_newDrawCShapeShadow( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
-
+	Uint8 *s_limit; /* buffer boundary */
+	
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	for (p = shape; yloop < ysize; p++)
 	{
 		switch (*p)
@@ -153,7 +164,10 @@ void JE_newDrawCShapeShadow( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 				s++; xloop++;
 				break;
 			default: /* set a pixel */
-				*s = 0;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = 0;
 				s++; xloop++;
 				break;
 		}
@@ -165,15 +179,19 @@ void JE_newDrawCShapeShadow( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 	}
 }
 
-void JE_newDrawCShapeDarken( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y )
+void JE_newDrawCShapeDarken( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
-
+	Uint8 *s_limit; /* buffer boundary */
+	
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	for (p = shape; yloop < ysize; p++)
 	{
 		/* (unported) compare the screen offset to 65535, if equal do case 253 */
@@ -191,7 +209,10 @@ void JE_newDrawCShapeDarken( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 				s++; xloop++;
 				break;
 			default:  /* set a pixel */
-				*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
 				s++; xloop++;
 				break;
 		}
@@ -203,20 +224,25 @@ void JE_newDrawCShapeDarken( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 	}
 }
 
-void JE_newDrawCShapeDarkenNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
+void JE_newDrawCShapeDarkenNum( JE_byte table, JE_byte shape, int x, int y )
 {
+	shape--; /* re-index */
 	JE_newDrawCShapeDarken((*shapeArray)[table][shape], shapeX[table][shape], shapeY[table][shape], x, y);
 }
 
-void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y )
+void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
-
+	Uint8 *s_limit; /* buffer boundary */
+	
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	for (p = shape; yloop < ysize; p++)
 	{
 		switch (*p)
@@ -233,7 +259,10 @@ void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 				s++; xloop++;
 				break;
 			default:  /* set a pixel */
-				*s = (((*s & 0x0f) >> 1) | (*p & 0xf0)) + ((*p & 0x0f) >> 1);
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = (((*s & 0x0f) >> 1) | (*p & 0xf0)) + ((*p & 0x0f) >> 1);
 				s++; xloop++;
 				break;
 		}
@@ -245,21 +274,26 @@ void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wor
 	}
 }
 
-void JE_newDrawCShapeTrickNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
+void JE_newDrawCShapeTrickNum( JE_byte table, JE_byte shape, int x, int y )
 {
+	shape--; /* re-index */
 	JE_newDrawCShapeTrick((*shapeArray)[table][shape], shapeX[table][shape], shapeY[table][shape], x, y);
 }
 
-void JE_newDrawCShapeModify( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+void JE_newDrawCShapeModify( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 	JE_byte temp;
-
+	
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	filter <<= 4;
 
 	for (p = shape; yloop < ysize; p++)
@@ -288,7 +322,10 @@ void JE_newDrawCShapeModify( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 					temp = 0x0f;
 				}
 				temp >>= 1;
-				*s = (((*s & 0x0f) >> 1) | filter) + temp;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = (((*s & 0x0f) >> 1) | filter) + temp;
 				s++; xloop++;
 				break;
 		}
@@ -300,21 +337,26 @@ void JE_newDrawCShapeModify( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 	}
 }
 
-void JE_newDrawCShapeModifyNum( JE_byte table, JE_byte shape, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+void JE_newDrawCShapeModifyNum( JE_byte table, JE_byte shape, int x, int y, JE_byte filter, JE_byte brightness )
 {
+	shape--; /* re-index */
 	JE_newDrawCShapeModify((*shapeArray)[table][shape], shapeX[table][shape], shapeY[table][shape], x, y, filter, brightness);
 }
 
-void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 	JE_byte temp;
-
+	
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	filter <<= 4;
 
 	for (p = shape; yloop < ysize; p++)
@@ -342,7 +384,10 @@ void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 				{
 					temp = 0x0f;
 				}
-				*s = temp | filter;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = temp | filter;
 				s++; xloop++;
 				break;
 		}
@@ -354,20 +399,25 @@ void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, JE_wo
 	}
 }
 
-void JE_newDrawCShapeAdjustNum( JE_byte table, JE_byte shape, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+void JE_newDrawCShapeAdjustNum( JE_byte table, JE_byte shape, int x, int y, JE_byte filter, JE_byte brightness )
 {
+	shape--; /* re-index */
 	JE_newDrawCShapeAdjust((*shapeArray)[table][shape], shapeX[table][shape], shapeY[table][shape], x, y, filter, brightness);
 }
 
-void JE_newDrawCShapeBrightAndDarken( JE_byte *shape, JE_word xsize, JE_word ysize, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+void JE_newDrawCShapeBrightAndDarken( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	s = (Uint8 *)tempScreenSeg->pixels;
 	s += y * tempScreenSeg->w + x;
-
+	
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
+	
 	filter <<= 4;
 
 	for (p = shape; yloop < ysize; p++)
@@ -386,10 +436,16 @@ void JE_newDrawCShapeBrightAndDarken( JE_byte *shape, JE_word xsize, JE_word ysi
 				s++; xloop++;
 				break;
 			default:  /* set a pixel */
-				*s = ((*p & 0x0f) | filter) + brightness;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = ((*p & 0x0f) | filter) + brightness;
 				s++; xloop++;
 				s += tempScreenSeg->w; /* jump a pixel down (after incrementing x) */
-				*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= tempScreenSeg->pixels)
+					*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
 				s -= tempScreenSeg->w; /* jump back up */
 				break;
 		}

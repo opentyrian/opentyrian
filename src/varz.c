@@ -621,20 +621,20 @@ void JE_drawOptions( void )
 	option2Y = tempY + 2;
 	option2LastY = 0;
 
-	option1Ammo = options[option1Item-1].ammo;
-	option2Ammo = options[option2Item-1].ammo;
+	option1Ammo = options[option1Item].ammo;
+	option2Ammo = options[option2Item].ammo;
 
-	optionAni1Go = options[option1Item-1].option == 1;
-	optionAni2Go = options[option2Item-1].option == 1;
-	option1Stop  = options[option1Item-1].stop;
-	option1MaxX  = options[option1Item-1].opspd;
+	optionAni1Go = options[option1Item].option == 1;
+	optionAni2Go = options[option2Item].option == 1;
+	option1Stop  = options[option1Item].stop;
+	option1MaxX  = options[option1Item].opspd;
 	option1MinX  = -option1MaxX;
-	option1MaxY  = options[option1Item-1].opspd;
+	option1MaxY  = options[option1Item].opspd;
 	option1MinY  = -option1MaxY;
-	option2Stop  = options[option2Item-1].stop;
-	option2MaxX  = options[option2Item-1].opspd;
+	option2Stop  = options[option2Item].stop;
+	option2MaxX  = options[option2Item].opspd;
 	option2MinX  = -option2MaxX;
-	option2MaxY  = options[option2Item-1].opspd;
+	option2MaxY  = options[option2Item].opspd;
 	option2MinY  = -option2MaxY;
 
 	if (option1Ammo > 0)
@@ -663,7 +663,7 @@ void JE_drawOptions( void )
 	option2AmmoRechargeWaitMax = (105 - option2Ammo) * 4;
 	option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
 
-	if (tempScreenSeg == VGAScreen->pixels)
+	if (tempScreenSeg == VGAScreen)
     {
 		if (option1Draw > 0)
 		{
@@ -685,20 +685,20 @@ void JE_drawOptions( void )
 	}
 
 	temp_surface = tempScreenSeg;
-	if (options[option1Item-1].icongr > 0)
+	if (options[option1Item].icongr > 0)
 	{
-		JE_newDrawCShapeNum(OPTION_SHAPES, options[option1Item-1].icongr, 284, option1Draw);
+		JE_newDrawCShapeNum(OPTION_SHAPES, options[option1Item].icongr, 284, option1Draw);
 	}
 	tempScreenSeg = temp_surface;
-	if (options[option2Item-1].icongr > 0)
+	if (options[option2Item].icongr > 0)
 	{
-		JE_newDrawCShapeNum(OPTION_SHAPES, options[option2Item-1].icongr, 284, option2Draw);
+		JE_newDrawCShapeNum(OPTION_SHAPES, options[option2Item].icongr, 284, option2Draw);
 	}
 	tempScreenSeg = temp_surface;
 
 	if (option1Draw > 0)
 	{
-		if (tempScreenSeg == VGAScreen)
+		if (tempScreenSeg == VGAScreenSeg)
 		{
 			/* TODO JE_barDraw(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
 		} else {
@@ -707,7 +707,7 @@ void JE_drawOptions( void )
 	}
 	if (option2Draw > 0)
 	{
-		if (tempScreenSeg == VGAScreen)
+		if (tempScreenSeg == VGAScreenSeg)
 		{
 			/* TODO JE_barDraw(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
 		} else {

@@ -65,7 +65,7 @@ void JE_drawTextWindow( char *text )
 	tempScreenSeg = VGAScreen; /*sega000*/
 	if (textErase > 0)
 	{
-		JE_newDrawCShapeNum(OPTION_SHAPES, 36, 16, 189);
+		JE_newDrawCShapeNum(OPTION_SHAPES, 37, 16, 189);
 	}
 	textErase = 100;
 	tempScreenSeg = VGAScreen; /*sega000*/
@@ -180,14 +180,14 @@ void JE_drawPortConfigButtons( void )
 		if (portConfig[1] == 1)
 		{
 			tempScreenSeg = VGAScreenSeg;
-			JE_newDrawCShapeNum(OPTION_SHAPES, 18, 285, 44);
-			tempScreenSeg = VGAScreenSeg;
-			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 302, 44);
-		} else {
-			tempScreenSeg = VGAScreenSeg;
 			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 285, 44);
 			tempScreenSeg = VGAScreenSeg;
-			JE_newDrawCShapeNum(OPTION_SHAPES, 18, 302, 44);
+			JE_newDrawCShapeNum(OPTION_SHAPES, 20, 302, 44);
+		} else {
+			tempScreenSeg = VGAScreenSeg;
+			JE_newDrawCShapeNum(OPTION_SHAPES, 20, 285, 44);
+			tempScreenSeg = VGAScreenSeg;
+			JE_newDrawCShapeNum(OPTION_SHAPES, 19, 302, 44);
 		}
 	}
 }
@@ -1565,7 +1565,7 @@ void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 	  shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
 	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1],
 	  shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
-	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26 - 1, x, y, filter, brightness);
+	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, filter, brightness);
 }
 
 void JE_handleChat( void )

@@ -1488,7 +1488,7 @@ level_loop:
 			if (--textErase == 0)
 			{
 				tempScreenSeg = VGAScreen;
-				JE_newDrawCShapeNum(OPTION_SHAPES, 36, 16, 189);
+				JE_newDrawCShapeNum(OPTION_SHAPES, 37, 16, 189);
 				tempScreenSeg = game_screen; /* side-effect of game_screen */
 			}
 		}
@@ -1921,7 +1921,7 @@ level_loop:
 
 				if (tempSpecial)
 				{
-					JE_newDrawCShapeTrickNum(OPTION_SHAPES, tempW - 60000 - 1, tempShotX+1, tempShotY);
+					JE_newDrawCShapeTrickNum(OPTION_SHAPES, tempW - 60000, tempShotX+1, tempShotY);
 					tempX2 = shapeX[OPTION_SHAPES][tempW - 60000 - 1] >> 1;
 					tempY2 = shapeY[OPTION_SHAPES][tempW - 60000 - 1] >> 1;
 				} else {
@@ -3453,7 +3453,7 @@ void JE_titleScreen( JE_boolean animate )
 					temp = 4;
 				}
 
-				JE_newDrawCShapeNum(PLANET_SHAPES, 146, 11, temp);
+				JE_newDrawCShapeNum(PLANET_SHAPES, 147, 11, temp);
 
 
 				memcpy(colors2, colors, sizeof(colors));
@@ -3479,7 +3479,7 @@ void JE_titleScreen( JE_boolean animate )
 						setjasondelay(2);
 						memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 
-						JE_newDrawCShapeNum(PLANET_SHAPES, 146, 11, temp);
+						JE_newDrawCShapeNum(PLANET_SHAPES, 147, 11, temp);
 
 						JE_showVGA();
 						wait_delay();
@@ -5390,8 +5390,8 @@ item_screen_start:
 		{
 			for (x = 1; x <= cubeMax; x++)
 			{
-				JE_newDrawCShapeDarkenNum(OPTION_SHAPES, 34, 190 + x*18 + 2, 37+1);
-				JE_newDrawCShapeNum(OPTION_SHAPES, 34, 190 + x*18, 37);
+				JE_newDrawCShapeDarkenNum(OPTION_SHAPES, 35, 190 + x*18 + 2, 37+1);
+				JE_newDrawCShapeNum(OPTION_SHAPES, 35, 190 + x*18, 37);
 			}
 		}
 
@@ -5750,7 +5750,7 @@ item_screen_start:
 						break;
 				}
 
-				JE_newDrawCShapeNum(OPTION_SHAPES, temp - 1, tempW, tempW2);
+				JE_newDrawCShapeNum(OPTION_SHAPES, temp, tempW, tempW2);
 
 				temp = pItems[6 - 1];
 
@@ -5763,20 +5763,20 @@ item_screen_start:
 
 				if (pItems[1 - 1] > 0)
 				{
-					temp = tyrian2_weapons[pItems[1 - 1] - 1] - 1;
+					temp = tyrian2_weapons[pItems[1 - 1] - 1];
 					temp2 = frontWeaponList[pItems[1 - 1] - 1] - 1;
 					JE_newDrawCShapeNum(WEAPON_SHAPES, temp, frontWeaponX[temp2]+1, frontWeaponY[temp2]);
 				}
 				if (pItems[2 - 1] > 0)
 				{
-					temp = tyrian2_weapons[pItems[2-1] - 1] - 1;
+					temp = tyrian2_weapons[pItems[2-1] - 1];
 					temp2 = rearWeaponList[pItems[2-1] - 1] - 1;
 					JE_newDrawCShapeNum(WEAPON_SHAPES, temp, rearWeaponX[temp2], rearWeaponY[temp2]);
 				}
 
 				JE_drawItem(6, pItems[4-1], 3, 84);
 				JE_drawItem(7, pItems[5-1], 129, 84);
-				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27 - 1, 28, 23, 15, shields[pItems[10-1]].mpwr - 10);
+				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[10-1]].mpwr - 10);
 			}
 		}
 
@@ -5794,7 +5794,7 @@ item_screen_start:
 			menuChoices[7] = cubeMax + 2;
 			JE_bar(1, 1, 145, 170, 0);
 
-			JE_newDrawCShapeNum(OPTION_SHAPES, 21 - 1, 1, 1); /* Portrait area background */
+			JE_newDrawCShapeNum(OPTION_SHAPES, 21, 1, 1); /* Portrait area background */
 
 			if (curMenu == 7)
 			{
@@ -5867,7 +5867,7 @@ item_screen_start:
 
 			if (currentFaceNum > 0)
 			{
-				JE_newDrawCShapeNum(FACE_SHAPES, currentFaceNum - 1, faceX, faceY);
+				JE_newDrawCShapeNum(FACE_SHAPES, currentFaceNum, faceX, faceY);
 			}
 
 			lastSelect = curSel[7];
@@ -6046,7 +6046,7 @@ item_screen_start:
 					if (curMenu == 7 && curSel[7] < menuChoices[7])
 					{
 						/* Draw flashy cube */
-						JE_newDrawCShapeModifyNum(OPTION_SHAPES, 26 - 1, 166, 38 + (curSel[7] - 2) * 28, 13, col);
+						JE_newDrawCShapeModifyNum(OPTION_SHAPES, 26, 166, 38 + (curSel[7] - 2) * 28, 13, col);
 					}
 
 					/* IF (curmenu = 5) AND (cursel [2] IN [3, 4, 6, 7, 8]) */
@@ -7075,7 +7075,7 @@ void JE_updateNavScreen( void )
 		JE_drawPlanet(mapOrigin - 1);
 	}
 
-	JE_newDrawCShapeNum(OPTION_SHAPES, 29 - 1, 0, 0);
+	JE_newDrawCShapeNum(OPTION_SHAPES, 29, 0, 0);
 
 	if (curSel[3] < menuChoices[3])
 	{
@@ -7266,17 +7266,17 @@ void JE_drawPlanet( JE_byte planetNum )
 {
 	JE_integer tempX, tempY, tempZ;
 
-	tempZ = PGR[planetNum] - 1;
-	tempX = planetX[planetNum] + 66 - tempNavX - shapeX[PLANET_SHAPES][tempZ] / 2;
-	tempY = planetY[planetNum] + 85 - tempNavY - shapeY[PLANET_SHAPES][tempZ] / 2;
+	tempZ = PGR[planetNum];
+	tempX = planetX[planetNum] + 66 - tempNavX - shapeX[PLANET_SHAPES][tempZ-1] / 2;
+	tempY = planetY[planetNum] + 85 - tempNavY - shapeY[PLANET_SHAPES][tempZ-1] / 2;
 
-	if (tempX > -7 && tempX + shapeX[PLANET_SHAPES][tempZ] < 170 && tempY > 0 && tempY < 160)
+	if (tempX > -7 && tempX + shapeX[PLANET_SHAPES][tempZ-1] < 170 && tempY > 0 && tempY < 160)
 	{
 		if (PAni[planetNum])
 		{
 			tempZ += planetAni;
 		}
-		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
+		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ-1], shapeX[PLANET_SHAPES][tempZ-1], shapeY[PLANET_SHAPES][tempZ-1], tempX + 3, tempY + 3);
 		JE_newDrawCShapeNum(PLANET_SHAPES, tempZ, tempX, tempY);
 	}
 }
@@ -7419,7 +7419,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 			/*scanCode = 0;
 			k = 0;*/
 
-			JE_newDrawCShapeNum(OPTION_SHAPES, 36 - 1, 50, 50);
+			JE_newDrawCShapeNum(OPTION_SHAPES, 36, 50, 50);
 			JE_textShade(70, 60, miscText[29 - 1], 0, 5, FULL_SHADE);
 			JE_helpBox(70, 90, miscText[30 + useMouse - 1], 30);
 
@@ -7981,7 +7981,7 @@ void JE_weaponSimUpdate( void )
 			sprintf(buf, "%d", downgradeCost);
 			JE_outText(26, 137, buf, 1, 4);
 		} else {
-			JE_newDrawCShapeNum(OPTION_SHAPES, 14 - 1, 24, 149);
+			JE_newDrawCShapeNum(OPTION_SHAPES, 14, 24, 149);
 		}
 
 		if (rightPower)
@@ -7990,13 +7990,13 @@ void JE_weaponSimUpdate( void )
 			{
 				sprintf(buf, "%d", upgradeCost);
 				JE_outText(108, 137, buf, 7, 4);
-				JE_newDrawCShapeNum(OPTION_SHAPES, 15 - 1, 119, 149);
+				JE_newDrawCShapeNum(OPTION_SHAPES, 15, 119, 149);
 			} else {
 				sprintf(buf, "%d", upgradeCost);
 				JE_outText(108, 137, buf, 1, 4);
 			}
 		} else {
-			JE_newDrawCShapeNum(OPTION_SHAPES, 15 - 1, 119, 149);
+			JE_newDrawCShapeNum(OPTION_SHAPES, 15, 119, 149);
 		}
 
 		if (curSel[1] == 3)
@@ -8019,7 +8019,7 @@ void JE_weaponSimUpdate( void )
 	} else {
 		leftPower = FALSE;
 		rightPower = FALSE;
-		JE_newDrawCShapeNum(OPTION_SHAPES, 18 - 1, 20, 146);
+		JE_newDrawCShapeNum(OPTION_SHAPES, 18, 20, 146);
 	}
 
 	JE_drawItem(1, pItems[12 - 1], PX - 5, PY - 7);
@@ -8249,7 +8249,7 @@ draw_player_shot_loop_end:
 		}
 	}
 	
-	JE_newDrawCShapeNum(OPTION_SHAPES, 13 - 1, 0, 0);
+	JE_newDrawCShapeNum(OPTION_SHAPES, 13, 0, 0);
 	
 	
 	/*========================Power Bar=========================*/
