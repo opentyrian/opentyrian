@@ -6055,10 +6055,6 @@ item_screen_start:
 						setdelay(3);
 						JE_weaponSimUpdate();
 						JE_drawScore();
-						/* JE_waitRetrace(); */
-
-						/* TODO: waitRetrace doesn't work, not sure how framecount = 3 factors in 
-						   either. this will probably need tuning */
 						service_SDL_events(FALSE);
 
 						if (newPal > 0)

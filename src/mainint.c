@@ -21,6 +21,7 @@
 
 #include "backgrnd.h"
 #include "config.h"
+#include "editship.h"
 #include "episodes.h"
 #include "error.h"
 #include "fonthand.h"
@@ -28,6 +29,7 @@
 #include "helptext.h"
 #include "joystick.h"
 #include "keyboard.h"
+#include "loudness.h"
 #include "network.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -1615,16 +1617,233 @@ void JE_inGameDisplays( void )
 
 void JE_mainKeyboardInput( void )
 {
-	/* DEBUG!*/
-	if (keysactive[SDLK_PAGEUP])
+	tempB = JE_gammaCheck();
+
+	/* { Network Request Commands } */
+
+	if (!isNetworkGame || gameQuitDelay == 0)
 	{
-		levelTimer = TRUE;
-		levelTimerCountdown = 0;
-		endLevel = TRUE;
-		levelEnd = 40;
+		/* { Edited Ships } for Player 1 */
+		if (extraAvail && keysactive[SDLK_TAB] && !isNetworkGame && !superTyrian)
+		{
+			for (x = 0; x < 10; x++)
+			{
+				if (0 /* keyactive[x+1] The number keys, TODO: doesn't exactly work like that under SDL */)
+				{
+					/* TODO */
+				}
+			}
+		}
+
+		/* for Player 2 */
+		if (extraAvail && keysactive[SDLK_CAPSLOCK] && !isNetworkGame && !superTyrian)
+		{
+			for (x = 0; x < 10; x++)
+			{
+				if (0 /* keyactive[x+1] The number keys, TODO: doesn't exactly work like that under SDL */)
+				{
+					/* TODO */
+				}
+			}
+		}
 	}
-	/**/
-	STUB(JE_mainKeyboardInput);
+
+	/* { In-Game Help } */
+	if (keysactive[SDLK_F1])
+	{
+		if (isNetworkGame)
+		{
+			helpRequest = TRUE;
+		} else {
+			JE_inGameHelp();
+			skipStarShowVGA = TRUE;
+		}
+	}
+
+	/* {!Activate Nort Ship!} */
+	if (keysactive[SDLK_F2] && keysactive[SDLK_F4] && keysactive[SDLK_F6] && keysactive[SDLK_F7] &&
+	    keysactive[SDLK_F9] /*&& keysactive[43] missing from scancode table??? TODO*/ && keysactive[SDLK_SLASH])
+	{
+		if (isNetworkGame)
+		{
+			nortShipRequest = TRUE;
+		} else {
+			pItems[11] = 12;
+			pItems[10] = 13;
+			pItems[1] = 36;
+			pItems[2] = 37;
+			shipGr = 1;
+		}
+	}
+
+	/* {Cheating} */
+	if (!isNetworkGame && !twoPlayerMode && !superTyrian && superArcadeMode == 0)
+	{
+		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && keysactive[SDLK_F6])
+		{
+			youAreCheating = !youAreCheating;
+			keysactive[SDLK_F2];
+		}
+
+		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && (keysactive[SDLK_F4] || keysactive[SDLK_F5]) && !superTyrian)
+		{
+			armorLevel = 0;
+			armorLevel2 = 0;
+			youAreCheating = !youAreCheating;
+			JE_drawTextWindow(miscText[62]);
+		}
+
+		if (constantPlay && keysactive[SDLK_c] && !superTyrian && superArcadeMode == 0)
+		{
+			youAreCheating = !youAreCheating;
+			keysactive[SDLK_c] = FALSE;
+		}
+	}
+
+	if (superTyrian)
+	{
+		youAreCheating = FALSE;
+	}
+
+	/* {Personal Commands} */
+
+	/* {DEBUG} */
+	if (keysactive[SDLK_F10] && keysactive[SDLK_BACKSPACE])
+	{
+		keysactive[SDLK_F10] = FALSE;
+		debug = !debug;
+
+		debugHist = 1;
+		debugHistCount = 1;
+
+		/* YKS: clock ticks since midnight replaced by SDL_GetTicks */
+		lastDebugTime = SDL_GetTicks();
+	}
+
+	/* {CHEAT-SKIP LEVEL} */
+	if (keysactive[SDLK_F2] && keysactive[SDLK_F6] && (keysactive[SDLK_F7] || keysactive[SDLK_F8]) &&
+	    !keysactive[SDLK_F9] && !superTyrian && superArcadeMode == 0)
+	{
+		if (isNetworkGame)
+		{
+			skipLevelRequest = TRUE;
+		} else {
+			levelTimer = TRUE;
+			levelTimerCountdown = 0;
+			endLevel = TRUE;
+			levelEnd = 40;
+		}
+	}
+
+	/* { Pause Game } */
+	if (keysactive[SDLK_p])
+	{
+		if (isNetworkGame)
+		{
+			pauseRequest = TRUE;
+		} else {
+			JE_pauseGame();
+		}
+	}
+
+	/* {In-Game Setup} */
+	if (keysactive[SDLK_ESCAPE])
+	{
+		yourInGameMenuRequest = TRUE;
+		if (isNetworkGame)
+		{
+			inGameMenuRequest = TRUE;
+		} else {
+			JE_doInGameSetup();
+			skipStarShowVGA = TRUE;
+		}
+	}
+
+	/* {MUTE SOUND} */
+	if (keysactive[SDLK_s])
+	{
+		keysactive[SDLK_s] = FALSE;
+		soundActive = !soundActive;
+		if (soundActive)
+		{
+			JE_drawTextWindow(miscText[18]);
+		} else {
+			JE_drawTextWindow(miscText[17]);
+		}
+		JE_setNewGameVol();
+	}
+
+	/* {MUTE MUSIC} */
+	if (keysactive[SDLK_m])
+	{
+		keysactive[SDLK_m] = FALSE;
+		musicActive = !musicActive;
+		if (musicActive)
+		{
+			JE_drawTextWindow(miscText[36]);
+			JE_selectSong(2);
+		} else {
+			JE_drawTextWindow(miscText[35]);
+			JE_stopSong();
+		}
+	}
+
+	if (keysactive[SDLK_BACKSPACE])
+	{
+		/* {SCREENSHOT PAUSE} */
+		if (keysactive[SDLK_NUMLOCK])
+		{
+			superPause = !superPause;
+		}
+
+		/* {SMOOTHIES} */
+		if (keysactive[SDLK_F12] && keysactive[SDLK_SCROLLOCK])
+		{
+			for (temp = 3; temp <= 3+9; temp++)
+			{
+				if (0 /* keyactive[temp] The number keys, TODO: doesn't exactly work like that under SDL */)
+				{
+					smoothies[temp-3] = !smoothies[temp-3];
+				}
+			}
+		}
+
+		/* {CYCLE THROUGH FILTER COLORS} */
+		if (keysactive[SDLK_MINUS])
+		{
+			if (levelFilter == -99)
+			{
+				levelFilter = 0;
+			} else {
+				levelFilter++;
+				if (levelFilter == 16)
+				{
+					levelFilter = -99;
+				}
+			}
+		}
+
+		/* {HYPER-SPEED} */
+		if (keysactive[SDLK_1])
+		{
+			fastPlay++;
+			if (fastPlay > 2)
+			{
+				fastPlay = 0;
+			}
+			keysactive[SDLK_1] = FALSE;
+			JE_setNewGameSpeed();
+		}
+
+		/* {IN-GAME RANDOM MUSIC SELECTION} */
+		if (keysactive[SDLK_SCROLLOCK])
+		{
+			tempW = (rand() % MUSIC_NUM)+1;
+			JE_playSong(tempW);
+		}
+	}
+
+	newkey = FALSE;
 }
 
 void JE_pauseGame( void )
