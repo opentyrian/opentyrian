@@ -200,7 +200,7 @@ void JE_loadSndFile( void )
 	fclose(fi);
 
 	/* SYN: Loading offsets into VOICES.SND */
-	if (tyrianXmas) 
+	if (tyrianXmas)
 	{
 		JE_resetFile(&fi, "voicesc.snd");
 	} else {
@@ -303,7 +303,7 @@ void JE_playSampleNum( JE_byte samplenum )
 
 void JE_calcFXVol( void )
 {
-	fxPlayVol = (fxVolume - 1) >> 5; 
+	fxPlayVol = (fxVolume - 1) >> 5;
 }
 
 void JE_setTimerInt( void )

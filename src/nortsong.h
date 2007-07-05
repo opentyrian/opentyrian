@@ -115,7 +115,7 @@ char *JE_hexa2 (JE_byte data );
 char *JE_hexa4 (JE_word data );
 
 
-/* SYN: This stuff is probably unneeded, as it deals with sound hardware issues abstracted 
+/* SYN: This stuff is probably unneeded, as it deals with sound hardware issues abstracted
    away by SDL. Pascal code is left here as reference, just in case we want this stuff
    later.
 

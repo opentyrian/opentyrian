@@ -177,18 +177,18 @@ void JE_drawShape2( int x, int y, int s_, JE_byte *shape )
 	JE_byte *p; /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
-	
+
 	int i;
-	
+
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
-	
+
 	s_limit = (Uint8 *)VGAScreen->pixels;
 	s_limit += VGAScreen->h * VGAScreen->w;
-	
+
 	p = shape;
 	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
-	
+
 	while (*p != 0x0f)
 	{
 		s += *p & 0x0f;
@@ -217,18 +217,18 @@ void JE_superDrawShape2( int x, int y, int s_, JE_byte *shape )
 	JE_byte *p; /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
-	
+
 	int i;
-	
+
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
-	
+
 	s_limit = (Uint8 *)VGAScreen->pixels;
 	s_limit += VGAScreen->h * VGAScreen->w;
-	
+
 	p = shape;
 	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
-	
+
 	while (*p != 0x0f)
 	{
 		s += *p & 0x0f;
@@ -257,18 +257,18 @@ void JE_drawShape2Shadow( int x, int y, int s_, JE_byte *shape )
 	JE_byte *p; /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
-	
+
 	int i;
-	
+
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
-	
+
 	s_limit = (Uint8 *)VGAScreen->pixels;
 	s_limit += VGAScreen->h * VGAScreen->w;
-	
+
 	p = shape;
 	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
-	
+
 	while (*p != 0x0f)
 	{
 		s += *p & 0x0f;
@@ -392,7 +392,7 @@ JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 /* TODO */
 
 
-/* 
+/*
 these are all located in editship.c
 
 void JE_startNewShape( void )

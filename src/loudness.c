@@ -48,7 +48,7 @@ int freq = 11025 * OUTPUT_QUALITY;
 
 /* SYN: TODO: Okay, some sound issues and what I'm going to do about them:
 	- sfx are garbled when music is playing. Something is wrong with my mixing. Fix it.
-	- music speed is wrong. This seems to be corrected by having a larger music buffer; for latency issues, 
+	- music speed is wrong. This seems to be corrected by having a larger music buffer; for latency issues,
 	  this means I need a seperate buffer to play music into that is refilled as needed and copied in smaller
 	  pieces to the main output buffer.
 */
@@ -62,24 +62,24 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 {
 	SDL_AudioSpec plz, got;
 	int i = 0;
-	
+
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
 	{
 		printf("Failed to initialize audio: %s\n", SDL_GetError());
 		noSound = TRUE;
 		return;
 	}
-	
+
 	sound_init_state = TRUE;
-	
+
 	soundmutex = SDL_CreateMutex();
-	
+
 	if (soundmutex == NULL)
 	{
 		printf("Couldn't create mutex! Oh noes!\n");
 		exit(-1);
 	}
-	
+
 	/*final_audio_buffer = NULL;
 	audio_pos = NULL;*/
 	for (i = 0; i < SFX_CHANNELS; i++)
@@ -87,26 +87,26 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 		channel_buffer[i] = channel_pos[i] = NULL;
 		channel_len[i] = 0;
 	}
-	
+
 	opl_init();
-	
+
 	plz.freq = freq;
 	plz.format = AUDIO_S16SYS;
 	plz.channels = 1;
 	plz.samples = 512;
 	plz.callback = audio_cb;
 	plz.userdata = soundmutex;
-	
+
 	printf("\tRequested SDL frequency: %d; SDL buffer size: %d\n", plz.freq, plz.samples);
-	
-	if ( SDL_OpenAudio(&plz, &got) < 0 ) 
+
+	if ( SDL_OpenAudio(&plz, &got) < 0 )
 	{
 		printf("\tWARNING: Failed to initialize SDL audio. Bailing out.\n");
 		exit(1);
 	}
-	
+
 	printf("\tObtained  SDL frequency: %d; SDL buffer size: %d\n", got.freq, got.samples);
-	
+
 	SDL_PauseAudio(0);
 }
 
@@ -135,14 +135,14 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	music_pos = (SAMPLE_TYPE*) sdl_buffer;
 
 	/* SYN: Simulate the fm synth chip */
-	while(remaining > 0) 
+	while(remaining > 0)
 	{
-		while(ct < 0) 
+		while(ct < 0)
 		{
 			ct += freq;
 			lds_update(); /* SYN: Do I need to use the return value for anything here? */
 		}
-		/* SYN: Okay, about the calculations below. I still don't 100% get what's going on, but... 
+		/* SYN: Okay, about the calculations below. I still don't 100% get what's going on, but...
 		 - freq is samples/time as output by SDL.
 		 - REFRESH is how often the play proc would have been called in Tyrian. Standard speed is
 		   70Hz, which is the default value of 70.0f
@@ -161,13 +161,13 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 
 	/* Reduce the music volume. */
 	qu = howmuch / BYTES_PER_SAMPLE;
-	for (smp = 0; smp < qu; smp++) 
+	for (smp = 0; smp < qu; smp++)
 	{
 		feedme[smp] = feedme[smp] * music_volume;
 	}
 
 	/* SYN: Mix sound channels and shove into audio buffer */
-	for (ch = 0; ch < SFX_CHANNELS; ch++) 
+	for (ch = 0; ch < SFX_CHANNELS; ch++)
 	{
 		/* SYN: Don't copy more data than is in the channel! */
 		qu = ( (Uint32) howmuch > channel_len[ch] ? (int) channel_len[ch] : howmuch); /* How many bytes to copy */
@@ -298,7 +298,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	double v = 1;
 	/* v = (vol - 0x100) / ((double) 0xe00); */ /* SYN: Convert Loudness vol to fraction) */
 
-	if (noSound) 
+	if (noSound)
 	{
 		/* no sound, so let's leave */
 		return;

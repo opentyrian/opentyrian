@@ -796,7 +796,7 @@ void JE_tyrianHalt( JE_byte code )
 	/* JE_endMusic(soundeffects); TODO */
 
 
-	if (code != 9) 
+	if (code != 9)
 	{
 		/*
 		TODO?
@@ -840,7 +840,7 @@ void JE_tyrianHalt( JE_byte code )
 void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum )
 {
 	const JE_byte soundChannel[11] /* [1..11] */ = {0, 2, 4, 4, 2, 2, 5, 5, 1, 4, 1};
-	
+
 	if (portNum <= PORT_NUM)
 	{
 		if (wpNum > 0 && wpNum <= WEAP_NUM)

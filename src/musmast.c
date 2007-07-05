@@ -26,8 +26,8 @@
 
 JE_byte songBuy;
 
-const char musicFile[MUSIC_NUM][13] = 
-{ 
+const char musicFile[MUSIC_NUM][13] =
+{
 	/*  1 */  "ASTEROI2.DAT",
 	/*  2 */  "ASTEROID.DAT",
 	/*  3 */  "BUY.DAT",
@@ -71,7 +71,7 @@ const char musicFile[MUSIC_NUM][13] =
 	/* 41 */  "TYR-BEER.DAT"   /* BEER */
 };
 
-const char musicTitle[MUSIC_NUM][48] = 
+const char musicTitle[MUSIC_NUM][48] =
 {
 	"Asteroid Dance Part 2",
 	"Asteroid Dance Part 1",

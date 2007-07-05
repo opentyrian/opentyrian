@@ -39,15 +39,15 @@
 /******** MAJOR TODO:
   SYN: High score data is stored one per save file slot. That makes 2 * 11 = 22 high scores.
   Each episode has six high scores. 6 * 4 = 24 OH SHI--
-  
+
   I have no idea what is up with this, but I'm going to have to change substantial amounts and
-  possibly partially break compatibility with the original. This will also get sorted out 
+  possibly partially break compatibility with the original. This will also get sorted out
   if/when we add support for Tyrian2000 data files, as I'll have to figure out what its save
   file format is (besides a couple kilobytes larger...).
-  
-  As it stands high scores are going to be broked for episode 4 (nevermind 5) and there's not 
+
+  As it stands high scores are going to be broked for episode 4 (nevermind 5) and there's not
   much I can do about it. *emo tear* :'(
-  
+
   I hope there aren't any other surprises like this waiting. We are using the code for v2.0,
   right? Right? :|
 */
@@ -321,14 +321,14 @@ void JE_saveGame( JE_byte slot, char *name )
 	{
 		pItems[3 - 1] = 255;
 	}
-	if (superTyrian) 
+	if (superTyrian)
 	{
 		pItems[3 - 1] = 254;
 	}
 
 	memcpy(saveFiles[slot].items, pItems, sizeof(pItems));
 
-	if (superArcadeMode > 253) 
+	if (superArcadeMode > 253)
 	{
 		pItems[3 - 1] = 0;
 	}
@@ -370,7 +370,7 @@ void JE_saveGame( JE_byte slot, char *name )
 }
 
 void JE_loadGame( JE_byte slot )
-{ 
+{
 	JE_byte temp5;
 
 	superTyrian = FALSE;
@@ -378,7 +378,7 @@ void JE_loadGame( JE_byte slot )
 	twoPlayerMode = FALSE;
 	extraGame = FALSE;
 	galagaMode = FALSE;
-  
+
 	initialDifficulty = saveFiles[slot].initialDifficulty;
 	gameHasRepeated = saveFiles[slot].gameHasRepeated;
 	twoPlayerMode = slot > 11; /* TODO: Verify this value, may need reindexing! */
@@ -391,19 +391,19 @@ void JE_loadGame( JE_byte slot )
 		onePlayerAction = TRUE;
 		superArcadeMode = 0;
 		pItems [3 - 1] = 0;
-	} 
+	}
 	else if (superArcadeMode == 254)
 	{
 		onePlayerAction = TRUE;
 		superArcadeMode = 0;
 		pItems [3 - 1] = 0;
 		superTyrian = TRUE;
-	} 
+	}
 	else if (superArcadeMode > 0)
 	{
 		onePlayerAction = TRUE;
 	}
-  
+
 	if (twoPlayerMode)
 	{
 		memcpy(pItemsPlayer2, saveFiles[slot].lastItems, sizeof(pItemsPlayer2));
@@ -432,11 +432,11 @@ void JE_loadGame( JE_byte slot )
 
 	portPower[temp] = saveFiles[slot].power[0];
 	portPower[temp] = saveFiles[slot].power[1];
-  
+
 	temp5 = saveFiles[slot].episode;
 
 	memcpy(levelName, saveFiles[slot].levelName, sizeof(levelName));
-  
+
 	if (strcmp(lastLevelName, "Completed") == 0)
 	{
 	  if (temp5 == 4)
@@ -449,7 +449,7 @@ void JE_loadGame( JE_byte slot )
 	  }
 	  /* {Increment 1-3 to 2-4.  Episode 4 goes to 1.  Episode 5 stands still.} */
 	}
-  
+
 	JE_initEpisode(temp5);
 	saveLevel = mainLevel;
 	memcpy(lastLevelName, levelName, sizeof(levelName));
@@ -468,7 +468,7 @@ void JE_initProcessorType( void )
 	background2 = TRUE;
 	displayScore = TRUE;
 
-  
+
 	switch (gameSpeed)
 	{
 	case 1:  /* Slug Mode */
@@ -528,7 +528,7 @@ void JE_setNewGameSpeed( void )
 		pentiumMode = TRUE;
 		break;
 	}
-  
+
   frameCount = frameCountMax;
   JE_resetTimerInt();
   JE_setTimerInt();
@@ -672,7 +672,7 @@ void JE_loadConfiguration( void )
 	{
 		JE_resetFile(&fi, "tyrian.cfg");
 
-		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed 
+		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
 		background2 = 0;
 		efread(&background2, 1, 1, fi);
@@ -728,7 +728,7 @@ void JE_loadConfiguration( void )
 		inputDevice1 = 0;
 		inputDevice2 = 0;
     }
-  
+
 	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
 	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
 
@@ -736,7 +736,7 @@ void JE_loadConfiguration( void )
 	musicActive = TRUE;
 
 	JE_setVol(tyrMusicVolume, fxVolume);
-  
+
 	dont_die = TRUE;
 	JE_resetFile(&fi, "tyrian.sav");
 	dont_die = FALSE;
@@ -749,7 +749,7 @@ void JE_loadConfiguration( void )
 		JE_decryptSaveTemp();
 
 		/* SYN: The original mostly blasted the save file into raw memory. However, our lives are not so
-		   easy, because the C struct is necessarily a different size. So instead we have to loop 
+		   easy, because the C struct is necessarily a different size. So instead we have to loop
 		   through each record and load fields manually. *emo tear* :'( */
 
 		p = saveTemp;
@@ -860,7 +860,7 @@ void JE_loadConfiguration( void )
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 22]);
 			} else {
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
-			}          
+			}
         }
 	}
 
@@ -983,7 +983,7 @@ void JE_saveConfiguration( void )
 
 		/* efwrite(keySettings, 1, 8, f); */
 		efwrite(keySettings, 1, sizeof(keySettings), f);
-	 
+	
 		fclose(f);
 	}
 }

@@ -29,7 +29,7 @@
 
 #define MAX_STARS 100
 
-/* These are necessary because the size of the structure has changed from the original, but we 
+/* These are necessary because the size of the structure has changed from the original, but we
    need to know the original sizes in order to find things in TYRIAN.SAV */
 #define SAVE_FILES_SIZE 2398
 #define SIZEOF_SAVEGAMETEMP SAVE_FILES_SIZE + 4 + 100

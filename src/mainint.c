@@ -2364,7 +2364,7 @@ redo:
 				}
 
 				if (*stopWaitY_ > 0)
-					(*stopWaitY_)--; 
+					(*stopWaitY_)--;
 				else {
 					*stopWaitY_ = 1;
 					if (*lastTurn2_ < 0)

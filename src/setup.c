@@ -49,7 +49,7 @@ JE_boolean repeatedFade, continuousPlay;
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
 	JE_setMousePosition(160, 100);
-	
+
 	do
 	{
 		JE_showVGA();
@@ -142,12 +142,12 @@ void JE_jukeboxGo( void )
 
 	JE_wipeKey();
 
-	do 
+	do
 	{
 		tempScreenSeg = VGAScreen; /*sega000*/
 
 		if (weirdMusic) /* TODO: Not sure what this is about, figure it out */
-		{ 
+		{
 			/*
 			IF framecount2 = 0 THEN
 			BEGIN
@@ -162,7 +162,7 @@ void JE_jukeboxGo( void )
 			END;
 			*/
 		}
-      
+
 		if (repeated && !repeatedFade)
 		{
 		  fade = TRUE;
@@ -233,7 +233,7 @@ void JE_jukeboxGo( void )
 			JE_resetTimerInt();
 			JE_setTimerInt();
 		}
-      
+
 		/* TODO: Make this stuff work */
 		/*
       joystick2;
@@ -297,7 +297,7 @@ void JE_jukeboxGo( void )
 				{
 					weirdMusic = TRUE;
 					weirdSpeed = 10;
-				} 
+				}
 				else if (weirdSpeed > 1)
 				{
 					weirdSpeed--;

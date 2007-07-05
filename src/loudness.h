@@ -42,14 +42,14 @@ extern float sample_volume;
 extern float music_volume;
 #endif
 /* SYN: The arguments to initialize are probably mostly meaningless now */
-void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror); 
+void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_byte sberror, JE_byte midierror);
 void JE_deinitialize( void );
 
 void JE_play( void );
 
 /* SYN: selectSong is called with 0 to disable the current song. Calling it with 1 will start the current song if not playing,
    or restart it if it is. */
-void JE_selectSong( JE_word value ); 
+void JE_selectSong( JE_word value );
 
 /* TODO: Some of these procs take segment and offset or other weird arguments, the signature of many of these may change
    as I make stuff more "sensible" */
@@ -57,7 +57,7 @@ void JE_selectSong( JE_word value );
 void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq);
 void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq);
 JE_word JE_sampleStatus(JE_byte chan);
-	 
+	
 void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dmahi);
 void JE_multiSampleMix( void );
 /* void JE_multiSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_byte chan, JE_byte vol); */

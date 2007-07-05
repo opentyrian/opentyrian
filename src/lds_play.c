@@ -100,8 +100,8 @@ int lds_load(JE_byte *music_location)
 
 	/* load header */
 	mode = *(pos++);
-	if ( mode > 2) 
-	{ 
+	if ( mode > 2)
+	{
 		/* Error! */
 		/* printf("Error loading music! %d\n", mode);
 		return FALSE; */
@@ -112,7 +112,7 @@ int lds_load(JE_byte *music_location)
 	tempo = *(pos++);
 	pattlen = *(pos++);
 
-	for(i = 0; i < 9; i++) 
+	for(i = 0; i < 9; i++)
 	{
 		chandelay[i] = *(pos++);;
 	}
@@ -134,7 +134,7 @@ int lds_load(JE_byte *music_location)
 		sb->mod_sr = *(pos++);
 		sb->mod_wave = *(pos++);
 		sb->car_misc = *(pos++);
-		sb->car_vol = *(pos++); 
+		sb->car_vol = *(pos++);
 		sb->car_ad = *(pos++);
 		sb->car_sr = *(pos++);
 		sb->car_wave = *(pos++);
@@ -149,7 +149,7 @@ int lds_load(JE_byte *music_location)
 		sb->car_trem = *(pos++);
 		sb->tremwait = *(pos++);
 		sb->arpeggio = *(pos++);
-		for(j = 0; j < 12; j++) 
+		for(j = 0; j < 12; j++)
 		{
 			sb->arp_tab[j] = *(pos++);
 		}
@@ -217,7 +217,7 @@ void lds_rewind(int subsong)
 	int i;
 
 	/* init all with 0 */
-	tempo_now = 3; 
+	tempo_now = 3;
 	playing = TRUE; songlooped = FALSE;
 	jumping = fadeonoff = allvolume = hardfade = pattplay = posplay = jumppos =
 	mainvolume = 0;
@@ -312,10 +312,10 @@ int lds_update( void )
 	}
 
 	/* handle notes */
-	if(!tempo_now) 
+	if(!tempo_now)
 	{
 		vbreak = FALSE;
-		for(chan = 0; chan < 9; chan++) 
+		for(chan = 0; chan < 9; chan++)
 		{
 			c = &channel[chan];
 			if(!c->packwait) {
@@ -330,9 +330,9 @@ int lds_update( void )
 					{
 						c->packwait = comlo;
 					} else {
-						if(comhi >= 0x80) 
+						if(comhi >= 0x80)
 						{
-							switch(comhi) 
+							switch(comhi)
 							{
 							case 0xff:
 								c->volcar = (((c->volcar & 0x3f) * comlo) >> 6) & 0x3f;
@@ -366,7 +366,7 @@ int lds_update( void )
 								vbreak = TRUE;
 								jumppos = comlo & maxpos;
 								jumping = 1;
-								if(jumppos < posplay) 
+								if(jumppos < posplay)
 								{
 									songlooped = TRUE;
 								}
@@ -392,7 +392,7 @@ int lds_update( void )
 								break;
 
 							case 0xf4:
-								if(!hardfade) 
+								if(!hardfade)
 								{
 									allvolume = mainvolume = comlo;
 									fadeonoff = 0;
@@ -400,7 +400,7 @@ int lds_update( void )
 								break;
 
 							case 0xf3:
-								if(!hardfade) 
+								if(!hardfade)
 								{
 									fadeonoff = comlo;
 								}
@@ -441,12 +441,12 @@ int lds_update( void )
 							 * discard the 8th one completely.
 							 */
 
-							if(transpose & 64) 
+							if(transpose & 64)
 							{
 								transp |= 128;
 							}
 
-							if(transpose & 128) 
+							if(transpose & 128)
 							{
 								sound = (comlo + transp) & maxsound;
 								high = comhi << 4;
@@ -492,10 +492,10 @@ int lds_update( void )
 		  }
 		*/
 		pattplay++;
-		if(vbreak) 
+		if(vbreak)
 		{
 		  pattplay = 0;
-		  for(i = 0; i < 9; i++) 
+		  for(i = 0; i < 9; i++)
 		  {
 			  channel[i].packpos = channel[i].packwait = 0;
 		  }
@@ -503,7 +503,7 @@ int lds_update( void )
 		} else {
 			if(pattplay >= pattlen) {
 				pattplay = 0;
-				for(i = 0; i < 9; i++) 
+				for(i = 0; i < 9; i++)
 				{
 					channel[i].packpos = channel[i].packwait = 0;
 				}
@@ -672,7 +672,7 @@ int lds_update( void )
 }
 
 void lds_playsound(int inst_number, int channel_number, int tunehigh)
-{ 
+{
   Channel		*c = &channel[channel_number];		/* current channel */
   SoundBank		*i = &soundbank[inst_number];		/* current instrument */
   Uint32		regnum = op_table[channel_number];	/* channel's OPL2 register */

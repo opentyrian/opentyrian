@@ -55,7 +55,7 @@
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 const char *opentyrian_str = "OpenTyrian";
-const char *opentyrian_menu_items[] = 
+const char *opentyrian_menu_items[] =
 {
 	"About OpenTyrian",
 	"Setup",
@@ -297,7 +297,7 @@ int main( int argc, char *argv[] )
 	} else {
 		printf("No mouse found.\n");
 	}
-	
+
 	if (tyrianXmas)
 	{
 		if (JE_getFileSize("tyrianc.shp") == 0)
@@ -338,48 +338,48 @@ int main( int argc, char *argv[] )
 		/* SYN: This code block doesn't really resemble the original, because the
 		    underlying sound code is very different. I've left out some stuff that
 		    checked hardware values and stuff here. */
-		
+
 		JE_initialize(0, 0, 0, 0, 0); /* TODO: Fix arguments */
-		
+
 		soundEffects = TRUE; /* TODO: find a real way to give this a value */
 		if (soundEffects)
 		{
 			JE_multiSampleInit(0, 0, 0, 0); /* TODO: Fix arguments */
-			
+
 			/* I don't think these messages matter, but I'll replace them with more useful stuff if I can. */
 			/*if (soundEffects == 2) printf("SoundBlaster active");
 			printf ("DSP Version ***\n");
 			printf ("SB port ***\n");
 			printf ("Interrupt ***\n");*/
-			
+
 			JE_loadSndFile();
 		}
-		
+
 	}
-	
+
 	if (recordDemo)
 	{
 		printf("Game will be recorded.\n");
 	}
-	
+
 	megaData1 = malloc(sizeof(*megaData1));
 	megaData2 = malloc(sizeof(*megaData2));
 	megaData3 = malloc(sizeof(*megaData3));
-	
+
 	newshape_init();
 	JE_loadMainShapeTables();
 	/* TODO JE_loadExtraShapes;*/  /*Editship*/
-	
+
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/
-	
+
 	JE_loadPals();
-	
+
 	SDL_LockSurface(VGAScreen);
 	JE_main();
 	SDL_UnlockSurface(VGAScreen);
-	
+
 	JE_closeVGA256();
-	
+
 	return 0;
 }

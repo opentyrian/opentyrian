@@ -93,7 +93,7 @@ DEATH    - Constant death mode.  Only useful for testing.
 NOSOUND  - Disables Sound/Music usage even if FX or Music are in the config
            file.  It tells the initialization routine to NEVER check for
            initialization and will not load the Sound Effects, saving memory
-           in SETUP.                                                                                                       
+           in SETUP.
            FM sound will still be automatically detected since I have no
            control over that.
            You can, however, select sound and music selections that would
