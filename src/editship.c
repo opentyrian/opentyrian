@@ -28,12 +28,12 @@
 #undef NO_EXTERNS
 
 
-JE_boolean extraavail;
-JE_word extrashapeofs;
+JE_boolean extraAvail;
+JE_word extraShapeOfs;
 JE_ShipsType ships;
-void * extrashapes;
-JE_word extrashapeseg;
-JE_word extrashapesize;
+void *extraShapes;
+JE_word extraShapeSeg;
+JE_word extraShapeSize;
 
 void JE_endShape( void )
 {
