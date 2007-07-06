@@ -7796,7 +7796,7 @@ void JE_menuFunction( JE_byte select )
 		switch (curSel[curMenu])
 		{
 		case 2:
-			mainLevel = mapSection[mapPNum];
+			mainLevel = mapSection[mapPNum-1];
 			jumpSection = TRUE;
 			break;
 		case 3:
@@ -7840,7 +7840,7 @@ void JE_menuFunction( JE_byte select )
 		switch (curSel[curMenu])
 		{
 		case 2:
-			mainLevel = mapSection[mapPNum];
+			mainLevel = mapSection[mapPNum-1];
 			jumpSection = TRUE;
 			break;
 		case 3:
@@ -7925,7 +7925,7 @@ void JE_menuFunction( JE_byte select )
 		switch (curSel[curMenu])
 		{
 		case 2:
-			mainLevel = mapSection[mapPNum];
+			mainLevel = mapSection[mapPNum-1];
 			jumpSection = TRUE;
 			break;
 		case 3:
