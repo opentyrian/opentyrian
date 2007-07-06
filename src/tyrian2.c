@@ -128,6 +128,8 @@ void JE_starShowVGA( void )
 
 	int y, delaycount_temp;
 
+	int lightx, lighty;
+	
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
 
@@ -145,9 +147,21 @@ void JE_starShowVGA( void )
 
 		if (starShowVGASpecialCode == 1)
 		{
-			/* TODO FlippedOut */
+			src += VGAScreen->w * 183;
+			for (y = 0; y < 184; y++)
+			{
+				memmove(s, src, 264);
+				s += VGAScreen->w;
+				src -= VGAScreen->w;
+			}
 		} else if (starShowVGASpecialCode == 2 && processorType >= 2) {
-			/* TODO LightBulb */
+			lighty = 172 - PY;
+			lightx = 281 - PX;
+			
+			for (y = 0; y < 184; y++)
+			{
+				/* TODO LightBulb */
+			}
 		} else {
 			for (y = 0; y < 184; y++)
 			{
@@ -5957,7 +5971,7 @@ item_screen_start:
 					/* TODO: The text wrapping on the datacubes is incorrect. Not a big deal really, but should
 					   probably be fixed at some point. */
 
-					frameCount = 1;
+					setdelay(1);
 					if (mouseX > 164 && mouseX < 299 && mouseY > 47 && mouseY < 153)
 					{
 						if (mouseY > 100)
@@ -6022,7 +6036,7 @@ item_screen_start:
 					}
 					JE_mouseReplace();
 
-					frameCount = 0;
+					setdelay(0);
 				} else {
 					/* current menu is not 8 (read data cube) */
 
@@ -6086,9 +6100,9 @@ item_screen_start:
 
 						if (curMenu == 8) /* SYN: menu 8 is a datacube... this should never happen?! */
 						{
-							frameCount = 0;
+							setdelay(0);
 						} else {
-							frameCount = 2;
+							setdelay(2);
 						}
 
 						JE_drawScore();
@@ -6120,57 +6134,36 @@ item_screen_start:
 						}
 
 						JE_waitAction(0, TRUE);
-						/*JE_waitFrameCount();*/
+						wait_delay();
 					}
 				}
-
-				/* SYN: Originally this was a loop that checked joystick events and ran until
-				   either framecount == 0 or input was found. This seems to be what the waitAction
-				   function is for, so I'm just calling that because the loop wasn't working
-				   properly anyways. This is around line 3337 in the pretty-printed TYRIAN2.PAS.
 				
-				   TODO: Make sure this is a good idea.
-				*/
-				if (!inputDetected)
-				{
-					JE_waitAction(0, TRUE);
-				} else {
-					service_SDL_events(FALSE); /* Grab any new events if necessary, but don't clear old ones */
-				}
-
-
-				/* do { */
-					/*mouseButton = JE_mousePosition(&mouseX, &mouseY);
-					inputDetected = ((mouseButton > 0) || newkey);*/
-				/*
-                        IF joysticktranslate THEN
-                          BEGIN
-                            IF (k = #13) OR (k = #27) THEN
-                              BEGIN
-                                IF buttonheld THEN
-                                  BEGIN
-                                    k := #0;
-                                    inputdetected := FALSE;
-                                  END
-                                ELSE
-                                  BEGIN
-                                    buttonheld := TRUE;
-                                    inputdetected := TRUE;
-                                  END;
-                              END
-                            ELSE
-                              BEGIN
-                                buttonheld := FALSE;
-                                inputdetected := TRUE;
-                              END;
-                          END
-                        ELSE
-                          BEGIN
-                            buttonheld := FALSE;
-                          END;
-					*/
-				/*} while ( !inputDetected && frameCount != 0 );*/
-
+				 do {
+					service_SDL_events(FALSE);
+					mouseButton = JE_mousePosition(&mouseX, &mouseY); 
+					inputDetected = ((mouseButton > 0) || newkey);
+					
+					if (JE_joystickTranslate())
+					{
+							if (lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_ESCAPE)
+							{
+								if (buttonHeld)
+								{
+									lastkey_sym = 0;
+									inputDetected = FALSE;
+								} else {
+									buttonHeld = TRUE;
+									inputDetected = TRUE;
+								}
+							} else {
+								buttonHeld = FALSE;
+								inputDetected = TRUE;
+							}
+					} else {
+						buttonHeld = FALSE;
+					}
+				} while (!inputDetected && delaycount() != 0);
+				
 				/* TODO: Make sure the quicksave works */
 				if (curMenu != 6)
 				{
@@ -7410,7 +7403,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 				JE_tyrianHalt(0);
 			}
 
-			frameCount = 4;
+			setdelay(4);
 
 			/*scanCode = 0;
 			k = 0;*/

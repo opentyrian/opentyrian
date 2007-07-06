@@ -99,7 +99,7 @@ void JE_joystick1( void ) /* procedure to get x and y */
 #else
 	joyX = - (joyButton[GP2X_VK_LEFT]  || joyButton[GP2X_VK_UP_LEFT]  || joyButton[GP2X_VK_DOWN_LEFT])
 	       + (joyButton[GP2X_VK_RIGHT] || joyButton[GP2X_VK_UP_RIGHT] || joyButton[GP2X_VK_DOWN_RIGHT]);
-	joyX = - (joyButton[GP2X_VK_UP]   || joyButton[GP2X_VK_UP_LEFT]   || joyButton[GP2X_VK_UP_LEFT])
+	joyY = - (joyButton[GP2X_VK_UP]   || joyButton[GP2X_VK_UP_LEFT]   || joyButton[GP2X_VK_UP_LEFT])
 	       + (joyButton[GP2X_VK_DOWN] || joyButton[GP2X_VK_DOWN_LEFT] || joyButton[GP2X_VK_DOWN_RIGHT]);
 #endif
 
@@ -132,7 +132,7 @@ void JE_updateButtons( void ) /* Uses ButtonAssign to find out */
 
 	memset(button, 0, sizeof(button));
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < COUNTOF(joyButton); i++)
 	{
 		switch (joyButtonAssign[i])
 		{

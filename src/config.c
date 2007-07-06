@@ -312,6 +312,8 @@ void JE_saveGame( JE_byte slot, char *name )
 {
 	int i;
 
+	slot--; /* cheap re-indexing */
+
 	saveFiles[slot].initialDifficulty = initialDifficulty;
 	saveFiles[slot].gameHasRepeated = gameHasRepeated;
 	saveFiles[slot].level = saveLevel;
