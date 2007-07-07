@@ -60,13 +60,17 @@ void JE_initVGA256( void )
 
 	if (!initd)
 	{
+		JE_boolean success = TRUE;
 		initd = TRUE;
-		if (SDL_InitSubSystem(SDL_INIT_VIDEO) ||
-		   !(VGAScreen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE)))
+
+		success = success && !SDL_InitSubSystem(SDL_INIT_VIDEO);
+		success = success && (VGAScreen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE));
+		if (!success)
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
 		}
+
 		VGAScreenSeg = VGAScreen;
 		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 	}
