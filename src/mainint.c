@@ -2251,7 +2251,7 @@ redo:
 
 						tempR2 = linkGunDirec - tempR;
 
-						if (abs(linkGunDirec - tempR) < 0.3)
+						if (fabs(linkGunDirec - tempR) < 0.3)
 							linkGunDirec = tempR;
 						else {
 
@@ -2434,8 +2434,8 @@ redo:
 						shotMultiPos[2-1] = 0;
 						JE_initPlayerShot(0, 2, *PX_ + 1 + ROUND(sin(linkGunDirec) * 20), *PY_ + ROUND(cos(linkGunDirec) * 20),
 						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[2-1]-1], playerNum_);
-						playerShotData[b-1].shotXM = -ROUND(sin(linkGunDirec) * playerShotData[b-1].shotYM);
-						playerShotData[b-1].shotYM = -ROUND(cos(linkGunDirec) * playerShotData[b-1].shotYM);
+						playerShotData[b].shotXM = -ROUND(sin(linkGunDirec) * playerShotData[b].shotYM);
+						playerShotData[b].shotYM = -ROUND(cos(linkGunDirec) * playerShotData[b].shotYM);
 
 						switch (pItems_[2-1])
 						{
@@ -2443,26 +2443,26 @@ redo:
 							case 32:
 							case 10:
 								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
-								playerShotData[b-1].shotGr = linkMultiGr[temp];
+								playerShotData[b].shotGr = linkMultiGr[temp];
 								break;
 							case 28:
 							case 33:
 							case 11:
 								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
-								playerShotData[b-1].shotGr = linkSonicGr[temp];
+								playerShotData[b].shotGr = linkSonicGr[temp];
 								break;
 							case 30:
 							case 35:
 							case 14:
 								if (linkGunDirec > M_PI / 2 && linkGunDirec < M_PI + M_PI / 2)
 								{
-									playerShotData[b-1].shotYC = 1;
+									playerShotData[b].shotYC = 1;
 								}
 								break;
 							case 38:
 							case 22:
 								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
-								playerShotData[b-1].shotGr = linkMult2Gr[temp];
+								playerShotData[b].shotGr = linkMult2Gr[temp];
 								break;
 						}
 

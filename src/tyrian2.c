@@ -627,7 +627,7 @@ enemy_still_exists:
 									{
 										enemy[i].filter = 112;
 									} else {
-										tempI4 = 4 - (abs (PX - tempX) + abs(PY - tempY)) / 20;
+										tempI4 = 4 - (abs(PX - tempX) + abs(PY - tempY)) / 20;
 										if (tempI4 > 0)
 										{
 											if (PX > tempX)
