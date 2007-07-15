@@ -5890,8 +5890,8 @@ item_screen_start:
 		/* 2 player input devices */
 		if (curMenu == 9)
 		{
-			JE_dString(186, 38 + 2 * 16, JE_bright(curSel[3] == x) + inputDevices[inputDevice1], SMALL_FONT_SHAPES);
-			JE_dString(186, 38 + 4 * 16, JE_bright(curSel[4] == x) + inputDevices[inputDevice2], SMALL_FONT_SHAPES);
+			JE_dString(186, 38 + 2 * 16, JE_bright(curSel[3] == x) + inputDevices[inputDevice1-1], SMALL_FONT_SHAPES);
+			JE_dString(186, 38 + 4 * 16, JE_bright(curSel[4] == x) + inputDevices[inputDevice2-1], SMALL_FONT_SHAPES);
 		}
 
 
