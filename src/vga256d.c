@@ -72,7 +72,7 @@ void JE_initVGA256( void )
 		}
 
 		VGAScreenSeg = VGAScreen;
-		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+		/* game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0); */
 	}
 
 #ifdef TARGET_GP2X

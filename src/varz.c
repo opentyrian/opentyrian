@@ -1048,14 +1048,138 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 	}
 }
 
-void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodetype )
+void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodeType )
 {
-	STUB(JE_setupExplosion);
+	const struct {
+		JE_word egr;
+		JE_byte etime;
+	} explodeData[53] /* [1..53] */ = {
+		{ 144,  7 },
+		{ 120, 12 },
+		{ 190, 12 },
+		{ 209, 12 },
+		{ 152, 12 },
+		{ 171, 12 },
+		{ 133,  7 },   /*White Smoke*/
+		{   1, 12 },
+		{  20, 12 },
+		{  39, 12 },
+		{  58, 12 },
+		{ 110,  3 },
+		{  76,  7 },
+		{  91,  3 },
+/*15*/	{ 227,  3 },
+		{ 230,  3 },
+		{ 233,  3 },
+		{ 252,  3 },
+		{ 246,  3 },
+/*20*/	{ 249,  3 },
+		{ 265,  3 },
+		{ 268,  3 },
+		{ 271,  3 },
+		{ 236,  3 },
+/*25*/	{ 239,  3 },
+		{ 242,  3 },
+		{ 261,  3 },
+		{ 274,  3 },
+		{ 277,  3 },
+/*30*/	{ 280,  3 },
+		{ 299,  3 },
+		{ 284,  3 },
+		{ 287,  3 },
+		{ 290,  3 },
+/*35*/	{ 293,  3 },
+		{ 165,  8 },   /*Coin Values*/
+		{ 184,  8 },
+		{ 203,  8 },
+		{ 222,  8 },
+		{ 168,  8 },
+		{ 187,  8 },
+		{ 206,  8 },
+		{ 225, 10 },
+		{ 169, 10 },
+		{ 188, 10 },
+		{ 207, 20 },
+		{ 226, 14 },
+		{ 170, 14 },
+		{ 189, 14 },
+		{ 208, 14 },
+		{ 246, 14 },
+		{ 227, 14 },
+		{ 265, 14 }
+	};
+	int i;
+	
+	if (y > -16 && y < 190)
+	{
+		for(i = 0; i < EXPLOSION_MAX; i++)
+		{
+			if (explodeAvail[i] == 0)
+			{
+				explosions[i].explodeLoc = y * VGAScreen->w + x;
+				if (explodeType == 6)
+				{
+					explosions[i].explodeLoc += 12 * VGAScreen->w + 2;
+				} else if (explodeType == 98)
+				{
+					explodeType = 6;
+				}
+				explosions[i].explodeGr = explodeData[explodeType].egr + 1;
+				explodeAvail[i] = explodeData[explodeType].etime;
+				explosions[i].followPlayer = playerFollow;
+				explosions[i].fixedExplode = fixedExplosions;
+				explosions[i].fixedMovement = explosionMoveUp;
+				return;
+			}
+		}
+	}
 }
 
-void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y )
+void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_integer x, JE_integer y )
 {
-	STUB(JE_setupExplosionLarge);
+	JE_byte z;
+
+	if (y >= 0)
+	{
+		if (enemyGround)
+		{
+			JE_setupExplosion(x - 6, y - 14, 2);
+			JE_setupExplosion(x + 6, y - 14, 4);
+			JE_setupExplosion(x - 6, y,      3);
+			JE_setupExplosion(x + 6, y,      5);
+		} else {
+			JE_setupExplosion(x - 6, y - 14, 7);
+			JE_setupExplosion(x + 6, y - 14, 9);
+			JE_setupExplosion(x - 6, y,      8);
+			JE_setupExplosion(x + 6, y,     10);
+		}
+		
+		tempX = x;
+		tempY = y;
+		if (exploNum > 10)
+		{
+			exploNum -= 10;
+			tempB = TRUE;
+		} else {
+			tempB = FALSE;
+		}
+		
+		if (exploNum)
+		{
+			for (z = 0; z < 20 /*REX maximum*/; z++)
+			{
+				if (REXavail[z] == 0)
+				{
+					REXavail[z] = exploNum;
+					REXdat[z].delay = 2;
+					REXdat[z].ex = tempX;
+					REXdat[z].ey = tempY;
+					REXdat[z].big = tempB;
+					return;
+				}
+			}
+		}
+	}
 }
 
 void JE_drawShield( void )

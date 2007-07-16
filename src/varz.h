@@ -42,7 +42,7 @@ struct JE_SingleEnemyType
 	JE_shortint exc, eyc;   /* CURRENT SPEED */
 	JE_shortint exca, eyca; /* RANDOM ACCELERATION */
 	JE_shortint excc, eycc; /* FIXED ACCELERATION WAITTIME */
-	JE_byte     exccw, eyccw;
+	JE_shortint exccw, eyccw;
 	JE_byte     armorleft;
 	JE_byte     eshotwait[3], eshotmultipos[3]; /* [1..3] */
 	JE_byte     enemycycle;
