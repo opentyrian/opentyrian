@@ -3283,7 +3283,7 @@ new_game:
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
 									if (tempX > 900)
 									{
-										memcpy(&colors, &palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
+										memcpy(colors, palettes[pcxpal[tempX-1 - 900]-1], sizeof(colors));
 										JE_clr256();
 										JE_showVGA();
 										JE_fadeColor(1);

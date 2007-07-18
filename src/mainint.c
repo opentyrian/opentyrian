@@ -34,6 +34,7 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "pallib.h"
 #include "params.h"
 #include "pcxload.h"
 #include "picload.h"
@@ -1102,8 +1103,82 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 
 JE_boolean JE_nextEpisode( void )
 {
-	STUB(JE_nextEpisode);
-	return FALSE;
+	JE_boolean found;
+	JE_integer x;
+	JE_longint temp;
+	
+	strcpy(lastLevelName, "Completed");
+	x = episodeNum;
+	found = JE_findNextEpisode();
+	
+	if (!isNetworkGame && !gameHasRepeated
+	    && (jumpBackToEpisode1 || x == 3)
+	    && x != 4
+	    && !constantPlay
+	    && !(pItems[9-1] == 4))
+	{
+		JE_highScoreCheck();
+		gameHasRepeated = TRUE;
+	}
+	
+	if (found)
+	{
+		gameLoaded = TRUE;
+		mainLevel = FIRST_LEVEL;
+		saveLevel = FIRST_LEVEL;
+		
+		if (jumpBackToEpisode1 && !isNetworkGame && x == 1)
+		{
+			JE_loadOrderingInfo();
+		}
+		
+		if (jumpBackToEpisode1 && x > 2 && !constantPlay)
+		{
+			JE_playCredits();
+		}
+		
+		if (jumpBackToEpisode1 && (rand() % 6) == 0)
+		{
+			pItems[1-1] = 23;
+			pItems[2-1] = 24;
+			pItems[12-1] = 2;
+			portPower[1-1] = 1;
+			portPower[2-1] = 1;
+			pItemsPlayer2[2-1] = 24;
+			memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
+		}
+		
+		JE_playSong(27);
+		
+		JE_clr256();
+		memcpy(colors, palettes[6-1], sizeof(colors));
+		
+		tempScreenSeg = VGAScreen;
+		
+		JE_dString(JE_fontCenter(episodeName[episodeNum], SMALL_FONT_SHAPES),
+		           130, episodeName[episodeNum], SMALL_FONT_SHAPES);
+		
+		JE_dString(JE_fontCenter(miscText[5-1], SMALL_FONT_SHAPES), 185,
+		           miscText[5-1], SMALL_FONT_SHAPES);
+		
+		JE_showVGA();
+		JE_fadeColor(15);
+		
+		JE_wipeKey();
+		if (!constantPlay)
+		{
+			do
+			{
+				JE_updateStream();
+			} while (!JE_anyButton());
+		}
+		JE_fadeBlack(15);
+		
+	} else {
+		mainLevel = 0;
+	}
+	
+	return found;
 }
 
 void JE_initPlayerData( void )

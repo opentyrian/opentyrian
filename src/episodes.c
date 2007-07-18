@@ -267,8 +267,8 @@ JE_boolean JE_findNextEpisode( void )
 		}
 
 		newEpisode++;
-
 	}
+	newEpisode--;
 
 	if (found)
 	{
