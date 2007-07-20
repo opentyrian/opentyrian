@@ -4200,7 +4200,7 @@ void JE_displayText( void )
 void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 {
 	JE_byte temp;
-	int t;
+	int t = 0;
 
 	if (superArcadeMode > 0 && tempW == 534)
 	{
