@@ -22,6 +22,7 @@
 
 #include "opentyr.h"
 
+#include <inttypes.h>
 
 #ifndef NO_EXTERNS
 extern JE_word backPos, backPos2, backPos3;
@@ -30,7 +31,7 @@ extern JE_word megaDataSeg, megaDataOfs, megaData2Seg, megaData2Ofs, megaData3Se
 extern JE_word mapX, mapY, mapX2, mapX3, mapY2, mapY3;
 extern JE_byte **mapYPos, **mapY2Pos, **mapY3Pos;
 extern JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs, mapX3Ofs, tempMapXOfs;
-extern unsigned int mapXbpPos, mapX2bpPos, mapX3bpPos;
+extern intptr_t mapXbpPos, mapX2bpPos, mapX3bpPos;
 extern JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 extern void *smoothiesScreen;
 extern JE_word smoothiesSeg;

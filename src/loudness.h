@@ -25,7 +25,7 @@
 #include "SDL.h"
 
 
-#define SFX_CHANNELS 7
+#define SFX_CHANNELS 8
 #define OUTPUT_QUALITY 4
 #define BYTES_PER_SAMPLE 2
 #define SAMPLE_SCALING OUTPUT_QUALITY

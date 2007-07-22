@@ -49,6 +49,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 
 JE_word statdmg [2];
@@ -2577,7 +2578,7 @@ explosion_draw_overflow:
 	if (soundEffects > 0 && soundActive && firstGameOver)
 	{
 		temp = 0;
-		for (temp2 = 0; temp2 <= 7; temp2++)
+		for (temp2 = 0; temp2 < SFX_CHANNELS; temp2++)
 		{
 			if (soundQueue[temp2] > 0)
 			{
@@ -5379,7 +5380,7 @@ void JE_eventSystem( void )
 
 		case 71:
 			printf("*!* POSSIBLY BAD MAP REPOSITONING\n");
-			if (((((int)mapYPos - (int)&megaData1->mainmap) / sizeof(JE_byte *)) * 2) <= eventRec[eventLoc-1].eventdat2) /* <MXD> ported correctly? */
+			if (((((intptr_t)mapYPos - (intptr_t)&megaData1->mainmap) / sizeof(JE_byte *)) * 2) <= eventRec[eventLoc-1].eventdat2) /* <MXD> ported correctly? */
 			{
 				JE_eventJump(eventRec[eventLoc-1].eventdat);
 			}
