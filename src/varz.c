@@ -21,7 +21,9 @@
 
 #include "config.h"
 #include "episodes.h"
+#include "network.h"
 #include "newshape.h"
+#include "nortsong.h"
 #include "vga256d.h"
 
 #define NO_EXTERNS
@@ -1180,6 +1182,86 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 			}
 		}
 	}
+}
+
+JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
+                         JE_byte temp,
+                         JE_integer *PX, JE_integer *PY,
+                         JE_boolean *playerAlive,
+                         JE_byte *playerStillExploding,
+                         JE_integer *armorLevel,
+                         JE_shortint *shield )
+{
+	int playerDamage = 0;
+	soundQueue[7] = 27;
+	
+	/* Player Damage Routines */
+	if (*shield < temp)
+	{
+		playerDamage = temp;
+		temp -= *shield;
+		*shield = 0;
+		
+		if (temp > 0)
+		{
+			
+			/*Through Shields - Now Armor */
+			if (*armorLevel < temp)
+			{
+				temp -= *armorLevel;
+				*armorLevel = 0;
+				if (playerAlive && !youAreCheating)
+				{
+					levelTimer = FALSE;
+					gameQuitDelay = 10;
+					*playerAlive = FALSE;
+					*playerStillExploding = 60;
+					levelEnd = 40;
+					tempVolume = tyrMusicVolume;
+					soundQueue[1] = 22;
+				}
+				
+				/*Through Armor - Now What? */
+				
+			} else {
+				*armorLevel -= temp;
+				soundQueue[7] = 19;
+			}
+		}
+		
+	} else {
+		*shield -= temp;
+		
+		if (!twoPlayerMode)
+			playerFollow = TRUE;
+		JE_setupExplosion(*PX - 17, *PY - 12, 14);
+		JE_setupExplosion(*PX - 5 , *PY - 12, 15);
+		JE_setupExplosion(*PX + 7 , *PY - 12, 16);
+		JE_setupExplosion(*PX + 19, *PY - 12, 17);
+		
+		JE_setupExplosion(*PX - 17, *PY + 2,  18);
+		JE_setupExplosion(*PX + 19, *PY + 2,  19);
+		
+		JE_setupExplosion(*PX - 17, *PY + 16, 20);
+		JE_setupExplosion(*PX - 5 , *PY + 16, 21);
+		JE_setupExplosion(*PX + 7 , *PY + 16, 22);
+		playerFollow = FALSE;
+	}
+	
+	/* TODO JE_wipeShieldArmorBars();*/
+	JE_drawShield();
+	JE_drawArmor();
+	
+	return playerDamage;
+}
+
+void JE_powerUp( JE_byte port )
+{
+	shotMultiPos[port-1] = 0;
+	if (portPower[port-1] < 11 && (pItems[port-1] > 0 || twoPlayerMode))
+		portPower[port-1]++;
+	else
+		score += 1000;
 }
 
 void JE_drawShield( void )

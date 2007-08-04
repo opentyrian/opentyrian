@@ -387,12 +387,12 @@ void JE_doSpecialShot( JE_byte playernum, JE_integer *armor, JE_shortint *shield
 
 void JE_powerUp( JE_byte port );
 void JE_wipeShieldArmorBars( void );
-JE_byte JE_playerDamage( JE_word tempx, JE_word tempy, JE_byte temp,
-                         JE_integer *px, JE_integer *py,
-                         JE_boolean *PlayerAlive,
-                         JE_byte *PlayerStillExploding,
-                         JE_integer *ArmorLevel,
-                         JE_shortint *Shield );
+JE_byte JE_playerDamage( JE_word tempX, JE_word tempY, JE_byte temp,
+                         JE_integer *PX, JE_integer *PY,
+                         JE_boolean *playerAlive,
+                         JE_byte *playerStillExploding,
+                         JE_integer *armorLevel,
+                         JE_shortint *shield );
 
 void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodetype );
 void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );

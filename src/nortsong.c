@@ -26,6 +26,7 @@
 #include "musmast.h"
 #include "params.h"
 #include "sndmast.h"
+#include "vga256d.h"
 
 #define NO_EXTERNS
 #include "nortsong.h"
@@ -308,12 +309,12 @@ void JE_calcFXVol( void )
 
 void JE_setTimerInt( void )
 {
-	STUB(JE_setTimerInt);
+	jasondelay = 1000.0f / (1193180.0f / speed);
 }
 
 void JE_resetTimerInt( void )
 {
-	STUB(JE_resetTimerInt);
+	jasondelay = 1000.0f / (1193180.0f / 0x4300);
 }
 
 void JE_timerInt( void )

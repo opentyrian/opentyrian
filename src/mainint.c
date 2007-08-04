@@ -3242,11 +3242,347 @@ char *JE_getName( JE_byte pnum )
 	return NULL;
 }
 
-void JE_playerCollide( JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_integer *lastTurn2,
-                       JE_longint *score, JE_integer *armorLevel, JE_shortint *shield, JE_boolean *playerAlive,
-                       JE_byte *playerStillExploding, JE_byte playerNum, JE_byte playerInvulnerable )
+void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
+                       JE_longint *score_, JE_integer *armorLevel_, JE_shortint *shield_, JE_boolean *playerAlive_,
+                       JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {
-	STUB(JE_playerCollide);
+	char tempStr[256];
+	
+	for (z = 0; z < 100; z++)
+	{
+		if (enemyAvail[z] != 1)
+		{
+			tempI3 = enemy[z].ex + enemy[z].mapoffset;
+			
+			if (abs(*PX_ - tempI3) < 12 && abs(*PY_ - enemy[z].ey) < 14)
+			{   /*Collide*/
+				tempI4 = enemy[z].evalue;
+				if (tempI4 > 29999)
+				{
+					if (tempI4 == 30000)
+					{
+						*score_ += 100;
+						
+						if (!galagaMode)
+						{
+							if (purpleBallsRemaining[playerNum_ - 1] > 1)
+								purpleBallsRemaining[playerNum_ - 1]--;
+							else {
+								JE_powerUp(playerNum_);
+								JE_calcPurpleBall(playerNum_);
+							}
+						} else {
+							if (twoPlayerMode)
+								*score_ += 2400;
+							twoPlayerMode = TRUE;
+							twoPlayerLinked = TRUE;
+							portPower[2-1] = 1;
+							armorLevel2 = 10;
+							playerAliveB = TRUE;
+						}
+						enemyAvail[z] = 1;
+						soundQueue[7] = 29;
+					} else if (superArcadeMode > 0 && tempI4 > 30000) {
+						shotMultiPos[1-1] = 0;
+						shotRepeat[1-1] = 10;
+						
+						tempW = SAWeapon[superArcadeMode-1][tempI4 - 30000-1];
+						
+						if (tempW == pItems[1-1])
+						{
+							*score_ += 1000;
+							if (portPower[1-1] < 11)
+								JE_powerUp(1);
+							JE_calcPurpleBall(playerNum_);
+						} else if (purpleBallsRemaining[playerNum_-1] > 1)
+							purpleBallsRemaining[playerNum_-1]--;
+						else {
+							JE_powerUp(playerNum_);
+							JE_calcPurpleBall(playerNum_);
+						}
+						
+						pItems[1-1] = tempW;
+						*score_ += 200;
+						soundQueue[7] = 29;
+						enemyAvail[z] = 1;
+					} else if (tempI4 > 32100) {
+						if (playerNum_ == 1)
+						{
+							*score_ += 250;
+							pItems[11-1] = tempI4 - 32100;
+							shotMultiPos[9-1] = 0;
+							shotRepeat[9-1] = 10;
+							shotMultiPos[11-1] = 0;
+							shotRepeat[11-1] = 0;
+							
+							if (isNetworkGame)
+							{
+								sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], special[tempI4 - 32100].name);
+							} else if (twoPlayerMode) {
+								sprintf(tempStr, "%s %s", miscText[43-1], special[tempI4 - 32100].name);
+							} else {
+								sprintf(tempStr, "%s %s", miscText[64-1], special[tempI4 - 32100].name);
+							}
+							JE_drawTextWindow(tempStr);
+							soundQueue[7] = 29;
+							enemyAvail[z] = 1;
+						}
+					} else if (tempI4 > 32000) {
+						if (playerNum_ == 2)
+						{
+							enemyAvail[z] = 1;
+							if (isNetworkGame)
+							{
+								sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], options[tempI4 - 32000].name);
+							} else {
+								sprintf(tempStr, "%s %s", miscText[44-1], options[tempI4 - 32000].name);
+							}
+							JE_drawTextWindow(tempStr);
+							
+							if (tempI4 - 32000 != pItemsPlayer2[8-1])
+								pItemsPlayer2[7-1] = 100;
+							pItemsPlayer2[8-1] = tempI4 - 32000;
+							
+							if (pItemsPlayer2[7-1] < 103)
+								pItemsPlayer2[7-1]++;
+							
+							temp = pItemsPlayer2[7-1] - 100;
+							pItemsPlayer2[4-1] = optionSelect[pItemsPlayer2[8-1]][temp-1][1-1];
+							pItemsPlayer2[5-1] = optionSelect[pItemsPlayer2[8-1]][temp-1][2-1];
+							
+							
+							shotMultiPos[3-1] = 0;
+							shotMultiPos[4-1] = 0;
+							/* TODO tempScreenSeg = sega000;*/
+							JE_drawOptions();
+							soundQueue[7] = 29;
+							tempScreenSeg = VGAScreen;
+						} else if (onePlayerAction) {
+							enemyAvail[z] = 1;
+							sprintf(tempStr, "%s %s", miscText[64-1], options[tempI4 - 32000].name);
+							JE_drawTextWindow(tempStr);
+							pItems[4-1] = tempI4 - 32000;
+							pItems[5-1] = tempI4 - 32000;
+							shotMultiPos[3-1] = 0;
+							shotMultiPos[4-1] = 0;
+							/* TODO tempscreenseg = sega000;*/
+							JE_drawOptions();
+							soundQueue[7] = 29;
+						}
+						if (enemyAvail[z] == 1)
+							*score_ += 250;
+					} else if (tempI4 > 31000) {
+						*score_ += 250;
+						if (playerNum_ == 2)
+						{
+							if (isNetworkGame)
+							{
+								sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], weaponPort[tempI4 - 31000].name);
+							} else {
+								sprintf(tempStr, "%s %s", miscText[44-1], weaponPort[tempI4 - 31000].name);
+							}
+							JE_drawTextWindow(tempStr);
+							pItemsPlayer2[2-1] = tempI4 - 31000;
+							shotMultiPos[2-1] = 0;
+							enemyAvail[z] = 1;
+							soundQueue[7] = 29;
+						} else if (onePlayerAction) {
+							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 31000].name);
+							JE_drawTextWindow(tempStr);
+							pItems[2-1] = tempI4 - 31000;
+							shotMultiPos[2] = 0;
+							enemyAvail[z] = 1;
+							soundQueue[7] = 29;
+							if (portPower[2-1] == 0)
+								portPower[2-1] = 1;
+						}
+					} else if (tempI4 > 30000) {
+						
+						if (playerNum_ == 1 && twoPlayerMode)
+						{
+							if (isNetworkGame)
+							{
+								sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], weaponPort[tempI4 - 30000].name);
+							} else {
+								sprintf(tempStr, "%s %s", miscText[43-1], weaponPort[tempI4 - 30000].name);
+							}
+							JE_drawTextWindow(tempStr);
+							pItems[1-1] = tempI4 - 30000;
+							shotMultiPos[1-1] = 0;
+							enemyAvail[z] = 1;
+							soundQueue[7] = 29;
+						} else if (onePlayerAction) {
+							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 30000].name);
+							JE_drawTextWindow(tempStr);
+							pItems[1-1] = tempI4 - 30000;
+							shotMultiPos[1-1] = 0;
+							enemyAvail[z] = 1;
+							soundQueue[7] = 29;
+						}
+						
+						if (enemyAvail[z] == 1)
+						{
+							pItems[11-1] = specialArcadeWeapon[tempI4 - 30000-1];
+							if (pItems[11-1] > 0)
+							{
+								shotMultiPos[9-1] = 0;
+								shotRepeat[9-1] = 0;
+								shotMultiPos[11-1] = 0;
+								shotRepeat[11-1] = 0;
+							}
+							*score_ += 250;
+						}
+						
+					}
+				} else if (tempI4 > 20000) {
+					if (twoPlayerLinked)
+					{
+						armorLevel += (tempI4 - 20000) / 2;
+						if (armorLevel > 28)
+							armorLevel = 28;
+						armorLevel2 += (tempI4 - 20000) / 2;
+						if (armorLevel2 > 28)
+							armorLevel2 = 28;
+					} else {
+						*armorLevel_ += tempI4 - 20000;
+						if (*armorLevel_ > 28)
+							*armorLevel_ = 28;
+					}
+					enemyAvail[z] = 1;
+					JE_drawArmor();
+					soundQueue[7] = 29;
+				} else if (tempI4 > 10000 && enemyAvail[z] == 2) {
+					if (!bonusLevel)
+					{
+						JE_playSong(31);  /*Zanac*/
+						bonusLevel = TRUE;
+						nextLevel = tempI4 - 10000;
+						enemyAvail[z] = 1;
+						displayTime = 150;
+					}
+				} else if (enemy[z].scoreitem) {
+					enemyAvail[z] = 1;
+					soundQueue[7] = 18;
+					if (tempI4 == 1)
+					{
+						cubeMax++;
+						soundQueue[3] = V_DATA_CUBE;
+					} else if (tempI4 == -1) {
+						if (isNetworkGame)
+						{
+							sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], miscText[45-1]);
+						} else if (twoPlayerMode) {
+							sprintf(tempStr, "%s %s", miscText[43-1], miscText[45-1]);
+						} else {
+							strcpy(tempStr, miscText[45-1]);
+						}
+						JE_drawTextWindow(tempStr);
+						JE_powerUp(1);
+						soundQueue[7] = 29;
+					} else if (tempI4 == -2) {
+						if (isNetworkGame)
+						{
+							sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], miscText[46-1]);
+						} else if (twoPlayerMode) {
+							sprintf(tempStr, "%s %s", miscText[44-1], miscText[46-1]);
+						} else {
+							strcpy(tempStr, miscText[46-1]);
+						}
+						JE_drawTextWindow(tempStr);
+						JE_powerUp(2);
+						soundQueue[7] = 29;
+					} else if (tempI4 == -3) {
+						shotMultiPos[5-1] = 0;
+						JE_initPlayerShot(0, 5, *PX_, *PY_, mouseX, mouseY, 104, playerNum_);
+						shotAvail[z] = 0;
+					} else if (tempI4 == -4) {
+						if (superBomb[playerNum_-1] < 10)
+							superBomb[playerNum_-1]++;
+					} else if (tempI4 == -5) {
+						pItems[1-1] = 25;         /*HOT DOG!*/
+						pItems[2-1] = 26;
+						pItemsPlayer2[2-1] = 26;
+						memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
+						portConfig[2-1] = 1;
+						memset(shotMultiPos, 0, sizeof(shotMultiPos));
+					} else if (twoPlayerLinked) {
+						score += tempI4 / 2;
+						score2 += tempI4 / 2;
+					} else
+						*score_ += tempI4;
+					fixedExplosions = TRUE;
+					JE_setupExplosion(tempI3, enemy[z].ey, enemyDat[enemy[z].enemytype].explosiontype);
+					fixedExplosions = FALSE;
+				} else
+					if (playerInvulnerable_ == 0 && enemyAvail[z] == 0 &&
+					    enemyDat[enemy[z].enemytype].explosiontype % 2 == 0)
+					{
+						
+						tempI3 = enemy[z].armorleft;
+						if (tempI3 > damageRate)
+							tempI3 = damageRate;
+						
+						JE_playerDamage(tempW, tempW, tempI3, PX_, PY_, playerAlive_, playerStillExploding_, armorLevel_, shield_);
+						
+						if (enemy[z].armorleft > 0)
+						{
+							*lastTurn2_ += (enemy[z].exc * enemy[z].armorleft) / 2;
+							*lastTurn_  += (enemy[z].eyc * enemy[z].armorleft) / 2;
+						}
+						
+						tempI = enemy[z].armorleft;
+						if (tempI == 255)
+							tempI = 30000;
+						
+						temp = enemy[z].linknum;
+						if (temp == 0)
+							temp = 255;
+						
+						b = z;
+						
+						if (tempI > tempI2)
+						{
+							if (enemy[z].armorleft != 255)
+								enemy[z].armorleft -= tempI3;
+							soundQueue[5] = 3;
+						} else {
+							
+							for (temp2 = 0; temp2 < 100; temp2++)
+							{
+								if (enemyAvail[temp2] != 1)
+								{
+									temp3 = enemy[temp2].linknum;
+									if (temp2 == b ||
+										(temp != 255 &&
+										 (temp == temp3 || temp - 100 == temp3
+										  || (temp3 > 40 && temp3 / 20 == temp / 20 && temp3 <= temp))))
+										
+									{
+										
+										tempI3 = enemy[temp2].ex + enemy[temp2].mapoffset;
+										
+										enemy[temp2].linknum = 0;
+										
+										enemyAvail[temp2] = 1;
+										
+										if (enemyDat[enemy[temp2].enemytype].esize == 1)
+										{
+											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);
+											soundQueue[6] = 9;
+										} else {
+											JE_setupExplosion(tempI3, enemy[temp2].ey, 1);
+											soundQueue[5] = 4;
+										}
+									}
+								}
+							}
+							enemyAvail[z] = 1;
+						}
+					}
+			}
+
+		}
+	}
 }
 
 

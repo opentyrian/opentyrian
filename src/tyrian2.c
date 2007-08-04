@@ -4644,6 +4644,8 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 	return tempb;
 }
 
+/* <MXD> find bug showing up in bonus level */
+/* <MXD> find bug showing up in deleni -- unaligned purple balls? */
 void JE_eventSystem( void )
 {
 	JE_boolean tempb;
