@@ -227,10 +227,10 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 
 void JE_DetectCFG( void )
 {
-	STUB(JE_DetectCFG);
+	STUB();
 }
 
 void JE_outputString( JE_char* s )
 {
-	STUB(JE_outputString);
+	STUB();
 }

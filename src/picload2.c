@@ -37,15 +37,15 @@ JE_char c2;
 
 /*void JE_updatePCXColorsSlow ( void* colorbuffer )
 {
-	STUB(JE_updatePCXColorsSlow );
+	STUB();
 }*/
 
 void JE_unpackPCX( void )
 {
-	STUB(JE_unpackPCX);
+	STUB();
 }
 
 void JE_analyzePic( void )
 {
-	STUB(JE_analyzePic);
+	STUB();
 }

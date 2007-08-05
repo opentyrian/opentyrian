@@ -99,5 +99,5 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 
 /*void JE_unpackPCX( void )
 {
-	STUB(JE_unpackPCX);
+	STUB();
 }*/

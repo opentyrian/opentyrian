@@ -46,72 +46,72 @@ JE_boolean firsttime;
 
 void JE_superPixel( JE_word loc )
 {
-	STUB(JE_superPixel);
+	STUB();
 }
 
 void JE_pauseScreen( void )
 {
-	STUB(JE_pauseScreen);
+	STUB();
 }
 
 void JE_eSound( JE_byte sound )
 {
-	STUB(JE_eSound);
+	STUB();
 }
 
 void JE_helpScreen( void )
 {
-	STUB(JE_helpScreen);
+	STUB();
 }
 
 JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y )
 {
-	STUB(JE_stabilityCheck);
+	STUB();
 	return FALSE;
 }
 
 JE_byte JE_placementPosition( JE_word x, JE_byte width )
 {
-	STUB(JE_placementPosition);
+	STUB();
 	return 0;
 }
 
 void JE_destructMain( void )
 {
-	STUB(JE_destructMain);
+	STUB();
 }
 
 void JE_destructGame( void )
 {
-	STUB(JE_destructGame);
+	STUB();
 }
 
 void JE_modeSelect( void )
 {
-	STUB(JE_modeSelect);
+	STUB();
 }
 
 void JE_generateTerrain( void )
 {
-	STUB(JE_generateTerrain);
+	STUB();
 }
 
 void JE_aliasDirt( void )
 {
-	STUB(JE_aliasDirt);
+	STUB();
 }
 
 void JE_tempScreenChecking( void )
 {
-	STUB(JE_tempScreenChecking);
+	STUB();
 }
 
 void JE_makeExplosion( JE_word tempx, JE_word tempy, JE_byte shottype )
 {
-	STUB(JE_makeExplosion);
+	STUB();
 }
 
 void JE_introScreen( void )
 {
-	STUB(JE_introScreen);
+	STUB();
 }

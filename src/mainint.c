@@ -1379,13 +1379,12 @@ void JE_highScoreScreen( void )
 
 void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma )
 {
-	STUB(JE_gammaCorrect);
+	STUB();
 }
 
 JE_boolean JE_gammaCheck( void )
 {
-	STUB(JE_gammaCheck);
-
+	STUB();
 	return FALSE;
 }
 
@@ -1393,29 +1392,28 @@ JE_boolean JE_gammaCheck( void )
 void JE_loadOrderingInfo( void )
 {
 	/* YKS: Unused on the port */
-	STUB(JE_loadOrderingInfo);
+	STUB();
 }
 
 void JE_doInGameSetup( void )
 {
-	STUB(JE_doInGameSetup);
+	STUB();
 }
 
 JE_boolean JE_inGameSetup( void )
 {
-	STUB(JE_inGameSetup);
-
+	STUB();
 	return FALSE;
 }
 
 void JE_inGameHelp( void )
 {
-	STUB(JE_inGameHelp);
+	STUB();
 }
 
 void JE_highScoreCheck( void )
 {
-	STUB(JE_highScoreCheck);
+	STUB();
 }
 
 void JE_setNewGameVol( void )
@@ -1581,12 +1579,12 @@ void JE_readDemoKeys( void )
 
 void JE_sfCodes( void )
 {
-	STUB(JE_sfCodes);
+	STUB();
 }
 
 void JE_func( JE_byte col )
 {
-	STUB(JE_func);
+	STUB();
 }
 
 void JE_sort( void )
@@ -1621,19 +1619,18 @@ void JE_sort( void )
 
 JE_boolean JE_getPassword( void )
 {
-	STUB(JE_getPassword);
-
+	STUB();
 	return FALSE;
 }
 
 void JE_playCredits( void )
 {
-	STUB(JE_playCredits);
+	STUB();
 }
 
 void JE_endLevelAni( void )
 {
-	STUB(JE_endLevelAni);
+	STUB();
 }
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
@@ -1647,7 +1644,7 @@ void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 
 void JE_handleChat( void )
 {
-	STUB(JE_handleChat);
+	STUB();
 }
 
 JE_boolean JE_getNumber( char *s, JE_byte *x )
@@ -1682,12 +1679,12 @@ end_loop:
 
 void JE_operation( JE_byte slot )
 {
-	STUB(JE_operation);
+	STUB();
 }
 
 void JE_inGameDisplays( void )
 {
-	STUB(JE_inGameDisplays);
+	STUB();
 }
 
 void JE_mainKeyboardInput( void )
@@ -1923,7 +1920,7 @@ void JE_mainKeyboardInput( void )
 
 void JE_pauseGame( void )
 {
-	STUB(JE_pauseGame);
+	STUB();
 }
 
 void JE_playerMovement( JE_byte inputDevice_,
@@ -3237,7 +3234,7 @@ void JE_mainGamePlayerFunctions( void )
 
 char *JE_getName( JE_byte pnum )
 {
-	STUB(JE_getName);
+	STUB();
 
 	return NULL;
 }
@@ -3588,5 +3585,5 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 
 /*void JE_textMenuWait ( JE_word waittime, JE_boolean dogamma )
 {
-	STUB(JE_textMenuWait );
+	STUB();
 }*/

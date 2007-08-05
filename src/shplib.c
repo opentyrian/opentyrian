@@ -32,5 +32,5 @@ JE_shppostype shppos;
 
 void JE_analyzeShp( void )
 {
-	STUB(JE_analyzeShp);
+	STUB();
 }

@@ -240,13 +240,13 @@ void JE_selectSong( JE_word value )
 void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 {
 	/* SYN: I don't think this function is used. */
-	STUB(JE_samplePlay);
+	STUB();
 }
 
 void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 {
 	/* SYN: I don't think this function is used. */
-	STUB(JE_bigSamplePlay);
+	STUB();
 }
 
 /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
@@ -266,13 +266,13 @@ void JE_setVol(JE_word volume, JE_word sample)
 
 JE_word JE_getVol( void )
 {
-	STUB(JE_getVol);
+	STUB();
 	return 0;
 }
 
 JE_word JE_getSampleVol( void )
 {
-	STUB(JE_getSampleVol);
+	STUB();
 	return 0;
 }
 

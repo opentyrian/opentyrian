@@ -40,30 +40,30 @@ JE_char* f;
 
 void JE_purgeShapes( void )
 {
-	STUB(JE_purgeShapes);
+	STUB();
 }
 
 void JE_drawShapeNumS( JE_word shape, JE_word x, JE_word y )
 {
-	STUB(JE_drawShapeNumS);
+	STUB();
 }
 
 void JE_drawShapeNum( JE_word shape, JE_word x, JE_word y )
 {
-	STUB(JE_drawShapeNum);
+	STUB();
 }
 
 void JE_loadShapes( JE_char* shapefile )
 {
-	STUB(JE_loadShapes);
+	STUB();
 }
 
 void JE_drawShape( void* shape, JE_word shapex, JE_word shapey, JE_word x, JE_word y )
 {
-	STUB(JE_drawShape);
+	STUB();
 }
 
 void JE_drawShapeS( void* shape, JE_word shapex, JE_word shapey, JE_word x, JE_word y )
 {
-	STUB(JE_drawShapeS);
+	STUB();
 }

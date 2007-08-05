@@ -152,7 +152,6 @@ void opentyrian_menu( void )
 
 	int sel = 0;
 	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
-	int i;
 	JE_boolean quit;
 
 	JE_fadeBlack(10);
@@ -160,7 +159,7 @@ void opentyrian_menu( void )
 
 	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
 
-	for (i = 0; i <= maxSel; i++)
+	for (int i = 0; i <= maxSel; i++)
 	{
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES),
 		                 (i != maxSel) ? (i * 16 + 32) : 118, opentyrian_menu_items[i],
@@ -175,7 +174,6 @@ void opentyrian_menu( void )
 
 	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
 	JE_playSong(currentJukeboxSong);
-
 
 	do
 	{

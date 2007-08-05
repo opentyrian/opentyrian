@@ -380,12 +380,12 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 
 void JE_wipeKey( void )
 {
-	STUB(JE_wipeKey);
+	STUB();
 }
 
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 {
-	STUB(JE_mousePosition);
+	STUB();
 	return 0;
 }
 
@@ -397,20 +397,20 @@ these are all located in editship.c
 
 void JE_startNewShape( void )
 {
-	STUB(JE_startNewShape);
+	STUB();
 }
 
 void JE_endShape( void )
 {
-	STUB(JE_endShape);
+	STUB();
 }
 
 void JE_add( JE_byte nextbyte )
 {
-	STUB(JE_add);
+	STUB();
 }
 
 void JE_buildRec( void )
 {
-	STUB(JE_buildRec);
+	STUB();
 }*/

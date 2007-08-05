@@ -297,7 +297,7 @@ star_end:
 void JE_makeGray( void )
 {
 	/* YKS: Not used anywhere. */
-	STUB(JE_makeGray);
+	STUB();
 }
 
 void JE_wackyCol( void )

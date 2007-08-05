@@ -45,7 +45,7 @@ void opl_update( short* buf, long samples)
 				buf[i*2] = buf[i];
 				buf[i*2+1] = buf[i];
 			}
-  	} else {
+	} else {
 		short *tempbuf = malloc(sizeof(short) * (stereo ? samples * 2 : samples));
 		int i;
 

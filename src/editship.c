@@ -37,40 +37,40 @@ JE_word extraShapeSize;
 
 void JE_endShape( void )
 {
-	STUB(JE_endShape);
+	STUB();
 }
 
 void JE_decryptShips( void )
 {
-	STUB(JE_decryptShips);
+	STUB();
 }
 
 void JE_compressShapeFile( void )
 {
-	STUB(JE_compressShapeFile);
+	STUB();
 }
 
 void JE_loadExtraShapes( void )
 {
-	STUB(JE_loadExtraShapes);
+	STUB();
 }
 
 void JE_add( JE_byte nextbyte )
 {
-	STUB(JE_add);
+	STUB();
 }
 
 void JE_encryptShips( void )
 {
-	STUB(JE_encryptShips);
+	STUB();
 }
 
 void JE_buildRec( void )
 {
-	STUB(JE_buildRec);
+	STUB();
 }
 
 void JE_startNewShape( void )
 {
-	STUB(JE_startNewShape);
+	STUB();
 }

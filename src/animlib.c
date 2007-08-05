@@ -38,41 +38,41 @@ JE_word currentpageseg;
 
 void JE_loadPage( JE_word pagenumber )
 {
-	STUB(JE_loadPage);
+	STUB();
 }
 
 void JE_drawFrame( JE_word framenumber )
 {
-	STUB(JE_drawFrame);
+	STUB();
 }
 
 JE_word JE_findPage ( JE_word framenumber )
 {
-	STUB(JE_findPage );
+	STUB();
 	return -1;
 }
 
 void JE_renderFrame( JE_word framenumber )
 {
-	STUB(JE_renderFrame);
+	STUB();
 }
 
 void JE_playAnim( JE_char *animfile, JE_byte startingframe, JE_boolean keyhalt, JE_byte speed )
 {
-	STUB(JE_playAnim);
+	STUB();
 }
 
 void JE_loadAnim( JE_char *filename )
 {
-	STUB(JE_loadAnim);
+	STUB();
 }
 
 void JE_closeAnim( void )
 {
-	STUB(JE_closeAnim);
+	STUB();
 }
 
 void JE_playRunSkipDump( JE_word bufferoffset )
 {
-	STUB(JE_playRunSkipDump);
+	STUB();
 }

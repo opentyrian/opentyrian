@@ -53,7 +53,7 @@ JE_byte temp, temp2;
 
 void JE_darkenBackground( JE_word neat )
 {
-	STUB(JE_darkenBackground);
+	STUB();
 }
 
 void JE_drawBackground2( void )
@@ -560,35 +560,35 @@ void JE_drawBackground3( void )
 
 void JE_checkSmoothies( void )
 {
-	STUB(JE_checkSmoothies);
+	STUB();
 }
 
 void JE_smoothies1( void )
 {
-	STUB(JE_smoothies1);
+	STUB();
 }
 
 void JE_smoothies2( void )
 {
-	STUB(JE_smoothies2);
+	STUB();
 }
 
 void JE_smoothies3( void )
 {
-	STUB(JE_smoothies3);
+	STUB();
 }
 
 void JE_smoothies4( void )
 {
-	STUB(JE_smoothies4);
+	STUB();
 }
 
 void JE_smoothies6( void )
 {
-	STUB(JE_smoothies6);
+	STUB();
 }
 
 void JE_initSmoothies( void )
 {
-	STUB(JE_initSmoothies);
+	STUB();
 }

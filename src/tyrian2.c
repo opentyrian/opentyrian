@@ -7639,7 +7639,7 @@ void JE_drawPlanet( JE_byte planetNum )
 
 void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 )
 {
-	STUB(JE_scaleBitmap );
+	STUB();
 }
 
 void JE_initWeaponView( void )
@@ -7672,23 +7672,23 @@ void JE_initWeaponView( void )
 
 void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
 {
-	STUB(JE_barX);
+	STUB();
 }
 
 void JE_computeDots( void )
 {
-	STUB(JE_computeDots);
+	STUB();
 }
 
 JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist )
 {
-	STUB(JE_partWay);
+	STUB();
 	return -1;
 }
 
 void JE_doFunkyScreen( void )
 {
-	STUB(JE_doFunkyScreen);
+	STUB();
 }
 
 void JE_drawMainMenuHelpText( void )
@@ -7724,7 +7724,7 @@ void JE_drawMainMenuHelpText( void )
 
 void JE_whoa( void )
 {
-	STUB(JE_whoa);
+	STUB();
 }
 
 JE_boolean JE_quitRequest( JE_boolean useMouse )
@@ -7877,7 +7877,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 
 void JE_doStatBar( void )
 {
-	STUB(JE_doStatBar);
+	STUB();
 }
 
 void JE_drawScore( void )
@@ -8315,12 +8315,12 @@ void JE_menuFunction( JE_byte select )
 
 void JE_drawJoystick( void )
 {
-	STUB(JE_drawJoystick);
+	STUB();
 }
 
 void JE_funkyScreen( void )
 {
-	STUB(JE_funkyScreen);
+	STUB();
 }
 
 void JE_weaponSimUpdate( void )
@@ -8713,16 +8713,16 @@ void JE_genItemMenu( JE_byte itemNum )
 
 void JE_doNetwork( void )
 {
-	STUB(JE_doNetwork);
+	STUB();
 }
 
 /* located in backgrnd.c
 void JE_drawBackground3( void )
 {
-	STUB(JE_drawBackground3);
+	STUB();
 }*/
 
 void JE_scaleInPicture( void )
 {
-	STUB(JE_scaleInPicture);
+	STUB();
 }

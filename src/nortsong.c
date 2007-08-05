@@ -319,12 +319,12 @@ void JE_resetTimerInt( void )
 
 void JE_timerInt( void )
 {
-	STUB(JE_timerInt);
+	STUB();
 }
 
 void JE_changeVolume( JE_word temp, JE_integer change, JE_word fxvol, JE_integer fxchange )
 {
-	STUB(JE_changeVolume);
+	STUB();
 }
 
 void JE_waitFrameCount( void )

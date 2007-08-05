@@ -126,12 +126,12 @@ void JE_getVGA( void )
 
 void JE_onScreen( void )
 {
-	STUB(JE_onScreen);
+	STUB();
 }
 
 void JE_offScreen( void )
 {
-	STUB(JE_offScreen);
+	STUB();
 }
 
 void JE_disableRefresh( void )
@@ -451,33 +451,33 @@ JE_boolean JE_kp( void )
 
 void JE_getImage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
-	STUB(JE_getimage16);
+	STUB();
 }
 void JE_putImage16( JE_word a, JE_byte b, JE_shape16B *p )
 {
-	STUB(JE_putimage16);
+	STUB();
 }
 void JE_absDrawGraphic( JE_ShapeTypeOne s )
 {
-	STUB(JE_absDrawGraphic);
+	STUB();
 }
 void JE_drawGraphicOver( JE_word x, JE_word y, JE_ShapeTypeOne s )
 {
-	STUB(JE_drawgraphicover);
+	STUB();
 }
 void JE_absDrawGraphicOver( JE_ShapeTypeOne s )
 {
-	STUB(JE_absDrawGraphicOver);
+	STUB();
 }
 void JE_readGraphic( JE_integer x, JE_integer y, JE_ShapeTypeOne s )
 {
-	STUB(JE_readgraphic);
+	STUB();
 }
 void JE_wait( JE_byte min, JE_byte sec, JE_byte hun )
 {
-	STUB(JE_wait);
+	STUB();
 }
 void JE_darkenScreen( void )
 {
-	STUB(JE_darkenscreen);
+	STUB();
 }

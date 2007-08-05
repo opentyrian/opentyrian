@@ -29,7 +29,7 @@
 #include <string.h>
 
 
-#define STUB(name) printf("!!! STUB: %s:%d:" #name "\n", __FILE__, __LINE__)
+#define STUB() printf("!!! STUB: %s:%d:%s\n", __FILE__, __LINE__, __func__)
 
 #define ROUND(x) (floor((x)+0.5))
 
