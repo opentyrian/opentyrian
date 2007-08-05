@@ -48,9 +48,6 @@ int freq = 11025 * OUTPUT_QUALITY;
 
 /* SYN: TODO: Okay, some sound issues and what I'm going to do about them:
 	- sfx are garbled when music is playing. Something is wrong with my mixing. Fix it.
-	- music speed is wrong. This seems to be corrected by having a larger music buffer; for latency issues,
-	  this means I need a seperate buffer to play music into that is refilled as needed and copied in smaller
-	  pieces to the main output buffer.
 */
 
 
