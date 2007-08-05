@@ -34,7 +34,7 @@
 
 
 JE_boolean notyetloadedpcx;
-JE_boolean notYetLoadedPCX = TRUE;
+JE_boolean notYetLoadedPCX = true;
 
 void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 {
@@ -57,7 +57,7 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 	/*Same as old AnalyzePic*/
 	if (notYetLoadedPCX)
 	{
-		notYetLoadedPCX = FALSE;
+		notYetLoadedPCX = false;
 		efread(&x, sizeof(JE_word), 1, PCXfile);
 		for (x = 0; x < PCX_NUM; x++)
 		{

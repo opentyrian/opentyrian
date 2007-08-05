@@ -155,22 +155,22 @@ void opentyrian_menu( void )
 	JE_boolean quit;
 
 	JE_fadeBlack(10);
-	JE_loadPic(13, FALSE); /* 2, 5, or 13? */
+	JE_loadPic(13, false); /* 2, 5, or 13? */
 
-	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, FALSE);
+	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, false);
 
 	for (int i = 0; i <= maxSel; i++)
 	{
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES),
 		                 (i != maxSel) ? (i * 16 + 32) : 118, opentyrian_menu_items[i],
-		                 15, -4, SMALL_FONT_SHAPES, TRUE);
+		                 15, -4, SMALL_FONT_SHAPES, true);
 	}
 
 	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
 	JE_showVGA();
 	JE_fadeColor(20);
-	wait_noinput(TRUE, FALSE, FALSE);
-	quit = FALSE;
+	wait_noinput(true, false, false);
+	quit = false;
 
 	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
 	JE_playSong(currentJukeboxSong);
@@ -180,12 +180,12 @@ void opentyrian_menu( void )
 		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[sel], SMALL_FONT_SHAPES),
 		                 (sel != maxSel) ? (sel * 16 + 32) : 118, opentyrian_menu_items[sel],
-		                 15, -2, SMALL_FONT_SHAPES, TRUE);
+		                 15, -2, SMALL_FONT_SHAPES, true);
 
 		JE_showVGA();
 
 		tempW = 0;
-		JE_textMenuWait(&tempW, FALSE);
+		JE_textMenuWait(&tempW, false);
 
 		if (newkey) {
 			switch (lastkey_sym)
@@ -212,7 +212,7 @@ void opentyrian_menu( void )
 						case 0: /* About */
 							JE_playSampleNum(SELECT);
 							scroller3d(about_text);
-							JE_loadPic(13, FALSE);
+							JE_loadPic(13, false);
 							JE_fadeColor(20);
 							break;
 						case 1: /* Setup */
@@ -222,17 +222,17 @@ void opentyrian_menu( void )
 						case 2: /* Jukebox */
 							JE_playSampleNum(SELECT);
 							JE_jukeboxGo();
-							JE_loadPic(13, FALSE);
+							JE_loadPic(13, false);
 							JE_fadeColor(20);
 							break;
 						default: /* Return to main menu */
-							quit = TRUE;
+							quit = true;
 							JE_playSampleNum(ESC);
 							break;
 					}
 					break;
 				case SDLK_ESCAPE:
-					quit = TRUE;
+					quit = true;
 					JE_playSampleNum(ESC);
 					return;
 				default:
@@ -262,7 +262,7 @@ int main( int argc, char *argv[] )
 
 	recordFileNum = 1;
 	playDemoNum = 0;
-	playDemo = FALSE;
+	playDemo = false;
 
 	JE_loadConfiguration();
 
@@ -281,7 +281,7 @@ int main( int argc, char *argv[] )
 		}
 	} else {
 		printf("Joystick override.\n");
-		joystick_installed = FALSE;
+		joystick_installed = false;
 	}
 
 	if (mouseInstalled)
@@ -300,19 +300,19 @@ int main( int argc, char *argv[] )
 	{
 		if (JE_getFileSize("tyrianc.shp") == 0)
 		{
-			tyrianXmas = FALSE;
+			tyrianXmas = false;
 		}
-		/*if (JE_getFileSize("voicesc.shp") == 0) tyrianXmas = FALSE;*/
+		/*if (JE_getFileSize("voicesc.shp") == 0) tyrianXmas = false;*/
 		if (tyrianXmas)
 		{
 			printf("*****************************\n"
 			       "Christmas has been detected.\n"
 			       "  Activate Christmas? (Y/N)\n"
 			       "*****************************\n");
-			wait_input(TRUE,FALSE,FALSE);
+			wait_input(true,false,false);
 			if (lastkey_sym != SDLK_y)
 			{
-				tyrianXmas = FALSE;
+				tyrianXmas = false;
 			}
 		} else {
 			printf("Christmas is missing.\n");
@@ -320,10 +320,10 @@ int main( int argc, char *argv[] )
 	}
 
 	/* Default Options */
-	youAreCheating = FALSE;
-	smoothScroll = TRUE;
-	showMemLeft = FALSE;
-	playerPasswordInput = TRUE;
+	youAreCheating = false;
+	smoothScroll = true;
+	showMemLeft = false;
+	playerPasswordInput = true;
 
 	printf("Initializing SDL audio...\n");
 	JE_loadSong(1);
@@ -339,7 +339,7 @@ int main( int argc, char *argv[] )
 
 		JE_initialize(0, 0, 0, 0, 0); /* TODO: Fix arguments */
 
-		soundEffects = TRUE; /* TODO: find a real way to give this a value */
+		soundEffects = true; /* TODO: find a real way to give this a value */
 		if (soundEffects)
 		{
 			JE_multiSampleInit(0, 0, 0, 0); /* TODO: Fix arguments */

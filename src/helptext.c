@@ -99,7 +99,7 @@ void JE_helpBox( JE_word x, JE_word y, char *message, JE_byte boxwidth )
 
 	pos = 1;
 	endpos = 0;
-	endstring = FALSE;
+	endstring = false;
 
 	do
 	{
@@ -113,7 +113,7 @@ void JE_helpBox( JE_word x, JE_word y, char *message, JE_byte boxwidth )
 				pos++;
 				if (pos == strlen(message))
 				{
-					endstring = TRUE;
+					endstring = true;
 					if (pos - startpos < boxwidth)
 					{
 						endpos = pos + 1;

@@ -70,7 +70,7 @@ void JE_starlib_main( void )
 
 	JE_wackyCol();
 
-	grayB = FALSE;
+	grayB = false;
 
 	starlib_speed += speedChange;
 
@@ -251,7 +251,7 @@ star_end:
 				break;
 			case 'X':
 			case 27:
-				run = FALSE;
+				run = false;
 				break;
 			case '[':
 				pColor--;
@@ -269,8 +269,8 @@ star_end:
 				doChange = !doChange;
 				break;
 			case 'P':
-				wait_noinput(TRUE,FALSE,FALSE);
-				wait_input(TRUE,FALSE,FALSE);
+				wait_noinput(true,false,false);
+				wait_input(true,false,false);
 				break;
 			default:
 				break;
@@ -308,15 +308,15 @@ void JE_wackyCol( void )
 
 void JE_starlib_init( void )
 {
-	static JE_boolean initialized = FALSE;
+	static JE_boolean initialized = false;
 
 	if (!initialized)
 	{
-		initialized = TRUE;
+		initialized = true;
 
 		JE_resetValues();
 		JE_changeSetup(2);
-		doChange = TRUE;
+		doChange = true;
 
 		/* RANDOMIZE; */
 		for (x = 0; x < starlib_MAX_STARS; x++)

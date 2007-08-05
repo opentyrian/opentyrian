@@ -46,7 +46,7 @@ JE_byte maxShape[MAX_TABLE];                    /* [1..maxtable] */
 
 JE_byte mouseGrabShape[24*28];                 /* [1..24*28] */
 
-JE_boolean loadOverride = FALSE;
+JE_boolean loadOverride = false;
 
 /*
   Colors:
@@ -219,7 +219,7 @@ void JE_newPurgeShapes( JE_byte table )
 			if (shapeExist[table][x])
 			{
 				free((*shapeArray)[table][x]);
-				shapeExist[table][x] = FALSE;
+				shapeExist[table][x] = false;
 			}
 		}
 	}
@@ -272,14 +272,14 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 	if (time > 0)
 	{
 		/* SYN: The original used the variable framecount here. Some code was setting framecount
-		   directly and then calling this proc with params (0, FALSE). I think this is more correct now. */
+		   directly and then calling this proc with params (0, false). I think this is more correct now. */
 		frameCount = time;
 	}
 	setjasondelay(frameCount);
 
 	do
 	{
-		service_SDL_events(TRUE);
+		service_SDL_events(true);
 		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
 		mouseX = mouse_x;
 		mouseY = mouse_y;
@@ -300,10 +300,10 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 			if (netQuit)
 			{
 				lastkey_sym = SDLK_ESC;
-				return TRUE; *//* MXD assumes this default return value *//*
+				return true; *//* MXD assumes this default return value *//*
 			}
 			if (JE_scanNetByte(128))
-				return TRUE; *//* MXD assumes this default return value */
+				return true; *//* MXD assumes this default return value */
 			/*Let other player continue moving around*/
 		}
 
@@ -322,7 +322,7 @@ void JE_mouseStart( void )
 	{
 		tempW = mouseCursorGr[mouseCursor];
 
-		service_SDL_events(FALSE);
+		service_SDL_events(false);
 		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
 		lastMouseX = mouse_x;
 		lastMouseY = mouse_y;

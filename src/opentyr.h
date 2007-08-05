@@ -23,9 +23,10 @@
 #include "SDL.h"
 #include "SDL_endian.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h> /* For the ROUND() macro */
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -37,9 +38,6 @@
  * !!! USE WITH ARRAYS ONLY !!! */
 #define COUNTOF(x) (sizeof(x) / sizeof *(x))
 
-#define TRUE 1
-#define FALSE 0
-
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -49,7 +47,7 @@ typedef Sint16 JE_integer;
 typedef Sint8  JE_shortint;
 typedef Uint16 JE_word;
 typedef Uint8  JE_byte;
-typedef int    JE_boolean;
+typedef bool   JE_boolean;
 typedef char   JE_char;
 typedef double JE_real;
 

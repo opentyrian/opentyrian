@@ -61,7 +61,7 @@ JE_boolean buttonHeld;
 
 JE_ButtonAssign joyButtonAssign;
 
-JE_boolean useButtonAssign = FALSE;
+JE_boolean useButtonAssign = false;
 
 /* Joystick Data */
 Sint16 jMinX, jMaxX, jMinY, jMaxY, jCenterX, jCenterY, joyX, joyY;
@@ -85,7 +85,7 @@ void JE_joystick1( void ) /* procedure to get x and y */
 
 	if (isNetworkGame)
 	{
-		forceAveraging = TRUE;
+		forceAveraging = true;
 	}
 
 	for (i = 0; i < COUNTOF(joyButton); i++)
@@ -158,7 +158,7 @@ void JE_updateButtons( void ) /* Uses ButtonAssign to find out */
 
 void JE_joystick2( void )
 {
-	joystickInput = FALSE;
+	joystickInput = false;
 
 	if (joystick_installed)
 	{
@@ -205,28 +205,28 @@ JE_boolean JE_nextJoystickCheck( void )
 			joystickWait--;
 		if (button[0] || button[1] || button[2] || button[3])
 		{
-			return TRUE;
+			return true;
 		} else {
 			if (joystickWait == 0)
 			{
 				joystickWait = joystickWaitMax;
-				return TRUE;
+				return true;
 			}
 		}
 	} else {
 		joystickWait = 0;
 	}
-	return FALSE;
+	return false;
 }
 
 JE_boolean JE_joystickTranslate( void )
 {
 	JE_boolean tempb;
 
-	joystickUp = FALSE;
-	joystickDown = FALSE;
-	joystickLeft = FALSE;
-	joystickRight = FALSE;
+	joystickUp = false;
+	joystickDown = false;
+	joystickLeft = false;
+	joystickRight = false;
 
 	tempb = JE_nextJoystickCheck();
 
@@ -234,32 +234,32 @@ JE_boolean JE_joystickTranslate( void )
 	{
 		if (joystickUp)
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_UP;
 		}
 		if (joystickDown)
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_DOWN;
 		}
 		if (joystickLeft)
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_LEFT;
 		}
 		if (joystickRight)
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_RIGHT;
 		}
 		if (button[0])
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_RETURN;
 		}
 		if (button[1])
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_ESCAPE;
 		}
 	}
@@ -275,26 +275,26 @@ JE_boolean JE_joystickNotHeld( void )
 		{
 			if (buttonHeld)
 			{
-				newkey = FALSE;
+				newkey = false;
 			} else {
-				buttonHeld = TRUE;
-				return TRUE;
+				buttonHeld = true;
+				return true;
 			}
 		} else {
-			buttonHeld = FALSE;
-			return TRUE;
+			buttonHeld = false;
+			return true;
 		}
 	} else {
-		buttonHeld = FALSE;
+		buttonHeld = false;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
 void JE_joystickInit( void )
 {
-	joystick_installed = FALSE;
+	joystick_installed = false;
 
 	if (scanForJoystick)
 	{
@@ -311,10 +311,10 @@ void JE_joystickInit( void )
 #ifndef TARGET_GP2X
 				if (SDL_JoystickNumButtons(joystick) >= 4 && SDL_JoystickNumAxes(joystick) >= 2)
 				{
-					joystick_installed = TRUE;
+					joystick_installed = true;
 				}
 #else
-				joystick_installed = TRUE;
+				joystick_installed = true;
 #endif
 			}
 		}
@@ -332,18 +332,18 @@ void JE_joystickInit( void )
 
 		jCenterX = joyX;
 		jCenterY = joyY;
-		button[0] = FALSE;
-		button[1] = FALSE;
-		button[2] = FALSE;
-		button[3] = FALSE;
-		joystickUp = FALSE;
-		joystickDown = FALSE;
-		joystickLeft = FALSE;
-		joystickRight = FALSE;
+		button[0] = false;
+		button[1] = false;
+		button[2] = false;
+		button[3] = false;
+		joystickUp = false;
+		joystickDown = false;
+		joystickLeft = false;
+		joystickRight = false;
 	}
 }
 
 void joystick_init( void )
 {
-	isNetworkGame = FALSE;
+	isNetworkGame = false;
 }

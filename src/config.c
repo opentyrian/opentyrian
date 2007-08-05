@@ -216,7 +216,7 @@ JE_boolean galagaMode;
 JE_boolean extraGame;
 
 JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian;
-JE_boolean trentWin = FALSE;
+JE_boolean trentWin = false;
 JE_byte    superArcadeMode;
 
 JE_byte    superArcadePowerUp;
@@ -229,7 +229,7 @@ JE_byte secretHint;
 JE_byte background3over;
 JE_byte background2over;
 JE_byte gammaCorrection;
-JE_boolean superPause = FALSE;
+JE_boolean superPause = false;
 JE_boolean explosionTransparent,
            youAreCheating,
            displayScore,
@@ -375,11 +375,11 @@ void JE_loadGame( JE_byte slot )
 {
 	JE_byte temp5;
 
-	superTyrian = FALSE;
-	onePlayerAction = FALSE;
-	twoPlayerMode = FALSE;
-	extraGame = FALSE;
-	galagaMode = FALSE;
+	superTyrian = false;
+	onePlayerAction = false;
+	twoPlayerMode = false;
+	extraGame = false;
+	galagaMode = false;
 
 	initialDifficulty = saveFiles[slot].initialDifficulty;
 	gameHasRepeated = saveFiles[slot].gameHasRepeated;
@@ -390,26 +390,26 @@ void JE_loadGame( JE_byte slot )
 
 	if (superArcadeMode == 255)
 	{
-		onePlayerAction = TRUE;
+		onePlayerAction = true;
 		superArcadeMode = 0;
 		pItems [3 - 1] = 0;
 	}
 	else if (superArcadeMode == 254)
 	{
-		onePlayerAction = TRUE;
+		onePlayerAction = true;
 		superArcadeMode = 0;
 		pItems [3 - 1] = 0;
-		superTyrian = TRUE;
+		superTyrian = true;
 	}
 	else if (superArcadeMode > 0)
 	{
-		onePlayerAction = TRUE;
+		onePlayerAction = true;
 	}
 
 	if (twoPlayerMode)
 	{
 		memcpy(pItemsPlayer2, saveFiles[slot].lastItems, sizeof(pItemsPlayer2));
-		onePlayerAction = FALSE;
+		onePlayerAction = false;
 	} else {
 		memcpy(pItemsBack2, saveFiles[slot].lastItems, sizeof(pItemsBack2));
 	}
@@ -462,13 +462,13 @@ void JE_initProcessorType( void )
 	/* SYN: Originally this proc looked at your hardware specs and chose appropriate options. We don't care, so I'll just set
 	   decent defaults here. */
 
-	wild = FALSE;
-	superWild = FALSE;
-	smoothScroll = TRUE;
-	explosionTransparent = TRUE;
-	filtrationAvail = TRUE;
-	background2 = TRUE;
-	displayScore = TRUE;
+	wild = false;
+	superWild = false;
+	smoothScroll = true;
+	explosionTransparent = true;
+	filtrationAvail = true;
+	background2 = true;
+	displayScore = true;
 
 
 	switch (gameSpeed)
@@ -494,40 +494,40 @@ void JE_initProcessorType( void )
 
 void JE_setNewGameSpeed( void )
 {
-	pentiumMode = TRUE;
+	pentiumMode = true;
 
 	switch (fastPlay)
 	{
 	case 0:
 		speed = 0x4300;
-		smoothScroll = TRUE;
+		smoothScroll = true;
 		frameCountMax = 2;
 		break;
 	case 1:
 		speed = 0x3000;
-		smoothScroll = TRUE;
+		smoothScroll = true;
 		frameCountMax = 2;
 		break;
 	case 2:
 		speed = 0x2000;
-		smoothScroll = FALSE;
+		smoothScroll = false;
 		frameCountMax = 2;
 		break;
 	case 3:
 		speed = 0x5300;
-		smoothScroll = TRUE;
+		smoothScroll = true;
 		frameCountMax = 4;
 		break;
 	case 4:
 		speed = 0x4300;
-		smoothScroll = TRUE;
+		smoothScroll = true;
 		frameCountMax = 3;
 		break;
 	case 5:
 		speed = 0x4300;
-		smoothScroll = TRUE;
+		smoothScroll = true;
 		frameCountMax = 2;
-		pentiumMode = TRUE;
+		pentiumMode = true;
 		break;
 	}
 
@@ -585,7 +585,7 @@ void JE_encryptSaveTemp( void )
 
 void JE_decryptSaveTemp( void )
 {
-	JE_boolean correct = TRUE;
+	JE_boolean correct = true;
 	JE_SaveGameTemp s2;
 	/*JE_word x;*/
 	int x;
@@ -612,7 +612,7 @@ void JE_decryptSaveTemp( void )
 	}
 	if (saveTemp[SAVE_FILE_SIZE] != y)
 	{
-		correct = FALSE;
+		correct = false;
 		printf("Failed additive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE], y);
 	}
 
@@ -623,7 +623,7 @@ void JE_decryptSaveTemp( void )
 	}
 	if (saveTemp[SAVE_FILE_SIZE+1] != y)
 	{
-		correct = FALSE;
+		correct = false;
 		printf("Failed subtractive checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE+1], y);
 	}
 
@@ -634,7 +634,7 @@ void JE_decryptSaveTemp( void )
 	}
 	if (saveTemp[SAVE_FILE_SIZE+2] != y)
 	{
-		correct = FALSE;
+		correct = false;
 		printf("Failed multiplicative checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE+2], y);
 	}
 
@@ -645,7 +645,7 @@ void JE_decryptSaveTemp( void )
 	}
 	if (saveTemp[SAVE_FILE_SIZE+3] != y)
 	{
-		correct = FALSE;
+		correct = false;
 		printf("Failed XOR'd checksum: %d vs %d\n", saveTemp[SAVE_FILE_SIZE+3], y);
 	}
 
@@ -668,7 +668,7 @@ void JE_loadConfiguration( void )
 	JE_byte junk;
 	int y;
 
-	errorActive = TRUE;
+	errorActive = true;
 
 	if (!JE_isCFGThere())
 	{
@@ -720,7 +720,7 @@ void JE_loadConfiguration( void )
 		soundEffects = 1;
 		jConfigure = 0; /* TODO: Figure out what this is */
 		memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
-		background2 = TRUE;
+		background2 = true;
 		inputDevice = 0;
 		tyrMusicVolume = 255;
 		fxVolume = 128;
@@ -734,14 +734,14 @@ void JE_loadConfiguration( void )
 	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
 	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
 
-	soundActive = TRUE;
-	musicActive = TRUE;
+	soundActive = true;
+	musicActive = true;
 
 	JE_setVol(tyrMusicVolume, fxVolume);
 
-	dont_die = TRUE;
+	dont_die = true;
 	JE_resetFile(&fi, "tyrian.sav");
-	dont_die = FALSE;
+	dont_die = false;
 
 	if (fi)
 	{
@@ -866,7 +866,7 @@ void JE_loadConfiguration( void )
         }
 	}
 
-	errorActive = FALSE;
+	errorActive = false;
 
 	JE_calcFXVol();
 	JE_initProcessorType();

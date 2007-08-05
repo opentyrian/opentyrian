@@ -27,7 +27,7 @@
 #undef NO_EXTERNS
 
 
-JE_boolean continuousPlay = FALSE;
+JE_boolean continuousPlay = false;
 JE_word currentJukeboxSong = 0; /* SYN: used to be currentsong, but that name conflicted with elsewhere */
 
 void JE_playNewSelection( void )
@@ -39,8 +39,8 @@ void JE_playNewSelection( void )
 void JE_jukebox_selectSong( JE_word song )
 {
 	JE_selectSong(song);
-	repeated = FALSE;
-	playing = TRUE;
+	repeated = false;
+	playing = true;
 }
 
 void JE_checkEndOfSong( void )
@@ -48,7 +48,7 @@ void JE_checkEndOfSong( void )
 	if (!continuousPlay && (repeated || !playing) )
 	{
 		JE_playNewSelection();
-		repeated = FALSE;
+		repeated = false;
 	}
 	if (continuousPlay && !playing)
 	{

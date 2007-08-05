@@ -70,16 +70,16 @@ void JE_setNetByte( JE_byte send)
 JE_boolean JE_scanNetByte( JE_byte scan )
 {
 	STUB();
-	return TRUE;
+	return true;
 }
 
 void JE_clearSpecialRequests( void )
 {
-	pauseRequest = FALSE;
-	inGameMenuRequest = FALSE;
-	skipLevelRequest = FALSE;
-	helpRequest = FALSE;
-	nortShipRequest = FALSE;
+	pauseRequest = false;
+	inGameMenuRequest = false;
+	skipLevelRequest = false;
+	helpRequest = false;
+	nortShipRequest = false;
 }
 
 /* TODO */

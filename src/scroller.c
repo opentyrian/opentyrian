@@ -67,7 +67,7 @@ void scroller3d( const char *text[] )
 #	define HORIZON_W 200
 #	define MAX_LINES ((200-HORIZON)/TEXT_HEIGHT)
 	int txt_y = 0, cur_line = 0, line_off = 0, text_len = 0, wait = 0;
-	JE_boolean quit = FALSE;
+	JE_boolean quit = false;
 	Uint8 *surf;
 
 	while (text[text_len])
@@ -75,12 +75,12 @@ void scroller3d( const char *text[] )
 		text_len++;
 	}
 
-	JE_loadPic(4, FALSE); /* Steal palette for now. */
+	JE_loadPic(4, false); /* Steal palette for now. */
 	memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
 
 	surf = malloc(sizeof(VGAScreen2Seg));
 
-	wait_noinput(TRUE,TRUE,TRUE);
+	wait_noinput(true,true,true);
 	currentJukeboxSong = 41; /* BEER! =D */
 	JE_playSong(currentJukeboxSong);
 
@@ -88,10 +88,10 @@ void scroller3d( const char *text[] )
 	{
 		int start_line = cur_line, i, max = min(text_len, cur_line+MAX_LINES+1);
 
-		service_SDL_events(TRUE);
+		service_SDL_events(true);
 		if (keydown)
 		{
-			quit = TRUE;
+			quit = true;
 		}
 
 		if (wait++ >= 60)
@@ -120,7 +120,7 @@ void scroller3d( const char *text[] )
 		{
 			int txt_x = JE_fontCenter(text[i], SMALL_FONT_SHAPES);
 
-			JE_outTextAdjust(txt_x, (i-cur_line)*TEXT_HEIGHT-line_off+TEXT_HEIGHT, text[i], 15, -3, SMALL_FONT_SHAPES, FALSE);
+			JE_outTextAdjust(txt_x, (i-cur_line)*TEXT_HEIGHT-line_off+TEXT_HEIGHT, text[i], 15, -3, SMALL_FONT_SHAPES, false);
 		}
 
 		memset(surf, 0, sizeof(VGAScreen2Seg));

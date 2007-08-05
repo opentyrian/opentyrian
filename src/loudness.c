@@ -43,7 +43,7 @@ SAMPLE_TYPE *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian act
 SAMPLE_TYPE *channel_pos [SFX_CHANNELS];
 /*SAMPLE_TYPE *music_buffer = NULL; */
 Uint32 channel_len [SFX_CHANNELS];
-int sound_init_state = FALSE;
+int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
 
 /* SYN: TODO: Okay, some sound issues and what I'm going to do about them:
@@ -66,11 +66,11 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
 	{
 		printf("Failed to initialize audio: %s\n", SDL_GetError());
-		noSound = TRUE;
+		noSound = true;
 		return;
 	}
 
-	sound_init_state = TRUE;
+	sound_init_state = true;
 
 	soundmutex = SDL_CreateMutex();
 

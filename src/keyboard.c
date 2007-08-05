@@ -128,7 +128,7 @@ SDLMod lastkey_mod;
 unsigned char lastkey_char;
 Uint8 lastmouse_but;
 Uint16 lastmouse_x, lastmouse_y;
-JE_boolean mouse_pressed[3] = {FALSE, FALSE, FALSE};
+JE_boolean mouse_pressed[3] = {false, false, false};
 Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
 
 int numkeys;
@@ -143,8 +143,8 @@ void flush_events_buffer( void )
 
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-	service_SDL_events(FALSE);
-	while (!((keyboard ? keydown : FALSE) || (mouse ? mousedown : FALSE) || (joystick ? button[0] : FALSE)))
+	service_SDL_events(false);
+	while (!((keyboard ? keydown : false) || (mouse ? mousedown : false) || (joystick ? button[0] : false)))
 	{
 		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
 		{
@@ -152,14 +152,14 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 			{
 				JE_joystick2();
 			}
-			service_SDL_events(FALSE);
+			service_SDL_events(false);
 		}
 	}
 }
 
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-	service_SDL_events(FALSE);
+	service_SDL_events(false);
 	while ((keydown && keyboard) || (mousedown && mouse) || (button[0] && joystick))
 	{
 		if (SDL_GetTicks() % SDL_POLL_INTERVAL == 0)
@@ -168,7 +168,7 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 			{
 				JE_joystick2();
 			}
-			service_SDL_events(FALSE);
+			service_SDL_events(false);
 		}
 	}
 }
@@ -178,8 +178,8 @@ void init_keyboard( void )
 	keysactive = SDL_GetKeyState(&numkeys);
 	SDL_EnableKeyRepeat(500, 60);
 
-	newkey = newmouse = FALSE;
-	keydown = mousedown = FALSE;
+	newkey = newmouse = false;
+	keydown = mousedown = false;
 
 	SDL_EnableUNICODE(1);
 
@@ -196,7 +196,7 @@ void service_SDL_events( JE_boolean clear_new )
 
 	if (clear_new)
 	{
-		newkey = newmouse = FALSE;
+		newkey = newmouse = false;
 	}
 	while (SDL_PollEvent(&ev))
 	{
@@ -215,26 +215,26 @@ void service_SDL_events( JE_boolean clear_new )
 					puts("\n\n\nCtrl+Pause pressed. Doing emergency quit.\n");
 					exit(1);
 				}
-				newkey = TRUE;
+				newkey = true;
 				lastkey_sym = ev.key.keysym.sym;
 				lastkey_mod = ev.key.keysym.mod;
 				lastkey_char = ev.key.keysym.unicode;
-				keydown = TRUE;
+				keydown = true;
 				break;
 			case SDL_KEYUP:
-				keydown = FALSE;
+				keydown = false;
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
 				{
-					newmouse = TRUE;
+					newmouse = true;
 					lastmouse_but = ev.button.button;
 					lastmouse_x = ev.button.x;
 					lastmouse_y = ev.button.y;
-					mousedown = TRUE;
+					mousedown = true;
 				} else {
-					mousedown = FALSE;
+					mousedown = false;
 				}
 				switch (ev.button.button)
 				{

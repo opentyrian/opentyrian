@@ -318,8 +318,8 @@ void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape )
 
 JE_boolean JE_anyButton( void )
 {
-	button[0] = FALSE;
-	service_SDL_events(TRUE);
+	button[0] = false;
+	service_SDL_events(true);
 	JE_joystick2();
 	return newkey || mousedown || button[0];
 }

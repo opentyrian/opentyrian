@@ -30,7 +30,7 @@
 #include <string.h>
 
 
-JE_boolean mouseInstalled = TRUE;
+JE_boolean mouseInstalled = true;
 JE_char k;
 
 SDL_Surface *VGAScreen, *VGAScreenSeg, *game_screen;
@@ -54,14 +54,14 @@ const Uint8 VGA_pal[] = {
 
 void JE_initVGA256( void )
 {
-	static JE_boolean initd = FALSE;
+	static JE_boolean initd = false;
 	SDL_Color *col_buf;
 	int i,j;
 
 	if (!initd)
 	{
-		JE_boolean success = TRUE;
-		initd = TRUE;
+		JE_boolean success = true;
+		initd = true;
 
 		success = success && !SDL_InitSubSystem(SDL_INIT_VIDEO);
 		success = success && (VGAScreen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE));

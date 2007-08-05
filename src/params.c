@@ -50,20 +50,20 @@ void JE_paramCheck( int argc, char *argv[] )
 	JE_word x,y;
 	time_t now;
 
-	robertWeird     = TRUE;
-	richMode        = FALSE;
-	timMode        = FALSE;
-	recordDemo      = FALSE;
-	scanForJoystick = TRUE;
-	constantPlay    = FALSE;
-	useBios         = FALSE;
-	noSound         = FALSE;
-	quikJuke        = FALSE;
-	forceMaxVolume  = FALSE;
-	soundInfoReport = FALSE;
-	noRetrace       = FALSE;
-	joyMax          = FALSE;
-	forceAveraging  = FALSE;
+	robertWeird     = true;
+	richMode        = false;
+	timMode        = false;
+	recordDemo      = false;
+	scanForJoystick = true;
+	constantPlay    = false;
+	useBios         = false;
+	noSound         = false;
+	quikJuke        = false;
+	forceMaxVolume  = false;
+	soundInfoReport = false;
+	noRetrace       = false;
+	joyMax          = false;
+	forceAveraging  = false;
 
 	now = time(NULL);
 	tyrianXmas = localtime(&now)->tm_mon == 12;
@@ -133,60 +133,60 @@ JOYMAX   - Sets your joystick to maximum sensitivity.   [V1.2]
 				switch (y)
 				{
 					case 0:
-						richMode = TRUE;
+						richMode = true;
 						break;
 					case 1:
-						timMode = TRUE;
+						timMode = true;
 						break;
 					case 2:
-						recordDemo = TRUE;
+						recordDemo = true;
 						printf("Use a keyboard to record a demo.\n");
 						break;
 					case 3:
-						scanForJoystick = FALSE;
+						scanForJoystick = false;
 						break;
 					case 4:
-						robertWeird = FALSE;
+						robertWeird = false;
 						break;
 					case 5:
-						constantPlay = TRUE;
+						constantPlay = true;
 						break;
 					case 6:
-						constantDie = TRUE;
+						constantDie = true;
 						break;
 					case 7:
-						useBios = TRUE;
+						useBios = true;
 						printf("Keyboard redirection enabled.\n");
 						break;
 					case 8:
-						noSound = TRUE;
+						noSound = true;
 						break;
 					case 9:
-						quikJuke = TRUE;
+						quikJuke = true;
 						break;
 					case 10:
-						forceMaxVolume = TRUE;
+						forceMaxVolume = true;
 						break;
 					case 11:
-						soundInfoReport = TRUE;
+						soundInfoReport = true;
 						break;
 					case 12:
-						noRetrace = TRUE;
+						noRetrace = true;
 						break;
 					case 13:
-						joyMax = TRUE;
+						joyMax = true;
 						break;
 					case 14:
-						forceAveraging = TRUE;
+						forceAveraging = true;
 						break;
 					case 15:
-						stupidWindows = FALSE;
+						stupidWindows = false;
 						break;
 					case 16:
-						tyrianXmas = FALSE;
+						tyrianXmas = false;
 						break;
 					case 17:
-						tyrianXmas = TRUE;
+						tyrianXmas = true;
 						break;
 					default:
 						/* YKS: This shouldn't ever be reached. */

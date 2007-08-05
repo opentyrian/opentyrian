@@ -58,7 +58,7 @@ JE_shortint warningColChange;
 void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font )
 {
 	JE_byte a, b;
-	JE_boolean bright = FALSE;
+	JE_boolean bright = false;
 
 	for (a = 0; s[a] != 0; a++)
 	{
@@ -611,7 +611,7 @@ void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font )
 void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow )
 {
 	JE_byte a, b;
-	JE_boolean bright = FALSE;
+	JE_boolean bright = false;
 
 	for (a = 0; s[a] != 0; a++)
 	{

@@ -32,10 +32,10 @@
 JE_word randomcount;
 JE_char dir[12];
 
-JE_boolean errorActive = TRUE;
-JE_boolean errorOccurred = FALSE;
+JE_boolean errorActive = true;
+JE_boolean errorOccurred = false;
 
-JE_boolean dont_die = FALSE;
+JE_boolean dont_die = false;
 
 char err_msg[128] = "No error?!?!";
 
@@ -87,12 +87,12 @@ JE_longint JE_getFileSize( const char *filename )
 	FILE *f;
 	JE_longint size = 0;
 
-	errorActive = FALSE;
+	errorActive = false;
 	f = fopen(JE_locateFile(filename), "rb");
-	errorActive = TRUE;
+	errorActive = true;
 	if (errorOccurred)
 	{
-		errorOccurred = FALSE;
+		errorOccurred = false;
 		return 0;
 	}
 
@@ -125,9 +125,9 @@ JE_boolean JE_find( const char *s )
 	if ((f = fopen(s, "r")))
 	{
 		fclose(f);
-		return TRUE;
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -182,7 +182,7 @@ char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 			{
 				return NULL;
 			}
-			errorActive = TRUE;
+			errorActive = true;
 			JE_errorHand(filename);
 		}
 
@@ -211,17 +211,17 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 {
 	FILE *f;
 
-	dont_die = TRUE; /* Disabled barf'n'die */
+	dont_die = true; /* Disabled barf'n'die */
 	JE_resetFile(&f, "tyrian.cfg");
-	dont_die = FALSE;
+	dont_die = false;
 
 	if (f && get_stream_size(f) == 20+sizeof(keySettings))
 	{
 		fclose(f);
-		return FALSE;
+		return false;
 	} else {
 		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n");
-		return TRUE;
+		return true;
 	}
 }
 

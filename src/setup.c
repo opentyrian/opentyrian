@@ -41,7 +41,7 @@
 #include "SDL.h"
 
 
-JE_boolean volumeActive = TRUE;
+JE_boolean volumeActive = true;
 JE_boolean fx;
 JE_word fxNum;
 JE_boolean repeatedFade, continuousPlay;
@@ -54,7 +54,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 	{
 		JE_showVGA();
 
-		service_SDL_events(TRUE);
+		service_SDL_events(true);
 
 		inputDetected = newkey | mousedown | JE_joystickNotHeld();
 
@@ -65,7 +65,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 
 		if (mousedown)
 		{
-			newkey = TRUE;
+			newkey = true;
 			lastkey_sym = SDLK_RETURN;
 		}
 
@@ -74,25 +74,25 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		{
 			if (abs(mouse_y - 100) > 10)
 			{
-				inputDetected = TRUE;
+				inputDetected = true;
 				if (mouse_y - 100 < 0)
 				{
 					lastkey_sym = SDLK_UP;
 				} else {
 					lastkey_sym = SDLK_DOWN;
 				}
-				newkey = TRUE;
+				newkey = true;
 			}
 			if (abs(mouse_x - 160) > 10)
 			{
-				inputDetected = TRUE;
+				inputDetected = true;
 				if (mouse_x - 160 < 0)
 				{
 					lastkey_sym = SDLK_LEFT;
 				} else {
 					lastkey_sym = SDLK_RIGHT;
 				}
-				newkey = TRUE;
+				newkey = true;
 			}
 		}
 #endif
@@ -117,11 +117,11 @@ void JE_jukeboxGo( void )
 	JE_boolean youStopped, drawText, quit, fade;
 
 
-	weirdMusic = FALSE;
-	weirdCurrent = TRUE;
-	drawText = TRUE;
+	weirdMusic = false;
+	weirdCurrent = true;
+	drawText = true;
 
-	fx = FALSE;
+	fx = false;
 	fxNum = 1;
 
 	lastSong = currentJukeboxSong;
@@ -133,12 +133,12 @@ void JE_jukeboxGo( void )
 	JE_initVGA256();
 	JE_starlib_init();
 
-	quit = FALSE;
-	fade = FALSE;
-	repeatedFade = FALSE;
+	quit = false;
+	fade = false;
+	repeatedFade = false;
 
 	tempVolume = tyrMusicVolume;
-	youStopped = FALSE;
+	youStopped = false;
 
 	JE_wipeKey();
 
@@ -165,8 +165,8 @@ void JE_jukeboxGo( void )
 
 		if (repeated && !repeatedFade)
 		{
-		  fade = TRUE;
-		  repeatedFade = TRUE;
+		  fade = true;
+		  repeatedFade = true;
 		}
 
 		if ( ( (repeated && !fade) || !playing) && !youStopped)
@@ -176,7 +176,7 @@ void JE_jukeboxGo( void )
 		}
 
 		setdelay(1);
-		service_SDL_events(TRUE);
+		service_SDL_events(true);
 
 		JE_starlib_main();
 
@@ -220,7 +220,7 @@ void JE_jukeboxGo( void )
 					tempVolume -= 2;
 					JE_setVol(tempVolume, fxVolume);
 				} else {
-					fade = FALSE;
+					fade = false;
 				}
 			}
 			else if (speed < 0xE000)
@@ -228,7 +228,7 @@ void JE_jukeboxGo( void )
 				speed += 0x800;
 			} else {
 				speed = 0xE000;
-				fade = FALSE;
+				fade = false;
 			}
 			JE_resetTimerInt();
 			JE_setTimerInt();
@@ -239,7 +239,7 @@ void JE_jukeboxGo( void )
       joystick2;
       IF (mouseposition (x, y) > 0) OR button [1] THEN
         BEGIN
-          quit := TRUE;
+          quit := true;
           wipekey;
         END;
       */
@@ -252,7 +252,7 @@ void JE_jukeboxGo( void )
 			{
 			case SDLK_ESCAPE: /* quit jukebox */
 			case SDLK_q:
-				quit = TRUE;
+				quit = true;
 				break;
 			case SDLK_r: /* restart song */
 				JE_jukebox_selectSong(1);
@@ -286,16 +286,16 @@ void JE_jukeboxGo( void )
 			case SDLK_RETURN:
 				currentJukeboxSong++;
 				JE_playNewSong();
-				youStopped = FALSE;
+				youStopped = false;
 				break;
 			case SDLK_s:
 				JE_jukebox_selectSong(0);
-				youStopped = TRUE;
+				youStopped = true;
 				break;
 			case SDLK_w:
 				if (!weirdMusic)
 				{
-					weirdMusic = TRUE;
+					weirdMusic = true;
 					weirdSpeed = 10;
 				}
 				else if (weirdSpeed > 1)
@@ -304,7 +304,7 @@ void JE_jukeboxGo( void )
 				}
 				else
 				{
-					weirdMusic = FALSE;
+					weirdMusic = false;
 					if (!fade)
 					{
 						JE_setVol(tempVolume, fxVolume);
@@ -322,13 +322,13 @@ void JE_jukeboxGo( void )
 			case SDLK_UP:
 				currentJukeboxSong--;
 				JE_playNewSong();
-				youStopped = FALSE;
+				youStopped = false;
 				break;
 			case SDLK_RIGHT:
 			case SDLK_DOWN:
 				currentJukeboxSong++;
 				JE_playNewSong();
-				youStopped = FALSE;
+				youStopped = false;
 				break;
 			default:
 				break;
@@ -356,8 +356,8 @@ void JE_playNewSong( void )
 {
 	currentJukeboxSong = (currentJukeboxSong > MUSIC_NUM) ? 1 : (currentJukeboxSong < 1) ? MUSIC_NUM : currentJukeboxSong;
 	JE_playSong(currentJukeboxSong);
-	playing = TRUE;
-	repeatedFade = FALSE;
+	playing = true;
+	repeatedFade = false;
 	tempVolume = tyrMusicVolume;
 	JE_setVol(tempVolume, fxVolume);
 }

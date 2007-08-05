@@ -67,7 +67,7 @@ void JE_helpScreen( void )
 JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y )
 {
 	STUB();
-	return FALSE;
+	return false;
 }
 
 JE_byte JE_placementPosition( JE_word x, JE_byte width )

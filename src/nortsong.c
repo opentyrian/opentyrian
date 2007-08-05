@@ -55,9 +55,9 @@ JE_word dspversion;
 const char hexa[17] = "0123456789ABCDEF";
 
 Uint32 target, target2;
-JE_boolean mixEnable = FALSE;
-JE_boolean notYetLoadedSound = TRUE;
-JE_boolean notYetLoadedMusic = TRUE;
+JE_boolean mixEnable = false;
+JE_boolean notYetLoadedSound = true;
+JE_boolean notYetLoadedMusic = true;
 
 JE_SongPosType songPos;
 
@@ -68,12 +68,12 @@ JE_word frameCount, frameCount2, frameCountMax;
 JE_byte currentSong = 0;
 JE_byte jConfigure = 0;
 
-JE_byte soundActive = TRUE; /* I'm not sure if these two are ever false. */
-JE_byte musicActive = TRUE; /* TODO: Make sure these get proper values. */
+JE_byte soundActive = true; /* I'm not sure if these two are ever false. */
+JE_byte musicActive = true; /* TODO: Make sure these get proper values. */
 
 JE_byte *digiFx[SOUND_NUM + 9]; /* [1..soundnum + 9] */
 JE_word fxSize[SOUND_NUM + 9]; /* [1..soundnum + 9] */
-int allocd_digifx = FALSE;
+int allocd_digifx = false;
 
 
 JE_word fxVolume = 128; /* Default value, should be loaded from config */
@@ -117,7 +117,7 @@ void wait_delay( void )
 	{
 		if (ticks % SDL_POLL_INTERVAL == 0)
 		{
-			service_SDL_events(FALSE);
+			service_SDL_events(false);
 		}
 	}
 }
@@ -126,8 +126,8 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 {
 	Uint32 ticks;
 
-	newkey = newmouse = FALSE;
-	service_SDL_events(FALSE);
+	newkey = newmouse = false;
+	service_SDL_events(false);
 	while ((ticks = SDL_GetTicks()) < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
 	{
 		if (ticks % SDL_POLL_INTERVAL == 0)
@@ -136,7 +136,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 			{
 				JE_joystick2();
 			}
-			service_SDL_events(FALSE);
+			service_SDL_events(false);
 		}
 	}
 }
@@ -151,7 +151,7 @@ void JE_loadSong( JE_word songnum )
 	if (notYetLoadedMusic)
 	{
 		/* SYN: We're loading offsets into MUSIC.MUS for each song here. */
-		notYetLoadedMusic = FALSE;
+		notYetLoadedMusic = false;
 		efread(&x, sizeof(x), 1, fi);
 		efread(songPos, sizeof(JE_longint), sizeof(songPos) / sizeof(JE_longint), fi); /* SYN: reads long int (i.e. 4) * MUSICNUM */
 		fseek(fi, 0, SEEK_END);
@@ -196,7 +196,7 @@ void JE_loadSndFile( void )
 		digiFx[z] = malloc(fxSize[z]);
 		efread(digiFx[z], 1, fxSize[z], fi); /* JE: Load sample to buffer */
 	}
-	allocd_digifx = TRUE;
+	allocd_digifx = true;
 
 	fclose(fi);
 
@@ -231,7 +231,7 @@ void JE_loadSndFile( void )
 
 	fclose(fi);
 
-	notYetLoadedSound = FALSE;
+	notYetLoadedSound = false;
 
 }
 
@@ -265,8 +265,8 @@ void JE_playSong ( JE_word songnum )
 		 JE_stopSong();
 		currentSong = songnum;
 		 JE_loadSong (songnum);
-		 repeated = FALSE;
-		 playing = TRUE;
+		 repeated = false;
+		 playing = true;
 		 JE_selectSong (1);
 		 /* JE_waitRetrace(); */
 

@@ -81,7 +81,7 @@ Position *positions = NULL;
 Uint8 fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
 Uint16 posplay, jumppos, speed;
 Uint16 *patterns = NULL;
-int playing, songlooped;
+JE_boolean playing, songlooped;
 Uint32 numpatch, numposi, patterns_size, mainvolume;
 
 const Uint16 maxsound = 0x3f, maxpos = 0xff;
@@ -104,7 +104,7 @@ int lds_load(JE_byte *music_location)
 	{
 		/* Error! */
 		/* printf("Error loading music! %d\n", mode);
-		return FALSE; */
+		return false; */
 	}
 
 	memcpy(&speed, pos, sizeof(Uint16));
@@ -209,7 +209,7 @@ int lds_load(JE_byte *music_location)
 
 	lds_rewind(-1);*/
 
-	return TRUE;
+	return true;
 }
 
 void lds_rewind(int subsong)
@@ -218,7 +218,7 @@ void lds_rewind(int subsong)
 
 	/* init all with 0 */
 	tempo_now = 3;
-	playing = TRUE; songlooped = FALSE;
+	playing = true; songlooped = false;
 	jumping = fadeonoff = allvolume = hardfade = pattplay = posplay = jumppos =
 	mainvolume = 0;
 	memset(channel, 0, sizeof(channel));
@@ -268,7 +268,7 @@ int lds_update( void )
 	int i;
 	Channel *c;
 
-	if(!playing) return FALSE;
+	if(!playing) return false;
 
 	/* handle fading */
 	if(fadeonoff)
@@ -281,7 +281,7 @@ int lds_update( void )
 				allvolume = 1;
 				fadeonoff = 0;
 				if(hardfade != 0) {
-				  playing = FALSE;
+				  playing = false;
 				  hardfade = 0;
 				  for(i = 0; i < 9; i++)
 				  {
@@ -314,7 +314,7 @@ int lds_update( void )
 	/* handle notes */
 	if(!tempo_now)
 	{
-		vbreak = FALSE;
+		vbreak = false;
 		for(chan = 0; chan < 9; chan++)
 		{
 			c = &channel[chan];
@@ -349,7 +349,7 @@ int lds_update( void )
 								break;
 
 							case 0xfc:
-								playing = FALSE;
+								playing = false;
 								/* in real player there's also full keyoff here, but we don't need it */
 								break;
 
@@ -358,17 +358,17 @@ int lds_update( void )
 								break;
 
 							case 0xfa:
-								vbreak = TRUE;
+								vbreak = true;
 								jumppos = (posplay + 1) & maxpos;
 								break;
 
 							case 0xf9:
-								vbreak = TRUE;
+								vbreak = true;
 								jumppos = comlo & maxpos;
 								jumping = 1;
 								if(jumppos < posplay)
 								{
-									songlooped = TRUE;
+									songlooped = true;
 								}
 								break;
 
@@ -668,7 +668,7 @@ int lds_update( void )
 	}
 	}
 
-	return (!playing || songlooped) ? FALSE : TRUE;
+	return (!playing || songlooped) ? false : true;
 }
 
 void lds_playsound(int inst_number, int channel_number, int tunehigh)

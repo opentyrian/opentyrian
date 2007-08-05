@@ -749,7 +749,7 @@ void JE_drawOptionLevel( void )
 
 void JE_tyrianHalt( JE_byte code )
 {
-	/* callBIOSHandler = TRUE; < we don't need this */
+	/* callBIOSHandler = true; < we don't need this */
 	if (code != 9)
 	{
 		JE_closeVGA256();
@@ -1161,9 +1161,9 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 		if (exploNum > 10)
 		{
 			exploNum -= 10;
-			tempB = TRUE;
+			tempB = true;
 		} else {
-			tempB = FALSE;
+			tempB = false;
 		}
 		
 		if (exploNum)
@@ -1212,9 +1212,9 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 				*armorLevel = 0;
 				if (playerAlive && !youAreCheating)
 				{
-					levelTimer = FALSE;
+					levelTimer = false;
 					gameQuitDelay = 10;
-					*playerAlive = FALSE;
+					*playerAlive = false;
 					*playerStillExploding = 60;
 					levelEnd = 40;
 					tempVolume = tyrMusicVolume;
@@ -1233,7 +1233,7 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 		*shield -= temp;
 		
 		if (!twoPlayerMode)
-			playerFollow = TRUE;
+			playerFollow = true;
 		JE_setupExplosion(*PX - 17, *PY - 12, 14);
 		JE_setupExplosion(*PX - 5 , *PY - 12, 15);
 		JE_setupExplosion(*PX + 7 , *PY - 12, 16);
@@ -1245,7 +1245,7 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 		JE_setupExplosion(*PX - 17, *PY + 16, 20);
 		JE_setupExplosion(*PX - 5 , *PY + 16, 21);
 		JE_setupExplosion(*PX + 7 , *PY + 16, 22);
-		playerFollow = FALSE;
+		playerFollow = false;
 	}
 	
 	/* TODO JE_wipeShieldArmorBars();*/
@@ -1312,5 +1312,5 @@ void JE_resetPlayerH( void )
 			playerHY[temp] = PY - 18;
 		}
 	}
-	playerHNotReady = FALSE;
+	playerHNotReady = false;
 }
