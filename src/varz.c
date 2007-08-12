@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "episodes.h"
+#include "joystick.h"
 #include "network.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -1046,6 +1047,381 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 					shotRepeat[temp-1] = weapons[wpNum].shotrepeat;
 				}
 			}
+		}
+	}
+}
+
+void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shield, JE_byte specialType )
+{
+	nextSpecialWait = 0;
+	switch (special[specialType].stype)
+	{
+		/*Weapon*/
+		case 1:
+			if (playerNum == 1)
+			{
+				JE_initPlayerShot(0, 11, PX, PY, mouseX, mouseY, special[specialType].wpn, playerNum);
+			} else {
+				JE_initPlayerShot(0, 11, PXB, PYB, mouseX, mouseY, special[specialType].wpn, playerNum);
+			}
+			shotRepeat[9-1] = shotRepeat[11-1];
+			break;
+		/*Repulsor*/
+		case 2:
+			for (temp = 0; temp < ENEMY_SHOT_MAX; temp++)
+				if (!enemyShotAvail[temp])
+				{
+					if (PX > enemyShot[temp].sx)
+					{
+						enemyShot[temp].sxm--;
+					} else if (PX < enemyShot[temp].sx) {
+						enemyShot[temp].sxm++;
+					}
+					if (PY > enemyShot[temp].sy)
+					{
+						enemyShot[temp].sym--;
+					} else if (PY < enemyShot[temp].sy) {
+						enemyShot[temp].sym++;
+					}
+				}
+			break;
+		/*Zinglon Blast*/
+		case 3:
+			zinglonDuration = 50;
+			shotRepeat[9-1] = 100;
+			soundQueue[7] = 21;
+			break;
+		/*Attractor*/
+		case 4:
+			for (temp = 0; temp < 100; temp++)
+			{
+				if (enemyAvail[temp] != 1 && enemy[temp].scoreitem
+				    && enemy[temp].evalue != 0)
+				{
+					if (PX > enemy[temp].ex)
+					{
+						enemy[temp].exc++;
+					} else if (PX < enemy[temp].ex) {
+						enemy[temp].exc--;
+					}
+					if (PY > enemy[temp].ey) {
+						enemy[temp].eyc++;
+					} else if (PY < enemy[temp].ey) {
+						enemy[temp].eyc--;
+					}
+				}
+			}
+			break;
+		/*Flare*/
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 16:
+			if (flareDuration == 0)
+			{
+				flareStart = true;
+			}
+			specialWeaponWpn = special[specialType].wpn;
+			linkToPlayer = false;
+			spraySpecial = false;
+			switch (special[specialType].stype)
+			{
+				case 5:
+					specialWeaponFilter = 7;
+					specialWeaponFreq = 2;
+					flareDuration = 50;
+					break;
+				case 6:
+					specialWeaponFilter = 1;
+					specialWeaponFreq = 7;
+					flareDuration = 200 + portPower[1-1] * 25;
+					break;
+				case 7:
+					specialWeaponFilter = 3;
+					specialWeaponFreq = 3;
+					flareDuration = 50 + portPower[1-1] * 10;
+					zinglonDuration = 50;
+					shotRepeat[9-1] = 100;
+					soundQueue[7] = 21;
+					break;
+				case 8:
+					specialWeaponFilter = -99;
+					specialWeaponFreq = 7;
+					flareDuration = 10 + portPower[1-1];
+					break;
+				case 9:
+					specialWeaponFilter = -99;
+					specialWeaponFreq = 8;
+					flareDuration = portPower[1-1] * 2 + 8;
+					linkToPlayer = true;
+					nextSpecialWait = special[specialType].pwr;
+					break;
+				case 10:
+					specialWeaponFilter = -99;
+					specialWeaponFreq = 8;
+					flareDuration = 14 + portPower[1-1] * 4;
+					linkToPlayer = true;
+					break;
+				case 11:
+					specialWeaponFilter = -99;
+					specialWeaponFreq = special[specialType].pwr;
+					flareDuration = 10 + portPower[1-1] * 10;
+					astralDuration = 20 + portPower[1-1] * 10;
+					break;
+				case 16:
+					specialWeaponFilter = -99;
+					specialWeaponFreq = 8;
+					flareDuration = temp2 * 16 + 8;
+					linkToPlayer = true;
+					spraySpecial = true;
+					break;
+			}
+			break;
+		case 12:
+			switch (playerNum)
+			{
+				case 1:
+					playerInvulnerable1 = temp2 * 10;
+					break;
+				case 2:
+					playerInvulnerable2 = temp2 * 10;
+					break;
+			}
+			if (superArcadeMode > 0 && superArcadeMode <= SA)
+			{
+				shotRepeat[9-1] = 250;
+				JE_initPlayerShot(0, 11, PX, PY, mouseX, mouseY, 707, 1);
+				playerInvulnerable1 = 100;
+			}
+			break;
+		case 13:
+			if (playerNum == 1)
+			{
+				armor += temp2 / 4 + 1;
+			} else {
+				armorLevel += temp2 / 4 + 1;
+			}
+			soundQueue[3] = 29;
+			break;
+		case 14:
+			if (playerNum == 2)
+			{
+				armor += temp2 / 4 + 1;
+			} else {
+				armorLevel2 += temp2 / 4 + 1;
+			}
+			soundQueue[3] = 29;
+			break;
+		case 17:
+			soundQueue[3] = 29;
+			if (pItems[4-1] == special[specialType].wpn)
+			{
+				pItems[5-1] = special[specialType].wpn;
+				shotMultiPos[4] = 0;
+			} else {
+				pItems[4-1] = special[specialType].wpn;
+				shotMultiPos[3] = 0;
+			}
+			
+			/* TODO tempscreenseg = sega000;*/
+			JE_drawOptions();
+			break;
+		case 18:
+			pItems[5-1] = special[specialType].wpn;
+			
+			/* TODO tempScreenSeg = sega000;*/
+			JE_drawOptions();
+			soundQueue[4] = 29;
+			shotMultiPos[4-1] = 0;
+			break;
+	}
+}
+
+void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield )
+{
+	if (pItems[11-1] > 0)
+    {
+		if (shotRepeat[9-1] == 0 && specialWait == 0 && flareDuration < 2 &&
+		    zinglonDuration < 2)
+		{
+			JE_drawShape2(47, 4, 94, shapes9);
+		} else {
+			JE_drawShape2(47, 4, 93, shapes9);
+		}
+    }
+	
+	if (shotRepeat[9-1] > 0)
+	{
+		shotRepeat[9-1]--;
+	}
+	if (specialWait > 0)
+	{
+		specialWait--;
+	}
+	temp = SFExecuted[playerNum-1];
+	if (temp > 0 && shotRepeat[9-1] == 0 && flareDuration == 0)
+    {
+		temp2 = special[temp].pwr;
+		
+		tempB = true;
+		if (temp2 > 0)
+		{
+			if (temp2 < 98)
+			{
+				if (*shield >= temp2)
+				{
+					*shield -= temp2;
+				} else {
+					tempB = false;
+				}
+			} else if (temp2 == 98) {
+				if (*shield < 4)
+				{
+					tempB = false;
+				}
+				temp2 = *shield;
+				*shield = 0;
+			} else if (temp2 == 99) {
+				temp2 = *shield / 2;
+				*shield = temp2;
+			} else {
+				temp2 -= 100;
+				if (*armor > temp2)
+				{
+					*armor -= temp2;
+				} else {
+					tempB = false;
+				}
+			}
+		}
+		
+		shotMultiPos[ 9-1] = 0;
+		shotMultiPos[11-1] = 0;
+		if (tempB)
+		{
+			JE_specialComplete(playerNum, armor, shield, temp);
+		}
+		SFExecuted[playerNum-1] = 0;
+		
+		/* TODO JE_wipeShieldArmorBars();*/
+		JE_drawShield();
+		JE_drawArmor();
+    }
+	
+	if (playerNum == 1 && pItems[11-1] > 0)
+	{  /*Main Begin*/
+		
+		if (superArcadeMode > 0 && (button[2-1] || button[3-1]))
+		{
+			fireButtonHeld = false;
+		}
+		if (!button[1-1] && !(superArcadeMode > 0 && (button[2-1] || button[3-1])))
+		{
+			fireButtonHeld = false;
+		} else if (shotRepeat[9-1] == 0 && !fireButtonHeld && !(flareDuration > 0) && specialWait == 0) {
+			fireButtonHeld = true;
+			JE_specialComplete(playerNum, armor, shield, pItems[11-1]);
+		}
+		
+	}  /*Main End*/
+	
+	if (astralDuration > 0)
+	{
+		astralDuration--;
+	}
+	
+	shotAvail[MAX_PWEAPON-1] = 0;
+	if (flareDuration > 1)
+    {
+      if (specialWeaponFilter != -99)
+        {
+          if (levelFilter == -99 && levelBrightness == -99)
+            filterActive = false;
+          if (!filterActive)
+            {
+              levelFilter = specialWeaponFilter;
+              if (levelFilter == 7)
+                levelBrightness = 0;
+              filterActive = true;
+            }
+          
+          if (rand() % 2 == 0)
+            flareColChg = -1;
+          else
+            flareColChg = 1;
+          
+          if (levelFilter == 7)
+            {
+              if (levelBrightness < -6)
+                flareColChg = 1;
+              if (levelBrightness > 6)
+                flareColChg = -1;
+              levelBrightness += flareColChg;
+            }
+        }
+      
+      if (rand() % 6 < specialWeaponFreq)
+        {
+          b = 0;
+          
+          if (linkToPlayer)
+            {
+              if (shotRepeat[9-1] == 0)
+                
+                JE_initPlayerShot(0, 9, PX, PY, mouseX, mouseY,
+                                specialWeaponWpn, playerNum);
+            }
+          else
+            JE_initPlayerShot(0, 9, rand() % 280, rand() % 180, mouseX, mouseY,
+                            specialWeaponWpn, playerNum);
+          
+          if (spraySpecial && b > 0)
+            {
+              playerShotData[b].shotXM = (rand() % 5) - 2;
+              playerShotData[b].shotYM = (rand() % 5) - 2;
+              if (playerShotData[b].shotYM == 0)
+                playerShotData[b].shotYM++;
+            }
+        }
+      
+      flareDuration--;
+      if (flareDuration == 1)
+		{
+			specialWait = nextSpecialWait;
+		}
+    }
+  else
+    if (flareStart)
+      {
+        flareStart = false;
+        if (linkToPlayer)
+          shotRepeat[9-1] = 15;
+        else
+          shotRepeat[9-1] = 200;
+        flareDuration = 0;
+        if (levelFilter == specialWeaponFilter)
+          {
+            levelFilter = -99;
+            levelBrightness = -99;
+            filterActive = false;
+          }
+      }
+	
+	if (zinglonDuration > 1)
+	{
+		temp = 25 - abs(zinglonDuration - 25);
+		
+		JE_barBright(PX + 7 - temp,     0, PX + 7 + temp,     184);
+		JE_barBright(PX + 7 - temp - 2, 0, PX + 7 + temp + 2, 184);
+		
+		zinglonDuration--;
+		if (zinglonDuration % 5 == 0)
+		{
+			shotAvail[MAX_PWEAPON-1] = 1;
 		}
 	}
 }

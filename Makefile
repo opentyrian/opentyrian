@@ -1,5 +1,5 @@
 # BUILD SETTINGS ###################################
-DEBUG := 0
+DEBUG := 1
 # Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
 # If building for the GP2X
@@ -22,7 +22,7 @@ ifeq ($(PLATFORM), WINDOWS)
 	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -mwindows
 endif
 ifeq ($(PLATFORM), GP2X)
-	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math -funroll-loops -std=c99
+	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math -funroll-loops
 	SDL_LDFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --libs` -static -L$(GP2X_CHAINPREFIX)/lib
 	CC := $(GP2X_CHAIN)gcc
 	STRIP := $(GP2X_CHAIN)strip

@@ -28,7 +28,7 @@ unsigned short note_table[12];	/* standard adlib note table */
 unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
 #endif
 
-void opl_update( short*, long );
+void opl_update( Sint16 *buf, int samples );
 void opl_init( void );
 void opl_deinit( void );
 void opl_reset( void );

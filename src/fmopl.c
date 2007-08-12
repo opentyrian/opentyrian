@@ -1899,7 +1899,7 @@ static int OPLTimerOver(FM_OPL *OPL,int c)
 }
 
 
-#define MAX_OPL_CHIPS 2
+#define MAX_OPL_CHIPS 1
 
 
 #if (BUILD_YM3812)

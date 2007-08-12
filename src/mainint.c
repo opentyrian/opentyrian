@@ -2747,7 +2747,7 @@ redo:
 
 					/*SpecialShot*/
 					if (!galagaMode)
-						/* TODO JE_doSpecialShot(playerNum_, armorLevel_, shield_)*/;
+						JE_doSpecialShot(playerNum_, armorLevel_, shield_);
 
 					/*Normal Main Weapons*/
 					if (!(twoPlayerLinked && playerNum_ == 2))

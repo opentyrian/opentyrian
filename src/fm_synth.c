@@ -33,7 +33,7 @@ const unsigned char op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x1
 int use16bit, stereo;
 #define opl 0
 
-void opl_update( short* buf, long samples)
+void opl_update( Sint16 *buf, int samples )
 {
 	int i;
 
@@ -46,7 +46,7 @@ void opl_update( short* buf, long samples)
 				buf[i*2+1] = buf[i];
 			}
 	} else {
-		short *tempbuf = malloc(sizeof(short) * (stereo ? samples * 2 : samples));
+		short *tempbuf = malloc(sizeof(Sint16) * (stereo ? samples * 2 : samples));
 		int i;
 
 		YM3812UpdateOne(opl, tempbuf, samples);
@@ -69,7 +69,7 @@ void opl_init( void )
 	use16bit = (BYTES_PER_SAMPLE == 2);
 	stereo = 0;
 
-	YM3812Init(1, 3579545, (11025 * OUTPUT_QUALITY));
+	YM3812Init(1, 3579545, 11025 * OUTPUT_QUALITY);
 }
 
 void opl_deinit( void )

@@ -318,21 +318,21 @@ void JE_saveGame( JE_byte slot, char *name )
 	saveFiles[slot].gameHasRepeated = gameHasRepeated;
 	saveFiles[slot].level = saveLevel;
 
-	pItems[3 - 1] = superArcadeMode;
+	pItems[3-1] = superArcadeMode;
 	if (superArcadeMode == 0 && onePlayerAction)
 	{
-		pItems[3 - 1] = 255;
+		pItems[3-1] = 255;
 	}
 	if (superTyrian)
 	{
-		pItems[3 - 1] = 254;
+		pItems[3-1] = 254;
 	}
 
 	memcpy(saveFiles[slot].items, pItems, sizeof(pItems));
 
 	if (superArcadeMode > 253)
 	{
-		pItems[3 - 1] = 0;
+		pItems[3-1] = 0;
 	}
 	if (twoPlayerMode)
 	{
@@ -341,10 +341,10 @@ void JE_saveGame( JE_byte slot, char *name )
 		memcpy(saveFiles[slot].lastItems, pItemsBack2, sizeof(pItemsBack2));
 	}
 
-	saveFiles[slot].score = score;
+	saveFiles[slot].score  = score;
 	saveFiles[slot].score2 = score2;
 	memcpy(saveFiles[slot].levelName, lastLevelName, sizeof(lastLevelName));
-	saveFiles[slot].cubes = lastCubeMax;
+	saveFiles[slot].cubes  = lastCubeMax;
 
 	if (strcmp(lastLevelName, "Completed") == 0)
 	{
@@ -363,10 +363,12 @@ void JE_saveGame( JE_byte slot, char *name )
 	saveFiles[slot].input1 = inputDevice1;
 	saveFiles[slot].input2 = inputDevice2;
 
-	memcpy(saveFiles[slot].name, name, sizeof(name));
+	strcpy(saveFiles[slot].name, name);
 
-	saveFiles[slot].power[0] = portPower[0];
-	saveFiles[slot].power[1] = portPower[1];
+	for (x = 0; x < 2; x++)
+	{
+		saveFiles[slot].power[x] = portPower[x];
+	}
 
 	JE_saveConfiguration();
 }
@@ -375,6 +377,8 @@ void JE_loadGame( JE_byte slot )
 {
 	JE_byte temp5;
 
+	slot--; /* cheap re-indexing */
+
 	superTyrian = false;
 	onePlayerAction = false;
 	twoPlayerMode = false;
@@ -382,27 +386,23 @@ void JE_loadGame( JE_byte slot )
 	galagaMode = false;
 
 	initialDifficulty = saveFiles[slot].initialDifficulty;
-	gameHasRepeated = saveFiles[slot].gameHasRepeated;
-	twoPlayerMode = slot > 11; /* TODO: Verify this value, may need reindexing! */
-	difficultyLevel = saveFiles[slot].difficulty;
+	gameHasRepeated   = saveFiles[slot].gameHasRepeated;
+	twoPlayerMode     = slot > 10;
+	difficultyLevel   = saveFiles[slot].difficulty;
 	memcpy(pItems, saveFiles[slot].items, sizeof(pItems));
-	superArcadeMode = pItems[3 - 1];
+	superArcadeMode   = pItems[3-1];
 
 	if (superArcadeMode == 255)
 	{
 		onePlayerAction = true;
 		superArcadeMode = 0;
-		pItems [3 - 1] = 0;
-	}
-	else if (superArcadeMode == 254)
-	{
+		pItems[3-1] = 0;
+	} else if (superArcadeMode == 254) {
 		onePlayerAction = true;
 		superArcadeMode = 0;
-		pItems [3 - 1] = 0;
+		pItems[3-1] = 0;
 		superTyrian = true;
-	}
-	else if (superArcadeMode > 0)
-	{
+	} else if (superArcadeMode > 0) {
 		onePlayerAction = true;
 	}
 
@@ -414,26 +414,27 @@ void JE_loadGame( JE_byte slot )
 		memcpy(pItemsBack2, saveFiles[slot].lastItems, sizeof(pItemsBack2));
 	}
 
-	/* {Compatibility with old version} */
-	/* SYN: TODO: See if any of these need reindexing */
-	if (pItemsPlayer2[7] < 101)
+	/* Compatibility with old version */
+	if (pItemsPlayer2[7-1] < 101)
 	{
-		pItemsPlayer2[7] = 101;
-		pItemsPlayer2[8] = pItemsPlayer2[4];
+		pItemsPlayer2[7-1] = 101;
+		pItemsPlayer2[8-1] = pItemsPlayer2[4-1];
 	}
 
-	score = saveFiles[slot].score;
-	score2 = saveFiles[slot].score2;
-	mainLevel = saveFiles[slot].level;
-	cubeMax = saveFiles[slot].cubes;
+	score       = saveFiles[slot].score;
+	score2      = saveFiles[slot].score2;
+	mainLevel   = saveFiles[slot].level;
+	cubeMax     = saveFiles[slot].cubes;
 	lastCubeMax = cubeMax;
 
-	secretHint = saveFiles[slot].secretHint;
+	secretHint   = saveFiles[slot].secretHint;
 	inputDevice1 = saveFiles[slot].input1;
 	inputDevice2 = saveFiles[slot].input2;
 
-	portPower[temp] = saveFiles[slot].power[0];
-	portPower[temp] = saveFiles[slot].power[1];
+	for (temp = 0; temp < 2; temp++)
+	{
+		portPower[temp] = saveFiles[slot].power[temp];
+	}
 
 	temp5 = saveFiles[slot].episode;
 
@@ -441,15 +442,13 @@ void JE_loadGame( JE_byte slot )
 
 	if (strcmp(lastLevelName, "Completed") == 0)
 	{
-	  if (temp5 == 4)
-	  {
-		temp5 = 1;
-	  }
-	  else if (temp5 < 4)
-	  {
-		temp5++;
-	  }
-	  /* {Increment 1-3 to 2-4.  Episode 4 goes to 1.  Episode 5 stands still.} */
+		if (temp5 == 4)
+		{
+			temp5 = 1;
+		} else if (temp5 < 4) {
+			temp5++;
+		}
+		/* Increment 1-3 to 2-4.  Episode 4 goes to 1.  Episode 5 stands still. */
 	}
 
 	JE_initEpisode(temp5);

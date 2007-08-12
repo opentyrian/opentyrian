@@ -29,7 +29,7 @@
 #define OUTPUT_QUALITY 4
 #define BYTES_PER_SAMPLE 2
 #define SAMPLE_SCALING OUTPUT_QUALITY
-#define SAMPLE_TYPE signed short int
+#define SAMPLE_TYPE Sint16
 
 typedef JE_byte JE_MusicType [20000];
 
