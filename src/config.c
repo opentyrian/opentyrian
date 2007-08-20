@@ -461,7 +461,7 @@ void JE_initProcessorType( void )
 	/* SYN: Originally this proc looked at your hardware specs and chose appropriate options. We don't care, so I'll just set
 	   decent defaults here. */
 
-	wild = false;
+	wild = true;
 	superWild = false;
 	smoothScroll = true;
 	explosionTransparent = true;
@@ -469,6 +469,10 @@ void JE_initProcessorType( void )
 	background2 = true;
 	displayScore = true;
 
+#ifdef TARGET_GP2X
+	wild = false;
+	filtrationAvail = false;
+#endif
 
 	switch (gameSpeed)
 	{

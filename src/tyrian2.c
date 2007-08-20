@@ -134,9 +134,9 @@ void JE_starShowVGA( void )
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
 
-		s = VGAScreen->pixels;
+		s = VGAScreenSeg->pixels;
 
-		src = VGAScreen->pixels;
+		src = game_screen->pixels;
 		src += 24;
 
 		if (smoothScroll != 0 && thisPlayerNum != 2)
@@ -148,12 +148,12 @@ void JE_starShowVGA( void )
 
 		if (starShowVGASpecialCode == 1)
 		{
-			src += VGAScreen->w * 183;
+			src += game_screen->w * 183;
 			for (y = 0; y < 184; y++)
 			{
 				memmove(s, src, 264);
-				s += VGAScreen->w;
-				src -= VGAScreen->w;
+				s += VGAScreenSeg->w;
+				src -= game_screen->w;
 			}
 		} else if (starShowVGASpecialCode == 2 && processorType >= 2) {
 			lighty = 172 - PY;
@@ -167,8 +167,8 @@ void JE_starShowVGA( void )
 			for (y = 0; y < 184; y++)
 			{
 				memmove(s, src, 264);
-				s += VGAScreen->w;
-				src += VGAScreen->w;
+				s += VGAScreenSeg->w;
+				src += game_screen->w;
 			}
 		}
 		JE_showVGA();
@@ -1443,9 +1443,9 @@ debugHistCount = 1;
 lastDebugTime = SDL_GetTicks();
 /* </MXD> */
 
-	/* tempScreenSeg = game_screen; side-effect of game_screen */
-
 level_loop:
+
+	tempScreenSeg = game_screen; /* side-effect of game_screen */
 
 	if (isNetworkGame)
 	{
@@ -1493,26 +1493,160 @@ level_loop:
 	}
 
 
+	/* use game_screen for all the generic drawing functions */
+	VGAScreen = game_screen;
 
 	if (!endLevel)
 	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
-
-		/*=======================Message Bar========================*/
+		
+		/*-----------------------Message Bar------------------------*/
 		if (textErase > 0)
 		{
 			if (--textErase == 0)
 			{
-				tempScreenSeg = VGAScreen;
+				tempScreenSeg = VGAScreenSeg; /* <MXD> SEGa000 */
 				JE_newDrawCShapeNum(OPTION_SHAPES, 37, 16, 189);
-				/* tempScreenSeg = game_screen; side-effect of game_screen */
 			}
 		}
 
-		/* TODO */
+		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+		
+		/*------------------------Shield Gen-------------------------*/
+		if (galagaMode)
+		{
+			shield = 0;
+			shield2 = 0;
+			if (portPower[2-1] == 0 || armorLevel2 == 0)
+			{
+				twoPlayerMode = false;
+			}
+			if (score >= galagaLife)
+			{
+				soundQueue[6] = 11;
+				soundQueue[7] = 21;
+				if (portPower[1-1] < 11)
+				{
+					portPower[1-1]++;
+				} else {
+					score += 1000;
+				}
+				if (galagaLife == 10000)
+				{
+					galagaLife = 20000;
+				} else {
+					galagaLife += 25000;
+				}
+			}
+		} else { /*GALAGA mode*/
+			if (twoPlayerMode)
+			{
+				if (--shieldWait == 0)
+				{
+					shieldWait = 20 - shieldSet;
+					if (shield < shieldMax && playerAlive)
+					{
+						shield++;
+					}
+					if (shield2 < shieldMax2 && playerAliveB)
+					{
+						shield2++;
+					}
+					JE_drawShield();
+				}
+			} else {
+				if (playerAlive && shield < shieldMax && power > shieldT)
+				{
+					if (--shieldWait == 0)
+					{
+						shieldWait = 20 - shieldSet;
+						power -= shieldT;
+						shield++;
+						if (shield2 < shieldMax)
+						{
+							shield2++;
+						}
+						JE_drawShield();
+					}
+				}
+			}
+		}
+		
+		/*---------------------Weapon Display-------------------------*/
+		if (lastPortPower[1-1] != portPower[1-1])
+		{
+			lastPortPower[1-1] = portPower[1-1];
+			
+			if (twoPlayerMode)
+			{
+				tempW2 = 6;
+				tempW = 286;
+			} else {
+				tempW2 = 17;
+				tempW = 289;
+			}
+			
+			JE_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0); /* <MXD> SEGa000 */
+			
+			for (temp = 1; temp <= portPower[1-1]; temp++)
+			{
+				JE_rectangle(tempW, tempW2, tempW + 1, tempW2 + 2, 115 + temp); /* <MXD> SEGa000 */
+				tempW += 2;
+			}
+		}
+		
+		if (lastPortPower[2-1] != portPower[2-1])
+		{
+			lastPortPower[2-1] = portPower[2-1];
+			
+			if (twoPlayerMode)
+			{
+				tempW2 = 100;
+				tempW = 286;
+			} else {
+				tempW2 = 38;
+				tempW = 289;
+			}
+			
+			JE_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0); /* <MXD> SEGa000 */
+			
+			for (temp = 1; temp <= portPower[2-1]; temp++)
+			{
+				JE_rectangle(tempW, tempW2, tempW + 1, tempW2 + 2, 115 + temp); /* <MXD> SEGa000 */
+				tempW += 2;
+			}
+		}
+		
+		/*------------------------Power Bar-------------------------*/
+		if (twoPlayerMode || onePlayerAction)
+		{
+			power = 900;
+		} else {
+			power = power + powerAdd;
+			if (power > 900)
+			{
+				power = 900;
+			}
+			
+			temp = power / 10;
+			
+			if (temp != lastPower)
+			{
+				if (temp > lastPower)
+				{
+					JE_bar(269, 113 - 11 - temp, 276, 114 - 11 - lastPower, 113 + temp / 7); /* <MXD> SEGa000 */
+				} else {
+					JE_bar(269, 113 - 11 - lastPower, 276, 114 - 11 - temp, 0); /* <MXD> SEGa000 */
+				}
+			}
+			
+			lastPower = temp;
+		}
 
 		oldMapX3Ofs = mapX3Ofs;
 
 		enemyOnScreen = 0;
+		
+		VGAScreen = game_screen; /* side-effect of game_screen */
 
 	}    /*MAIN DRAWING IS STOPPED ENDING   HERE*/
 
@@ -1526,11 +1660,6 @@ level_loop:
 	{
 		goto start_level;
 	}
-
-	/* swap the buffers for all the generic drawing functions
-	swapper = VGAScreen;
-	VGAScreen = game_screen;
-	game_screen = swapper; */
 
 
 	/* SMOOTHIES! */
@@ -2329,52 +2458,93 @@ draw_player_shot_loop_end:
 				{
 					enemyShotAvail[z] = 1;
 				} else {
-
-					/* TODO */
-
-					s = (Uint8 *)VGAScreen->pixels;
-					s += enemyShot[z].sy * VGAScreen->w + enemyShot[z].sx;
-
-					s_limit = (Uint8 *)VGAScreen->pixels;
-					s_limit += VGAScreen->h * VGAScreen->w;
-
-					if (enemyShot[z].animax != 0)
+					
+					if ((temp3 = 1
+					     && playerAlive != 0
+					     && enemyShot[z].sx - PX > sAniXNeg && enemyShot[z].sx - PX < sAniX
+					     && enemyShot[z].sy - PY > sAniYNeg && enemyShot[z].sy - PY < sAniY)
+					 || (temp3 = 2
+					     && twoPlayerMode != 0
+					     && playerAliveB != 0
+					     && enemyShot[z].sx - PXB > sAniXNeg && enemyShot[z].sx - PXB < sAniX
+					     && enemyShot[z].sy - PYB > sAniYNeg && enemyShot[z].sy - PYB < sAniY))
 					{
-						if (++enemyShot[z].animate >= enemyShot[z].animax)
+						tempX = enemyShot[z].sx;
+						tempY = enemyShot[z].sy;
+						temp = enemyShot[z].sdmg;
+						
+						enemyShotAvail[z] = 1;
+						
+						JE_setupExplosion(tempX, tempY, 0);
+						
+						switch (temp3)
 						{
-							enemyShot[z].animate = 0;
+							case 1:
+								if (playerInvulnerable1 == 0)
+								{
+									if ((temp = JE_playerDamage(tempX, tempY, temp, &PX, &PY, &playerAlive, &playerStillExploding, &armorLevel, &shield)) > 0)
+									{
+										lastTurn2 += (enemyShot[z].sxm * temp) / 2;
+										lastTurn  += (enemyShot[z].sym * temp) / 2;
+									}
+								}
+								break;
+							case 2:
+								if (playerInvulnerable2 == 0)
+								{
+									if ((temp = JE_playerDamage(tempX, tempY, temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &armorLevel2, &shield2)) > 0)
+									{
+										lastTurn2B += (enemyShot[z].sxm * temp) / 2;
+										lastTurnB  += (enemyShot[z].sym * temp) / 2;
+									}
+								}
+								break;
 						}
-					}
-
-					if (enemyShot[z].sgr >= 500)
-					{
-						p = shapesW2;
-						p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 500 - 1]);
 					} else {
-						p = shapesC1;
-						p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 1]);
-					}
+						s = (Uint8 *)VGAScreen->pixels;
+						s += enemyShot[z].sy * VGAScreen->w + enemyShot[z].sx;
 
-					while (*p != 0x0f)
-					{
-						s += *p & 0x0f;
-						i = (*p & 0xf0) >> 4;
-						if (i)
+						s_limit = (Uint8 *)VGAScreen->pixels;
+						s_limit += VGAScreen->h * VGAScreen->w;
+
+						if (enemyShot[z].animax != 0)
 						{
-							while (i--)
+							if (++enemyShot[z].animate >= enemyShot[z].animax)
 							{
-								p++;
-								if (s >= s_limit)
-									goto enemy_shot_draw_overflow;
-								if ((void *)s >= VGAScreen->pixels)
-									*s = *p;
-								s++;
+								enemyShot[z].animate = 0;
 							}
-						} else {
-							s -= 12;
-							s += VGAScreen->w;
 						}
-						p++;
+
+						if (enemyShot[z].sgr >= 500)
+						{
+							p = shapesW2;
+							p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 500 - 1]);
+						} else {
+							p = shapesC1;
+							p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 1]);
+						}
+
+						while (*p != 0x0f)
+						{
+							s += *p & 0x0f;
+							i = (*p & 0xf0) >> 4;
+							if (i)
+							{
+								while (i--)
+								{
+									p++;
+									if (s >= s_limit)
+										goto enemy_shot_draw_overflow;
+									if ((void *)s >= VGAScreen->pixels)
+										*s = *p;
+									s++;
+								}
+							} else {
+								s -= 12;
+								s += VGAScreen->w;
+							}
+							p++;
+						}
 					}
 
 				}
@@ -2799,11 +2969,6 @@ explosion_draw_overflow:
 		/* TODO JE_filterScreen(levelFilter, levelBrightness);*/
 	}
 
-	/* swap the buffers back
-	swapper = VGAScreen;
-	VGAScreen = game_screen;
-	game_screen = swapper; */
-
 	/** Statbar **/
 	if (statBar[0] > 0 || statBar[1] > 0)
 	{
@@ -2811,6 +2976,8 @@ explosion_draw_overflow:
 	}
 
 	JE_inGameDisplays();
+
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 
 	JE_starShowVGA();
 
@@ -4644,8 +4811,12 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 	return tempb;
 }
 
-/* <MXD> find bug showing up in bonus level */
-/* <MXD> find bug showing up in deleni -- unaligned purple balls? */
+/* <MXD> == randomly placed bug list == */
+/* <MXD> some explosions (and shield) do not appear when at the top of the screen */
+/* <MXD> ammo meter missing? */
+/* <MXD> find bug showing up in Tyrian demo -- dies too early */
+/* <MXD> find bug showing up in bonus level -- little brown ships */
+/* <MXD> find bug showing up in Deleni -- unaligned purple balls? */
 void JE_eventSystem( void )
 {
 	JE_boolean tempb;
@@ -4807,7 +4978,6 @@ void JE_eventSystem( void )
 			break;
 		case 16:
 			JE_drawTextWindow(outputs[eventRec[eventLoc-1].eventdat-1]);
-			/* tempScreenSeg = game_screen; side-effect of game_screen */
 			soundQueue[3] = windowTextSamples[eventRec[eventLoc-1].eventdat-1];
 			break;
 		case 17: /* Ground Bottom */

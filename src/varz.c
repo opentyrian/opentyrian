@@ -1307,9 +1307,11 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		}
 		SFExecuted[playerNum-1] = 0;
 		
-		/* TODO JE_wipeShieldArmorBars();*/
+		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+		JE_wipeShieldArmorBars();
 		JE_drawShield();
 		JE_drawArmor();
+		VGAScreen = game_screen; /* side-effect of game_screen */
     }
 	
 	if (playerNum == 1 && pItems[11-1] > 0)
@@ -1560,6 +1562,24 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 	}
 }
 
+void JE_wipeShieldArmorBars( void )
+{
+	if (!twoPlayerMode || galagaMode)
+	{
+		JE_bar(270, 137, 278, 194 - shield * 2, 0); /* <MXD> SEGa000 */
+	} else {
+		JE_bar(270, 60 - 44, 278, 60, 0); /* <MXD> SEGa000 */
+		JE_bar(270, 194 - 44, 278, 194, 0); /* <MXD> SEGa000 */
+    }
+	if (!twoPlayerMode || galagaMode)
+	{
+		JE_bar(307, 137, 315, 194 - armorLevel * 2, 0); /* <MXD> SEGa000 */
+	} else {
+		JE_bar(307, 60 - 44, 315, 60, 0); /* <MXD> SEGa000 */
+		JE_bar(307, 194 - 44, 315, 194, 0); /* <MXD> SEGa000 */
+	}
+}
+
 JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
                          JE_byte temp,
                          JE_integer *PX, JE_integer *PY,
@@ -1624,9 +1644,11 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 		playerFollow = false;
 	}
 	
-	/* TODO JE_wipeShieldArmorBars();*/
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+	JE_wipeShieldArmorBars();
 	JE_drawShield();
 	JE_drawArmor();
+	VGAScreen = game_screen; /* side-effect of game_screen */
 	
 	return playerDamage;
 }
@@ -1650,7 +1672,7 @@ void JE_drawShield( void )
 		JE_dBar3(270, 194, shield, 144);
 		if (shield != shieldMax)
 		{
-			JE_rectangle(270, 193 - (shieldMax << 1), 278, 193 - (shieldMax << 1), 68);
+			JE_rectangle(270, 193 - (shieldMax << 1), 278, 193 - (shieldMax << 1), 68); /* <MXD> SEGa000 */
 		}
 	}
 }

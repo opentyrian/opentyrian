@@ -65,13 +65,13 @@ JE_boolean useLastBank; /* See if I want to use the last 16 colors for DisplayTe
 /* Draws a message at the bottom text window on the playing screen */
 void JE_drawTextWindow( char *text )
 {
-	tempScreenSeg = VGAScreen; /*sega000*/
+	tempScreenSeg = VGAScreenSeg; /*sega000*/
 	if (textErase > 0)
 	{
 		JE_newDrawCShapeNum(OPTION_SHAPES, 37, 16, 189);
 	}
 	textErase = 100;
-	tempScreenSeg = VGAScreen; /*sega000*/
+	tempScreenSeg = VGAScreenSeg; /*sega000*/
 	JE_outText(20, 190, text, 0, 4);
 }
 
@@ -1684,7 +1684,80 @@ void JE_operation( JE_byte slot )
 
 void JE_inGameDisplays( void )
 {
-	STUB();
+	char stemp[21];
+	JE_byte temp;
+	
+	char tempstr[256];
+
+	sprintf(tempstr, "%d", score);
+	JE_textShade(30, 175, tempstr, 2, 4, FULL_SHADE);
+	if (twoPlayerMode && !galagaMode)
+	{
+		sprintf(tempstr, "%d", score2);
+		JE_textShade(230, 175, tempstr, 2, 4, FULL_SHADE);
+	}
+
+	/*Special Weapon?*/
+	if (pItems[11-1] > 0)
+	{
+		JE_drawShape2x2(25, 1, special[pItems[11-1]].itemgraphic, eShapes6);
+	}
+
+	/*Lives Left*/
+	if (onePlayerAction || twoPlayerMode)
+	{
+		
+		for (temp = 0; temp < (onePlayerAction ? 1 : 2); temp++)
+		{
+			temp5 = (temp == 0 && pItems[11-1] > 0) ? 35 : 15;
+			tempW = (temp == 0) ? 30: 270;
+			
+			if (portPower[temp] > 5)
+			{
+				JE_drawShape2(tempW, temp5, 285, shapes9);
+				tempW = (temp == 0) ? 45 : 250;
+				sprintf(tempstr, "%d", portPower[temp] - 1);
+				JE_textShade(tempW, temp5 + 3, tempstr, 15, 1, FULL_SHADE);
+			} else if (portPower[temp] > 1) {
+				for (temp2 = 1; temp2 < portPower[temp]; temp2++)
+				{
+					JE_drawShape2(tempW, temp5, 285, shapes9);
+					tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
+				}
+			}
+			
+			strcpy(stemp, (temp == 0) ? miscText[49-1] : miscText[50-1]);
+			if (isNetworkGame)
+			{
+				strcpy(stemp, JE_getName(temp+1));
+			}
+			
+			tempW = (temp == 0) ? 28 : (285 - JE_textWidth(stemp, TINY_FONT));
+			JE_textShade(tempW, temp5 - 7, stemp, 2, 6, FULL_SHADE);
+			
+		}
+		
+	}
+
+	/*Super Bombs!!*/
+	for (temp = 0; temp < 2; temp++)
+	{
+		if (superBomb[temp] > 0)
+		{
+			tempW = (temp == 0) ? 30 : 270;
+			
+			for (temp2 = 0; temp2 < superBomb[temp]; temp2++)
+			{
+				JE_drawShape2(tempW, 160, 304, shapes9);
+				tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
+			}
+		}
+	}
+
+	if (youAreCheating)
+	{
+		JE_outText(90, 170, "Cheaters always prosper.", 3, 4);
+	}
 }
 
 void JE_mainKeyboardInput( void )
@@ -1754,7 +1827,7 @@ void JE_mainKeyboardInput( void )
 		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && keysactive[SDLK_F6])
 		{
 			youAreCheating = !youAreCheating;
-			keysactive[SDLK_F2];
+			/* TODO keysactive[SDLK_F2] = false;*/
 		}
 
 		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && (keysactive[SDLK_F4] || keysactive[SDLK_F5]) && !superTyrian)
@@ -1762,7 +1835,7 @@ void JE_mainKeyboardInput( void )
 			armorLevel = 0;
 			armorLevel2 = 0;
 			youAreCheating = !youAreCheating;
-			JE_drawTextWindow(miscText[62]);
+			JE_drawTextWindow(miscText[63-1]);
 		}
 
 		if (constantPlay && keysactive[SDLK_c] && !superTyrian && superArcadeMode == 0)
@@ -2037,8 +2110,10 @@ redo:
 					else
 						*shield_ = *shieldMax_ / 2;
 
+					VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 					JE_drawArmor();
 					JE_drawShield();
+					VGAScreen = game_screen; /* side-effect of game_screen */
 					goto redo;
 				} else {
 					if (galagaMode)
@@ -2065,8 +2140,10 @@ redo:
 				levelEnd = 40;
 			}
 
-			/* TODO JE_wipeShieldArmorBars();*/
+			VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+			JE_wipeShieldArmorBars();
 			JE_drawArmor();
+			VGAScreen = game_screen; /* side-effect of game_screen */
 			if (portPower[1-1] < 11)
 				portPower[1-1]++;
 		}
@@ -2768,7 +2845,6 @@ redo:
 									max = 2;
 									break;
 							}
-power = 10000; /** <-- free energy machine **/
 							for (temp = min - 1; temp < max; temp++)
 								if (pItems_[temp] > 0)
 								{
@@ -2788,13 +2864,12 @@ power = 10000; /** <-- free energy machine **/
 					{
 
 						if (!twoPlayerLinked)
-							JE_drawShape2(*PX_ + (shipGr_ == 0) + 1, *PY_ - 13, 77 + chargeLevel + chargeGr * 19,
-							              eShapes6);
+							JE_drawShape2(*PX_ + (shipGr_ == 0) + 1, *PY_ - 13, 77 + chargeLevel + chargeGr * 19, eShapes6);
 
 						if (chargeGrWait > 0)
-							chargeGrWait--;
-						else
 						{
+							chargeGrWait--;
+						} else {
 							chargeGr++;
 							if (chargeGr == 4)
 								chargeGr = 0;
@@ -2802,7 +2877,11 @@ power = 10000; /** <-- free energy machine **/
 						}
 
 						if (chargeLevel > 0)
-							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* NOTE vga256c*/
+						{
+							VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* <MXD> SEGa000 */
+							VGAScreen = game_screen; /* side-effect of game_screen */
+						}
 
 						if (chargeWait > 0)
 						{
@@ -2816,7 +2895,11 @@ power = 10000; /** <-- free energy machine **/
 						}
 
 						if (chargeLevel > 0)
+						{
+							VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204); /* NOTE vga256c*/
+							VGAScreen = game_screen; /* side-effect of game_screen */
+						}
 
 						if (shotRepeat[6-1] > 0)
 							shotRepeat[6-1]--;
@@ -2829,7 +2912,11 @@ power = 10000; /** <-- free energy machine **/
 								                  chargeGunWeapons[pItemsPlayer2[2-1]-1] + chargeLevel, playerNum_);
 
 								if (chargeLevel > 0)
+								{
+									VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 									JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* NOTE vga256c*/
+									VGAScreen = game_screen; /* side-effect of game_screen */
+								}
 
 								chargeLevel = 0;
 								chargeWait = 30 - portPower[2-1] * 2;
@@ -3446,7 +3533,9 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							*armorLevel_ = 28;
 					}
 					enemyAvail[z] = 1;
+					VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 					JE_drawArmor();
+					VGAScreen = game_screen; /* side-effect of game_screen */
 					soundQueue[7] = 29;
 				} else if (tempI4 > 10000 && enemyAvail[z] == 2) {
 					if (!bonusLevel)

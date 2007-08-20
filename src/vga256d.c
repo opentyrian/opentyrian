@@ -60,19 +60,16 @@ void JE_initVGA256( void )
 
 	if (!initd)
 	{
-		JE_boolean success = true;
 		initd = true;
 
-		success = success && !SDL_InitSubSystem(SDL_INIT_VIDEO);
-		success = success && (VGAScreen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE));
-		if (!success)
+		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1
+		    || (VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE)) == 0)
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
 		}
 
-		VGAScreenSeg = VGAScreen;
-		/* game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0); */
+		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 	}
 
 #ifdef TARGET_GP2X

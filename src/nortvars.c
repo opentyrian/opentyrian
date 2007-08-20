@@ -343,7 +343,7 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 
 	for (z = 0; z <= num; z++)
 	{
-		JE_rectangle(x, y-1, x+8, y, col);
+		JE_rectangle(x, y - 1, x + 8, y, col); /* <MXD> SEGa000 */
 		if (zWait > 0)
 		{
 			zWait--;

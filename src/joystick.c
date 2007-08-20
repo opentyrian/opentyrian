@@ -32,7 +32,7 @@
 #ifndef TARGET_GP2X
 const JE_ButtonAssign defaultJoyButtonAssign = {1, 4, 5, 5};
 #else
-const JE_ButtonAssign defaultJoyButtonAssign = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 1, 4, 5, 5, 0, 0, 0};
+const JE_ButtonAssign defaultJoyButtonAssign = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 1, 4, 5, 5, 0, 0, 0};
 #ifndef GP2X_VK_UP
 #define GP2X_VK_UP              0
 #define GP2X_VK_DOWN            4
