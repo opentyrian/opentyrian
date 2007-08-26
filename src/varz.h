@@ -254,7 +254,7 @@ extern JE_byte enemyShapeTables[6];
 extern JE_boolean uniqueEnemy;
 extern JE_word superEnemy254Jump;
 extern struct {
-	JE_word explodeLoc;
+	Sint32  explodeLoc;
 	JE_word explodeGr;
 	JE_byte followPlayer;
 	JE_byte fixedExplode;

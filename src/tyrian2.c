@@ -155,7 +155,7 @@ void JE_starShowVGA( void )
 				s += VGAScreenSeg->w;
 				src -= game_screen->w;
 			}
-		} else if (starShowVGASpecialCode == 2 && processorType >= 2) {
+		} else if (starShowVGASpecialCode == 2 && processorType >= 2 && 0) {
 			lighty = 172 - PY;
 			lightx = 281 - PX;
 			
@@ -1097,7 +1097,7 @@ start_level_first:
 	JE_outText(268, temp, levelName, 12, 4);
 
 	JE_showVGA();
-	/* TODO JE_gammaCorrect(&colors, gammaCorrection);*/
+	JE_gammaCorrect(&colors, gammaCorrection);
 	JE_fadeColor(50);
 
 	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
@@ -1807,7 +1807,38 @@ level_loop:
 	/* DRAWSTARS */
 	if (starActive || astralDuration > 0)
 	{
-		/* TODO */
+		s = (Uint8 *)VGAScreen->pixels;
+		
+		for (i = MAX_STARS; i--; )
+		{
+			starDat[i].sLoc += starDat[i].sMov;
+			if (starDat[i].sLoc < 177 * 320)
+			{
+				if (*(s + starDat[i].sLoc) == 0)
+				{
+					*(s + starDat[i].sLoc) = starDat[i].sC;
+				}
+				if (starDat[i].sC - 4 >= 9 * 16)
+				{
+					if (*(s + starDat[i].sLoc + 1) == 0)
+					{
+						*(s + starDat[i].sLoc + 1) = starDat[i].sC - 4;
+					}
+					if (*(s + starDat[i].sLoc - 1) == 0)
+					{
+						*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
+					}
+					if (*(s + starDat[i].sLoc + 320) == 0)
+					{
+						*(s + starDat[i].sLoc + 320) = starDat[i].sC - 4;
+					}
+					if (*(s + starDat[i].sLoc - 320) == 0)
+					{
+						*(s + starDat[i].sLoc - 320) = starDat[i].sC - 4;
+					}
+				}
+			}
+		}
 	}
 
 	if (processorType > 1 && smoothies[4])
@@ -1902,7 +1933,12 @@ level_loop:
 	/* New Enemy */
 	if (enemiesActive && rand() % 100 > levelEnemyFrequency)
 	{
-		/* TODO */
+		tempW = levelEnemy[rand() % levelEnemyMax];
+		if (tempW == 2)
+		{
+			soundQueue[3] = 7;
+		}
+		JE_newEnemy(0);
 	}
 
 	if (processorType > 1 && smoothies[2])
@@ -2635,15 +2671,15 @@ enemy_shot_draw_overflow:
 				explosions[j].explodeGr++;
 				l = explodeMove;
 			}
-			explosions[j].explodeLoc += explosions[j].fixedMovement;
+			explosions[j].explodeLoc += l + explosions[j].fixedMovement;
 			
 			s = (Uint8 *)VGAScreen->pixels;
-			s += explosions[j].explodeLoc + l;
+			s += explosions[j].explodeLoc;
 			
 			s_limit = (Uint8 *)VGAScreen->pixels;
 			s_limit += VGAScreen->h * VGAScreen->w;
 			
-			if (s > s_limit)
+			if (s + VGAScreen->w * 14 > s_limit)
 			{
 				explodeAvail[j] = 0;
 			} else {
@@ -2729,7 +2765,61 @@ explosion_draw_overflow:
 	if ((playerAlive && armorLevel < 6) ||
 	    (twoPlayerMode && !galagaMode && playerAliveB && armorLevel2 < 6))
 	{
-		/* TODO */
+		if (playerAlive && armorLevel < 6)
+		{
+			tempW2 = armorLevel;
+		} else {
+			tempW2 = armorLevel2;
+		}
+		
+		if (armorShipDelay > 0)
+		{
+			armorShipDelay--;
+		} else {
+			tempW = 560;
+			JE_newEnemy(50);
+			if (b > 0)
+			{
+				enemy[b-1].enemydie = 560 + (rand() % 3) + 1;
+				enemy[b-1].eyc -= backMove3;
+				enemy[b-1].armorleft = 4;
+			}
+			armorShipDelay = 500;
+		}
+		
+		if ((playerAlive && armorLevel < 6 && (!isNetworkGame || thisPlayerNum == 1))
+		    || (twoPlayerMode && playerAliveB && armorLevel2 < 6 && (!isNetworkGame || thisPlayerNum == 2)))
+		{
+				
+			tempW = tempW2 * 4 + 8;
+			if (warningSoundDelay > tempW)
+			{
+				warningSoundDelay = tempW;
+			}
+			
+			if (warningSoundDelay > 1)
+			{
+				warningSoundDelay--;
+			} else {
+				soundQueue[7] = 17;
+				warningSoundDelay = tempW;
+			}
+			
+			warningCol += warningColChange;
+			if (warningCol > 113 + (14 - (tempW2 * 2)))
+			{
+				warningColChange = -warningColChange;
+				warningCol = 113 + (14 - (tempW2 * 2));
+			} else if (warningCol < 113) {
+				warningColChange = -warningColChange;
+			}
+			JE_bar(24, 181, 138, 183, warningCol);
+			JE_bar(175, 181, 287, 183, warningCol);
+			JE_bar(24, 0, 287, 3, warningCol);
+			
+			JE_outText(140, 178, "WARNING", 7, (warningCol % 16) / 2);
+			
+		}
 	}
 
 	/*------- Random Explosions --------*/
@@ -4812,11 +4902,10 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 }
 
 /* <MXD> == randomly placed bug list == */
-/* <MXD> some explosions (and shield) do not appear when at the top of the screen */
-/* <MXD> ammo meter missing? */
-/* <MXD> find bug showing up in Tyrian demo -- dies too early */
-/* <MXD> find bug showing up in bonus level -- little brown ships */
-/* <MXD> find bug showing up in Deleni -- unaligned purple balls? */
+/* <MXD> ammo meter missing, sidekicks not being updated during level? */
+/* <MXD> bug showing up in Tyrian demo -- dies too early */
+/* <MXD> bug showing up in Bonus -- little brown ships */
+/* <MXD> bug showing up in Gyges -- enemyshots velocity is wrong */
 void JE_eventSystem( void )
 {
 	JE_boolean tempb;
@@ -8566,7 +8655,7 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 	/* SYN: oh god asm make it go away T_T */
 
 /*
-  Z := OFS (stardat);
+  Z := OFS (starDat);
   ASM
 	(*    push ds*)
 	mov  cx, maxstars

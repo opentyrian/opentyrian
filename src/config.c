@@ -300,10 +300,10 @@ void JE_setupStars( void )
 {
 	int z;
 
-	for (z = 0; z < MAX_STARS; z++)
+	for (z = MAX_STARS; z--; )
 	{
-		starDat[z].sLoc = (rand() % 200) * 320;
-		starDat[z].sMov = (rand() % 3 + 2) * 320;
+		starDat[z].sLoc = (rand() % 320) + (rand() % 200) * 320;
+		starDat[z].sMov = ((rand() % 3) + 2) * 320;
 		starDat[z].sC = (rand() % 16) + (9 * 16);
 	}
 }

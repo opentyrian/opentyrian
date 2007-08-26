@@ -41,6 +41,7 @@ extern JE_boolean useLastBank;
 void JE_drawTextWindow( char *text );
 void JE_initPlayerData( void );
 void JE_highScoreScreen( void );
+void JE_gammaCorrect_func( JE_byte *col, JE_real r );
 void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma );
 JE_boolean JE_gammaCheck( void );
 /* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */

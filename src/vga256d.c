@@ -86,9 +86,9 @@ void JE_initVGA256( void )
 		col_buf[j].b = VGA_pal[i+2];
 	}
 
-	SDL_SetColors(VGAScreen, col_buf, 0, 256);
+	SDL_SetColors(VGAScreenSeg, col_buf, 0, 256);
 
-	SDL_FillRect(VGAScreen, NULL, 0x0);
+	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
 }
 
 void JE_initVGA256X( void )
@@ -377,7 +377,7 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
 	color.g = green;
 	color.b = blue;
 
-	SDL_SetColors(VGAScreen, &color, col, 1);
+	SDL_SetColors(VGAScreenSeg, &color, col, 1);
 }
 
 void JE_drawGraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )

@@ -281,7 +281,7 @@ JE_word superEnemy254Jump;
 /*ExplosionData*/
 struct
 {
-	JE_word explodeLoc;
+	Sint32  explodeLoc;
 	JE_word explodeGr;
 	JE_byte followPlayer;
 	JE_byte fixedExplode;
@@ -1338,81 +1338,89 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 	
 	shotAvail[MAX_PWEAPON-1] = 0;
 	if (flareDuration > 1)
-    {
-      if (specialWeaponFilter != -99)
-        {
-          if (levelFilter == -99 && levelBrightness == -99)
-            filterActive = false;
-          if (!filterActive)
-            {
-              levelFilter = specialWeaponFilter;
-              if (levelFilter == 7)
-                levelBrightness = 0;
-              filterActive = true;
-            }
-          
-          if (rand() % 2 == 0)
-            flareColChg = -1;
-          else
-            flareColChg = 1;
-          
-          if (levelFilter == 7)
-            {
-              if (levelBrightness < -6)
-                flareColChg = 1;
-              if (levelBrightness > 6)
-                flareColChg = -1;
-              levelBrightness += flareColChg;
-            }
-        }
-      
-      if (rand() % 6 < specialWeaponFreq)
-        {
-          b = 0;
-          
-          if (linkToPlayer)
-            {
-              if (shotRepeat[9-1] == 0)
-                
-                JE_initPlayerShot(0, 9, PX, PY, mouseX, mouseY,
-                                specialWeaponWpn, playerNum);
-            }
-          else
-            JE_initPlayerShot(0, 9, rand() % 280, rand() % 180, mouseX, mouseY,
-                            specialWeaponWpn, playerNum);
-          
-          if (spraySpecial && b > 0)
-            {
-              playerShotData[b].shotXM = (rand() % 5) - 2;
-              playerShotData[b].shotYM = (rand() % 5) - 2;
-              if (playerShotData[b].shotYM == 0)
-                playerShotData[b].shotYM++;
-            }
-        }
-      
-      flareDuration--;
-      if (flareDuration == 1)
+	{
+		if (specialWeaponFilter != -99)
+		{
+			if (levelFilter == -99 && levelBrightness == -99)
+			{
+				filterActive = false;
+			}
+			if (!filterActive)
+			{
+				levelFilter = specialWeaponFilter;
+				if (levelFilter == 7)
+				{
+					levelBrightness = 0;
+				}
+				filterActive = true;
+			}
+			
+			if (rand() % 2 == 0)
+				flareColChg = -1;
+			else
+				flareColChg = 1;
+			
+			if (levelFilter == 7)
+			{
+				if (levelBrightness < -6)
+				{
+					flareColChg = 1;
+				}
+				if (levelBrightness > 6)
+				{
+					flareColChg = -1;
+				}
+				levelBrightness += flareColChg;
+			}
+		}
+		
+		if (rand() % 6 < specialWeaponFreq)
+		{
+			b = 0;
+			
+			if (linkToPlayer)
+			{
+				if (shotRepeat[9-1] == 0)
+				{
+					JE_initPlayerShot(0, 9, PX, PY, mouseX, mouseY, specialWeaponWpn, playerNum);
+				}
+			} else {
+				JE_initPlayerShot(0, 9, rand() % 280, rand() % 180, mouseX, mouseY, specialWeaponWpn, playerNum);
+			}
+			
+			if (spraySpecial && b > 0)
+			{
+				playerShotData[b].shotXM = (rand() % 5) - 2;
+				playerShotData[b].shotYM = (rand() % 5) - 2;
+				if (playerShotData[b].shotYM == 0)
+				{
+					playerShotData[b].shotYM++;
+				}
+			}
+		}
+		
+		flareDuration--;
+		if (flareDuration == 1)
 		{
 			specialWait = nextSpecialWait;
 		}
-    }
-  else
-    if (flareStart)
-      {
-        flareStart = false;
-        if (linkToPlayer)
-          shotRepeat[9-1] = 15;
-        else
-          shotRepeat[9-1] = 200;
-        flareDuration = 0;
-        if (levelFilter == specialWeaponFilter)
-          {
-            levelFilter = -99;
-            levelBrightness = -99;
-            filterActive = false;
-          }
-      }
-	
+    } else if (flareStart) {
+		flareStart = false;
+		if (linkToPlayer)
+		{
+			shotRepeat[9-1] = 15;
+		} else {
+			shotRepeat[9-1] = 200;
+		}
+		flareDuration = 0;
+		if (levelFilter == specialWeaponFilter)
+		{
+			levelFilter = -99;
+			levelBrightness = -99;
+			filterActive = false;
+		}
+	}
+		
 	if (zinglonDuration > 1)
 	{
 		temp = 25 - abs(zinglonDuration - 25);

@@ -37,6 +37,7 @@
 #include "pallib.h"
 #include "params.h"
 #include "pcxload.h"
+#include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
 #include "shpmast.h"
@@ -1377,15 +1378,41 @@ void JE_highScoreScreen( void )
 
 }
 
+void JE_gammaCorrect_func( JE_byte *col, JE_real r )
+{
+	*col = ROUND(*col * r);
+	if (*col > 63)
+	{
+		*col = 63;
+	}
+}
+
 void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma )
 {
-	STUB();
+	int x;
+	JE_real r = 1 + (JE_real)gamma / 10;
+	
+	for (x = 0; x < 256; x++)
+	{
+		JE_gammaCorrect_func(&(*colorBuffer)[x].r, r);
+		JE_gammaCorrect_func(&(*colorBuffer)[x].g, r);
+		JE_gammaCorrect_func(&(*colorBuffer)[x].b, r);
+	}
 }
 
 JE_boolean JE_gammaCheck( void )
 {
-	STUB();
-	return false;
+	Uint8 temp = keysactive[SDLK_F11];
+	if (temp)
+	{
+		/* TODO keysactive[SDLK_F11] = 0; */
+		newkey = false;
+		gammaCorrection = (gammaCorrection + 1) % 4;
+		memcpy(colors, palettes[pcxpal[3-1]], sizeof(colors));
+		JE_gammaCorrect(&colors, gammaCorrection);
+		JE_updateColorsFast(&colors);
+	}
+	return temp;
 }
 
 /* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
