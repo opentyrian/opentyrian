@@ -65,7 +65,7 @@ void JE_loadItemDat( void )
 	if (episodeNum > 3)
 	{
 		JE_resetFile(&lvlFile, levelFile);
-		fseek(lvlFile, lvlPos[lvlNum], SEEK_SET);
+		fseek(lvlFile, lvlPos[lvlNum-1], SEEK_SET);
 	} else {
 		JE_resetFile(&lvlFile, "tyrian.hdt");
 		efread(&episode1DataLoc, sizeof(JE_longint), 1, lvlFile);
