@@ -581,7 +581,13 @@ void JE_calcPurpleBall( JE_byte playernum )
 
 void JE_drawOptions( void )
 {
-	SDL_Surface *temp_surface;
+	SDL_Surface *temp_surface = 0;
+
+	if (tempScreenSeg == VGAScreenSeg)
+	{
+		temp_surface = VGAScreen;
+		VGAScreen = VGAScreenSeg;
+	}
 
 	if(twoPlayerMode)
 	{
@@ -666,56 +672,31 @@ void JE_drawOptions( void )
 	option2AmmoRechargeWaitMax = (105 - option2Ammo) * 4;
 	option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
 
-	if (tempScreenSeg == VGAScreen)
-    {
-		if (option1Draw > 0)
-		{
-			JE_bar(284, option1Draw, 284 + 28, option1Draw + 15, 0);
-		}
-		if (option2Draw > 0)
-		{
-			JE_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
-		}
-	} else {
-		if (option1Draw > 0)
-		{
-			/* TODO vga256c.BAR(284, option1Draw, 284 + 28, option1Draw + 15, 0);*/
-		}
-		if (option2Draw > 0)
-		{
-			/* TODO vga256c.BAR(284, option2Draw, 284 + 28, option2Draw + 15, 0);*/
-		}
+	if (option1Draw > 0)
+	{
+		JE_bar(284, option1Draw, 284 + 28, option1Draw + 15, 0);
+	}
+	if (option2Draw > 0)
+	{
+		JE_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
 	}
 
-	temp_surface = tempScreenSeg;
 	if (options[option1Item].icongr > 0)
 	{
 		JE_newDrawCShapeNum(OPTION_SHAPES, options[option1Item].icongr, 284, option1Draw);
 	}
-	tempScreenSeg = temp_surface;
 	if (options[option2Item].icongr > 0)
 	{
 		JE_newDrawCShapeNum(OPTION_SHAPES, options[option2Item].icongr, 284, option2Draw);
 	}
-	tempScreenSeg = temp_surface;
 
 	if (option1Draw > 0)
 	{
-		if (tempScreenSeg == VGAScreenSeg)
-		{
-			/* TODO JE_barDraw(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
-		} else {
-			/* TODO JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
-		}
+		/* TODO JE_barDraw(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
 	}
 	if (option2Draw > 0)
 	{
-		if (tempScreenSeg == VGAScreenSeg)
-		{
-			/* TODO JE_barDraw(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
-		} else {
-			/* TODO JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
-		}
+		/* TODO JE_barDraw(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
 	}
 
 	if (option1Ammo == 0)
@@ -734,18 +715,28 @@ void JE_drawOptions( void )
 	optionCharge1 = 0;
 	optionCharge2 = 0;
 
+	if (temp_surface)
+	{
+		VGAScreen = temp_surface;
+	}
+
 	JE_drawOptionLevel();
 }
 
 void JE_drawOptionLevel( void )
 {
+	SDL_Surface *temp_surface = VGAScreen;
+	VGAScreen = VGAScreenSeg;
+
 	if (twoPlayerMode)
 	{
 		for (temp = 1; temp <= 3; temp++)
 		{
-			/* TODO vga256c.BAR(268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((pItemsPlayer2[6] - 100) == temp) * 11);*/
+			JE_bar(268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((pItemsPlayer2[7-1] - 100) == temp) * 11);
 		}
 	}
+
+	VGAScreen = temp_surface;
 }
 
 void JE_tyrianHalt( JE_byte code )
@@ -1227,13 +1218,13 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 				shotMultiPos[3] = 0;
 			}
 			
-			/* TODO tempscreenseg = sega000;*/
+			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
 			break;
 		case 18:
 			pItems[5-1] = special[specialType].wpn;
 			
-			/* TODO tempScreenSeg = sega000;*/
+			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
 			soundQueue[4] = 29;
 			shotMultiPos[4-1] = 0;

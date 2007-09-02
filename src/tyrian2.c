@@ -122,6 +122,11 @@ const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
 
 const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
 
+/* <MXD> == randomly placed bug list == */
+/* <MXD> Bonus -- little brown ships not following expected path */
+/* <MXD> Gyges -- enemyshots velocity is wrong */
+/* <MXD> displaying/clearing message area causes tempScreenSeg to go bad */
+
 void JE_starShowVGA( void )
 {
 	JE_byte *src;
@@ -2520,11 +2525,11 @@ draw_player_shot_loop_end:
 					enemyShotAvail[z] = 1;
 				} else {
 					
-					if ((temp3 = 1
+					if (((temp3 = 1)
 					     && playerAlive != 0
 					     && enemyShot[z].sx - PX > sAniXNeg && enemyShot[z].sx - PX < sAniX
 					     && enemyShot[z].sy - PY > sAniYNeg && enemyShot[z].sy - PY < sAniY)
-					 || (temp3 = 2
+					 || ((temp3 = 2)
 					     && twoPlayerMode != 0
 					     && playerAliveB != 0
 					     && enemyShot[z].sx - PXB > sAniXNeg && enemyShot[z].sx - PXB < sAniX
@@ -4926,11 +4931,6 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 	return tempb;
 }
 
-/* <MXD> == randomly placed bug list == */
-/* <MXD> ammo meter missing, sidekicks not being updated during level? */
-/* <MXD> bug showing up in Tyrian demo -- dies too early */
-/* <MXD> bug showing up in Bonus -- little brown ships */
-/* <MXD> bug showing up in Gyges -- enemyshots velocity is wrong */
 void JE_eventSystem( void )
 {
 	JE_boolean tempb;

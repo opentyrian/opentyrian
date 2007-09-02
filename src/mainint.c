@@ -3539,7 +3539,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							
 							shotMultiPos[3-1] = 0;
 							shotMultiPos[4-1] = 0;
-							/* TODO tempScreenSeg = sega000;*/
+							tempScreenSeg = VGAScreenSeg;
 							JE_drawOptions();
 							soundQueue[7] = 29;
 							tempScreenSeg = VGAScreen;
@@ -3551,7 +3551,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							pItems[5-1] = tempI4 - 32000;
 							shotMultiPos[3-1] = 0;
 							shotMultiPos[4-1] = 0;
-							/* TODO tempscreenseg = sega000;*/
+							tempScreenSeg = VGAScreenSeg;
 							JE_drawOptions();
 							soundQueue[7] = 29;
 						}
