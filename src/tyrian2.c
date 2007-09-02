@@ -127,9 +127,9 @@ void JE_starShowVGA( void )
 	JE_byte *src;
 	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
 
-	int y, delaycount_temp;
+	int delaycount_temp;
 
-	int lightx, lighty;
+	int x, y, lightx, lighty, lightdist;
 	
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
@@ -155,13 +155,38 @@ void JE_starShowVGA( void )
 				s += VGAScreenSeg->w;
 				src -= game_screen->w;
 			}
-		} else if (starShowVGASpecialCode == 2 && processorType >= 2 && 0) {
+		} else if (starShowVGASpecialCode == 2 && processorType >= 2) {
 			lighty = 172 - PY;
 			lightx = 281 - PX;
 			
-			for (y = 0; y < 184; y++)
+			for (y = 184; y; y--)
 			{
-				/* TODO LightBulb */
+				if (lighty > y)
+				{
+					for (x = 320 - 56; x; x--)
+					{
+						*s = (*src & 0xf0) | ((*src >> 2) & 0x03);
+						s++;
+						src++;
+					}
+				} else {
+					for (x = 320 - 56; x; x--)
+					{
+						lightdist = abs(lightx - x) + lighty;
+						if (lightdist < y)
+						{
+							*s = *src;
+						} else if (lightdist - y <= 5) {
+							*s = (*src & 0xf0) | (((*src & 0x0f) + (3 * (5 - (lightdist - y)))) / 4);
+						} else {
+							*s = (*src & 0xf0) | ((*src & 0x0f) >> 2);
+						}
+						s++;
+						src++;
+					}
+				}
+				s += 56;
+				src += 56;
 			}
 		} else {
 			for (y = 0; y < 184; y++)
@@ -1402,7 +1427,7 @@ start_level_first:
 	memset(enemyShapeTables, 0, sizeof(enemyShapeTables));
 	memset(enemy,            0, sizeof(enemy));
 
-	memset(SFCurrentcode,    0, sizeof(SFCurrentcode));
+	memset(SFCurrentCode,    0, sizeof(SFCurrentCode));
 	memset(SFExecuted,       0, sizeof(SFExecuted));
 
 	zinglonDuration = 0;
@@ -2107,7 +2132,7 @@ level_loop:
 				} else {
 					if (tempW > 1000)
 					{
-						/*TODO JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempW / 1000) << 4);*/
+						JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempW / 1000) << 4);
 						tempW = tempW % 1000;
 					}
 					if (tempW > 500)
@@ -2224,7 +2249,7 @@ level_loop:
 										enemy[b].armorleft -= tempI2;
 										JE_setupExplosion(tempShotX, tempShotY, 0);
 									} else {
-									/* TODO JE_doSP(tempShotX + 6, tempShotY + 6, tempI2 / 2 + 3, tempI2 / 4 + 2, temp2);*/
+									JE_doSP(tempShotX + 6, tempShotY + 6, tempI2 / 2 + 3, tempI2 / 4 + 2, temp2);
 								}
 							}
 							

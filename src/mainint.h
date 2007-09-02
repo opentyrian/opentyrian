@@ -60,7 +60,7 @@ void JE_setNewGameVol( void );
 void JE_changeDifficulty( void );
 void JE_doDemoKeys( void );
 void JE_readDemoKeys( void );
-void JE_sfCodes( void );
+void JE_SFCodes( void );
 void JE_func( JE_byte col );
 void JE_sort( void );
 

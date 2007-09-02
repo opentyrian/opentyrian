@@ -164,7 +164,7 @@ const JE_byte shipCombos[13][3] /* [0..12, 1..3] */ =
 };
 
 /*Street-Fighter Commands*/
-JE_byte SFCurrentcode[2][21]; /* [1..2, 1..21] */
+JE_byte SFCurrentCode[2][21]; /* [1..2, 1..21] */
 JE_byte SFExecuted[2]; /* [1..2] */
 
 
@@ -1719,4 +1719,9 @@ void JE_resetPlayerH( void )
 		}
 	}
 	playerHNotReady = false;
+}
+
+void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color )
+{
+	STUB();
 }

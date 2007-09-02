@@ -182,7 +182,7 @@ extern const JE_byte keyboardCombos[26][8];
 extern const JE_byte shipCombosB[21];
 extern const JE_byte superTyrianSpecials[4];
 extern const JE_byte shipCombos[13][3];
-extern JE_byte SFCurrentcode[2][21];
+extern JE_byte SFCurrentCode[2][21];
 extern JE_byte SFExecuted[2];
 extern JE_boolean stoppedDemo;
 extern JE_byte lvlFileNum;

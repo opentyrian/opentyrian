@@ -1604,9 +1604,84 @@ void JE_readDemoKeys( void )
 	nextDemoOperation = getc(recordFile);
 }
 
-void JE_sfCodes( void )
+/*Street Fighter codes*/
+void JE_SFCodes( void )
 {
-	STUB();
+	JE_byte temp, temp2, temp3, temp4, temp5;
+	
+	/*Get direction*/
+	tempW = pItems[12-1];
+	if (playerNum == 2 && tempW < 15)
+	{
+		tempW = 0;
+	}
+	
+	if (tempW < 15)
+	{
+		
+		temp2 = (mouseY > PY) +    /*UP*/
+		        (mouseY < PY) +    /*DOWN*/
+		        (PX < mouseX) +    /*LEFT*/
+		        (PX > mouseX);     /*RIGHT*/
+		temp = (mouseY > PY) * 1 + /*UP*/
+		       (mouseY < PY) * 2 + /*DOWN*/
+		       (PX < mouseX) * 3 + /*LEFT*/
+		       (PX > mouseX) * 4;  /*RIGHT*/
+		
+		if (temp == 0)
+		{
+			if (!button[1-1])
+			{
+				temp = 9;
+				temp2 = 1;
+			} else {
+				temp2 = 0;
+				temp = 99;
+			}
+		}
+		
+		if (temp2 == 1)
+		{
+			temp += button[1-1] * 4;
+			
+			temp3 = superTyrian ? 21 : 3;
+			
+			for (temp2 = 0; temp2 < temp3; temp2++)
+			{
+				
+				temp5 = superTyrian ? shipCombosB[temp2] : shipCombos[tempW][temp2];
+				/*Use SuperTyrian ShipCombos or not?*/
+				
+				if (temp5 == 0)
+				{
+					SFCurrentCode[playerNum-1][temp2] = 0;
+				} else {
+					temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum-1][temp2]];
+					
+					if (temp4 == temp)
+					{
+						SFCurrentCode[playerNum-1][temp2]++;
+						
+						temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum-1][temp2]];
+						if (temp4 > 100 && temp4 <= 100 + SPECIAL_NUM)
+						{
+							SFCurrentCode[playerNum-1][temp2] = 0;
+							SFExecuted[playerNum-1] = temp4 - 100;
+						}
+					} else {
+						if ((temp != 9) &&
+						    (temp4 - 1) % 4 != (temp - 1) % 4 &&
+						    (SFCurrentCode[playerNum-1][temp2] == 0 ||
+						     keyboardCombos[temp5-1][SFCurrentCode[playerNum-1][temp2]-1] != temp))
+						{
+							SFCurrentCode[playerNum-1][temp2] = 0;
+						}
+					}
+				}
+			}
+		}
+		
+	}
 }
 
 void JE_func( JE_byte col )
@@ -2387,7 +2462,7 @@ redo:
 			}
 
 			/*Street-Fighter codes*/
-			/* TODO JE_SFCodes();*/
+			JE_SFCodes();
 
 			if (moveOk)
 			{
