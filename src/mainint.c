@@ -1225,7 +1225,7 @@ void JE_initPlayerData( void )
 	mainLevel = FIRST_LEVEL;
 	saveLevel = FIRST_LEVEL;
 
-	strcpy(lastLevelName, miscText[20]);
+	strcpy(lastLevelName, miscText[20-1]);
 }
 
 void JE_sortHighScores( void )
