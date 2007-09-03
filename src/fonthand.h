@@ -53,7 +53,7 @@ void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, int x,
 void JE_newDrawCShapeTrickNum( JE_byte table, JE_byte shape, int x, int y );
 void JE_newDrawCShapeModify( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness );
 void JE_newDrawCShapeModifyNum( JE_byte table, JE_byte shape, int x, int y, JE_byte filter, JE_byte brightness );
-void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness );
+void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, Sint8 brightness );
 void JE_newDrawCShapeAdjustNum( JE_byte table, JE_byte shape, int x, int y, JE_byte filter, JE_byte brightness );
 void JE_newDrawCShapeBrightAndDarken( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness );
 /*void JE_newDrawCShapeZoom( JE_byte table, JE_byte shape, JE_word x, JE_word y, JE_real scale );*/

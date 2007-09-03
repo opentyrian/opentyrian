@@ -20,6 +20,7 @@
 #include "opentyr.h"
 
 #include "newshape.h"
+#include "network.h"
 #include "nortsong.h"
 #include "vga256d.h"
 
@@ -343,7 +344,7 @@ void JE_newDrawCShapeModifyNum( JE_byte table, JE_byte shape, int x, int y, JE_b
 	JE_newDrawCShapeModify((*shapeArray)[table][shape], shapeX[table][shape], shapeY[table][shape], x, y, filter, brightness);
 }
 
-void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness )
+void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, Sint8 brightness )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p;       /* shape pointer */
@@ -621,12 +622,10 @@ void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_s
 		{
 			if (shadow)
 			{
-				JE_newDrawCShapeDarken((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]],
-				                       shapeY[font][fontMap[b-33]], x + 2, y + 2);
+				JE_newDrawCShapeDarken((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x + 2, y + 2);
 			}
 
-			JE_newDrawCShapeAdjust((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]],
-			                       shapeY[font][fontMap[b-33]], x, y, filter, brightness + (bright << 2));
+			JE_newDrawCShapeAdjust((*shapeArray)[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, filter, brightness + (bright << 2));
 
 			x += shapeX[font][fontMap[b-33]] + 1;
 		} else {
@@ -710,4 +709,67 @@ void JE_updateWarning( void )
 			JE_playSampleNum(17);
 		}
 	}
+}
+
+void JE_outTextGlow( JE_word x, JE_word y, const char *s )
+{
+	JE_integer z;
+	JE_byte c = 15;
+
+	int delaycount_temp;
+
+	JE_setNetByte(0);
+	
+	if (warningRed)
+	{
+		c = 7;
+	}
+	
+	tempScreenSeg = VGAScreenSeg; /* sega000 */
+	JE_outTextAdjust(x - 1, y,     s, 0, -12, textGlowFont, false);
+	JE_outTextAdjust(x,     y - 1, s, 0, -12, textGlowFont, false);
+	JE_outTextAdjust(x + 1, y,     s, 0, -12, textGlowFont, false);
+	JE_outTextAdjust(x,     y + 1, s, 0, -12, textGlowFont, false);
+	if (frameCountMax > 0)
+		for (z = 1; z <= 12; z++)
+		{
+			setjasondelay(frameCountMax);
+			tempScreenSeg = VGAScreenSeg; /* sega000 */
+			JE_outTextAdjust(x, y, s, c, z - 10, textGlowFont, false);
+			if (JE_anyButton())
+			{
+				frameCountMax = 0;
+			}
+			JE_updateStream();
+			if (netQuit)
+			{
+				exit(0);
+			}
+			
+			JE_waitRetrace();
+			JE_showVGA();
+			while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+				SDL_Delay(delaycount_temp);
+		}
+	for (z = (frameCountMax == 0) ? 6 : 12; z >= textGlowBrightness; z--)
+	{
+		setjasondelay(frameCountMax);
+		tempScreenSeg = VGAScreenSeg; /* sega000 */
+		JE_outTextAdjust(x, y, s, c, z - 10, textGlowFont, false);
+		if (JE_anyButton())
+		{
+			frameCountMax = 0;
+		}
+		JE_updateStream();
+		if (netQuit)
+		{
+			exit(0);
+		}
+		
+		JE_waitRetrace();
+		JE_showVGA();
+		while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			SDL_Delay(delaycount_temp);
+	}
+	textGlowBrightness = 6;
 }

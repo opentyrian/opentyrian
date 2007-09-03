@@ -31,7 +31,7 @@
 
 #ifndef NO_EXTERNS
 
-extern JE_word statdmg [2];
+extern JE_word statDmg[2];
 #endif
 
 void JE_scaleInPicture( void );

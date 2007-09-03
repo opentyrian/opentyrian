@@ -52,7 +52,7 @@
 #include <inttypes.h>
 
 
-JE_word statdmg [2];
+JE_word statDmg[2]; /* [1..2] */
 JE_byte planetAni, planetAniWait;
 JE_byte currentDotNum, currentDotWait;
 JE_real navX, navY, newNavX, newNavY;
@@ -3090,7 +3090,7 @@ explosion_draw_overflow:
 	}
 
 	/** Statbar **/
-	if (statBar[0] > 0 || statBar[1] > 0)
+	if (statBar[1-1] > 0 || statBar[2-1] > 0)
 	{
 		JE_doStatBar();
 	}
@@ -7954,11 +7954,6 @@ void JE_initWeaponView( void )
 	JE_setupStars();
 }
 
-void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
-{
-	STUB();
-}
-
 void JE_computeDots( void )
 {
 	STUB();
@@ -8159,9 +8154,68 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 	return retval;
 }
 
+void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
+{
+	JE_bar(x1, y1,     x2, y1,     col + 1);
+	JE_bar(x1, y1 + 1, x2, y2 - 1, col    );
+	JE_bar(x1, y2,     x2, y2,     col - 1);
+}
+
 void JE_doStatBar( void )
 {
-	STUB();
+	for (temp2 = 0; temp2 < 2; temp2++)
+	{
+		if (statBar[temp2] > 0)
+		{
+			statDmg[temp2] = 256;  /*Higher than maximum*/
+			for (temp = 0; temp < 100; temp++)
+			{
+				if (enemy[temp].linknum == statBar[temp2] && enemyAvail[temp] != 1)
+				{
+					if (enemy[temp].armorleft < statDmg[temp2])
+					{
+						statDmg[temp2] = enemy[temp].armorleft;
+					}
+				}
+			}
+			if (statDmg[temp2] == 256 || statDmg[temp2] == 0)
+			{
+				statBar[temp2] = 0;
+			}
+		}
+	}
+	
+	if (statBar[1-1] == 0)
+	{
+		statBar[1-1] = statBar[2-1];
+		statDmg[1-1] = statDmg[2-1];
+		statBar[2-1] = 0;
+	}
+	
+	if (statBar[2-1] > 0)
+	{  /*2 bars*/
+		JE_barX(100, 7, 150, 12, 115);
+		JE_barX(125 - (statDmg[1-1] / 10), 7, 125 + (statDmg[1-1] + 5) / 10, 12, 118 + statCol[1-1]);
+		JE_barX(160, 7, 210, 12, 115);
+		JE_barX(185 - (statDmg[2-1] / 10), 7, 185 + (statDmg[2-1] + 5) / 10, 12, 118 + statCol[2-1]);
+	} else if (statBar[1-1] > 0) {  /*1 bar*/
+		tempW = 155;
+		if (levelTimer)
+		{
+			tempW = 250;
+		}
+		JE_barX(tempW - 26, 7, tempW + 26, 12, 115);
+		JE_barX(tempW - (statDmg[1-1] / 10), 7, tempW + (statDmg[1-1] + 5) / 10, 12, 118 + statCol[1-1]);
+	}
+	
+	if (statCol[1-1] > 0)
+	{
+		statCol[1-1]--;
+	}
+	if (statCol[2-1] > 0)
+	{
+		statCol[2-1]--;
+	}
 }
 
 void JE_drawScore( void )

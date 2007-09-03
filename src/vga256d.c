@@ -373,9 +373,9 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
 {
 	SDL_Color color;
 
-	color.r = red;
-	color.g = green;
-	color.b = blue;
+	color.r = red << 2;
+	color.g = green << 2;
+	color.b = blue << 2;
 
 	SDL_SetColors(VGAScreenSeg, &color, col, 1);
 }

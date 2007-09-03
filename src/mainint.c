@@ -1732,7 +1732,246 @@ void JE_playCredits( void )
 
 void JE_endLevelAni( void )
 {
-	STUB();
+	JE_word x, y;
+	JE_byte temp;
+	char tempStr[256];
+	
+	Sint8 i;
+	int delaycount_temp;
+	
+	if (!constantPlay)
+	{
+		/*Grant Bonus Items*/
+		/*Front/Rear*/
+		saveTemp[SAVE_FILES_SIZE + pItems[1-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItems[2-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItemsPlayer2[1-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItemsPlayer2[2-1]] = 1;
+		
+		/*Special*/
+		if (pItems[11-1] < 21)
+		{
+			saveTemp[SAVE_FILES_SIZE + 81 + pItems[11-1]] = 1;
+		}
+		
+		/*Options*/
+		saveTemp[SAVE_FILES_SIZE + 51 + pItems[4-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItems[5-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItemsPlayer2[4-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItemsPlayer2[5-1]] = 1;
+	}
+	
+	JE_changeDifficulty();
+	
+	memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
+	strcpy(lastLevelName, levelName);
+	
+	JE_setNetByte(0);
+	
+	JE_updateStream();
+	JE_updateStream();
+	JE_updateStream();
+	JE_updateStream();
+	
+	JE_wipeKey();
+	frameCountMax = 4;
+	textGlowFont = SMALL_FONT_SHAPES;
+	
+	JE_setPalette(254, 63, 63, 63);
+	
+	if (!levelTimer || levelTimerCountdown > 0 || !(episodeNum == 4))
+	{
+		JE_playSampleNum(V_LEVEL_END);
+	} else {
+		JE_playSong(22);
+	}
+  
+	if (bonusLevel)
+	{
+		JE_outTextGlow(20, 20, miscText[17-1]);
+	} else if (playerAlive && (!twoPlayerMode || playerAliveB)) {
+		sprintf(tempStr, "%s %s", miscText[27-1], levelName);
+		JE_outTextGlow(20, 20, tempStr);
+	} else {
+		sprintf(tempStr, "%s %s", miscText[62-1], levelName);
+		JE_outTextGlow(20, 20, tempStr);
+	}
+	
+	JE_updateStream();
+	if (netQuit)
+		exit(0);
+	
+	if (twoPlayerMode)
+	{
+		sprintf(tempStr, "%s %d", miscText[41-1], score);
+		JE_outTextGlow(30, 50, tempStr);
+		
+		sprintf(tempStr, "%s %d", miscText[42-1], score2);
+		JE_outTextGlow(30, 70, tempStr);
+	} else {
+		sprintf(tempStr, "%s %d", miscText[28-1], score);
+		JE_outTextGlow(30, 50, tempStr);
+		
+		JE_updateStream();
+		if (netQuit)
+			exit(0);
+	}
+	
+	if (totalEnemy == 0)
+	{
+		temp = 0;
+	} else {
+		temp = ROUND(enemyKilled * 100 / totalEnemy);
+	}
+	sprintf(tempStr, "%s %d%%", miscText[63-1], temp);
+	JE_outTextGlow(40, 90, tempStr);
+	
+	if (!constantPlay)
+	{
+		editorLevel += temp / 5;
+	}
+	
+	JE_updateStream();
+	if (netQuit)
+		exit(0);
+	
+	if (!onePlayerAction && !twoPlayerMode)
+	{
+		JE_outTextGlow(30, 120, miscText[4-1]);   /*Cubes*/
+		
+		JE_updateStream();
+		if (netQuit)
+			exit(0);
+		
+		if (cubeMax > 0)
+		{
+			if (cubeMax > 4)
+			{
+				cubeMax = 4;
+			}
+			if (frameCountMax != 0)
+			{
+				frameCountMax = 1;
+			}
+			for (temp = 1; temp <= cubeMax; temp++)
+			{
+				JE_playSampleNum(18);
+				x = 20 + 30 * temp;
+				y = 135;
+				JE_drawCube(x, y, 9, 0);
+				JE_showVGA();
+				JE_updateStream();
+				if (netQuit)
+					exit(0);
+				
+				for (i = -15; i <= 10; i++)
+				{
+					setjasondelay(frameCountMax);
+					tempScreenSeg = VGAScreenSeg; /* sega000 */
+					JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, 9, i);
+					if (JE_anyButton())
+					{
+						frameCountMax = 0;
+					}
+					JE_waitRetrace();
+					JE_showVGA();
+					
+					JE_updateStream();
+					if (netQuit)
+						exit(0);
+					
+					while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+						SDL_Delay(delaycount_temp);
+				}
+				for (i = 10; i >= 0; i--)
+				{
+					setjasondelay(frameCountMax);
+					tempScreenSeg = VGAScreenSeg; /* sega000 */
+					JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, 9, i);
+					if (JE_anyButton())
+					{
+						frameCountMax = 0;
+					}
+					JE_waitRetrace();
+					JE_showVGA();
+					
+					JE_updateStream();
+					if (netQuit)
+						exit(0);
+					
+					while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+						SDL_Delay(delaycount_temp);
+				}
+			}
+		} else {
+			JE_outTextGlow(50, 135, miscText[15-1]);
+		}
+		
+	}
+
+	JE_updateStream();
+	if (netQuit)
+		exit(0);
+	
+	if (frameCountMax != 0)
+	{
+		frameCountMax = 6;
+		temp = 1;
+	} else {
+		temp = 0;
+	}
+	temp2 = twoPlayerMode ? 150 : 160;
+	JE_outTextGlow(90, temp2, miscText[5-1]);
+	JE_updateStream();
+	if (netQuit)
+		exit(0);
+	
+	if (!constantPlay)
+	{
+		do
+		{
+			setjasondelay(1);
+			JE_waitRetrace();
+			
+			JE_updateStream();
+			if (netQuit)
+				exit(0);
+			
+			while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+				SDL_Delay(delaycount_temp);
+		} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
+	}
+	
+	/*Synchronize the network*/
+	if (isNetworkGame)
+	{
+		tempScreenSeg = VGAScreenSeg; /* sega000 */
+		
+		frameCountMax = 0;
+		JE_outTextGlow(10, 165, "Waiting for other player.");
+		
+		exchangeCount = 1;
+		
+		/* TODO
+		REPEAT
+			SetNetByte (249);
+			framecount := 1;
+			UpdateStream;
+			IF NetQuit THEN
+				EXIT;
+			REPEAT
+			UNTIL framecount = 0;
+		UNTIL (InPacket^.Data [0] = 249) AND (UseOutPacket.Data [0] = 249);
+		*/
+	} else {
+		if (isNetworkActive)
+		{
+			/* TODO ArenaPoll;*/
+		}
+	}
+	
+	JE_fadeBlack(15);
+	JE_clr256();
 }
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
