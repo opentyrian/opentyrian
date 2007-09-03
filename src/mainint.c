@@ -2336,12 +2336,18 @@ void JE_pauseGame( void )
 {
 	JE_boolean done;
 	JE_word mouseX, mouseY;
+	
+	SDL_Surface *temp_surface;
 
 	tempScreenSeg = VGAScreenSeg; // sega000
 	if (!superPause)
 	{
 		JE_dString(120, 90, miscText[22], FONT_SHAPES);
+		
+		temp_surface = VGAScreen;  /* side-effect of game_screen */
+		VGAScreen = VGAScreenSeg;
 		JE_showVGA();
+		VGAScreen = temp_surface;
 	}
 	JE_setVol((tyrMusicVolume >> 1) + 10, fxVolume);
 
