@@ -60,7 +60,7 @@ void JE_setNewGameVol( void );
 void JE_changeDifficulty( void );
 void JE_doDemoKeys( void );
 void JE_readDemoKeys( void );
-void JE_SFCodes( void );
+void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer mouseX_, JE_integer mouseY_, JE_PItemsType pItems_ );
 void JE_func( JE_byte col );
 void JE_sort( void );
 

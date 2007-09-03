@@ -1605,13 +1605,13 @@ void JE_readDemoKeys( void )
 }
 
 /*Street Fighter codes*/
-void JE_SFCodes( void )
+void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer mouseX_, JE_integer mouseY_, JE_PItemsType pItems_ )
 {
 	JE_byte temp, temp2, temp3, temp4, temp5;
 	
 	/*Get direction*/
-	tempW = pItems[12-1];
-	if (playerNum == 2 && tempW < 15)
+	tempW = pItems_[12-1];
+	if (playerNum_ == 2 && tempW < 15)
 	{
 		tempW = 0;
 	}
@@ -1619,14 +1619,14 @@ void JE_SFCodes( void )
 	if (tempW < 15)
 	{
 		
-		temp2 = (mouseY > PY) +    /*UP*/
-		        (mouseY < PY) +    /*DOWN*/
-		        (PX < mouseX) +    /*LEFT*/
-		        (PX > mouseX);     /*RIGHT*/
-		temp = (mouseY > PY) * 1 + /*UP*/
-		       (mouseY < PY) * 2 + /*DOWN*/
-		       (PX < mouseX) * 3 + /*LEFT*/
-		       (PX > mouseX) * 4;  /*RIGHT*/
+		temp2 = (mouseY_ > PY_) +    /*UP*/
+		        (mouseY_ < PY_) +    /*DOWN*/
+		        (PX < mouseX_) +    /*LEFT*/
+		        (PX > mouseX_);     /*RIGHT*/
+		temp = (mouseY_ > PY_) * 1 + /*UP*/
+		       (mouseY_ < PY_) * 2 + /*DOWN*/
+		       (PX_ < mouseX_) * 3 + /*LEFT*/
+		       (PX_ > mouseX_) * 4;  /*RIGHT*/
 		
 		if (temp == 0)
 		{
@@ -1654,27 +1654,27 @@ void JE_SFCodes( void )
 				
 				if (temp5 == 0)
 				{
-					SFCurrentCode[playerNum-1][temp2] = 0;
+					SFCurrentCode[playerNum_-1][temp2] = 0;
 				} else {
-					temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum-1][temp2]];
+					temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum_-1][temp2]];
 					
 					if (temp4 == temp)
 					{
-						SFCurrentCode[playerNum-1][temp2]++;
+						SFCurrentCode[playerNum_-1][temp2]++;
 						
-						temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum-1][temp2]];
+						temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum_-1][temp2]];
 						if (temp4 > 100 && temp4 <= 100 + SPECIAL_NUM)
 						{
-							SFCurrentCode[playerNum-1][temp2] = 0;
-							SFExecuted[playerNum-1] = temp4 - 100;
+							SFCurrentCode[playerNum_-1][temp2] = 0;
+							SFExecuted[playerNum_-1] = temp4 - 100;
 						}
 					} else {
 						if ((temp != 9) &&
 						    (temp4 - 1) % 4 != (temp - 1) % 4 &&
-						    (SFCurrentCode[playerNum-1][temp2] == 0 ||
-						     keyboardCombos[temp5-1][SFCurrentCode[playerNum-1][temp2]-1] != temp))
+						    (SFCurrentCode[playerNum_-1][temp2] == 0 ||
+						     keyboardCombos[temp5-1][SFCurrentCode[playerNum_-1][temp2]-1] != temp))
 						{
-							SFCurrentCode[playerNum-1][temp2] = 0;
+							SFCurrentCode[playerNum_-1][temp2] = 0;
 						}
 					}
 				}
@@ -2794,7 +2794,7 @@ redo:
 			}
 
 			/*Street-Fighter codes*/
-			JE_SFCodes();
+			JE_SFCodes(playerNum_, *PX_, *PY_, *mouseX_, *mouseY_, pItems_);
 
 			if (moveOk)
 			{
