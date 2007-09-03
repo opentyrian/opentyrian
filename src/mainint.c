@@ -1458,7 +1458,7 @@ void JE_setNewGameVol( void )
 		temp2 = tyrMusicVolume;
 	}
 
-	/* TODO nortsong.JE_setvol(temp2, temp); */
+	/* TODO nortsong.JE_setVol(temp2, temp); */
 }
 
 void JE_changeDifficulty( void )
@@ -2334,7 +2334,94 @@ void JE_mainKeyboardInput( void )
 
 void JE_pauseGame( void )
 {
-	STUB();
+	JE_boolean done;
+	JE_word mouseX, mouseY;
+
+	tempScreenSeg = VGAScreenSeg; // sega000
+	if (!superPause)
+	{
+		JE_dString(120, 90, miscText[22], FONT_SHAPES);
+		JE_showVGA();
+	}
+	JE_setVol((tyrMusicVolume >> 1) + 10, fxVolume);
+
+	newkey = false;
+
+	done = false;
+
+	if (isNetworkGame)
+	{
+		JE_setNetByte(0);
+		// outPacket->length = 2; TODO
+	}
+
+	newkey = false;
+
+	do
+	{
+		setjasondelay(2);
+
+		JE_joystick2();
+
+		if (isNetworkActive)
+		{
+			if (!isNetworkGame)
+			{
+				// JE_arenaPoll(); TODO
+			}
+			JE_handleChat();
+		}
+
+		if (superPause)
+		{
+			if ((newkey && (lastkey_sym != SDLK_F11) && !(lastkey_sym == SDLK_LALT) && !(lastkey_sym == SDLK_c) && !(lastkey_sym == SDLK_SPACE)) || (JE_mousePosition(&mouseX, &mouseY) > 0) || button[2] || button[3] || button[4]) 
+			{
+				if (isNetworkGame)
+				{
+					JE_setNetByte(10);
+					// outPacket->length = 2; TODO
+				} else {
+					done = true;
+				}
+			}
+		} else {
+			if ((newkey && lastkey_sym != SDLK_F11) || JE_mousePosition(&mouseX, &mouseY) > 0 || button[1] || button[2] || button[3] || button[4])
+			{
+				if (isNetworkGame)
+				{
+					JE_setNetByte(10);
+					// outPacket->length = 2; TODO
+				} else {
+					done = true;
+				}
+			}
+		}
+
+		if (isNetworkGame)
+		{
+			JE_updateStream();
+			if (netQuit)
+			{
+				JE_tyrianHalt(6);
+			}
+			done = JE_scanNetByte(10);
+			JE_setNetByte(0);
+			// outPacket->length = 2; TODO
+		}
+
+		if (lastkey_sym == SDLK_p)
+		{
+			repause = true;
+		}
+
+		wait_delay();
+	} while (!done);
+
+	JE_setVol(tyrMusicVolume, fxVolume);
+
+	// gameQuitDelay = streamLagFrames + 4; TODO
+	tempScreenSeg = VGAScreen;
+	skipStarShowVGA = true;
 }
 
 void JE_playerMovement( JE_byte inputDevice_,
