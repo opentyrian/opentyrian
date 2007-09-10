@@ -1,3 +1,4 @@
+#include <limits.h>
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
@@ -4050,7 +4051,7 @@ void JE_titleScreen( JE_boolean animate )
 	JE_boolean quit = 0;
 
 	const int menunum = 7;
-	JE_byte namego[SA + 2] = {0}; /* [1..SA+2] */
+	JE_byte nameGo[SA + 2] = {0}; /* [1..SA+2] */
 	JE_word waitForDemo;
 	JE_byte menu = 0;
 	JE_boolean redraw = true,
@@ -4088,7 +4089,7 @@ void JE_titleScreen( JE_boolean animate )
 	joystickWaitMax = 80;
 	joystickWait = 0;
 
-	/* If IsNetworkActive { TODO } else { */
+	/* If IsNetworkActive { TODO We're not having networking, are we? } else { */
 
 	do
 	{
@@ -4207,7 +4208,7 @@ void JE_titleScreen( JE_boolean animate )
 			goto trentWinsGame;
 		}
 
-		waitForDemo = 2000;
+		waitForDemo = -1; /* TODO Uh, fix this? */
 		JE_textMenuWait(&waitForDemo, false);
 
 		if (waitForDemo == 1)
@@ -4218,7 +4219,10 @@ void JE_titleScreen( JE_boolean animate )
 				playDemoNum = 1;
 		}
 
-		/* TODO: Crapload of stuff */
+		if (keysactive[SDLK_LALT] && keysactive[SDLK_x])
+		{
+			quit = true;
+		}
 
 		if (newkey)
 		{
@@ -4241,6 +4245,131 @@ void JE_titleScreen( JE_boolean animate )
 						menu++;
 					}
 					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				default:
+					break;
+			}
+		}
+
+		for (z = 0; z < SA+2; z++)
+		{
+			if (specialName[z][nameGo[z]] == toupper(lastkey_char))
+			{
+				nameGo[z]++;
+				if (strlen(specialName[z]) == nameGo[z])
+				{
+					printf("%d %d\n", z, SA);
+					if (z == SA)
+					{
+						loadDestruct = true;
+					}
+
+					if (z == SA+1)
+					{
+						/* SuperTyrian */
+
+						JE_playSampleNum(37);
+						JE_whoa();
+						JE_clr256();
+						JE_outText(10, 10, "Cheat codes have been disabled.", 15, 4);
+
+						if (keysactive[SDLK_SCROLLOCK])
+						{
+							initialDifficulty = 6;
+						} else {
+							initialDifficulty = 8;
+						}
+
+						if (initialDifficulty == 8)
+						{
+							JE_outText(10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
+						} else {
+							JE_outText(10, 20, "Difficulty level has been set to Suicide.", 15, 4);
+						}
+						JE_outText(10, 30, "It is imperitive that you discover the special codes.", 15, 4);
+						if (initialDifficulty == 8)
+						{
+							JE_outText(10, 40, "(Next time, for an easier challenge hold down SCROLL LOCK.)", 15, 4);
+						}
+						JE_outText(10, 60, "Prepare to play...", 15, 4);
+
+						char buf[10+1+15+1];
+						snprintf(buf, sizeof(buf), "%s %s", miscTextB[4], pName[0]);
+						JE_dString(JE_fontCenter(buf, FONT_SHAPES), 110, buf, FONT_SHAPES);
+						JE_playSong(17);
+						JE_playSampleNum(35);
+						JE_showVGA();
+
+						JE_wipeKey();
+
+						wait_input(true, true, true);
+
+						constantDie = false;
+						JE_initEpisode(1);
+						superTyrian = true;
+						onePlayerAction = true;
+						pItems[11] = 13;
+						pItems[0] = 39;
+						pItems[2] = 254;
+						gameLoaded = true;
+						difficultyLevel = initialDifficulty;
+						score = 0;
+					} else {
+						pItems[2] = z+1;
+						pItems[11] = SAShip[z];
+						JE_fadeBlack(10);
+						if (JE_episodeSelect() && JE_difficultySelect())
+						{
+							/* Start special mode! */
+							JE_fadeBlack(10);
+							JE_loadPic(1, false);
+							JE_clr256();
+							JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
+							JE_dString(JE_fontCenter(superShips[z+1], SMALL_FONT_SHAPES), 100, superShips[z+1], SMALL_FONT_SHAPES);
+							tempW = ships[pItems[11]].shipgraphic;
+							if (tempW != 1)
+							{
+								JE_drawShape2x2(148, 70, tempW, shapes9);
+							}
+
+							JE_showVGA();
+							JE_fadeColor(50);
+
+							wait_input(true, true, true);
+
+							twoPlayerMode = false;
+							onePlayerAction = true;
+							superArcadeMode = z+1;
+							gameLoaded = true;
+							score = 0;
+							pItems[0] = SAWeapon[z][0];
+							pItems[10] = SASpecialWeapon[z];
+							if (z+1 == SA)
+							{
+								pItems[3] = 24;
+								pItems[4] = 24;
+							}
+							difficultyLevel++;
+							initialDifficulty = difficultyLevel;
+						} else {
+							redraw = true;
+							fadeIn = true;
+						}
+						newkey = false;
+					}
+				}
+			} else {
+				nameGo[z] = 0;
+			}
+		}
+		lastkey_char = '\0';
+
+		if (newkey)
+		{
+			switch (lastkey_sym)
+			{
+				case SDLK_ESCAPE:
+					quit = true;
 					break;
 				case SDLK_RETURN:
 					JE_playSampleNum(SELECT);
@@ -4339,9 +4468,6 @@ void JE_titleScreen( JE_boolean animate )
 							break;
 					}
 					redraw = true;
-					break;
-				case SDLK_ESCAPE:
-					quit = true;
 					break;
 				default:
 					break;
