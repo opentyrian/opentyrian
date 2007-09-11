@@ -4258,7 +4258,6 @@ void JE_titleScreen( JE_boolean animate )
 				nameGo[z]++;
 				if (strlen(specialName[z]) == nameGo[z])
 				{
-					printf("%d %d\n", z, SA);
 					if (z == SA)
 					{
 						loadDestruct = true;
