@@ -1656,6 +1656,16 @@ void JE_powerUp( JE_byte port )
 		score += 1000;
 }
 
+void JE_portConfigs( void )
+{
+	if (twoPlayerMode)
+	{
+		tempW = weaponPort[pItemsPlayer2[2-1]].opnum;
+	} else {
+		tempW = weaponPort[pItems[2-1]].opnum;
+	}
+}
+
 void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)

@@ -3241,7 +3241,7 @@ redo:
 								}
 							} else {
 								portConfig[2-1]++;
-								/* TODO JE_portConfigs();*/
+								JE_portConfigs();
 								if (portConfig[2-1] > tempW)
 								{
 									portConfig[2-1] = 1;
