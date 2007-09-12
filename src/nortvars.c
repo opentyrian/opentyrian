@@ -355,6 +355,25 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 	}
 }
 
+void JE_barDraw( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
+{
+	xsize--;
+	ysize--;
+	for (z = 1; z <= amt / res; z++)
+	{
+		JE_bar(x, y,         x + xsize, y + ysize, col + 12);
+		JE_bar(x, y,         x + xsize, y,         col + 13);
+		JE_bar(x, y + ysize, x + xsize, y + ysize, col + 11);
+		x += xsize + 2;
+	}
+	
+	amt %= res;
+	if (amt > 0)
+	{
+		JE_bar(x, y, x + xsize, y + ysize, col + ((12 / res) * amt));
+	}
+}
+
 void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
 {
 	xsize--;
@@ -375,6 +394,23 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 	{
 		JE_barShade(x+2, y+2, x+xsize+2, y+ysize+2);
 		JE_bar(x,y, x+xsize, y+ysize, col+(12 / res * amt));
+	}
+}
+
+void JE_barDrawDirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
+{
+	xsize--;
+	ysize--;
+	for (z = 1; z <= amt / res; z++)
+	{
+		JE_c_bar(x, y, x + xsize, y + ysize, col + 12);
+		x += xsize + 2;
+	}
+	
+	amt %= res;
+	if (amt > 0)
+	{
+		JE_c_bar(x, y, x + xsize, y + ysize, col + ((12 / res) * amt));
 	}
 }
 

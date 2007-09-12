@@ -2574,8 +2574,8 @@ redo:
 				levelEnd = 40;
 			}
 
-			VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 			JE_wipeShieldArmorBars();
+			VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 			JE_drawArmor();
 			VGAScreen = game_screen; /* side-effect of game_screen */
 			if (portPower[1-1] < 11)
@@ -3312,9 +3312,7 @@ redo:
 
 						if (chargeLevel > 0)
 						{
-							VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* <MXD> SEGa000 */
-							VGAScreen = game_screen; /* side-effect of game_screen */
+							JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 						}
 
 						if (chargeWait > 0)
@@ -3330,9 +3328,7 @@ redo:
 
 						if (chargeLevel > 0)
 						{
-							VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-							JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204); /* NOTE vga256c*/
-							VGAScreen = game_screen; /* side-effect of game_screen */
+							JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
 						}
 
 						if (shotRepeat[6-1] > 0)
@@ -3347,9 +3343,7 @@ redo:
 
 								if (chargeLevel > 0)
 								{
-									VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-									JE_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193); /* NOTE vga256c*/
-									VGAScreen = game_screen; /* side-effect of game_screen */
+									JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 								}
 
 								chargeLevel = 0;
@@ -3505,7 +3499,7 @@ redo:
 										option1AmmoRechargeWait = option1AmmoRechargeWaitMax;
 										if (option1Ammo < options[option1Item].ammo)
 											option1Ammo++;
-										/* TODO JE_barDrawDirect (284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/ /*Option1Ammo*/
+										JE_barDrawDirect (284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2); /*Option1Ammo*/
 									}
 								}
 
@@ -3524,8 +3518,8 @@ redo:
 										optionCharge1Wait = 20;
 										optionCharge1 = 0;
 										option1Ammo--;
-										JE_bar(284, option1Draw + 13, 312, option1Draw + 15, 0); /* NOTE vga256c */
-										/* TODO JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
+										JE_c_bar(284, option1Draw + 13, 312, option1Draw + 15, 0);
+										JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);
 									}
 								} else
 									if (option1Ammo < 0)
@@ -3561,7 +3555,7 @@ redo:
 										option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
 										if (option2Ammo < options[option2Item].ammo)
 											option2Ammo++;
-										/* TODO JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+										JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
 									}
 								}
 
@@ -3582,8 +3576,8 @@ redo:
 										optionCharge2 = 0;
 										optionAni2Go = true;
 										option2Ammo--;
-										JE_bar(284, option2Draw + 13, 312, option2Draw + 15, 0); /* NOTE vga256c */
-										/* TODO JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+										JE_c_bar(284, option2Draw + 13, 312, option2Draw + 15, 0);
+										JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
 									}
 								} else
 									if (option2Ammo < 0)

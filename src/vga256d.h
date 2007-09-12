@@ -69,6 +69,7 @@ void JE_getPix( JE_word x, JE_word y, JE_byte *c );
 JE_byte JE_getPixel( JE_word x, JE_word y );
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e );
 void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e );
+void JE_c_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e );
 void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_barShade2( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d );

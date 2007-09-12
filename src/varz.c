@@ -674,11 +674,11 @@ void JE_drawOptions( void )
 
 	if (option1Draw > 0)
 	{
-		JE_bar(284, option1Draw, 284 + 28, option1Draw + 15, 0);
+		JE_c_bar(284, option1Draw, 284 + 28, option1Draw + 15, 0);
 	}
 	if (option2Draw > 0)
 	{
-		JE_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
+		JE_c_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
 	}
 
 	if (options[option1Item].icongr > 0)
@@ -692,11 +692,11 @@ void JE_drawOptions( void )
 
 	if (option1Draw > 0)
 	{
-		/* TODO JE_barDraw(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);*/
+		JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);
 	}
 	if (option2Draw > 0)
 	{
-		/* TODO JE_barDraw(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);*/
+		JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
 	}
 
 	if (option1Ammo == 0)
@@ -725,18 +725,13 @@ void JE_drawOptions( void )
 
 void JE_drawOptionLevel( void )
 {
-	SDL_Surface *temp_surface = VGAScreen;
-	VGAScreen = VGAScreenSeg;
-
 	if (twoPlayerMode)
 	{
 		for (temp = 1; temp <= 3; temp++)
 		{
-			JE_bar(268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((pItemsPlayer2[7-1] - 100) == temp) * 11);
+			JE_c_bar(268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((pItemsPlayer2[7-1] - 100) == temp) * 11);
 		}
 	}
-
-	VGAScreen = temp_surface;
 }
 
 void JE_tyrianHalt( JE_byte code )
@@ -1298,8 +1293,8 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		}
 		SFExecuted[playerNum-1] = 0;
 		
-		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 		JE_wipeShieldArmorBars();
+		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 		JE_drawShield();
 		JE_drawArmor();
 		VGAScreen = game_screen; /* side-effect of game_screen */
@@ -1565,17 +1560,17 @@ void JE_wipeShieldArmorBars( void )
 {
 	if (!twoPlayerMode || galagaMode)
 	{
-		JE_bar(270, 137, 278, 194 - shield * 2, 0); /* <MXD> SEGa000 */
+		JE_c_bar(270, 137, 278, 194 - shield * 2, 0);
 	} else {
-		JE_bar(270, 60 - 44, 278, 60, 0); /* <MXD> SEGa000 */
-		JE_bar(270, 194 - 44, 278, 194, 0); /* <MXD> SEGa000 */
+		JE_c_bar(270, 60 - 44, 278, 60, 0);
+		JE_c_bar(270, 194 - 44, 278, 194, 0);
     }
 	if (!twoPlayerMode || galagaMode)
 	{
-		JE_bar(307, 137, 315, 194 - armorLevel * 2, 0); /* <MXD> SEGa000 */
+		JE_c_bar(307, 137, 315, 194 - armorLevel * 2, 0);
 	} else {
-		JE_bar(307, 60 - 44, 315, 60, 0); /* <MXD> SEGa000 */
-		JE_bar(307, 194 - 44, 315, 194, 0); /* <MXD> SEGa000 */
+		JE_c_bar(307, 60 - 44, 315, 60, 0);
+		JE_c_bar(307, 194 - 44, 315, 194, 0);
 	}
 }
 
@@ -1643,8 +1638,8 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 		playerFollow = false;
 	}
 	
-	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 	JE_wipeShieldArmorBars();
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 	JE_drawShield();
 	JE_drawArmor();
 	VGAScreen = game_screen; /* side-effect of game_screen */

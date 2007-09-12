@@ -191,8 +191,8 @@ void JE_starShowVGA( void )
 						src++;
 					}
 				}
-				s += 56;
-				src += 56;
+				s += 56 + VGAScreenSeg->w - 320;
+				src += 56 + VGAScreenSeg->w - 320;
 			}
 		} else {
 			for (y = 0; y < 184; y++)
@@ -1616,7 +1616,7 @@ level_loop:
 				tempW = 289;
 			}
 			
-			JE_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0); /* <MXD> SEGa000 */
+			JE_c_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0);
 			
 			for (temp = 1; temp <= portPower[1-1]; temp++)
 			{
@@ -1638,7 +1638,7 @@ level_loop:
 				tempW = 289;
 			}
 			
-			JE_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0); /* <MXD> SEGa000 */
+			JE_c_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0);
 			
 			for (temp = 1; temp <= portPower[2-1]; temp++)
 			{
@@ -1664,9 +1664,9 @@ level_loop:
 			{
 				if (temp > lastPower)
 				{
-					JE_bar(269, 113 - 11 - temp, 276, 114 - 11 - lastPower, 113 + temp / 7); /* <MXD> SEGa000 */
+					JE_c_bar(269, 113 - 11 - temp, 276, 114 - 11 - lastPower, 113 + temp / 7);
 				} else {
-					JE_bar(269, 113 - 11 - lastPower, 276, 114 - 11 - temp, 0); /* <MXD> SEGa000 */
+					JE_c_bar(269, 113 - 11 - lastPower, 276, 114 - 11 - temp, 0);
 				}
 			}
 			
@@ -1843,7 +1843,7 @@ level_loop:
 		for (i = MAX_STARS; i--; )
 		{
 			starDat[i].sLoc += starDat[i].sMov;
-			if (starDat[i].sLoc < 177 * 320)
+			if (starDat[i].sLoc < 177 * VGAScreen->w)
 			{
 				if (*(s + starDat[i].sLoc) == 0)
 				{
@@ -1855,17 +1855,17 @@ level_loop:
 					{
 						*(s + starDat[i].sLoc + 1) = starDat[i].sC - 4;
 					}
-					if (*(s + starDat[i].sLoc - 1) == 0)
+					if (starDat[i].sLoc > 0 && *(s + starDat[i].sLoc - 1) == 0)
 					{
 						*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
 					}
-					if (*(s + starDat[i].sLoc + 320) == 0)
+					if (*(s + starDat[i].sLoc + VGAScreen->w) == 0)
 					{
-						*(s + starDat[i].sLoc + 320) = starDat[i].sC - 4;
+						*(s + starDat[i].sLoc + VGAScreen->w) = starDat[i].sC - 4;
 					}
-					if (*(s + starDat[i].sLoc - 320) == 0)
+					if (starDat[i].sLoc >= VGAScreen->w && *(s + starDat[i].sLoc - VGAScreen->w) == 0)
 					{
-						*(s + starDat[i].sLoc - 320) = starDat[i].sC - 4;
+						*(s + starDat[i].sLoc - VGAScreen->w) = starDat[i].sC - 4;
 					}
 				}
 			}

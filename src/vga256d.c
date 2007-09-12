@@ -264,6 +264,24 @@ void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, 
 	}
 }
 
+void JE_c_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e )
+{
+	if (a < 320 && c < 320 && b < 200 && d < 200)
+	{
+		char *vga = VGAScreenSeg->pixels;
+		int i, width;
+
+		width = c-a+1;
+
+		for (i = b*320+a; i <= d*320+a; i += 320)
+		{
+			memset(vga+i, e, width);
+		}
+	} else {
+		printf("!!! WARNING: Filled Rectangle clipped: %d %d %d %d %d\n", a,b,c,d,e);
+	}
+}
+
 void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
 	if (a < 320 && c < 320 && b < 200 && d < 200)
