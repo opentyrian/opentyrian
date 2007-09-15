@@ -58,7 +58,7 @@ const char *opentyrian_str = "OpenTyrian";
 const char *opentyrian_menu_items[] =
 {
 	"About OpenTyrian",
-	"Setup",
+	"Fullscreen",
 	/* "Play Destruct", */
 	"Jukebox",
 	"Return to Main Menu"
@@ -150,6 +150,7 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
 void opentyrian_menu( void )
 {
 
+	static bool fullscr = false;
 	int sel = 0;
 	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	JE_boolean quit;
@@ -215,9 +216,11 @@ void opentyrian_menu( void )
 							JE_loadPic(13, false);
 							JE_fadeColor(20);
 							break;
-						case 1: /* Setup */
+						case 1: /* Fullscreen */
 							/* TODO: Implement this */
-							JE_playSampleNum(WRONG);
+							JE_playSampleNum(SELECT);
+							fullscr = !fullscr;
+							set_fullscreen(fullscr);
 							break;
 						case 2: /* Jukebox */
 							JE_playSampleNum(SELECT);

@@ -47,6 +47,7 @@ extern JE_byte outcol;
 #endif
 
 void JE_initVGA256( void );
+void set_fullscreen( bool full );
 void JE_initVGA256X( void );
 void JE_closeVGA256( void );
 void JE_clr256( void );
