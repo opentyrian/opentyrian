@@ -60,7 +60,6 @@ const JE_byte cryptKey[10] = /* [1..10] */
 	15, 50, 89, 240, 147, 34, 86, 9, 32, 208
 };
 
-/* What TODO with this? */
 const JE_KeySettingType defaultKeySettings =
 {
 	SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_SPACE, SDLK_RETURN, SDLK_LCTRL, SDLK_LALT
@@ -461,36 +460,57 @@ void JE_initProcessorType( void )
 	/* SYN: Originally this proc looked at your hardware specs and chose appropriate options. We don't care, so I'll just set
 	   decent defaults here. */
 
-	wild = true;
+	wild = false;
 	superWild = false;
 	smoothScroll = true;
 	explosionTransparent = true;
-	filtrationAvail = true;
+	filtrationAvail = false;
 	background2 = true;
 	displayScore = true;
 
-#ifdef TARGET_GP2X
-	wild = false;
-	filtrationAvail = false;
-#endif
+	switch (processorType)
+	{
+		case 1: /* 386 */
+			background2 = false;
+			displayScore = false;
+			explosionTransparent = false;
+			break;
+		case 2: /* 486 - Default */
+			break;
+		case 3: /* High Detail */
+			smoothScroll = false;
+			break;
+		case 4: /* Pentium */
+			wild = true;
+			filtrationAvail = true;
+			break;
+		case 5: /* Nonstandard VGA */
+			smoothScroll = false;
+			break;
+		case 6: /* SuperWild */
+			wild = true;
+			superWild = true;
+			filtrationAvail = true;
+			break;
+	}
 
 	switch (gameSpeed)
 	{
-	case 1:  /* Slug Mode */
-		fastPlay = 3;
-		break;
-	case 2:  /* Slower */
-		fastPlay = 4;
-		break;
-	case 3: /* Slow */
-		fastPlay = 5;
-		break;
-	case 4: /* Normal */
-		fastPlay = 0;
-		break;
-	case 5: /* Pentium Hyper */
-		fastPlay = 1;
-		break;
+		case 1:  /* Slug Mode */
+			fastPlay = 3;
+			break;
+		case 2:  /* Slower */
+			fastPlay = 4;
+			break;
+		case 3: /* Slow */
+			fastPlay = 5;
+			break;
+		case 4: /* Normal */
+			fastPlay = 0;
+			break;
+		case 5: /* Pentium Hyper */
+			fastPlay = 1;
+			break;
 	}
 
 }
