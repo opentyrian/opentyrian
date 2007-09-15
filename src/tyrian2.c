@@ -3609,7 +3609,7 @@ new_game:
 											vga2 = VGAScreen2Seg;
 											pic = pic_buffer + (199 - z) * 320;
 
-											setdelay(1); /* attempting to emulate JE_waitRetrace();*/
+											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
 											for (y = 0; y < 199; y++)
 											{
 												if (y <= z)
@@ -3659,7 +3659,7 @@ new_game:
 											vga2 = VGAScreen2Seg;
 											pic = pic_buffer;
 
-											setdelay(1); /* attempting to emulate JE_waitRetrace();*/
+											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
 											for (y = 0; y < 199; y++)
 											{
 												if (y <= 199 - z)
@@ -3709,7 +3709,7 @@ new_game:
 											vga2 = VGAScreen2Seg;
 											pic = pic_buffer;
 
-											setdelay(1); /* attempting to emulate JE_waitRetrace();*/
+											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
 											for(y = 0; y < 200; y++)
 											{
 												memcpy(vga, vga2 + z, 319 - z);
@@ -6493,10 +6493,10 @@ item_screen_start:
 			{
 				char buf[50];
 
-				snprintf(buf, sizeof buf, "%s %d", miscText[41], score);
+				snprintf(buf, sizeof buf, "%s %d", miscText[40], score);
 				JE_textShade(25, 50, buf, 15, 0, FULL_SHADE);
 
-				snprintf(buf, sizeof buf, "%s %d", miscText[42], score2);
+				snprintf(buf, sizeof buf, "%s %d", miscText[41], score2);
 				JE_textShade(25, 60, buf, 15, 0, FULL_SHADE);
 			} else if (superArcadeMode > 0 || superTyrian) {
 				helpBoxColor = 15;
@@ -6511,10 +6511,9 @@ item_screen_start:
 
 				JE_textShade(25, 50, superShips[SA+1], 15, 0, FULL_SHADE);
 				JE_helpBox(25, 60, weaponPort[pItems[1 - 1]].name, 22);
-				JE_textShade(25, 120, superShips[SA+1], 15, 0, FULL_SHADE);
+				JE_textShade(25, 120, superShips[SA+2], 15, 0, FULL_SHADE);
 				JE_helpBox(25, 130, special[pItems[11 - 1]].name, 22);
 			} else {
-				/* printf("%d", pItems[12 - 1]); */
 				if (pItems[12 - 1] > 90)
 				{
 					temp = 32;
@@ -6680,7 +6679,6 @@ item_screen_start:
 		/* k = 0; */
 
 		/* JE: {Reset player weapons} */
-		/* FILLCHAR (shotmultipos, SIZEOF (shotmultipos), 0); */
 		memset(shotMultiPos, 0, sizeof(shotMultiPos));
 
 		JE_drawScore();
@@ -6747,7 +6745,7 @@ item_screen_start:
 					/* TODO: The text wrapping on the datacubes is incorrect. Not a big deal really, but should
 					   probably be fixed at some point. */
 
-					setdelay(1);
+					setjasondelay(1);
 					if (mouseX > 164 && mouseX < 299 && mouseY > 47 && mouseY < 153)
 					{
 						if (mouseY > 100)
@@ -6812,7 +6810,8 @@ item_screen_start:
 					}
 					JE_mouseReplace();
 
-					setdelay(0);
+					setjasondelay(0);
+					wait_delay();
 				} else {
 					/* current menu is not 8 (read data cube) */
 
@@ -6842,7 +6841,7 @@ item_screen_start:
 					/* IF (curmenu = 5) AND (cursel [2] IN [3, 4, 6, 7, 8]) */
 					if (curMenu == 4 && ( curSel[1] == 3 || curSel[1] == 4 || ( curSel[1] >= 6 && curSel[1] <= 8) ) )
 					{
-						setdelay(3);
+						setjasondelay(3);
 						JE_weaponSimUpdate();
 						JE_drawScore();
 						service_SDL_events(false);
@@ -6876,9 +6875,9 @@ item_screen_start:
 
 						if (curMenu == 8) /* SYN: menu 8 is a datacube... this should never happen?! */
 						{
-							setdelay(0);
+							setjasondelay(0);
 						} else {
-							setdelay(2);
+							setjasondelay(2);
 						}
 
 						JE_drawScore();
@@ -8174,7 +8173,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 				JE_tyrianHalt(0);
 			}
 
-			setdelay(4);
+			setjasondelay(4);
 
 			/*scanCode = 0;
 			k = 0;*/
@@ -8525,7 +8524,7 @@ void JE_menuFunction( JE_byte select )
 				JE_rectangle(230, tempY - 2, 300, tempY + 7, col);
 
 				/* JE_waitRetrace(); */
-				setdelay(1);
+				setjasondelay(1);
 				service_SDL_events(false);
 
 				JE_showVGA();
@@ -9170,8 +9169,8 @@ void JE_genItemMenu( JE_byte itemNum )
 				tempPowerLevel[tempW] = 1;
 			}
 		}
-		curSel[5] = temp3;
 	}
+	curSel[4] = temp3;
 }
 
 void JE_doNetwork( void )

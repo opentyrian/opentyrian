@@ -213,6 +213,7 @@ void service_SDL_events( JE_boolean clear_new )
 				if (ev.key.keysym.sym == SDLK_PAUSE && (ev.key.keysym.mod & KMOD_CTRL))
 				{
 					puts("\n\n\nCtrl+Pause pressed. Doing emergency quit.\n");
+					SDL_Quit();
 					exit(1);
 				}
 				newkey = true;

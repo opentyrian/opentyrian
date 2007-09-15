@@ -271,11 +271,8 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 {
 	if (time > 0)
 	{
-		/* SYN: The original used the variable framecount here. Some code was setting framecount
-		   directly and then calling this proc with params (0, false). I think this is more correct now. */
-		frameCount = time;
+		setjasondelay(time);
 	}
-	setjasondelay(frameCount);
 
 	do
 	{
