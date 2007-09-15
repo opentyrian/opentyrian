@@ -366,7 +366,7 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
 	JE_integer z,v;
 	char *vga;
 
-	v = ROUND(sqrt(abs((a*a)-(c*c))+abs((b*b)-(d*d)) / 4));
+	v = round(sqrt(abs((a*a)-(c*c))+abs((b*b)-(d*d)) / 4));
 	g = (c-a)/(double)v; h = (d-b)/(double)v;
 	x = a; y = b;
 
@@ -374,7 +374,7 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
 
 	for (z = 0; z <= v; z++)
 	{
-		vga[(int)(ROUND(x)+ROUND(y)*320.0)] = e;
+		vga[(int)(round(x)+round(y)*320.0)] = e;
 		x += g; y += h;
 	}
 }

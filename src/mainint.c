@@ -1380,7 +1380,7 @@ void JE_highScoreScreen( void )
 
 void JE_gammaCorrect_func( JE_byte *col, JE_real r )
 {
-	*col = ROUND(*col * r);
+	*col = round(*col * r);
 	if (*col > 63)
 	{
 		*col = 63;
@@ -1694,25 +1694,25 @@ void JE_changeDifficulty( void )
 	switch (initialDifficulty)
 	{
 		case 1:
-			temp = ROUND(temp * 0.4);
+			temp = round(temp * 0.4);
 			break;
 		case 2:
-			temp = ROUND(temp * 0.8);
+			temp = round(temp * 0.8);
 			break;
 		case 3:
-			temp = ROUND(temp * 1.3);
+			temp = round(temp * 1.3);
 			break;
 		case 4:
-			temp = ROUND(temp * 1.6);
+			temp = round(temp * 1.6);
 			break;
 		case 5:
 		case 6:
-			temp = ROUND(temp * 2);
+			temp = round(temp * 2);
 			break;
 		case 7:
 		case 8:
 		case 9:
-			temp = ROUND(temp * 3);
+			temp = round(temp * 3);
 			break;
 	}
 
@@ -2039,7 +2039,7 @@ void JE_endLevelAni( void )
 	{
 		temp = 0;
 	} else {
-		temp = ROUND(enemyKilled * 100 / totalEnemy);
+		temp = round(enemyKilled * 100 / totalEnemy);
 	}
 	sprintf(tempStr, "%s %d%%", miscText[63-1], temp);
 	JE_outTextGlow(40, 90, tempStr);
@@ -3218,13 +3218,13 @@ redo:
 				*lastTurn_ = 4;
 
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + ROUND(sin(linkGunDirec + 0.2) * 26), *PY_ + ROUND(cos(linkGunDirec + 0.2) * 26),
+				JE_initPlayerShot(0, 5, *PX_ + 1 + round(sin(linkGunDirec + 0.2) * 26), *PY_ + round(cos(linkGunDirec + 0.2) * 26),
 				                  *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + ROUND(sin(linkGunDirec - 0.2) * 26), *PY_ + ROUND(cos(linkGunDirec - 0.2) * 26),
+				JE_initPlayerShot(0, 5, *PX_ + 1 + round(sin(linkGunDirec - 0.2) * 26), *PY_ + round(cos(linkGunDirec - 0.2) * 26),
 				                  *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + ROUND(sin(linkGunDirec) * 26), *PY_ + ROUND(cos(linkGunDirec) * 26),
+				JE_initPlayerShot(0, 5, *PX_ + 1 + round(sin(linkGunDirec) * 26), *PY_ + round(cos(linkGunDirec) * 26),
 				                  *mouseX_, *mouseY_, 147, playerNum_);
 
 				if (shotRepeat[2-1] > 0)
@@ -3233,23 +3233,23 @@ redo:
 					if (button[1-1])
 					{
 						shotMultiPos[2-1] = 0;
-						JE_initPlayerShot(0, 2, *PX_ + 1 + ROUND(sin(linkGunDirec) * 20), *PY_ + ROUND(cos(linkGunDirec) * 20),
+						JE_initPlayerShot(0, 2, *PX_ + 1 + round(sin(linkGunDirec) * 20), *PY_ + round(cos(linkGunDirec) * 20),
 						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[2-1]-1], playerNum_);
-						playerShotData[b].shotXM = -ROUND(sin(linkGunDirec) * playerShotData[b].shotYM);
-						playerShotData[b].shotYM = -ROUND(cos(linkGunDirec) * playerShotData[b].shotYM);
+						playerShotData[b].shotXM = -round(sin(linkGunDirec) * playerShotData[b].shotYM);
+						playerShotData[b].shotYM = -round(cos(linkGunDirec) * playerShotData[b].shotYM);
 
 						switch (pItems_[2-1])
 						{
 							case 27:
 							case 32:
 							case 10:
-								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
+								temp = round(linkGunDirec * 2.54647908948);  /*16 directions*/
 								playerShotData[b].shotGr = linkMultiGr[temp];
 								break;
 							case 28:
 							case 33:
 							case 11:
-								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
+								temp = round(linkGunDirec * 2.54647908948);  /*16 directions*/
 								playerShotData[b].shotGr = linkSonicGr[temp];
 								break;
 							case 30:
@@ -3262,7 +3262,7 @@ redo:
 								break;
 							case 38:
 							case 22:
-								temp = ROUND(linkGunDirec * 2.54647908948);  /*16 directions*/
+								temp = round(linkGunDirec * 2.54647908948);  /*16 directions*/
 								playerShotData[b].shotGr = linkMult2Gr[temp];
 								break;
 						}
@@ -3609,8 +3609,8 @@ redo:
 								optionSatelliteRotate += 0.2;
 							else
 								optionSatelliteRotate += 0.15;
-							option1X = *PX_ + ROUND(sin(optionSatelliteRotate) * 20);
-							option1Y = *PY_ + ROUND(cos(optionSatelliteRotate) * 20);
+							option1X = *PX_ + round(sin(optionSatelliteRotate) * 20);
+							option1Y = *PY_ + round(cos(optionSatelliteRotate) * 20);
 							break;
 					}
 
@@ -3620,8 +3620,8 @@ redo:
 	                    case 4:
 							if (leftOptionIsSpecial != 4)
 								optionSatelliteRotate += 0.15;
-							option2X = *PX_ - ROUND(sin(optionSatelliteRotate) * 20);
-							option2Y = *PY_ - ROUND(cos(optionSatelliteRotate) * 20);
+							option2X = *PX_ - round(sin(optionSatelliteRotate) * 20);
+							option2Y = *PY_ - round(cos(optionSatelliteRotate) * 20);
 							break;
 						case 1:
 						case 3:

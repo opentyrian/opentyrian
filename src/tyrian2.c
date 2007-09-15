@@ -800,8 +800,8 @@ enemy_still_exists:
 									} else {
 										tempI3 = abs(tempI2);
 									}
-									enemyShot[b].sxm = ROUND((tempI * temp4) / tempI3);
-									enemyShot[b].sym = ROUND((tempI2 * temp4) / tempI3);
+									enemyShot[b].sxm = round((tempI * temp4) / tempI3);
+									enemyShot[b].sym = round((tempI2 * temp4) / tempI3);
 								}
 							}
 
@@ -868,8 +868,8 @@ enemy_still_exists:
 								} else {
 									tempI3 = abs(tempI5);
 								}
-								enemy[b-1].exc = ROUND((tempI4 * enemy[b-1].launchtype) / tempI3);
-								enemy[b-1].eyc = ROUND((tempI5 * enemy[b-1].launchtype) / tempI3);
+								enemy[b-1].exc = round((tempI4 * enemy[b-1].launchtype) / tempI3);
+								enemy[b-1].eyc = round((tempI5 * enemy[b-1].launchtype) / tempI3);
 							}
 						}
 
@@ -2920,7 +2920,7 @@ explosion_draw_overflow:
 
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
-		sprintf(tempStr, "%2.3f", 1000.0f / ROUND(debugHist / debugHistCount));
+		sprintf(tempStr, "%2.3f", 1000.0f / round(debugHist / debugHistCount));
 		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + PX, curLoc, tempStr, lastTurn2, lastTurn, PX, PY);
 		JE_outText(45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
@@ -5404,7 +5404,7 @@ void JE_eventSystem( void )
 					enemy[temp].armorleft = eventRec[eventLoc-1].eventdat;
 					if (galagaMode)
 					{
-						enemy[temp].armorleft = ROUND(eventRec[eventLoc-1].eventdat * (difficultyLevel / 2));
+						enemy[temp].armorleft = round(eventRec[eventLoc-1].eventdat * (difficultyLevel / 2));
 					}
 				}
 			}
@@ -7814,8 +7814,8 @@ void JE_updateNavScreen( void )
 	   yellowish planet below Tyrian isn't visible for as many frames as in the
 	   original. */
 
-	tempNavX = ROUND(navX);
-	tempNavY = ROUND(navY);
+	tempNavX = round(navX);
+	tempNavY = round(navY);
 	JE_bar(19, 16, 135, 169, 2);
 	JE_drawNavLines(true);
 	JE_drawNavLines(false);
