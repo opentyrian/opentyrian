@@ -1424,13 +1424,231 @@ void JE_loadOrderingInfo( void )
 
 void JE_doInGameSetup( void )
 {
-	STUB();
+	haltGame = false;
+	/* TODO syncnet (0);*/
+	if (yourInGameMenuRequest)
+	{
+		useButtonAssign = false; /*Joystick button remapping*/
+		if (JE_inGameSetup())
+		{
+			reallyEndLevel = true;
+			playerEndLevel = true;
+		}
+		if (!isNetworkGame)
+		{
+			/* TODO */
+		}
+		quitRequested = false;
+		/* TODO keysActive[28] = FALSE;*/
+	}
+	
+	if (isNetworkActive && !isNetworkGame)
+	{
+		/* TODO JE_arenaPoll();*/
+	}
+	
+	if (isNetworkGame)
+	{
+		/* TODO */
+	}
+	
+	useButtonAssign = true;  /*Joystick button remapping*/
+	/* TODO gameQuitDelay = streamLagFrames + 1;*/
+	yourInGameMenuRequest = false;
+	skipStarShowVGA = true;
 }
 
 JE_boolean JE_inGameSetup( void )
 {
-	STUB();
-	return false;
+	SDL_Surface *temp_surface = VGAScreen;
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+	
+	JE_boolean returnvalue = false;
+	
+	const JE_byte help[6] /* [1..6] */ = {15, 15, 28, 29, 26, 27};
+	JE_byte  sel;
+	JE_boolean quit;
+	JE_word x, y, z;
+
+	tempScreenSeg = VGAScreenSeg; /* <MXD> ? */
+	/* TODO callBiosHandler = true;*/
+	JE_clearKeyboard();
+	JE_wipeKey();
+	
+	quit = false;
+	sel = 1;
+	
+	JE_barShade(3, 13, 217, 137); /*Main Box*/
+	JE_barShade(5, 15, 215, 135);
+	
+	JE_barShade(3, 143, 257, 157); /*Help Box*/
+	JE_barShade(5, 145, 255, 155);
+	memcpy(VGAScreen2Seg, VGAScreenSeg->pixels, sizeof(VGAScreen2Seg));
+	
+	do
+	{
+		memcpy(VGAScreenSeg->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		
+		for (x = 0; x < 6; x++)
+		{
+			JE_outTextAdjust(10, (x + 1) * 20, inGameText[x], 15, ((sel == x+1) << 1) - 4, SMALL_FONT_SHAPES, true);
+		}
+		
+		JE_outTextAdjust(120, 3 * 20, detailLevel[processorType-1], 15, ((sel == 3) << 1) - 4, SMALL_FONT_SHAPES, true);
+		JE_outTextAdjust(120, 4 * 20, gameSpeedText[gameSpeed-1],   15, ((sel == 4) << 1) - 4, SMALL_FONT_SHAPES, true);
+		
+		JE_outTextAdjust(10, 147, mainMenuHelp[help[sel-1]-1], 14, 6, TINY_FONT, true);
+		
+		JE_barDrawShadow(120, 20, 1, 16, tyrMusicVolume / 12, 3, 13);
+		JE_barDrawShadow(120, 40, 1, 16, fxVolume / 12, 3, 13);
+		
+		JE_showVGA();
+		
+		tempW = 0;
+		JE_textMenuWait(&tempW, true);
+		
+		if (inputDetected)
+		{
+			switch (lastkey_sym)
+			{
+				case SDLK_RETURN:
+					JE_playSampleNum(SELECT);
+					switch (sel)
+					{
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+							sel = 5;
+							break;
+						case 5:
+							quit = true;
+							break;
+						case 6:
+							returnvalue = true;
+							quit = true;
+							if (constantPlay)
+							{
+								JE_tyrianHalt(0);
+							}
+							
+							if (isNetworkGame)
+							{ /*Tell other computer to exit*/
+								netQuit = true;
+								haltGame = true;
+								playerEndLevel = true;
+							}
+							break;
+					}
+					break;
+				case SDLK_ESCAPE:
+					quit = true;
+					JE_playSampleNum(ESC);
+					break;
+				case SDLK_UP:
+					if (--sel < 1)
+					{
+						sel = 6;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_DOWN:
+					if (++sel > 6)
+					{
+						sel = 1;
+					}
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_LEFT:
+					switch (sel)
+					{
+						case 1:
+							JE_changeVolume(tyrMusicVolume, -16, fxVolume, 0);
+							if (!musicActive)
+							{
+								musicActive = true;
+								temp = currentSong;
+								currentSong = 0;
+								JE_playSong(temp);
+							}
+							break;
+						case 2:
+							JE_changeVolume(tyrMusicVolume, 0, fxVolume, -16);
+							soundActive = true;
+							break;
+						case 3:
+							if (--processorType < 1)
+							{
+								processorType = 4;
+							}
+							JE_initProcessorType();
+							JE_setNewGameSpeed();
+							break;
+						case 4:
+							if (--gameSpeed < 1)
+							{
+								gameSpeed = 5;
+							}
+							JE_initProcessorType();
+							JE_setNewGameSpeed();
+							break;
+					}
+					if (sel < 5)
+					{
+						JE_playSampleNum(CURSOR_MOVE);
+					}
+					break;
+				case SDLK_RIGHT:
+					switch (sel)
+					{
+						case 1:
+							JE_changeVolume(tyrMusicVolume, 16, fxVolume, 0);
+							if (!musicActive)
+							{
+								musicActive = true;
+								temp = currentSong;
+								currentSong = 0;
+								JE_playSong(temp);
+							}
+							break;
+						case 2:
+							JE_changeVolume(tyrMusicVolume, 0, fxVolume, 16);
+							soundActive = true;
+							break;
+						case 3:
+							if (++processorType > 4)
+							{
+								processorType = 1;
+							}
+							JE_initProcessorType();
+							JE_setNewGameSpeed();
+							break;
+						case 4:
+							if (++gameSpeed > 5)
+							{
+								gameSpeed = 1;
+							}
+							JE_initProcessorType();
+							JE_setNewGameSpeed();
+							break;
+					}
+					if (sel < 5)
+					{
+						JE_playSampleNum(CURSOR_MOVE);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		
+	} while (!(quit || haltGame || netQuit));
+	/* TODO callBiosHandler = false;*/
+	netQuit = false;
+	
+	VGAScreen = temp_surface; /* side-effect of game_screen */
+	
+	return returnvalue;
 }
 
 void JE_inGameHelp( void )
