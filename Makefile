@@ -1,5 +1,5 @@
 # BUILD SETTINGS ###################################
-DEBUG := 0
+DEBUG := 1
 # Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
 # If building for the GP2X

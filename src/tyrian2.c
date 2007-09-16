@@ -6745,7 +6745,6 @@ item_screen_start:
 					/* TODO: The text wrapping on the datacubes is incorrect. Not a big deal really, but should
 					   probably be fixed at some point. */
 
-					setjasondelay(1);
 					if (mouseX > 164 && mouseX < 299 && mouseY > 47 && mouseY < 153)
 					{
 						if (mouseY > 100)
@@ -6772,7 +6771,7 @@ item_screen_start:
 					for (x = temp + 1; x <= temp + 10; x++)
 					{
 						/* if (x <= temp3 && x >= 0) */
-						if (x <= temp3);
+						if (x <= temp3)
 						{
 							JE_outTextAndDarken(161, tempW, cubeText[curSel[7] - 2][x-1], 14, 3, TINY_FONT);
 							tempW += 12;
@@ -6810,7 +6809,7 @@ item_screen_start:
 					}
 					JE_mouseReplace();
 
-					setjasondelay(0);
+					setjasondelay(1);
 					wait_delay();
 				} else {
 					/* current menu is not 8 (read data cube) */
