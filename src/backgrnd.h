@@ -36,7 +36,6 @@ extern JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 extern void *smoothiesScreen;
 extern JE_word smoothiesSeg;
 extern JE_boolean anySmoothies;
-extern JE_word TSS;
 extern JE_byte SDAT[9];
 #endif
 

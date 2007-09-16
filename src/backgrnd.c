@@ -46,14 +46,26 @@ JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 void      *smoothiesScreen;
 JE_word    smoothiesSeg;
 JE_boolean anySmoothies;
-JE_word    TSS;       /*Temp smoothies screen*/
 JE_byte    SDAT[9]; /* [1..9] */
 
 JE_byte temp, temp2;
 
 void JE_darkenBackground( JE_word neat )
 {
-	STUB();
+	Uint8 *s = VGAScreen->pixels; /* screen pointer, 8-bit specific */
+	int x, y;
+	
+	s += 24;
+	
+	for (y = 184; y; y--)
+	{
+		for (x = 264; x; x--)
+		{
+			*s = ((((*s & 0x0f) << 4) - (*s & 0x0f) + ((((x - neat - y) >> 2) + *(s-2) + (y == 184 ? 0 : *(s-(VGAScreen->w-1)))) & 0x0f)) >> 4) | (*s & 0xf0);
+			*s++;
+		}
+		s += VGAScreen->w - 264;
+	}
 }
 
 void JE_drawBackground2( void )
@@ -560,7 +572,16 @@ void JE_drawBackground3( void )
 
 void JE_checkSmoothies( void )
 {
-	STUB();
+	anySmoothies = false;
+	if (smoothies[1-1] || smoothies[2-1] || smoothies[3-1] || smoothies[4-1] || smoothies[5-1] || smoothies[6-1])
+	{
+		anySmoothies = true;
+	}
+	
+	if (anySmoothies)
+	{
+		JE_initSmoothies();
+    }
 }
 
 void JE_smoothies1( void )
@@ -590,5 +611,8 @@ void JE_smoothies6( void )
 
 void JE_initSmoothies( void )
 {
-	STUB();
+	if (smoothiesScreen == NULL)
+	{
+		smoothiesScreen = VGAScreen2Seg;
+	}
 }

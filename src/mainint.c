@@ -1637,6 +1637,11 @@ JE_boolean JE_inGameSetup( void )
 						JE_playSampleNum(CURSOR_MOVE);
 					}
 					break;
+				case SDLK_w:
+					if (sel == 3)
+					{
+						processorType = 6;
+					}
 				default:
 					break;
 			}
