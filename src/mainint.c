@@ -1641,6 +1641,7 @@ JE_boolean JE_inGameSetup( void )
 					if (sel == 3)
 					{
 						processorType = 6;
+						JE_initProcessorType();
 					}
 				default:
 					break;

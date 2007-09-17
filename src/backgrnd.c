@@ -570,6 +570,65 @@ void JE_drawBackground3( void )
 
 }
 
+void JE_filterScreen( JE_shortint col, JE_shortint int_)
+{
+	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
+	int x, y;
+	unsigned int temp;
+	
+	if (filterFade)
+	{
+		levelBrightness += levelBrightnessChg;
+		if (filterFadeStart &&
+		    (levelBrightness < -14 || levelBrightness > 14))
+		{
+			levelBrightnessChg = -levelBrightnessChg;
+			filterFadeStart = false;
+			levelFilter = levelFilterNew;
+		}
+		if (!filterFadeStart && levelBrightness == 0)
+		{
+			filterFade = false;
+			levelBrightness = -99;
+		}
+	}
+	
+	if (col != -99 && filtrationAvail)
+	{
+		s = VGAScreen->pixels;
+		s += 24;
+		
+		col <<= 4;
+		
+		for (y = 184; y; y--)
+		{
+			for (x = 264; x; x--)
+			{
+				*s = col | (*s & 0x0f);
+				*s++;
+			}
+			s += VGAScreen->w - 264;
+		}
+	}
+	
+	if (int_ != -99 && explosionTransparent)
+	{
+		s = VGAScreen->pixels;
+		s += 24;
+		
+		for (y = 184; y; y--)
+		{
+			for (x = 264; x; x--)
+			{
+				temp = (*s & 0x0f) + int_;
+				*s = (*s & 0xf0) | (temp > 0x1f ? 0 : (temp > 0x0f ? 0x0f : temp));
+				*s++;
+			}
+			s += VGAScreen->w - 264;
+		}
+	}
+}
+
 void JE_checkSmoothies( void )
 {
 	anySmoothies = false;
@@ -582,6 +641,14 @@ void JE_checkSmoothies( void )
 	{
 		JE_initSmoothies();
     }
+}
+
+void JE_initSmoothies( void )
+{
+	if (smoothiesScreen == NULL)
+	{
+		smoothiesScreen = VGAScreen2Seg;
+	}
 }
 
 void JE_smoothies1( void )
@@ -607,12 +674,4 @@ void JE_smoothies4( void )
 void JE_smoothies6( void )
 {
 	STUB();
-}
-
-void JE_initSmoothies( void )
-{
-	if (smoothiesScreen == NULL)
-	{
-		smoothiesScreen = VGAScreen2Seg;
-	}
 }

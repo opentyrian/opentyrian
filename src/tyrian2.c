@@ -3087,7 +3087,7 @@ explosion_draw_overflow:
 	/*Filtration*/
 	if (filterActive)
 	{
-		/* TODO JE_filterScreen(levelFilter, levelBrightness);*/
+		JE_filterScreen(levelFilter, levelBrightness);
 	}
 
 	/** Statbar **/

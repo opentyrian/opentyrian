@@ -42,13 +42,12 @@ extern JE_byte SDAT[9];
 void JE_darkenBackground( JE_word neat );
 void JE_drawBackground2( void );
 void JE_superBackground2( void );
-void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
-
 void JE_drawBackground3( void );
 
-void JE_initSmoothies( void );
+void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
 
 void JE_checkSmoothies( void );
+void JE_initSmoothies( void );
 void JE_smoothies1( void );
 void JE_smoothies2( void );
 void JE_smoothies3( void );
