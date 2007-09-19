@@ -1867,7 +1867,7 @@ level_loop:
 		}
 	}
 
-	if (processorType > 1 && smoothies[4])
+	if (processorType > 1 && smoothies[5-1])
 	{
 		JE_smoothies3();
 	}
@@ -1882,7 +1882,7 @@ level_loop:
 
 	if (background2over == 0)
 	{
-		if (!(smoothies[1] && processorType < 4) && !(smoothies[0] && processorType == 3))
+		if (!(smoothies[2-1] && processorType < 4) && !(smoothies[1-1] && processorType == 3))
 		{
 			if (wild && !background2notTransparent)
 			{
@@ -1893,11 +1893,11 @@ level_loop:
 		}
 	}
 
-	if (smoothies[0] && processorType > 2 && SDAT[0] == 0)
+	if (smoothies[1-1] && processorType > 2 && SDAT[1-1] == 0)
 	{
 		JE_smoothies1();
 	}
-	if (smoothies[1] && processorType > 2)
+	if (smoothies[2-1] && processorType > 2)
 	{
 		JE_smoothies2();
 	}
@@ -1918,7 +1918,7 @@ level_loop:
 		}
 	}
 
-	if (smoothies[0] && processorType > 2 && SDAT[0] > 0)
+	if (smoothies[1-1] && processorType > 2 && SDAT[1-1] > 0)
 	{
 		JE_smoothies1();
 	}
@@ -1931,8 +1931,8 @@ level_loop:
 
 	/*-----------------------BACKGROUNDS------------------------*/
 	/*-----------------------BACKGROUND 2------------------------*/
-	if (!(smoothies[1] && processorType < 4) &&
-	    !(smoothies[0] && processorType == 3))
+	if (!(smoothies[2-1] && processorType < 4) &&
+	    !(smoothies[1-1] && processorType == 3))
 	{
 		if (background2over == 1)
 		{
@@ -1967,11 +1967,11 @@ level_loop:
 		JE_newEnemy(0);
 	}
 
-	if (processorType > 1 && smoothies[2])
+	if (processorType > 1 && smoothies[3-1])
 	{
 		JE_smoothies3();
 	}
-	if (processorType > 1 && smoothies[3])
+	if (processorType > 1 && smoothies[4-1])
 	{
 		JE_smoothies4();
 	}
@@ -2773,8 +2773,8 @@ explosion_draw_overflow:
 
 	/*-----------------------BACKGROUNDS------------------------*/
 	/*-----------------------BACKGROUND 2------------------------*/
-	if (!(smoothies[1] && processorType < 4) &&
-	    !(smoothies[0] && processorType == 3))
+	if (!(smoothies[2-1] && processorType < 4) &&
+	    !(smoothies[1-1] && processorType == 3))
 	{
 		if (background2over == 2)
 		{

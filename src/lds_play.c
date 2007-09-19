@@ -312,7 +312,7 @@ int lds_update( void )
 	}
 
 	/* handle notes */
-	if(!tempo_now)
+	if(!tempo_now && positions)
 	{
 		vbreak = false;
 		for(chan = 0; chan < 9; chan++)

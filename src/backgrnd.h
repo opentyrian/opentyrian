@@ -52,7 +52,6 @@ void JE_smoothies2( void );
 void JE_smoothies3( void );
 void JE_smoothies4( void );
 /*smoothies #5 is used for 3*/
-void JE_smoothies6( void );
 /*smoothies #9 is a vertical flip*/
 
 #endif /* BACKGRND_H */
