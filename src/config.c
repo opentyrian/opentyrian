@@ -517,7 +517,7 @@ void JE_initProcessorType( void )
 
 void JE_setNewGameSpeed( void )
 {
-	pentiumMode = true;
+	pentiumMode = false;
 
 	switch (fastPlay)
 	{

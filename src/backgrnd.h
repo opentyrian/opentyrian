@@ -33,8 +33,7 @@ extern JE_byte **mapYPos, **mapY2Pos, **mapY3Pos;
 extern JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs, mapX3Ofs, tempMapXOfs;
 extern intptr_t mapXbpPos, mapX2bpPos, mapX3bpPos;
 extern JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
-extern void *smoothiesScreen;
-extern JE_word smoothiesSeg;
+extern SDL_Surface *smoothiesScreen;
 extern JE_boolean anySmoothies;
 extern JE_byte SDAT[9];
 #endif

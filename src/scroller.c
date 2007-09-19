@@ -76,9 +76,9 @@ void scroller3d( const char *text[] )
 	}
 
 	JE_loadPic(4, false); /* Steal palette for now. */
-	memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
+	memset(VGAScreen->pixels, 0, VGAScreen->pitch * VGAScreen->h);
 
-	surf = malloc(sizeof(VGAScreen2Seg));
+	surf = malloc(VGAScreen->pitch * VGAScreen->h);
 
 	wait_noinput(true,true,true);
 	currentJukeboxSong = 41; /* BEER! =D */
@@ -114,7 +114,7 @@ void scroller3d( const char *text[] )
 			continue;
 		}
 
-		memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
+		memset(VGAScreen->pixels, 0, VGAScreen->pitch * VGAScreen->h);
 
 		for (i = cur_line; i < max; i++)
 		{
@@ -123,9 +123,9 @@ void scroller3d( const char *text[] )
 			JE_outTextAdjust(txt_x, (i-cur_line)*TEXT_HEIGHT-line_off+TEXT_HEIGHT, text[i], 15, -3, SMALL_FONT_SHAPES, false);
 		}
 
-		memset(surf, 0, sizeof(VGAScreen2Seg));
+		memset(surf, 0, VGAScreen->pitch * VGAScreen->h);
 		memcpy(surf+(HORIZON*320), ((Uint8 *)VGAScreen->pixels)+(TEXT_HEIGHT*320), (200-HORIZON)*320);
-		memset(VGAScreen->pixels, 0, sizeof(VGAScreen2Seg));
+		memset(VGAScreen->pixels, 0, VGAScreen->pitch * VGAScreen->h);
 
 		for (i = HORIZON; i < 200; i++)
 		{

@@ -39,8 +39,9 @@ typedef JE_screentype *JE_screenptr;
 #ifndef NO_EXTERNS
 extern JE_boolean mouseInstalled;
 extern JE_char k;
-SDL_Surface *VGAScreen, *VGAScreenSeg, *game_screen;
-extern Uint8 VGAScreen2Seg[320*200];
+extern SDL_Surface *VGAScreen, *VGAScreenSeg;
+extern SDL_Surface *game_screen;
+extern SDL_Surface *VGAScreen2;
 extern JE_word speed; /* JE: holds timer speed for 70Hz */
 extern JE_byte scancode;
 extern JE_byte outcol;

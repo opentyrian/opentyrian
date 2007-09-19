@@ -33,8 +33,9 @@
 JE_boolean mouseInstalled = true;
 JE_char k;
 
-SDL_Surface *VGAScreen, *VGAScreenSeg, *game_screen;
-Uint8 VGAScreen2Seg[320*200];
+SDL_Surface *VGAScreen, *VGAScreenSeg;
+SDL_Surface *game_screen;
+SDL_Surface *VGAScreen2;
 
 /* JE: From Nortsong */
 JE_word speed; /* JE: holds timer speed for 70Hz */
@@ -69,6 +70,7 @@ void JE_initVGA256( void )
 			exit(1);
 		}
 
+		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 	}
 

@@ -210,13 +210,13 @@ void JE_helpSystem( JE_byte startTopic )
 	JE_showVGA();
 	JE_fadeColor(10);
 
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 	joystickWaitMax = 120; joystickWait = 0;
 
 	do
 	{
-		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 		temp2 = 0;
 
@@ -445,7 +445,7 @@ JE_boolean JE_playerSelect( void )
 	JE_boolean quit;
 
 	JE_loadPic(2, false);
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 	JE_showVGA();
 	JE_fadeColor(20);
 	quit = false;
@@ -537,7 +537,7 @@ JE_boolean JE_episodeSelect( void )
 
 startepisodeselect:
 	JE_loadPic(2, false);
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 	JE_showVGA();
 	JE_fadeColor(10);
 	quit = false;
@@ -635,7 +635,7 @@ JE_boolean JE_difficultySelect( void )
 	JE_boolean quit;
 
 	JE_loadPic(2, false);
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 	JE_showVGA();
 	JE_fadeColor(20);
 	quit = false;
@@ -867,7 +867,7 @@ void JE_loadScreen( void )
 	sel = 1;
 	quit = false;
 
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 	do
 	{
@@ -878,7 +878,7 @@ void JE_loadScreen( void )
 			tempY = mouse_y;
 		}
 
-		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 		JE_dString(JE_fontCenter(miscText[38 + screen - 1], FONT_SHAPES), 5, miscText[38 + screen - 1], FONT_SHAPES);
 
@@ -1266,13 +1266,13 @@ void JE_highScoreScreen( void )
 	x = 1;
 	chg = 1;
 
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 	do
 	{
 		if (episodeAvail[x])
 		{
-			memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 			JE_dString( JE_fontCenter( miscText[51 - 1], FONT_SHAPES), 03, miscText[51 - 1], FONT_SHAPES);
 			JE_dString( JE_fontCenter( episodeName[x], SMALL_FONT_SHAPES), 30, episodeName[x], SMALL_FONT_SHAPES);
@@ -1483,11 +1483,11 @@ JE_boolean JE_inGameSetup( void )
 	
 	JE_barShade(3, 143, 257, 157); /*Help Box*/
 	JE_barShade(5, 145, 255, 155);
-	memcpy(VGAScreen2Seg, VGAScreenSeg->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 	
 	do
 	{
-		memcpy(VGAScreenSeg->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 		
 		for (x = 0; x < 6; x++)
 		{

@@ -123,11 +123,6 @@ const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
 
 const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
 
-/* <MXD> == randomly placed bug list == */
-/* <MXD> Bonus -- little brown ships not following expected path */
-/* <MXD> Gyges -- enemyshots velocity is wrong */
-/* <MXD> displaying/clearing message area causes tempScreenSeg to go bad */
-
 void JE_starShowVGA( void )
 {
 	JE_byte *src;
@@ -1480,10 +1475,10 @@ level_loop:
 
 	if (isNetworkGame)
 	{
-		smoothies[8] = false;
-		smoothies[5] = false;
+		smoothies[9-1] = false;
+		smoothies[6-1] = false;
 	} else {
-		starShowVGASpecialCode = smoothies[8] + (smoothies [5] << 1);
+		starShowVGASpecialCode = smoothies[9-1] + (smoothies[6-1] << 1);
 	}
 
 	/*Background Wrapping*/
@@ -1697,7 +1692,7 @@ level_loop:
 	JE_checkSmoothies();
 	if (anySmoothies)
 	{
-		memcpy(VGAScreen->pixels, smoothiesScreen, sizeof(smoothiesSeg));
+		VGAScreen = smoothiesScreen;
 	}
 
 	/* --- BACKGROUNDS --- */
@@ -1723,7 +1718,7 @@ level_loop:
 	{
 		/* BP is used by all backgrounds */
 
-		s = (Uint8 *)tempScreenSeg->pixels;
+		s = (Uint8 *)VGAScreen->pixels;
 
 		/* Offset for top */
 		s += 11 * 24;
@@ -1749,15 +1744,15 @@ level_loop:
 				{
 					memcpy(s, p, 24);
 
-					s += tempScreenSeg->w;
+					s += VGAScreen->w;
 					p += 24;
 				}
 
-				s -= backPos * tempScreenSeg->w + 24;
+				s -= backPos * VGAScreen->w + 24;
 			}
 
 			s += 24 * 11;
-			s += backPos * tempScreenSeg->w + 24;
+			s += backPos * VGAScreen->w + 24;
 
 			/* Increment Map Location for next line */
 			bp += 14 - 2;   /* (Map Width) */
@@ -1780,17 +1775,17 @@ level_loop:
 				{
 					memcpy(s, p, 24);
 
-					s += tempScreenSeg->w;
+					s += VGAScreen->w;
 					p += 24;
 				}
 
-				s -= tempScreenSeg->w * 28 + 24;
+				s -= VGAScreen->w * 28 + 24;
 			}
 
 			/* Increment Map Location for next line */
 			bp += 14 + 14 - 2;  /* (Map Width) */
 
-			s += tempScreenSeg->w * 28 + 24 * 12;
+			s += VGAScreen->w * 28 + 24 * 12;
 		}
 
 		if (backPos <= 15)
@@ -1806,11 +1801,11 @@ level_loop:
 				{
 					memcpy(s, p, 24);
 
-					s += tempScreenSeg->w;
+					s += VGAScreen->w;
 					p += 24;
 				}
 
-				s -= (15 - backPos + 1) * tempScreenSeg->w + 24;
+				s -= (15 - backPos + 1) * VGAScreen->w + 24;
 			}
 		}
 	} else {
@@ -3593,7 +3588,7 @@ new_game:
 								if (!constantPlay)
 								{
 									JE_setNetByte(0);
-									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+									memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
 									JE_loadPic(tempX, false);
@@ -3606,7 +3601,7 @@ new_game:
 										if (!newkey && !ESCPressed)
 										{
 											vga = VGAScreen->pixels;
-											vga2 = VGAScreen2Seg;
+											vga2 = VGAScreen2->pixels;
 											pic = pic_buffer + (199 - z) * 320;
 
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
@@ -3617,8 +3612,8 @@ new_game:
 													memcpy(vga, pic, 320);
 													pic += 320;
 												} else {
-													memcpy(vga, vga2, 320);
-													vga2 += 320;
+													memcpy(vga, vga2, VGAScreen->w);
+													vga2 += VGAScreen->w;
 												}
 												vga += VGAScreen->w;
 											}
@@ -3643,7 +3638,7 @@ new_game:
 								if (!constantPlay)
 								{
 									JE_setNetByte(0);
-									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+									memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
 									JE_loadPic(tempX, false);
@@ -3656,7 +3651,7 @@ new_game:
 										if (!newkey && !ESCPressed)
 										{
 											vga = VGAScreen->pixels;
-											vga2 = VGAScreen2Seg;
+											vga2 = VGAScreen2->pixels;
 											pic = pic_buffer;
 
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
@@ -3664,8 +3659,8 @@ new_game:
 											{
 												if (y <= 199 - z)
 												{
-													memcpy(vga, vga2, 320);
-													vga2 += 320;
+													memcpy(vga, vga2, VGAScreen->w);
+													vga2 += VGAScreen->w;
 												} else {
 													memcpy(vga, pic, 320);
 													pic += 320;
@@ -3693,7 +3688,7 @@ new_game:
 								if (!constantPlay)
 								{
 									JE_setNetByte(0);
-									memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+									memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
 									JE_loadPic(tempX, false);
@@ -3706,7 +3701,7 @@ new_game:
 										if (!newkey && !ESCPressed)
 										{
 											vga = VGAScreen->pixels;
-											vga2 = VGAScreen2Seg;
+											vga2 = VGAScreen2->pixels;
 											pic = pic_buffer;
 
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
@@ -3714,7 +3709,7 @@ new_game:
 											{
 												memcpy(vga, vga2 + z, 319 - z);
 												vga += 320 - z;
-												vga2 += 320;
+												vga2 += VGAScreen2->w;
 												memcpy(vga, pic, z + 1);
 												vga += z;
 												pic += 320;
@@ -4110,7 +4105,7 @@ void JE_titleScreen( JE_boolean animate )
 				}
 				JE_loadPic(4, false);
 
-				memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+				memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 				if (moveTyrianLogoUp)
 				{
@@ -4143,7 +4138,7 @@ void JE_titleScreen( JE_boolean animate )
 						int i;
 
 						setjasondelay(2);
-						memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+						memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 						JE_newDrawCShapeNum(PLANET_SHAPES, 147, 11, temp);
 
@@ -4180,11 +4175,11 @@ void JE_titleScreen( JE_boolean animate )
 
 				JE_fadeColors(&colors, &colors2, 0, 255, 20);
 
-				memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+				memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 			}
 		}
 
-		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 		for (temp = 0; temp < menunum; temp++)
 		{
@@ -6071,7 +6066,7 @@ void JE_itemScreen( void )
 		}
 	}
 
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 	keyboardUsed = false;
 	firstMenu9 = false;
@@ -6139,7 +6134,7 @@ item_screen_start:
 		/* SYN: note reindexing... "firstMenu9" refers to Menu 8 here :( */
 		if (curMenu != 8 || firstMenu9)
 		{
-			memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 		}
 
 		defaultBrightness = -3;
@@ -7271,7 +7266,7 @@ item_screen_start:
 							break;
 						}
 
-						memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+						memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 						curPal = newPal;
 						memcpy(colors, palettes[newPal], sizeof(colors));

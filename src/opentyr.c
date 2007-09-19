@@ -167,7 +167,7 @@ void opentyrian_menu( void )
 		                 15, -4, SMALL_FONT_SHAPES, true);
 	}
 
-	memcpy(VGAScreen2Seg, VGAScreen->pixels, sizeof(VGAScreen2Seg));
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 	JE_showVGA();
 	JE_fadeColor(20);
 	wait_noinput(true, false, false);
@@ -178,7 +178,7 @@ void opentyrian_menu( void )
 
 	do
 	{
-		memcpy(VGAScreen->pixels, VGAScreen2Seg, sizeof(VGAScreen2Seg));
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[sel], SMALL_FONT_SHAPES),
 		                 (sel != maxSel) ? (sel * 16 + 32) : 118, opentyrian_menu_items[sel],
 		                 15, -2, SMALL_FONT_SHAPES, true);
