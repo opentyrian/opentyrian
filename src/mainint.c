@@ -2509,12 +2509,16 @@ void JE_mainKeyboardInput( void )
 		/* {SMOOTHIES} */
 		if (keysactive[SDLK_F12] && keysactive[SDLK_SCROLLOCK])
 		{
-			for (temp = 3; temp <= 3+9; temp++)
+			for (temp = SDLK_2; temp <= SDLK_9; temp++)
 			{
-				if (0 /* keyactive[temp] The number keys, TODO: doesn't exactly work like that under SDL */)
+				if (keysactive[temp])
 				{
-					smoothies[temp-3] = !smoothies[temp-3];
+					smoothies[temp-SDLK_2] = !smoothies[temp-SDLK_2];
 				}
+			}
+			if (keysactive[SDLK_0])
+			{
+				smoothies[8] = !smoothies[8];
 			}
 		}
 
