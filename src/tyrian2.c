@@ -3077,7 +3077,7 @@ explosion_draw_overflow:
 	}
 
 	/** Test **/
-	/* TODO JE_drawSP();*/
+	JE_drawSP();
 
 	/*Filtration*/
 	if (filterActive)

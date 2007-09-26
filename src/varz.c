@@ -1717,7 +1717,54 @@ void JE_resetPlayerH( void )
 	playerHNotReady = false;
 }
 
-void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color )
+void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ) /* superpixels */
 {
-	STUB();
+	JE_real tempr;
+	JE_integer tempx, tempy;
+	
+	for (temp = 0; temp < num; temp++)
+	{
+		if (++lastSP > MAX_SP)
+			lastSP = 0;
+		tempr = ((float)rand() / RAND_MAX) * (M_PI * 2);
+		tempy = round(cos(tempr) * ((float)rand() / RAND_MAX) * explowidth);
+		tempx = round(sin(tempr) * ((float)rand() / RAND_MAX) * explowidth);
+		SPL[lastSP].location = (tempy + y) * VGAScreen->w + (tempx + x);
+		SPL[lastSP].movement = tempy * VGAScreen->w + tempx + VGAScreen->w;
+		SPL[lastSP].color = color;
+		SPZ[lastSP] = 15;
+	}
+}
+
+void JE_drawSP( void )
+{
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	
+	int i = MAX_SP + 1;
+	
+	while (i--)
+	{
+		if (SPZ[i])
+		{
+			SPL[i].location += SPL[i].movement;
+			
+			if (SPL[i].location < VGAScreen->h * VGAScreen->w)
+			{
+				s = (Uint8 *)VGAScreen->pixels;
+				s += SPL[i].location;
+				
+				*s = (((*s & 0x0f) + SPZ[i]) >> 1) + SPL[i].color;
+				if (SPL[i].location > 1)
+					*(s - 1) = (((*(s - 1) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+				if (SPL[i].location < VGAScreen->h * VGAScreen->w - 1)
+					*(s + 1) = (((*(s + 1) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+				if (SPL[i].location > VGAScreen->w)
+					*(s - VGAScreen->w) = (((*(s - VGAScreen->w) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+				if (SPL[i].location < (VGAScreen->h - 1) * VGAScreen->w)
+					*(s + VGAScreen->w) = (((*(s + VGAScreen->w) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+			}
+			
+			SPZ[i]--;
+		}
+	}
 }

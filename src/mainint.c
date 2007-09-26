@@ -1405,7 +1405,7 @@ JE_boolean JE_gammaCheck( void )
 	Uint8 temp = keysactive[SDLK_F11];
 	if (temp)
 	{
-		/* TODO keysactive[SDLK_F11] = 0; */
+		keysactive[SDLK_F11] = false;
 		newkey = false;
 		gammaCorrection = (gammaCorrection + 1) % 4;
 		memcpy(colors, palettes[pcxpal[3-1]], sizeof(colors));
@@ -1439,7 +1439,7 @@ void JE_doInGameSetup( void )
 			/* TODO */
 		}
 		quitRequested = false;
-		/* TODO keysActive[28] = FALSE;*/
+		keysactive[SDLK_RETURN] = false;
 	}
 	
 	if (isNetworkActive && !isNetworkGame)
@@ -2392,7 +2392,7 @@ void JE_mainKeyboardInput( void )
 		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && keysactive[SDLK_F6])
 		{
 			youAreCheating = !youAreCheating;
-			/* TODO keysactive[SDLK_F2] = false;*/
+			keysactive[SDLK_F2] = false;
 		}
 
 		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && (keysactive[SDLK_F4] || keysactive[SDLK_F5]) && !superTyrian)
@@ -3265,7 +3265,7 @@ redo:
 							case 30:
 							case 35:
 							case 14:
-								if (linkGunDirec > M_PI / 2 && linkGunDirec < M_PI + M_PI / 2)
+								if (linkGunDirec > M_PI_2 && linkGunDirec < M_PI + M_PI / 2)
 								{
 									playerShotData[b].shotYC = 1;
 								}
