@@ -5097,10 +5097,13 @@ void JE_eventSystem( void )
 				case 0:
 				case 1:
 					stopBackgroundNum = 1;
+					break;
 				case 2:
 					stopBackgroundNum = 2;
+					break;
 				case 3:
 					stopBackgroundNum = 3;
+					break;
 			}
 			break;
 		case 5:
@@ -5850,7 +5853,7 @@ void JE_eventSystem( void )
 				newPL[eventRec[eventLoc-1].eventdat3 - 80] = 255;
 				if (eventRec[eventLoc-1].eventdat4 > 0)
 				{ /*Skip*/
-					curLoc = eventRec [eventLoc-1 + eventRec[eventLoc-1].eventdat4].eventtime - 1;
+					curLoc = eventRec[eventLoc-1 + eventRec[eventLoc-1].eventdat4].eventtime - 1;
 					eventLoc += eventRec[eventLoc-1].eventdat4 - 1;
 				}
 			}
