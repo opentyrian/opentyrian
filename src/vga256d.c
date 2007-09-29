@@ -97,11 +97,13 @@ void JE_initVGA256( void )
 
 void set_fullscreen( bool full )
 {
-	if ((VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE | (full ? SDL_FULLSCREEN : 0))) == 0);
+	if ((VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE | (full ? SDL_FULLSCREEN : 0))) == 0)
 	{
 		printf("Display initialization failed: %s\n", SDL_GetError());
 		exit(1);
 	}
+
+	SDL_ShowCursor(!full);
 }
 
 void JE_initVGA256X( void )
