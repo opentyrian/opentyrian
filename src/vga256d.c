@@ -23,6 +23,8 @@
 #include "vga256d.h"
 #undef NO_EXTERNS
 
+#include "newshape.h" // For tempScreenSeg
+
 #include "SDL.h"
 #include <ctype.h>
 #include <math.h>
@@ -97,7 +99,7 @@ void JE_initVGA256( void )
 
 void set_fullscreen( bool full )
 {
-	if ((VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE | (full ? SDL_FULLSCREEN : 0))) == 0)
+	if ((tempScreenSeg = VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE | (full ? SDL_FULLSCREEN : 0))) == 0)
 	{
 		printf("Display initialization failed: %s\n", SDL_GetError());
 		exit(1);
