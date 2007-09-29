@@ -795,8 +795,8 @@ enemy_still_exists:
 									} else {
 										tempI3 = abs(tempI2);
 									}
-									enemyShot[b].sxm = round((tempI * temp4) / tempI3);
-									enemyShot[b].sym = round((tempI2 * temp4) / tempI3);
+									enemyShot[b].sxm = round(((float)tempI / tempI3) * temp4);
+									enemyShot[b].sym = round(((float)tempI2 / tempI3) * temp4);
 								}
 							}
 

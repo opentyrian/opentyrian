@@ -285,7 +285,7 @@ struct
 	JE_word explodeGr;
 	JE_byte followPlayer;
 	JE_byte fixedExplode;
-	JE_word fixedMovement;
+	Sint16  fixedMovement;
 } explosions[EXPLOSION_MAX]; /* [1..ExplosionMax] */
 JE_byte explodeAvail[EXPLOSION_MAX]; /* [1..ExplosionMax] */
 JE_integer explosionFollowAmount;
