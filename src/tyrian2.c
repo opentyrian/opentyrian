@@ -5234,7 +5234,7 @@ void JE_eventSystem( void )
 			break;
 
 		case 19: /* Enemy Global Move */
-			if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 91)
+			if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)
 			{
 				temp2 = 1;
 				temp3 = 100;
@@ -5299,7 +5299,7 @@ void JE_eventSystem( void )
 			}
 			break;
 		case 20: /* Enemy Global Accel */
-			if (eventRec[eventLoc-1].eventdat3 > 79)
+			if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)
 			{
 				eventRec[eventLoc-1].eventdat4 = newPL[eventRec[eventLoc-1].eventdat3 - 80];
 			}
@@ -5411,9 +5411,9 @@ void JE_eventSystem( void )
 			smallEnemyAdjust = eventRec[eventLoc-1].eventdat;
 			break;
 		case 27: /* Enemy Global AccelRev */
-			if (eventRec[eventLoc-1].eventdat3 > 79)
+			if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)
 			{
-				eventRec[eventLoc-1].eventdat4 = newPL [eventRec[eventLoc-1].eventdat3 - 80];
+				eventRec[eventLoc-1].eventdat4 = newPL[eventRec[eventLoc-1].eventdat3 - 80];
 			}
 			for (temp = 0; temp < 100; temp++)
 			{
@@ -5677,7 +5677,7 @@ void JE_eventSystem( void )
 			JE_eventJump(eventRec[eventLoc-1].eventdat);
 			break;
 		case 55: /* Enemy Global AccelRev */
-			if (eventRec[eventLoc-1].eventdat3 > 79)
+			if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)
 			{
 				eventRec[eventLoc-1].eventdat4 = newPL[eventRec[eventLoc-1].eventdat3 - 80];
 			}
