@@ -1461,15 +1461,15 @@ void JE_doInGameSetup( void )
 JE_boolean JE_inGameSetup( void )
 {
 	SDL_Surface *temp_surface = VGAScreen;
-	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-	
 	JE_boolean returnvalue = false;
 	
 	const JE_byte help[6] /* [1..6] */ = {15, 15, 28, 29, 26, 27};
 	JE_byte  sel;
 	JE_boolean quit;
 	JE_word x, y, z;
-
+	
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+	
 	tempScreenSeg = VGAScreenSeg; /* <MXD> ? */
 	/* TODO callBiosHandler = true;*/
 	JE_clearKeyboard();

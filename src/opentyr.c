@@ -154,13 +154,14 @@ void opentyrian_menu( void )
 	int sel = 0;
 	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	JE_boolean quit;
+	int i;
 
 	JE_fadeBlack(10);
 	JE_loadPic(13, false); /* 2, 5, or 13? */
 
 	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, false);
 
-	for (int i = 0; i <= maxSel; i++)
+	for (i = 0; i <= maxSel; i++)
 	{
 		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES),
 		                 (i != maxSel) ? (i * 16 + 32) : 118, opentyrian_menu_items[i],
