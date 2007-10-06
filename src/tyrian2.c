@@ -4260,7 +4260,6 @@ void JE_titleScreen( JE_boolean animate )
 
 					if (z == SA+1)
 					{
-						char buf[10+1+15+1];
 						/* SuperTyrian */
 
 						JE_playSampleNum(37);
@@ -4288,6 +4287,7 @@ void JE_titleScreen( JE_boolean animate )
 						}
 						JE_outText(10, 60, "Prepare to play...", 15, 4);
 
+						char buf[10+1+15+1];
 						snprintf(buf, sizeof(buf), "%s %s", miscTextB[4], pName[0]);
 						JE_dString(JE_fontCenter(buf, FONT_SHAPES), 110, buf, FONT_SHAPES);
 						JE_playSong(17);
@@ -8716,13 +8716,13 @@ void JE_menuFunction( JE_byte select )
 					JE_helpBox(35, 35, mainMenuHelp[33 - 1], 18);
 					JE_showVGA();
 					if ( (joystickUp || joystickDown || joystickLeft || joystickRight) &&
-						 !( button[1] || button[2] || button[3] || button[4]) )
+						 !( button[0] || button[1] || button[2] || button[3]) )
 					{
 						inputDetected = false;
 					}
 				} while (!JE_anyButton());
 
-				if (button[1] || button[2] || button[3] || button[4])
+				if (button[0] || button[1] || button[2] || button[3])
 				{
 					jCenterX = joyX;
 					jCenterY = joyY;

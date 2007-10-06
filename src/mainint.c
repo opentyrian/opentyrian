@@ -1057,13 +1057,13 @@ JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems )
 {
 	JE_longint tempL = score;
 
-	tempL += JE_getValue(2, pItems[12]);
-	tempL += JE_getValue(3, pItems[1]);
-	tempL += JE_getValue(4, pItems[2]);
-	tempL += JE_getValue(5, pItems[10]);
-	tempL += JE_getValue(6, pItems[6]);
-	tempL += JE_getValue(7, pItems[4]);
-	tempL += JE_getValue(8, pItems[5]);
+	tempL += JE_getValue(2, pItems[11]);
+	tempL += JE_getValue(3, pItems[0]);
+	tempL += JE_getValue(4, pItems[1]);
+	tempL += JE_getValue(5, pItems[9]);
+	tempL += JE_getValue(6, pItems[5]);
+	tempL += JE_getValue(7, pItems[3]);
+	tempL += JE_getValue(8, pItems[4]);
 
 	return tempL;
 }
@@ -1461,15 +1461,15 @@ void JE_doInGameSetup( void )
 JE_boolean JE_inGameSetup( void )
 {
 	SDL_Surface *temp_surface = VGAScreen;
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+	
 	JE_boolean returnvalue = false;
 	
 	const JE_byte help[6] /* [1..6] */ = {15, 15, 28, 29, 26, 27};
 	JE_byte  sel;
 	JE_boolean quit;
 	JE_word x, y, z;
-	
-	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-	
+
 	tempScreenSeg = VGAScreenSeg; /* <MXD> ? */
 	/* TODO callBiosHandler = true;*/
 	JE_clearKeyboard();
