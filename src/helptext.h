@@ -49,7 +49,7 @@ extern char playerName[5][26];          /* [0..4] of string [25] */
 extern char inputDevices[3][13];        /* [1..3] of string [12] */
 extern char networkText[4][21];         /* [1..4] of string [20] */
 extern char difficultyNameB[10][21];    /* [0..9] of string [20] */
-extern char joyButton[5][21];           /* [1..5] of string [20] */
+extern char joyButtonNames[5][21];      /* [1..5] of string [20] */
 extern char superShips[11][26];         /* [0..10] of string [25] */
 extern char specialName[9][10];         /* [1..9] of string [9] */
 extern char destructHelp[25][22];

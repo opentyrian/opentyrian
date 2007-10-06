@@ -30,7 +30,7 @@
 
 JE_boolean extraAvail;
 JE_word extraShapeOfs;
-JE_ShipsType ships;
+/* TODO JE_ShipsType ships;*/
 void *extraShapes;
 JE_word extraShapeSeg;
 JE_word extraShapeSize;

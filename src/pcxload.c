@@ -31,7 +31,6 @@
 JE_ColorType colors2;
 JE_word width, depth;
 JE_word bytes;
-JE_char c, c2;
 JE_boolean overrideBlack = false;
 
 void JE_updatePCXColorsSlow( JE_ColorType *colorBuffer )

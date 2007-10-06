@@ -73,7 +73,7 @@ char playerName[5][26];            /* [0..4] of string [25] */
 char inputDevices[3][13];          /* [1..3] of string [12] */
 char networkText[4][21];           /* [1..4] of string [20] */
 char difficultyNameB[10][21];      /* [0..9] of string [20] */
-char joyButton[5][21];             /* [1..5] of string [20] */
+char joyButtonNames[5][21];        /* [1..5] of string [20] */
 char superShips[11][26];           /* [0..10] of string [25] */
 char specialName[9][10];           /* [1..9] of string [9] */
 char destructHelp[25][22];
@@ -304,7 +304,7 @@ void JE_loadHelpText( void )
 
 	for (i = 0; i < 5; i++)
 	{
-		JE_readCryptLn(f,joyButton[i]);         /*Joystick Button Assignments*/
+		JE_readCryptLn(f,joyButtonNames[i]);    /*Joystick Button Assignments*/
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 

@@ -6188,7 +6188,7 @@ item_screen_start:
 		{
 			for (temp = 1; temp <= 4; temp++)
 			{
-				JE_textShade(214, 34 + temp*24 - 8, joyButton[joyButtonAssign[temp]], 15, 2, DARKEN);
+				JE_textShade(214, 34 + temp*24 - 8, joyButtonNames[joyButtonAssign[temp]], 15, 2, DARKEN);
 			}
 		}
 
