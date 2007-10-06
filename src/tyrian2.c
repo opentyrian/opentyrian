@@ -6004,7 +6004,7 @@ void JE_itemScreen( void )
 		8: read data cube
 		9: 2 player arcade game menu
 		10: 1 player arcade game menu
-		11: different options menu (???)
+		11: different options menu
 		12: joystick settings
 	*/
 

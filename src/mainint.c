@@ -2608,7 +2608,7 @@ void JE_pauseGame( void )
 
 		if (superPause)
 		{
-			if ((newkey && (lastkey_sym != SDLK_F11) && !(lastkey_sym == SDLK_LALT) && !(lastkey_sym == SDLK_c) && !(lastkey_sym == SDLK_SPACE)) || (JE_mousePosition(&mouseX, &mouseY) > 0) || button[2] || button[3] || button[4]) 
+			if ((newkey && (lastkey_sym != SDLK_F11) && !(lastkey_sym == SDLK_LALT) && !(lastkey_sym == SDLK_c) && !(lastkey_sym == SDLK_SPACE)) || (JE_mousePosition(&mouseX, &mouseY) > 0) || button[1] || button[2] || button[3]) 
 			{
 				if (isNetworkGame)
 				{
@@ -2619,7 +2619,7 @@ void JE_pauseGame( void )
 				}
 			}
 		} else {
-			if ((newkey && lastkey_sym != SDLK_F11) || JE_mousePosition(&mouseX, &mouseY) > 0 || button[1] || button[2] || button[3] || button[4])
+			if ((newkey && lastkey_sym != SDLK_F11) || JE_mousePosition(&mouseX, &mouseY) > 0 || button[0] || button[1] || button[2] || button[3])
 			{
 				if (isNetworkGame)
 				{
