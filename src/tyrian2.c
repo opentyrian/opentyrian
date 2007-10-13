@@ -6217,13 +6217,13 @@ item_screen_start:
 				/* Write save game slot */
 				if (x == max)
 				{
-					strcpy(tempStr, miscText[5]);
+					strcpy(tempStr, miscText[6-1]);
 				} else {
-					if (saveFiles[x-1].level == 0)
+					if (saveFiles[x-2].level == 0)
 					{
-						strcpy(tempStr, miscText[2]);
+						strcpy(tempStr, miscText[3-1]);
 					} else {
-						strcpy(tempStr, saveFiles[x-1].name);
+						strcpy(tempStr, saveFiles[x-2].name);
 					}
 				}
 
@@ -6250,15 +6250,15 @@ item_screen_start:
 						temp2 = 250;
 					}
 
-					if (saveFiles[x-1].level == 0)
+					if (saveFiles[x-2].level == 0)
 					{
 						strcpy(tempStr, "-----"); /* Empty save slot */
 					} else {
 						char buf[20];
 
-						strcpy(tempStr, saveFiles[x-1].levelName);
+						strcpy(tempStr, saveFiles[x-2].levelName);
 
-						snprintf(buf, sizeof buf, "%s%d", miscTextB[1], saveFiles[x-1].episode);
+						snprintf(buf, sizeof buf, "%s%d", miscTextB[1-1], saveFiles[x-2].episode);
 						JE_textShade(297, tempY, buf, temp2 / 16, temp2 % 16 - 8, DARKEN);
 					}
 

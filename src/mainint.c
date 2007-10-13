@@ -2244,7 +2244,141 @@ end_loop:
 
 void JE_operation( JE_byte slot )
 {
-	STUB();
+	JE_byte flash;
+	JE_boolean quit;
+	char stemp[21];
+	char tempStr[51];
+	
+	if (!performSave) {
+		if (saveFiles[slot-1].level > 0)
+		{
+			gameJustLoaded = true;
+			JE_loadGame(slot);
+			gameLoaded = true;
+			quit = true;
+			
+			if (pItems[3-1] > 0)
+			{
+				onePlayerAction = true;
+				if (pItems[3-1] == 255)
+				{
+					superTyrian = true;
+				} else {
+					superArcadeMode = pItems[3-1];
+				}
+			}
+		}
+	} else if (slot % 11 != 0) {
+		quit = false;
+		strcpy(stemp, "              ");
+		memcpy(stemp, saveFiles[slot-1].name, strlen(saveFiles[slot-1].name));
+		temp = strlen(stemp);
+		while (stemp[temp-1] == ' ' && --temp);
+		
+		flash = 8 * 16 + 10;
+		
+		while (JE_mousePosition(&tempX, &tempY) != 0); /* TODO non-busy wait */
+		
+		JE_barShade(65, 55, 255, 155);
+		
+		do {
+			JE_newDrawCShapeNum(OPTION_SHAPES, 36, 50, 50);
+			
+			JE_textShade(60, 55, miscText[1-1], 11, 4, DARKEN);
+			JE_textShade(70, 70, levelName, 11, 4, DARKEN);
+			
+			do {
+				
+				flash = (flash == 8 * 16 + 10) ? 8 * 16 + 2 : 8 * 16 + 10;
+				temp3 = (temp3 == 6) ? 2 : 6;
+				
+				strcpy(tempStr, miscText[2-1]);
+				strncat(tempStr, stemp, temp);
+				JE_outText(65, 89, tempStr, 8, 3);
+				tempW = 65 + JE_textWidth(tempStr, TINY_FONT);
+				JE_barShade(tempW + 2, 90, tempW + 6, 95);
+				JE_bar(tempW + 1, 89, tempW + 5, 94, flash);
+				
+				JE_showVGA();
+				
+			} while (!JE_waitAction(14, false));
+			
+			if (mouseButton > 0)
+			{
+				if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
+				{
+					quit = true;
+					JE_saveGame(slot, stemp);
+					JE_playSampleNum(SELECT);
+				} else if (mouseX > 151 && mouseX < 237 && mouseY > 123 && mouseY < 149) {
+					quit = true;
+					JE_playSampleNum(ESC);
+				}
+			} else {
+				
+				if (newkey)
+				{
+					bool validkey = false;
+					lastkey_char = toupper(lastkey_char);
+					switch(lastkey_char)
+					{
+						case ' ':
+						case '-':
+						case '.':
+						case ',':
+						case ':':
+						case '!':
+						case '?':
+						case '#':
+						case '@':
+						case '$':
+						case '%':
+						case '*':
+						case '(':
+						case ')':
+						case '/':
+						case '=':
+						case '+':
+						case '<':
+						case '>':
+						case ';':
+						case '"':
+							validkey = true;
+						default:
+							if (temp < 14 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
+							{
+								JE_playSampleNum(CURSOR_MOVE);
+								stemp[temp] = lastkey_char;
+								temp++;
+							}
+							break;
+						case 8:
+							if (temp)
+							{
+								temp--;
+								stemp[temp] = ' ';
+								JE_playSampleNum(CLICK);
+							}
+							break;
+						case 27:
+							quit = true;
+							JE_playSampleNum(ESC);
+							break;
+						case 13:
+							quit = true;
+							JE_saveGame(slot, stemp);
+							drawGameSaved = true;
+							JE_playSampleNum(SELECT);
+							break;
+					}
+				}
+				
+		  }
+		
+		} while (!quit);
+	}
+	
+	while (JE_mousePosition(&tempX, &tempY) != 0); /* TODO non-busy wait */
 }
 
 void JE_inGameDisplays( void )

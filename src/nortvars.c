@@ -421,7 +421,14 @@ void JE_wipeKey( void )
 
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 {
-	STUB();
+	if (mouseInstalled)
+	{
+		service_SDL_events(false);
+		*mouseX = mouse_x;
+		*mouseY = mouse_y;
+		return mousedown ? lastmouse_but : 0;
+	}
+	
 	return 0;
 }
 
