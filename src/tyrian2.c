@@ -3223,7 +3223,6 @@ new_game:
 	haltGame = false;
 	if (loadTitleScreen)
 	{
-		JE_openingAnim();
 		JE_titleScreen(true);
 		loadTitleScreen = false;
 	}
