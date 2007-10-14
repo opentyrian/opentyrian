@@ -2161,22 +2161,22 @@ level_loop:
 					if (z == MAX_PWEAPON)
 					{
 						temp = 25 - abs(zinglonDuration - 25);
-						tempB = abs(enemy[b].ex + enemy[b].mapoffset - (PX + 7) ) < temp;
+						tempB = abs(enemy[b].ex + enemy[b].mapoffset - (PX + 7)) < temp;
 						temp2 = 9;
 						chain = 0;
 						tempI2 = 10;
 					} else if (tempSpecial) {
 						tempB = ((enemy[b].enemycycle == 0) &&
-								(abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (25 + tempX2)) &&
-								(abs(enemy[b].ey - tempShotY - 12 - tempY2)                 < (29 + tempY2))) ||
-								((enemy[b].enemycycle > 0) &&
-								(abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (13 + tempX2)) &&
-								(abs(enemy[b].ey - tempShotY - 6 - tempY2)                  < (15 + tempY2)));
+						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (25 + tempX2)) &&
+						        (abs(enemy[b].ey - tempShotY - 12 - tempY2)                 < (29 + tempY2))) ||
+						        ((enemy[b].enemycycle > 0) &&
+						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (13 + tempX2)) &&
+						        (abs(enemy[b].ey - tempShotY - 6 - tempY2)                  < (15 + tempY2)));
 					} else {
 						tempB = ((enemy[b].enemycycle == 0) &&
-								(abs(enemy[b].ex + enemy[b].mapoffset - tempShotX) < 25) && (abs(enemy[b].ey - tempShotY - 12) < 29)) ||
-								((enemy[b].enemycycle > 0) &&
-								(abs(enemy[b].ex + enemy[b].mapoffset - tempShotX) < 13) && (abs(enemy[b].ey - tempShotY - 6) < 15));
+						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX) < 25) && (abs(enemy[b].ey - tempShotY - 12) < 29)) ||
+						        ((enemy[b].enemycycle > 0) &&
+						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX) < 13) && (abs(enemy[b].ey - tempShotY - 6) < 15));
 					}
 					
 					if (tempB)

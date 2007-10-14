@@ -343,7 +343,7 @@ struct
 	JE_word     shotGr;
 	JE_word     shotAni;          /*30*/
 	JE_word     shotAniMax;
-	JE_shortint shotDmg;
+	Uint8       shotDmg;
 	JE_byte     shotBlastFilter;
 	JE_byte     chainReaction;    /*35*/
 	JE_byte     playerNumber;

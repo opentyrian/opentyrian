@@ -249,7 +249,7 @@ void JE_scanForEpisodes( void )
 JE_boolean JE_findNextEpisode( void )
 {
 	JE_boolean found = false;
-	JE_byte newEpisode = episodeNum+1;
+	JE_byte newEpisode = episodeNum + 1;
 
 	jumpBackToEpisode1 = false;
 
@@ -261,7 +261,7 @@ JE_boolean JE_findNextEpisode( void )
 			jumpBackToEpisode1 = true;
 		}
 
-		if (episodeAvail[newEpisode])
+		if (episodeAvail[newEpisode-1])
 		{
 			found = true;
 		}

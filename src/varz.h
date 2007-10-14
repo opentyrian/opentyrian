@@ -296,7 +296,7 @@ extern struct {
 	JE_integer shotDevX, shotDirX, shotDevY, shotDirY, shotCirSizeX, shotCirSizeY;
 	JE_byte shotTrail;
 	JE_word shotGr, shotAni, shotAniMax;
-	JE_shortint shotDmg;
+	Uint8 shotDmg;
 	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax, fill[1];
 } playerShotData[MAX_PWEAPON + 1];
 extern JE_byte chain;
