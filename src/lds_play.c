@@ -108,6 +108,7 @@ int lds_load(JE_byte *music_location)
 	}
 
 	memcpy(&speed, pos, sizeof(Uint16));
+	SDL_SwapLE16(speed);
 	pos += 2;
 	tempo = *(pos++);
 	pattlen = *(pos++);
@@ -121,9 +122,10 @@ int lds_load(JE_byte *music_location)
 
 	/* load patches */
 	memcpy(&numpatch, pos, sizeof(Uint16));
+	SDL_SwapLE16(numpatch);
 	pos += 2;
 
-	if (soundbank != NULL) free(soundbank);
+	free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 
 	for(i = 0; i < numpatch; i++) {
@@ -154,11 +156,14 @@ int lds_load(JE_byte *music_location)
 			sb->arp_tab[j] = *(pos++);
 		}
 		memcpy(&sb->start, pos, sizeof(Uint16));
+		SDL_SwapLE16(sb->start);
 		pos += 2;
 		memcpy(&sb->size, pos, sizeof(Uint16));
+		SDL_SwapLE16(sb->size);
 		pos += 2;
 		sb->fms = *(pos++);
 		memcpy(&sb->transp, pos, sizeof(Uint16));
+		SDL_SwapLE16(sb->transp);
 		pos += 2;
 		sb->midinst = *(pos++);
 		sb->midvelo = *(pos++);
@@ -170,9 +175,10 @@ int lds_load(JE_byte *music_location)
 
 	/* load positions */
 	memcpy(&numposi, pos, sizeof(Uint16));
+	SDL_SwapLE16(numposi);
 	pos += 2;
 
-	if (positions != NULL) free(positions);
+	free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
 
 	for(i = 0; i < numposi; i++)
@@ -183,6 +189,7 @@ int lds_load(JE_byte *music_location)
 		* we can just divide it by 2 to get our array index of 16bit words.
 		*/
 		memcpy(&temp, pos, sizeof(Uint16));
+		SDL_SwapLE16(temp);
 		pos += 2;
 		positions[i * 9 + j].patnum = temp / 2;
 		positions[i * 9 + j].transpose = *(pos++);
@@ -192,12 +199,13 @@ int lds_load(JE_byte *music_location)
 	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
 	remaining = (songPos[currentSong] - songPos[currentSong - 1]) - (pos - music_location); /* bytes remaining */
 
-	if (patterns != NULL) free(patterns);
+	free(patterns);
 	patterns = malloc(sizeof(Uint16) * (remaining / 2 + 1));
 	/* patterns = malloc(temp + 1); */
 	for(i = 0; i < (remaining / 2 + 1); i++)
 	{
 		memcpy(&patterns[i], pos, sizeof(Uint16));
+		SDL_SwapLE16(patterns[i]);
 		pos += 2;
 	}
 
