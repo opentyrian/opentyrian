@@ -107,8 +107,7 @@ int lds_load(JE_byte *music_location)
 		return false; */
 	}
 
-	memcpy(&speed, pos, sizeof(Uint16));
-	SDL_SwapLE16(speed);
+	speed = SDL_SwapLE16(*pos);
 	pos += 2;
 	tempo = *(pos++);
 	pattlen = *(pos++);
@@ -121,8 +120,7 @@ int lds_load(JE_byte *music_location)
 	regbd = *(pos++);
 
 	/* load patches */
-	memcpy(&numpatch, pos, sizeof(Uint16));
-	SDL_SwapLE16(numpatch);
+	numpatch = SDL_SwapLE16(*pos);
 	pos += 2;
 
 	free(soundbank);
@@ -155,15 +153,12 @@ int lds_load(JE_byte *music_location)
 		{
 			sb->arp_tab[j] = *(pos++);
 		}
-		memcpy(&sb->start, pos, sizeof(Uint16));
-		SDL_SwapLE16(sb->start);
+		sb->start = SDL_SwapLE16(*pos);
 		pos += 2;
-		memcpy(&sb->size, pos, sizeof(Uint16));
-		SDL_SwapLE16(sb->size);
+		sb->size = SDL_SwapLE16(*pos);
 		pos += 2;
 		sb->fms = *(pos++);
-		memcpy(&sb->transp, pos, sizeof(Uint16));
-		SDL_SwapLE16(sb->transp);
+		sb->transp = SDL_SwapLE16(*pos);
 		pos += 2;
 		sb->midinst = *(pos++);
 		sb->midvelo = *(pos++);
@@ -174,8 +169,7 @@ int lds_load(JE_byte *music_location)
 	}
 
 	/* load positions */
-	memcpy(&numposi, pos, sizeof(Uint16));
-	SDL_SwapLE16(numposi);
+	numposi = SDL_SwapLE16(*pos);
 	pos += 2;
 
 	free(positions);
@@ -188,8 +182,7 @@ int lds_load(JE_byte *music_location)
 		* word fields anyway, so it ought to be an even number (hopefully) and
 		* we can just divide it by 2 to get our array index of 16bit words.
 		*/
-		memcpy(&temp, pos, sizeof(Uint16));
-		SDL_SwapLE16(temp);
+		temp = SDL_SwapLE16(*pos);
 		pos += 2;
 		positions[i * 9 + j].patnum = temp / 2;
 		positions[i * 9 + j].transpose = *(pos++);
@@ -204,8 +197,7 @@ int lds_load(JE_byte *music_location)
 	/* patterns = malloc(temp + 1); */
 	for(i = 0; i < (remaining / 2 + 1); i++)
 	{
-		memcpy(&patterns[i], pos, sizeof(Uint16));
-		SDL_SwapLE16(patterns[i]);
+		patterns[i] = SDL_SwapLE16(*pos);
 		pos += 2;
 	}
 
