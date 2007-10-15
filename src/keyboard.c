@@ -183,7 +183,7 @@ void init_keyboard( void )
 
 	SDL_EnableUNICODE(1);
 
-	SDL_WM_SetCaption("Ctrl-Pause to kill", NULL);
+	SDL_WM_SetCaption("Ctrl-Backspace to kill", NULL);
 
 #ifdef NDEBUG
 	SDL_WM_GrabInput(SDL_GRAB_ON);
@@ -210,9 +210,9 @@ void service_SDL_events( JE_boolean clear_new )
 				break;
 			case SDL_KEYDOWN:
 				/* Emergency kill: Ctrl+Pause */
-				if (ev.key.keysym.sym == SDLK_PAUSE && (ev.key.keysym.mod & KMOD_CTRL))
+				if (ev.key.keysym.sym == SDLK_BACKSPACE && (ev.key.keysym.mod & KMOD_CTRL))
 				{
-					puts("\n\n\nCtrl+Pause pressed. Doing emergency quit.\n");
+					puts("\n\n\nCtrl+Backspace pressed. Doing emergency quit.\n");
 					SDL_Quit();
 					exit(1);
 				}
