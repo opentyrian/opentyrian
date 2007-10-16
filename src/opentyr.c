@@ -76,29 +76,31 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 {
 	size_t i, f = fread(buffer, size, num, stream);
 
+#	if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	switch (size)
 	{
 		case 2:
 			for (i = 0; i < num; i++)
 			{
-				((Uint16 *)buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
+				((Uint16 *)buffer)[i] = SDL_Swap16(((Uint16 *)buffer)[i]);
 			}
 			break;
 		case 4:
 			for (i = 0; i < num; i++)
 			{
-				((Uint32 *)buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
+				((Uint32 *)buffer)[i] = SDL_Swap32(((Uint32 *)buffer)[i]);
 			}
 			break;
 		case 8:
 			for (i = 0; i < num; i++)
 			{
-				((Uint64 *)buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
+				((Uint64 *)buffer)[i] = SDL_Swap64(((Uint64 *)buffer)[i]);
 			}
 			break;
 		default:
 			break;
 	}
+#	endif
 
 	return f;
 }
