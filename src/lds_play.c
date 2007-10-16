@@ -90,7 +90,7 @@ Uint8 *read_pos;
 int lds_load(JE_byte *music_location)
 {
 	Uint32	i, j;
-	SoundBank	*sb;
+	SoundBank *sb;
 	int remaining;
 	Uint16 temp;
 	JE_byte *pos;
@@ -100,33 +100,30 @@ int lds_load(JE_byte *music_location)
 
 	/* load header */
 	mode = *(pos++);
-	if ( mode > 2)
+	if (mode > 2)
 	{
 		/* Error! */
 		/* printf("Error loading music! %d\n", mode);
 		return false; */
 	}
 
-	memcpy(&speed, pos, sizeof(Uint16));
-	speed = SDL_SwapLE16(speed);
+	speed = SDL_SwapLE16(*(Uint16 *)pos);
 	pos += 2;
 	tempo = *(pos++);
 	pattlen = *(pos++);
 
 	for(i = 0; i < 9; i++)
 	{
-		chandelay[i] = *(pos++);;
+		chandelay[i] = *(pos++);
 	}
 
 	regbd = *(pos++);
 
 	/* load patches */
-	numpatch = 0;
-	memcpy(&numpatch, pos, sizeof(Uint16));
-	numpatch = SDL_SwapLE32(SDL_SwapLE16(numpatch));
+	numpatch = SDL_SwapLE16(*(Uint16 *)pos);
 	pos += 2;
 
-	free(soundbank);
+	if (soundbank) free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 
 	for(i = 0; i < numpatch; i++) {
@@ -156,15 +153,12 @@ int lds_load(JE_byte *music_location)
 		{
 			sb->arp_tab[j] = *(pos++);
 		}
-		memcpy(&sb->start, pos, sizeof(Uint16));
-		sb->start = SDL_SwapLE16(sb->start);
+		sb->start = SDL_SwapLE16(*(Uint16 *)pos);
 		pos += 2;
-		memcpy(&sb->size, pos, sizeof(Uint16));
-		sb->size = SDL_SwapLE16(sb->size);
+		sb->size = SDL_SwapLE16(*(Uint16 *)pos);
 		pos += 2;
 		sb->fms = *(pos++);
-		memcpy(&sb->transp, pos, sizeof(Uint16));
-		sb->transp = SDL_SwapLE16(sb->transp);
+		sb->transp = SDL_SwapLE16(*(Uint16 *)pos);
 		pos += 2;
 		sb->midinst = *(pos++);
 		sb->midvelo = *(pos++);
@@ -175,27 +169,24 @@ int lds_load(JE_byte *music_location)
 	}
 
 	/* load positions */
-	numposi = 0;
-	memcpy(&numposi, pos, sizeof(Uint16));
-	numposi = SDL_SwapLE32(SDL_SwapLE16(numposi));
+	numposi = SDL_SwapLE16(*(Uint16 *)pos);
 	pos += 2;
 
-	free(positions);
+	if (positions) free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
 
 	for(i = 0; i < numposi; i++)
-	for(j = 0; j < 9; j++) {
-		/*
-		* patnum is a pointer inside the pattern space, but patterns are 16bit
-		* word fields anyway, so it ought to be an even number (hopefully) and
-		* we can just divide it by 2 to get our array index of 16bit words.
-		*/
-		memcpy(&temp, pos, sizeof(Uint16));
-		temp = SDL_SwapLE16(temp);
-		pos += 2;
-		positions[i * 9 + j].patnum = temp / 2;
-		positions[i * 9 + j].transpose = *(pos++);
-	}
+		for(j = 0; j < 9; j++) {
+			/*
+			* patnum is a pointer inside the pattern space, but patterns are 16bit
+			* word fields anyway, so it ought to be an even number (hopefully) and
+			* we can just divide it by 2 to get our array index of 16bit words.
+			*/
+			temp = SDL_SwapLE16(*(Uint16 *)pos);
+			pos += 2;
+			positions[i * 9 + j].patnum = temp / 2;
+			positions[i * 9 + j].transpose = *(pos++);
+		}
 
 	/* load patterns */
 	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
@@ -206,8 +197,7 @@ int lds_load(JE_byte *music_location)
 	/* patterns = malloc(temp + 1); */
 	for(i = 0; i < (remaining / 2 + 1); i++)
 	{
-		memcpy(&patterns[i], pos, sizeof(Uint16));
-		patterns[i] = SDL_SwapLE16(patterns[i]);
+		patterns[i] = SDL_SwapLE16(*(Uint16 *)pos);
 		pos += 2;
 	}
 
@@ -229,8 +219,7 @@ void lds_rewind(int subsong)
 	/* init all with 0 */
 	tempo_now = 3;
 	playing = true; songlooped = false;
-	jumping = fadeonoff = allvolume = hardfade = pattplay = posplay = jumppos =
-	mainvolume = 0;
+	jumping = fadeonoff = allvolume = hardfade = pattplay = posplay = jumppos =	mainvolume = 0;
 	memset(channel, 0, sizeof(channel));
 	memset(fmchip, 0, sizeof(fmchip));
 
@@ -291,12 +280,12 @@ int lds_update( void )
 				allvolume = 1;
 				fadeonoff = 0;
 				if(hardfade != 0) {
-				  playing = false;
-				  hardfade = 0;
-				  for(i = 0; i < 9; i++)
-				  {
-					channel[i].keycount = 1;
-				  }
+					playing = false;
+					hardfade = 0;
+					for(i = 0; i < 9; i++)
+					{
+						channel[i].keycount = 1;
+					}
 				}
 			}
 
@@ -318,7 +307,7 @@ int lds_update( void )
 			if(!(--c->chancheat.chandelay)) {
 				lds_playsound(c->chancheat.sound, chan, c->chancheat.high);
 			}
-	  }
+		}
 	}
 
 	/* handle notes */
@@ -504,12 +493,12 @@ int lds_update( void )
 		pattplay++;
 		if(vbreak)
 		{
-		  pattplay = 0;
-		  for(i = 0; i < 9; i++)
-		  {
-			  channel[i].packpos = channel[i].packwait = 0;
-		  }
-		  posplay = jumppos;
+			pattplay = 0;
+			for(i = 0; i < 9; i++)
+			{
+				channel[i].packpos = channel[i].packwait = 0;
+			}
+			posplay = jumppos;
 		} else {
 			if(pattplay >= pattlen) {
 				pattplay = 0;
@@ -526,156 +515,153 @@ int lds_update( void )
 
 	/* make effects */
 	for(chan = 0; chan < 9; chan++) {
-	c = &channel[chan];
-	regnum = op_table[chan];
-	if(c->keycount > 0) {
-	  if(c->keycount == 1)
-	lds_setregs_adv(0xb0 + chan, 0xdf, 0);
-	  c->keycount--;
-	}
+		c = &channel[chan];
+		regnum = op_table[chan];
+		if(c->keycount > 0) {
+			if(c->keycount == 1)
+				lds_setregs_adv(0xb0 + chan, 0xdf, 0);
+			c->keycount--;
+		}
 
-	/* arpeggio */
-	if(c->arp_size == 0)
-	  arpreg = 0;
-	else {
-	  arpreg = c->arp_tab[c->arp_pos] << 4;
-	  if(arpreg == 0x800) {
-	if(c->arp_pos > 0) c->arp_tab[0] = c->arp_tab[c->arp_pos - 1];
-	c->arp_size = 1; c->arp_pos = 0;
-	arpreg = c->arp_tab[0] << 4;
-	  }
-
-	  if(c->arp_count == c->arp_speed) {
-	c->arp_pos++;
-	if(c->arp_pos >= c->arp_size) c->arp_pos = 0;
-	c->arp_count = 0;
-	  } else
-	c->arp_count++;
-	}
-
-	/* glide & portamento */
-	if(c->lasttune && (c->lasttune != c->gototune)) {
-	  if(c->lasttune > c->gototune) {
-	if(c->lasttune - c->gototune < c->portspeed)
-	  c->lasttune = c->gototune;
-	else
-	  c->lasttune -= c->portspeed;
-	  } else {
-	if(c->gototune - c->lasttune < c->portspeed)
-	  c->lasttune = c->gototune;
-	else
-	  c->lasttune += c->portspeed;
-	  }
-
-	  if(arpreg >= 0x800)
-	arpreg = c->lasttune - (arpreg ^ 0xff0) - 16;
-	  else
-	arpreg += c->lasttune;
-
-	  freq = frequency[arpreg % (12 * 16)];
-	  octave = arpreg / (12 * 16) - 1;
-	  lds_setregs(0xa0 + chan, freq & 0xff);
-	  lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
-	} else {
-	  /* vibrato */
-	  if(!c->vibwait) {
-	if(c->vibrate) {
-	  wibc = vibtab[c->vibcount & 0x3f] * c->vibrate;
-
-	  if((c->vibcount & 0x40) == 0)
-		tune = c->lasttune + (wibc >> 8);
-	  else
-		tune = c->lasttune - (wibc >> 8);
-
-	  if(arpreg >= 0x800)
-		tune = tune - (arpreg ^ 0xff0) - 16;
-	  else
-		tune += arpreg;
-
-	  freq = frequency[tune % (12 * 16)];
-	  octave = tune / (12 * 16) - 1;
-	  lds_setregs(0xa0 + chan, freq & 0xff);
-	  lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
-	  c->vibcount += c->vibspeed;
-	} else
-	  if(c->arp_size != 0) {	/* no vibrato, just arpeggio */
-		if(arpreg >= 0x800)
-		  tune = c->lasttune - (arpreg ^ 0xff0) - 16;
-		else
-		  tune = c->lasttune + arpreg;
-
-		freq = frequency[tune % (12 * 16)];
-		octave = tune / (12 * 16) - 1;
-		lds_setregs(0xa0 + chan, freq & 0xff);
-		lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
-	  }
-	  } else {	/* no vibrato, just arpeggio */
-	c->vibwait--;
-
-	if(c->arp_size != 0) {
-	  if(arpreg >= 0x800)
-		tune = c->lasttune - (arpreg ^ 0xff0) - 16;
-	  else
-		tune = c->lasttune + arpreg;
-
-	  freq = frequency[tune % (12 * 16)];
-	  octave = tune / (12 * 16) - 1;
-	  lds_setregs(0xa0 + chan, freq & 0xff);
-	  lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
-	}
-	  }
-	}
-
-	/* tremolo (modulator) */
-	if(!c->trmwait) {
-	  if(c->trmrate) {
-	tremc = tremtab[c->trmcount & 0x7f] * c->trmrate;
-	if((tremc >> 8) <= (c->volmod & 0x3f))
-	  level = (c->volmod & 0x3f) - (tremc >> 8);
-	else
-	  level = 0;
-
-	if(allvolume != 0 && (fmchip[0xc0 + chan] & 1))
-	  lds_setregs_adv(0x40 + regnum, 0xc0, ((level * allvolume) >> 8) ^ 0x3f);
-	else
-	  lds_setregs_adv(0x40 + regnum, 0xc0, level ^ 0x3f);
-
-	c->trmcount += c->trmspeed;
-	  } else
-	if(allvolume != 0 && (fmchip[0xc0 + chan] & 1))
-	  lds_setregs_adv(0x40 + regnum, 0xc0, ((((c->volmod & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
-	else
-	  lds_setregs_adv(0x40 + regnum, 0xc0, (c->volmod ^ 0x3f) & 0x3f);
-	} else {
-	  c->trmwait--;
-	  if(allvolume != 0 && (fmchip[0xc0 + chan] & 1))
-	lds_setregs_adv(0x40 + regnum, 0xc0, ((((c->volmod & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
-	}
-
-	/* tremolo (carrier) */
-	if(!c->trcwait) {
-	  if(c->trcrate) {
-	tremc = tremtab[c->trccount & 0x7f] * c->trcrate;
-	if((tremc >> 8) <= (c->volcar & 0x3f))
-	  level = (c->volcar & 0x3f) - (tremc >> 8);
-	else
-	  level = 0;
-
-	if(allvolume != 0)
-	  lds_setregs_adv(0x43 + regnum, 0xc0, ((level * allvolume) >> 8) ^ 0x3f);
-	else
-	  lds_setregs_adv(0x43 + regnum, 0xc0, level ^ 0x3f);
-	c->trccount += c->trcspeed;
-	  } else
-	if(allvolume != 0)
-	  lds_setregs_adv(0x43 + regnum, 0xc0, ((((c->volcar & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
-	else
-	  lds_setregs_adv(0x43 + regnum, 0xc0, (c->volcar ^ 0x3f) & 0x3f);
-	} else {
-	  c->trcwait--;
-	  if(allvolume != 0)
-	lds_setregs_adv(0x43 + regnum, 0xc0, ((((c->volcar & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
-	}
+		/* arpeggio */
+		if(c->arp_size == 0)
+			arpreg = 0;
+		else {
+			arpreg = c->arp_tab[c->arp_pos] << 4;
+			if(arpreg == 0x800) {
+				if(c->arp_pos > 0) c->arp_tab[0] = c->arp_tab[c->arp_pos - 1];
+				c->arp_size = 1; c->arp_pos = 0;
+				arpreg = c->arp_tab[0] << 4;
+			}
+	
+			if(c->arp_count == c->arp_speed) {
+				c->arp_pos++;
+				if(c->arp_pos >= c->arp_size) c->arp_pos = 0;
+				c->arp_count = 0;
+			} else
+				c->arp_count++;
+		}
+	
+		/* glide & portamento */
+		if(c->lasttune && (c->lasttune != c->gototune)) {
+			if(c->lasttune > c->gototune) {
+				if(c->lasttune - c->gototune < c->portspeed)
+					c->lasttune = c->gototune;
+				else
+					c->lasttune -= c->portspeed;
+			} else {
+				if(c->gototune - c->lasttune < c->portspeed)
+					c->lasttune = c->gototune;
+				else
+					c->lasttune += c->portspeed;
+			}
+	
+			if(arpreg >= 0x800)
+				arpreg = c->lasttune - (arpreg ^ 0xff0) - 16;
+			else
+				arpreg += c->lasttune;
+	
+			freq = frequency[arpreg % (12 * 16)];
+			octave = arpreg / (12 * 16) - 1;
+			lds_setregs(0xa0 + chan, freq & 0xff);
+			lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
+		} else {
+			/* vibrato */
+			if(!c->vibwait) {
+				if(c->vibrate) {
+					wibc = vibtab[c->vibcount & 0x3f] * c->vibrate;
+	
+					if((c->vibcount & 0x40) == 0)
+						tune = c->lasttune + (wibc >> 8);
+					else
+						tune = c->lasttune - (wibc >> 8);
+		
+					if(arpreg >= 0x800)
+						tune = tune - (arpreg ^ 0xff0) - 16;
+					else
+						tune += arpreg;
+		
+					freq = frequency[tune % (12 * 16)];
+					octave = tune / (12 * 16) - 1;
+					lds_setregs(0xa0 + chan, freq & 0xff);
+					lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
+					c->vibcount += c->vibspeed;
+				} else if(c->arp_size != 0) {	/* no vibrato, just arpeggio */
+					if(arpreg >= 0x800)
+						tune = c->lasttune - (arpreg ^ 0xff0) - 16;
+					else
+						tune = c->lasttune + arpreg;
+	
+					freq = frequency[tune % (12 * 16)];
+					octave = tune / (12 * 16) - 1;
+					lds_setregs(0xa0 + chan, freq & 0xff);
+					lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
+				}
+			} else {	/* no vibrato, just arpeggio */
+				c->vibwait--;
+	
+				if(c->arp_size != 0) {
+					if(arpreg >= 0x800)
+						tune = c->lasttune - (arpreg ^ 0xff0) - 16;
+					else
+						tune = c->lasttune + arpreg;
+	
+					freq = frequency[tune % (12 * 16)];
+					octave = tune / (12 * 16) - 1;
+					lds_setregs(0xa0 + chan, freq & 0xff);
+					lds_setregs_adv(0xb0 + chan, 0x20, ((octave << 2) + (freq >> 8)) & 0xdf);
+				}
+			}
+		}
+	
+		/* tremolo (modulator) */
+		if(!c->trmwait) {
+			if(c->trmrate) {
+				tremc = tremtab[c->trmcount & 0x7f] * c->trmrate;
+				if((tremc >> 8) <= (c->volmod & 0x3f))
+					level = (c->volmod & 0x3f) - (tremc >> 8);
+				else
+					level = 0;
+				
+				if(allvolume != 0 && (fmchip[0xc0 + chan] & 1))
+					lds_setregs_adv(0x40 + regnum, 0xc0, ((level * allvolume) >> 8) ^ 0x3f);
+				else
+					lds_setregs_adv(0x40 + regnum, 0xc0, level ^ 0x3f);
+				
+				c->trmcount += c->trmspeed;
+			} else if(allvolume != 0 && (fmchip[0xc0 + chan] & 1))
+				lds_setregs_adv(0x40 + regnum, 0xc0, ((((c->volmod & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
+			else
+				lds_setregs_adv(0x40 + regnum, 0xc0, (c->volmod ^ 0x3f) & 0x3f);
+		} else {
+			c->trmwait--;
+			if(allvolume != 0 && (fmchip[0xc0 + chan] & 1))
+			lds_setregs_adv(0x40 + regnum, 0xc0, ((((c->volmod & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
+		}
+			
+		/* tremolo (carrier) */
+		if(!c->trcwait) {
+			if(c->trcrate) {
+				tremc = tremtab[c->trccount & 0x7f] * c->trcrate;
+				if((tremc >> 8) <= (c->volcar & 0x3f))
+					level = (c->volcar & 0x3f) - (tremc >> 8);
+				else
+					level = 0;
+				
+				if(allvolume != 0)
+					lds_setregs_adv(0x43 + regnum, 0xc0, ((level * allvolume) >> 8) ^ 0x3f);
+				else
+					lds_setregs_adv(0x43 + regnum, 0xc0, level ^ 0x3f);
+				c->trccount += c->trcspeed;
+			} else if(allvolume != 0)
+				lds_setregs_adv(0x43 + regnum, 0xc0, ((((c->volcar & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
+			else
+				lds_setregs_adv(0x43 + regnum, 0xc0, (c->volcar ^ 0x3f) & 0x3f);
+		} else {
+			c->trcwait--;
+			if(allvolume != 0)
+			lds_setregs_adv(0x43 + regnum, 0xc0, ((((c->volcar & 0x3f) * allvolume) >> 8) ^ 0x3f) & 0x3f);
+		}
 	}
 
 	return (!playing || songlooped) ? false : true;
@@ -683,115 +669,115 @@ int lds_update( void )
 
 void lds_playsound(int inst_number, int channel_number, int tunehigh)
 {
-  Channel		*c = &channel[channel_number];		/* current channel */
-  SoundBank		*i = &soundbank[inst_number];		/* current instrument */
-  Uint32		regnum = op_table[channel_number];	/* channel's OPL2 register */
-  Uint8		volcalc, octave;
-  Uint16	freq;
-
-  /* set fine tune */
-  tunehigh += ((i->finetune + c->finetune + 0x80) & 0xff) - 0x80;
-
-  /* arpeggio handling */
-  if(!i->arpeggio) {
-    Uint16	arpcalc = i->arp_tab[0] << 4;
-
-    if(arpcalc > 0x800)
-      tunehigh = tunehigh - (arpcalc ^ 0xff0) - 16;
-    else
-      tunehigh += arpcalc;
-  }
-
-  /* glide handling */
-  if(c->glideto != 0) {
-    c->gototune = tunehigh;
-    c->portspeed = c->glideto;
-    c->glideto = c->finetune = 0;
-    return;
-  }
-
-  /* set modulator registers */
-  lds_setregs(0x20 + regnum, i->mod_misc);
-  volcalc = i->mod_vol;
-  if(!c->nextvol || !(i->feedback & 1))
-    c->volmod = volcalc;
-  else
-    c->volmod = (volcalc & 0xc0) | ((((volcalc & 0x3f) * c->nextvol) >> 6));
-
-  if((i->feedback & 1) == 1 && allvolume != 0)
-    lds_setregs(0x40 + regnum, ((c->volmod & 0xc0) | (((c->volmod & 0x3f) * allvolume) >> 8)) ^ 0x3f);
-  else
-    lds_setregs(0x40 + regnum, c->volmod ^ 0x3f);
-  lds_setregs(0x60 + regnum, i->mod_ad);
-  lds_setregs(0x80 + regnum, i->mod_sr);
-  lds_setregs(0xe0 + regnum, i->mod_wave);
-
-  /* Set carrier registers */
-  lds_setregs(0x23 + regnum, i->car_misc);
-  volcalc = i->car_vol;
-  if(!c->nextvol)
-    c->volcar = volcalc;
-  else
-    c->volcar = (volcalc & 0xc0) | ((((volcalc & 0x3f) * c->nextvol) >> 6));
-
-  if(allvolume)
-    lds_setregs(0x43 + regnum, ((c->volcar & 0xc0) | (((c->volcar & 0x3f) * allvolume) >> 8)) ^ 0x3f);
-  else
-    lds_setregs(0x43 + regnum, c->volcar ^ 0x3f);
-  lds_setregs(0x63 + regnum, i->car_ad);
-  lds_setregs(0x83 + regnum, i->car_sr);
-  lds_setregs(0xe3 + regnum, i->car_wave);
-  lds_setregs(0xc0 + channel_number, i->feedback);
-  lds_setregs_adv(0xb0 + channel_number, 0xdf, 0);		/* key off */
-
-  freq = frequency[tunehigh % (12 * 16)];
-  octave = tunehigh / (12 * 16) - 1;
-  if(!i->glide) {
-    if(!i->portamento || !c->lasttune) {
-      lds_setregs(0xa0 + channel_number, freq & 0xff);
-      lds_setregs(0xb0 + channel_number, (octave << 2) + 0x20 + (freq >> 8));
-      c->lasttune = c->gototune = tunehigh;
-    } else {
-      c->gototune = tunehigh;
-      c->portspeed = i->portamento;
-      lds_setregs_adv(0xb0 + channel_number, 0xdf, 0x20);	/* key on */
-    }
-  } else {
-    lds_setregs(0xa0 + channel_number, freq & 0xff);
-    lds_setregs(0xb0 + channel_number, (octave << 2) + 0x20 + (freq >> 8));
-    c->lasttune = tunehigh;
-    c->gototune = tunehigh + ((i->glide + 0x80) & 0xff) - 0x80;	/* set destination */
-    c->portspeed = i->portamento;
-  }
-
-  if(!i->vibrato)
-    c->vibwait = c->vibspeed = c->vibrate = 0;
-  else {
-    c->vibwait = i->vibdelay;
-    /* PASCAL:    c->vibspeed = ((i->vibrato >> 4) & 15) + 1; */
-    c->vibspeed = (i->vibrato >> 4) + 2;
-    c->vibrate = (i->vibrato & 15) + 1;
-  }
-
-  if(!(c->trmstay & 0xf0)) {
-    c->trmwait = (i->tremwait & 0xf0) >> 3;
-    /* PASCAL:    c->trmspeed = (i->mod_trem >> 4) & 15; */
-    c->trmspeed = i->mod_trem >> 4;
-    c->trmrate = i->mod_trem & 15;
-    c->trmcount = 0;
-  }
-
-  if(!(c->trmstay & 0x0f)) {
-    c->trcwait = (i->tremwait & 15) << 1;
-    /* PASCAL:    c->trcspeed = (i->car_trem >> 4) & 15; */
-    c->trcspeed = i->car_trem >> 4;
-    c->trcrate = i->car_trem & 15;
-    c->trccount = 0;
-  }
-
-  c->arp_size = i->arpeggio & 15;
-  c->arp_speed = i->arpeggio >> 4;
-  memcpy(c->arp_tab, i->arp_tab, 12);
-  c->keycount = i->keyoff;
-  c->nextvol = c->glideto = c->finetune = c->vibcount = c->arp_pos = c->arp_count = 0;
+	Channel		*c = &channel[channel_number];		/* current channel */
+	SoundBank		*i = &soundbank[inst_number];		/* current instrument */
+	Uint32		regnum = op_table[channel_number];	/* channel's OPL2 register */
+	Uint8		volcalc, octave;
+	Uint16	freq;
+	
+	/* set fine tune */
+	tunehigh += ((i->finetune + c->finetune + 0x80) & 0xff) - 0x80;
+	
+	/* arpeggio handling */
+	if(!i->arpeggio) {
+		Uint16	arpcalc = i->arp_tab[0] << 4;
+	
+		if(arpcalc > 0x800)
+			tunehigh = tunehigh - (arpcalc ^ 0xff0) - 16;
+		else
+			tunehigh += arpcalc;
+	}
+	
+	/* glide handling */
+	if(c->glideto != 0) {
+		c->gototune = tunehigh;
+		c->portspeed = c->glideto;
+		c->glideto = c->finetune = 0;
+		return;
+	}
+	
+	/* set modulator registers */
+	lds_setregs(0x20 + regnum, i->mod_misc);
+	volcalc = i->mod_vol;
+	if(!c->nextvol || !(i->feedback & 1))
+		c->volmod = volcalc;
+	else
+		c->volmod = (volcalc & 0xc0) | ((((volcalc & 0x3f) * c->nextvol) >> 6));
+	
+	if((i->feedback & 1) == 1 && allvolume != 0)
+		lds_setregs(0x40 + regnum, ((c->volmod & 0xc0) | (((c->volmod & 0x3f) * allvolume) >> 8)) ^ 0x3f);
+	else
+		lds_setregs(0x40 + regnum, c->volmod ^ 0x3f);
+	lds_setregs(0x60 + regnum, i->mod_ad);
+	lds_setregs(0x80 + regnum, i->mod_sr);
+	lds_setregs(0xe0 + regnum, i->mod_wave);
+	
+	/* Set carrier registers */
+	lds_setregs(0x23 + regnum, i->car_misc);
+	volcalc = i->car_vol;
+	if(!c->nextvol)
+		c->volcar = volcalc;
+	else
+		c->volcar = (volcalc & 0xc0) | ((((volcalc & 0x3f) * c->nextvol) >> 6));
+	
+	if(allvolume)
+		lds_setregs(0x43 + regnum, ((c->volcar & 0xc0) | (((c->volcar & 0x3f) * allvolume) >> 8)) ^ 0x3f);
+	else
+		lds_setregs(0x43 + regnum, c->volcar ^ 0x3f);
+	lds_setregs(0x63 + regnum, i->car_ad);
+	lds_setregs(0x83 + regnum, i->car_sr);
+	lds_setregs(0xe3 + regnum, i->car_wave);
+	lds_setregs(0xc0 + channel_number, i->feedback);
+	lds_setregs_adv(0xb0 + channel_number, 0xdf, 0);		/* key off */
+	
+	freq = frequency[tunehigh % (12 * 16)];
+	octave = tunehigh / (12 * 16) - 1;
+	if(!i->glide) {
+		if(!i->portamento || !c->lasttune) {
+			lds_setregs(0xa0 + channel_number, freq & 0xff);
+			lds_setregs(0xb0 + channel_number, (octave << 2) + 0x20 + (freq >> 8));
+			c->lasttune = c->gototune = tunehigh;
+		} else {
+			c->gototune = tunehigh;
+			c->portspeed = i->portamento;
+			lds_setregs_adv(0xb0 + channel_number, 0xdf, 0x20);	/* key on */
+		}
+	} else {
+		lds_setregs(0xa0 + channel_number, freq & 0xff);
+		lds_setregs(0xb0 + channel_number, (octave << 2) + 0x20 + (freq >> 8));
+		c->lasttune = tunehigh;
+		c->gototune = tunehigh + ((i->glide + 0x80) & 0xff) - 0x80;	/* set destination */
+		c->portspeed = i->portamento;
+	}
+	
+	if(!i->vibrato)
+		c->vibwait = c->vibspeed = c->vibrate = 0;
+	else {
+		c->vibwait = i->vibdelay;
+		/* PASCAL:    c->vibspeed = ((i->vibrato >> 4) & 15) + 1; */
+		c->vibspeed = (i->vibrato >> 4) + 2;
+		c->vibrate = (i->vibrato & 15) + 1;
+	}
+	
+	if(!(c->trmstay & 0xf0)) {
+		c->trmwait = (i->tremwait & 0xf0) >> 3;
+		/* PASCAL:    c->trmspeed = (i->mod_trem >> 4) & 15; */
+		c->trmspeed = i->mod_trem >> 4;
+		c->trmrate = i->mod_trem & 15;
+		c->trmcount = 0;
+	}
+	
+	if(!(c->trmstay & 0x0f)) {
+		c->trcwait = (i->tremwait & 15) << 1;
+		/* PASCAL:    c->trcspeed = (i->car_trem >> 4) & 15; */
+		c->trcspeed = i->car_trem >> 4;
+		c->trcrate = i->car_trem & 15;
+		c->trccount = 0;
+	}
+	
+	c->arp_size = i->arpeggio & 15;
+	c->arp_speed = i->arpeggio >> 4;
+	memcpy(c->arp_tab, i->arp_tab, 12);
+	c->keycount = i->keyoff;
+	c->nextvol = c->glideto = c->finetune = c->vibcount = c->arp_pos = c->arp_count = 0;
 }

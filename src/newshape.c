@@ -230,14 +230,19 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p = shape; /* shape pointer */
 	Uint8 *s;   /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
+
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
 
 	for (yloop = 0; yloop < 28; yloop++)
 	{
 		for (xloop = 0; xloop < 24; xloop++)
 		{
+			if (s >= s_limit) return;
 			*s = *p;
 			s++; p++;
 		}
@@ -251,14 +256,19 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p = shape; /* shape pointer */
 	Uint8 *s;   /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
 
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->w + x;
+
+	s_limit = (Uint8 *)tempScreenSeg->pixels;
+	s_limit += tempScreenSeg->h * tempScreenSeg->w;
 
 	for (yloop = 0; yloop < 28; yloop++)
 	{
 		for (xloop = 0; xloop < 24; xloop++)
 		{
+			if (s >= s_limit) return;
 			*p = *s;
 			s++; p++;
 		}
