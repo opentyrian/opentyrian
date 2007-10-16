@@ -26,7 +26,7 @@
 #ifndef NO_EXTERNS
 extern JE_word randomcount;
 extern JE_boolean dont_die;
-extern JE_char dir[12];
+extern JE_char dir[256];
 extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
 extern char err_msg[128];

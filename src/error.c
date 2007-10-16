@@ -30,14 +30,14 @@
 #include <stdio.h>
 
 JE_word randomcount;
-JE_char dir[12];
+JE_char dir[256]; /* increase me */
 
 JE_boolean errorActive = true;
 JE_boolean errorOccurred = false;
 
 JE_boolean dont_die = false;
 
-char err_msg[128] = "No error?!?!";
+char err_msg[128] = "No error!?";
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
@@ -139,25 +139,24 @@ void JE_findTyrian( const char *filename )
 	{
 		dir[0] = '\0';
 	} else {
-		unsigned int i;
-		/* If you ever add a longer dir, increase the magic number. */
-		size_t tmpsize = (strlen(filename)+10) * sizeof (*strbuf);
-
 		/* Let's find it! */
 		printf("Searching for Tyrian files...\n\n");
 
-		strbuf = malloc(tmpsize);
-		for (i = 0; i < COUNTOF(tyrian_searchpaths); i++)
+		for (int i = 0; i < COUNTOF(tyrian_searchpaths); i++)
 		{
+			strbuf = malloc(strlen(tyrian_searchpaths[i]) + strlen(filename) + 2);
+			
 			sprintf(strbuf, "%s/%s", tyrian_searchpaths[i], filename);
 			if (JE_find(strbuf))
 			{
 				free(strbuf);
-
+				
 				sprintf(dir, "%s/", tyrian_searchpaths[i]);
 				printf("Tyrian data files found at %s\n\n", dir);
 				return;
 			}
+			
+			free(strbuf);
 		}
 	}
 }
