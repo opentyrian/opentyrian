@@ -1837,7 +1837,7 @@ level_loop:
 		
 		for (i = MAX_STARS; i--; )
 		{
-			starDat[i].sLoc += starDat[i].sMov;
+			starDat[i].sLoc += starDat[i].sMov + starY;
 			if (starDat[i].sLoc < 177 * VGAScreen->w)
 			{
 				if (*(s + starDat[i].sLoc) == 0)
@@ -8841,85 +8841,50 @@ void JE_weaponSimUpdate( void )
 
 void JE_weaponViewFrame( JE_byte testshotnum )
 {
-	int z;
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	int i;
 
 	JE_bar(8, 8, 143, 182, 0);
 
 	/* JE: (* Port Configuration Display *)
-	(*    drawportconfigbuttons;*)
+	(*    drawportconfigbuttons;*/
 
-	(*===========================STARS==========================*)
-	(*DRAWSTARS*) */
+	/*===========================STARS==========================*/
+	/*DRAWSTARS*/
 
-	/* SYN: oh god asm make it go away T_T */
-
-/*
-  Z := OFS (starDat);
-  ASM
-	(*    push ds*)
-	mov  cx, maxstars
-
-	mov  es, vgascreenseg
-
-	mov  si, Z
-	mov  bx, 320
-
-	(*    mov  ds,tempw*)
-
-	@mainstar :
-
-	mov  di, ds : [si + 1]
-	add  di, ds : [si + 3]
-	add  di, bx
-
-	mov  ds : [si + 1], di
-
-	cmp  di, 177 * 320
-	ja   @nodrawALL
-
-	mov  al, ds : [si]
-
-	cmp  ch, BYTE PTR es : [di]
-	jne  @nodrawC
-	mov  es : [di], al
-	@nodrawC :
-
-	sub  al, 4
-	cmp  al, 9 * 16
-	jb   @nodrawALL
-
-	INC  di
-	cmp  ch, BYTE PTR es : [di]
-	jne  @nodrawR
-	mov  es : [di], al
-	@nodrawR :
-	sub  di, 2
-	cmp  ch, BYTE PTR es : [di]
-	jne  @nodrawL
-	mov  es : [di], al
-	@nodrawL :
-	add  di, 321
-	cmp  ch, BYTE PTR es : [di]
-	jne  @nodrawB
-	mov  es : [di], al
-	@nodrawB :
-	sub  di, 640
-	cmp  ch, BYTE PTR es : [di]
-	jne  @nodrawT
-	mov  es : [di], al
-	@nodrawT :
-
-
-
-	@nodrawALL :
-	add  si, 5
-	DEC  cx
-	jnz  @mainstar
-
-	@nostars :
-	(*    pop ds*)
-  END;
-  */
+	for (i = MAX_STARS; i--;)
+	{
+		s = (Uint8 *)VGAScreen->pixels;
+		
+		starDat[i].sLoc += starDat[i].sMov + VGAScreen->w;
+		
+		if (starDat[i].sLoc < 177 * VGAScreen->w)
+		{
+			if (*(s + starDat[i].sLoc) == 0)
+			{
+				*(s + starDat[i].sLoc) = starDat[i].sC;
+			}
+			if (starDat[i].sC - 4 >= 9 * 16)
+			{
+				if (*(s + starDat[i].sLoc + 1) == 0)
+				{
+					*(s + starDat[i].sLoc + 1) = starDat[i].sC - 4;
+				}
+				if (starDat[i].sLoc > 0 && *(s + starDat[i].sLoc - 1) == 0)
+				{
+					*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
+				}
+				if (*(s + starDat[i].sLoc + VGAScreen->w) == 0)
+				{
+					*(s + starDat[i].sLoc + VGAScreen->w) = starDat[i].sC - 4;
+				}
+				if (starDat[i].sLoc >= VGAScreen->w && *(s + starDat[i].sLoc - VGAScreen->w) == 0)
+				{
+					*(s + starDat[i].sLoc - VGAScreen->w) = starDat[i].sC - 4;
+				}
+			}
+		}
+	}
 
 	mouseX = PX;
 	mouseY = PY;
