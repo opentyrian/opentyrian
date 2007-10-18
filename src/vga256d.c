@@ -24,6 +24,7 @@
 #undef NO_EXTERNS
 
 #include "newshape.h" // For tempScreenSeg
+#include "config.h" // For fullscreen stuff
 
 #include "SDL.h"
 #include <ctype.h>
@@ -64,9 +65,11 @@ void JE_initVGA256( void )
 	if (!initd)
 	{
 		initd = true;
+		fullscreen_enabled = fullscreen_set;
 
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1
-		    || (VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE)) == 0)
+		    || (VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8,
+			    SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0))) == 0)
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
@@ -77,9 +80,12 @@ void JE_initVGA256( void )
 	}
 
 #if defined(TARGET_GP2X) || defined(NDEBUG)
-	/* Remove the cursor from the top-left corner of the screen  */
-	SDL_ShowCursor(0);
+	if (fullscreen_enabled)
 #endif
+	{
+		/* Remove the cursor from the top-left corner of the screen  */
+		SDL_ShowCursor(0);
+	}
 
 	col_buf = malloc(sizeof(SDL_Color)*256);
 
@@ -95,17 +101,6 @@ void JE_initVGA256( void )
 	free(col_buf);
 
 	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
-}
-
-void set_fullscreen( bool full )
-{
-	if ((tempScreenSeg = VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE | SDL_HWPALETTE | (full ? SDL_FULLSCREEN : 0))) == 0)
-	{
-		printf("Display initialization failed: %s\n", SDL_GetError());
-		exit(1);
-	}
-
-	SDL_ShowCursor(!full);
 }
 
 void JE_initVGA256X( void )

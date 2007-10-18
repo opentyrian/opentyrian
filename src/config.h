@@ -137,6 +137,8 @@ extern JE_byte *saveFilePointer;
 extern JE_SaveGameTemp saveTemp;
 extern JE_byte *saveTempPointer;
 extern JE_word editorLevel;
+
+extern bool fullscreen_set, fullscreen_enabled;
 #endif
 
 void JE_initProcessorType( void );

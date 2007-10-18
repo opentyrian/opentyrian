@@ -58,8 +58,14 @@ extern const char *opentyrian_str;
 
 char *strnztcpy( char *to, char *from, size_t count );
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 size_t efread( void *buffer, size_t size, size_t num, FILE *stream );
 size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream );
+#else
+#define efread fread
+#define efwrite fwrite
+#endif
+
 
 void opentyrian_menu( void );
 

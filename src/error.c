@@ -214,7 +214,7 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 	JE_resetFile(&f, "tyrian.cfg");
 	dont_die = false;
 
-	if (f && get_stream_size(f) == 20+sizeof(keySettings))
+	if (f && get_stream_size(f) == 56)
 	{
 		fclose(f);
 		return false;

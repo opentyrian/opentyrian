@@ -65,18 +65,18 @@ const char *opentyrian_menu_items[] =
 };
 
 /* zero-terminated strncpy */
-char *strnztcpy( char *to, char *from, size_t count )
+inline char *strnztcpy( char *to, char *from, size_t count )
 {
 	to[count] = '\0';
 	return strncpy(to, from, count);
 }
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 /* endian-swapping fread */
 size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 {
 	size_t i, f = fread(buffer, size, num, stream);
 
-#	if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	switch (size)
 	{
 		case 2:
@@ -100,7 +100,6 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 		default:
 			break;
 	}
-#	endif
 
 	return f;
 }
@@ -148,32 +147,22 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
 
 	return f;
 }
+#endif
 
 void opentyrian_menu( void )
 {
-
-	static bool fullscr = false;
 	int sel = 0;
 	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
-	JE_boolean quit;
+	bool quit = false, fade_in = true;
 
 	JE_fadeBlack(10);
 	JE_loadPic(13, false); /* 2, 5, or 13? */
 
 	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, false);
 
-	for (int i = 0; i <= maxSel; i++)
-	{
-		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[i], SMALL_FONT_SHAPES),
-		                 (i != maxSel) ? (i * 16 + 32) : 118, opentyrian_menu_items[i],
-		                 15, -4, SMALL_FONT_SHAPES, true);
-	}
-
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+
 	JE_showVGA();
-	JE_fadeColor(20);
-	wait_noinput(true, false, false);
-	quit = false;
 
 	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
 	JE_playSong(currentJukeboxSong);
@@ -181,11 +170,32 @@ void opentyrian_menu( void )
 	do
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-		JE_outTextAdjust(JE_fontCenter(opentyrian_menu_items[sel], SMALL_FONT_SHAPES),
-		                 (sel != maxSel) ? (sel * 16 + 32) : 118, opentyrian_menu_items[sel],
-		                 15, -2, SMALL_FONT_SHAPES, true);
+
+		for (int i = 0; i <= maxSel; i++)
+		{
+			const char *text = opentyrian_menu_items[i];
+			if (i == 1) /* fullscreen */
+			{
+				static char buf[12+3+17+1];
+				snprintf(buf, sizeof(buf), "Fullscreen: %s%s",
+				         (fullscreen_set ? "On" : "Off"),
+				         (fullscreen_set != fullscreen_enabled ? " -Please restart-" : ""));
+				text = buf;
+			}
+
+			JE_outTextAdjust(JE_fontCenter(text, SMALL_FONT_SHAPES),
+			                 (i != maxSel) ? (i * 16 + 32) : 118, text,
+			                 15, (i != sel ? -4 : -2), SMALL_FONT_SHAPES, true);
+		}
 
 		JE_showVGA();
+
+		if (fade_in)
+		{
+			fade_in = false;
+			JE_fadeColor(20);
+			wait_noinput(true,false,false);
+		}
 
 		tempW = 0;
 		JE_textMenuWait(&tempW, false);
@@ -219,10 +229,8 @@ void opentyrian_menu( void )
 							JE_fadeColor(20);
 							break;
 						case 1: /* Fullscreen */
-							/* TODO: Implement this */
+							fullscreen_set = !fullscreen_set;
 							JE_playSampleNum(SELECT);
-							fullscr = !fullscr;
-							set_fullscreen(fullscr);
 							break;
 						case 2: /* Jukebox */
 							JE_playSampleNum(SELECT);
@@ -262,14 +270,14 @@ int main( int argc, char *argv[] )
 
 	JE_scanForEpisodes();
 
-	JE_initVGA256();
-	init_keyboard();
-
 	recordFileNum = 1;
 	playDemoNum = 0;
 	playDemo = false;
 
 	JE_loadConfiguration();
+
+	JE_initVGA256();
+	init_keyboard();
 
 	/* TODO: Tyrian originally checked availible memory here. */
 

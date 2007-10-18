@@ -260,6 +260,8 @@ JE_word editorLevel;   /*Initial value 800*/
 
 JE_word x;
 
+bool fullscreen_set, fullscreen_enabled;
+
 const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 
 void JE_decryptString( char *s, JE_byte len )
@@ -735,8 +737,17 @@ void JE_loadConfiguration( void )
 		/* efread(keySettings, 8, 1, fi); Fixed because we're using SDLKey now */
 		efread(keySettings, sizeof(keySettings), 1, fi);
 
-		fclose(fi);
+		if (!feof(fi))
+		{
+			/* Fullscreen settings */
 
+			Uint8 tmp;
+			efread(&tmp, sizeof(tmp), 1, fi);
+
+			fullscreen_set = (tmp == 1);
+		}
+
+		fclose(fi);
 	} else {
 		memcpy(joyButtonAssign, defaultJoyButtonAssign, sizeof(joyButtonAssign));
 		/*midiPort = 1;*/ /* We don't care about this. */
@@ -752,6 +763,8 @@ void JE_loadConfiguration( void )
 		gameSpeed = 4;
 		inputDevice1 = 0;
 		inputDevice2 = 0;
+
+		fullscreen_set = false;
     }
 
 	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
@@ -921,7 +934,7 @@ void JE_saveConfiguration( void )
 
 		/* SYN: Pascal strings are prefixed by a byte holding the length! */
 		*((JE_byte*)p) = strlen(saveFiles[z].levelName);
-		p += 1;
+		p++;
 		memcpy(((char*)p), saveFiles[z].levelName, 9);
 		p += 9;
 
@@ -954,7 +967,7 @@ void JE_saveConfiguration( void )
 		p += sizeof(JE_byte);
 
 		*((JE_boolean*)p) = saveFiles[z].gameHasRepeated ;
-		p += 1; /* TODO: should be sizeof(JE_boolean) but that is 4 for some reason :( */
+		p++; /* TODO: should be sizeof(JE_boolean) but that is 4 for some reason :( */
 
 		*((JE_byte*)p) = saveFiles[z].initialDifficulty;
 		p += sizeof(JE_byte);
@@ -965,7 +978,7 @@ void JE_saveConfiguration( void )
 		*((JE_longint*)p) = saveFiles[z].highScore2 ;
 		p += sizeof(JE_longint);
 
-		p += 1; /* Skip length byte wheeee */
+		p++; /* Skip length byte wheeee */
 		memcpy(((char*)p), saveFiles[z].highScoreName, 29);
 		p += 29;
 
@@ -1007,7 +1020,11 @@ void JE_saveConfiguration( void )
 		efwrite(&inputDevice2, 1, 1, f);
 
 		/* efwrite(keySettings, 1, 8, f); */
-		efwrite(keySettings, 1, sizeof(keySettings), f);
+		efwrite(keySettings, sizeof(keySettings), 1, f);
+
+		/* New fullscreen stuff */
+		int tmp = (fullscreen_set ? 1 : 0);
+		efwrite(&tmp, sizeof(tmp), 1, f);
 	
 		fclose(f);
 	}
