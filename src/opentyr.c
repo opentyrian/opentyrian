@@ -65,7 +65,7 @@ const char *opentyrian_menu_items[] =
 };
 
 /* zero-terminated strncpy */
-inline char *strnztcpy( char *to, char *from, size_t count )
+char *strnztcpy( char *to, char *from, size_t count )
 {
 	to[count] = '\0';
 	return strncpy(to, from, count);
