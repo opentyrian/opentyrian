@@ -260,7 +260,7 @@ JE_word editorLevel;   /*Initial value 800*/
 
 JE_word x;
 
-bool fullscreen_set, fullscreen_enabled;
+bool fullscreen_set = false, fullscreen_enabled;
 
 const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 
@@ -1023,7 +1023,7 @@ void JE_saveConfiguration( void )
 		efwrite(keySettings, sizeof(keySettings), 1, f);
 
 		/* New fullscreen stuff */
-		int tmp = (fullscreen_set ? 1 : 0);
+		Uint8 tmp = (fullscreen_set ? 1 : 0);
 		efwrite(&tmp, sizeof(tmp), 1, f);
 	
 		fclose(f);
