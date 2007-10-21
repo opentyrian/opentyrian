@@ -276,5 +276,5 @@ void sleep_game( void )
 
 void JE_clearKeyboard( void )
 {
-	STUB();
+	// /!\ Doesn't seems important. I think. D:
 }

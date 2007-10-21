@@ -2209,7 +2209,7 @@ void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 
 void JE_handleChat( void )
 {
-	STUB();
+	// STUB(); Annoying piece of crap =P
 }
 
 JE_boolean JE_getNumber( char *s, JE_byte *x )

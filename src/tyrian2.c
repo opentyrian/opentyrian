@@ -7817,16 +7817,16 @@ void JE_updateNavScreen( void )
 	JE_drawNavLines(false);
 	JE_drawDots();
 
-	for (x = 1; x <= 11; x++)
+	for (x = 0; x < 11; x++)
 	{
-		JE_drawPlanet(x-1);
+		JE_drawPlanet(x);
 	}
 
-	for (x = 1; x < menuChoices[3]; x++)
+	for (x = 0; x < menuChoices[3]-1; x++)
 	{
-		if (mapPlanet[x-1] > 11)
+		if (mapPlanet[x] > 11)
 		{
-			JE_drawPlanet(mapPlanet[x-1] - 1);
+			JE_drawPlanet(mapPlanet[x] - 1);
 		}
 	}
 
@@ -7839,8 +7839,12 @@ void JE_updateNavScreen( void )
 
 	if (curSel[3] < menuChoices[3])
 	{
-		newNavX = (planetX[mapOrigin - 1] - shapeX[PLANET_SHAPES][PGR[mapOrigin - 1]] / 2 + planetX[mapPlanet[curSel[3]-2] - 1] -  shapeX[PLANET_SHAPES][PGR[mapPlanet[curSel[3]-2] - 1]] / 2) / 2.0;
-		newNavY = (planetY[mapOrigin - 1] - shapeY[PLANET_SHAPES][PGR[mapOrigin - 1]] / 2 + planetY[mapPlanet[curSel[3]-2] - 1] -  shapeY[PLANET_SHAPES][PGR[mapPlanet[curSel[3]-2] - 1]] / 2) / 2.0;
+		newNavX = (planetX[mapOrigin-1] - shapeX[PLANET_SHAPES][PGR[mapOrigin-1]-1] / 2
+		          + planetX[mapPlanet[curSel[3]-2] - 1]
+		          - shapeX[PLANET_SHAPES][PGR[mapPlanet[curSel[3]-2] - 1]-1] / 2) / 2.0;
+		newNavY = (planetY[mapOrigin-1] - shapeY[PLANET_SHAPES][PGR[mapOrigin-1]-1] / 2
+		          + planetY[mapPlanet[curSel[3]-2] - 1]
+		          - shapeY[PLANET_SHAPES][PGR[mapPlanet[curSel[3]-2] - 1]-1] / 2) / 2.0;
 	}
 
 	navX = navX + (newNavX - navX) / 2.0;
@@ -8003,15 +8007,15 @@ void JE_drawDots( void )
 	JE_byte x, y;
 	JE_integer tempX, tempY;
 
-	for (x = 1; x <= mapPNum; x++)
+	for (x = 0; x < mapPNum; x++)
 	{
-		for (y = 1; y <= planetDots[x]; y++)
+		for (y = 0; y < planetDots[x]; y++)
 		{
 			tempX = planetDotX[x][y] - tempNavX + 66 - 2;
 			tempY = planetDotY[x][y] - tempNavY + 85 - 2;
 			if (tempX > 0 && tempX < 140 && tempY > 0 && tempY < 168)
 			{
-				if (x == curSel[3]-1 && y <= currentDotNum)
+				if (x == curSel[3]-2 && y < currentDotNum)
 				{
 					JE_newDrawCShapeNum(OPTION_SHAPES, 31, tempX, tempY);
 				} else {
@@ -8026,18 +8030,18 @@ void JE_drawPlanet( JE_byte planetNum )
 {
 	JE_integer tempX, tempY, tempZ;
 
-	tempZ = PGR[planetNum];
-	tempX = planetX[planetNum] + 66 - tempNavX - shapeX[PLANET_SHAPES][tempZ-1] / 2;
-	tempY = planetY[planetNum] + 85 - tempNavY - shapeY[PLANET_SHAPES][tempZ-1] / 2;
+	tempZ = PGR[planetNum]-1;
+	tempX = planetX[planetNum] + 66 - tempNavX - shapeX[PLANET_SHAPES][tempZ] / 2;
+	tempY = planetY[planetNum] + 85 - tempNavY - shapeY[PLANET_SHAPES][tempZ] / 2;
 
-	if (tempX > -7 && tempX + shapeX[PLANET_SHAPES][tempZ-1] < 170 && tempY > 0 && tempY < 160)
+	if (tempX > -7 && tempX + shapeX[PLANET_SHAPES][tempZ] < 170 && tempY > 0 && tempY < 160)
 	{
 		if (PAni[planetNum])
 		{
 			tempZ += planetAni;
 		}
-		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ-1], shapeX[PLANET_SHAPES][tempZ-1], shapeY[PLANET_SHAPES][tempZ-1], tempX + 3, tempY + 3);
-		JE_newDrawCShapeNum(PLANET_SHAPES, tempZ, tempX, tempY);
+		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
+		JE_newDrawCShapeNum(PLANET_SHAPES, tempZ+1, tempX, tempY);
 	}
 }
 
@@ -8076,18 +8080,78 @@ void JE_initWeaponView( void )
 
 void JE_computeDots( void )
 {
-	STUB();
+	JE_integer tempX, tempY;
+	JE_longint distX, distY;
+	JE_byte x, y;
+
+	for (x = 0; x < mapPNum; x++)
+	{
+		distX = (int)(planetX[mapPlanet[x]-1]) - (int)(planetX[mapOrigin-1]);
+		distY = (int)(planetY[mapPlanet[x]-1]) - (int)(planetY[mapOrigin-1]);
+		tempX = abs(distX) + abs(distY);
+
+		if (tempX != 0)
+		{
+			planetDots[x] = round(sqrt(sqrt((distX * distY) + (distY * distY)))) - 1;
+		} else {
+			planetDots[x] = 0;
+		}
+
+		if (planetDots[x] > 10)
+		{
+			planetDots[x] = 10;
+		}
+
+		for (y = 0; y < planetDots[x]; y++)
+		{
+			tempX = JE_partWay(planetX[mapOrigin-1], planetX[mapPlanet[x]-1], planetDots[x], y);
+			tempY = JE_partWay(planetY[mapOrigin-1], planetY[mapPlanet[x]-1], planetDots[x], y);
+			/* ??? Why does it use temp? =P */
+			planetDotX[x][y] = tempX;
+			planetDotY[x][y] = tempY;
+		}
+	}
 }
 
 JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist )
 {
-	STUB();
-	return -1;
+	return (finish - start) / (dots + 2) * (dist + 1) + start;
 }
 
 void JE_doFunkyScreen( void )
 {
-	STUB();
+	JE_clr256();
+
+	if (pItems[11] > 90)
+	{
+		temp = 32;
+	} else if (pItems[11] > 0) {
+		temp = ships[pItems[11]].bigshipgraphic;
+	} else {
+		temp = ships[pItemsBack[11]].bigshipgraphic;
+	}
+
+	switch (temp)
+	{
+		case 32:
+			tempW = 35;
+			tempW2 = 33;
+			break;
+		case 28:
+			tempW = 31;
+			tempW2 = 36;
+			break;
+		case 33:
+			tempW = 31;
+			tempW2 = 35;
+			break;
+	}
+	tempW -= 30;
+
+	JE_newDrawCShapeNum(OPTION_SHAPES, temp, tempW, tempW2);
+	JE_funkyScreen();
+	JE_loadPic(1, false);
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen->pitch * VGAScreen->h);
 }
 
 void JE_drawMainMenuHelpText( void )
@@ -8096,7 +8160,7 @@ void JE_drawMainMenuHelpText( void )
 	JE_byte temp;
 
 	temp = curSel[curMenu] - 2;
-	/* printf("%d --> %d \n", temp, menuHelp[curMenu][temp]); */
+	/* printf("%d --> %d \n", temp, menuHelp[curMenu][temp]); TODO */
 	if (curMenu < 3 || curMenu == 9 || curMenu > 10)
 	{
 		memcpy(tempStr, mainMenuHelp[(menuHelp[curMenu][temp])-1], sizeof(tempStr));
@@ -8778,7 +8842,30 @@ void JE_drawJoystick( void )
 
 void JE_funkyScreen( void )
 {
-	STUB();
+	wait_noinput(true,true,true);
+
+	/* TODO Slew of ASM */
+
+	JE_clr256();
+	JE_drawLines(true);
+	JE_drawLines(false);
+	JE_rectangle(0, 0, 319, 199, 37);
+	JE_rectangle(1, 1, 318, 198, 35);
+
+	/* TODO More ASM */
+
+	verticalHeight = 9;
+	JE_outText(10, 2, ships[pItems[11]].name, 12, 3);
+	JE_helpBox(100, 20, shipInfo[pItems[11]-1][0], 40);
+	JE_helpBox(100, 100, shipInfo[pItems[11]-1][0], 40);
+	verticalHeight = 7;
+
+	JE_outText(JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
+
+	JE_playSampleNum(16);
+	JE_scaleInPicture();
+
+	wait_input(true,true,true);
 }
 
 void JE_weaponSimUpdate( void )
@@ -9142,7 +9229,6 @@ void JE_doNetwork( void )
 /* located in backgrnd.c
 void JE_drawBackground3( void )
 {
-	STUB();
 }*/
 
 void JE_scaleInPicture( void )
