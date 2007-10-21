@@ -2654,7 +2654,7 @@ void JE_mainKeyboardInput( void )
 			{
 				smoothies[8] = !smoothies[8];
 			}
-		}
+		} else
 
 		/* {CYCLE THROUGH FILTER COLORS} */
 		if (keysactive[SDLK_MINUS])
@@ -2669,7 +2669,7 @@ void JE_mainKeyboardInput( void )
 					levelFilter = -99;
 				}
 			}
-		}
+		} else
 
 		/* {HYPER-SPEED} */
 		if (keysactive[SDLK_1])

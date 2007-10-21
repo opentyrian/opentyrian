@@ -646,7 +646,7 @@ void JE_initSmoothies( void )
 void JE_smoothies1( void ) /*Lava Effect*/
 {
 	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = smoothiesScreen->pixels; /* screen pointer, 8-bit specific */
+	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i, j, temp;
 	
 	s += game_screen->w * 185;
@@ -670,7 +670,7 @@ void JE_smoothies1( void ) /*Lava Effect*/
 void JE_smoothies2( void ) /*Water effect*/
 {
 	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = smoothiesScreen->pixels; /* screen pointer, 8-bit specific */
+	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i, j, temp;
 
 	s += game_screen->w * 185;
@@ -697,7 +697,7 @@ void JE_smoothies2( void ) /*Water effect*/
 void JE_smoothies3( void ) /* iced motion blur */
 {
 	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = smoothiesScreen->pixels; /* screen pointer, 8-bit specific */
+	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i;
 
 	for (i = 184 * game_screen->w; i; i--)
@@ -712,7 +712,7 @@ void JE_smoothies3( void ) /* iced motion blur */
 void JE_smoothies4( void ) /* motion blur */
 {
 	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = smoothiesScreen->pixels; /* screen pointer, 8-bit specific */
+	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i;
 
 	for (i = 184 * game_screen->w; i; i--)
