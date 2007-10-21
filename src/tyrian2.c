@@ -1,4 +1,3 @@
-#include <limits.h>
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
@@ -20,6 +19,7 @@
  */
 #include "opentyr.h"
 
+#include "animlib.h"
 #include "backgrnd.h"
 #include "episodes.h"
 #include "error.h"
@@ -3277,7 +3277,7 @@ new_game:
 						switch (s[1])
 						{
 							case 'A':
-								/* TODO JE_playAnim("tyrend.anm", 1, true, 7);*/
+								JE_playAnim("tyrend.anm", 1, true, 7);
 								break;
 
 							case 'G':
@@ -3529,7 +3529,7 @@ new_game:
 
 										if (SANextShip[superArcadeMode] < 7)
 										{
-											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]]].shipgraphic, shapes9);
+											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
 										} else {
 											if (SANextShip[superArcadeMode] == 7)
 											{

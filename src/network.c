@@ -59,17 +59,17 @@ JE_boolean netSuccess;
 
 void JE_updateStream( void )
 {
-	STUB();
+//	STUB();
 }
 
 void JE_setNetByte( JE_byte send)
 {
-	STUB();
+//	STUB();
 }
 
 JE_boolean JE_scanNetByte( JE_byte scan )
 {
-	STUB();
+//	STUB();
 	return true;
 }
 
