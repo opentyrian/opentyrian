@@ -111,6 +111,17 @@ const JE_word linkMult2Gr[17] /* [0..16] */ =
 
 const JE_byte randomEnemyLaunchSounds[3] /* [1..3] */ = {13,6,26};
 
+/* YKS: Twiddle cheat sheet:
+ * 1: UP
+ * 2: DOWN
+ * 3: LEFT
+ * 4: RIGHT
+ * 5: UP+FIRE
+ * 6: DOWN+FIRE
+ * 7: LEFT+FIRE
+ * 8: RIGHT+FIRE
+ * 9: Release all keys (directions and fire)
+ */
 const JE_byte keyboardCombos[26][8] /* [1..26, 1..8] */ =
 {
 	{ 2, 1,   2,   5, 137,           0, 0, 0}, /*Invulnerability*/

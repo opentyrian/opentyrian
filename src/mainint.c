@@ -1834,7 +1834,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 	JE_byte temp, temp2, temp3, temp4, temp5;
 	
 	/*Get direction*/
-	tempW = pItems_[12-1];
+	tempW = pItems_[11]; // Get player ship
 	if (playerNum_ == 2 && tempW < 15)
 	{
 		tempW = 0;
@@ -1852,9 +1852,9 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 		       (PX_ < mouseX_) * 3 + /*LEFT*/
 		       (PX_ > mouseX_) * 4;  /*RIGHT*/
 		
-		if (temp == 0)
+		if (temp == 0) // no direction being pressed
 		{
-			if (!button[1-1])
+			if (!button[0]) // if fire button is released
 			{
 				temp = 9;
 				temp2 = 1;
@@ -1864,24 +1864,27 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 			}
 		}
 		
-		if (temp2 == 1)
+		if (temp2 == 1) // if exactly one direction pressed or firebutton is released
 		{
-			temp += button[1-1] * 4;
+			temp += button[0] * 4;
 			
 			temp3 = superTyrian ? 21 : 3;
-			
 			for (temp2 = 0; temp2 < temp3; temp2++)
 			{
 				
-				temp5 = superTyrian ? shipCombosB[temp2] : shipCombos[tempW][temp2];
 				/*Use SuperTyrian ShipCombos or not?*/
+				temp5 = superTyrian ? shipCombosB[temp2] : shipCombos[tempW][temp2];
 				
-				if (temp5 == 0)
+				// temp5 == selected combo in ship
+				if (temp5 == 0) /* combo doesn't exists */
 				{
+					// mark twiddles as cancelled/finished
 					SFCurrentCode[playerNum_-1][temp2] = 0;
 				} else {
+					// get next combo key
 					temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum_-1][temp2]];
 					
+					// correct key
 					if (temp4 == temp)
 					{
 						SFCurrentCode[playerNum_-1][temp2]++;
