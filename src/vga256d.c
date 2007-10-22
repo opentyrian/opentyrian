@@ -80,12 +80,9 @@ void JE_initVGA256( void )
 	}
 
 #if defined(TARGET_GP2X) || defined(NDEBUG)
-	if (fullscreen_enabled)
+	/* Remove the cursor from the top-left corner of the screen  */
+	SDL_ShowCursor(0);
 #endif
-	{
-		/* Remove the cursor from the top-left corner of the screen  */
-		SDL_ShowCursor(0);
-	}
 
 	col_buf = malloc(sizeof(SDL_Color)*256);
 
