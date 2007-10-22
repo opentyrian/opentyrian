@@ -313,11 +313,9 @@ void JE_saveGame( JE_byte slot, char *name )
 {
 	int i;
 
-	slot--; /* cheap re-indexing */
-
-	saveFiles[slot].initialDifficulty = initialDifficulty;
-	saveFiles[slot].gameHasRepeated = gameHasRepeated;
-	saveFiles[slot].level = saveLevel;
+	saveFiles[slot-1].initialDifficulty = initialDifficulty;
+	saveFiles[slot-1].gameHasRepeated = gameHasRepeated;
+	saveFiles[slot-1].level = saveLevel;
 
 	pItems[3-1] = superArcadeMode;
 	if (superArcadeMode == 0 && onePlayerAction)
@@ -329,7 +327,7 @@ void JE_saveGame( JE_byte slot, char *name )
 		pItems[3-1] = 254;
 	}
 
-	memcpy(saveFiles[slot].items, pItems, sizeof(pItems));
+	memcpy(saveFiles[slot-1].items, pItems, sizeof(pItems));
 
 	if (superArcadeMode > 253)
 	{
@@ -337,15 +335,15 @@ void JE_saveGame( JE_byte slot, char *name )
 	}
 	if (twoPlayerMode)
 	{
-		memcpy(saveFiles[slot].lastItems, pItemsPlayer2, sizeof(pItemsPlayer2));
+		memcpy(saveFiles[slot-1].lastItems, pItemsPlayer2, sizeof(pItemsPlayer2));
 	} else {
-		memcpy(saveFiles[slot].lastItems, pItemsBack2, sizeof(pItemsBack2));
+		memcpy(saveFiles[slot-1].lastItems, pItemsBack2, sizeof(pItemsBack2));
 	}
 
-	saveFiles[slot].score  = score;
-	saveFiles[slot].score2 = score2;
-	memcpy(saveFiles[slot].levelName, lastLevelName, sizeof(lastLevelName));
-	saveFiles[slot].cubes  = lastCubeMax;
+	saveFiles[slot-1].score  = score;
+	saveFiles[slot-1].score2 = score2;
+	memcpy(saveFiles[slot-1].levelName, lastLevelName, sizeof(lastLevelName));
+	saveFiles[slot-1].cubes  = lastCubeMax;
 
 	if (strcmp(lastLevelName, "Completed") == 0)
 	{
@@ -354,21 +352,21 @@ void JE_saveGame( JE_byte slot, char *name )
 		{
 			temp = 4; /* JE: {Episodemax is 4 for completion purposes} */
 		}
-		saveFiles[slot].episode = temp;
+		saveFiles[slot-1].episode = temp;
 	} else {
-		saveFiles[slot].episode = episodeNum;
+		saveFiles[slot-1].episode = episodeNum;
 	}
 
-	saveFiles[slot].difficulty = difficultyLevel;
-	saveFiles[slot].secretHint = secretHint;
-	saveFiles[slot].input1 = inputDevice1;
-	saveFiles[slot].input2 = inputDevice2;
+	saveFiles[slot-1].difficulty = difficultyLevel;
+	saveFiles[slot-1].secretHint = secretHint;
+	saveFiles[slot-1].input1 = inputDevice1;
+	saveFiles[slot-1].input2 = inputDevice2;
 
-	strcpy(saveFiles[slot].name, name);
+	strcpy(saveFiles[slot-1].name, name);
 
 	for (x = 0; x < 2; x++)
 	{
-		saveFiles[slot].power[x] = portPower[x];
+		saveFiles[slot-1].power[x] = portPower[x];
 	}
 
 	JE_saveConfiguration();
@@ -378,19 +376,17 @@ void JE_loadGame( JE_byte slot )
 {
 	JE_byte temp5;
 
-	slot--; /* cheap re-indexing */
-
 	superTyrian = false;
 	onePlayerAction = false;
 	twoPlayerMode = false;
 	extraGame = false;
 	galagaMode = false;
 
-	initialDifficulty = saveFiles[slot].initialDifficulty;
-	gameHasRepeated   = saveFiles[slot].gameHasRepeated;
-	twoPlayerMode     = slot > 10;
-	difficultyLevel   = saveFiles[slot].difficulty;
-	memcpy(pItems, saveFiles[slot].items, sizeof(pItems));
+	initialDifficulty = saveFiles[slot-1].initialDifficulty;
+	gameHasRepeated   = saveFiles[slot-1].gameHasRepeated;
+	twoPlayerMode     = (slot-1) > 10;
+	difficultyLevel   = saveFiles[slot-1].difficulty;
+	memcpy(pItems, saveFiles[slot-1].items, sizeof(pItems));
 	superArcadeMode   = pItems[3-1];
 
 	if (superArcadeMode == 255)
@@ -409,10 +405,10 @@ void JE_loadGame( JE_byte slot )
 
 	if (twoPlayerMode)
 	{
-		memcpy(pItemsPlayer2, saveFiles[slot].lastItems, sizeof(pItemsPlayer2));
+		memcpy(pItemsPlayer2, saveFiles[slot-1].lastItems, sizeof(pItemsPlayer2));
 		onePlayerAction = false;
 	} else {
-		memcpy(pItemsBack2, saveFiles[slot].lastItems, sizeof(pItemsBack2));
+		memcpy(pItemsBack2, saveFiles[slot-1].lastItems, sizeof(pItemsBack2));
 	}
 
 	/* Compatibility with old version */
@@ -422,26 +418,26 @@ void JE_loadGame( JE_byte slot )
 		pItemsPlayer2[8-1] = pItemsPlayer2[4-1];
 	}
 
-	score       = saveFiles[slot].score;
-	score2      = saveFiles[slot].score2;
-	mainLevel   = saveFiles[slot].level;
-	cubeMax     = saveFiles[slot].cubes;
+	score       = saveFiles[slot-1].score;
+	score2      = saveFiles[slot-1].score2;
+	mainLevel   = saveFiles[slot-1].level;
+	cubeMax     = saveFiles[slot-1].cubes;
 	lastCubeMax = cubeMax;
 
-	secretHint   = saveFiles[slot].secretHint;
-	inputDevice1 = saveFiles[slot].input1;
-	inputDevice2 = saveFiles[slot].input2;
+	secretHint   = saveFiles[slot-1].secretHint;
+	inputDevice1 = saveFiles[slot-1].input1;
+	inputDevice2 = saveFiles[slot-1].input2;
 
 	for (temp = 0; temp < 2; temp++)
 	{
-		portPower[temp] = saveFiles[slot].power[temp];
+		portPower[temp] = saveFiles[slot-1].power[temp];
 	}
 
-	temp5 = saveFiles[slot].episode;
+	temp5 = saveFiles[slot-1].episode;
 
-	memcpy(levelName, saveFiles[slot].levelName, sizeof(levelName));
+	memcpy(levelName, saveFiles[slot-1].levelName, sizeof(levelName));
 
-	if (strcmp(lastLevelName, "Completed") == 0)
+	if (strcmp(levelName, "Completed") == 0)
 	{
 		if (temp5 == 4)
 		{
