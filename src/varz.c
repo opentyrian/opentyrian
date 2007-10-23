@@ -544,7 +544,7 @@ void JE_getShipInfo( void )
 	} else {
 		shipGr2 = 0;
 		armorLevel2 = 10;
-    }
+	}
 
 	baseArmor = armorLevel;
 	baseArmor2 = armorLevel2;
@@ -1241,7 +1241,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield )
 {
 	if (pItems[11-1] > 0)
-    {
+	{
 		if (shotRepeat[9-1] == 0 && specialWait == 0 && flareDuration < 2 &&
 		    zinglonDuration < 2)
 		{
@@ -1249,7 +1249,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		} else {
 			JE_drawShape2(47, 4, 93, shapes9);
 		}
-    }
+	}
 	
 	if (shotRepeat[9-1] > 0)
 	{
@@ -1261,7 +1261,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 	}
 	temp = SFExecuted[playerNum-1];
 	if (temp > 0 && shotRepeat[9-1] == 0 && flareDuration == 0)
-    {
+	{
 		temp2 = special[temp].pwr;
 		
 		tempB = true;
@@ -1309,7 +1309,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		JE_drawShield();
 		JE_drawArmor();
 		VGAScreen = game_screen; /* side-effect of game_screen */
-    }
+	}
 	
 	if (playerNum == 1 && pItems[11-1] > 0)
 	{  /*Main Begin*/
@@ -1401,7 +1401,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		{
 			specialWait = nextSpecialWait;
 		}
-    } else if (flareStart) {
+	} else if (flareStart) {
 		flareStart = false;
 		if (linkToPlayer)
 		{
@@ -1575,7 +1575,7 @@ void JE_wipeShieldArmorBars( void )
 	} else {
 		JE_c_bar(270, 60 - 44, 278, 60, 0);
 		JE_c_bar(270, 194 - 44, 278, 194, 0);
-    }
+	}
 	if (!twoPlayerMode || galagaMode)
 	{
 		JE_c_bar(307, 137, 315, 194 - armorLevel * 2, 0);
@@ -1717,7 +1717,7 @@ void JE_resetPlayerH( void )
 	for (temp = 0; temp < 20; temp++)
 	{
 		if (twoPlayerMode)
-        {
+		{
 			playerHX[temp] = PXB - (20 - temp);
 			playerHY[temp] = PYB - 18;
 		} else {

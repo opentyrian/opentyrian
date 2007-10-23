@@ -761,7 +761,7 @@ void JE_loadConfiguration( void )
 		inputDevice2 = 0;
 
 		fullscreen_set = false;
-    }
+	}
 
 	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
 	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
@@ -895,7 +895,7 @@ void JE_loadConfiguration( void )
 			} else {
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
 			}
-        }
+		}
 	}
 
 	errorActive = false;

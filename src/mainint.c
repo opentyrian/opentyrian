@@ -50,6 +50,8 @@
 #include "mainint.h"
 #undef NO_EXTERNS
 
+#include <ctype.h>
+
 
 #define MAX_PAGE 8
 #define TOPICS 6
@@ -1029,15 +1031,15 @@ void JE_loadScreen( void )
 				{
 					if (saveFiles[sel - 1].level > 0)
 					{
-                        JE_playSampleNum (SELECT);
+						JE_playSampleNum (SELECT);
 						performSave = false;
-                        JE_operation(sel);
-                        quit = true;
+						JE_operation(sel);
+						quit = true;
 					} else {
-                        JE_playSampleNum (WRONG);
-                    }
+						JE_playSampleNum (WRONG);
+					}
 				} else {
-                  quit = true;
+					quit = true;
 				}
 
 

@@ -1041,7 +1041,7 @@ start_level:
 				superTyrian = false;
 				onePlayerAction = false;
 				pItems[2] = 0;
-            }
+			}
 			if (bonusLevelCurrent && !playerEndLevel)
 			{
 				mainLevel = nextLevel;
@@ -2456,7 +2456,7 @@ draw_player_shot_loop_end:
 	{
 		JE_playerCollide(&PX, &PY, &lastTurn, &lastTurn2, &score, &armorLevel, &shield, &playerAlive,
 		                 &playerStillExploding, 1, playerInvulnerable1);
-    }
+	}
 
 	if (twoPlayerMode && playerAliveB && !endLevel)
 		JE_playerCollide(&PXB, &PYB, &lastTurnB, &lastTurn2B, &score2, &armorLevel2, &shield2, &playerAliveB,
@@ -2965,7 +2965,7 @@ explosion_draw_overflow:
 				{
 					soundQueue[6] = 24;  /*28 or 24*/
 				}
-            } else {
+			} else {
 				if (levelTimerCountdown % 20 == 0)
 				{
 					soundQueue[7] = 17;
@@ -3068,7 +3068,7 @@ explosion_draw_overflow:
 				goto level_loop;
 			}
 		}
-    }
+	}
 
 	/*Network Update*/
 	if (isNetworkGame)
@@ -3124,7 +3124,7 @@ explosion_draw_overflow:
 		{
 			reallyEndLevel = true;
 		}
-    }
+	}
 
 	if (!endLevel && enemyOnScreen == 0)
 	{
@@ -4599,8 +4599,8 @@ void JE_displayText( void )
 
 		while (delaycount());
 
-    } while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1) || ESCPressed));
-    levelWarningDisplay = false;
+	} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1) || ESCPressed));
+	levelWarningDisplay = false;
 }
 
 
@@ -5575,13 +5575,13 @@ void JE_eventSystem( void )
 			background2over = eventRec[eventLoc-1].eventdat;
 			break;
 		case 44:
-			filterActive = (eventRec[eventLoc-1].eventdat > 0);
-			filterFade  = (eventRec[eventLoc-1].eventdat == 2);
-			levelFilter = eventRec[eventLoc-1].eventdat2;
-			levelBrightness = eventRec[eventLoc-1].eventdat3;
-			levelFilterNew = eventRec[eventLoc-1].eventdat4;
+			filterActive       = (eventRec[eventLoc-1].eventdat > 0);
+			filterFade         = (eventRec[eventLoc-1].eventdat == 2);
+			levelFilter        = eventRec[eventLoc-1].eventdat2;
+			levelBrightness    = eventRec[eventLoc-1].eventdat3;
+			levelFilterNew     = eventRec[eventLoc-1].eventdat4;
 			levelBrightnessChg = eventRec[eventLoc-1].eventdat5;
-			filterFadeStart = (eventRec[eventLoc-1].eventdat6 == 0);
+			filterFadeStart    = (eventRec[eventLoc-1].eventdat6 == 0);
 			break;
 		case 45: /* Two Player Enemy from other Enemies */
 			if (!superTyrian)
@@ -8268,7 +8268,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 				JE_mouseStart();
 				JE_showVGA();
 				JE_mouseReplace();
-            } else {
+			} else {
 				JE_showVGA();
 			}
 

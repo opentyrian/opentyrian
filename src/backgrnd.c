@@ -635,7 +635,7 @@ void JE_checkSmoothies( void )
 	{
 		anySmoothies = true;
 		JE_initSmoothies();
-    }
+	}
 }
 
 void JE_initSmoothies( void )
