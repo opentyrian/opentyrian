@@ -726,6 +726,7 @@ void JE_loadConfiguration( void )
 
 		efread(&tyrMusicVolume, 2, 1, fi);
 		efread(&fxVolume, 2, 1, fi);
+		printf("loaded volume: mus:%d sfx:%d\n", tyrMusicVolume, fxVolume);
 
 		efread(&inputDevice1, 1, 1, fi);
 		efread(&inputDevice2, 1, 1, fi);
@@ -752,8 +753,8 @@ void JE_loadConfiguration( void )
 		memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
 		background2 = true;
 		inputDevice = 0;
-		tyrMusicVolume = 255;
-		fxVolume = 128;
+		tyrMusicVolume = 0x100; // YKS: I had to change these two, sorry (was 255)
+		fxVolume = 0xf; // (was 128)
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
@@ -763,12 +764,23 @@ void JE_loadConfiguration( void )
 		fullscreen_set = false;
 	}
 
-	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
-	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
+	if (tyrMusicVolume > 255)
+	{
+		tyrMusicVolume = 255;
+	}
+	if (fxVolume > 254)
+	{
+		fxVolume = 254;
+	}
+	if (fxVolume < 14)
+	{
+		fxVolume = 14;
+	}
 
 	soundActive = true;
 	musicActive = true;
 
+	printf("limited volume: mus:%d sfx:%d\n", tyrMusicVolume, fxVolume);
 	JE_setVol(tyrMusicVolume, fxVolume);
 
 	dont_die = true;
@@ -1009,6 +1021,7 @@ void JE_saveConfiguration( void )
 		efwrite(&difficultyLevel, 1, 1, f);
 		efwrite(joyButtonAssign, 1, 4, f);
 
+		printf("saved volume: mus:%d sfx:%d\n", tyrMusicVolume, fxVolume);
 		efwrite(&tyrMusicVolume, 1, 2, f);
 		efwrite(&fxVolume, 1, 2, f);
 

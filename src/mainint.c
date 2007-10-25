@@ -1565,7 +1565,7 @@ JE_boolean JE_inGameSetup( void )
 					switch (sel)
 					{
 						case 1:
-							JE_changeVolume(tyrMusicVolume, -16, fxVolume, 0);
+							JE_changeVolume(&tyrMusicVolume, -16, &fxVolume, 0);
 							if (!musicActive)
 							{
 								musicActive = true;
@@ -1575,7 +1575,7 @@ JE_boolean JE_inGameSetup( void )
 							}
 							break;
 						case 2:
-							JE_changeVolume(tyrMusicVolume, 0, fxVolume, -16);
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -16);
 							soundActive = true;
 							break;
 						case 3:
@@ -1604,7 +1604,7 @@ JE_boolean JE_inGameSetup( void )
 					switch (sel)
 					{
 						case 1:
-							JE_changeVolume(tyrMusicVolume, 16, fxVolume, 0);
+							JE_changeVolume(&tyrMusicVolume, 16, &fxVolume, 0);
 							if (!musicActive)
 							{
 								musicActive = true;
@@ -1614,7 +1614,7 @@ JE_boolean JE_inGameSetup( void )
 							}
 							break;
 						case 2:
-							JE_changeVolume(tyrMusicVolume, 0, fxVolume, 16);
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 16);
 							soundActive = true;
 							break;
 						case 3:

@@ -98,7 +98,7 @@ void JE_reinit ( JE_boolean redo );
 void JE_aweStuff( void );
 void JE_setTimerInt( void );
 void JE_calcFXVol( void );
-void JE_changeVolume( JE_word temp, JE_integer change, JE_word fxvol, JE_integer fxchange );
+void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integer fxchange );
 void JE_frameDelay( JE_byte delay );
 
 void JE_loadSmpFile ( char *name, JE_byte samplenum);

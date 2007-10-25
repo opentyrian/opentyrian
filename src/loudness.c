@@ -33,18 +33,20 @@ JE_MusicType musicData;
 JE_boolean repeated;
 JE_boolean playing;
 
-float sample_volume = 0.25f;
-float music_volume = 0.4f;
+double sample_volume = 0.25f;
+double music_volume = 0.25f;
 
 SDL_mutex *soundmutex = NULL;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
-SAMPLE_TYPE *channel_buffer [SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
-SAMPLE_TYPE *channel_pos [SFX_CHANNELS];
+SAMPLE_TYPE *channel_buffer[SFX_CHANNELS]; /* SYN: I'm not sure what Tyrian actually does for sound effect channels... */
+SAMPLE_TYPE *channel_pos[SFX_CHANNELS];
 /*SAMPLE_TYPE *music_buffer = NULL; */
-Uint32 channel_len [SFX_CHANNELS];
+Uint32 channel_len[SFX_CHANNELS];
 int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
+
+bool music_playing = false;
 
 /* SYN: TODO: Okay, some sound issues and what I'm going to do about them:
 	- sfx are garbled when music is playing. Something is wrong with my mixing. Fix it.
@@ -109,17 +111,14 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 
 void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 {
-	long ch, smp, qu, i;
 	static long ct = 0;
-	long remaining = howmuch / BYTES_PER_SAMPLE;
-	SAMPLE_TYPE *music_pos;
+	// ((2^16) / 2) - 1 = 32767
+	const double sfx_mix_vol = ((32767.)/(SFX_CHANNELS*32767.));
+	const double mus_mix_vol = .5;
 	long music_samples = howmuch * 1.1f;
-	SAMPLE_TYPE *feedme = (SAMPLE_TYPE*) sdl_buffer;
 	int extend;
-	long clip;
-	SDL_mutex *mut;
 
-	mut = (SDL_mutex *) userdata;
+	SDL_mutex *mut = (SDL_mutex *)userdata;
 
 	/* Making sure that we don't mess with sound buffers when someone else is using them! */
 	if (SDL_mutexP(mut) == -1)
@@ -129,49 +128,65 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	}
 
 	/*music_buffer = malloc(BYTES_PER_SAMPLE * music_samples);  SYN: A little extra because I don't trust the adplug code to be exact */
-	music_pos = (SAMPLE_TYPE*) sdl_buffer;
+	SAMPLE_TYPE *feedme = (SAMPLE_TYPE *)sdl_buffer;
+	SAMPLE_TYPE *music_pos = feedme;
+
 
 	/* SYN: Simulate the fm synth chip */
-	while(remaining > 0)
+	if (music_playing)
 	{
-		while(ct < 0)
+		long remaining = howmuch / BYTES_PER_SAMPLE;
+		while(remaining > 0)
 		{
-			ct += freq;
-			lds_update(); /* SYN: Do I need to use the return value for anything here? */
+			while(ct < 0)
+			{
+				ct += freq;
+				lds_update(); /* SYN: Do I need to use the return value for anything here? */
+			}
+			/* SYN: Okay, about the calculations below. I still don't 100% get what's going on, but...
+			 - freq is samples/time as output by SDL.
+			 - REFRESH is how often the play proc would have been called in Tyrian. Standard speed is
+			   70Hz, which is the default value of 70.0f
+			 - ct represents the margin between play time (representing # of samples) and tick speed of
+			   the songs (70Hz by default). It keeps track of which one is ahead, because they don't
+			   synch perfectly. */
+
+			/* set i to smaller of data requested by SDL and a value calculated from the refresh rate */
+			long i = ((long) ((ct / REFRESH) + 4) & ~3);
+			i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
+			opl_update((short*) music_pos, i);
+			music_pos += i;
+			remaining -= i;
+			ct -= (long)(REFRESH * i);
 		}
-		/* SYN: Okay, about the calculations below. I still don't 100% get what's going on, but...
-		 - freq is samples/time as output by SDL.
-		 - REFRESH is how often the play proc would have been called in Tyrian. Standard speed is
-		   70Hz, which is the default value of 70.0f
-		 - ct represents the margin between play time (representing # of samples) and tick speed of
-		   the songs (70Hz by default). It keeps track of which one is ahead, because they don't
-		   synch perfectly. */
 
-		/* set i to smaller of data requested by SDL and a value calculated from the refresh rate */
-		i = ((long) ((ct / REFRESH) + 4) & ~3);
-		i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
-		opl_update((short*) music_pos, i);
-		music_pos += i;
-		remaining -= i;
-		ct -= (long)(REFRESH * i);
+		/* Reduce the music volume. */
+		long qu = howmuch / BYTES_PER_SAMPLE;
+		for (long smp = 0; smp < qu; smp++)
+		{
+			feedme[smp] = feedme[smp] * (mus_mix_vol*music_volume);
+		}
 	}
 
-	/* Reduce the music volume. */
-	qu = howmuch / BYTES_PER_SAMPLE;
-	for (smp = 0; smp < qu; smp++)
+	// Adaptative mixing version
+/*	int active_chans = 0;
+	for (int i = 0; i < SFX_CHANNELS; i++)
 	{
-		feedme[smp] = feedme[smp] * music_volume;
-	}
+		if (channel_buffer[i] != NULL)
+		{
+			active_chans++;
+		}
+	}*/
 
-	/* SYN: Mix sound channels and shove into audio buffer */
-	for (ch = 0; ch < SFX_CHANNELS; ch++)
+	for (long ch = 0; ch < SFX_CHANNELS; ch++)
 	{
 		/* SYN: Don't copy more data than is in the channel! */
-		qu = ( (Uint32) howmuch > channel_len[ch] ? (int) channel_len[ch] : howmuch); /* How many bytes to copy */
+		long qu = ( (Uint32)howmuch > channel_len[ch] ? (int)channel_len[ch] : howmuch); /* How many bytes to copy */
 		qu /= BYTES_PER_SAMPLE;
-		for (smp = 0; smp < qu; smp++)
+
+		for (long smp = 0; smp < qu; smp++)
 		{
-			clip = ((long) feedme[smp] + (long) (( channel_pos[ch][smp]) * sample_volume ));
+			long clip = (feedme[smp] + (long)(channel_pos[ch][smp] * (sfx_mix_vol*sample_volume)));
 			feedme[smp] = (clip > 0xffff) ? 0xffff : (clip <= -0xffff) ? -0xffff : (short) clip;
 		}
 
@@ -228,6 +243,7 @@ void JE_selectSong( JE_word value )
 	if (value != 0)
 	{
 		lds_load((JE_byte*) musicData); /* Load song */
+		music_playing = true;
 		/* TODO: Start playing song */
 	}
 
@@ -252,13 +268,18 @@ void JE_setVol(JE_word volume, JE_word sample)
 {
 	/* TODO: Make this function actually work properly? */
 	printf("JE_setVol: music vol: %d, sfx vol: %d\n", volume, sample);
-	/* TODO: Disabling this because the volume is messed up. Must fix!
-	music_volume = 0.4 * ( (float) volume / 256.0 );
-	sample_volume = 0.25 * ( (float) sample / 128.0 ); */
-
-	music_volume = 0.4f;
-	sample_volume = 0.25f;
-
+	/* TODO: Disabling this because the volume is messed up. Must fix!*/
+	if (volume >= 0x1 && volume <= 0x100)
+	{
+		music_volume = volume / 256.0;
+	}
+	if (sample >= 0x1 && sample <= 0xf)
+	{
+		sample_volume = ((sample+1) << 4) / 256.0;
+		printf("final sample: %f\n", sample_volume);
+	} else {
+		printf("REJECTED CHANGE: %x\n", sample);
+	}
 }
 
 JE_word JE_getVol( void )

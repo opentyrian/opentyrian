@@ -7400,7 +7400,7 @@ item_screen_start:
 						switch (curSel[curMenu])
 						{
 						case 4:
-							JE_changeVolume(tyrMusicVolume, -16, fxVolume, 0);
+							JE_changeVolume(&tyrMusicVolume, -16, &fxVolume, 0);
 							if (!musicActive)
 							{
 								musicActive = true;
@@ -7410,7 +7410,7 @@ item_screen_start:
 							}
 							break;
 						case 5:
-							JE_changeVolume(tyrMusicVolume, 0, fxVolume, -16);
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -16);
 							soundActive = true;
 							break;
 						}
@@ -7488,7 +7488,7 @@ item_screen_start:
 						switch (curSel[curMenu])
 						{
 						case 4:
-							JE_changeVolume(tyrMusicVolume, 16, fxVolume, 0);
+							JE_changeVolume(&tyrMusicVolume, 16, &fxVolume, 0);
 							if (!musicActive)
 							{
 								musicActive = true;
@@ -7498,7 +7498,7 @@ item_screen_start:
 							}
 							break;
 						case 5:
-							JE_changeVolume(tyrMusicVolume, 0, fxVolume, 16);
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 16);
 							soundActive = true;
 							break;
 						}
