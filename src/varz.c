@@ -1198,7 +1198,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 		case 13:
 			if (playerNum == 1)
 			{
-				armor += temp2 / 4 + 1;
+				*armor += temp2 / 4 + 1;
 			} else {
 				armorLevel += temp2 / 4 + 1;
 			}
@@ -1207,7 +1207,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 		case 14:
 			if (playerNum == 2)
 			{
-				armor += temp2 / 4 + 1;
+				*armor += temp2 / 4 + 1;
 			} else {
 				armorLevel2 += temp2 / 4 + 1;
 			}
