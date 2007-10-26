@@ -46,6 +46,8 @@ Uint32 channel_len [SFX_CHANNELS];
 int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
 
+bool music_playing = false;
+
 
 void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
 
@@ -219,6 +221,7 @@ void JE_selectSong( JE_word value )
 		music_playing = false;
 	} else {
 		lds_load((JE_byte*) musicData); /* Load song */
+		music_playing = true;
 		/* TODO: Start playing song */
 	}
 
