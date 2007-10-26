@@ -752,8 +752,8 @@ void JE_loadConfiguration( void )
 		memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
 		background2 = true;
 		inputDevice = 0;
-		tyrMusicVolume = 0xff;
-		fxVolume = 0x80;
+		tyrMusicVolume = 255;
+		fxVolume = 128;
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
@@ -763,18 +763,8 @@ void JE_loadConfiguration( void )
 		fullscreen_set = false;
 	}
 
-	if (tyrMusicVolume > 255)
-	{
-		tyrMusicVolume = 255;
-	}
-	if (fxVolume > 254)
-	{
-		fxVolume = 254;
-	}
-	if (fxVolume < 14)
-	{
-		fxVolume = 14;
-	}
+	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
+	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
 
 	soundActive = true;
 	musicActive = true;
