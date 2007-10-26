@@ -261,7 +261,6 @@ void JE_setVol(JE_word volume, JE_word sample)
 {
 	/* TODO: Make this function actually work properly? */
 	printf("JE_setVol: music vol: %d, sfx vol: %d\n", volume, sample);
-	/* TODO: Disabling this because the volume is messed up. Must fix!*/
 	if (volume >= 0x1 && volume <= 0x100)
 	{
 		// = .5f * (volume / 256.f)
@@ -274,7 +273,7 @@ void JE_setVol(JE_word volume, JE_word sample)
 	} else {
 		if (sample < 0x10)
 		{
-			sample <<= 4;
+			sample <<= 5;
 		}
 		sample_volume = sample * (0.5 / 240.0);
 	}

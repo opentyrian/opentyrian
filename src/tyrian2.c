@@ -1304,7 +1304,7 @@ start_level_first:
 
 	JE_setNewGameSpeed();
 
-	JE_setVol(tyrMusicVolume, fxPlayVol >> 2);
+	JE_setVol(tyrMusicVolume, fxPlayVol); // YKS: was fxPlayVol >> 2
 
 	/*Save backup game*/
 	if (!playDemo && !doNotSaveBackup)
