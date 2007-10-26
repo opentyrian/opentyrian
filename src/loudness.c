@@ -271,10 +271,12 @@ void JE_setVol(JE_word volume, JE_word sample)
 	if (sample >= 0xf0)
 	{
 		sample_volume = 0.25 * (0xf0 / 240.0); // YKS: compile-time, too
-	} else if (sample <= 0x10) {
-		sample_volume = 0.25 * (0x10 / 240.0);
-	} else if (sample >= 0x10 && sample <= 0xf0) {
-		sample_volume =  sample * (0.25 / 240.0);
+	} else {
+		if (sample < 0x10)
+		{
+			sample <<= 4;
+		}
+		sample_volume = sample * (0.25 / 240.0);
 	}
 }
 
@@ -334,7 +336,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	{
 		for (ex = 0; ex < SAMPLE_SCALING; ex++)
 		{
-			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = ((SAMPLE_TYPE)buffer[i] << 8) * v;
+			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = ((SAMPLE_TYPE)((Sint8)buffer[i]) << 8) * v;
 		}
 	}
 
