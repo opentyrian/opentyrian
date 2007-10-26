@@ -227,17 +227,18 @@ void JE_selectSong( JE_word value )
 		return;
 	}
 
-	/* TODO: Finish this function! */
-
-	/* TODO: Stop currently playing song  */
-
-	/* TODO: The mutex'd region could possibly be smaller, but I wanted to keep it in this file. */
-
 	/* Making sure that we don't mess with sound buffers when someone else is using them! */
 	if (SDL_mutexP(soundmutex) == -1)
 	{
 		printf("Couldn't lock mutex! Argh!\n");
 		exit(-1);
+	}
+
+	/* TODO: Finish this FADING function! */
+
+	if (value == 0)
+	{
+		music_playing = false;
 	}
 
 	if (value != 0)
