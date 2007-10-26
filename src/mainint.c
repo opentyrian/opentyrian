@@ -1684,7 +1684,7 @@ void JE_setNewGameVol( void )
 		temp2 = tyrMusicVolume;
 	}
 
-	/* TODO nortsong.JE_setVol(temp2, temp); */
+	JE_setVol(temp2, temp);
 }
 
 void JE_changeDifficulty( void )

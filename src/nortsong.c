@@ -305,17 +305,16 @@ void JE_playSampleNum( JE_byte samplenum )
 void JE_calcFXVol( void )
 {
 	fxPlayVol = (fxVolume - 1) >> 5;
-	printf("JE_calcFXVol: in:0x%x out:0x%x\n", fxVolume, fxPlayVol);
 }
 
 void JE_setTimerInt( void )
 {
-	jasondelay = 1000.0 / (1193180.0 / speed);
+	jasondelay = 1000.0f / (1193180.0f / speed);
 }
 
 void JE_resetTimerInt( void )
 {
-	jasondelay = 1000.0 / (1193180.0 / 0x4300);
+	jasondelay = 1000.0f / (1193180.0f / 0x4300);
 }
 
 void JE_timerInt( void )
@@ -325,7 +324,7 @@ void JE_timerInt( void )
 
 void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integer fxchange )
 {
-	if (change != 0)
+	if (change)
 	{
 		if (*temp + change > 254)
 		{
@@ -339,8 +338,8 @@ void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integ
 			JE_playSampleNum(WRONG);
 		}
 	}
-
-	if (fxchange != 0)
+	
+	if (fxchange)
 	{
 		if (*fxvol + fxchange > 254)
 		{
@@ -354,7 +353,7 @@ void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integ
 			JE_playSampleNum(WRONG);
 		}
 	}
-
+	
 	JE_calcFXVol();
 	JE_setVol(*temp, fxPlayVol);
 }
