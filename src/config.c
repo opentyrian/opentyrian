@@ -752,8 +752,8 @@ void JE_loadConfiguration( void )
 		memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
 		background2 = true;
 		inputDevice = 0;
-		tyrMusicVolume = 255;
-		fxVolume = 128;
+		tyrMusicVolume = 0xff;
+		fxVolume = 0x80;
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
@@ -763,8 +763,18 @@ void JE_loadConfiguration( void )
 		fullscreen_set = false;
 	}
 
-	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
-	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
+	if (tyrMusicVolume > 255)
+	{
+		tyrMusicVolume = 255;
+	}
+	if (fxVolume > 254)
+	{
+		fxVolume = 254;
+	}
+	if (fxVolume < 14)
+	{
+		fxVolume = 14;
+	}
 
 	soundActive = true;
 	musicActive = true;
@@ -856,7 +866,7 @@ void JE_loadConfiguration( void )
 			saveFiles[z].highScoreName[29] = 0;
 			p += 29;
 
-			/* printf("%s, %ld / %ld\n", saveFiles[z].highScoreName, saveFiles[z].highScore1, saveFiles[z].highScore2); */
+			/* TODO DEBUG printf("%s, %ld / %ld\n", saveFiles[z].highScoreName, saveFiles[z].highScore1, saveFiles[z].highScore2); */
 
 			saveFiles[z].highScoreDiff = *((JE_byte*)p);
 			p += sizeof(JE_byte);
