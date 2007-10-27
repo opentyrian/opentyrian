@@ -6420,7 +6420,7 @@ item_screen_start:
 
 				JE_getShipInfo();
 
-				/* On-Ship item bar */
+				/* Owned item bar */
 				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
@@ -7022,86 +7022,85 @@ item_screen_start:
 
 		if (mouseButton > 0)
 		{
-				
-				lastDirection = 1;
+			lastDirection = 1;
 
-				/* TODO mousebutton := mouseposition (mousex, mousey); */
+			/* TODO mousebutton := mouseposition (mousex, mousey); */
 
-				if (curMenu == 7 && cubeMax == 0)
+			if (curMenu == 7 && cubeMax == 0)
+			{
+				curMenu = 0;
+				JE_playSampleNum(ESC);
+				newPal = 1;
+				JE_wipeKey();
+			}
+
+			if (curMenu == 8)
+			{
+				if (0 /*TODO (mousex > 258) AND (mousex < 290) AND (mousey > 159) AND (mousey < 171) */)
 				{
-					curMenu = 0;
+					curMenu = 7;
 					JE_playSampleNum(ESC);
-					newPal = 1;
-					JE_wipeKey();
 				}
+			}
 
-				if (curMenu == 8)
+			tempB = true;
+
+			if (curMenu == 2 || curMenu == 11)
+			{
+				if (0 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 70) AND (mousey <= 82)*/)
 				{
-					if (0 /*TODO (mousex > 258) AND (mousex < 290) AND (mousey > 159) AND (mousey < 171) */)
+					if (!musicActive)
 					{
-						curMenu = 7;
-						JE_playSampleNum(ESC);
+						musicActive = true;
+						temp = currentSong;
+						currentSong = 0;
+						JE_playSong(temp);
 					}
+
+					curSel[2] = 3;
+					/* temp := (mousex - 221) DIV 4 * 12; */
+
+					if (abs(tyrMusicVolume - temp) < 12)
+					{
+						tyrMusicVolume = temp;
+					} else {
+						if (tyrMusicVolume < temp)
+						{
+							tyrMusicVolume += 12;
+						} else {
+							tyrMusicVolume -= 12;
+						}
+					}
+					tempB = false;
 				}
 
-				tempB = true;
-
-				if (curMenu == 2 || curMenu == 11)
+				if (1 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 86) AND (mousey <= 98)*/)
 				{
-					if (0 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 70) AND (mousey <= 82)*/)
+					soundActive = true;
+					curSel[2] = 4;
+					/* TODO temp := (mousex - 221) DIV 4 * 12; */
+					if (abs(fxVolume - temp) < 12)
 					{
-						if (!musicActive)
+						fxVolume = temp;
+					} else {
+						if (fxVolume < temp)
 						{
-							musicActive = true;
-							temp = currentSong;
-							currentSong = 0;
-							JE_playSong(temp);
-						}
-
-						curSel[2] = 3;
-						/* temp := (mousex - 221) DIV 4 * 12; */
-
-						if (abs(tyrMusicVolume - temp) < 12)
-						{
-							tyrMusicVolume = temp;
+							fxVolume += 12;
 						} else {
-							if (tyrMusicVolume < temp)
-							{
-								tyrMusicVolume += 12;
-							} else {
-								tyrMusicVolume -= 12;
-							}
-						}
-						tempB = false;
-					}
-
-					if (1 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 86) AND (mousey <= 98)*/)
-					{
-						soundActive = true;
-						curSel[2] = 4;
-						/* TODO temp := (mousex - 221) DIV 4 * 12; */
-						if (abs(fxVolume - temp) < 12)
-						{
-							fxVolume = temp;
-						} else {
-							if (fxVolume < temp)
-							{
-								fxVolume += 12;
-							} else {
-								fxVolume -= 12;
-							}
+							fxVolume -= 12;
 						}
 					}
-
-					if (fxVolume > 254)
-					{
-						fxVolume = 254;
-					}
-
-					JE_calcFXVol();
-					JE_setVol(tyrMusicVolume, fxPlayVol);
-					JE_playSampleNum(CURSOR_MOVE);
 				}
+
+				if (fxVolume > 254)
+				{
+					fxVolume = 254;
+				}
+
+				JE_calcFXVol();
+				JE_setVol(tyrMusicVolume, fxPlayVol);
+				JE_playSampleNum(CURSOR_MOVE);
+			}
 
 					/*
 				IF (tempb) AND (mousey > 20) AND (mousex > 170) AND (mousex < 308) AND (curmenu <> 9) THEN BEGIN
@@ -7287,10 +7286,11 @@ item_screen_start:
 					}
 					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
 					{
-						tempPowerLevel[curSel[4] - 1] = portPower[curSel[1] - 2];
+						tempPowerLevel[curSel[4] - 2] = portPower[curSel[1] - 3];
 						if (curSel[1] == 4)
 						{
-							portConfig[2] = 1;
+							// If Rear Weapon, reset firing pattern to default
+							portConfig[1] = 1;
 						}
 					}
 					curSel[curMenu]--;
@@ -7300,7 +7300,7 @@ item_screen_start:
 					}
 					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
 					{
-						portPower[curSel[1] - 2] = tempPowerLevel[curSel[4] - 1];
+						portPower[curSel[1] - 3] = tempPowerLevel[curSel[4] - 2];
 					}
 					break;
 
@@ -7313,10 +7313,11 @@ item_screen_start:
 					}
 					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
 					{
-						tempPowerLevel[curSel[4] - 1] = portPower[curSel[1] - 2];
+						tempPowerLevel[curSel[4] - 2] = portPower[curSel[1] - 3];
 						if (curSel[1] == 4)
 						{
-							portConfig[2] = 1;
+							// If Rear Weapon, reset firing pattern to default
+							portConfig[1] = 1;
 						}
 					}
 					curSel[curMenu]++;
@@ -7326,7 +7327,7 @@ item_screen_start:
 					}
 					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
 					{
-						portPower[curSel[1] - 2] = tempPowerLevel[curSel[4] - 1];
+						portPower[curSel[1] - 3] = tempPowerLevel[curSel[4] - 2];
 					}
 					break;
 
@@ -8530,7 +8531,7 @@ void JE_menuFunction( JE_byte select )
 	case 4:
 		if (curSel[4] < menuChoices[4] && robertWeird)
 		{
-			tempPowerLevel[curSel[4] - 2] = portPower[curSel[1] - 2];
+			tempPowerLevel[curSel[4] - 1] = portPower[curSel[1] - 2];
 			curSel[4] = menuChoices[4];
 		} else {
 			if (curSel[4] == menuChoices[4] && !robertWeird)
@@ -9178,7 +9179,7 @@ void JE_genItemMenu( JE_byte itemNum )
 
 	strcpy(menuInt[4][0], menuInt[1][itemNum - 1]);
 
-	for (tempW = 1; tempW < itemAvailMax[itemAvailMap[itemNum-2]]; tempW++)
+	for (tempW = 0; tempW < itemAvailMax[itemAvailMap[itemNum-2]-1]; tempW++)
 	{
 		temp = itemAvail[itemAvailMap[itemNum-2]-1][tempW];
 		switch (itemNum)
@@ -9204,18 +9205,20 @@ void JE_genItemMenu( JE_byte itemNum )
 		}
 		if (temp == temp2)
 		{
-			temp3 = tempW + 1;
+			temp3 = tempW + 2;
 		}
-		strcpy(menuInt[4][tempW], tempStr);
+		strcpy(menuInt[4][tempW+1], tempStr);
+	}
 
-		if (itemNum == 3 || itemNum == 4)
+	strcpy(menuInt[4][tempW+1], miscText[13]);
+
+	// YKS: I have no idea wtf this is doing, but I don't think it matters either, little of this function does
+	if (itemNum == 3 || itemNum == 4)
+	{
+		tempPowerLevel[tempW] = portPower[itemNum-3];
+		if (tempPowerLevel[tempW] < 1)
 		{
-			tempW++;
-			tempPowerLevel[tempW] = portPower[itemNum-3];
-			if (tempPowerLevel[tempW] < 1)
-			{
-				tempPowerLevel[tempW] = 1;
-			}
+			tempPowerLevel[tempW] = 1;
 		}
 	}
 	curSel[4] = temp3;
