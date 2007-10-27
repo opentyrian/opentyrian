@@ -8092,7 +8092,7 @@ void JE_computeDots( void )
 
 		if (tempX != 0)
 		{
-			planetDots[x] = round(sqrt(sqrt((distX * distY) + (distY * distY)))) - 1;
+			planetDots[x] = round(sqrt(sqrt((distX * distX) + (distY * distY)))) - 1;
 		} else {
 			planetDots[x] = 0;
 		}
