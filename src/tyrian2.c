@@ -3416,7 +3416,7 @@ new_game:
 
 									JE_readCryptLn(lvlFile, s);
 
-									sprintf(buf, "%s ", s+8);
+									sprintf(buf, "%s ", (strlen(s) > 8 ? s+8 : ""));
 									/*strcat(strcpy(s, s + 8), " ");*/
 									temp2 = 0;
 									while (JE_getNumber(buf, &itemAvail[temp][temp2]))
