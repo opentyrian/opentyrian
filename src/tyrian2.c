@@ -992,7 +992,7 @@ start_level:
 		smoothScroll = true;
 		speed = 0x4300;
 		JE_resetTimerInt();
-		/* TODO nortsong.settimerint;*/
+		JE_setTimerInt();
 	}
 
 	if (recordDemo || playDemo)
@@ -1001,7 +1001,8 @@ start_level:
 		if (playDemo)
 		{
 			JE_fadeBlack(10);
-			/* TODO JE_wipekey();*/
+			/* JE_wipekey();*/
+			wait_input(true,true,true);
 		}
 	}
 
@@ -5986,10 +5987,6 @@ JE_longint JE_cashLeft( void )
 void JE_itemScreen( void )
 {
 	char *buf;
-	int temp_menunum = -1; /* TODO: Remove this temp var */
-
-	/* TODO: The whole menu still has minor issues with timing and input. Need to figure
-	   out what the problem is. */
 
 	/* SYN: Okay, here's the menu numbers. All are reindexed by -1 from the original code.
 		0: full game menu
@@ -6078,14 +6075,6 @@ item_screen_start:
 
 	do
 	{
-		/* TODO: testing code */
-		if (temp_menunum != curMenu)
-		{
-			printf("Current menu: %d\n", curMenu);
-			temp_menunum = curMenu;
-		}
-
-
 		JE_getShipInfo();
 
 		quit = false;
@@ -6142,7 +6131,6 @@ item_screen_start:
 		defaultBrightness = -3;
 
 		/* JE: --- STEP I - Draw the menu --- */
-		/* SYN: TODO: Comment some of this crap so we know wtf it's doing */
 
 		/* play next level menu */
 		if (curMenu == 3)
@@ -6483,7 +6471,6 @@ item_screen_start:
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
-		/* TODO: This may be kinda buggy... */
 		if (((curMenu >= 0 && curMenu <= 2) || curMenu == 5 || curMenu == 6 || (curMenu >= 9 && curMenu <= 11) || curMenu == 13) || (curMenu == 4 && (curSel[1] == 2 || curSel[1] == 5)))
 		{
 			if (twoPlayerMode)
@@ -6514,10 +6501,10 @@ item_screen_start:
 				if (pItems[12 - 1] > 90)
 				{
 					temp = 32;
-				} else if (pItems[12 - 1] > 0) {
-					temp = ships[pItems[12 - 1]].bigshipgraphic;
+				} else if (pItems[11] > 0) {
+					temp = ships[pItems[11]].bigshipgraphic;
 				} else {
-					temp = ships[pItemsBack[12 - 1]].bigshipgraphic;
+					temp = ships[pItemsBack[11]].bigshipgraphic;
 				}
 
 				switch (temp)
@@ -6538,31 +6525,31 @@ item_screen_start:
 
 				JE_newDrawCShapeNum(OPTION_SHAPES, temp, tempW, tempW2);
 
-				temp = pItems[6 - 1];
+				temp = pItems[5];
 
 				if (temp > 1)
 				{
 					temp--;
 				}
 
-				JE_newDrawCShapeNum(WEAPON_SHAPES, temp + 16, generatorX[temp]+1, generatorY[temp]+1);
+				JE_newDrawCShapeNum(WEAPON_SHAPES, temp + 16, generatorX[temp-1]+1, generatorY[temp-1]+1);
 
-				if (pItems[1 - 1] > 0)
+				if (pItems[0] > 0)
 				{
-					temp = tyrian2_weapons[pItems[1 - 1] - 1];
-					temp2 = frontWeaponList[pItems[1 - 1] - 1] - 1;
+					temp = tyrian2_weapons[pItems[0] - 1];
+					temp2 = frontWeaponList[pItems[0] - 1] - 1;
 					JE_newDrawCShapeNum(WEAPON_SHAPES, temp, frontWeaponX[temp2]+1, frontWeaponY[temp2]);
 				}
-				if (pItems[2 - 1] > 0)
+				if (pItems[1] > 0)
 				{
-					temp = tyrian2_weapons[pItems[2-1] - 1];
-					temp2 = rearWeaponList[pItems[2-1] - 1] - 1;
+					temp = tyrian2_weapons[pItems[1] - 1];
+					temp2 = rearWeaponList[pItems[1] - 1] - 1;
 					JE_newDrawCShapeNum(WEAPON_SHAPES, temp, rearWeaponX[temp2], rearWeaponY[temp2]);
 				}
 
-				JE_drawItem(6, pItems[4-1], 3, 84);
-				JE_drawItem(7, pItems[5-1], 129, 84);
-				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[10-1]].mpwr - 10);
+				JE_drawItem(6, pItems[3], 3, 84);
+				JE_drawItem(7, pItems[4], 129, 84);
+				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[9]].mpwr - 10);
 			}
 		}
 
@@ -6935,7 +6922,6 @@ item_screen_start:
 					}
 				} while (!inputDetected && delaycount() != 0);
 				
-				/* TODO: Make sure the quicksave works */
 				if (curMenu != 6)
 				{
 					if (keysactive[SDLK_s] && (keysactive[SDLK_LALT] || keysactive[SDLK_RALT]) )
@@ -6969,10 +6955,10 @@ item_screen_start:
 				/* TODO: need to handle joystick events in here? */
 				if (curMenu == 8)
 				{
-					if (mouseButton > 0 && mouseCursor > 1)
+					if (mouseButton > 0 && mouseCursor >= 1)
 					{
 						inputDetected = false;
-						if (mouseCursor == 2)
+						if (mouseCursor == 1)
 						{
 							yChg = -1;
 						} else {
@@ -7024,7 +7010,7 @@ item_screen_start:
 		{
 			lastDirection = 1;
 
-			/* TODO mousebutton := mouseposition (mousex, mousey); */
+			mouseButton = JE_mousePosition(&mouseX, &mouseY);
 
 			if (curMenu == 7 && cubeMax == 0)
 			{
@@ -7036,7 +7022,7 @@ item_screen_start:
 
 			if (curMenu == 8)
 			{
-				if (0 /*TODO (mousex > 258) AND (mousex < 290) AND (mousey > 159) AND (mousey < 171) */)
+				if ((mouseX > 258) && (mouseX < 290) && (mouseY > 159) && (mouseY < 171))
 				{
 					curMenu = 7;
 					JE_playSampleNum(ESC);
@@ -7047,7 +7033,7 @@ item_screen_start:
 
 			if (curMenu == 2 || curMenu == 11)
 			{
-				if (0 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 70) AND (mousey <= 82)*/)
+				if ((mouseX >= 221) && (mouseX <= 303) && (mouseY >= 70) && (mouseY <= 82))
 				{
 					if (!musicActive)
 					{
@@ -7057,8 +7043,8 @@ item_screen_start:
 						JE_playSong(temp);
 					}
 
-					curSel[2] = 3;
-					/* temp := (mousex - 221) DIV 4 * 12; */
+					curSel[2] = 4;
+					temp = (mouseX - 221) / 4 * 12;
 
 					if (abs(tyrMusicVolume - temp) < 12)
 					{
@@ -7074,11 +7060,11 @@ item_screen_start:
 					tempB = false;
 				}
 
-				if (1 /*(mousex >= 221) AND (mousex <= 303) AND (mousey >= 86) AND (mousey <= 98)*/)
+				if ((mouseX >= 221) && (mouseX <= 303) && (mouseY >= 86) && (mouseY <= 98))
 				{
 					soundActive = true;
-					curSel[2] = 4;
-					/* TODO temp := (mousex - 221) DIV 4 * 12; */
+					curSel[2] = 5;
+					temp = (mouseX - 221) / 4 * 12;
 					if (abs(fxVolume - temp) < 12)
 					{
 						fxVolume = temp;
@@ -7102,97 +7088,133 @@ item_screen_start:
 				JE_playSampleNum(CURSOR_MOVE);
 			}
 
-					/*
-				IF (tempb) AND (mousey > 20) AND (mousex > 170) AND (mousex < 308) AND (curmenu <> 9) THEN BEGIN
-					tempi := (mousey - 38) DIV mouseselectionY [curmenu] + 2;
+			if (tempB && (mouseY > 20) && (mouseX > 170) && (mouseX < 308) && (curMenu != 8))
+			{
+				tempI = (mouseY - 38) / mouseSelectionY[curMenu]+2;
 
-					IF curmenu = 10 THEN BEGIN
-						IF tempi > 5 THEN
-							DEC (tempi);
-						IF tempi > 3 THEN
-							DEC (tempi);
-					END;
+				if (curMenu == 9)
+				{
+					if (tempI > 5)
+					{
+						tempI--;
+					}
+					if (tempI > 3)
+					{
+						tempI--;
+					}
+				}
 
-					IF curmenu = 1 THEN BEGIN
-						IF tempi > 7 THEN
-							tempi := 7;
-					END;
+				if (curMenu == 0)
+				{
+					if (tempI > 7)
+					{
+						tempI = 7;
+					}
+				}
 
-					IF curmenu = 4 THEN BEGIN
-						IF tempi = menuchoices [curmenu] + 1 THEN
-							tempi := menuchoices [curmenu];
-					END;
+				if (curMenu == 3)
+				{
+					if (tempI == menuChoices[curMenu]+1)
+					{
+						tempI = menuChoices[curMenu];
+					}
+				}
 
-					IF tempi <= menuchoices [curmenu] THEN BEGIN
-						IF (curmenu = 5) AND (tempi = menuchoices [5]) THEN BEGIN
-							score := CashLeft;
-							curmenu := 2;
-							playsamplenum (_Item);
-						END
-					ELSE BEGIN
-						playsamplenum (_Click);
-						IF cursel [curmenu] = tempi THEN BEGIN
-							menufunction (cursel [curmenu]);
-						END ELSE BEGIN
-							IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
-								temppowerlevel [cursel [5] - 1] := portpower [cursel [2] - 2];
+				if (tempI <= menuChoices[curMenu])
+				{
+					if ((curMenu == 4) && (tempI == menuChoices[4]))
+					{
+						score = JE_cashLeft();
+						curMenu = 1;
+						JE_playSampleNum(ITEM);
+					} else {
+						JE_playSampleNum(CLICK);
+						if (curSel[curMenu] == tempI)
+						{
+							JE_menuFunction(curSel[curMenu]);
+						} else {
+							if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
+							{
+								tempPowerLevel[curSel[4]-2] = portPower[curSel[1]-3];
+							}
+							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > score))
+							{
+								JE_playSampleNum(WRONG);
+							} else {
+								if (curSel[1] == 4)
+								{
+									portConfig[1] = 1;
+								}
+								curSel[curMenu] = tempI;
+							}
 
-							IF (curmenu = 5) AND (getcost (cursel [2], Itemavail [itemavailmap [cursel [2] - 1], tempi - 1]) > score) THEN
-								playsamplenum (_Wrong)
-							ELSE BEGIN
-								IF cursel [2] = 4 THEN
-									portconfig [2] := 1;
-								cursel [curmenu] := tempi;
-							END;
+							if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
+							{
+								portPower[curSel[1]-3] = tempPowerLevel[curSel[4]-2];
+							}
+						}
+					}
+				}
 
-							IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN
-								portpower [cursel [2] - 2] := temppowerlevel [cursel [5] - 1];
-						END;
-					END;
-				END;
-			REPEAT
-				mousebutton := mouseposition (tempx, tempy)
-			UNTIL mousebutton = 0;
-		END;
+				/*do {
+					mouseButton = JE_mousePosition(&tempX, &tempY);
+				} while (!(mouseButton == 0));*/
+				wait_noinput(false,true,false);
+			}
 
-		IF (curmenu = 5) AND (cursel [2] IN [3, 4]) THEN BEGIN
-			IF (mousex >= 23) AND (mousex <= 36) AND (mousey >= 149) AND (mousey <= 168) THEN BEGIN
-				playsamplenum (_Cursormove);
-				CASE cursel [2] OF
-					3 :
-						IF leftpower THEN
-							DEC (portpower [1])
-						ELSE
-							playsamplenum (_Wrong);
-					4 :
-						IF leftpower THEN
-							DEC (portpower [2])
-						ELSE
-							playsamplenum (_Wrong);
-				END;
-				wipekey;
-			END;
-			IF (mousex >= 119) AND (mousex <= 131) AND (mousey >= 149) AND (mousey <= 168) THEN BEGIN
-				playsamplenum (_Cursormove);
-				CASE cursel [2] OF
-					3 :
-						IF rightpower AND rightpowerafford THEN
-							INC (portpower [1])
-						ELSE
-							playsamplenum (_Wrong);
-					4 :
-						IF rightpower AND rightpowerafford THEN
-							INC (portpower [2])
-						ELSE
-							playsamplenum (_Wrong);
-				END;
-				wipekey;
-			END;
-		END;
-		*/
-		}
-		else
-		{
+			if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
+			{
+				if ((mouseX >= 23) && (mouseX <= 36) && (mouseY >= 149) && (mouseY <= 168))
+				{
+					JE_playSampleNum(CURSOR_MOVE);
+					switch (curSel[1])
+					{
+						case 3:
+							if (leftPower)
+							{
+								portPower[0]--;
+							} else {
+								JE_playSampleNum(WRONG);
+							}
+							break;
+						case 4:
+							if (leftPower)
+							{
+								portPower[1]--;
+							} else {
+								JE_playSampleNum(WRONG);
+							}
+							break;
+					}
+					wait_noinput(false,true,false);
+				}
+
+				if ((mouseX >= 119) && (mouseX <= 131) && (mouseY >= 149) && (mouseY <= 168))
+				{
+					JE_playSampleNum(CURSOR_MOVE);
+					switch (curSel[1])
+					{
+						case 3:
+							if (rightPower && rightPowerAfford)
+							{
+								portPower[0]++;
+							} else {
+								JE_playSampleNum(WRONG);
+							}
+							break;
+						case 4:
+							if (rightPower && rightPowerAfford)
+							{
+								portPower[1]++;
+							} else {
+								JE_playSampleNum(WRONG);
+							}
+							break;
+					}
+					wait_noinput(false,true,false);
+				}
+			}
+		} else {
 			if (newkey)
 			{
 				switch (lastkey_sym)
@@ -8161,7 +8183,6 @@ void JE_drawMainMenuHelpText( void )
 	JE_byte temp;
 
 	temp = curSel[curMenu] - 2;
-	/* printf("%d --> %d \n", temp, menuHelp[curMenu][temp]); TODO */
 	if (curMenu < 3 || curMenu == 9 || curMenu > 10)
 	{
 		memcpy(tempStr, mainMenuHelp[(menuHelp[curMenu][temp])-1], sizeof(tempStr));
@@ -8198,10 +8219,6 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 	JE_boolean quit, select;
 	JE_integer col, colC;
 
-	/* TODO: The mouse cursor is causing display problems--figure out why */
-	/* TODO: Selecting something with the mouse causes the keyboard to stop working
-	   in the menu. Find out why. */
-
 	if (useMouse)
 	{
 		JE_mouseReplace();
@@ -8220,7 +8237,8 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 
 	sel = 1;
 
-	JE_wipeKey();
+	// JE_wipeKey();
+	wait_noinput(true,true,true);
 
 	JE_barShade(65, 55, 255, 155);
 
@@ -8422,8 +8440,6 @@ void JE_menuFunction( JE_byte select )
 	col = 0;
 	colC = -1;
 	JE_playSampleNum(CLICK);
-
-	printf("menu %d, selected %d (also %d)\n", curMenu, select, curSel[curMenu]);
 
 	curSelect = curSel[curMenu];
 
@@ -9215,7 +9231,7 @@ void JE_genItemMenu( JE_byte itemNum )
 	// YKS: I have no idea wtf this is doing, but I don't think it matters either, little of this function does
 	if (itemNum == 3 || itemNum == 4)
 	{
-		tempPowerLevel[tempW] = portPower[itemNum-3];
+		tempPowerLevel[tempW] = portPower[itemNum-1];
 		if (tempPowerLevel[tempW] < 1)
 		{
 			tempPowerLevel[tempW] = 1;
