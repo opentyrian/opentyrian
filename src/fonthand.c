@@ -716,8 +716,6 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 	JE_integer z;
 	JE_byte c = 15;
 
-	int delaycount_temp;
-
 	JE_setNetByte(0);
 	
 	if (warningRed)
@@ -748,7 +746,9 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 			
 			JE_waitRetrace();
 			JE_showVGA();
-			while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+
+			int delaycount_temp;
+			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 				SDL_Delay(delaycount_temp);
 		}
 	for (z = (frameCountMax == 0) ? 6 : 12; z >= textGlowBrightness; z--)
@@ -768,7 +768,9 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 		
 		JE_waitRetrace();
 		JE_showVGA();
-		while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+
+		int delaycount_temp;
+		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 			SDL_Delay(delaycount_temp);
 	}
 	textGlowBrightness = 6;

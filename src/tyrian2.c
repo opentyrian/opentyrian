@@ -128,8 +128,6 @@ void JE_starShowVGA( void )
 	JE_byte *src;
 	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
 
-	int delaycount_temp;
-
 	int x, y, lightx, lighty, lightdist;
 	
 	if (!playerEndLevel && !skipStarShowVGA)
@@ -142,7 +140,8 @@ void JE_starShowVGA( void )
 
 		if (smoothScroll != 0 && thisPlayerNum != 2)
 		{
-			while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			int delaycount_temp;
+			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 				SDL_Delay(delaycount_temp);
 			setjasondelay(frameCountMax);
 		}
@@ -4498,7 +4497,8 @@ void JE_openingAnim( void )
 		memset(black, 0, sizeof(black));
 
 		setjasondelay(200);
-		while(!(delaycount() == 0 || JE_anyButton()));
+		while (!JE_anyButton() && (target - SDL_GetTicks()) > 0)
+			SDL_Delay(16);
 
 		JE_fadeBlack(15);
 
@@ -4509,7 +4509,8 @@ void JE_openingAnim( void )
 		JE_fadeColor(10);
 
 		setjasondelay(200);
-		while(!(delaycount() == 0 || JE_anyButton()));
+		while (!JE_anyButton() && (target - SDL_GetTicks()) > 0)
+			SDL_Delay(16);
 
 		JE_fadeBlack(10);
 	}
@@ -6853,7 +6854,10 @@ item_screen_start:
 						}
 
 						JE_mouseReplace();
-						wait_delay();
+						
+						int delaycount_temp;
+						if ((delaycount_temp = target - SDL_GetTicks()) > 0)
+							SDL_Delay(delaycount_temp);
 					} else { /* current menu is anything but weapon sim or datacube */
 
 						if (curMenu == 8) /* SYN: menu 8 is a datacube... this should never happen?! */
@@ -6890,9 +6894,10 @@ item_screen_start:
 							JE_fadeColor(10);
 							backFromHelp = false;
 						}
-
-						JE_waitAction(0, true);
-						wait_delay();
+						
+						int delaycount_temp;
+						if ((delaycount_temp = target - SDL_GetTicks()) > 0)
+							SDL_Delay(delaycount_temp);
 					}
 				}
 				

@@ -207,7 +207,10 @@ void JE_jukeboxGo( void )
 			tempScreenSeg = VGAScreen; /*sega000*/
 			JE_outText(JE_fontCenter("Arrow keys change the song being played.", TINY_FONT), 180, "Arrow keys change the song being played.", 1, 0);
 		}
-		wait_delay();
+
+		int delaycount_temp;
+		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			SDL_Delay(delaycount_temp);
 
 		JE_showVGA();
 

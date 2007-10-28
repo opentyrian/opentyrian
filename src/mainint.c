@@ -1966,7 +1966,6 @@ void JE_endLevelAni( void )
 	char tempStr[256];
 	
 	Sint8 i;
-	int delaycount_temp;
 	
 	if (!constantPlay)
 	{
@@ -2109,7 +2108,8 @@ void JE_endLevelAni( void )
 					if (netQuit)
 						exit(0);
 					
-					while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+					int delaycount_temp;
+					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 						SDL_Delay(delaycount_temp);
 				}
 				for (i = 10; i >= 0; i--)
@@ -2128,7 +2128,8 @@ void JE_endLevelAni( void )
 					if (netQuit)
 						exit(0);
 					
-					while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+					int delaycount_temp;
+					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 						SDL_Delay(delaycount_temp);
 				}
 			}
@@ -2166,7 +2167,8 @@ void JE_endLevelAni( void )
 			if (netQuit)
 				exit(0);
 			
-			while ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			int delaycount_temp;
+			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 				SDL_Delay(delaycount_temp);
 		} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
 	}
