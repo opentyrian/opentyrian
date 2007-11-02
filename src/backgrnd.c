@@ -114,9 +114,6 @@ void JE_drawBackground2( void )
 			bp = mapY2Pos + mapX2bpPos;
 		}
 
-		/* Use DS for MegaDataSeg */
-		src = megaData2->mainmap[0][0];
-
 		/*============BACKGROUND 2 TOP=============*/
 		if (backPos2 != 0)
 		{
