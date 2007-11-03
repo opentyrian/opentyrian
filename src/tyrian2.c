@@ -6693,11 +6693,9 @@ item_screen_start:
 
 		if (constantPlay)
 		{
-			mainLevel = mapSection[mapPNum];
+			mainLevel = mapSection[mapPNum-1];
 			jumpSection = true;
-		}
-		else
-		{
+		} else {
 
 			do
 			{
