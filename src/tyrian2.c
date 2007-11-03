@@ -5847,7 +5847,7 @@ void JE_eventSystem( void )
 			{
 				do {
 					temp = (rand() % (eventRec[eventLoc-1].eventdat2 + 1 - eventRec[eventLoc-1].eventdat)) + eventRec[eventLoc-1].eventdat;
-				} while (!(JE_searchFor(temp) && enemy[temp5].eyc == 0));
+				} while (!(JE_searchFor(temp) && enemy[temp5-1].eyc == 0));
 
 				newPL[eventRec[eventLoc-1].eventdat3 - 80] = temp;
 			} else {
