@@ -5901,9 +5901,9 @@ void JE_eventSystem( void )
 		case 81: /*WRAP2*/
 			printf("*!* POSSIBLY BAD MAP REPOSITONING\n");
 			BKwrap2   = &megaData2->mainmap[0][0];
-			BKwrap2   += eventRec[eventLoc-1].eventdat;
+			BKwrap2   += eventRec[eventLoc-1].eventdat / 2;
 			BKwrap2to = &megaData2->mainmap[0][0];
-			BKwrap2to += eventRec[eventLoc-1].eventdat2;
+			BKwrap2to += eventRec[eventLoc-1].eventdat2 / 2;
 			break;
 
 		case 82: /*Give SPECIAL WEAPON*/
