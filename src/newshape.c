@@ -19,6 +19,7 @@
  */
 #include "opentyr.h"
 
+#include "error.h"
 #include "joystick.h"
 #include "keyboard.h"
 #include "network.h"
@@ -112,6 +113,19 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 			efread((*shapeArray)[table][tempW], sizeof(JE_byte), shapeSize[table][tempW], f);
 		}
 	}
+}
+
+void JE_newLoadShapes( JE_byte table, char *shapefile )
+{
+	FILE *f;
+	
+	JE_newPurgeShapes(table);
+	
+	JE_resetFile(&f, shapefile);
+	
+	JE_newLoadShapesB(table, f);
+	
+	fclose(f);
 }
 
 void JE_newDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize )

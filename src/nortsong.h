@@ -51,7 +51,7 @@ extern JE_longint address;
 extern JE_word intcount;
 
 extern JE_word dspversion;
-extern Uint32 target;
+extern Uint32 target, target2;
 
 extern JE_char hexa[17];
 extern JE_boolean mixEnable;
