@@ -1964,15 +1964,13 @@ void JE_playCredits( void )
 	JE_integer curpos, newpos;
 	JE_byte yloc;
 	FILE *f;
-	JE_byte currentpic, fade = 0;
+	JE_byte currentpic = 1, fade = 0;
 	JE_shortint fadechg = 1;
-	JE_byte currentship;
-	JE_integer shipx, shipxwait;
-	JE_shortint shipxc, shipxca;
+	JE_byte currentship = 0;
+	JE_integer shipx = 0, shipxwait = 0;
+	JE_shortint shipxc = 0, shipxca = 0;
 	
 	JE_newLoadShapes(EXTRA_SHAPES, "estsc.shp");
-	
-	currentpic = 1;
 	
 	setjasondelay(1000);
 	
