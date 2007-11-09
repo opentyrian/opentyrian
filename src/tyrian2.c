@@ -4497,7 +4497,7 @@ void JE_openingAnim( void )
 		memset(black, 0, sizeof(black));
 
 		setjasondelay(200);
-		while (!JE_anyButton() && (target - SDL_GetTicks()) > 0)
+		while (!JE_anyButton() && (signed int)(target - SDL_GetTicks()) > 0)
 			SDL_Delay(16);
 
 		JE_fadeBlack(15);
@@ -4509,7 +4509,7 @@ void JE_openingAnim( void )
 		JE_fadeColor(10);
 
 		setjasondelay(200);
-		while (!JE_anyButton() && (target - SDL_GetTicks()) > 0)
+		while (!JE_anyButton() && (signed int)(target - SDL_GetTicks()) > 0)
 			SDL_Delay(16);
 
 		JE_fadeBlack(10);
@@ -5055,7 +5055,7 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 void JE_eventSystem( void )
 {
 	JE_boolean tempb;
-
+	
 	switch (eventRec[eventLoc-1].eventtype)
 	{
 		case 1:
@@ -5108,48 +5108,54 @@ void JE_eventSystem( void )
 			}
 			break;
 		case 5:
-			if (eShapes1 != NULL)
+			if (enemyShapeTables[1-1] != eventRec[eventLoc-1].eventdat)
 			{
-				free(eShapes1);
-				eShapes1 = NULL;
+				if (eventRec[eventLoc-1].eventdat > 0)
+				{
+					JE_loadCompShapes(&eShapes1, &eShapes1Size, shapeFile[eventRec[eventLoc-1].eventdat -1]);      /* Enemy Bank 1 */
+					enemyShapeTables[1-1] = eventRec[eventLoc-1].eventdat;
+				} else if (eShapes1 != NULL) {
+					free(eShapes1);
+					eShapes1 = NULL;
+					enemyShapeTables[1-1] = 0;
+				}
 			}
-			if (eShapes2 != NULL)
+			if (enemyShapeTables[2-1] != eventRec[eventLoc-1].eventdat2)
 			{
-				free(eShapes2);
-				eShapes2 = NULL;
+				if (eventRec[eventLoc-1].eventdat2 > 0)
+				{
+					JE_loadCompShapes(&eShapes2, &eShapes2Size, shapeFile[eventRec[eventLoc-1].eventdat2-1]);      /* Enemy Bank 2 */
+					enemyShapeTables[2-1] = eventRec[eventLoc-1].eventdat2;
+				} else if (eShapes2 != NULL) {
+					free(eShapes2);
+					eShapes2 = NULL;
+					enemyShapeTables[2-1] = 0;
+				}
 			}
-			if (eShapes3 != NULL)
+			if (enemyShapeTables[3-1] != eventRec[eventLoc-1].eventdat3)
 			{
-				free(eShapes3);
-				eShapes3 = NULL;
+				if (eventRec[eventLoc-1].eventdat3 > 0)
+				{
+					JE_loadCompShapes(&eShapes3, &eShapes3Size, shapeFile[eventRec[eventLoc-1].eventdat3-1]);      /* Enemy Bank 3 */
+					enemyShapeTables[3-1] = eventRec[eventLoc-1].eventdat3;
+				} else if (eShapes3 != NULL) {
+					free(eShapes3);
+					eShapes3 = NULL;
+					enemyShapeTables[3-1] = 0;
+				}
 			}
-			if (eShapes4 != NULL)
+			if (enemyShapeTables[4-1] != eventRec[eventLoc-1].eventdat4)
 			{
-				free(eShapes4);
-				eShapes4 = NULL;
-			}
-			memset(enemyShapeTables, 0, sizeof(enemyShapeTables));
-
-			if (eventRec[eventLoc-1].eventdat > 0)
-			{
-				JE_loadCompShapes(&eShapes1, &eShapes1Size, shapeFile[eventRec[eventLoc-1].eventdat -1]);      /* Enemy Bank 1 */
-				enemyShapeTables[1-1] = eventRec[eventLoc-1].eventdat;
-			}
-			if (eventRec[eventLoc-1].eventdat2 > 0)
-			{
-				JE_loadCompShapes(&eShapes2, &eShapes2Size, shapeFile[eventRec[eventLoc-1].eventdat2-1]);      /* Enemy Bank 2 */
-				enemyShapeTables[2-1] = eventRec[eventLoc-1].eventdat2;
-			}
-			if (eventRec[eventLoc-1].eventdat3 > 0)
-			{
-				JE_loadCompShapes(&eShapes3, &eShapes3Size, shapeFile[eventRec[eventLoc-1].eventdat3-1]);      /* Enemy Bank 3 */
-				enemyShapeTables[3-1] = eventRec[eventLoc-1].eventdat3;
-			}
-			if (eventRec[eventLoc-1].eventdat4 > 0)
-			{
-				JE_loadCompShapes(&eShapes4, &eShapes4Size, shapeFile[eventRec[eventLoc-1].eventdat4-1]);      /* Enemy Bank 4 */
-				enemyShapeTables[4-1] = eventRec[eventLoc-1].eventdat4;
-				enemyShapeTables[5-1] = 21;
+				if (eventRec[eventLoc-1].eventdat4 > 0)
+				{
+					JE_loadCompShapes(&eShapes4, &eShapes4Size, shapeFile[eventRec[eventLoc-1].eventdat4-1]);      /* Enemy Bank 4 */
+					enemyShapeTables[4-1] = eventRec[eventLoc-1].eventdat4;
+					enemyShapeTables[5-1] = 21;
+				} else if (eShapes4 != NULL) {
+					free(eShapes4);
+					eShapes4 = NULL;
+					enemyShapeTables[4-1] = 0;
+				}
 			}
 			break;
 		case 6: /* Ground Enemy */

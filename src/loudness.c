@@ -245,7 +245,7 @@ void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
 /* SYN: Either I'm misunderstanding Andreas's comments, or the information in them is inaccurate. */
 void JE_setVol(JE_word volume, JE_word sample)
 {
-	printf("JE_setVol: music: %d, sample: %d\n", volume, sample);
+	/* printf("JE_setVol: music: %d, sample: %d\n", volume, sample); */
 	
 	if (volume > 0)
 		music_volume = volume * (float) (0.5 / 256.0);
