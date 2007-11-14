@@ -101,7 +101,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 		bank = 7;
 	}
 
-	if (strcmp(s, ""))
+	if (s[0])
 	{
 		if (frameCountMax == 0)
 		{
@@ -141,7 +141,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 						return;
 					}
 
-					for (z = loc - 29; z < loc; z++)
+					for (z = loc - 28; z <= loc; z++)
 					{
 						if (z >= 0 && z < maxloc)
 						{
@@ -171,6 +171,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 							JE_updateWarning();
 						}
 						JE_updateStream();
+						SDL_Delay(16);
 					} while (!(delaycount() == 0 || ESCPressed));
 					JE_showVGA();
 				}
