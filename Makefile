@@ -49,14 +49,9 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(OBJS:.o=.d)
 endif
 
-obj/%.d : src/%.c
-	@echo 'Generating dependencies for file $<'
-	@set -e; $(CC) -MM -MT obj/$*.o $(CFLAGS) $< \
-	    | sed 's/obj\/\($*\)\.o[ :]*/obj\/\1.o obj\/$*\.d : /g' > $@; \
-	    [ -s $@ ] || rm -f $@
-
+obj/%.d : obj/%.o
 obj/%.o : src/%.c
-	$(CC) -o $@ -c $(CFLAGS) $<
+	$(CC) -o $@ -MMD -c $(CFLAGS) $<
 
 .PHONY : clean
 
