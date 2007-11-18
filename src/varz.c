@@ -305,7 +305,7 @@ JE_integer explosionMoveUp;
 
 /*EnemyShotData*/
 JE_boolean fireButtonHeld;
-JE_byte /*boolean*/ enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
+JE_boolean enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
 struct
 {
 	JE_integer sx, sy;

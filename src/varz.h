@@ -265,7 +265,7 @@ extern JE_integer explosionFollowAmount;
 extern JE_boolean playerFollow, fixedExplosions;
 extern JE_integer explosionMoveUp;
 extern JE_boolean fireButtonHeld;
-extern JE_byte /*boolean*/ enemyShotAvail[ENEMY_SHOT_MAX];
+extern JE_boolean enemyShotAvail[ENEMY_SHOT_MAX];
 extern struct {
 	JE_integer sx, sy;
 	JE_integer sxm, sym;
