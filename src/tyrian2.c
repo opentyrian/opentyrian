@@ -1001,7 +1001,7 @@ start_level:
 		{
 			JE_fadeBlack(10);
 			/* JE_wipekey();*/
-			wait_input(true,true,true);
+			wait_noinput(true, true, true);
 		}
 	}
 
@@ -1309,12 +1309,7 @@ start_level_first:
 	/*Save backup game*/
 	if (!playDemo && !doNotSaveBackup)
 	{
-		if (twoPlayerMode)
-		{
-			temp = 22;
-		} else {
-			temp = 11;
-		}
+		temp = twoPlayerMode ? 22 : 11;
 		JE_saveGame(temp, "LAST LEVEL    ");
 	}
 
