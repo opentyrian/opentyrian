@@ -82,7 +82,7 @@ Uint8 fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay
 Uint16 posplay, jumppos, speed;
 Uint16 *patterns = NULL;
 JE_boolean playing, songlooped;
-Uint32 numpatch, numposi, patterns_size, mainvolume;
+Uint16 numpatch, numposi, patterns_size, mainvolume;
 
 const Uint16 maxsound = 0x3f, maxpos = 0xff;
 Uint8 *read_pos;
