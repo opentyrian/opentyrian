@@ -21,9 +21,9 @@
 /* A substantial amount of this code has been copied and adapted from adplug.
    Thanks, guys! Adplug is awesome! :D */
 #include "opentyr.h"
+#include "lds_play.h"
 
 #include "fm_synth.h"
-#include "lds_play.h"
 #include "loudness.h"
 #include "nortsong.h"
 

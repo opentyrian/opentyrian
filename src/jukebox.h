@@ -23,10 +23,8 @@
 #include "opentyr.h"
 
 
-#ifndef NO_EXTERNS
 extern JE_boolean continuousPlay;
 extern JE_word currentJukeboxSong;
-#endif
 
 void JE_playNewSelection( void );
 void JE_jukebox_selectSong( JE_word song );

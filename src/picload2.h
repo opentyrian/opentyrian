@@ -23,13 +23,12 @@
 #include "opentyr.h"
 
 #include "pcxmast.h"
+#include "nortvars.h"
 
 
-#ifndef NO_EXTERNS
 extern JE_ColorType colors2;
 extern JE_boolean overrideblack;
 extern JE_char c2;
-#endif
 
 void JE_analyzePic( void );
 

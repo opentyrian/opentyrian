@@ -27,7 +27,6 @@
 
 #define SDL_POLL_INTERVAL 5
 
-#ifndef NO_EXTERNS
 extern const char *keyNames[];
 extern JE_boolean ESCPressed;
 extern JE_boolean newkey, newmouse, keydown, mousedown;
@@ -40,7 +39,6 @@ extern JE_boolean mouse_pressed[3];
 extern Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
 extern int numkeys;
 extern Uint8 *keysactive;
-#endif
 
 void flush_events_buffer( void );
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );

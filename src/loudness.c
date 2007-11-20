@@ -18,14 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "loudness.h"
 
 #include "fm_synth.h"
 #include "lds_play.h"
 #include "params.h"
-
-#define NO_EXTERNS
-#include "loudness.h"
-#undef NO_EXTERNS
 
 
 /* SYN: These are externally accessible variables: */

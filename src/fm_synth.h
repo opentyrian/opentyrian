@@ -23,10 +23,8 @@
 #include "opentyr.h"
 
 
-#ifndef NO_EXTERNS
-unsigned short note_table[12];	/* standard adlib note table */
-unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
-#endif
+extern const unsigned short note_table[12];	/* standard adlib note table */
+extern const unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
 
 void opl_update( Sint16 *buf, int samples );
 void opl_init( void );

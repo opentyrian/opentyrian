@@ -34,7 +34,6 @@ typedef struct
 	JE_longint  sync;
 } JE_PacketData;
 
-#ifndef NO_EXTERNS
 extern JE_longint startTime;
 extern JE_longint frames;
 extern JE_integer netPlayers, thisPlayerNum, otherPlayerNum;
@@ -52,7 +51,6 @@ extern JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 extern JE_boolean portConfigChange, portConfigDone;
 extern JE_byte exchangeCount;
 extern JE_boolean netSuccess;
-#endif
 
 void JE_initNetwork( void );
 

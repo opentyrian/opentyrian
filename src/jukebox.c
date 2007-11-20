@@ -18,13 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "jukebox.h"
 
 #include "loudness.h"
 #include "nortsong.h"
-
-#define NO_EXTERNS
-#include "jukebox.h"
-#undef NO_EXTERNS
 
 
 JE_boolean continuousPlay = false;

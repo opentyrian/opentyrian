@@ -157,7 +157,49 @@ typedef JE_byte JE_EnemyAvailType[100]; /* [1..100] */
 
 typedef JE_byte JE_REXtype[20]; /* [1..20] */
 
-#ifndef NO_EXTERNS
+typedef struct {
+	Sint32  explodeLoc;
+	JE_word explodeGr;
+	JE_byte followPlayer;
+	JE_byte fixedExplode;
+	Sint16 fixedMovement;
+} ExplosionsType;
+
+typedef struct {
+	JE_integer sx, sy;
+	JE_integer sxm, sym;
+	JE_shortint sxc, syc;
+	JE_byte tx, ty;
+	JE_word sgr;
+	JE_byte sdmg;
+	JE_byte duration;
+	JE_word animate;
+	JE_word animax;
+	JE_byte fill[12];
+} EnemyShotType;
+
+typedef struct {
+	JE_integer shotX, shotY, shotXM, shotYM, shotXC, shotYC;
+	JE_boolean shotComplicated;
+	JE_integer shotDevX, shotDirX, shotDevY, shotDirY, shotCirSizeX, shotCirSizeY;
+	JE_byte shotTrail;
+	JE_word shotGr, shotAni, shotAniMax;
+	Uint8 shotDmg;
+	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax, fill[1];
+} PlayerShotDataType;
+
+typedef struct {
+	JE_byte delay;
+	JE_word ex, ey;
+	JE_boolean big;
+} REXdatType;
+
+typedef struct {
+	JE_word location;
+	JE_word movement;
+	JE_byte color;
+} SPLType;
+
 extern JE_byte fromTime;
 extern JE_integer tempDat, tempDat2, tempDat3;
 extern JE_boolean tempb2;
@@ -253,31 +295,14 @@ extern JE_word enemyOnScreen;
 extern JE_byte enemyShapeTables[6];
 extern JE_boolean uniqueEnemy;
 extern JE_word superEnemy254Jump;
-extern struct {
-	Sint32  explodeLoc;
-	JE_word explodeGr;
-	JE_byte followPlayer;
-	JE_byte fixedExplode;
-	Sint16 fixedMovement;
-} explosions[EXPLOSION_MAX];
+extern ExplosionsType explosions[EXPLOSION_MAX];
 extern JE_byte explodeAvail[EXPLOSION_MAX];
 extern JE_integer explosionFollowAmount;
 extern JE_boolean playerFollow, fixedExplosions;
 extern JE_integer explosionMoveUp;
 extern JE_boolean fireButtonHeld;
 extern JE_boolean enemyShotAvail[ENEMY_SHOT_MAX];
-extern struct {
-	JE_integer sx, sy;
-	JE_integer sxm, sym;
-	JE_shortint sxc, syc;
-	JE_byte tx, ty;
-	JE_word sgr;
-	JE_byte sdmg;
-	JE_byte duration;
-	JE_word animate;
-	JE_word animax;
-	JE_byte fill[12];
-} enemyShot[ENEMY_SHOT_MAX];
+extern EnemyShotType enemyShot[ENEMY_SHOT_MAX];
 extern JE_byte zinglonDuration;
 extern JE_byte astralDuration;
 extern JE_word flareDuration;
@@ -290,15 +315,7 @@ extern JE_byte doIced;
 extern JE_boolean infiniteShot;
 extern JE_byte superBomb[2];
 extern JE_integer tempShotX, tempShotY;
-extern struct {
-	JE_integer shotX, shotY, shotXM, shotYM, shotXC, shotYC;
-	JE_boolean shotComplicated;
-	JE_integer shotDevX, shotDirX, shotDevY, shotDirY, shotCirSizeX, shotCirSizeY;
-	JE_byte shotTrail;
-	JE_word shotGr, shotAni, shotAniMax;
-	Uint8 shotDmg;
-	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax, fill[1];
-} playerShotData[MAX_PWEAPON + 1];
+extern PlayerShotDataType playerShotData[MAX_PWEAPON + 1];
 extern JE_byte chain;
 extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
@@ -336,17 +353,9 @@ extern JE_boolean playerHNotReady;
 extern JE_word playerHX[20], playerHY[20];
 extern JE_word neat;
 extern JE_REXtype REXavail;
-extern struct {
-	JE_byte delay;
-	JE_word ex, ey;
-	JE_boolean big;
-} REXdat[20];
+extern REXdatType REXdat[20];
 extern JE_byte SPZ[MAX_SP + 1];
-extern struct {
-	JE_word location;
-	JE_word movement;
-	JE_byte color;
-} SPL[MAX_SP + 1];
+extern SPLType SPL[MAX_SP + 1];
 extern JE_word lastSP;
 extern JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
 extern JE_word avail;
@@ -371,7 +380,6 @@ extern JE_boolean linkToPlayer;
 extern JE_integer baseArmor, baseArmor2;
 extern JE_word shipGr, shipGr2;
 extern JE_byte *shipGrPtr, *shipGr2ptr;
-#endif
 
 void JE_getShipInfo( void );
 JE_word JE_SGr( JE_word ship, JE_byte **ptr );

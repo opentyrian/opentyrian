@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "varz.h"
 
 #include "config.h"
 #include "episodes.h"
@@ -26,10 +27,6 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "varz.h"
-#undef NO_EXTERNS
 
 
 JE_byte fromTime;
@@ -290,14 +287,7 @@ JE_boolean uniqueEnemy;
 JE_word superEnemy254Jump;
 
 /*ExplosionData*/
-struct
-{
-	Sint32  explodeLoc;
-	JE_word explodeGr;
-	JE_byte followPlayer;
-	JE_byte fixedExplode;
-	Sint16  fixedMovement;
-} explosions[EXPLOSION_MAX]; /* [1..ExplosionMax] */
+ExplosionsType explosions[EXPLOSION_MAX]; /* [1..ExplosionMax] */
 JE_byte explodeAvail[EXPLOSION_MAX]; /* [1..ExplosionMax] */
 JE_integer explosionFollowAmount;
 JE_boolean playerFollow, fixedExplosions;
@@ -306,19 +296,7 @@ JE_integer explosionMoveUp;
 /*EnemyShotData*/
 JE_boolean fireButtonHeld;
 JE_boolean enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
-struct
-{
-	JE_integer sx, sy;
-	JE_integer sxm, sym;
-	JE_shortint sxc, syc;
-	JE_byte tx, ty;
-	JE_word sgr;
-	JE_byte sdmg;
-	JE_byte duration;
-	JE_word animate;
-	JE_word animax;
-	JE_byte fill[12]; /* [1..12] */
-} enemyShot[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax]  */
+EnemyShotType enemyShot[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax]  */
 
 /* Player Shot Data */
 JE_byte     zinglonDuration;
@@ -335,34 +313,7 @@ JE_boolean  infiniteShot;
 JE_byte superBomb[2]; /* [1..2] */
 
 JE_integer tempShotX, tempShotY;
-struct
-{
-	JE_integer  shotX;
-	JE_integer  shotY;
-	JE_integer  shotXM;
-	JE_integer  shotYM;
-	JE_integer  shotXC;           /*10*/
-	JE_integer  shotYC;
-	JE_boolean  shotComplicated;
-	JE_integer  shotDevX;
-	JE_integer  shotDirX;
-	JE_integer  shotDevY;         /*19*/
-	JE_integer  shotDirY;
-	JE_integer  shotCirSizeX;
-	JE_integer  shotCirSizeY;
-	JE_byte     shotTrail;
-	JE_word     shotGr;
-	JE_word     shotAni;          /*30*/
-	JE_word     shotAniMax;
-	Uint8       shotDmg;
-	JE_byte     shotBlastFilter;
-	JE_byte     chainReaction;    /*35*/
-	JE_byte     playerNumber;
-	JE_byte     aimAtEnemy;
-	JE_byte     aimDelay;
-	JE_byte     aimDelayMax;      /*39*/
-	JE_byte     fill[1];          /* [1..1] */
-} playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
+PlayerShotDataType playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
 
 JE_byte chain;
 
@@ -449,22 +400,11 @@ JE_word neat;
 
 /*Repeating Explosions*/
 JE_REXtype REXavail;
-struct
-{
-	JE_byte    delay;
-	JE_word    ex, ey;
-	JE_boolean big;
-	/*JE_byte fill[2] \* [1..2] \* */
-} REXdat[20]; /* [1..20] */
+REXdatType REXdat[20]; /* [1..20] */
 
 /*SuperPixels*/
 JE_byte SPZ[MAX_SP + 1]; /* [0..MaxSP] */
-struct
-{
-	JE_word location;
-	JE_word movement;
-	JE_byte color;
-} SPL[MAX_SP + 1]; /* [0..MaxSP] */
+SPLType SPL[MAX_SP + 1]; /* [0..MaxSP] */
 JE_word lastSP;
 
 /*MegaData*/

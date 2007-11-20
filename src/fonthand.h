@@ -29,8 +29,6 @@
 #define TRICK      3
 #define NO_SHADE 255
 
-#ifndef NO_EXTERNS
-
 extern const JE_byte fontMap[136];
 extern JE_integer defaultBrightness;
 extern JE_byte textGlowFont, textGlowBrightness;
@@ -42,7 +40,6 @@ extern JE_byte warningSoundDelay;
 extern JE_word armorShipDelay;
 extern JE_byte warningCol;
 extern JE_shortint warningColChange;
-#endif
 
 void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font );
 void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_shortint brightness );

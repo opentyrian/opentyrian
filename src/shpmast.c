@@ -18,10 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-
-#define NO_EXTERNS
 #include "shpmast.h"
-#undef NO_EXTERNS
 
 
 const char *shpfile[SHP_NUM] = /* [1..SHPnum] */

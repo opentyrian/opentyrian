@@ -32,9 +32,6 @@ struct JE_StarType
 	JE_integer lastX, lastY;
 };
 
-#ifndef NO_EXTERNS
-#endif
-
 void JE_starlib_main( void );
 void JE_makeGray( void );
 void JE_wackyCol( void );

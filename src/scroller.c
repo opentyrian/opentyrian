@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "scroller.h"
 
 #include "fonthand.h"
 #include "joystick.h"
@@ -29,8 +30,6 @@
 #include "picload.h"
 #include "varz.h"
 #include "vga256d.h"
-
-#include "scroller.h"
 
 #include "SDL.h"
 

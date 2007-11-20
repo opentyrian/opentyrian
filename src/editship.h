@@ -25,14 +25,12 @@
 
 typedef int JE_ShipsType; /* TODO: FIX THIS! just a placeholder! */
 
-#ifndef NO_EXTERNS
 extern JE_boolean extraAvail;
 extern JE_word extraShapeOfs;
 /* TODO: conflicts extern JE_ShipsType ships; */
 extern void *extraShapes;
 extern JE_word extraShapeSeg;
 extern JE_word extraShapeSize;
-#endif
 
 void JE_startNewShape( void );
 

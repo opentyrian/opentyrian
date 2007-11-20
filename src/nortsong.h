@@ -32,7 +32,6 @@ typedef JE_longint JE_SongPosType [MUSIC_NUM + 1]; /* [1..Musicnum + 1] */
 typedef JE_byte JE_DigiMixType [0x4ff];
 typedef JE_byte JE_AweType [35000];
 
-#ifndef NO_EXTERNS
 extern JE_word w1;
 extern JE_AweType * awe_data;
 /*extern JE_word tempw;*/
@@ -53,7 +52,7 @@ extern JE_word intcount;
 extern JE_word dspversion;
 extern Uint32 target, target2;
 
-extern JE_char hexa[17];
+extern const char hexa[17];
 extern JE_boolean mixEnable;
 
 extern JE_boolean notYetLoadedSound, notYetLoadedMusic;
@@ -74,8 +73,7 @@ extern JE_word fxVolume, fxPlayVol;
 extern JE_word tempVolume;
 extern JE_word tyrMusicVolume;
 
-extern int jasondelay;
-#endif
+extern float jasondelay;
 
 void JE_timerInt( void );
 

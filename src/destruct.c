@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "destruct.h"
 
 #include "config.h"
 #include "fonthand.h"
@@ -31,12 +32,7 @@
 #include "picload2.h"
 #include "starfade.h"
 #include "varz.h"
-/* #include "vga256c.h" */
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "destruct.h"
-#undef NO_EXTERNS
 
 
 JE_word tempscreenseg;

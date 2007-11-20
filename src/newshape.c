@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "newshape.h"
 
 #include "error.h"
 #include "joystick.h"
@@ -28,10 +29,6 @@
 #include "params.h"
 #include "varz.h"
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "newshape.h"
-#undef NO_EXTERNS
 
 
 SDL_Surface *tempScreenSeg = NULL;

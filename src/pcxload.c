@@ -18,12 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "pcxload.h"
 
 #include "starfade.h"
-
-#define NO_EXTERNS
-#include "pcxload.h"
-#undef NO_EXTERNS
 
 #include "SDL.h"
 

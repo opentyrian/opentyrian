@@ -26,7 +26,6 @@
 #include "nortvars.h"
 
 
-#ifndef NO_EXTERNS
 extern JE_shortint constantLastX;
 extern JE_word textErase;
 extern JE_word upgradeCost;
@@ -34,7 +33,6 @@ extern JE_word downgradeCost;
 extern JE_boolean performSave;
 extern JE_boolean jumpSection;
 extern JE_boolean useLastBank;
-#endif
 
 /*void JE_textMenuWait ( JE_word waittime, JE_boolean dogamma );*/
 

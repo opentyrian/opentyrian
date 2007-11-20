@@ -23,10 +23,8 @@
 #include "opentyr.h"
 
 
-#ifndef NO_EXTERNS
 extern JE_word currentpageofs;
 extern JE_word currentpageseg;
-#endif
 
 void JE_playRunSkipDump( JE_word bufferoffset );
 

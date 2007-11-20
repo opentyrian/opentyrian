@@ -156,7 +156,6 @@ typedef struct
 	JE_word     eenemydie;
 } JE_EnemyDatType[ENEMY_NUM + 1]; /* [0..enemynum] */
 
-#ifndef NO_EXTERNS
 extern JE_WeaponPortType weaponPort;
 extern JE_WeaponType weapons;
 extern JE_PowerType powerSys;
@@ -171,7 +170,6 @@ extern char macroFile[13], cubeFile[13];
 extern JE_longint episode1DataLoc;
 extern JE_boolean bonusLevel;
 extern JE_boolean jumpBackToEpisode1;
-#endif
 
 void JE_loadItemDat( void );
 void JE_initEpisode( JE_byte newEpisode );

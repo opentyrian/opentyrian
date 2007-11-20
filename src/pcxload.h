@@ -41,14 +41,11 @@ struct JE_PCXHeader_rec {
 	JE_word palette_type;
 };
 
-#ifndef NO_EXTERNS
-
 extern JE_ColorType colors2;
 extern JE_word width, depth;
 extern JE_word bytes;
 extern JE_char /*c,*/ c2;
 extern JE_boolean overrideBlack;
-#endif
 
 /*void JE_unpackPCX( void );*/
 

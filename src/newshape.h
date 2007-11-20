@@ -43,7 +43,6 @@
 
 typedef JE_byte *JE_ShapeArrayType[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable, 1..maximumshape] */
 
-#ifndef NO_EXTERNS
 extern SDL_Surface *tempScreenSeg;
 extern JE_ShapeArrayType *shapeArray;
 extern JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],
@@ -54,7 +53,6 @@ extern JE_byte maxShape[MAX_TABLE];
 extern JE_byte mouseGrabShape[24*28];
 extern JE_boolean loadOverride;
 /*extern JE_word min, max;*/
-#endif
 
 void JE_newLoadShapes( JE_byte table, char *shapefile );
 void JE_newLoadShapesB( JE_byte table, FILE *f );

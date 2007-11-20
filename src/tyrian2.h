@@ -29,10 +29,7 @@
 #define CUBE_WIDTH 35
 #define LINE_WIDTH 150
 
-#ifndef NO_EXTERNS
-
 extern JE_word statDmg[2];
-#endif
 
 void JE_scaleInPicture( void );
 

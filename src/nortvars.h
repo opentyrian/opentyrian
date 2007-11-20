@@ -37,8 +37,6 @@ typedef JE_ShapeTypeOne JE_ShapeType[304]; /* [1..304] */
 typedef JE_byte JE_NewShapeTypeOne[182]; /* [0..168+14-1] */
 typedef JE_NewShapeTypeOne JE_NewShapeType[304]; /* [1..304] */
 
-#ifndef NO_EXTERNS
-
 /* extern JE_word z; */
 
 extern JE_word y;
@@ -48,7 +46,6 @@ extern JE_word lastMouseX, lastMouseY;
 extern JE_byte mouseCursor;
 extern JE_boolean mouse_threeButton;
 extern JE_word mouseX, mouseY, mouseButton;
-#endif
 
 /*void JE_buildRec( void );
 void JE_add( JE_byte nextbyte );

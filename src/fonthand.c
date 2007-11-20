@@ -18,15 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "fonthand.h"
 
 #include "newshape.h"
 #include "network.h"
 #include "nortsong.h"
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "fonthand.h"
-#undef NO_EXTERNS
 
 
 const JE_byte fontMap[136] = /* [33..168] */

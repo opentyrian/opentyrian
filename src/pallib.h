@@ -29,10 +29,8 @@
 
 typedef JE_ColorType JE_PalType[MAX_PAL]; /* [1..maxpal] */
 
-#ifndef NO_EXTERNS
 extern JE_PalType palettes;
 extern JE_word palNum;
-#endif
 
 void JE_loadPals( void );
 void JE_zPal( JE_byte palette );

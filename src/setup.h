@@ -23,10 +23,8 @@
 #include "opentyr.h"
 
 
-#ifndef NO_EXTERNS
 JE_boolean volumeActive, fx;
 JE_word fxNum;
-#endif
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma );
 

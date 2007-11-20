@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "setup.h"
 
 #include "config.h"
 #include "fonthand.h"
@@ -33,10 +34,6 @@
 #include "starlib.h"
 #include "varz.h"
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "setup.h"
-#undef NO_EXTERNS
 
 #include "SDL.h"
 

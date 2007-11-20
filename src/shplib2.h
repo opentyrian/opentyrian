@@ -21,9 +21,9 @@
 #define SHPLIB2_H
 
 #include "opentyr.h"
+#include "newshape.h"
 
 
-#ifndef NO_EXTERNS
 extern JE_word shapex [MAXIMUM_SHAPE];
 extern JE_longint memory;
 extern JE_word shapey [MAXIMUM_SHAPE];
@@ -31,7 +31,6 @@ extern JE_word maxshape;
 extern JE_boolean shapexist [MAXIMUM_SHAPE];
 extern void * shapearray [MAXIMUM_SHAPE];
 extern JE_char* f; /* was type TEXT */
-#endif
 
 void JE_drawShapeS( void* shape, JE_word shapex, JE_word shapey, JE_word x, JE_word y );
 

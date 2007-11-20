@@ -36,7 +36,6 @@ typedef JE_shape16B *JE_shape16;
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
-#ifndef NO_EXTERNS
 extern JE_boolean mouseInstalled;
 extern JE_char k;
 extern SDL_Surface *VGAScreen, *VGAScreenSeg;
@@ -45,7 +44,6 @@ extern SDL_Surface *VGAScreen2;
 extern JE_word speed; /* JE: holds timer speed for 70Hz */
 extern JE_byte scancode;
 extern JE_byte outcol;
-#endif
 
 void JE_initVGA256( void );
 void set_fullscreen( bool full );

@@ -25,10 +25,8 @@
 #include "shpmast.h"
 
 
-#ifndef NO_EXTERNS
 extern JE_word shpnumb;
 extern JE_shppostype shppos;
-#endif
 
 void JE_analyzeShp( void );
 

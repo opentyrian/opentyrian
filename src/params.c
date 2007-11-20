@@ -18,10 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
-
-#define NO_EXTERNS
 #include "params.h"
-#undef NO_EXTERNS
 
 #include <ctype.h>
 #include <string.h>

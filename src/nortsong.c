@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "nortsong.h"
 
 #include "error.h"
 #include "joystick.h"
@@ -27,10 +28,6 @@
 #include "params.h"
 #include "sndmast.h"
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "nortsong.h"
-#undef NO_EXTERNS
 
 #include "SDL.h"
 

@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "opentyr.h"
+#include "config.h"
 
 #include "episodes.h"
 #include "error.h"
@@ -27,10 +28,6 @@
 #include "nortvars.h"
 #include "varz.h"
 #include "vga256d.h"
-
-#define NO_EXTERNS
-#include "config.h"
-#undef NO_EXTERNS
 
 #include <stdio.h>
 #include <string.h>
@@ -161,12 +158,7 @@ JE_boolean smoothies[9] = /* [1..9] */
 JE_byte starShowVGASpecialCode;
 
 /* Stars */
-struct
-{
-	JE_byte sC;
-	JE_word sLoc;
-	JE_word sMov;
-} starDat[MAX_STARS]; /* [1..Maxstars] */
+StarDatType starDat[MAX_STARS]; /* [1..Maxstars] */
 JE_word starY;
 
 
@@ -252,9 +244,7 @@ JE_byte    gameSpeed;
 JE_byte    processorType;  /* 1=386 2=486 3=Pentium Hyper */
 
 JE_SaveFilesType saveFiles; /*array[1..saveLevelnum] of savefiletype;*/
-JE_SaveFilesType *saveFilePointer = &saveFiles;
 JE_SaveGameTemp saveTemp;
-JE_SaveGameTemp *saveTempPointer = &saveTemp;
 
 JE_word editorLevel;   /*Initial value 800*/
 

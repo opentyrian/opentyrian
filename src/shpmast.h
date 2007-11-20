@@ -27,9 +27,7 @@
 
 typedef JE_longint JE_shppostype[SHP_NUM + 1]; /* [1..SHPnum + 1] */
 
-#ifndef NO_EXTERNS
 extern const char *shpfile[SHP_NUM];
 extern JE_shppostype shppos;
-#endif
 
 #endif /* SHPMAST_H */
