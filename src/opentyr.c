@@ -194,7 +194,7 @@ void opentyrian_menu( void )
 		{
 			fade_in = false;
 			JE_fadeColor(20);
-			wait_noinput(true,false,false);
+			wait_noinput(true, false, false);
 		}
 
 		tempW = 0;

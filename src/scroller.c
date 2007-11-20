@@ -20,6 +20,7 @@
 #include "opentyr.h"
 
 #include "fonthand.h"
+#include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
 #include "newshape.h"
@@ -82,7 +83,7 @@ void scroller3d( const char *text[] )
 
 	surf = malloc(VGAScreen->pitch * VGAScreen->h);
 
-	wait_noinput(true,true,true);
+	wait_noinput(true, true, joystick_installed);
 	currentJukeboxSong = 41; /* BEER! =D */
 	JE_playSong(currentJukeboxSong);
 

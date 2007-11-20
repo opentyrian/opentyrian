@@ -269,8 +269,8 @@ star_end:
 				doChange = !doChange;
 				break;
 			case 'P':
-				wait_noinput(true,false,false);
-				wait_input(true,false,false);
+				wait_noinput(true, false, false);
+				wait_input(true, false, false);
 				break;
 			default:
 				break;

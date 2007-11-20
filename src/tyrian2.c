@@ -1001,7 +1001,7 @@ start_level:
 		{
 			JE_fadeBlack(10);
 			/* JE_wipekey();*/
-			wait_noinput(true, true, true);
+			wait_noinput(true, true, joystick_installed);
 		}
 	}
 
@@ -3811,14 +3811,10 @@ new_game:
 								ESCPressed = false;
 								break;
 
-							/* TODO */
-
 							case 'M':
 								temp = atoi(strnztcpy(buffer, s + 3, 3));
 								JE_playSong(temp);
 								break;
-
-							/* TODO */
 						}
 					break;
 				}
@@ -7163,7 +7159,7 @@ item_screen_start:
 				/*do {
 					mouseButton = JE_mousePosition(&tempX, &tempY);
 				} while (!(mouseButton == 0));*/
-				wait_noinput(false,true,false);
+				wait_noinput(false, true, false);
 			}
 
 			if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
@@ -7190,7 +7186,7 @@ item_screen_start:
 							}
 							break;
 					}
-					wait_noinput(false,true,false);
+					wait_noinput(false, true, false);
 				}
 
 				if ((mouseX >= 119) && (mouseX <= 131) && (mouseY >= 149) && (mouseY <= 168))
@@ -7215,7 +7211,7 @@ item_screen_start:
 							}
 							break;
 					}
-					wait_noinput(false,true,false);
+					wait_noinput(false, true, false);
 				}
 			}
 		} else {
@@ -8242,7 +8238,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 	sel = 1;
 
 	// JE_wipeKey();
-	wait_noinput(true,true,true);
+	wait_noinput(true, true, joystick_installed);
 
 	JE_barShade(65, 55, 255, 155);
 
@@ -8863,7 +8859,7 @@ void JE_drawJoystick( void )
 
 void JE_funkyScreen( void )
 {
-	wait_noinput(true,true,true);
+	wait_noinput(true, true, joystick_installed);
 
 	/* TODO Slew of ASM */
 
