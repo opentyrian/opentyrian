@@ -4245,10 +4245,7 @@ void JE_titleScreen( JE_boolean animate )
 					if (z == SA)
 					{
 						loadDestruct = true;
-					}
-
-					if (z == SA+1)
-					{
+					} else if (z == SA+1) {
 						/* SuperTyrian */
 
 						JE_playSampleNum(37);
