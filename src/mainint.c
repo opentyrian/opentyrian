@@ -587,6 +587,7 @@ startepisodeselect:
 
 						quit = true;
 						JE_initEpisode(sel);
+						pItems[9-1] = episodeNum;
 						return true;
 					} else {
 						if (sel > 1)
@@ -623,7 +624,6 @@ startepisodeselect:
 		}
 
 	} while (!(quit || haltGame /*|| netQuit*/));
-	pItems[8] = episodeNum;
 
 	return false; /*MXD assumes this default return value here*/
 }
@@ -1057,13 +1057,13 @@ JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems )
 {
 	JE_longint tempL = score;
 
-	tempL += JE_getValue(2, pItems[11]);
-	tempL += JE_getValue(3, pItems[0]);
-	tempL += JE_getValue(4, pItems[1]);
-	tempL += JE_getValue(5, pItems[9]);
-	tempL += JE_getValue(6, pItems[5]);
-	tempL += JE_getValue(7, pItems[3]);
-	tempL += JE_getValue(8, pItems[4]);
+	tempL += JE_getValue(2, pItems[12-1]);
+	tempL += JE_getValue(3, pItems[1-1]);
+	tempL += JE_getValue(4, pItems[2-1]);
+	tempL += JE_getValue(5, pItems[10-1]);
+	tempL += JE_getValue(6, pItems[6-1]);
+	tempL += JE_getValue(7, pItems[4-1]);
+	tempL += JE_getValue(8, pItems[5-1]);
 
 	return tempL;
 }
@@ -1082,7 +1082,7 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 		case 4:
 			tempW2 = weaponPort[itemNum].cost;
 			tempW3 = tempW2;
-			for (z = 0; z < portPower[itemType-2]; z++)
+			for (z = 0; z < portPower[itemType-2-1]; z++)
 			{
 				tempW2 += JE_powerLevelCost(tempW3, z);
 			}
@@ -1664,7 +1664,256 @@ void JE_inGameHelp( void )
 
 void JE_highScoreCheck( void )
 {
-	STUB();
+	JE_longint tempscore;
+	JE_byte num, flash;
+	JE_boolean quit, cancel;
+	char stemp[41], tempstr[41];
+	JE_boolean fadein;
+	JE_byte a, b, c, q, z;
+	JE_byte episodenum = pItems[9-1];
+	char buffer[256];
+	
+	for (q = 1; q <= 2; q++)
+	{
+		if (q == 1 || twoPlayerMode)
+		{
+			JE_sortHighScores();
+			
+			if (twoPlayerMode)
+			{
+				z = q;
+				if (score < score2)
+				{
+					z = (q == 1) ? 2 : 1;
+				}
+				switch (z)
+				{
+					case 1:
+						tempscore = score;
+						break;
+					case 2:
+						tempscore = score2;
+						break;
+				}
+			} else {
+				tempscore = JE_totalScore(score, pItems);
+			}
+			
+			num = episodenum * 6 - 6 + twoPlayerMode * 3;
+			
+			b = 0;
+			for (a = 3; a >= 1; a--)
+			{
+				if (tempscore > saveFiles[num + a-1].highScore1)
+				{
+					b = a;
+				}
+			}
+			
+			/* Did you get a high score? */
+			if (b > 0)
+			{
+				a = num;     /*store old num*/
+				num += b;
+				
+				if (b != 3)
+				{
+					for (c = a + 3; c >= (a + 3) - (b - 1); c--)
+					{
+						saveFiles[c-1].highScore1 = saveFiles[c - 1-1].highScore1;
+						strcpy(saveFiles[c-1].highScoreName, saveFiles[c - 1-1].highScoreName);
+					}
+				}
+				
+				JE_clr256();
+				JE_showVGA();
+				memcpy(colors, palettes[1-1], sizeof(colors));
+				
+				JE_playSong(34);
+				
+				/* Enter Thy name */
+				quit = false;
+				cancel = false;
+				strcpy(stemp, "                              ");
+				temp = 0;
+				fadein = true;
+				
+				flash = 8 * 16 + 10;
+				
+				while (JE_mousePosition(&tempX, &tempY) != 0); /* TODO non-busy wait */
+				
+				JE_barShade(65, 55, 255, 155);
+				
+				do {
+					JE_dString(JE_fontCenter(miscText[52-1], FONT_SHAPES), 3, miscText[52-1], FONT_SHAPES);
+					
+					temp3 = twoPlayerMode ? 57 + z : 53;
+					
+					JE_dString(JE_fontCenter(miscText[temp3-1], SMALL_FONT_SHAPES), 30, miscText[temp3-1], SMALL_FONT_SHAPES);
+					
+					JE_newDrawCShapeNum(OPTION_SHAPES, 36, 50, 50);
+					
+					if (twoPlayerMode)
+					{
+						sprintf(buffer, "%s %s", miscText[48 + z-1], miscText[54-1]);
+						JE_textShade(60, 55, buffer, 11, 4, FULL_SHADE);
+					} else {
+						JE_textShade(60, 55, miscText[54-1], 11, 4, FULL_SHADE);
+					}
+					
+					sprintf(buffer, "%s %d", miscText[38-1], tempscore);
+					JE_textShade(70, 70, buffer, 11, 4, FULL_SHADE);
+					
+					do {
+						
+						if (flash == 8 * 16 + 10)
+						{
+							flash = 8 * 16 + 2;
+						} else {
+							flash = 8 * 16 + 10;
+						}
+						temp3 = (temp3 == 6) ? 2 : 6;
+						
+						strncpy(tempstr, stemp, temp);
+						tempstr[temp] = '\0';
+						JE_outText(65, 89, tempstr, 8, 3);
+						tempW = 65 + JE_textWidth(tempstr, TINY_FONT);
+						JE_barShade(tempW + 2, 90, tempW + 6, 95);
+						JE_bar(tempW + 1, 89, tempW + 5, 94, flash);
+						
+						JE_showVGA();
+						
+						if (fadein)
+						{
+							JE_fadeColor (15);
+							fadein = false;
+						}
+						
+					} while (!JE_waitAction(14, false));
+					
+					if (!playing)
+					{
+						JE_playSong(32);
+					}
+					
+					if (mouseButton > 0)
+					{
+						if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
+						{
+							quit = true;
+						} else if (mouseX > 151 && mouseX < 237 && mouseY > 123 && mouseY < 149) {
+							quit = true;
+							cancel = true;
+						}
+					} else {
+						
+						if (newkey)
+						{
+							bool validkey = false;
+							lastkey_char = toupper(lastkey_char);
+							switch(lastkey_char)
+							{
+								case ' ':
+								case '-':
+								case '.':
+								case ',':
+								case ':':
+								case '!':
+								case '?':
+								case '#':
+								case '@':
+								case '$':
+								case '%':
+								case '*':
+								case '(':
+								case ')':
+								case '/':
+								case '=':
+								case '+':
+								case '<':
+								case '>':
+								case ';':
+								case '"':
+								case '\'':
+									validkey = true;
+								default:
+									if (temp < 28 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
+									{
+										stemp[temp] = lastkey_char;
+										temp++;
+									}
+									break;
+								case 8:
+									if (temp)
+									{
+										temp--;
+										stemp[temp] = ' ';
+									}
+									break;
+								case 27:
+									quit = true;
+									cancel = true;
+									break;
+								case 13:
+									quit = true;
+									break;
+							}
+						}
+					}
+					
+				} while (!quit);
+				
+				if (!cancel)
+				{
+					saveFiles[num-1].highScore1 = tempscore;
+					strcpy(saveFiles[num-1].highScoreName, stemp);
+					saveFiles[num-1].highScoreDiff = difficultyLevel;
+				}
+				
+				JE_fadeBlack(15);
+				JE_loadPic(2, false);
+				
+				JE_dString(JE_fontCenter(miscText[51-1], FONT_SHAPES), 10, miscText[51-1], FONT_SHAPES);
+				JE_dString(JE_fontCenter(episodeName[episodeNum], SMALL_FONT_SHAPES), 35, episodeName[episodeNum], SMALL_FONT_SHAPES);
+				
+				for (b = 1; b <= 3; b++)
+				{
+					if (a + b != num)
+					{
+						sprintf(buffer, "~#%d:~  %d", b, saveFiles[a + b-1].highScore1);
+						JE_textShade( 20, (b * 12) + 65, buffer, 15, 0, FULL_SHADE);
+						JE_textShade(150, (b * 12) + 65, saveFiles[a + b-1].highScoreName, 15, 2, FULL_SHADE);
+					}
+				}
+				
+				JE_showVGA();
+				
+				JE_fadeColor(15);
+				
+				textGlowFont = TINY_FONT;
+				frameCountMax = 6;
+				textGlowBrightness = 10;
+				sprintf(buffer, "~#%d:~  %d", num - a, saveFiles[num-1].highScore1);
+				JE_outTextGlow( 20, (num - a) * 12 + 65, buffer);
+				textGlowBrightness = 10;
+				JE_outTextGlow(150, (num - a) * 12 + 65, saveFiles[num-1].highScoreName);
+				
+				if (frameCountMax != 0)
+				{
+					frameCountMax = 6;
+					temp = 1;
+				} else {
+					temp = 0;
+				}
+				textGlowBrightness = 10;
+				JE_outTextGlow(JE_fontCenter(miscText[5-1], TINY_FONT), 180, miscText[5-1]);
+				JE_showVGA();
+				while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
+				
+				JE_fadeBlack(15);
+			}
+		}
+	}
 }
 
 void JE_setNewGameVol( void )
@@ -2510,6 +2759,7 @@ void JE_operation( JE_byte slot )
 						case '>':
 						case ';':
 						case '"':
+						case '\'':
 							validkey = true;
 						default:
 							if (temp < 14 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
