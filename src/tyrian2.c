@@ -3560,7 +3560,7 @@ new_game:
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
 									if (tempX > 900)
 									{
-										memcpy(colors, palettes[pcxpal[tempX-1 - 900]-1], sizeof(colors));
+										memcpy(colors, palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
 										JE_clr256();
 										JE_showVGA();
 										JE_fadeColor(1);
@@ -4495,7 +4495,7 @@ void JE_openingAnim( void )
 		JE_loadPic(12, false);
 		JE_showVGA();
 
-		memcpy(colors, palettes[pcxpal[11]], sizeof(colors));
+		memcpy(colors, palettes[pcxpal[12-1]], sizeof(colors));
 		JE_fadeColor(10);
 
 		setjasondelay(200);
