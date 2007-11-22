@@ -714,7 +714,7 @@ void JE_loadConfiguration( void )
 		efread(&soundEffects, 1, 1, fi);
 		efread(&gammaCorrection, 1, 1, fi);
 		efread(&difficultyLevel, 1, 1, fi);
-		efread(joyButtonAssign, 4, 1, fi); /* 4 bytes */
+		efread(joyButtonAssign, sizeof(*joyButtonAssign), COUNTOF(joyButtonAssign), fi); /* typically 4 bytes */
 
 		efread(&tyrMusicVolume, 2, 1, fi);
 		efread(&fxVolume, 2, 1, fi);
@@ -722,18 +722,13 @@ void JE_loadConfiguration( void )
 		efread(&inputDevice1, 1, 1, fi);
 		efread(&inputDevice2, 1, 1, fi);
 
-		/* efread(keySettings, 8, 1, fi); Fixed because we're using SDLKey now */
-		efread(keySettings, sizeof(keySettings), 1, fi);
+		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 
-		if (!feof(fi))
-		{
-			/* Fullscreen settings */
+		/* Fullscreen settings */
+		Uint8 tmp;
+		efread(&tmp, 1, 1, fi);
 
-			Uint8 tmp;
-			efread(&tmp, sizeof(tmp), 1, fi);
-
-			fullscreen_set = (tmp == 1);
-		}
+		fullscreen_set = (tmp == 1);
 
 		fclose(fi);
 	} else {
@@ -999,7 +994,7 @@ void JE_saveConfiguration( void )
 		efwrite(&soundEffects, 1, 1, f);
 		efwrite(&gammaCorrection, 1, 1, f);
 		efwrite(&difficultyLevel, 1, 1, f);
-		efwrite(joyButtonAssign, 1, 4, f);
+		efwrite(joyButtonAssign, sizeof(*joyButtonAssign), COUNTOF(joyButtonAssign), f);
 
 		efwrite(&tyrMusicVolume, 1, 2, f);
 		efwrite(&fxVolume, 1, 2, f);
@@ -1007,12 +1002,11 @@ void JE_saveConfiguration( void )
 		efwrite(&inputDevice1, 1, 1, f);
 		efwrite(&inputDevice2, 1, 1, f);
 
-		/* efwrite(keySettings, 1, 8, f); */
-		efwrite(keySettings, sizeof(keySettings), 1, f);
+		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 
 		/* New fullscreen stuff */
 		Uint8 tmp = (fullscreen_set ? 1 : 0);
-		efwrite(&tmp, sizeof(tmp), 1, f);
+		efwrite(&tmp, 1, 1, f);
 	
 		fclose(f);
 	}
