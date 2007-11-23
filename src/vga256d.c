@@ -29,6 +29,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#define surface_width 320
+#ifdef TARGET_GP2X
+#define surface_height 240
+#else
+#define surface_height 200
+#endif /* TARGET_GP2X */
 
 JE_boolean mouseInstalled = true;
 JE_char k;
@@ -65,15 +71,15 @@ void JE_initVGA256( void )
 		fullscreen_enabled = fullscreen_set;
 
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1
-		    || (VGAScreen = VGAScreenSeg = SDL_SetVideoMode(320, 200, 8,
+		    || (VGAScreen = VGAScreenSeg = SDL_SetVideoMode(surface_width, surface_height, 8,
 			    SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0))) == 0)
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
 		}
 
-		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
+		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
 	}
 
 #if defined(TARGET_GP2X) || defined(NDEBUG)
