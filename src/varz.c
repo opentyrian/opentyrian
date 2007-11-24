@@ -1621,8 +1621,8 @@ void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(270, 60, round(shield * 0.8), 144);
-		JE_dBar3(270, 194, round(shield2 * 0.8), 144);
+		JE_dBar3(270, 60, round(shield * 0.8f), 144);
+		JE_dBar3(270, 194, round(shield2 * 0.8f), 144);
 	} else {
 		JE_dBar3(270, 194, shield, 144);
 		if (shield != shieldMax)

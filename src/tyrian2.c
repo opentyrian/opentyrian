@@ -22,6 +22,7 @@
 
 #include "animlib.h"
 #include "backgrnd.h"
+#include "destruct.h"
 #include "episodes.h"
 #include "error.h"
 #include "fonthand.h"
@@ -1086,7 +1087,7 @@ start_level_first:
 		{
 			free(eShapes1);
 		}
-		/* TODO JE_destructGame();*/
+		JE_destructGame();
 		loadDestruct = false;
 		loadTitleScreen = true;
 		goto start_level_first;
@@ -1252,10 +1253,10 @@ start_level_first:
 
 	/* Setup Armor/Shield Data */
 	shieldWait = 1;
-	shield     = shields[pItems[9]-1].mpwr;
-	shieldT    = shields[pItems[9]-1].tpwr * 20;
+	shield     = shields[pItems[10-1]].mpwr;
+	shieldT    = shields[pItems[10-1]].tpwr * 20;
 	shieldMax  = shield * 2;
-	shield2    = shields[pItemsPlayer2[9]-1].mpwr;
+	shield2    = shields[pItemsPlayer2[10-1]].mpwr;
 	shieldMax2 = shield * 2;
 	JE_drawShield();
 	JE_drawArmor();
@@ -6461,7 +6462,7 @@ item_screen_start:
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
-			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[9]].mpwr * 2, 2, 13);
+			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[10-1]].mpwr * 2, 2, 13);
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
@@ -6543,7 +6544,7 @@ item_screen_start:
 
 				JE_drawItem(6, pItems[3], 3, 84);
 				JE_drawItem(7, pItems[4], 129, 84);
-				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[9]].mpwr - 10);
+				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[10-1]].mpwr - 10);
 			}
 		}
 
