@@ -1664,12 +1664,12 @@ void JE_inGameHelp( void )
 
 void JE_highScoreCheck( void )
 {
-	JE_longint tempscore;
+	JE_longint tempscore = 0;
 	JE_byte num, flash;
 	JE_boolean quit, cancel;
 	char stemp[41], tempstr[41];
 	JE_boolean fadein;
-	JE_byte a, b, c, q, z;
+	JE_byte a, b, c, q, z = 0;
 	JE_byte episodenum = pItems[9-1];
 	char buffer[256];
 	
