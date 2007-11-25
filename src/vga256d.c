@@ -39,6 +39,7 @@
 JE_boolean mouseInstalled = true;
 JE_char k;
 
+SDL_Surface *display_surface;
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *game_screen;
 SDL_Surface *VGAScreen2;
@@ -69,15 +70,22 @@ void JE_initVGA256( void )
 	{
 		initd = true;
 		fullscreen_enabled = fullscreen_set;
-
+		
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1
-		    || (VGAScreen = VGAScreenSeg = SDL_SetVideoMode(surface_width, surface_height, 8,
-			    SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0))) == 0)
+#ifdef SCALE2X
+		    || (display_surface = SDL_SetVideoMode(surface_width * 2, surface_height * 2, 8,
+#else
+		    || (display_surface = VGAScreen = VGAScreenSeg = SDL_SetVideoMode(surface_width, surface_height, 8,
+#endif /* SCALE2X */
+		        SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0))) == 0)
 		{
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
 		}
-
+		
+#ifdef SCALE2X
+		VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
+#endif /* SCALE2X */
 		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
 		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
 	}
@@ -96,11 +104,11 @@ void JE_initVGA256( void )
 		col_buf[j].b = VGA_pal[i+2];
 	}
 
-	SDL_SetColors(VGAScreenSeg, col_buf, 0, 256);
+	SDL_SetColors(display_surface, col_buf, 0, 256);
 
 	free(col_buf);
 
-	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
+	SDL_FillRect(display_surface, NULL, 0x0);
 }
 
 void JE_initVGA256X( void )
@@ -120,7 +128,22 @@ void JE_clr256( void )
 
 void JE_showVGA( void )
 {
+#ifdef SCALE2X
+	/* 8-bit specific */
+	for (int y = 0; y < surface_height; y++)
+	{
+		for (int x = 0; x < surface_width; x++)
+		{
+			((Uint8 *)display_surface->pixels)[(y * 2 * surface_width + x) * 2] = 
+			((Uint8 *)display_surface->pixels)[(y * 2 * surface_width + x) * 2 + 1] = ((Uint8 *)VGAScreen->pixels)[y * surface_width + x];
+		}
+		memcpy(&((Uint8 *)display_surface->pixels)[((y * 2 + 1) * surface_width) * 2],
+		       &((Uint8 *)display_surface->pixels)[(y * 2 * surface_width) * 2], surface_width * 2);
+	}
+	SDL_Flip(display_surface);
+#else
 	SDL_Flip(VGAScreen);
+#endif /* SCALE2X */
 }
 
 void JE_showVGARetrace( void )
@@ -413,7 +436,7 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
 	color.g = green << 2;
 	color.b = blue << 2;
 
-	SDL_SetColors(VGAScreenSeg, &color, col, 1);
+	SDL_SetColors(display_surface, &color, col, 1);
 }
 
 void JE_drawGraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )

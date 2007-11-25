@@ -38,6 +38,7 @@ typedef JE_screentype *JE_screenptr;
 
 extern JE_boolean mouseInstalled;
 extern JE_char k;
+extern SDL_Surface *display_surface;
 extern SDL_Surface *VGAScreen, *VGAScreenSeg;
 extern SDL_Surface *game_screen;
 extern SDL_Surface *VGAScreen2;

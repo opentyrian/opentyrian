@@ -44,7 +44,7 @@ void JE_updateColorsFast( JE_ColorType *colorBuffer )
 		p[i].b = (*colorBuffer)[i].b << 2;
 	}
 
-	SDL_SetColors(VGAScreenSeg, p, 0, 256);
+	SDL_SetColors(display_surface, p, 0, 256);
 }
 
 void JE_fadeColors( JE_ColorType *fromColors, JE_ColorType *toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps )
@@ -61,7 +61,7 @@ void JE_fadeColors( JE_ColorType *fromColors, JE_ColorType *toColors, JE_byte st
 			p[i].g = ((*fromColors)[i].g + ((((*toColors)[i].g - (*fromColors)[i].g) * s) / noSteps)) << 2;
 			p[i].b = ((*fromColors)[i].b + ((((*toColors)[i].b - (*fromColors)[i].b) * s) / noSteps)) << 2;
 		}
-		SDL_SetColors(VGAScreenSeg, p, startCol, noColors + 1);
+		SDL_SetColors(display_surface, p, startCol, noColors + 1);
 		wait_delay();
 	}
 }
