@@ -123,12 +123,11 @@ void JE_jukeboxGo( void )
 
 	lastSong = currentJukeboxSong;
 
-	JE_fadeBlack(10);
-	memcpy(colors, vga_palette, sizeof(colors));
-	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
-	JE_showVGA();
-	JE_updateColorsFast(&colors); //JE_fadeColor(10);
+	/*JE_fadeBlack(10);
+	JE_initVGA256();
+	JE_fadeColor(10);*/
 
+	JE_initVGA256();
 	JE_starlib_init();
 
 	quit = false;
@@ -142,7 +141,7 @@ void JE_jukeboxGo( void )
 
 	do
 	{
-		tempScreenSeg = VGAScreenSeg;
+		tempScreenSeg = VGAScreen; /*sega000*/
 
 		if (weirdMusic) /* TODO: Not sure what this is about, figure it out */
 		{
@@ -169,7 +168,7 @@ void JE_jukeboxGo( void )
 
 		if ( ( (repeated && !fade) || !playing) && !youStopped)
 		{
-			currentJukeboxSong = ( rand() % MUSIC_NUM );
+			currentSong = ( rand() % MUSIC_NUM );
 			JE_playNewSong();
 		}
 
@@ -181,25 +180,24 @@ void JE_jukeboxGo( void )
 		if (lastSong != currentJukeboxSong)
 		{
 			lastSong = currentJukeboxSong;
-			JE_c_bar(50, 190, 250, 198, 0);
+			JE_bar(50, 190, 250, 198, 0);
 		}
 
 		if (drawText)
 		{
-			tempScreenSeg = VGAScreenSeg;
 			if (fx)
 			{
 				sprintf(tempStr, "%d %s", fxNum, soundTitle[fxNum - 1]);
-				JE_c_bar(50, 190, 250, 198, 0);
+				JE_bar(50, 190, 250, 198, 0);
 				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
 			} else {
 				sprintf(tempStr, "%d %s", currentJukeboxSong, musicTitle[currentJukeboxSong - 1]);
 				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
 			}
 
-			tempScreenSeg = VGAScreenSeg;
+			tempScreenSeg = VGAScreen; /*sega000*/
 			JE_outText(JE_fontCenter("Press ESC to quit the jukebox.", TINY_FONT), 170, "Press ESC to quit the jukebox.", 1, 0);
-			tempScreenSeg = VGAScreenSeg;
+			tempScreenSeg = VGAScreen; /*sega000*/
 			JE_outText(JE_fontCenter("Arrow keys change the song being played.", TINY_FONT), 180, "Arrow keys change the song being played.", 1, 0);
 		}
 
@@ -231,12 +229,12 @@ void JE_jukeboxGo( void )
 			JE_resetTimerInt();
 			JE_setTimerInt();
 		}
-		
+
 		JE_joystick2();
-		if (JE_mousePosition(&x, &y) > 0 || button[1-1])
+		if (JE_mousePosition(&x, &y) > 0 || button[0])
 		{
 			quit = true;
-			JE_wipeKey;
+			JE_wipeKey();
 		}
 
 		JE_showVGA();
@@ -330,9 +328,6 @@ void JE_jukeboxGo( void )
 			}
 		}
 	} while (!quit);
-
-	JE_fadeBlack(10);
-	JE_setVol(255, fxVolume);
 }
 
 void JE_newSpeed( void )

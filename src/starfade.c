@@ -39,9 +39,9 @@ void JE_updateColorsFast( JE_ColorType *colorBuffer )
 
 	for (i = 0; i < 256; i++)
 	{
-		p[i].r = (*colorBuffer)[i].r;
-		p[i].g = (*colorBuffer)[i].g;
-		p[i].b = (*colorBuffer)[i].b;
+		p[i].r = (*colorBuffer)[i].r << 2;
+		p[i].g = (*colorBuffer)[i].g << 2;
+		p[i].b = (*colorBuffer)[i].b << 2;
 	}
 
 	SDL_SetColors(display_surface, p, 0, 256);
@@ -57,9 +57,9 @@ void JE_fadeColors( JE_ColorType *fromColors, JE_ColorType *toColors, JE_byte st
 		setdelay(1);
 		for (i = 0; i <= noColors; i++)
 		{
-			p[i].r = ((*fromColors)[i].r + ((((*toColors)[i].r - (*fromColors)[i].r) * s) / noSteps));
-			p[i].g = ((*fromColors)[i].g + ((((*toColors)[i].g - (*fromColors)[i].g) * s) / noSteps));
-			p[i].b = ((*fromColors)[i].b + ((((*toColors)[i].b - (*fromColors)[i].b) * s) / noSteps));
+			p[i].r = ((*fromColors)[i].r + ((((*toColors)[i].r - (*fromColors)[i].r) * s) / noSteps)) << 2;
+			p[i].g = ((*fromColors)[i].g + ((((*toColors)[i].g - (*fromColors)[i].g) * s) / noSteps)) << 2;
+			p[i].b = ((*fromColors)[i].b + ((((*toColors)[i].b - (*fromColors)[i].b) * s) / noSteps)) << 2;
 		}
 		SDL_SetColors(display_surface, p, startCol, noColors + 1);
 		wait_delay();

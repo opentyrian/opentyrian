@@ -40,9 +40,9 @@ void JE_loadPals( void )
 	{
 		for (i = 0; i < 256; i++)
 		{
-			palettes[palNum][i].r = getc(f) << 2;
-			palettes[palNum][i].g = getc(f) << 2;
-			palettes[palNum][i].b = getc(f) << 2;
+			palettes[palNum][i].r = getc(f);
+			palettes[palNum][i].g = getc(f);
+			palettes[palNum][i].b = getc(f);
 		}
 		palNum++;
 	}
