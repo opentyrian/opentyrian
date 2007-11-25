@@ -1,7 +1,9 @@
 # BUILD SETTINGS ###################################
 DEBUG := 1
+SCALE_2X := 0
 # Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
+
 # If building for the GP2X
 GP2X_CHAINPREFIX := /opt/open2x/gcc-4.1.1-glibc-2.3.6
 GP2X_CHAIN := $(GP2X_CHAINPREFIX)/bin/arm-open2x-linux-
@@ -35,6 +37,10 @@ endif
 
 CFLAGS := --std=c99 -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wno-unused -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
 LDFLAGS := $(SDL_LDFLAGS) -lm
+
+ifeq ($(SCALE_2X), 1)
+	CFLAGS += -DSCALE2X
+endif
 
 ####################################################
 

@@ -31,10 +31,10 @@
 
 #define surface_width 320
 #ifdef TARGET_GP2X
-#define surface_height 240
+#	define surface_height 240
 #else
-#define surface_height 200
-#endif /* TARGET_GP2X */
+#	define surface_height 200
+#endif // TARGET_GP2X
 
 JE_boolean mouseInstalled = true;
 JE_char k;
@@ -71,19 +71,30 @@ void JE_initVGA256( void )
 		initd = true;
 		fullscreen_enabled = fullscreen_set;
 		
-		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1
-#ifdef SCALE2X
-		    || (display_surface = SDL_SetVideoMode(surface_width * 2, surface_height * 2, 8,
-#else
-		    || (display_surface = VGAScreen = VGAScreenSeg = SDL_SetVideoMode(surface_width, surface_height, 8,
-#endif /* SCALE2X */
-		        SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0))) == 0)
+		if (SDL_InitSubSystem(SDL_INIT_VIDEO) != -1)
 		{
+			#ifdef SCALE2X
+			int w = surface_width*2, h = surface_height*2;
+			#else
+			int w = surface_width, h = surface_height;
+			#endif
+
+			Uint32 flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0);
+			display_surface = SDL_SetVideoMode(w, h, 8, flags);
+
+			if (display_surface == NULL)
+			{
+				goto video_error;
+			}
+		} else {
+		video_error:
 			printf("Display initialization failed: %s\n", SDL_GetError());
 			exit(1);
 		}
 		
-#ifdef SCALE2X
+#ifndef SCALE2X
+		VGAScreen = VGAScreenSeg = display_surface;
+#else
 		VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
 #endif /* SCALE2X */
 		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);

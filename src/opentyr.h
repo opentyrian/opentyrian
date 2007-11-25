@@ -20,6 +20,11 @@
 #ifndef OPENTYR_H
 #define OPENTYR_H
 
+// Some compile time checks
+#if defined(TARGET_GP2X) && defined(SCALE_2X)
+#	error SCALE_2X option can't be used on a GP2X
+#endif
+
 #include "SDL.h"
 #include "SDL_endian.h"
 
