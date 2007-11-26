@@ -36,6 +36,7 @@ typedef JE_shape16B *JE_shape16;
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
+extern SDL_Color vga_palette[];
 extern JE_boolean mouseInstalled;
 extern JE_char k;
 extern SDL_Surface *display_surface;

@@ -234,11 +234,10 @@ void opentyrian_menu( void )
 							break;
 						case 2: /* Jukebox */
 							JE_playSampleNum(SELECT);
-							JE_fadeBlack(20);
 							JE_jukeboxGo();
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 							JE_showVGA();
-							JE_updateColorsFast(&colors);
+							fade_in = true;
 							break;
 						default: /* Return to main menu */
 							quit = true;
