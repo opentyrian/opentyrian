@@ -1,0 +1,145 @@
+tyrian.hdt:
+
+// episode 1 data offset:
+episode1DataLoc:32
+
+[at episode1DataLoc]
+// Note: Tyrian doesn't actually use these, they are hardcoded in the source for some reason.
+WEAP_NUM:16 = 780
+PORT_NUM:16 = 42
+POWER_NUM:16 = 6 (Note: SPECIAL_NUM isn't on the file)
+SHIP_NUM:16 = 13
+OPTION_NUM:16 = 30
+SHILED_NUM:16 = 10
+ENEMY_NUM:16 = 850
+
+struct {
+	drain:16 // Filler, not used
+	shotRepeat:8 // Rate of fire (lower == faster)
+	multi:8 // How many to shoot at once (use to shoot multiple pattern frames at once)
+	weapAni:16 // Number of frames in the animation (0 == 1 frame, 1 == 2 frames, ...)
+	max:8 // Number of pattern frames (better explanation needed =P it cycles thru the 8x arrays)
+	tx:8 // TODO: Not used in player
+	ty:8 // TODO: Not used in player
+	aim:8 // Homing ability, the bigger the number, the more the shot can turn
+
+	// There's one of these for each frame
+	8x attack:8 // Attacking power and effect (99 == Ice, >=250: Attacking power is attack-250 and goes thru enemies)
+	8x del:8 // Shot life (how long before it disappears)
+	8x sx:s8 // Horizontal speed
+	8x sy:s8 // Vertical speed
+	8x bx:s8 // Horizontal offset
+	8x by:s8 // Vertical offset
+	8x sg:16 // Shape number (graphics)
+
+	acceleration:s8 // Vertical acceleration
+	accelerationx:s8 // Horizontal acceleration
+	circleSize:8 // Perturbs the weapons travel:
+		// 0-19: Circle (radius)
+		// Other produce varying results, experiment (pattern changes roughly ever 20 steps)
+
+	sound:8 // Sound the effect makes (0 == no sound)
+	trail:8 // Shot trail effect (0xFF == none, 0x62 == smoke, others == various or garbage, experiment)
+	shipBlastFilter:8 // TODO: Not sure, but probably has something to do with the color enemies get after being hit
+} WEAP_NUM+1 (780+1)
+
+// Buyable weapons:
+struct {
+	str_len:8 = 0x1E // Pascal string lenght, leave alone
+	name:str30 // Weapon name
+	opnum:8 // How many firing modes weapon has. (1 or 2, only really works for rear guns)
+	2x { // Effect of the weapon (What it does, it's an index into the weapons structure). One for each firing mode.
+		11x op:16 // Each entry corresponds to a power level
+	}
+	cost:16 // How much does the weapon cost. Upgrades are calculated off this.
+	itemGraphic:16 // Weapon graphic in the shop.
+	powerUse:16 // Power drain when firing
+} PORT_NUM+1 (42+1)
+
+struct {
+	str_len:8 = 0x1E
+	name:str30
+	itemGraphic:16
+	pwr:8
+	sType:8
+	wpn:16
+} SPECIAL_NUM+1 (46+1)
+
+struct {
+	str_len:8 = 0x1E
+	name:str30
+	itemGraphic:16
+	power:s8
+	speed:8
+	cost:16
+} POWER_NUM+1 (6+1)
+
+struct {
+	str_len:8 = 0x1E
+	name:str30
+	shipGraphic:16
+	itemGraphic:16
+	ani:8
+	spd:s8
+	dmg:8
+	cost:16
+	bigShipGraphic:8
+} SHIP_NUM+1 (13+1)
+
+struct {
+	str_len:8 = 0x1E
+	name:str30
+	pwr:8
+	itemGraphic:16
+	cost:16
+	tr:8
+	option:8
+	opspd:s8
+	ani:8
+	gr:16
+	wport:8
+	wpnum:16
+	ammo:8
+	stop:8
+	iconGr:8
+} OPTION_NUM+1 (30+1)
+
+struct {
+	str_len:8 = 0x1E
+	name:str30
+	tpwr:8
+	mpwr:8
+	itemGraphic:16
+	cost:16
+} SHIELD_NUM+1 (10+1)
+
+struct {
+	ani:8
+	tur:8
+	freq:8
+	xmove:s8
+	ymove:s8
+	xaccel:s8
+	yaccel:s8
+	xcaccel:s8
+	ycaccel:s8
+	startx:s16
+	starty:s16
+	startxc:s8
+	startyc:s8
+	armor:8
+	esize:8
+	eGraphic:16
+	explosionType:8
+	animate:8
+	shapeBank:8
+	xRev:s8
+	yRev:s8
+	dgr:16
+	dLevel:s8
+	dAni:s8
+	eLaunchFreq:8
+	eLaunchType:16
+	value:s16
+	eEnemyDie:16
+} ENEMY_NUM+1 (850+1)
