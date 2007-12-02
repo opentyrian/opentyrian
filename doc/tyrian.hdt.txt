@@ -13,6 +13,7 @@ OPTION_NUM:16 = 30
 SHILED_NUM:16 = 10
 ENEMY_NUM:16 = 850
 
+// Size in bytes: 0x50
 struct {
 	drain:16 // Filler, not used
 	shotRepeat:8 // Rate of fire (lower == faster)
