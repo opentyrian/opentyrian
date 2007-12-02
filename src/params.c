@@ -63,7 +63,7 @@ void JE_paramCheck( int argc, char *argv[] )
 	forceAveraging  = false;
 
 	now = time(NULL);
-	tyrianXmas = localtime(&now)->tm_mon == 12;
+	tyrianXmas = localtime(&now)->tm_mon == 11;
 
 /* JE: Note:
 Parameters are no longer case-sensitive.

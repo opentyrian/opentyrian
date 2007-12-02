@@ -7599,7 +7599,7 @@ void JE_loadCubes( void )
 		curWidth = 0;
 		x = 5;
 		y = 0;
-		strcpy(s3, "");
+		s3[0] = '\0';
 
 		s2[0] = ' ';
 
@@ -7628,7 +7628,7 @@ void JE_loadCubes( void )
 						{
 							temp = s[pos - 1];
 
-							if (temp > 32 && temp < 169 && fontMap[temp] != 255 && (*shapeArray)[5][fontMap[temp]] != NULL)
+							if (temp > 32 && temp < 169 && fontMap[temp] > 0 && (*shapeArray)[5][fontMap[temp]] != NULL)
 							{
 								curWidth += shapeX[5][fontMap[temp]] + 1;
 							} else {
