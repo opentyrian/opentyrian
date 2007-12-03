@@ -625,7 +625,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 void JE_checkSmoothies( void )
 {
 	anySmoothies = false;
-	if (smoothies[1-1] || smoothies[2-1] || smoothies[3-1] || smoothies[4-1] || smoothies[5-1])
+	if ((processorType > 2 && (smoothies[1-1] || smoothies[2-1])) || (processorType > 1 && (smoothies[3-1] || smoothies[4-1] || smoothies[5-1])))
 	{
 		anySmoothies = true;
 		JE_initSmoothies();
