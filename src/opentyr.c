@@ -324,6 +324,7 @@ int main( int argc, char *argv[] )
 			tyrianXmas = false;
 		}
 		/*if (JE_getFileSize("voicesc.shp") == 0) tyrianXmas = false;*/
+#ifndef TARGET_GP2X
 		if (tyrianXmas)
 		{
 			printf("*****************************\n"
@@ -335,6 +336,7 @@ int main( int argc, char *argv[] )
 			{
 				tyrianXmas = false;
 			}
+#endif /*TARGET_GP2X*/
 		} else {
 			printf("Christmas is missing.\n");
 		}
