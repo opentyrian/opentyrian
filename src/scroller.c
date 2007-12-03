@@ -85,7 +85,6 @@ const struct about_text_type about_text[] =
 
 #define LINE_HEIGHT 15
 
-//#define ALE /* Zinglon commands that you define ALE! */
 #define MAX_BEER 5
 #define BEER_SHAPE 241
 
@@ -105,30 +104,31 @@ struct coin_def_type coin_defs[] =
 /* Text is an array of strings terminated by a NULL */
 void scroller_sine( const struct about_text_type text[] )
 {
+	bool ale = rand() % 2;
+
 	int visible_lines = surface_height / LINE_HEIGHT + 1;
 	int current_line = -visible_lines;
 	int y = 0;
 	bool fade_in = true;
 	
-#ifndef ALE
 	struct coin_type { int x, y, vel, type, cur_frame; bool backwards; } coins[MAX_COINS];
-#else /*ALE*/
 	struct { int x, y, ay, vx, vy; } beer[MAX_BEER];
-	memset(beer, 0, sizeof(beer));
-#endif
-	
-#ifndef ALE
-	for (int i = 0; i < MAX_COINS; i++)
+
+	if (ale)
 	{
-		coins[i].x = rand() % (surface_width - 12);
-		coins[i].y = rand() % (surface_height - 20 - 14);
-		
-		coins[i].vel = (rand() % 4) + 1;
-		coins[i].type = rand() % COUNTOF(coin_defs);
-		coins[i].cur_frame = rand() % coin_defs[coins[i].type].frame_count;
-		coins[i].backwards = false;
+		memset(beer, 0, sizeof(beer));
+	} else {
+		for (int i = 0; i < MAX_COINS; i++)
+		{
+			coins[i].x = rand() % (surface_width - 12);
+			coins[i].y = rand() % (surface_height - 20 - 14);
+			
+			coins[i].vel = (rand() % 4) + 1;
+			coins[i].type = rand() % COUNTOF(coin_defs);
+			coins[i].cur_frame = rand() % coin_defs[coins[i].type].frame_count;
+			coins[i].backwards = false;
+		}
 	}
-#endif /*ALE*/
 	
 	JE_fadeBlack(10);
 	
@@ -136,21 +136,22 @@ void scroller_sine( const struct about_text_type text[] )
 	
 	currentJukeboxSong = 41; /* BEER! =D */
 	JE_playSong(currentJukeboxSong);
-	
+
 	while (!JE_anyButton())
 	{
 		setdelay(3);
-		
+
 		JE_clr256();
-		
-#ifndef ALE
-		for (int i = 0; i < MAX_COINS/2; i++)
+
+		if (!ale)
 		{
-			struct coin_type *coin = &coins[i];
-			JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
+			for (int i = 0; i < MAX_COINS/2; i++)
+			{
+				struct coin_type *coin = &coins[i];
+				JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
+			}
 		}
-#endif /*ALE*/
-		
+
 		for (int i = 0; i < visible_lines; i++)
 		{
 			if (current_line + i >= 0)
@@ -186,7 +187,7 @@ void scroller_sine( const struct about_text_type text[] )
 				}
 			}
 		}
-		
+
 		y++;
 		y %= LINE_HEIGHT;
 		if (y == 0)
@@ -198,88 +199,89 @@ void scroller_sine( const struct about_text_type text[] )
 				current_line = -visible_lines;
 			}
 		}
-		
-#ifndef ALE
-		for (int i = MAX_COINS/2; i < MAX_COINS; i++)
+
+		if (!ale)
 		{
-			struct coin_type *coin = &coins[i];
-			JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
+			for (int i = MAX_COINS/2; i < MAX_COINS; i++)
+			{
+				struct coin_type *coin = &coins[i];
+				JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
+			}
 		}
-#endif /*ALE*/
-		
+
 		JE_bar(0, 0, surface_width - 1, 14, 0);
 		JE_bar(0, surface_height - 14, surface_width - 1, surface_height - 1, 0);
 		
-#ifndef ALE
-		for (int i = 0; i < MAX_COINS; i++)
-		{
-			struct coin_type *coin = &coins[i];
-			
-			if (coin->backwards)
+		if (!ale) {
+			for (int i = 0; i < MAX_COINS; i++)
 			{
-				coin->cur_frame--;
-			} else {
-				coin->cur_frame++;
-			}
-			if (coin->cur_frame == coin_defs[coin->type].frame_count)
-			{
-				if (coin_defs[coin->type].reverse_anim)
+				struct coin_type *coin = &coins[i];
+				
+				if (coin->backwards)
 				{
-					coin->backwards = true;
-					coin->cur_frame -= 2;
+					coin->cur_frame--;
 				} else {
-					coin->cur_frame = 0;
+					coin->cur_frame++;
 				}
-			}
-			if (coin->cur_frame == -1)
-			{
-				coin->cur_frame = 1;
-				coin->backwards = false;
-			}
-			
-			coin->y += coin->vel;
-			if (coin->y > surface_height - 14)
-			{
-				coin->x = rand() % (surface_width - 12);
-				coin->y = 0;
-				
-				coin->vel = (rand() % 4) + 1;
-				coin->type = rand() % COUNTOF(coin_defs);
-				coin->cur_frame = rand() % coin_defs[coin->type].frame_count;
-			}
-		}
-#else /*ALE*/
-		for (int i = 0; i < COUNTOF(beer); i++)
-		{
-			while (beer[i].vx == 0)
-			{
-				beer[i].x = rand() % (surface_width - 24);
-				beer[i].y = rand() % (surface_height - 28 - 50);
-				
-				beer[i].vx = (rand() % 5) - 2;
-			}
-			
-			beer[i].vy++;
-			
-			if (beer[i].x + beer[i].vx > surface_width - 24 || beer[i].x + beer[i].vx < 0) // check if the beer hit the sides
-			{
-				beer[i].vx = -beer[i].vx;
-			}
-			beer[i].x += beer[i].vx;
-			
-			if (beer[i].y + beer[i].vy > surface_height - 28) // check if the beer hit the bottom
-			{
-				beer[i].vy = -(beer[i].vy * 15 / 16) + (rand() % 3 - 1); // make sure the beer doesn't bounce too high
-				if ((beer[i].vy) > -10) // make sure the beer bounces!
+				if (coin->cur_frame == coin_defs[coin->type].frame_count)
 				{
-					beer[i].vy--;
+					if (coin_defs[coin->type].reverse_anim)
+					{
+						coin->backwards = true;
+						coin->cur_frame -= 2;
+					} else {
+						coin->cur_frame = 0;
+					}
+				}
+				if (coin->cur_frame == -1)
+				{
+					coin->cur_frame = 1;
+					coin->backwards = false;
+				}
+				
+				coin->y += coin->vel;
+				if (coin->y > surface_height - 14)
+				{
+					coin->x = rand() % (surface_width - 12);
+					coin->y = 0;
+					
+					coin->vel = (rand() % 4) + 1;
+					coin->type = rand() % COUNTOF(coin_defs);
+					coin->cur_frame = rand() % coin_defs[coin->type].frame_count;
 				}
 			}
-			beer[i].y += beer[i].vy;
-			
-			JE_drawShape2x2(beer[i].x, beer[i].y, BEER_SHAPE, eShapes5);
+		} else {
+			for (int i = 0; i < COUNTOF(beer); i++)
+			{
+				while (beer[i].vx == 0)
+				{
+					beer[i].x = rand() % (surface_width - 24);
+					beer[i].y = rand() % (surface_height - 28 - 50);
+					
+					beer[i].vx = (rand() % 5) - 2;
+				}
+				
+				beer[i].vy++;
+				
+				if (beer[i].x + beer[i].vx > surface_width - 24 || beer[i].x + beer[i].vx < 0) // check if the beer hit the sides
+				{
+					beer[i].vx = -beer[i].vx;
+				}
+				beer[i].x += beer[i].vx;
+				
+				if (beer[i].y + beer[i].vy > surface_height - 28) // check if the beer hit the bottom
+				{
+					beer[i].vy = -(beer[i].vy * 15 / 16) + (rand() % 3 - 1); // make sure the beer doesn't bounce too high
+					if ((beer[i].vy) > -10) // make sure the beer bounces!
+					{
+						beer[i].vy--;
+					}
+				}
+				beer[i].y += beer[i].vy;
+				
+				JE_drawShape2x2(beer[i].x, beer[i].y, BEER_SHAPE, eShapes5);
+			}
 		}
-#endif /*ALE*/
 		
 		JE_showVGA();
 		
