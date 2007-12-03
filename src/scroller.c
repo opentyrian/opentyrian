@@ -81,7 +81,7 @@ const struct about_text_type about_text[] =
 	{0x0f, "This is line color test ~F~."},
 	{0x00, ""},
 	{0x00, ""},
-	{0x12, "And a big thanks to ~Jason~"},
+	{0x12, "And a big thanks to ~Jason~ ~Emery~"},
 	{0x12, "for making this possible."},
 	{0x00, ""},
 	{0x00, ""},
@@ -145,8 +145,13 @@ no_more_text:
 		
 		y++;
 		y %= 15;
-		if (y == 0 && (current_line < 0 || text[current_line].text != NULL)) // stop if we've hit the end of text
-			current_line++;
+		if (y == 0)
+		{
+			if (current_line < 0 || text[current_line].text != NULL)
+				current_line++;
+			else
+				current_line = -visible_lines;
+		}
 		
 		JE_bar(0, 0, surface_width - 1, 9, 0);
 		JE_bar(0, surface_height - 10, surface_width - 1, surface_height - 1, 0);
@@ -169,7 +174,7 @@ no_more_text:
 			
 			if (beer[i].y + beer[i].vy > surface_height - 28) // check if the beer hit the bottom
 			{
-				beer[i].vy = -(beer[i].vy * 15 / 16) + (rand() % 3 - 1);
+				beer[i].vy = -(beer[i].vy * 15 / 16) + (rand() % 3 - 1); // make sure the beer doesn't bounce too high
 				if ((beer[i].vy) > -10) // make sure the beer bounces!
 					beer[i].vy--;
 			}

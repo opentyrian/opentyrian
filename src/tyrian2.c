@@ -1401,7 +1401,8 @@ start_level_first:
 
 	memset(enemyAvail,       1, sizeof(enemyAvail));
 	memset(explodeAvail,     0, sizeof(explodeAvail));
-	memset(enemyShotAvail,   1, sizeof(enemyShotAvail));
+	for (i = 0; i < COUNTOF(enemyShotAvail); i++)
+		enemyShotAvail[i] = 1;
 
 	/*Initialize Shots*/
 	memset(playerShotData,   0, sizeof(playerShotData));
