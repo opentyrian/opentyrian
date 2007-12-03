@@ -108,33 +108,25 @@ int delaycount2( void )
 
 void wait_delay( void )
 {
-	Uint32 ticks;
-
-	while ((ticks = SDL_GetTicks()) < target)
+	while (SDL_GetTicks() < target)
 	{
-		if (ticks % SDL_POLL_INTERVAL == 0)
-		{
-			service_SDL_events(false);
-		}
+		SDL_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
+		service_SDL_events(false);
 	}
 }
 
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-	Uint32 ticks;
-
 	newkey = newmouse = false;
 	service_SDL_events(false);
-	while ((ticks = SDL_GetTicks()) < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
+	while (SDL_GetTicks() < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
 	{
-		if (ticks % SDL_POLL_INTERVAL == 0)
+		SDL_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
+		if (joystick)
 		{
-			if (joystick)
-			{
-				JE_joystick2();
-			}
-			service_SDL_events(false);
+			JE_joystick2();
 		}
+		service_SDL_events(false);
 	}
 }
 
