@@ -1844,6 +1844,7 @@ void JE_highScoreCheck( void )
 									}
 									break;
 								case SDLK_BACKSPACE:
+								case SDLK_DELETE:
 									if (temp)
 									{
 										temp--;
@@ -2770,6 +2771,7 @@ void JE_operation( JE_byte slot )
 							}
 							break;
 						case SDLK_BACKSPACE:
+						case SDLK_DELETE:
 							if (temp)
 							{
 								temp--;

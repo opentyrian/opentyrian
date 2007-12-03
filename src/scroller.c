@@ -33,7 +33,7 @@
 
 const struct about_text_type about_text[] =
 {
-	{0x10, "----- ~OpenTyrian~ -----"},
+	{0x30, "----- ~OpenTyrian~ -----"},
 	{0x00, ""},
 	{0x00, ""},
 	{0x00, "This is a test of the credits"},
@@ -45,18 +45,19 @@ const struct about_text_type about_text[] =
 	{0x00, "of this message."},
 	{0x00, ""},
 	{0x00, ""},
-	{0x10, "----- ~Developers~ -----"}, /* in alphabetical order */
+	{0x30, "----- ~Developers~ -----"}, /* in alphabetical order */
 	{0x00, ""},
 	{0x03, "MindlessXD"},
 	{0x04, "syntaxglitch"},
 	{0x07, "yuriks"},
 	{0x00, ""},
+	{0x00, ""},
 	{0x05, "Thanks to the ~AdPlug~ team for donating"},
 	{0x05, "the FM synthesis and LDS loading code."},
 	{0x00, ""},
 	{0x00, ""},
-	{0x12, "And a big thanks to ~Jason Emery~"},
-	{0x12, "for making all this possible."},
+	{0x32, "And a big thanks to ~Jason Emery~"},
+	{0x32, "for making all this possible."},
 	{0x00, ""},
 	{0x00, ""},
 	{0x00, "This is line color test ~0~."},
@@ -82,6 +83,10 @@ const struct about_text_type about_text[] =
 	{0x00, NULL}
 };
 
+#define LINE_HEIGHT 15
+
+//#define ALE /* Zinglon commands that you define ALE! */
+#define MAX_BEER 5
 #define BEER_SHAPE 241
 
 struct coin_def_type {
@@ -100,27 +105,30 @@ struct coin_def_type coin_defs[] =
 /* Text is an array of strings terminated by a NULL */
 void scroller_sine( const struct about_text_type text[] )
 {
-	int visible_lines = surface_height / 15 + 1;
+	int visible_lines = surface_height / LINE_HEIGHT + 1;
 	int current_line = -visible_lines;
 	int y = 0;
 	bool fade_in = true;
 	
+#ifndef ALE
 	struct coin_type { int x, y, vel, type, cur_frame; bool backwards; } coins[MAX_COINS];
+#else /*ALE*/
+	struct { int x, y, ay, vx, vy; } beer[MAX_BEER];
+	memset(beer, 0, sizeof(beer));
+#endif
 	
-	// struct { int x, y, ay, vx, vy; } beer[5];
-	//memset(beer, 0, sizeof(beer));
-
+#ifndef ALE
 	for (int i = 0; i < MAX_COINS; i++)
 	{
 		coins[i].x = rand() % (surface_width - 12);
 		coins[i].y = rand() % (surface_height - 20 - 14);
-
+		
 		coins[i].vel = (rand() % 4) + 1;
 		coins[i].type = rand() % COUNTOF(coin_defs);
 		coins[i].cur_frame = rand() % coin_defs[coins[i].type].frame_count;
 		coins[i].backwards = false;
 	}
-
+#endif /*ALE*/
 	
 	JE_fadeBlack(10);
 	
@@ -135,12 +143,14 @@ void scroller_sine( const struct about_text_type text[] )
 		
 		JE_clr256();
 		
+#ifndef ALE
 		for (int i = 0; i < MAX_COINS/2; i++)
 		{
 			struct coin_type *coin = &coins[i];
 			JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
 		}
-
+#endif /*ALE*/
+		
 		for (int i = 0; i < visible_lines; i++)
 		{
 			if (current_line + i >= 0)
@@ -151,17 +161,23 @@ void scroller_sine( const struct about_text_type text[] )
 				}
 				
 				int line_x = JE_fontCenter(text[i + current_line].text, SMALL_FONT_SHAPES);
-				int line_y = i * 15 - y;
+				int line_y = i * LINE_HEIGHT - y;
+				
+				if (text[i + current_line].effect & 0x20)
+				{
+					JE_outTextAdjust(line_x + 1, line_y, text[i + current_line].text, text[i + current_line].effect & 0x0f, -10, SMALL_FONT_SHAPES, false);
+					JE_outTextAdjust(line_x - 1, line_y, text[i + current_line].text, text[i + current_line].effect & 0x0f, -10, SMALL_FONT_SHAPES, false);
+				}
 				
 				JE_outTextAdjust(line_x, line_y, text[i + current_line].text, text[i + current_line].effect & 0x0f, -4, SMALL_FONT_SHAPES, false);
 				
 				if (text[i + current_line].effect & 0x10)
 				{
-					for (int j = 0; j < 15; j++)
+					for (int j = 0; j < LINE_HEIGHT; j++)
 					{
 						if (line_y + j >= 10 && line_y + j <= surface_height - 10)
 						{
-							int foo = sin((((line_y + j) / 2) % 13) / 6.5f * M_PI) * 3;
+							int foo = sin((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
 							memmove(&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j) + foo],
 									&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j)],
 									VGAScreenSeg->pitch);
@@ -172,7 +188,7 @@ void scroller_sine( const struct about_text_type text[] )
 		}
 		
 		y++;
-		y %= 15;
+		y %= LINE_HEIGHT;
 		if (y == 0)
 		{
 			if (current_line < 0 || text[current_line].text != NULL)
@@ -182,20 +198,23 @@ void scroller_sine( const struct about_text_type text[] )
 				current_line = -visible_lines;
 			}
 		}
-
+		
+#ifndef ALE
 		for (int i = MAX_COINS/2; i < MAX_COINS; i++)
 		{
 			struct coin_type *coin = &coins[i];
 			JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
 		}
-
+#endif /*ALE*/
+		
 		JE_bar(0, 0, surface_width - 1, 14, 0);
 		JE_bar(0, surface_height - 14, surface_width - 1, surface_height - 1, 0);
 		
+#ifndef ALE
 		for (int i = 0; i < MAX_COINS; i++)
 		{
 			struct coin_type *coin = &coins[i];
-
+			
 			if (coin->backwards)
 			{
 				coin->cur_frame--;
@@ -217,20 +236,19 @@ void scroller_sine( const struct about_text_type text[] )
 				coin->cur_frame = 1;
 				coin->backwards = false;
 			}
-
+			
 			coin->y += coin->vel;
 			if (coin->y > surface_height - 14)
 			{
 				coin->x = rand() % (surface_width - 12);
 				coin->y = 0;
-
+				
 				coin->vel = (rand() % 4) + 1;
 				coin->type = rand() % COUNTOF(coin_defs);
 				coin->cur_frame = rand() % coin_defs[coin->type].frame_count;
 			}
 		}
-
-		/*
+#else /*ALE*/
 		for (int i = 0; i < COUNTOF(beer); i++)
 		{
 			while (beer[i].vx == 0)
@@ -261,8 +279,8 @@ void scroller_sine( const struct about_text_type text[] )
 			
 			JE_drawShape2x2(beer[i].x, beer[i].y, BEER_SHAPE, eShapes5);
 		}
-		*/
-
+#endif /*ALE*/
+		
 		JE_showVGA();
 		
 		if (fade_in)
