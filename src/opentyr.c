@@ -337,10 +337,10 @@ int main( int argc, char *argv[] )
 			{
 				tyrianXmas = false;
 			}
-#endif /*TARGET_GP2X*/
 		} else {
 			printf("Christmas is missing.\n");
 		}
+#endif /*TARGET_GP2X*/
 	}
 
 	/* Default Options */

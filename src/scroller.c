@@ -155,10 +155,10 @@ no_more_text:
 		{
 			while (beer[i].vx == 0)
 			{
-				beer[i].x = random() % (surface_width - 24);
-				beer[i].y = random() % (surface_height - 28 - 50);
+				beer[i].x = rand() % (surface_width - 24);
+				beer[i].y = rand() % (surface_height - 28 - 50);
 				
-				beer[i].vx = (random() % 5) - 2;
+				beer[i].vx = (rand() % 5) - 2;
 			}
 			
 			beer[i].vy++;
@@ -169,7 +169,7 @@ no_more_text:
 			
 			if (beer[i].y + beer[i].vy > surface_height - 28) // check if the beer hit the bottom
 			{
-				beer[i].vy = -(beer[i].vy * 15 / 16) + (random() % 3 - 1);
+				beer[i].vy = -(beer[i].vy * 15 / 16) + (rand() % 3 - 1);
 				if ((beer[i].vy) > -10) // make sure the beer bounces!
 					beer[i].vy--;
 			}
