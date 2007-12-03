@@ -19,6 +19,7 @@
  */
 #include "opentyr.h"
 
+#include "config.h"
 #include "episodes.h"
 #include "error.h"
 #include "fonthand.h"
