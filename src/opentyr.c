@@ -1,7 +1,7 @@
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Team
+ * Copyright (C) 2007  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -224,9 +224,10 @@ void opentyrian_menu( void )
 					{
 						case 0: /* About */
 							JE_playSampleNum(SELECT);
-							scroller3d(about_text);
-							JE_loadPic(13, false);
-							JE_fadeColor(20);
+							scroller_sine(about_text);
+							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+							JE_showVGA();
+							fade_in = true;
 							break;
 						case 1: /* Fullscreen */
 							fullscreen_set = !fullscreen_set;
@@ -268,6 +269,12 @@ int main( int argc, char *argv[] )
 	/* JE_detectCFG(); YKS: Removed */
 
 	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
+
+	printf("Copyright (C) 2007 The OpenTyrian Development Team\n\n");
+
+	printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
+	printf("This is free software, and you are welcome to redistribute it\n");
+	printf("under certain conditions.  See the file GPL.txt for details.\n\n");
 
 	JE_scanForEpisodes();
 
@@ -323,7 +330,7 @@ int main( int argc, char *argv[] )
 			       "Christmas has been detected.\n"
 			       "  Activate Christmas? (Y/N)\n"
 			       "*****************************\n");
-			wait_input(true,false,false);
+			wait_input(true, true, true);
 			if (lastkey_sym != SDLK_y)
 			{
 				tyrianXmas = false;

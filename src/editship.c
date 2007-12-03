@@ -1,7 +1,7 @@
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Team
+ * Copyright (C) 2007  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,7 +1,7 @@
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Team
+ * Copyright (C) 2007  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,13 +28,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-
-#define surface_width 320
-#ifdef TARGET_GP2X
-#	define surface_height 240
-#else
-#	define surface_height 200
-#endif // TARGET_GP2X
 
 JE_boolean mouseInstalled = true;
 JE_char k;

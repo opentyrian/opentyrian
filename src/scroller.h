@@ -1,7 +1,7 @@
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Team
+ * Copyright (C) 2007  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,10 +22,12 @@
 
 #include "opentyr.h"
 
+extern const struct about_text_type {
+	int effect;
+	char *text;
+} about_text[];
 
-extern const char *about_text[];
-
-void scroller3d( const char *text[] );
+void scroller_sine( const struct about_text_type text[] );
 
 #endif /* SCROLLER_H */
 

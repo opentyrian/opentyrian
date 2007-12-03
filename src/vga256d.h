@@ -1,7 +1,7 @@
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Team
+ * Copyright (C) 2007  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,12 @@
 #include "SDL.h"
 
 
-#define CRT_ADDRESS 0x3D4
-#define STATUS_REG 0x3DA
+#define surface_width 320
+#ifdef TARGET_GP2X
+#	define surface_height 240
+#else
+#	define surface_height 200
+#endif // TARGET_GP2X
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 typedef JE_shape16B *JE_shape16;

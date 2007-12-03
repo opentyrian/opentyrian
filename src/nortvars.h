@@ -1,7 +1,7 @@
 /* vim: set noet:
  *
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Team
+ * Copyright (C) 2007  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 typedef JE_char JE_TextBuffer[4096]; /* [1..4096] */
 
-typedef struct SDL_Color JE_ColorType[256]; /* [0..255] */
+typedef SDL_Color JE_ColorType[256]; /* [0..255] */
 
 typedef JE_byte JE_ShapeTypeOne[168]; /* [0..168-1] */
 typedef JE_ShapeTypeOne JE_ShapeType[304]; /* [1..304] */
