@@ -125,7 +125,8 @@ void JE_updateButtons( void ) /* Uses ButtonAssign to find out */
 	 * 1 : Fire Normal
 	 * 2 : Fire Left Sidekick
 	 * 3 : Fire Right Sidekick
-	 * 4 : Switch Rear Weapon
+	 * 4 : Fire Both Sidekicks
+	 * 5 : Switch Rear Weapon
 	 */
 
 	memset(button, 0, sizeof(button));
