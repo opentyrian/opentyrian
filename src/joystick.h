@@ -25,13 +25,36 @@
 #ifndef TARGET_GP2X
 typedef JE_boolean JE_ButtonType[4]; /* [1..4] */
 typedef JE_byte JE_ButtonAssign[4]; /* [1..4] */
-#else
+#else  /* TARGET_GP2X */
 typedef JE_boolean JE_ButtonType[19];
 typedef JE_byte JE_ButtonAssign[19];
-#endif
+
+#ifndef GP2X_VK_UP
+#define GP2X_VK_UP              0
+#define GP2X_VK_DOWN            4
+#define GP2X_VK_LEFT            2
+#define GP2X_VK_RIGHT           6
+#define GP2X_VK_UP_LEFT         1
+#define GP2X_VK_UP_RIGHT        7
+#define GP2X_VK_DOWN_LEFT       3
+#define GP2X_VK_DOWN_RIGHT      5
+#define GP2X_VK_CLICK           18
+#define GP2X_VK_FA              12
+#define GP2X_VK_FB              13
+#define GP2X_VK_FX              15
+#define GP2X_VK_FY              14
+#define GP2X_VK_FL              10
+#define GP2X_VK_FR              11
+#define GP2X_VK_START           8
+#define GP2X_VK_SELECT          9
+#define GP2X_VK_VOL_UP          16
+#define GP2X_VK_VOL_DOWN        17
+#endif  /* GP2X_VK_UP */
+
+#endif  /* TARGET_GP2X */
 
 extern const JE_ButtonAssign defaultJoyButtonAssign;
-extern JE_ButtonType tempButton, button;
+extern JE_ButtonType tempButton, button, joyButton;
 extern JE_boolean buttonHeld;
 extern JE_ButtonAssign joyButtonAssign;
 extern JE_boolean useButtonAssign;

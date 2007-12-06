@@ -6498,13 +6498,13 @@ item_screen_start:
 				JE_textShade(25, 120, superShips[SA+2], 15, 0, FULL_SHADE);
 				JE_helpBox(25, 130, special[pItems[11 - 1]].name, 22);
 			} else {
-				if (pItems[12 - 1] > 90)
+				if (pItems[12-1] > 90)
 				{
 					temp = 32;
-				} else if (pItems[11] > 0) {
-					temp = ships[pItems[11]].bigshipgraphic;
+				} else if (pItems[12-1] > 0) {
+					temp = ships[pItems[12-1]].bigshipgraphic;
 				} else {
-					temp = ships[pItemsBack[11]].bigshipgraphic;
+					temp = ships[pItemsBack[12-1]].bigshipgraphic;
 				}
 
 				switch (temp)

@@ -29,29 +29,8 @@
 
 #ifndef TARGET_GP2X
 const JE_ButtonAssign defaultJoyButtonAssign = {1, 4, 5, 5};
-#else
+#else  /* TARGET_GP2X */
 const JE_ButtonAssign defaultJoyButtonAssign = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 1, 4, 5, 5, 0, 0, 0};
-#ifndef GP2X_VK_UP
-#define GP2X_VK_UP              0
-#define GP2X_VK_DOWN            4
-#define GP2X_VK_LEFT            2
-#define GP2X_VK_RIGHT           6
-#define GP2X_VK_UP_LEFT         1
-#define GP2X_VK_UP_RIGHT        7
-#define GP2X_VK_DOWN_LEFT       3
-#define GP2X_VK_DOWN_RIGHT      5
-#define GP2X_VK_CLICK           18
-#define GP2X_VK_FA              12
-#define GP2X_VK_FB              13
-#define GP2X_VK_FX              15
-#define GP2X_VK_FY              14
-#define GP2X_VK_FL              10
-#define GP2X_VK_FR              11
-#define GP2X_VK_START           8
-#define GP2X_VK_SELECT          9
-#define GP2X_VK_VOL_UP          16
-#define GP2X_VK_VOL_DOWN        17
-#endif  /* GP2X_VK_UP */
 #endif  /* TARGET_GP2X */
 
 JE_ButtonType tempButton, button, joyButton;
@@ -94,12 +73,12 @@ void JE_joystick1( void ) /* procedure to get x and y */
 #ifndef TARGET_GP2X
 	joyX = SDL_JoystickGetAxis(joystick, 0);
 	joyY = SDL_JoystickGetAxis(joystick, 1);
-#else
+#else  /* TARGET_GP2X */
 	joyX = - (joyButton[GP2X_VK_LEFT]  || joyButton[GP2X_VK_UP_LEFT]  || joyButton[GP2X_VK_DOWN_LEFT])
 	       + (joyButton[GP2X_VK_RIGHT] || joyButton[GP2X_VK_UP_RIGHT] || joyButton[GP2X_VK_DOWN_RIGHT]);
 	joyY = - (joyButton[GP2X_VK_UP]   || joyButton[GP2X_VK_UP_LEFT]   || joyButton[GP2X_VK_UP_LEFT])
 	       + (joyButton[GP2X_VK_DOWN] || joyButton[GP2X_VK_DOWN_LEFT] || joyButton[GP2X_VK_DOWN_RIGHT]);
-#endif
+#endif  /* TARGET_GP2X */
 
 	if (forceAveraging)
 	{
@@ -164,9 +143,9 @@ void JE_joystick2( void )
 		JE_joystick1();
 #ifndef TARGET_GP2X
 		memcpy(button, joyButton, sizeof(button));
-#else
+#else  /* TARGET_GP2X */
 		memcpy(button, joyButton + 12, 4);
-#endif
+#endif  /* TARGET_GP2X */
 		/*JE_UpdateButtons;*/
 
 #ifndef TARGET_GP2X
@@ -174,24 +153,29 @@ void JE_joystick2( void )
 		{
 			joystickUp    = joyY < (jCenterY - jCenterY / 2);
 			joystickDown  = joyY > (jCenterY + jCenterY / 2);
-
+			
 			joystickLeft  = joyX < (jCenterX - jCenterY / 2);
 			joystickRight = joyX > (jCenterX + jCenterX / 2);
 		} else {
 			joystickUp    = joyY < (jCenterY - jCenterY / 5);
 			joystickDown  = joyY > (jCenterY + jCenterY / 5);
-
+			
 			joystickLeft  = joyX < (jCenterX - jCenterY / 5);
 			joystickRight = joyX > (jCenterX + jCenterX / 5);
 		}
-#else
+		
+		joystickInput = joystickUp || joystickDown || joystickLeft || joystickRight || button[0] || button[1] || button[2] || button[3];
+#else  /* TARGET_GP2X */
 		joystickLeft  = joyButton[GP2X_VK_LEFT]  || joyButton[GP2X_VK_UP_LEFT]  || joyButton[GP2X_VK_DOWN_LEFT];
 		joystickRight = joyButton[GP2X_VK_RIGHT] || joyButton[GP2X_VK_UP_RIGHT] || joyButton[GP2X_VK_DOWN_RIGHT];
 		joystickUp    = joyButton[GP2X_VK_UP]   || joyButton[GP2X_VK_UP_LEFT]   || joyButton[GP2X_VK_UP_LEFT];
 		joystickDown  = joyButton[GP2X_VK_DOWN] || joyButton[GP2X_VK_DOWN_LEFT] || joyButton[GP2X_VK_DOWN_RIGHT];
-#endif
-
-		joystickInput = joystickUp | joystickDown | joystickLeft | joystickRight | button[0] | button[1] | button[2] | button[3];
+		
+		for (int i = 0; i < COUNTOF(joyButton) && joystickInput == 0; i++)
+		{
+			joystickInput = joystickInput || joyButton[i];
+		}
+#endif  /* TARGET_GP2X */
 	}
 }
 
