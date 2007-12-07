@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 
 /******** MAJOR TODO:
@@ -947,6 +948,7 @@ void JE_saveConfiguration( void )
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
 		fflush(f);
 		fclose(f);
+		sync();
 	}
 	JE_decryptSaveTemp();
 
@@ -979,5 +981,6 @@ void JE_saveConfiguration( void )
 	
 		fflush(f);
 		fclose(f);
+		sync();
 	}
 }
