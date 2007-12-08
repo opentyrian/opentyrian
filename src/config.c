@@ -946,9 +946,10 @@ void JE_saveConfiguration( void )
 	if (f)
 	{
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
-		fflush(f);
 		fclose(f);
+#if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
 		sync();
+#endif
 	}
 	JE_decryptSaveTemp();
 
@@ -979,8 +980,9 @@ void JE_saveConfiguration( void )
 		Uint8 tmp = (fullscreen_set ? 1 : 0);
 		efwrite(&tmp, 1, 1, f);
 	
-		fflush(f);
 		fclose(f);
+#if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
 		sync();
+#endif
 	}
 }
