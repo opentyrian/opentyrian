@@ -208,7 +208,7 @@ JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the 
 {
 	FILE *f;
 
-	dont_die = true; /* Disabled barf'n'die */
+	dont_die = true;
 	JE_resetFile(&f, "tyrian.cfg");
 	dont_die = false;
 

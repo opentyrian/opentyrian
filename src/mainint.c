@@ -497,14 +497,16 @@ JE_boolean JE_playerSelect( void )
 					JE_playSampleNum(SELECT);
 					if (sel == 4)
 					{
-						netQuit = true;
+						/* TODO: network */
+						printf("-!- networking not implemented\n");
+						exit(-1);
 					}
 					break;
 				case SDLK_ESCAPE:
-				quit = true;
-				JE_playSampleNum(ESC);
-				return false;
-				break;
+					quit = true;
+					JE_playSampleNum(ESC);
+					return false;
+					break;
 				default:
 					break;
 			}
@@ -1811,6 +1813,7 @@ void JE_highScoreCheck( void )
 						{
 							bool validkey = false;
 							lastkey_char = toupper(lastkey_char);
+							lastkey_char = lastkey_char ? lastkey_char : lastkey_sym;
 							switch(lastkey_char)
 							{
 								case ' ':
@@ -2737,6 +2740,7 @@ void JE_operation( JE_byte slot )
 				{
 					bool validkey = false;
 					lastkey_char = toupper(lastkey_char);
+					lastkey_char = lastkey_char ? lastkey_char : lastkey_sym;
 					switch(lastkey_char)
 					{
 						case ' ':
@@ -3491,14 +3495,18 @@ redo:
 						{
 							tempB = false;
 							for (temp = 0; temp < 8; temp++)
+							{
 								if (lastKey[temp] != keysactive[keySettings[temp]])
+								{
 									tempB = true;
+								}
+							}
 
 							lastMoveWait++;
 							if (tempB)
 							{
 								fputc(lastMoveWait >> 8, recordFile);
-								fputc(lastMoveWait && 0xff, recordFile);
+								fputc(lastMoveWait & 0xff, recordFile);
 
 								for (temp = 0; temp < 8; temp++)
 									lastKey[temp] = keysactive[keySettings[temp]];

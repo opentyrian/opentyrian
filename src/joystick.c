@@ -186,15 +186,17 @@ JE_boolean JE_nextJoystickCheck( void )
 	{
 		if (joystickWait > 0)
 			joystickWait--;
-		if (button[0] || button[1] || button[2] || button[3])
+		
+		for (int i = 0; i < COUNTOF(joyButton); i++)
 		{
-			return true;
-		} else {
-			if (joystickWait == 0)
-			{
-				joystickWait = joystickWaitMax;
+			if (joyButton[i])
 				return true;
-			}
+		}
+		
+		if (joystickWait == 0)
+		{
+			joystickWait = joystickWaitMax;
+			return true;
 		}
 	} else {
 		joystickWait = 0;
@@ -218,32 +220,40 @@ JE_boolean JE_joystickTranslate( void )
 		if (joystickUp)
 		{
 			newkey = true;
-			lastkey_sym = SDLK_UP;
+			lastkey_char = lastkey_sym = SDLK_UP;
 		}
 		if (joystickDown)
 		{
 			newkey = true;
-			lastkey_sym = SDLK_DOWN;
+			lastkey_char = lastkey_sym = SDLK_DOWN;
 		}
 		if (joystickLeft)
 		{
 			newkey = true;
-			lastkey_sym = SDLK_LEFT;
+			lastkey_char = lastkey_sym = SDLK_LEFT;
 		}
 		if (joystickRight)
 		{
 			newkey = true;
-			lastkey_sym = SDLK_RIGHT;
+			lastkey_char = lastkey_sym = SDLK_RIGHT;
 		}
+#ifndef TARGET_GP2X
 		if (button[0])
+#else  /* TARGET_GP2X */
+		if (button[GP2X_VK_FA])
+#endif  /* TARGET_GP2X */
 		{
 			newkey = true;
-			lastkey_sym = SDLK_RETURN;
+			lastkey_char = lastkey_sym = SDLK_RETURN;
 		}
+#ifndef TARGET_GP2X
 		if (button[1])
+#else  /* TARGET_GP2X */
+		if (button[GP2X_VK_FX])
+#endif  /* TARGET_GP2X */
 		{
 			newkey = true;
-			lastkey_sym = SDLK_ESCAPE;
+			lastkey_char = lastkey_sym = SDLK_ESCAPE;
 		}
 	}
 
@@ -296,9 +306,9 @@ void JE_joystickInit( void )
 				{
 					joystick_installed = true;
 				}
-#else
+#else  /* TARGET_GP2X */
 				joystick_installed = true;
-#endif
+#endif  /* TARGET_GP2X */
 			}
 		}
 	}
@@ -324,9 +334,4 @@ void JE_joystickInit( void )
 		joystickLeft = false;
 		joystickRight = false;
 	}
-}
-
-void joystick_init( void )
-{
-	isNetworkGame = false;
 }

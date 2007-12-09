@@ -1318,6 +1318,7 @@ start_level_first:
 	memset(lastKey, 0, sizeof(lastKey));
 	if (recordDemo && !playDemo)
 	{
+		dont_die = true;
 		do
 		{
 			sprintf(tempStr, "demorec.%d", recordFileNum);
@@ -1327,8 +1328,9 @@ start_level_first:
 				recordFileNum++;
 			}
 		} while (tempb);
+		dont_die = false;
 
-		JE_resetFile(&recordFile, tempStr);
+		recordFile = fopen_check(tempStr, "wb");
 		if (!recordFile)
 		{
 			exit(1);
@@ -4527,7 +4529,9 @@ void JE_readTextSync( void )
 			JE_tyrianHalt(5);
 		}
 
-		while (delaycount());
+		int delaycount_temp;
+		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			SDL_Delay(delaycount_temp);
 
 	} while (0 /* TODO */);
 }
@@ -4587,7 +4591,9 @@ void JE_displayText( void )
 			JE_tyrianHalt(5);
 		}
 
-		while (delaycount());
+		int delaycount_temp;
+		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			SDL_Delay(delaycount_temp);
 
 	} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1) || ESCPressed));
 	levelWarningDisplay = false;
@@ -6979,13 +6985,13 @@ item_screen_start:
 						inputDetected = false;
 					}
 
-					if (keysactive[SDLK_UP])
+					if (keysactive[SDLK_UP] || joystickUp)
 					{
 						yChg = -1;
 						inputDetected = false;
 					}
 
-					if (keysactive[SDLK_DOWN])
+					if (keysactive[SDLK_DOWN] || joystickDown)
 					{
 						yChg = 1;
 						inputDetected = false;
