@@ -8220,7 +8220,49 @@ void JE_drawMainMenuHelpText( void )
 
 void JE_whoa( void )
 {
-	STUB();
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
+
+	JE_wipeKey();
+
+	tempW3 = 300;
+
+	do
+	{
+		setjasondelay(1);
+
+		int di = 640; // pixel pointer
+
+		Uint8 *vga2pixels = VGAScreen2->pixels;
+		for (int dx = 64000 - 1280; dx > 0; dx--)
+		{
+			di += (dx >> 8)/32 - 4;
+
+			unsigned int ax = vga2pixels[di] * 12;
+			ax += vga2pixels[di-320];
+			ax += vga2pixels[di-1];
+			ax += vga2pixels[di+1];
+			ax += vga2pixels[di+320];
+			ax /= 16;
+
+			vga2pixels[di] = ax;
+
+			di++;
+		}
+
+		di = 320 * 4;
+		for (int cx = 16000 - (320*7); cx > 0; cx--)
+		{
+			((Uint8 *)VGAScreen->pixels)[di] = vga2pixels[di];
+			di++;
+		}
+
+		tempW3--;
+
+		wait_delay();
+		JE_showVGA();
+	} while (!(tempW3 == 0 || JE_anyButton()));
+
+	levelWarningLines = 4;
 }
 
 JE_boolean JE_quitRequest( JE_boolean useMouse )
