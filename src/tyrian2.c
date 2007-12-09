@@ -5503,7 +5503,7 @@ void JE_eventSystem( void )
 				}
 				if (eventRec[eventLoc-1].eventdat == 534 && superTyrian)
 				{
-					eventRec[eventLoc-1].eventdat = 828 + superTyrianSpecials[(rand() % 5)];
+					eventRec[eventLoc-1].eventdat = 828 + superTyrianSpecials[rand() % 4];
 				}
 
 				for (temp = 0; temp < 100; temp++)
