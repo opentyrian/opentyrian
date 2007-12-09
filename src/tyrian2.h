@@ -75,7 +75,7 @@ void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col );
 
 void JE_initWeaponView( void );
 
-void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 );
+void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 );
 
 typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 

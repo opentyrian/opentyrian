@@ -8079,9 +8079,36 @@ void JE_drawPlanet( JE_byte planetNum )
 	}
 }
 
-void JE_scaleBitmap ( JE_word bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 )
+void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 )
 {
-	STUB();
+	JE_word w = x2 - x1 + 1,
+	        h = y2 - y1 + 1;
+	JE_longint sx = x * 0x10000 / w,
+	           sy = y * 0x10000 / h,
+	           cx, cy = 0;
+	
+	Uint8 *s = VGAScreen->pixels;
+	Uint8 *src = bitmap->pixels;
+	
+	s += ((VGAScreen->h - h) / 2) * VGAScreen->w + (VGAScreen->w - w) / 2;
+	
+	for (; h; h--)
+	{
+		for (int x = w; x; x--)
+		{
+			*s = *src;
+			s++;
+			
+			cx += sx;
+			src += cx >> 16;
+			cx &= 0xffff;
+		}
+		s += VGAScreen->w - w;
+		
+		cy += sy;
+		src += ((cy >> 16) - 1) * bitmap->w;
+		cy &= 0xffff;
+	}
 }
 
 void JE_initWeaponView( void )
@@ -8154,15 +8181,17 @@ JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byt
 
 void JE_doFunkyScreen( void )
 {
+	VGAScreen = VGAScreen2;
+	
 	JE_clr256();
 
-	if (pItems[11] > 90)
+	if (pItems[12-1] > 90)
 	{
 		temp = 32;
-	} else if (pItems[11] > 0) {
-		temp = ships[pItems[11]].bigshipgraphic;
+	} else if (pItems[12-1] > 0) {
+		temp = ships[pItems[12-1]].bigshipgraphic;
 	} else {
-		temp = ships[pItemsBack[11]].bigshipgraphic;
+		temp = ships[pItemsBack[12-1]].bigshipgraphic;
 	}
 
 	switch (temp)
@@ -8182,10 +8211,12 @@ void JE_doFunkyScreen( void )
 	}
 	tempW -= 30;
 
+	tempScreenSeg = VGAScreen2;
 	JE_newDrawCShapeNum(OPTION_SHAPES, temp, tempW, tempW2);
 	JE_funkyScreen();
+	tempScreenSeg = VGAScreenSeg;
 	JE_loadPic(1, false);
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen->pitch * VGAScreen->h);
+	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 }
 
 void JE_drawMainMenuHelpText( void )
@@ -8933,9 +8964,11 @@ void JE_funkyScreen( void )
 	JE_outText(JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
 
 	JE_playSampleNum(16);
+	
+	VGAScreen = VGAScreenSeg;
 	JE_scaleInPicture();
 
-	wait_input(true,true,true);
+	wait_input(true, true, true);
 }
 
 void JE_weaponSimUpdate( void )
@@ -9305,5 +9338,17 @@ void JE_drawBackground3( void )
 
 void JE_scaleInPicture( void )
 {
-	STUB();
+	for (int i = 0; i <= 160; i += 2)
+	{
+		setjasondelay(1);
+		
+		if (JE_anyButton())
+			i = 160;
+		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i, 100 + round(i * 0.625f));
+		JE_showVGA();
+		
+		int delaycount_temp;
+		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
+			SDL_Delay(delaycount_temp);
+	}
 }
