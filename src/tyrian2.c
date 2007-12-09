@@ -8087,13 +8087,14 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 	           sy = y * 0x10000 / h,
 	           cx, cy = 0;
 	
-	Uint8 *s = VGAScreen->pixels;
-	Uint8 *src = bitmap->pixels;
+	Uint8 *s = VGAScreen->pixels;  /* 8-bit specific */
+	Uint8 *src = bitmap->pixels;  /* 8-bit specific */
 	
 	s += ((VGAScreen->h - h) / 2) * VGAScreen->w + (VGAScreen->w - w) / 2;
 	
 	for (; h; h--)
 	{
+		cx = 0;
 		for (int x = w; x; x--)
 		{
 			*s = *src;
@@ -8103,10 +8104,12 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 			src += cx >> 16;
 			cx &= 0xffff;
 		}
+		
 		s += VGAScreen->w - w;
 		
 		cy += sy;
-		src += ((cy >> 16) - 1) * bitmap->w;
+		src -= ((sx * w) >> 16);
+		src += (cy >> 16) * bitmap->w;
 		cy &= 0xffff;
 	}
 }
@@ -8181,10 +8184,6 @@ JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byt
 
 void JE_doFunkyScreen( void )
 {
-	VGAScreen = VGAScreen2;
-	
-	JE_clr256();
-
 	if (pItems[12-1] > 90)
 	{
 		temp = 32;
@@ -8210,11 +8209,15 @@ void JE_doFunkyScreen( void )
 			break;
 	}
 	tempW -= 30;
-
-	tempScreenSeg = VGAScreen2;
+	
+	VGAScreen = tempScreenSeg = VGAScreen2;
+	JE_clr256();
+	
 	JE_newDrawCShapeNum(OPTION_SHAPES, temp, tempW, tempW2);
 	JE_funkyScreen();
+	
 	tempScreenSeg = VGAScreenSeg;
+	
 	JE_loadPic(1, false);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 }
@@ -8946,7 +8949,35 @@ void JE_funkyScreen( void )
 {
 	wait_noinput(true, true, joystick_installed);
 
-	/* TODO Slew of ASM */
+	Uint8 *s = game_screen->pixels; /* 8-bit specific */
+	Uint8 *src = VGAScreen2->pixels; /* 8-bit specific */
+	
+	for (int y = 0; y < 200; y++)
+	{
+		for (int x = 0; x < 320; x++)
+		{
+			int avg = 0;
+			if (y > 0)
+				avg += *(src - VGAScreen2->w) & 0x0f;
+			if (y < VGAScreen2->h - 1)
+				avg += *(src + VGAScreen2->w) & 0x0f;
+			if (x > 0)
+				avg += *(src - 1) & 0x0f;
+			if (x < VGAScreen2->w - 1)
+				avg += *(src + 1) & 0x0f;
+			avg /= 4;
+			
+			if ((*src & 0x0f) > avg)
+			{
+				*s = (*src & 0x0f) | 0xc0;
+			} else {
+				*s = 0;
+			}
+			
+			src++;
+			s++;
+		}
+	}
 
 	JE_clr256();
 	JE_drawLines(true);
@@ -8954,7 +8985,20 @@ void JE_funkyScreen( void )
 	JE_rectangle(0, 0, 319, 199, 37);
 	JE_rectangle(1, 1, 318, 198, 35);
 
-	/* TODO More ASM */
+	s = VGAScreen2->pixels; /* 8-bit specific */
+	src = game_screen->pixels; /* 8-bit specific */
+	
+	for (int y = 0; y < 200; y++)
+	{
+		for (int x = 0; x < 320; x++)
+		{
+			if (*src)
+				*s = *src;
+			
+			src++;
+			s++;
+		}
+	}
 
 	verticalHeight = 9;
 	JE_outText(10, 2, ships[pItems[11]].name, 12, 3);
@@ -9339,13 +9383,13 @@ void JE_drawBackground3( void )
 
 void JE_scaleInPicture( void )
 {
-	for (int i = 0; i <= 160; i += 2)
+	for (int i = 2; i <= 160; i += 2)
 	{
 		setjasondelay(1);
 		
 		if (JE_anyButton())
 			i = 160;
-		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i, 100 + round(i * 0.625f));
+		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i - 1, 100 + round(i * 0.625f) - 1);
 		JE_showVGA();
 		
 		int delaycount_temp;
