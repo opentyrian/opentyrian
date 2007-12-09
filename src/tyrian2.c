@@ -9001,9 +9001,9 @@ void JE_funkyScreen( void )
 	}
 
 	verticalHeight = 9;
-	JE_outText(10, 2, ships[pItems[11]].name, 12, 3);
-	JE_helpBox(100, 20, shipInfo[pItems[11]-1][0], 40);
-	JE_helpBox(100, 100, shipInfo[pItems[11]-1][0], 40);
+	JE_outText(10, 2, ships[pItems[12-1]].name, 12, 3);
+	JE_helpBox(100, 20, shipInfo[pItems[12-1]-1][0], 40);
+	JE_helpBox(100, 100, shipInfo[pItems[12-1]-1][1], 40);
 	verticalHeight = 7;
 
 	JE_outText(JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
@@ -9385,15 +9385,11 @@ void JE_scaleInPicture( void )
 {
 	for (int i = 2; i <= 160; i += 2)
 	{
-		setjasondelay(1);
-		
 		if (JE_anyButton())
 			i = 160;
 		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i - 1, 100 + round(i * 0.625f) - 1);
 		JE_showVGA();
 		
-		int delaycount_temp;
-		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-			SDL_Delay(delaycount_temp);
+		SDL_Delay(1);
 	}
 }
