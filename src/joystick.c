@@ -189,7 +189,11 @@ JE_boolean JE_nextJoystickCheck( void )
 		
 		for (int i = 0; i < COUNTOF(joyButton); i++)
 		{
+#ifndef TARGET_GP2X
 			if (joyButton[i])
+#else  /* TARGET_GP2X */
+			if (joyButton[i] && i != GP2X_VK_LEFT && i != GP2X_VK_RIGHT && i != GP2X_VK_UP && i != GP2X_VK_DOWN)
+#endif  /* TARGET_GP2X */
 				return true;
 		}
 		
@@ -237,20 +241,12 @@ JE_boolean JE_joystickTranslate( void )
 			newkey = true;
 			lastkey_char = lastkey_sym = SDLK_RIGHT;
 		}
-#ifndef TARGET_GP2X
 		if (button[0])
-#else  /* TARGET_GP2X */
-		if (button[GP2X_VK_FA])
-#endif  /* TARGET_GP2X */
 		{
 			newkey = true;
 			lastkey_char = lastkey_sym = SDLK_RETURN;
 		}
-#ifndef TARGET_GP2X
 		if (button[1])
-#else  /* TARGET_GP2X */
-		if (button[GP2X_VK_FX])
-#endif  /* TARGET_GP2X */
 		{
 			newkey = true;
 			lastkey_char = lastkey_sym = SDLK_ESCAPE;
