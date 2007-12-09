@@ -4338,8 +4338,8 @@ void JE_titleScreen( JE_boolean animate )
 							redraw = true;
 							fadeIn = true;
 						}
-						newkey = false;
 					}
+					newkey = false;
 				}
 			} else {
 				nameGo[z] = 0;
@@ -8252,6 +8252,7 @@ void JE_drawMainMenuHelpText( void )
 void JE_whoa( void )
 {
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
+	memset(VGAScreen->pixels, 0, VGAScreen->h * VGAScreen->pitch);
 
 	JE_wipeKey();
 
@@ -8261,19 +8262,19 @@ void JE_whoa( void )
 	{
 		setjasondelay(1);
 
-		int di = 640; // pixel pointer
+		Uint16 di = 640; // pixel pointer
 
 		Uint8 *vga2pixels = VGAScreen2->pixels;
-		for (int dx = 64000 - 1280; dx > 0; dx--)
+		for (Uint16 dx = 64000 - 1280; dx != 0; dx--)
 		{
-			di += (dx >> 8)/32 - 4;
+			Uint16 si = di + (Uint8)((Uint8)(dx >> 8) >> 5) - 4;
 
-			unsigned int ax = vga2pixels[di] * 12;
-			ax += vga2pixels[di-320];
-			ax += vga2pixels[di-1];
-			ax += vga2pixels[di+1];
-			ax += vga2pixels[di+320];
-			ax /= 16;
+			Uint16 ax = vga2pixels[si] * 12;
+			ax += vga2pixels[si-320];
+			ax += vga2pixels[si-1];
+			ax += vga2pixels[si+1];
+			ax += vga2pixels[si+320];
+			ax >>= 4;
 
 			vga2pixels[di] = ax;
 
@@ -8281,7 +8282,7 @@ void JE_whoa( void )
 		}
 
 		di = 320 * 4;
-		for (int cx = 16000 - (320*7); cx > 0; cx--)
+		for (Uint16 cx = 64000 - 320*7; cx != 0; cx--)
 		{
 			((Uint8 *)VGAScreen->pixels)[di] = vga2pixels[di];
 			di++;
