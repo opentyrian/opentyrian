@@ -1232,8 +1232,9 @@ void JE_initPlayerData( void )
 
 void JE_sortHighScores( void )
 {
-	JE_byte x, temp = 0;
-
+	JE_byte x;
+	
+	temp = 0;
 	for (x = 0; x < 6; x++)
 	{
 		JE_sort();
@@ -2175,25 +2176,25 @@ void JE_sort( void )
 
 	for (a = 0; a < 2; a++)
 	{
-		for (b = a+1; b < 3; b++)
+		for (b = a + 1; b < 3; b++)
 		{
-			if (saveFiles[temp+a].highScore1 < saveFiles[temp+b].highScore1)
+			if (saveFiles[temp + a].highScore1 < saveFiles[temp + b].highScore1)
 			{
 				JE_longint tempLI;
 				char tempStr[30];
 				JE_byte tempByte;
 
-				tempLI = saveFiles[temp+a].highScore1;
-				saveFiles[temp+a].highScore1 = saveFiles[temp+b].highScore1;
-				saveFiles[temp+b].highScore1 = tempLI;
+				tempLI = saveFiles[temp + a].highScore1;
+				saveFiles[temp + a].highScore1 = saveFiles[temp + b].highScore1;
+				saveFiles[temp + b].highScore1 = tempLI;
 
-				strcpy(tempStr, saveFiles[temp+a].highScoreName);
-				strcpy(saveFiles[temp+a].highScoreName, saveFiles[temp+b].highScoreName);
-				strcpy(saveFiles[temp+b].highScoreName, tempStr);
+				strcpy(tempStr, saveFiles[temp + a].highScoreName);
+				strcpy(saveFiles[temp + a].highScoreName, saveFiles[temp + b].highScoreName);
+				strcpy(saveFiles[temp + b].highScoreName, tempStr);
 
-				tempByte = saveFiles[temp+a].highScoreDiff;
-				saveFiles[temp+a].highScoreDiff = saveFiles[temp+b].highScoreDiff;
-				saveFiles[temp+b].highScoreDiff = tempByte;
+				tempByte = saveFiles[temp + a].highScoreDiff;
+				saveFiles[temp + a].highScoreDiff = saveFiles[temp + b].highScoreDiff;
+				saveFiles[temp + b].highScoreDiff = tempByte;
 			}
 		}
 	}

@@ -860,7 +860,7 @@ void JE_loadConfiguration( void )
 			if (z % 6 > 2)
 			{
 				saveFiles[z].highScore2 = ((rand() % 20) + 1) * 1000;
-				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 22]);
+				strcpy(saveFiles[z].highScoreName, defaultTeamNames[rand() % 22]);
 			} else {
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
 			}
