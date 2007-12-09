@@ -214,10 +214,10 @@ void service_SDL_events( JE_boolean clear_new )
 				lastkey_mod = ev.key.keysym.mod;
 				lastkey_char = ev.key.keysym.unicode;
 				keydown = true;
-				break;
+				return;
 			case SDL_KEYUP:
 				keydown = false;
-				break;
+				return;
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
