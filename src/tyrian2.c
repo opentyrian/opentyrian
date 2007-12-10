@@ -3066,7 +3066,7 @@ explosion_draw_overflow:
 			}
 		}
 	}
-
+	
 	/*Network Update*/
 	if (isNetworkGame)
 	{
@@ -8090,7 +8090,7 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 	Uint8 *s = VGAScreen->pixels;  /* 8-bit specific */
 	Uint8 *src = bitmap->pixels;  /* 8-bit specific */
 	
-	s += ((VGAScreen->h - h) / 2) * VGAScreen->w + (VGAScreen->w - w) / 2;
+	s += y1 * VGAScreen->w + x1;
 	
 	for (; h; h--)
 	{
