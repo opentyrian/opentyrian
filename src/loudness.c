@@ -30,8 +30,8 @@ JE_MusicType musicData;
 JE_boolean repeated;
 JE_boolean playing;
 
-float sample_volume = 0.35f;
-float music_volume = 0.4f;
+float sample_volume = 0.4f;
+float music_volume = 0.6f;
 
 SDL_mutex *soundmutex = NULL;
 
@@ -121,7 +121,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		long remaining = howmuch / BYTES_PER_SAMPLE;
 		while (remaining > 0)
 		{
-			while(ct < 0)
+			while (ct < 0)
 			{
 				ct += freq;
 				lds_update(); /* SYN: Do I need to use the return value for anything here? */
@@ -135,9 +135,9 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 			synch perfectly. */
 	
 			/* set i to smaller of data requested by SDL and a value calculated from the refresh rate */
-			long i = ((long) ((ct / REFRESH) + 4) & ~3);
+			long i = (long)((ct / REFRESH) + 4) & ~3;
 			i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
-			opl_update((short*) music_pos, i);
+			opl_update((short *)music_pos, i);
 			music_pos += i;
 			remaining -= i;
 			ct -= (long)(REFRESH * i);
@@ -160,8 +160,8 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		int qu = (howmuch > channel_len[ch] ? channel_len[ch] : howmuch) / BYTES_PER_SAMPLE;
 		for (int smp = 0; smp < qu; smp++)
 		{
-			long clip = ((long) feedme[smp] + (long) (channel_pos[ch][smp] * volume));
-			feedme[smp] = (clip > 0xffff) ? 0xffff : (clip <= -0xffff) ? -0xffff : (short) clip;
+			long clip = (long)feedme[smp] + (long)(channel_pos[ch][smp] * volume);
+			feedme[smp] = (clip > 0x7fff) ? 0x7fff : (clip <= -0x8000) ? -0x8000 : (short)clip;
 		}
 
 		channel_pos[ch] += qu;
@@ -245,10 +245,10 @@ void JE_setVol(JE_word volume, JE_word sample)
 	/* printf("JE_setVol: music: %d, sample: %d\n", volume, sample); */
 	
 	if (volume > 0)
-		music_volume = volume * (float) (0.5 / 256.0);
+		music_volume = volume * (float)(0.6 / 256.0);
 	if (sample > 240 || sample < 16)
 		sample = 240;
-	sample_volume = sample * (float) (0.35f / 240.0f);
+	sample_volume = sample * (float)(0.4 / 240.0);
 }
 
 JE_word JE_getVol( void )

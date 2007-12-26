@@ -26,10 +26,16 @@
 
 
 #define SFX_CHANNELS 8
+
+#ifndef TARGET_GP2X
 #define OUTPUT_QUALITY 4
-#define BYTES_PER_SAMPLE 2
+#else  /* TARGET_GP2X */
+#define OUTPUT_QUALITY 2
+#endif /* TARGET_GP2X */
+
 #define SAMPLE_SCALING OUTPUT_QUALITY
 #define SAMPLE_TYPE Sint16
+#define BYTES_PER_SAMPLE sizeof(SAMPLE_TYPE)
 
 typedef JE_byte JE_MusicType [20000];
 
