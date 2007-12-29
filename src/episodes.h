@@ -80,15 +80,6 @@ typedef struct
 typedef struct
 {
 	char        name[31]; /* string [30] */
-	JE_word     itemgraphic;
-	JE_shortint power;
-	JE_byte     speed;
-	JE_word     cost;
-} JE_EngineType[ENGINE_NUM + 1]; /* [0..enginenum] */
-
-typedef struct
-{
-	char        name[31]; /* string [30] */
 	JE_byte     pwr;
 	JE_word     itemgraphic;
 	JE_word     cost;
