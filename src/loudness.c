@@ -246,9 +246,7 @@ void JE_setVol(JE_word volume, JE_word sample)
 	
 	if (volume > 0)
 		music_volume = volume * (float)(0.6 / 256.0);
-	if (sample > 240 || sample < 16)
-		sample = 240;
-	sample_volume = sample * (float)(0.4 / 240.0);
+	sample_volume = sample * (float)(0.4 / 256.0);
 }
 
 JE_word JE_getVol( void )

@@ -1303,7 +1303,7 @@ start_level_first:
 
 	JE_setNewGameSpeed();
 
-	JE_setVol(tyrMusicVolume, fxPlayVol >> 2);
+	/* JE_setVol(tyrMusicVolume, fxPlayVol >> 2); NOTE: MXD killed this because it was broken */
 
 	/*Save backup game*/
 	if (!playDemo && !doNotSaveBackup)
@@ -7092,7 +7092,7 @@ item_screen_start:
 				}
 
 				JE_calcFXVol();
-				JE_setVol(tyrMusicVolume, fxPlayVol);
+				JE_setVol(tyrMusicVolume, fxVolume); /* NOTE: MXD killed this because it was broken */
 				JE_playSampleNum(CURSOR_MOVE);
 			}
 

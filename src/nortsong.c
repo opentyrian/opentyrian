@@ -344,7 +344,7 @@ void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integ
 	}
 	
 	JE_calcFXVol();
-	JE_setVol(*temp, fxPlayVol);
+	JE_setVol(*temp, *fxvol); /* NOTE: MXD killed this because it was broken */
 }
 
 void JE_waitFrameCount( void )
