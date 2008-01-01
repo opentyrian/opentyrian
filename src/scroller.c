@@ -48,6 +48,7 @@ const struct about_text_type about_text[] =
 	{0x30, "----- ~Developers~ -----"}, /* in alphabetical order */
 	{0x00, ""},
 	{0x03, "MindlessXD"},
+	{0x06, "mwolson"},
 	{0x04, "syntaxglitch"},
 	{0x07, "yuriks"},
 	{0x00, ""},
@@ -271,11 +272,15 @@ void scroller_sine( const struct about_text_type text[] )
 				
 				if (beer[i].y + beer[i].vy > surface_height - 28) // check if the beer hit the bottom
 				{
-					beer[i].vy = -(beer[i].vy * 15 / 16) + (rand() % 3 - 1); // make sure the beer doesn't bounce too high
-					if ((beer[i].vy) > -10) // make sure the beer bounces!
+					if ((beer[i].vy) < 8) // make sure the beer bounces!
 					{
-						beer[i].vy--;
+						beer[i].vy += rand() % 2;
+					} else if (beer[i].vy > 16) { // make sure the beer doesn't bounce too high
+						beer[i].vy = 16;
 					}
+					beer[i].vy = -beer[i].vy + (rand() % 3 - 1);
+					
+					beer[i].x += (beer[i].vx > 0 ? 1 : -1) * (i % 2 ? 1 : -1);
 				}
 				beer[i].y += beer[i].vy;
 				
