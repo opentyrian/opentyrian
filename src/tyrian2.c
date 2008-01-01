@@ -1082,10 +1082,11 @@ start_level_first:
 
 	if (loadDestruct)
 	{
+		/* <MXD> avoid double free
 		if (eShapes1 != NULL)
 		{
 			free(eShapes1);
-		}
+		}*/
 		JE_destructGame();
 		loadDestruct = false;
 		loadTitleScreen = true;

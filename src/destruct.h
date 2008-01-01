@@ -22,12 +22,6 @@
 
 #include "opentyr.h"
 
-
-extern JE_word tempscreenseg;
-extern JE_byte enddelay;
-extern JE_boolean died;
-extern JE_boolean firsttime;
-
 void JE_introScreen( void );
 
 void JE_makeExplosion( JE_word tempx, JE_word tempy, JE_byte shottype );

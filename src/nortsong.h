@@ -105,8 +105,6 @@ void JE_playSampleNum ( JE_byte samplenum );
 
 void JE_fxDestruct ( JE_byte samplenum );
 
-void JE_setvol (JE_byte musicvolume, JE_byte sample );
-
 void JE_waitFrameCount( void );
 
 char *JE_hexa2 (JE_byte data );
