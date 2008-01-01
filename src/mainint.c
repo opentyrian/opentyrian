@@ -1662,7 +1662,103 @@ JE_boolean JE_inGameSetup( void )
 
 void JE_inGameHelp( void )
 {
-	STUB();
+	SDL_Surface *temp_surface = VGAScreen;
+	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+	
+	tempScreenSeg = VGAScreenSeg;
+	/* TODO callbioshandler := TRUE; */
+	JE_clearKeyboard();
+	JE_wipeKey();
+	/* TODO JE_getVGA(); */
+	
+	JE_barShade(1, 1, 262, 182); /*Main Box*/
+	JE_barShade(3, 3, 260, 180);
+	JE_barShade(5, 5, 258, 178);
+	JE_barShade(7, 7, 256, 176);
+	JE_bar     (9, 9, 254, 174, 0);
+	
+	/* Start Draw */
+	
+	if (twoPlayerMode)
+	{  /*Two-Player Help*/
+		
+		helpBoxColor = 3;
+		helpBoxBrightness = 3;
+		JE_HBox(20,  4, 36, 50);
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 44, 2, 21);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(55, 20, 37, 40);
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 42, 5, 36);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(40, 43, 34, 44);
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 43, 2, 79);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(54, 84, 35, 40);
+		
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(5, 126, 38, 55);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(5, 160, 39, 55);
+		
+	} else {
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 41, 15, 5);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(40, 10, 31, 45);
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 40, 5, 37);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(40, 40, 32, 44);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(40, 60, 33, 44);
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 42, 5, 98);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(40, 103, 34, 44);
+		
+		JE_newDrawCShapeNum(OPTION_SHAPES, 43, 2, 138);
+		helpBoxColor = 5;
+		helpBoxBrightness = 3;
+		JE_HBox(54, 143, 35, 40);
+		
+	}
+	
+	/* End Draw */
+	
+	JE_newDrawCShapeNum(OPTION_SHAPES, 37, 16, 189);
+	JE_outText(120 - JE_textWidth(miscText[5-1], TINY_FONT) / 2 + 20, 190, miscText[5-1], 0, 4);
+	
+	JE_showVGA();
+	
+	do {
+		
+		tempW = 0;
+		JE_textMenuWait(&tempW, true);
+		
+	} while (!inputDetected);
+	
+	textErase = 1;
+	
+	if (isNetworkGame)
+	{
+	  /* TODO */
+	}
+	
+	/* TODO callbioshandler := FALSE; */
+	
+	VGAScreen = temp_surface;
 }
 
 void JE_highScoreCheck( void )
