@@ -1445,11 +1445,11 @@ void JE_destructMain( void )
 						}
 					}
 					
-					if (soundEffects > 1 && soundActive)
+					if (soundEffects > 0 && soundActive)
 					{
 						
 						temp = 0;
-						for (temp2 = 0; temp < 8; temp++)
+						for (temp2 = 0; temp2 < 8; temp2++)
 							if (soundQueue[temp2] > 0)
 							{
 								temp = soundQueue[temp2];
