@@ -37,7 +37,6 @@
 #include "nortvars.h"
 #include "pallib.h"
 #include "params.h"
-#include "pcxload.h"
 #include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
@@ -592,27 +591,7 @@ startepisodeselect:
 						pItems[9-1] = episodeNum;
 						return true;
 					} else {
-						if (sel > 1)
-						{
-							char buf[] = "episode-.pcx";
-
-							JE_playSampleNum(ESC);
-							JE_fadeBlack (10);
-
-							buf[7] = '0' + sel;
-							JE_loadPCX(buf, false);
-							verticalHeight = 9;
-							helpBoxColor = 15;
-							helpBoxBrightness = 4;
-							helpBoxShadeType = FULL_SHADE;
-							JE_helpBox(10, 10, helpTxt[29], 50);
-							JE_showVGA();
-							JE_fadeColor(10);
-							wait_input(true,true,true);
-							lastkey_sym = 0;
-							JE_fadeBlack(10);
-							goto startepisodeselect;
-						}
+						JE_playSampleNum(ESC);
 					}
 					break;
 				case SDLK_ESCAPE:

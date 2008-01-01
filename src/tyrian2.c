@@ -3571,7 +3571,7 @@ new_game:
 									} else {
 										if (tempX == 0)
 										{
-											/* TODO JE_loadPcx("tshp2.pcx", false);*/
+											/* TODO JE_loadPCX("tshp2.pcx", false); */
 										} else {
 											JE_loadPic(tempX, false);
 										}
