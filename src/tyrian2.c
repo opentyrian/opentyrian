@@ -38,6 +38,7 @@
 #include "nortsong.h"
 #include "pallib.h"
 #include "params.h"
+#include "pcxload.h"
 #include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
@@ -3571,7 +3572,7 @@ new_game:
 									} else {
 										if (tempX == 0)
 										{
-											/* TODO JE_loadPCX("tshp2.pcx", false); */
+											JE_loadPCX("tshp2.pcx");
 										} else {
 											JE_loadPic(tempX, false);
 										}
