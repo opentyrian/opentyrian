@@ -1459,8 +1459,12 @@ start_level_first:
 
 	JE_drawOptionLevel();
 
-	BKwrap2 = &megaData2->mainmap[0][0];
-	BKwrap2to = &megaData2->mainmap[0][0];
+	BKwrap1 = &megaData1->mainmap[1][0];
+	BKwrap1to = &megaData1->mainmap[1][0];
+	BKwrap2 = &megaData2->mainmap[1][0];
+	BKwrap2to = &megaData2->mainmap[1][0];
+	BKwrap3 = &megaData3->mainmap[1][0];
+	BKwrap3to = &megaData3->mainmap[1][0];
 
 /* TODO <MXD> remove these */
 debugHist = 1;
@@ -1481,9 +1485,17 @@ level_loop:
 	}
 
 	/*Background Wrapping*/
+	if (mapYPos <= BKwrap1)
+	{
+		mapYPos = BKwrap1to;
+	}
 	if (mapY2Pos <= BKwrap2)
 	{
 		mapY2Pos = BKwrap2to;
+	}
+	if (mapY3Pos <= BKwrap3)
+	{
+		mapY3Pos = BKwrap3to;
 	}
 
 

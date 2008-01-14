@@ -55,7 +55,7 @@ void JE_pauseScreen( void );
 SDL_Surface *destructTempScreen;
 JE_byte endDelay;
 JE_boolean died = false;
-JE_boolean firstTime;
+JE_boolean destructFirstTime;
 
 #define SHOT_MAX 40
 #define EXPLO_MAX 40
@@ -156,14 +156,14 @@ struct {
 	        trail1x, trail1y, trail1c;
 } shotRec[SHOT_MAX]; /*[1..shotmax]*/
 
-JE_boolean endOfGame, quit;
+JE_boolean endOfGame, destructQuit;
 
 
-JE_boolean found;
+JE_boolean destructFound;
 
 JE_integer destructTempX;
 JE_integer destructTempY;
-JE_real tempR, tempR2;
+JE_real destructTempR, destructTempR2;
 
 JE_byte exploSoundChannel;
 JE_boolean explosionAvail[EXPLO_MAX]; /*[1..explomax]*/
@@ -179,7 +179,7 @@ struct {
 
 void JE_destructGame( void )
 {
-	firstTime = true;
+	destructFirstTime = true;
 	JE_clr256();
 	JE_showVGA();
 	endOfGame = false;
@@ -207,13 +207,13 @@ void JE_destructMain( void )
 	do {
 		JE_modeSelect();
 		
-		if (!quit)
+		if (!destructQuit)
 		{
 			do {
-				quit = false;
+				destructQuit = false;
 				endOfGame = false;
 				
-				firstTime = true;
+				destructFirstTime = true;
 				JE_loadPic(11, false);
 				
 				haveWalls = rand() % 2;
@@ -439,9 +439,9 @@ void JE_destructMain( void )
 						
 						for (temp = 0; temp < exploRec[z].explofill; temp++)
 						{
-							tempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
-							destructTempY = exploRec[z].y + round(cos(tempR) * ((float)rand() / RAND_MAX) * exploRec[z].explowidth);
-							destructTempX = exploRec[z].x + round(sin(tempR) * ((float)rand() / RAND_MAX) * exploRec[z].explowidth);
+							destructTempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
+							destructTempY = exploRec[z].y + round(cos(destructTempR) * ((float)rand() / RAND_MAX) * exploRec[z].explowidth);
+							destructTempX = exploRec[z].x + round(sin(destructTempR) * ((float)rand() / RAND_MAX) * exploRec[z].explowidth);
 							
 							if (destructTempY < 200 && destructTempY > 15)
 							{
@@ -824,10 +824,10 @@ void JE_destructMain( void )
 					JE_outText(280, 3, tempstr, 15, 0);
 					
 					JE_showVGA();
-					if (firstTime)
+					if (destructFirstTime)
 					{
 						JE_fadeColor(25);
-						firstTime = false;
+						destructFirstTime = false;
 					}
 					
 					service_SDL_events(true);
@@ -1268,28 +1268,28 @@ void JE_destructMain( void )
 						
 					if (keysactive[SDLK_ESCAPE])
 					{
-						quit = true;
+						destructQuit = true;
 						endOfGame = true;
 						keysactive[SDLK_ESCAPE] = false;
 					}
 					
 					if (keysactive[SDLK_BACKSPACE])
 					{
-						quit = true;
+						destructQuit = true;
 						keysactive[SDLK_BACKSPACE] = false;
 					}
 					
 					if (endDelay > 0)
 						endDelay--;
-				} while (!quit && !(died && endDelay == 0));
+				} while (!destructQuit && !(died && endDelay == 0));
 				
-				quit = false;
+				destructQuit = false;
 				died = false;
 				JE_fadeBlack(25);
 			} while (!endOfGame);
 		}
 		
-	} while (!quit);
+	} while (!destructQuit);
 }
 
 void JE_introScreen( void )
@@ -1318,8 +1318,8 @@ void JE_modeSelect( void )
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	destructMode = 1;
 	
-	firstTime = true;
-	quit = false;
+	destructFirstTime = true;
+	destructQuit = false;
 	
 	do {
 		for (int x = 1; x <= DESTRUCT_MODES; x++)
@@ -1329,10 +1329,10 @@ void JE_modeSelect( void )
 		}
 		JE_showVGA();
 		
-		if (firstTime)
+		if (destructFirstTime)
 		{
 			JE_fadeColor(15);
-			firstTime = false;
+			destructFirstTime = false;
 		}
 		
 		newkey = false;
@@ -1355,9 +1355,9 @@ void JE_modeSelect( void )
 				destructMode = 1;
 		}
 		if (keysactive[SDLK_ESCAPE])
-			quit = true;
+			destructQuit = true;
 		
-	} while (!quit && !keysactive[SDLK_RETURN]);
+	} while (!destructQuit && !keysactive[SDLK_RETURN]);
 	
 	JE_fadeBlack(15);
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
@@ -1503,16 +1503,16 @@ void JE_generateTerrain( void )
 			do {
 				x = (rand() % 300) + 10;
 				
-				found = true;
+				destructFound = true;
 				
 				for (z = 0; z < 4; z++)
 					if ((x > leftX[z] - 12) && (x < leftX[z] + 13))
-						found = false;
+						destructFound = false;
 				for (z = 0; z < 4; z++)
 					if ((x > rightX[z] - 12) && (x < rightX[z] + 13))
-						found = false;
+						destructFound = false;
 				
-			} while (!found);
+			} while (!destructFound);
 			
 			for (z = 1; z <= temp; z++)
 			{
@@ -1541,9 +1541,9 @@ void JE_generateTerrain( void )
 			
 			for (z = 1; z <= y * y * 2; z++)
 			{
-				tempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(tempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(tempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
+				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
 					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->w] = 25;
 			}
@@ -1560,9 +1560,9 @@ void JE_generateTerrain( void )
 			
 			for (z = 1; z < y * y * 2; z++)
 			{
-				tempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(tempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(tempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
+				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
 					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->w] = 0;
 			}
