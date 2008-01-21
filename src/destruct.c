@@ -1019,21 +1019,21 @@ void JE_destructMain( void )
 						if (systemAngle[rightSystem[rightSel-1]-1])
 						{
 							/*rightAnglechange*/
-							if (keysactive[SDLK_KP6])
+							if (keysactive[SDLK_KP6] || keysactive[SDLK_RIGHT])
 							{
 								rightAngle[rightSel-1] += 0.01f;
 								if (rightAngle[rightSel-1] > M_PI / 2)
 									rightAngle[rightSel-1] = M_PI / 2 - 0.01f;
 							}
 							/*rightAnglechange*/
-							if (keysactive[SDLK_KP4])
+							if (keysactive[SDLK_KP4] || keysactive[SDLK_LEFT])
 							{
 								rightAngle[rightSel-1] -= 0.01f;
 								if (rightAngle[rightSel-1] < 0)
 									rightAngle[rightSel-1] = 0;
 							}
 						} else if (rightSystem[rightSel-1] == 8) { /*Helicopter*/
-							if (keysactive[SDLK_KP4] && rightX[rightSel-1] > 5)
+							if ((keysactive[SDLK_KP4] || keysactive[SDLK_LEFT]) && rightX[rightSel-1] > 5)
 								if (JE_stabilityCheck(rightX[rightSel-1] - 5, round(rightY[rightSel-1])))
 								{
 									if (rightLastMove[rightSel-1] > -5)
@@ -1042,7 +1042,7 @@ void JE_destructMain( void )
 									if (JE_stabilityCheck(rightX[rightSel-1], round(rightY[rightSel-1])))
 										rightYInAir[rightSel-1] = true;
 								}
-							if (keysactive[SDLK_KP6] && rightX[rightSel-1] < 305)
+							if ((keysactive[SDLK_KP6] || keysactive[SDLK_RIGHT]) && rightX[rightSel-1] < 305)
 								if (JE_stabilityCheck(rightX[rightSel-1] + 5, round(rightY[rightSel-1])))
 								{
 									if (rightLastMove[rightSel-1] < 5)
@@ -1054,7 +1054,7 @@ void JE_destructMain( void )
 						}
 						
 						/*Rightincreasepower*/
-						if (keysactive[SDLK_KP8])
+						if (keysactive[SDLK_KP8] || keysactive[SDLK_UP])
 						{
 							if (rightSystem[rightSel-1] == 8)
 							{ /*HELI*/
@@ -1070,7 +1070,7 @@ void JE_destructMain( void )
 							}
 						}
 						/*Rightdecreasepower*/
-						if (keysactive[SDLK_KP2])
+						if (keysactive[SDLK_KP2] || keysactive[SDLK_DOWN])
 						{
 							if (rightSystem[rightSel-1] == 8 && rightYInAir[rightSel-1])
 							{ /*HELI*/
@@ -1082,9 +1082,9 @@ void JE_destructMain( void )
 							}
 						}
 						/*Rightupweapon*/
-						if (keysactive[SDLK_KP9])
+						if (keysactive[SDLK_KP9] || keysactive[SDLK_PAGEUP])
 						{
-							keysactive[SDLK_KP9] = false;
+							keysactive[SDLK_KP9] = keysactive[SDLK_PAGEUP] = false;
 							rightShotType[rightSel-1]++;
 							if (rightShotType[rightSel-1] > SHOT_TYPES)
 								rightShotType[rightSel-1] = 1;
@@ -1097,9 +1097,9 @@ void JE_destructMain( void )
 							}
 						}
 						/*Rightdownweapon*/
-						if (keysactive[SDLK_KP3])
+						if (keysactive[SDLK_KP3] || keysactive[SDLK_PAGEDOWN])
 						{
-							keysactive[SDLK_KP3] = false;
+							keysactive[SDLK_KP3] = keysactive[SDLK_PAGEDOWN] = false;
 							rightShotType[rightSel-1]--;
 							if (rightShotType[rightSel-1] < 1)
 								rightShotType[rightSel-1] = SHOT_TYPES;
@@ -1113,9 +1113,9 @@ void JE_destructMain( void )
 						}
 						
 						/*Rightchange*/
-						if (keysactive[SDLK_KP5])
+						if (keysactive[SDLK_KP5] || keysactive[SDLK_BACKSLASH])
 						{
-							keysactive[SDLK_KP5] = false;
+							keysactive[SDLK_KP5] = keysactive[SDLK_BACKSLASH] = false;
 							rightSel++;
 							if (rightSel > MAX_INSTALLATIONS)
 								rightSel = 1;
@@ -1124,7 +1124,7 @@ void JE_destructMain( void )
 						/*Newshot*/
 						if (rightshotDelay > 0)
 							rightshotDelay--;
-						if ((keysactive[SDLK_KP0] || keysactive[SDLK_KP_ENTER]) && rightshotDelay == 0)
+						if ((keysactive[SDLK_KP0] || keysactive[SDLK_INSERT] || keysactive[SDLK_KP_ENTER] || keysactive[SDLK_RETURN]) && rightshotDelay == 0)
 						{
 							
 							rightshotDelay = shotDelay[rightShotType[rightSel-1]-1];
@@ -1146,7 +1146,7 @@ void JE_destructMain( void )
 										shotRec[z-1].y = rightY[rightSel-1] + 1;
 										shotRec[z-1].ymov = 0.5f;
 										shotRec[z-1].xmov = 0.02f * rightLastMove[rightSel-1] * rightLastMove[rightSel-1] * rightLastMove[rightSel-1];
-										if (keysactive[SDLK_KP8] && rightY[rightSel-1] < 30)
+										if ((keysactive[SDLK_KP8] || keysactive[SDLK_UP]) && rightY[rightSel-1] < 30)
 										{
 											shotRec[z-1].ymov = 0.1f;
 											if (shotRec[z-1].xmov < 0)
