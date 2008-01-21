@@ -143,21 +143,21 @@ void JE_jukeboxGo( void )
 	{
 		tempScreenSeg = VGAScreenSeg;
 
-		if (weirdMusic) /* TODO: Not sure what this is about, figure it out */
+		if (weirdMusic)
 		{
-			/*
-			IF framecount2 = 0 THEN
-			BEGIN
-				framecount2 := weirdspeed;
-
-				IF weirdcurrent THEN
-					nortsong.setvol (tempvolume SHR 1, FXvolume)
-				ELSE
-					nortsong.setvol (tempvolume, FXvolume);
-
-				weirdcurrent := NOT weirdcurrent;
-			END;
-			*/
+			if (delaycount2() == 0)
+			{
+				setjasondelay2(weirdSpeed);
+				
+				if (weirdCurrent)
+				{
+					JE_setVol(tempVolume / 2, fxVolume);
+				} else {
+					JE_setVol(tempVolume, fxVolume);
+				}
+				
+				weirdCurrent = !weirdCurrent;
+			}
 		}
 
 		if (repeated && !repeatedFade)
@@ -348,14 +348,7 @@ void JE_jukeboxGo( void )
 
 void JE_newSpeed( void )
 {
-	/* TODO: Figure out what to do with this function. The timing system has changed a lot. */
-		/*
-          vga256d.speed := $5300 - starlib.speed * $800;
-          IF starlib.speed > 5 THEN
-            vga256d.speed := $1000;
-          resettimerint;
-          nortsong.settimerint;
-        */
+	/* deprecated; changed music tempo to match star speed */
 }
 
 void JE_playNewSong( void )
@@ -367,7 +360,3 @@ void JE_playNewSong( void )
 	tempVolume = tyrMusicVolume;
 	JE_setVol(tempVolume, fxVolume);
 }
-
-
-
-/* TODO */

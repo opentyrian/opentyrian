@@ -79,4 +79,4 @@ void JE_clearSpecialRequests( void )
 	nortShipRequest = false;
 }
 
-/* TODO */
+/* TODO: pretty much all of this */

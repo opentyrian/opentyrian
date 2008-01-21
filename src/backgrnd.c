@@ -614,7 +614,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 			for (x = 264; x; x--)
 			{
 				temp = (*s & 0x0f) + int_;
-				*s = (*s & 0xf0) | (temp > 0x1f ? 0 : (temp > 0x0f ? 0x0f : temp));
+				*s = (*s & 0xf0) | (temp >= 0x1f ? 0 : (temp >= 0x0f ? 0x0f : temp));
 				s++;
 			}
 			s += VGAScreen->w - 264;

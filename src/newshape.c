@@ -312,17 +312,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 
 		if (time == 0 && isNetworkGame)
 		{
-			/* TODO
-			JE_setNetByte(0);
-			JE_updateStream();
-			if (netQuit)
-			{
-				lastkey_sym = SDLK_ESC;
-				return true; *//* MXD assumes this default return value *//*
-			}
-			if (JE_scanNetByte(128))
-				return true; *//* MXD assumes this default return value */
-			/*Let other player continue moving around*/
+			/* TODO: NETWORK */
 		}
 
 	} while (!(inputDetected || delaycount() == 0 || netQuit));

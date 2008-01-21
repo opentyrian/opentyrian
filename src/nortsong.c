@@ -65,8 +65,8 @@ JE_word frameCount, frameCount2, frameCountMax;
 JE_byte currentSong = 0;
 JE_byte jConfigure = 0;
 
-JE_byte soundActive = true; /* I'm not sure if these two are ever false. */
-JE_byte musicActive = true; /* TODO: Make sure these get proper values. */
+JE_byte soundActive = true;
+JE_byte musicActive = true;
 
 JE_byte *digiFx[SOUND_NUM + 9]; /* [1..soundnum + 9] */
 JE_word fxSize[SOUND_NUM + 9]; /* [1..soundnum + 9] */
