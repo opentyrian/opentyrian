@@ -572,8 +572,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 	if (filterFade)
 	{
 		levelBrightness += levelBrightnessChg;
-		if (filterFadeStart &&
-		    (levelBrightness < -14 || levelBrightness > 14))
+		if ((filterFadeStart && levelBrightness < -14) || levelBrightness > 14)
 		{
 			levelBrightnessChg = -levelBrightnessChg;
 			filterFadeStart = false;
