@@ -308,7 +308,9 @@ void JE_joystickInit( void )
 			}
 		}
 	}
-
+	
+	memset(button, 0, sizeof(button));
+	
 	if (joystick_installed)
 	{
 		JE_joystick1();
@@ -321,10 +323,6 @@ void JE_joystickInit( void )
 
 		jCenterX = joyX;
 		jCenterY = joyY;
-		button[0] = false;
-		button[1] = false;
-		button[2] = false;
-		button[3] = false;
 		joystickUp = false;
 		joystickDown = false;
 		joystickLeft = false;
