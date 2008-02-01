@@ -14,6 +14,7 @@ SHILED_NUM:16 = 10
 ENEMY_NUM:16 = 850
 
 // Size in bytes: 0x50
+// Bullet patterns
 struct {
 	drain:16 // Filler, not used
 	shotRepeat:8 // Rate of fire (lower == faster)
@@ -44,12 +45,12 @@ struct {
 	shipBlastFilter:8 // TODO: Not sure, but probably has something to do with the color enemies get after being hit
 } WEAP_NUM+1 (780+1)
 
-// Buyable weapons:
+// Weapons:
 struct {
-	str_len:8 = 0x1E // Pascal string lenght, leave alone
+	str_len:8 = 0x1E // Pascal string length, leave alone
 	name:str30 // Weapon name
 	opnum:8 // How many firing modes weapon has. (1 or 2, only really works for rear guns)
-	2x { // Effect of the weapon (What it does, it's an index into the weapons structure). One for each firing mode.
+	2x { // Weapon patterns (What it does, it's an index into the patterns structure). One for each firing mode.
 		11x op:16 // Each entry corresponds to a power level
 	}
 	cost:16 // How much does the weapon cost. Upgrades are calculated off this.
@@ -57,61 +58,73 @@ struct {
 	powerUse:16 // Power drain when firing
 } PORT_NUM+1 (42+1)
 
+// Special moves, those things that show up in the upper left corner with a fake charging bar
 struct {
-	str_len:8 = 0x1E
-	name:str30
-	itemGraphic:16
-	pwr:8
-	sType:8
-	wpn:16
+	str_len:8 = 0x1E // Pascal string length, leave alone
+	name:str30 // Name
+	itemGraphic:16 // The graphic that's displayed during gameplay
+	pwr:8 // Time needed between recharges, may be overriden
+	sType:8 // Determines the type of the special: TODO
+	wpn:16 // Argument used for some kinds of sType
 } SPECIAL_NUM+1 (46+1)
 
+// Generators
 struct {
-	str_len:8 = 0x1E
-	name:str30
-	itemGraphic:16
-	power:s8
-	speed:8
-	cost:16
+	str_len:8 = 0x1E // Pascal string length
+	name:str30 // Name
+	itemGraphic:16 // Graphic that's displayed in the shop
+	power:s8 // Amount of power provided by generator
+	speed:8 // Unused
+	cost:16 // Cost in shop
 } POWER_NUM+1 (6+1)
 
+// Ships
 struct {
-	str_len:8 = 0x1E
-	name:str30
-	shipGraphic:16
-	itemGraphic:16
-	ani:8
-	spd:s8
-	dmg:8
-	cost:16
-	bigShipGraphic:8
+	str_len:8 = 0x1E // String length
+	name:str30 // Name
+	shipGraphic:16 // Graphic used in-game
+	itemGraphic:16 // Graphic in shop
+	ani:8 // Sets the threshold for when to change to the turning frames
+	spd:s8 // Unused
+	dmg:8 // amount of armor ship has
+	cost:16 // Cost in shop
+	bigShipGraphic:8 // Big graphic displayed on the left while in shop
 } SHIP_NUM+1 (13+1)
 
+// Sidekicks
 struct {
-	str_len:8 = 0x1E
-	name:str30
-	pwr:8
-	itemGraphic:16
-	cost:16
-	tr:8
-	option:8
-	opspd:s8
-	ani:8
-	gr:16
-	wport:8
-	wpnum:16
-	ammo:8
-	stop:8
-	iconGr:8
+	str_len:8 = 0x1E // String length
+	name:str30 // Name
+	pwr:8 // Number of charge stages
+	itemGraphic:16 // Graphic in shop
+	cost:16 // Cost in shop
+	tr:8 // Position and movement of sidekick
+		// 0: Attached to side of ship
+		// 1: Follower ship with turning graphics
+		// 2: Attached to front of ship (player can "launch" if right sidekick)
+		// 3: Follower ship with normal graphic
+		// 4: Orbits around ship
+	option:8 // Determines animation for ship
+		// 0: Invisible
+		// 1: Constantly animating
+		// 2: Animates when firing
+	opspd:s8 // Unused
+	ani:8 // Number of frames in animation
+	20x gr:16 // In-game sprite for each animation frame
+	wport:8 // Weapon used for power usage, etc (index into weapons array)
+	wpnum:16 // Bullet pattern
+	ammo:8 // Amount of ammo
+	stop:8 // Unused
+	iconGr:8 // Icon in ammo indicators
 } OPTION_NUM+1 (30+1)
 
 struct {
-	str_len:8 = 0x1E
-	name:str30
-	tpwr:8
-	mpwr:8
-	itemGraphic:16
-	cost:16
+	str_len:8 = 0x1E // String length
+	name:str30 // Name
+	tpwr:8 // Generator power needed to charge
+	mpwr:8 // Amount of protection
+	itemGraphic:16 // Item icon in shop
+	cost:16 // Cost in shop
 } SHIELD_NUM+1 (10+1)
 
 struct {
