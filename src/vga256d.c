@@ -140,11 +140,11 @@ void JE_showVGA( void )
 	{
 		for (int x = 0; x < surface_width; x++)
 		{
-			((Uint8 *)display_surface->pixels)[(y * 2 * surface_width + x) * 2] = 
-			((Uint8 *)display_surface->pixels)[(y * 2 * surface_width + x) * 2 + 1] = ((Uint8 *)VGAScreen->pixels)[y * surface_width + x];
+			((Uint8 *)display_surface->pixels)[(y * display_surface->pitch + x) * 2] = 
+			((Uint8 *)display_surface->pixels)[(y * display_surface->pitch + x) * 2 + 1] = ((Uint8 *)VGAScreen->pixels)[y * VGAScreen->pitch + x];
 		}
-		memcpy(&((Uint8 *)display_surface->pixels)[((y * 2 + 1) * surface_width) * 2],
-		       &((Uint8 *)display_surface->pixels)[(y * 2 * surface_width) * 2], surface_width * 2);
+		memcpy(&((Uint8 *)display_surface->pixels)[(y * 2 + 1) * display_surface->pitch],
+		       &((Uint8 *)display_surface->pixels)[(y * 2) * display_surface->pitch], surface_width * 2);
 	}
 	SDL_Flip(display_surface);
 #else
@@ -205,10 +205,10 @@ void JE_pix( JE_word x, JE_word y, JE_byte c )
 void JE_pix2( JE_word x, JE_word y, JE_byte c )
 {
 	/* Bad things happen if we don't clip */
-	if (x <  VGAScreen->w && y <  VGAScreen->h)
+	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
-		vga[y * VGAScreen->w + x] = c;
+		vga[y * VGAScreen->pitch + x] = c;
 	}
 }
 
@@ -229,7 +229,7 @@ void JE_pix3( JE_word x, JE_word y, JE_byte c )
 
 void JE_pixAbs( JE_word x, JE_byte c )
 {
-	if (x < VGAScreen->w * VGAScreen->h)
+	if (x < VGAScreen->pitch * VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
 		vga[x] = c;
@@ -239,20 +239,20 @@ void JE_pixAbs( JE_word x, JE_byte c )
 void JE_getPix( JE_word x, JE_word y, JE_byte *c )
 {
 	/* Bad things happen if we don't clip */
-	if (x <  VGAScreen->w && y <  VGAScreen->h)
+	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
-		*c = vga[y * VGAScreen->w + x];
+		*c = vga[y * VGAScreen->pitch + x];
 	}
 }
 
 JE_byte JE_getPixel( JE_word x, JE_word y )
 {
 	/* Bad things happen if we don't clip */
-	if (x <  VGAScreen->w && y <  VGAScreen->h)
+	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
-		return vga[y * VGAScreen->w + x];
+		return vga[y * VGAScreen->pitch + x];
 	}
 
 	return 0;
@@ -260,26 +260,26 @@ JE_byte JE_getPixel( JE_word x, JE_word y )
 
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
 {
-	if (a < VGAScreen->w && b < VGAScreen->h &&
-	    c < VGAScreen->w && d < VGAScreen->h)
+	if (a < VGAScreen->pitch && b < VGAScreen->h &&
+	    c < VGAScreen->pitch && d < VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
 		int i;
 
 		/* Top line */
-		memset(&vga[b * VGAScreen->w + a], e, c - a + 1);
+		memset(&vga[b * VGAScreen->pitch + a], e, c - a + 1);
 
 		/* Bottom line */
-		memset(&vga[d * VGAScreen->w + a], e, c - a + 1);
+		memset(&vga[d * VGAScreen->pitch + a], e, c - a + 1);
 
 		/* Left line */
-		for (i = (b + 1) * VGAScreen->w + a; i < (d * VGAScreen->w + a); i += VGAScreen->w)
+		for (i = (b + 1) * VGAScreen->pitch + a; i < (d * VGAScreen->pitch + a); i += VGAScreen->pitch)
 		{
 			vga[i] = e;
 		}
 
 		/* Right line */
-		for (i = (b + 1) * VGAScreen->w + c; i < (d * VGAScreen->w + c); i += VGAScreen->w)
+		for (i = (b + 1) * VGAScreen->pitch + c; i < (d * VGAScreen->pitch + c); i += VGAScreen->pitch)
 		{
 			vga[i] = e;
 		}
@@ -290,15 +290,15 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
 
 void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, x2, y2, color */
 {
-	if (a < VGAScreen->w && b < VGAScreen->h &&
-	    c < VGAScreen->w && d < VGAScreen->h)
+	if (a < VGAScreen->pitch && b < VGAScreen->h &&
+	    c < VGAScreen->pitch && d < VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
 		int i, width;
 
 		width = c - a + 1;
 
-		for (i = b * VGAScreen->w + a; i <= d * VGAScreen->w + a; i += VGAScreen->w)
+		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
 		{
 			memset(&vga[i], e, width);
 		}
@@ -309,15 +309,15 @@ void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, 
 
 void JE_c_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e )
 {
-	if (a < VGAScreen->w && b < VGAScreen->h &&
-	    c < VGAScreen->w && d < VGAScreen->h)
+	if (a < VGAScreen->pitch && b < VGAScreen->h &&
+	    c < VGAScreen->pitch && d < VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreenSeg->pixels;
 		int i, width;
 
 		width = c - a + 1;
 
-		for (i = b * VGAScreen->w + a; i <= d * VGAScreen->w + a; i += VGAScreen->w)
+		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
 		{
 			memset(&vga[i], e, width);
 		}
@@ -328,15 +328,15 @@ void JE_c_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e )
 
 void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
-	if (a < VGAScreen->w && b < VGAScreen->h &&
-	    c < VGAScreen->w && d < VGAScreen->h)
+	if (a < VGAScreen->pitch && b < VGAScreen->h &&
+	    c < VGAScreen->pitch && d < VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
 		int i, j, width;
 
 		width = c - a + 1;
 
-		for (i = b * VGAScreen->w + a; i <= d * VGAScreen->w + a; i += VGAScreen->w)
+		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
 		{
 			for (j = 0; j < width; j++)
 			{
@@ -355,15 +355,15 @@ void JE_barShade2( JE_word a, JE_word b, JE_word c, JE_word d )
 
 void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
-	if (a < VGAScreen->w && b < VGAScreen->h &&
-	    c < VGAScreen->w && d < VGAScreen->h)
+	if (a < VGAScreen->pitch && b < VGAScreen->h &&
+	    c < VGAScreen->pitch && d < VGAScreen->h)
 	{
 		Uint8 *vga = VGAScreen->pixels;
 		int i, j, width;
 
 		width = c-a+1;
 
-		for (i = b * VGAScreen->w + a; i <= d * VGAScreen->w + a; i += VGAScreen->w)
+		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
 		{
 			for (j = 0; j < width; j++)
 			{
@@ -418,7 +418,7 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
 
 	for (z = 0; z <= v; z++)
 	{
-		vga[(int)(round(x) + round(y)) * VGAScreen->w] = e;
+		vga[(int)(round(x) + round(y)) * VGAScreen->pitch] = e;
 		x += g; y += h;
 	}
 }
@@ -450,12 +450,12 @@ void JE_drawGraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )
 	Uint8 *vga = VGAScreen->pixels;
 	int i;
 
-	vga += y * VGAScreen->w + x;
+	vga += y * VGAScreen->pitch + x;
 
 	for (i = 0; i < 14; i++)
 	{
 		memcpy(vga, s, 12);
-		vga += VGAScreen->w; s += 12;
+		vga += VGAScreen->pitch; s += 12;
 	}
 }
 

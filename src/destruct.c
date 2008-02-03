@@ -443,7 +443,7 @@ void JE_destructMain( void )
 							
 							if (destructTempY < 200 && destructTempY > 15)
 							{
-								tempW = destructTempX + destructTempY * destructTempScreen->w;
+								tempW = destructTempX + destructTempY * destructTempScreen->pitch;
 								if (exploRec[z].explocolor == 252)
 									JE_superPixel(tempW);
 								else
@@ -627,7 +627,7 @@ void JE_destructMain( void )
 									}
 								}
 								
-								temp = ((Uint8 *)destructTempScreen->pixels)[destructTempX + destructTempY * destructTempScreen->w];
+								temp = ((Uint8 *)destructTempScreen->pixels)[destructTempX + destructTempY * destructTempScreen->pitch];
 								
 								if (temp == 25)
 								{
@@ -1543,7 +1543,7 @@ void JE_generateTerrain( void )
 				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
-					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->w] = 25;
+					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 25;
 			}
 		}
 	}
@@ -1562,7 +1562,7 @@ void JE_generateTerrain( void )
 				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
-					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->w] = 0;
+					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 0;
 			}
 		}
 	}
@@ -1577,24 +1577,24 @@ void JE_generateTerrain( void )
 void JE_aliasDirt( void )
 {
 	Uint8 *s = VGAScreen->pixels;
-	s += 12 * VGAScreen->w;
+	s += 12 * VGAScreen->pitch;
 	
 	for (int y = 12; y < VGAScreen->h; y++)
 	{
-		for (int x = 0; x < VGAScreen->w; x++)
+		for (int x = 0; x < VGAScreen->pitch; x++)
 		{
 			if (*s == 0)
 			{
 				int temp = 0;
-				if (*(s - VGAScreen->w) == 25)
+				if (*(s - VGAScreen->pitch) == 25)
 					temp += 1;
 				if (y < VGAScreen2->h - 1)
-					if (*(s + VGAScreen->w) == 25)
+					if (*(s + VGAScreen->pitch) == 25)
 						temp += 3;
 				if (x > 0)
 					if (*(s - 1) == 25)
 						temp += 2;
-				if (x < VGAScreen2->w - 1)
+				if (x < VGAScreen2->pitch - 1)
 					if (*(s + 1) == 25)
 						temp += 2;
 				if (temp)
@@ -1625,7 +1625,7 @@ JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y )
 	JE_word z, tempW, tempW2;
 	
 	tempW2 = 0;
-	tempW = x + y * destructTempScreen->w - 2;
+	tempW = x + y * destructTempScreen->pitch - 2;
 	for (z = 1; z <= 12; z++)
 		if (((Uint8 *)destructTempScreen->pixels)[tempW + z] == 25)
 			tempW2++;
@@ -1636,14 +1636,14 @@ JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y )
 void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
 {
 	Uint8 *s = VGAScreen->pixels;
-	s += 12 * VGAScreen->w;
+	s += 12 * VGAScreen->pitch;
 	
 	Uint8 *temps = destructTempScreen->pixels;
-	temps += 12 * destructTempScreen->w;
+	temps += 12 * destructTempScreen->pitch;
 	
 	for (int y = 12; y < VGAScreen->h; y++)
 	{
-		for (int x = 0; x < VGAScreen->w; x++)
+		for (int x = 0; x < VGAScreen->pitch; x++)
 		{
 			if (*temps & 0x80 && *temps >= 241)
 			{
@@ -1718,7 +1718,7 @@ void JE_eSound( JE_byte sound )
 void JE_superPixel( JE_word loc )
 {
 	Uint8 *s = destructTempScreen->pixels;
-	int loc_max = destructTempScreen->w * destructTempScreen->h;
+	int loc_max = destructTempScreen->pitch * destructTempScreen->h;
 	
 	if (loc > 0 && loc < loc_max)
 	{
@@ -1775,92 +1775,92 @@ void JE_superPixel( JE_word loc )
 			s[loc + 2] = 255;
 	}
 	
-	if (loc - destructTempScreen->w > 0 && loc - destructTempScreen->w < loc_max)
+	if (loc - destructTempScreen->pitch > 0 && loc - destructTempScreen->pitch < loc_max)
 	{
 		/* up 1 */
-		if (s[loc - destructTempScreen->w] < 249)
-			s[loc - destructTempScreen->w] = 249;
-		else if (s[loc - destructTempScreen->w] < 255 - 2)
-			s[loc - destructTempScreen->w] += 2;
+		if (s[loc - destructTempScreen->pitch] < 249)
+			s[loc - destructTempScreen->pitch] = 249;
+		else if (s[loc - destructTempScreen->pitch] < 255 - 2)
+			s[loc - destructTempScreen->pitch] += 2;
 		else
-			s[loc - destructTempScreen->w] = 255;
+			s[loc - destructTempScreen->pitch] = 255;
 	}
 	
-	if (loc - destructTempScreen->w - 1 > 0 && loc - destructTempScreen->w - 1 < loc_max)
+	if (loc - destructTempScreen->pitch - 1 > 0 && loc - destructTempScreen->pitch - 1 < loc_max)
 	{
 		/* up 1, left 1 */
-		if (s[loc - destructTempScreen->w - 1] < 247)
-			s[loc - destructTempScreen->w - 1] = 247;
-		else if (s[loc - destructTempScreen->w - 1] < 255 - 1)
-			s[loc - destructTempScreen->w - 1] += 1;
+		if (s[loc - destructTempScreen->pitch - 1] < 247)
+			s[loc - destructTempScreen->pitch - 1] = 247;
+		else if (s[loc - destructTempScreen->pitch - 1] < 255 - 1)
+			s[loc - destructTempScreen->pitch - 1] += 1;
 		else
-			s[loc - destructTempScreen->w - 1] = 255;
+			s[loc - destructTempScreen->pitch - 1] = 255;
 	}
 	
-	if (loc - destructTempScreen->w + 1 > 0 && loc - destructTempScreen->w + 1 < loc_max)
+	if (loc - destructTempScreen->pitch + 1 > 0 && loc - destructTempScreen->pitch + 1 < loc_max)
 	{
 		/* up 1, right 1 */
-		if (s[loc - destructTempScreen->w + 1] < 249)
-			s[loc - destructTempScreen->w + 1] = 249;
-		else if (s[loc - destructTempScreen->w + 1] < 255 - 2)
-			s[loc - destructTempScreen->w + 1] += 2;
+		if (s[loc - destructTempScreen->pitch + 1] < 249)
+			s[loc - destructTempScreen->pitch + 1] = 249;
+		else if (s[loc - destructTempScreen->pitch + 1] < 255 - 2)
+			s[loc - destructTempScreen->pitch + 1] += 2;
 		else
-			s[loc - destructTempScreen->w + 1] = 255;
+			s[loc - destructTempScreen->pitch + 1] = 255;
 	}
 	
-	if (loc - destructTempScreen->w * 2 > 0 && loc - destructTempScreen->w * 2 < loc_max)
+	if (loc - destructTempScreen->pitch * 2 > 0 && loc - destructTempScreen->pitch * 2 < loc_max)
 	{
 		/* up 2 */
-		if (s[loc - destructTempScreen->w * 2] < 246)
-			s[loc - destructTempScreen->w * 2] = 246;
-		else if (s[loc - destructTempScreen->w * 2] < 255 - 1)
-			s[loc - destructTempScreen->w * 2] += 1;
+		if (s[loc - destructTempScreen->pitch * 2] < 246)
+			s[loc - destructTempScreen->pitch * 2] = 246;
+		else if (s[loc - destructTempScreen->pitch * 2] < 255 - 1)
+			s[loc - destructTempScreen->pitch * 2] += 1;
 		else
-			s[loc - destructTempScreen->w * 2] = 255;
+			s[loc - destructTempScreen->pitch * 2] = 255;
 	}
 	
-	if (loc + destructTempScreen->w > 0 && loc + destructTempScreen->w < loc_max)
+	if (loc + destructTempScreen->pitch > 0 && loc + destructTempScreen->pitch < loc_max)
 	{
 		/* down 1 */
-		if (s[loc + destructTempScreen->w] < 249)
-			s[loc + destructTempScreen->w] = 249;
-		else if (s[loc + destructTempScreen->w] < 255 - 2)
-			s[loc + destructTempScreen->w] += 2;
+		if (s[loc + destructTempScreen->pitch] < 249)
+			s[loc + destructTempScreen->pitch] = 249;
+		else if (s[loc + destructTempScreen->pitch] < 255 - 2)
+			s[loc + destructTempScreen->pitch] += 2;
 		else
-			s[loc + destructTempScreen->w] = 255;
+			s[loc + destructTempScreen->pitch] = 255;
 	}
 	
-	if (loc + destructTempScreen->w - 1 > 0 && loc + destructTempScreen->w - 1 < loc_max)
+	if (loc + destructTempScreen->pitch - 1 > 0 && loc + destructTempScreen->pitch - 1 < loc_max)
 	{
 		/* down 1, left 1 */
-		if (s[loc + destructTempScreen->w - 1] < 247)
-			s[loc + destructTempScreen->w - 1] = 247;
-		else if (s[loc + destructTempScreen->w - 1] < 255 - 1)
-			s[loc + destructTempScreen->w - 1] += 1;
+		if (s[loc + destructTempScreen->pitch - 1] < 247)
+			s[loc + destructTempScreen->pitch - 1] = 247;
+		else if (s[loc + destructTempScreen->pitch - 1] < 255 - 1)
+			s[loc + destructTempScreen->pitch - 1] += 1;
 		else
-			s[loc + destructTempScreen->w - 1] = 255;
+			s[loc + destructTempScreen->pitch - 1] = 255;
 	}
 	
-	if (loc + destructTempScreen->w + 1 > 0 && loc + destructTempScreen->w + 1 < loc_max)
+	if (loc + destructTempScreen->pitch + 1 > 0 && loc + destructTempScreen->pitch + 1 < loc_max)
 	{
 		/* down 1, right 1 */
-		if (s[loc + destructTempScreen->w + 1] < 247)
-			s[loc + destructTempScreen->w + 1] = 247;
-		else if (s[loc + destructTempScreen->w + 1] < 255 - 1)
-			s[loc + destructTempScreen->w + 1] += 1;
+		if (s[loc + destructTempScreen->pitch + 1] < 247)
+			s[loc + destructTempScreen->pitch + 1] = 247;
+		else if (s[loc + destructTempScreen->pitch + 1] < 255 - 1)
+			s[loc + destructTempScreen->pitch + 1] += 1;
 		else
-			s[loc + destructTempScreen->w + 1] = 255;
+			s[loc + destructTempScreen->pitch + 1] = 255;
 	}
 	
-	if (loc + destructTempScreen->w * 2 > 0 && loc + destructTempScreen->w * 2 < loc_max)
+	if (loc + destructTempScreen->pitch * 2 > 0 && loc + destructTempScreen->pitch * 2 < loc_max)
 	{
 		/* down 2 */
-		if (s[loc + destructTempScreen->w * 2] < 246)
-			s[loc + destructTempScreen->w * 2] = 246;
-		else if (s[loc + destructTempScreen->w * 2] < 255 - 1)
-			s[loc + destructTempScreen->w * 2] += 1;
+		if (s[loc + destructTempScreen->pitch * 2] < 246)
+			s[loc + destructTempScreen->pitch * 2] = 246;
+		else if (s[loc + destructTempScreen->pitch * 2] < 255 - 1)
+			s[loc + destructTempScreen->pitch * 2] += 1;
 		else
-			s[loc + destructTempScreen->w * 2] = 255;
+			s[loc + destructTempScreen->pitch * 2] = 255;
 	}
 }
 

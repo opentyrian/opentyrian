@@ -279,8 +279,8 @@ void JE_setupStars( void )
 
 	for (z = MAX_STARS; z--; )
 	{
-		starDat[z].sLoc = (rand() % 320) + (rand() % 200) * 320;
-		starDat[z].sMov = ((rand() % 3) + 2) * 320;
+		starDat[z].sLoc = (rand() % 320) + (rand() % 200) * VGAScreen->pitch;
+		starDat[z].sMov = ((rand() % 3) + 2) * VGAScreen->pitch;
 		starDat[z].sC = (rand() % 16) + (9 * 16);
 	}
 }

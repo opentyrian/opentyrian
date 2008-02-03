@@ -1411,10 +1411,10 @@ void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodeType )
 		{
 			if (explodeAvail[i] == 0)
 			{
-				explosions[i].explodeLoc = y * VGAScreen->w + x;
+				explosions[i].explodeLoc = y * VGAScreen->pitch + x;
 				if (explodeType == 6)
 				{
-					explosions[i].explodeLoc += 12 * VGAScreen->w + 2;
+					explosions[i].explodeLoc += 12 * VGAScreen->pitch + 2;
 				} else if (explodeType == 98)
 				{
 					explodeType = 6;
@@ -1650,8 +1650,8 @@ void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte col
 		tempr = ((float)rand() / RAND_MAX) * (M_PI * 2);
 		tempy = round(cos(tempr) * ((float)rand() / RAND_MAX) * explowidth);
 		tempx = round(sin(tempr) * ((float)rand() / RAND_MAX) * explowidth);
-		SPL[lastSP].location = (tempy + y) * VGAScreen->w + (tempx + x);
-		SPL[lastSP].movement = tempy * VGAScreen->w + tempx + VGAScreen->w;
+		SPL[lastSP].location = (tempy + y) * VGAScreen->pitch + (tempx + x);
+		SPL[lastSP].movement = tempy * VGAScreen->pitch + tempx + VGAScreen->pitch;
 		SPL[lastSP].color = color;
 		SPZ[lastSP] = 15;
 	}
@@ -1669,7 +1669,7 @@ void JE_drawSP( void )
 		{
 			SPL[i].location += SPL[i].movement;
 			
-			if (SPL[i].location < VGAScreen->h * VGAScreen->w)
+			if (SPL[i].location < VGAScreen->h * VGAScreen->pitch)
 			{
 				s = (Uint8 *)VGAScreen->pixels;
 				s += SPL[i].location;
@@ -1677,12 +1677,12 @@ void JE_drawSP( void )
 				*s = (((*s & 0x0f) + SPZ[i]) >> 1) + SPL[i].color;
 				if (SPL[i].location > 1)
 					*(s - 1) = (((*(s - 1) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
-				if (SPL[i].location < VGAScreen->h * VGAScreen->w - 1)
+				if (SPL[i].location < VGAScreen->h * VGAScreen->pitch - 1)
 					*(s + 1) = (((*(s + 1) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
-				if (SPL[i].location > VGAScreen->w)
-					*(s - VGAScreen->w) = (((*(s - VGAScreen->w) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
-				if (SPL[i].location < (VGAScreen->h - 1) * VGAScreen->w)
-					*(s + VGAScreen->w) = (((*(s + VGAScreen->w) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+				if (SPL[i].location > VGAScreen->pitch)
+					*(s - VGAScreen->pitch) = (((*(s - VGAScreen->pitch) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+				if (SPL[i].location < (VGAScreen->h - 1) * VGAScreen->pitch)
+					*(s + VGAScreen->pitch) = (((*(s + VGAScreen->pitch) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
 			}
 			
 			SPZ[i]--;

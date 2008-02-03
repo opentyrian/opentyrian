@@ -64,7 +64,7 @@ void JE_loadPCX( char *file ) // this is only meant to load tshp2.pcx
 		}
 		if (i && (i % 320 == 0))
 		{
-			s += VGAScreen->w - 320;
+			s += VGAScreen->pitch - 320;
 		}
 	}
 	

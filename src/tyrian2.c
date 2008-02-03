@@ -149,12 +149,12 @@ void JE_starShowVGA( void )
 
 		if (starShowVGASpecialCode == 1)
 		{
-			src += game_screen->w * 183;
+			src += game_screen->pitch * 183;
 			for (y = 0; y < 184; y++)
 			{
 				memmove(s, src, 264);
-				s += VGAScreenSeg->w;
-				src -= game_screen->w;
+				s += VGAScreenSeg->pitch;
+				src -= game_screen->pitch;
 			}
 		} else if (starShowVGASpecialCode == 2 && processorType >= 2) {
 			lighty = 172 - PY;
@@ -186,15 +186,15 @@ void JE_starShowVGA( void )
 						src++;
 					}
 				}
-				s += 56 + VGAScreenSeg->w - 320;
-				src += 56 + VGAScreenSeg->w - 320;
+				s += 56 + VGAScreenSeg->pitch - 320;
+				src += 56 + VGAScreenSeg->pitch - 320;
 			}
 		} else {
 			for (y = 0; y < 184; y++)
 			{
 				memmove(s, src, 264);
-				s += VGAScreenSeg->w;
-				src += game_screen->w;
+				s += VGAScreenSeg->pitch;
+				src += game_screen->pitch;
 			}
 		}
 		JE_showVGA();
@@ -305,10 +305,10 @@ void JE_drawEnemy( int enemyOffset )
 					if (enemy[i].ey > -13)
 					{
 						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey - 7) * VGAScreen->w + (enemy[i].ex - 6) + tempMapXOfs;
+						s += (enemy[i].ey - 7) * VGAScreen->pitch + (enemy[i].ex - 6) + tempMapXOfs;
 
 						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->w;
+						s_limit += VGAScreen->h * VGAScreen->pitch;
 
 						p = enemy[i].shapeseg;
 						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1]);
@@ -330,13 +330,13 @@ void JE_drawEnemy( int enemyOffset )
 								}
 							} else {
 								s -= 12;
-								s += VGAScreen->w;
+								s += VGAScreen->pitch;
 							}
 							p++;
 						}
 
 						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey - 7) * VGAScreen->w + (enemy[i].ex + 6) + tempMapXOfs;
+						s += (enemy[i].ey - 7) * VGAScreen->pitch + (enemy[i].ex + 6) + tempMapXOfs;
 
 						p = enemy[i].shapeseg;
 						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1]]);
@@ -358,7 +358,7 @@ void JE_drawEnemy( int enemyOffset )
 								}
 							} else {
 								s -= 12;
-								s += VGAScreen->w;
+								s += VGAScreen->pitch;
 							}
 							p++;
 						}
@@ -367,10 +367,10 @@ void JE_drawEnemy( int enemyOffset )
 					if (enemy[i].ey > -26 && enemy[i].ey < 182)
 					{
 						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey + 7) * VGAScreen->w + (enemy[i].ex - 6) + tempMapXOfs;
+						s += (enemy[i].ey + 7) * VGAScreen->pitch + (enemy[i].ex - 6) + tempMapXOfs;
 
 						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->w;
+						s_limit += VGAScreen->h * VGAScreen->pitch;
 
 						p = enemy[i].shapeseg;
 						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 18]);
@@ -392,13 +392,13 @@ void JE_drawEnemy( int enemyOffset )
 								}
 							} else {
 								s -= 12;
-								s += VGAScreen->w;
+								s += VGAScreen->pitch;
 							}
 							p++;
 						}
 
 						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey + 7) * VGAScreen->w + (enemy[i].ex + 6) + tempMapXOfs;
+						s += (enemy[i].ey + 7) * VGAScreen->pitch + (enemy[i].ex + 6) + tempMapXOfs;
 
 						p = enemy[i].shapeseg;
 						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 19]);
@@ -420,7 +420,7 @@ void JE_drawEnemy( int enemyOffset )
 								}
 							} else {
 								s -= 12;
-								s += VGAScreen->w;
+								s += VGAScreen->pitch;
 							}
 							p++;
 						}
@@ -430,10 +430,10 @@ void JE_drawEnemy( int enemyOffset )
 					if (enemy[i].ey > -13)
 					{
 						s = (Uint8 *)VGAScreen->pixels;
-						s += enemy[i].ey * VGAScreen->w + enemy[i].ex + tempMapXOfs;
+						s += enemy[i].ey * VGAScreen->pitch + enemy[i].ex + tempMapXOfs;
 
 						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->w;
+						s_limit += VGAScreen->h * VGAScreen->pitch;
 
 						p = enemy[i].shapeseg;
 						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1]);
@@ -455,7 +455,7 @@ void JE_drawEnemy( int enemyOffset )
 								}
 							} else {
 								s -= 12;
-								s += VGAScreen->w;
+								s += VGAScreen->pitch;
 							}
 							p++;
 						}
@@ -609,7 +609,7 @@ enemy_still_exists:
 						{
 							if (enemy[i].ey > 20)
 							{
-								explosionMoveUp = -640;
+								explosionMoveUp = -2 * VGAScreen->pitch;
 								JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
 								JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
 								explosionMoveUp = 0;
@@ -1153,7 +1153,7 @@ start_level_first:
 	backPos2 = 0;
 	backPos3 = 0;
 	power = 0;
-	starY = 320;
+	starY = VGAScreen->pitch;
 
 	/* Setup maximum player speed */
 	/* ==== Mouse Input ==== */
@@ -1205,7 +1205,7 @@ start_level_first:
 	backMove = 1;
 	backMove2 = 2;
 	backMove3 = 3;
-	explodeMove = 640;
+	explodeMove = 2 * VGAScreen->pitch;
 	enemiesActive = true;
 	for(temp = 0; temp < 3; temp++)
 	{
@@ -1737,15 +1737,15 @@ level_loop:
 				{
 					memcpy(s, p, 24);
 
-					s += VGAScreen->w;
+					s += VGAScreen->pitch;
 					p += 24;
 				}
 
-				s -= backPos * VGAScreen->w + 24;
+				s -= backPos * VGAScreen->pitch + 24;
 			}
 
 			s += 24 * 11;
-			s += backPos * VGAScreen->w + 24;
+			s += backPos * VGAScreen->pitch + 24;
 
 			/* Increment Map Location for next line */
 			bp += 14 - 2;   /* (Map Width) */
@@ -1768,17 +1768,17 @@ level_loop:
 				{
 					memcpy(s, p, 24);
 
-					s += VGAScreen->w;
+					s += VGAScreen->pitch;
 					p += 24;
 				}
 
-				s -= VGAScreen->w * 28 + 24;
+				s -= VGAScreen->pitch * 28 + 24;
 			}
 
 			/* Increment Map Location for next line */
 			bp += 14 + 14 - 2;  /* (Map Width) */
 
-			s += VGAScreen->w * 28 + 24 * 12;
+			s += VGAScreen->pitch * 28 + 24 * 12;
 		}
 
 		if (backPos <= 15)
@@ -1794,11 +1794,11 @@ level_loop:
 				{
 					memcpy(s, p, 24);
 
-					s += VGAScreen->w;
+					s += VGAScreen->pitch;
 					p += 24;
 				}
 
-				s -= (15 - backPos + 1) * VGAScreen->w + 24;
+				s -= (15 - backPos + 1) * VGAScreen->pitch + 24;
 			}
 		}
 	} else {
@@ -1831,7 +1831,7 @@ level_loop:
 		for (i = MAX_STARS; i--; )
 		{
 			starDat[i].sLoc += starDat[i].sMov + starY;
-			if (starDat[i].sLoc < 177 * VGAScreen->w)
+			if (starDat[i].sLoc < 177 * VGAScreen->pitch)
 			{
 				if (*(s + starDat[i].sLoc) == 0)
 				{
@@ -1847,13 +1847,13 @@ level_loop:
 					{
 						*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
 					}
-					if (*(s + starDat[i].sLoc + VGAScreen->w) == 0)
+					if (*(s + starDat[i].sLoc + VGAScreen->pitch) == 0)
 					{
-						*(s + starDat[i].sLoc + VGAScreen->w) = starDat[i].sC - 4;
+						*(s + starDat[i].sLoc + VGAScreen->pitch) = starDat[i].sC - 4;
 					}
-					if (starDat[i].sLoc >= VGAScreen->w && *(s + starDat[i].sLoc - VGAScreen->w) == 0)
+					if (starDat[i].sLoc >= VGAScreen->pitch && *(s + starDat[i].sLoc - VGAScreen->pitch) == 0)
 					{
-						*(s + starDat[i].sLoc - VGAScreen->w) = starDat[i].sC - 4;
+						*(s + starDat[i].sLoc - VGAScreen->pitch) = starDat[i].sC - 4;
 					}
 				}
 			}
@@ -2557,10 +2557,10 @@ draw_player_shot_loop_end:
 						}
 					} else {
 						s = (Uint8 *)VGAScreen->pixels;
-						s += enemyShot[z].sy * VGAScreen->w + enemyShot[z].sx;
+						s += enemyShot[z].sy * VGAScreen->pitch + enemyShot[z].sx;
 
 						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->w;
+						s_limit += VGAScreen->h * VGAScreen->pitch;
 
 						if (enemyShot[z].animax != 0)
 						{
@@ -2596,7 +2596,7 @@ draw_player_shot_loop_end:
 								}
 							} else {
 								s -= 12;
-								s += VGAScreen->w;
+								s += VGAScreen->pitch;
 							}
 							p++;
 						}
@@ -2696,9 +2696,9 @@ enemy_shot_draw_overflow:
 			s += explosions[j].explodeLoc;
 			
 			s_limit = (Uint8 *)VGAScreen->pixels;
-			s_limit += VGAScreen->h * VGAScreen->w;
+			s_limit += VGAScreen->h * VGAScreen->pitch;
 			
-			if (s + VGAScreen->w * 14 > s_limit)
+			if (s + VGAScreen->pitch * 14 > s_limit)
 			{
 				explodeAvail[j] = 0;
 			} else {
@@ -2724,7 +2724,7 @@ enemy_shot_draw_overflow:
 							}
 						} else {
 							s -= 12;
-							s += VGAScreen->w;
+							s += VGAScreen->pitch;
 						}
 						p++;
 					}
@@ -2746,7 +2746,7 @@ enemy_shot_draw_overflow:
 							}
 						} else {
 							s -= 12;
-							s += VGAScreen->w;
+							s += VGAScreen->pitch;
 						}
 						p++;
 					}
@@ -3090,7 +3090,7 @@ explosion_draw_overflow:
 		backMove = 1;
 		backMove2 = 2;
 		backMove3 = 3;
-		explodeMove = 640;
+		explodeMove = 2 * VGAScreen->pitch;
 		stopBackgroundNum = 0;
 		stopBackgrounds = false;
 		if (waitToEndLevel)
@@ -3126,7 +3126,7 @@ explosion_draw_overflow:
 			backMove = 1;
 			backMove2 = 2;
 			backMove3 = 3;
-			explodeMove = 640;
+			explodeMove = 2 * VGAScreen->pitch;
 		}
 	}
 
@@ -3589,10 +3589,10 @@ new_game:
 													memcpy(vga, pic, 320);
 													pic += 320;
 												} else {
-													memcpy(vga, vga2, VGAScreen->w);
-													vga2 += VGAScreen->w;
+													memcpy(vga, vga2, VGAScreen->pitch);
+													vga2 += VGAScreen->pitch;
 												}
-												vga += VGAScreen->w;
+												vga += VGAScreen->pitch;
 											}
 											JE_showVGA();
 											wait_delay();
@@ -3636,13 +3636,13 @@ new_game:
 											{
 												if (y <= 199 - z)
 												{
-													memcpy(vga, vga2, VGAScreen->w);
-													vga2 += VGAScreen->w;
+													memcpy(vga, vga2, VGAScreen->pitch);
+													vga2 += VGAScreen->pitch;
 												} else {
 													memcpy(vga, pic, 320);
 													pic += 320;
 												}
-												vga += VGAScreen->w;
+												vga += VGAScreen->pitch;
 											}
 											JE_showVGA();
 											wait_delay();
@@ -3686,7 +3686,7 @@ new_game:
 											{
 												memcpy(vga, vga2 + z, 319 - z);
 												vga += 320 - z;
-												vga2 += VGAScreen2->w;
+												vga2 += VGAScreen2->pitch;
 												memcpy(vga, pic, z + 1);
 												vga += z;
 												pic += 320;
@@ -5035,7 +5035,7 @@ void JE_eventSystem( void )
 	switch (eventRec[eventLoc-1].eventtype)
 	{
 		case 1:
-			starY = eventRec[eventLoc-1].eventdat * 320;
+			starY = eventRec[eventLoc-1].eventdat * VGAScreen->pitch;
 			break;
 		case 2:
 			map1YDelay = 1;
@@ -5047,9 +5047,9 @@ void JE_eventSystem( void )
 			backMove2 = eventRec[eventLoc-1].eventdat2;
 			if (backMove2 > 0)
 			{
-				explodeMove = backMove2 * 320;
+				explodeMove = backMove2 * VGAScreen->pitch;
 			} else {
-				explodeMove = backMove * 320;
+				explodeMove = backMove * VGAScreen->pitch;
 			}
 			backMove3 = eventRec[eventLoc-1].eventdat3;
 
@@ -5436,7 +5436,7 @@ void JE_eventSystem( void )
 
 			backMove = eventRec[eventLoc-1].eventdat;
 			backMove2 = eventRec[eventLoc-1].eventdat2;
-			explodeMove = backMove2 * 320;
+			explodeMove = backMove2 * VGAScreen->pitch;
 			backMove3 = eventRec[eventLoc-1].eventdat3;
 			break;
 		case 31: /* Enemy Fire Override */
@@ -8068,7 +8068,7 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 	Uint8 *s = VGAScreen->pixels;  /* 8-bit specific */
 	Uint8 *src = bitmap->pixels;  /* 8-bit specific */
 	
-	s += y1 * VGAScreen->w + x1;
+	s += y1 * VGAScreen->pitch + x1;
 	
 	for (; h; h--)
 	{
@@ -8083,11 +8083,11 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 			cx &= 0xffff;
 		}
 		
-		s += VGAScreen->w - w;
+		s += VGAScreen->pitch - w;
 		
 		cy += sy;
 		src -= ((sx * w) >> 16);
-		src += (cy >> 16) * bitmap->w;
+		src += (cy >> 16) * bitmap->pitch;
 		cy &= 0xffff;
 	}
 }
@@ -8931,12 +8931,12 @@ void JE_funkyScreen( void )
 		{
 			int avg = 0;
 			if (y > 0)
-				avg += *(src - VGAScreen2->w) & 0x0f;
+				avg += *(src - VGAScreen2->pitch) & 0x0f;
 			if (y < VGAScreen2->h - 1)
-				avg += *(src + VGAScreen2->w) & 0x0f;
+				avg += *(src + VGAScreen2->pitch) & 0x0f;
 			if (x > 0)
 				avg += *(src - 1) & 0x0f;
-			if (x < VGAScreen2->w - 1)
+			if (x < VGAScreen2->pitch - 1)
 				avg += *(src + 1) & 0x0f;
 			avg /= 4;
 			
@@ -9064,9 +9064,9 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 	{
 		s = (Uint8 *)VGAScreen->pixels;
 		
-		starDat[i].sLoc += starDat[i].sMov + VGAScreen->w;
+		starDat[i].sLoc += starDat[i].sMov + VGAScreen->pitch;
 		
-		if (starDat[i].sLoc < 177 * VGAScreen->w)
+		if (starDat[i].sLoc < 177 * VGAScreen->pitch)
 		{
 			if (*(s + starDat[i].sLoc) == 0)
 			{
@@ -9082,13 +9082,13 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 				{
 					*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
 				}
-				if (*(s + starDat[i].sLoc + VGAScreen->w) == 0)
+				if (*(s + starDat[i].sLoc + VGAScreen->pitch) == 0)
 				{
-					*(s + starDat[i].sLoc + VGAScreen->w) = starDat[i].sC - 4;
+					*(s + starDat[i].sLoc + VGAScreen->pitch) = starDat[i].sC - 4;
 				}
-				if (starDat[i].sLoc >= VGAScreen->w && *(s + starDat[i].sLoc - VGAScreen->w) == 0)
+				if (starDat[i].sLoc >= VGAScreen->pitch && *(s + starDat[i].sLoc - VGAScreen->pitch) == 0)
 				{
-					*(s + starDat[i].sLoc - VGAScreen->w) = starDat[i].sC - 4;
+					*(s + starDat[i].sLoc - VGAScreen->pitch) = starDat[i].sC - 4;
 				}
 			}
 		}
