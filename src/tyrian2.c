@@ -959,9 +959,7 @@ start_level:
 
 	useButtonAssign = true; /*Joystick button remapping*/
 
-	/*Set keyboard to NO BIOS*/
-	/* TODO callBIOShandler = true; */
-	/* TODO JE_clearKeyboard(); */
+	JE_clearKeyboard();
 
 	if (eShapes1 != NULL)
 	{
@@ -1306,9 +1304,6 @@ start_level_first:
 		temp = twoPlayerMode ? 22 : 11;
 		JE_saveGame(temp, "LAST LEVEL    ");
 	}
-
-	/*Set keyboard to NO BIOS*/
-	/* NOTE callBIOShandler = false; */
 
 	memset(lastKey, 0, sizeof(lastKey));
 	if (recordDemo && !playDemo)
@@ -4520,7 +4515,7 @@ void JE_readTextSync( void )
 		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 			SDL_Delay(delaycount_temp);
 
-	} while (0 /* TODO */);
+	} while (0 /* TODO: NETWORK */);
 }
 
 
@@ -6275,7 +6270,6 @@ item_screen_start:
 					} else {
 						temp2 = 250;
 					}
-					/*JE_textShade(236, 38 + (x - 2)*12, keyNames[keySettings[x-2]], temp2 / 16, temp2 % 16 - 8, DARKEN);*/
 					JE_textShade(236, 38 + (x - 2)*12, SDL_GetKeyName(keySettings[x-2]), temp2 / 16, temp2 % 16 - 8, DARKEN);
 				}
 			}
@@ -8298,8 +8292,6 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 
 	JE_showVGA();
 
-	/* JE: (*Set keyboard to BIOS*) */
-	/* callBIOSHandler = true; */
 	JE_clearKeyboard();
 
 	JE_getVGA();
@@ -8309,7 +8301,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 
 	sel = 1;
 
-	// JE_wipeKey();
+	JE_wipeKey();
 	wait_noinput(true, true, joystick_installed);
 
 	JE_barShade(65, 55, 255, 155);
@@ -8654,7 +8646,6 @@ void JE_menuFunction( JE_byte select )
 		{
 			temp2 = 254;
 			tempY = 38 + (curSelect - 2) * 12;
-			/*JE_textShade(236, tempY, keyNames[keySettings[curSelect-2]], (temp2 / 16), (temp2 % 16) - 8, DARKEN);*/
 			JE_textShade(236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
 			JE_showVGA();
 
@@ -8663,7 +8654,6 @@ void JE_menuFunction( JE_byte select )
 
 			newkey = false;
 
-			/*callBIOSHandler = false;*/
 			do {
 				col += colC;
 				if (col < 243 || col > 248)
@@ -8672,7 +8662,7 @@ void JE_menuFunction( JE_byte select )
 				}
 				JE_rectangle(230, tempY - 2, 300, tempY + 7, col);
 
-				/* JE_waitRetrace(); */
+				JE_waitRetrace();
 				setjasondelay(1);
 				service_SDL_events(false);
 
@@ -8704,7 +8694,6 @@ void JE_menuFunction( JE_byte select )
 				keySettings[curSelect-2] = lastkey_sym;
 				curSelect++;
 			}
-			/* callBIOSHandler = true; */
 			JE_wipeKey();
 
 		}

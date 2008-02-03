@@ -352,7 +352,7 @@ int main( int argc, char *argv[] )
 	printf("Initializing SDL audio...\n");
 	JE_loadSong(1);
 
-	if ( noSound ) /* TODO: Check if sound is enabled, handle either appropriately */
+	if (noSound) /* TODO: Check if sound is enabled, handle either appropriately */
 	{
 		/* TODO: Do we actually need to do anything here? */
 		/* JE_initialize(0, 0, 0, 0, 0); */

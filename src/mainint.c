@@ -496,7 +496,7 @@ JE_boolean JE_playerSelect( void )
 					JE_playSampleNum(SELECT);
 					if (sel == 4)
 					{
-						/* TODO: network */
+						/* TODO: NETWORK */
 						printf("-!- networking not implemented\n");
 						exit(-1);
 					}
@@ -1447,7 +1447,6 @@ JE_boolean JE_inGameSetup( void )
 	JE_word x, y, z;
 
 	tempScreenSeg = VGAScreenSeg; /* <MXD> ? */
-	/* TODO callBiosHandler = true;*/
 	JE_clearKeyboard();
 	JE_wipeKey();
 	
@@ -1625,7 +1624,6 @@ JE_boolean JE_inGameSetup( void )
 		}
 		
 	} while (!(quit || haltGame || netQuit));
-	/* TODO callBiosHandler = false;*/
 	netQuit = false;
 	
 	VGAScreen = temp_surface; /* side-effect of game_screen */
@@ -1639,10 +1637,9 @@ void JE_inGameHelp( void )
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 	
 	tempScreenSeg = VGAScreenSeg;
-	/* TODO callbioshandler = true; */
 	JE_clearKeyboard();
 	JE_wipeKey();
-	/* TODO JE_getVGA(); */
+	JE_getVGA();
 	
 	JE_barShade(1, 1, 262, 182); /*Main Box*/
 	JE_barShade(3, 3, 260, 180);
@@ -1728,8 +1725,6 @@ void JE_inGameHelp( void )
 	{
 		/* TODO: NETWORK */
 	}
-	
-	/* TODO callbioshandler = false; */
 	
 	VGAScreen = temp_surface;
 }
@@ -2985,7 +2980,7 @@ void JE_mainKeyboardInput( void )
 
 	/* {!Activate Nort Ship!} */
 	if (keysactive[SDLK_F2] && keysactive[SDLK_F4] && keysactive[SDLK_F6] && keysactive[SDLK_F7] &&
-	    keysactive[SDLK_F9] /*&& keysactive[43] missing from scancode table??? TODO*/ && keysactive[SDLK_SLASH])
+	    keysactive[SDLK_F9] && keysactive[SDLK_BACKSLASH] && keysactive[SDLK_SLASH])
 	{
 		if (isNetworkGame)
 		{
@@ -3198,8 +3193,7 @@ void JE_pauseGame( void )
 
 	if (isNetworkGame)
 	{
-		JE_setNetByte(0);
-		// outPacket->length = 2; TODO
+		/* TODO: NETWORK */
 	}
 
 	newkey = false;
@@ -3212,11 +3206,7 @@ void JE_pauseGame( void )
 
 		if (isNetworkActive)
 		{
-			if (!isNetworkGame)
-			{
-				// JE_arenaPoll(); TODO
-			}
-			JE_handleChat();
+			/* TODO: NETWORK */
 		}
 
 		if (superPause)
@@ -3225,8 +3215,7 @@ void JE_pauseGame( void )
 			{
 				if (isNetworkGame)
 				{
-					JE_setNetByte(10);
-					// outPacket->length = 2; TODO
+					/* TODO: NETWORK */
 				} else {
 					done = true;
 				}
@@ -3236,8 +3225,7 @@ void JE_pauseGame( void )
 			{
 				if (isNetworkGame)
 				{
-					JE_setNetByte(10);
-					// outPacket->length = 2; TODO
+					/* TODO: NETWORK */
 				} else {
 					done = true;
 				}
@@ -3246,14 +3234,7 @@ void JE_pauseGame( void )
 
 		if (isNetworkGame)
 		{
-			JE_updateStream();
-			if (netQuit)
-			{
-				JE_tyrianHalt(6);
-			}
-			done = JE_scanNetByte(10);
-			JE_setNetByte(0);
-			// outPacket->length = 2; TODO
+			/* TODO: NETWORK */
 		}
 
 		if (lastkey_sym == SDLK_p)
@@ -3266,7 +3247,7 @@ void JE_pauseGame( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
 
-	// gameQuitDelay = streamLagFrames + 4; TODO
+	/* TODO: NETWORK */
 	tempScreenSeg = VGAScreen;
 	skipStarShowVGA = true;
 }
@@ -3312,13 +3293,7 @@ redo:
 
 	if (isNetworkGame && thisPlayerNum == playerNum_)
 	{
-		/* TODO
-		Outpacket^.Data [0] := 0;
-		Outpacket^.Data [1] := 0;
-		Outpacket^.Data [2] := 0;
-		Outpacket^.Data [3] := 0;
-		Outpacket^.Data [4] := 0;
-		*/
+		/* TODO: NETWORK */
 	}
 
 	if (isNetworkGame)
@@ -3625,7 +3600,7 @@ redo:
 
 				if (isNetworkGame && playerNum_ == thisPlayerNum)
 				{
-					/* TODO */;
+					/* TODO: NETWORK */
 				}
 			}  /*isNetworkGame*/
 
@@ -3635,7 +3610,7 @@ redo:
 
 			if (isNetworkGame)
 			{
-				/* TODO */;
+				/* TODO: NETWORK */
 			}
 
 			/*Street-Fighter codes*/

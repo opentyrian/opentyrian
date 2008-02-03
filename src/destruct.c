@@ -187,9 +187,7 @@ void JE_destructGame( void )
 	JE_loadCompShapes(&eShapes1, &eShapes1Size, '~');
 	JE_fadeBlack(1);
 	
-	/* TODO callBIOShandler = false; */
 	JE_destructMain();
-	/* TODO callBIOShandler = false; */
 }
 
 void JE_destructMain( void )
@@ -1868,7 +1866,7 @@ void JE_superPixel( JE_word loc )
 
 void JE_helpScreen( void )
 {
-	/* TODO getvga;*/
+	JE_getVGA();
 	JE_fadeBlack(15);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	JE_clr256();

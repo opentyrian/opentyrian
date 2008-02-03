@@ -27,7 +27,6 @@
 
 #define SDL_POLL_INTERVAL 5
 
-extern const char *keyNames[];
 extern JE_boolean ESCPressed;
 extern JE_boolean newkey, newmouse, keydown, mousedown;
 extern SDLKey lastkey_sym;
