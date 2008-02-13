@@ -73,6 +73,13 @@ void JE_initVGA256( void )
 		initd = true;
 		fullscreen_enabled = fullscreen_set;
 		
+#ifdef _WIN32
+		if (!SDL_getenv("SDL_VIDEODRIVER"))
+		{
+			SDL_putenv("SDL_VIDEODRIVER=directx");
+		}
+#endif
+
 		if (SDL_InitSubSystem(SDL_INIT_VIDEO) != -1)
 		{
 			#ifdef SCALE2X
