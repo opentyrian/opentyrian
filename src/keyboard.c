@@ -84,8 +84,6 @@ void init_keyboard( void )
 
 	SDL_EnableUNICODE(1);
 
-	SDL_WM_SetCaption("Ctrl-Backspace to kill", NULL);
-
 #ifdef NDEBUG
 	SDL_WM_GrabInput(SDL_GRAB_ON);
 #endif

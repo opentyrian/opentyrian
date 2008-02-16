@@ -101,6 +101,8 @@ void JE_initVGA256( void )
 			exit(1);
 		}
 		
+		SDL_WM_SetCaption("OpenTyrian (ctrl-backspace to kill)", NULL);
+		
 #ifndef SCALE2X
 		VGAScreen = VGAScreenSeg = display_surface;
 #else
