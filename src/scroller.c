@@ -213,7 +213,8 @@ void scroller_sine( const struct about_text_type text[] )
 		JE_bar(0, 0, surface_width - 1, 14, 0);
 		JE_bar(0, surface_height - 14, surface_width - 1, surface_height - 1, 0);
 		
-		if (!ale) {
+		if (!ale)
+		{
 			for (int i = 0; i < MAX_COINS; i++)
 			{
 				struct coin_type *coin = &coins[i];

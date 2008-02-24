@@ -1011,7 +1011,8 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 					} else if (PX < enemy[temp].ex) {
 						enemy[temp].exc--;
 					}
-					if (PY > enemy[temp].ey) {
+					if (PY > enemy[temp].ey)
+					{
 						enemy[temp].eyc++;
 					} else if (PY < enemy[temp].ey) {
 						enemy[temp].eyc--;

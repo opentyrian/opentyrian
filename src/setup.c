@@ -252,7 +252,8 @@ void JE_jukeboxGo( void )
 
 		JE_showVGA();
 
-		if (newkey) {
+		if (newkey)
+		{
 			JE_newSpeed();
 			switch (lastkey_sym)
 			{

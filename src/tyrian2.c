@@ -686,7 +686,8 @@ enemy_still_exists:
 
 								enemyShotAvail[b]--;
 
-								if (weapons[temp3].sound > 0) {
+								if (weapons[temp3].sound > 0)
+								{
 									do {
 										temp = rand() % 8;
 									} while (temp == 3);
@@ -2077,7 +2078,8 @@ level_loop:
 
 				if (playerShotData[z].aimAtEnemy != 0)
 				{
-					if (--playerShotData[z].aimDelay == 0) {
+					if (--playerShotData[z].aimDelay == 0)
+					{
 						playerShotData[z].aimDelay = playerShotData[z].aimDelayMax;
 
 						if (enemyAvail[playerShotData[z].aimAtEnemy] != 1)
@@ -2191,7 +2193,8 @@ level_loop:
 							enemy[b].iced = 40;
 						} else {
 							doIced = 0;
-							if (tempI2 >= 250) {
+							if (tempI2 >= 250)
+							{
 								tempI2 = tempI2 - 250;
 								infiniteShot = true;
 							}

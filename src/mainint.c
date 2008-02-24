@@ -648,7 +648,8 @@ JE_boolean JE_difficultySelect( void )
 			}
 		}
 
-		if (newkey) {
+		if (newkey)
+		{
 			switch (lastkey_sym)
 			{
 				case SDLK_UP:
@@ -2721,7 +2722,8 @@ void JE_operation( JE_byte slot )
 	char stemp[21];
 	char tempStr[51];
 	
-	if (!performSave) {
+	if (!performSave)
+	{
 		if (saveFiles[slot-1].level > 0)
 		{
 			gameJustLoaded = true;

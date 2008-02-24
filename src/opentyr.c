@@ -201,7 +201,8 @@ void opentyrian_menu( void )
 		tempW = 0;
 		JE_textMenuWait(&tempW, false);
 
-		if (newkey) {
+		if (newkey)
+		{
 			switch (lastkey_sym)
 			{
 				case SDLK_UP:

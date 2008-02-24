@@ -34,9 +34,10 @@ void opl_update( Sint16 *buf, int samples )
 {
 	int i;
 
-	if (use16bit) {
+	if (use16bit)
+	{
 		YM3812UpdateOne(opl, buf, samples);
-
+		
 		if (stereo)
 			for(i = samples - 1; i >= 0; i--) {
 				buf[i*2] = buf[i];
