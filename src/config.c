@@ -24,6 +24,7 @@
 #include "error.h"
 #include "joystick.h"
 #include "loudness.h"
+#include "mtrand.h"
 #include "nortsong.h"
 #include "nortvars.h"
 #include "varz.h"
@@ -279,9 +280,9 @@ void JE_setupStars( void )
 
 	for (z = MAX_STARS; z--; )
 	{
-		starDat[z].sLoc = (rand() % 320) + (rand() % 200) * VGAScreen->pitch;
-		starDat[z].sMov = ((rand() % 3) + 2) * VGAScreen->pitch;
-		starDat[z].sC = (rand() % 16) + (9 * 16);
+		starDat[z].sLoc = (mt_rand() % 320) + (mt_rand() % 200) * VGAScreen->pitch;
+		starDat[z].sMov = ((mt_rand() % 3) + 2) * VGAScreen->pitch;
+		starDat[z].sC = (mt_rand() % 16) + (9 * 16);
 	}
 }
 
@@ -836,14 +837,14 @@ void JE_loadConfiguration( void )
 			}
 			saveFiles[z].name[14] = 0;
 
-			saveFiles[z].highScore1 = ((rand() % 20) + 1) * 1000;
+			saveFiles[z].highScore1 = ((mt_rand() % 20) + 1) * 1000;
 
 			if (z % 6 > 2)
 			{
-				saveFiles[z].highScore2 = ((rand() % 20) + 1) * 1000;
-				strcpy(saveFiles[z].highScoreName, defaultTeamNames[rand() % 22]);
+				saveFiles[z].highScore2 = ((mt_rand() % 20) + 1) * 1000;
+				strcpy(saveFiles[z].highScoreName, defaultTeamNames[mt_rand() % 22]);
 			} else {
-				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[rand() % 34]);
+				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[mt_rand() % 34]);
 			}
 		}
 	}

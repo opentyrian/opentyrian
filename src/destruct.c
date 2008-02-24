@@ -25,6 +25,7 @@
 #include "helptext.h"
 #include "keyboard.h"
 #include "loudness.h"
+#include "mtrand.h"
 #include "newshape.h"
 #include "nortsong.h"
 #include "picload.h"
@@ -214,7 +215,7 @@ void JE_destructMain( void )
 				destructFirstTime = true;
 				JE_loadPic(11, false);
 				
-				haveWalls = rand() % 2;
+				haveWalls = mt_rand() % 2;
 				
 				JE_generateTerrain();
 				
@@ -437,9 +438,9 @@ void JE_destructMain( void )
 						
 						for (temp = 0; temp < exploRec[z].explofill; temp++)
 						{
-							destructTempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
-							destructTempY = exploRec[z].y + round(cos(destructTempR) * ((float)rand() / RAND_MAX) * exploRec[z].explowidth);
-							destructTempX = exploRec[z].x + round(sin(destructTempR) * ((float)rand() / RAND_MAX) * exploRec[z].explowidth);
+							destructTempR = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
+							destructTempY = exploRec[z].y + round(cos(destructTempR) * ((float)mt_rand() / RAND_MAX) * exploRec[z].explowidth);
+							destructTempX = exploRec[z].x + round(sin(destructTempR) * ((float)mt_rand() / RAND_MAX) * exploRec[z].explowidth);
 							
 							if (destructTempY < 200 && destructTempY > 15)
 							{
@@ -513,7 +514,7 @@ void JE_destructMain( void )
 								shotRec[z].y -= shotRec[z].ymov;
 								shotRec[z].ymov = -shotRec[z].ymov * 0.8f;
 								if (shotRec[z].xmov == 0)
-									shotRec[z].xmov += ((float)rand() / RAND_MAX) - 0.5f;
+									shotRec[z].xmov += ((float)mt_rand() / RAND_MAX) - 0.5f;
 							}
 						}
 						
@@ -659,15 +660,15 @@ void JE_destructMain( void )
 					{
 						case 1:
 							
-							if (rand() % 100 > 80)
+							if (mt_rand() % 100 > 80)
 							{
-								Lc_Angle += (rand() % 3) - 1;
+								Lc_Angle += (mt_rand() % 3) - 1;
 								if (Lc_Angle > 1)
 									Lc_Angle = 1;
 								if (Lc_Angle < -1)
 									Lc_Angle = -1;
 							}
-							if (rand() % 100 > 90)
+							if (mt_rand() % 100 > 90)
 							{
 								if (Lc_Angle > 0 && leftAngle[leftSel-1] > (M_PI / 2.0f) - (M_PI / 9.0f))
 									Lc_Angle = 0;
@@ -675,15 +676,15 @@ void JE_destructMain( void )
 									Lc_Angle = 0;
 							}
 							
-							if (rand() % 100 > 93)
+							if (mt_rand() % 100 > 93)
 							{
-								Lc_Power += (rand() % 3) - 1;
+								Lc_Power += (mt_rand() % 3) - 1;
 								if (Lc_Power > 1)
 									Lc_Power = 1;
 								if (Lc_Power < -1)
 									Lc_Power = -1;
 							}
-							if (rand() % 100 > 90)
+							if (mt_rand() % 100 > 90)
 							{
 								if (Lc_Power > 0 && leftPower[leftSel-1] > 4)
 									Lc_Power = 0;
@@ -701,14 +702,14 @@ void JE_destructMain( void )
 							{
 								if (!leftYInAir[leftSel-1])
 									Lc_Power = 1;
-								if (rand() % leftX[leftSel-1] > 100)
+								if (mt_rand() % leftX[leftSel-1] > 100)
 									Lc_Power = 1;
-								if (rand() % 240 > leftX[leftSel-1])
+								if (mt_rand() % 240 > leftX[leftSel-1])
 									L_Right = true;
-								else if ((rand() % 20) + 300 < leftX[leftSel-1])
+								else if ((mt_rand() % 20) + 300 < leftX[leftSel-1])
 									L_Left = true;
-								else if (rand() % 30 == 1)
-									Lc_Angle = (rand() % 3) - 1;
+								else if (mt_rand() % 30 == 1)
+									Lc_Angle = (mt_rand() % 3) - 1;
 								if (leftX[leftSel-1] > 295 && leftLastMove[leftSel-1] > 1)
 								{
 									L_Left = true;
@@ -716,7 +717,7 @@ void JE_destructMain( void )
 								}
 								if (leftSystem[leftSel-1] != 8 || leftLastMove[leftSel-1] > 3 || (leftX[leftSel-1] > 160 && leftLastMove[leftSel-1] > -3))
 								{
-									if (rand() % (int)round(leftY[leftSel-1]) < 150 && leftYMov[leftSel-1] < 0.01f && (leftX[leftSel-1] < 160 || leftLastMove[leftSel-1] < 2))
+									if (mt_rand() % (int)round(leftY[leftSel-1]) < 150 && leftYMov[leftSel-1] < 0.01f && (leftX[leftSel-1] < 160 || leftLastMove[leftSel-1] < 2))
 										L_Fire = true;
 									NoL_Down = (5 - abs(leftLastMove[leftSel-1])) * (5 - abs(leftLastMove[leftSel-1])) + 3;
 									Lc_Power = 1;
@@ -742,7 +743,7 @@ void JE_destructMain( void )
 								Lc_Fire = 1;
 							}
 							
-							if (rand() % 200 > 198)
+							if (mt_rand() % 200 > 198)
 							{
 								L_Change = true;
 								Lc_Angle = 0;
@@ -750,7 +751,7 @@ void JE_destructMain( void )
 								Lc_Fire = 0;
 							}
 							
-							if (rand() % 100 > 98 || leftShotType[leftSel-1] == 1)
+							if (mt_rand() % 100 > 98 || leftShotType[leftSel-1] == 1)
 								L_Weapon = true;
 							
 							if (Lc_Angle > 0)
@@ -1390,8 +1391,8 @@ void JE_generateTerrain( void )
 	JE_word destructTempX, destructTempY, destructTempX2, destructTempY2;
 	JE_byte arenaType2;
 	
-	arenaType = (rand() % 4) + 1;
-	arenaType2 = (rand() % 4) + 1;
+	arenaType = (mt_rand() % 4) + 1;
+	arenaType2 = (mt_rand() % 4) + 1;
 	
 	/*  Type                 Type2
 	    1 = normal           1 = Normal
@@ -1400,20 +1401,20 @@ void JE_generateTerrain( void )
 	    4 = highwalls
 	*/
 	
-	JE_playSong(goodsel[rand() % 14]);
-	heightchange = (rand() % 3) - 1;
+	JE_playSong(goodsel[mt_rand() % 14]);
+	heightchange = (mt_rand() % 3) - 1;
 	
-	sinewave = ((float)rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
-	sinewave2 = ((float)rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
-	cosinewave = ((float)rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
-	cosinewave2 = ((float)rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
+	sinewave = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
+	sinewave2 = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
+	cosinewave = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
+	cosinewave2 = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
 	HC1 = 20;
 	
 	switch (arenaType)
 	{
 		case 1:
-			sinewave = M_PI - ((float)rand() / RAND_MAX) * 0.3f;
-			sinewave2 = M_PI - ((float)rand() / RAND_MAX) * 0.3f;
+			sinewave = M_PI - ((float)mt_rand() / RAND_MAX) * 0.3f;
+			sinewave2 = M_PI - ((float)mt_rand() / RAND_MAX) * 0.3f;
 			break;
 		case 2:
 			HC1 = 100;
@@ -1443,16 +1444,16 @@ void JE_generateTerrain( void )
 	
 	for (x = 0; x < basetypes[Lbaselookup[destructMode-1]-1][1-1]; x++)
 	{
-		leftX[x] = (rand() % 120) + 10;
+		leftX[x] = (mt_rand() % 120) + 10;
 		leftY[x] = JE_placementPosition(leftX[x] - 1, 14);
-		leftSystem[x] = basetypes[Lbaselookup[destructMode-1]-1][(rand() % 10) + 2-1];
+		leftSystem[x] = basetypes[Lbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
 		if (leftSystem[x] == 4)
 		{
 			if (tempW == MAX_INSTALLATIONS - 1)
 			{
 				leftSystem[x] = 1;
 			} else {
-				leftY[x] = 30 + (rand() % 40);
+				leftY[x] = 30 + (mt_rand() % 40);
 				tempW++;
 			}
 		}
@@ -1466,18 +1467,18 @@ void JE_generateTerrain( void )
 	
 	for (x = 0; x < basetypes[Rbaselookup[destructMode-1]-1][1-1]; x++)
 	{
-		rightX[x] = 320 - ((rand() % 120) + 22);
+		rightX[x] = 320 - ((mt_rand() % 120) + 22);
 		rightY[x] = JE_placementPosition(rightX[x] - 1, 14);
 		rightYMov[x] = 0;
 		rightYInAir[x] = false;
-		rightSystem[x] = basetypes[Rbaselookup[destructMode-1]-1][(rand() % 10) + 2-1];
+		rightSystem[x] = basetypes[Rbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
 		if (rightSystem[x] == 4)
 		{
 			if (tempW == MAX_INSTALLATIONS - 1)
 			{
 				rightSystem[x] = 1;
 			} else {
-				rightY[x] = 30 + (rand() % 40);
+				rightY[x] = 30 + (mt_rand() % 40);
 				tempW++;
 			}
 		}
@@ -1494,12 +1495,12 @@ void JE_generateTerrain( void )
 		tempW = 20;
 		do {
 			
-			temp = (rand() % 5) + 1;
+			temp = (mt_rand() % 5) + 1;
 			if (temp > tempW)
 				temp = tempW;
 			
 			do {
-				x = (rand() % 300) + 10;
+				x = (mt_rand() % 300) + 10;
 				
 				destructFound = true;
 				
@@ -1530,18 +1531,18 @@ void JE_generateTerrain( void )
 	
 	if (arenaType == 3)
 	{ /*RINGIES!!!!*/
-		int rings = rand() % 6 + 1;
+		int rings = mt_rand() % 6 + 1;
 		for (x = 1; x <= rings; x++)
 		{
-			destructTempX = (rand() % 320);
-			destructTempY = (rand() % 160) + 20;
-			y = (rand() % 40) + 10;  /*Size*/
+			destructTempX = (mt_rand() % 320);
+			destructTempY = (mt_rand() % 160) + 20;
+			y = (mt_rand() % 40) + 10;  /*Size*/
 			
 			for (z = 1; z <= y * y * 2; z++)
 			{
-				destructTempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempR = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
+				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
 					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 25;
 			}
@@ -1549,18 +1550,18 @@ void JE_generateTerrain( void )
 	}
 	if (arenaType2 == 2)
 	{ /*HOLES*/
-		int holes = (rand() % 6) + 1;
+		int holes = (mt_rand() % 6) + 1;
 		for (x = 1; x <= holes; x++)
 		{
-			destructTempX = (rand() % 320);
-			destructTempY = (rand() % 160) + 20;
-			y = (rand() % 40) + 10;  /*Size*/
+			destructTempX = (mt_rand() % 320);
+			destructTempY = (mt_rand() % 160) + 20;
+			y = (mt_rand() % 40) + 10;  /*Size*/
 			
 			for (z = 1; z < y * y * 2; z++)
 			{
-				destructTempR = ((float)rand() / RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempR = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
+				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
 					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 0;
 			}
@@ -1697,8 +1698,8 @@ void JE_makeExplosion( JE_word destructTempX, JE_word destructTempY, JE_byte sho
 			exploRec[tempW-1].explofill = exploDensity[shottype-1];
 			exploRec[tempW-1].explocolor = shotDirt[shottype-1];
 		} else {
-			exploRec[tempW-1].explomax = (rand() % 40) + 10;
-			exploRec[tempW-1].explofill = (rand() % 60) + 20;
+			exploRec[tempW-1].explomax = (mt_rand() % 40) + 10;
+			exploRec[tempW-1].explofill = (mt_rand() % 60) + 20;
 			exploRec[tempW-1].explocolor = 252;
 		}
 	}

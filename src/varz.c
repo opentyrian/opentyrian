@@ -23,6 +23,7 @@
 #include "config.h"
 #include "episodes.h"
 #include "joystick.h"
+#include "mtrand.h"
 #include "network.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -1263,7 +1264,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 				filterActive = true;
 			}
 			
-			if (rand() % 2 == 0)
+			if (mt_rand() % 2 == 0)
 				flareColChg = -1;
 			else
 				flareColChg = 1;
@@ -1282,7 +1283,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 			}
 		}
 		
-		if (rand() % 6 < specialWeaponFreq)
+		if (mt_rand() % 6 < specialWeaponFreq)
 		{
 			b = 0;
 			
@@ -1293,13 +1294,13 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 					JE_initPlayerShot(0, 9, PX, PY, mouseX, mouseY, specialWeaponWpn, playerNum);
 				}
 			} else {
-				JE_initPlayerShot(0, 9, rand() % 280, rand() % 180, mouseX, mouseY, specialWeaponWpn, playerNum);
+				JE_initPlayerShot(0, 9, mt_rand() % 280, mt_rand() % 180, mouseX, mouseY, specialWeaponWpn, playerNum);
 			}
 			
 			if (spraySpecial && b > 0)
 			{
-				playerShotData[b].shotXM = (rand() % 5) - 2;
-				playerShotData[b].shotYM = (rand() % 5) - 2;
+				playerShotData[b].shotXM = (mt_rand() % 5) - 2;
+				playerShotData[b].shotYM = (mt_rand() % 5) - 2;
 				if (playerShotData[b].shotYM == 0)
 				{
 					playerShotData[b].shotYM++;
@@ -1648,9 +1649,9 @@ void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte col
 	{
 		if (++lastSP > MAX_SP)
 			lastSP = 0;
-		tempr = ((float)rand() / RAND_MAX) * (M_PI * 2);
-		tempy = round(cos(tempr) * ((float)rand() / RAND_MAX) * explowidth);
-		tempx = round(sin(tempr) * ((float)rand() / RAND_MAX) * explowidth);
+		tempr = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
+		tempy = round(cos(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
+		tempx = round(sin(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
 		SPL[lastSP].location = (tempy + y) * VGAScreen->pitch + (tempx + x);
 		SPL[lastSP].movement = tempy * VGAScreen->pitch + tempx + VGAScreen->pitch;
 		SPL[lastSP].color = color;

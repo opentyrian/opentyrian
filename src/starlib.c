@@ -21,6 +21,7 @@
 #include "starlib.h"
 
 #include "keyboard.h"
+#include "mtrand.h"
 #include "vga256d.h"
 
 #include <ctype.h>
@@ -244,7 +245,7 @@ star_end:
 				JE_resetValues();
 				break;
 			case 'S':
-				nspVarVarInc = (rand()/(float)RAND_MAX) * 0.01 - 0.005;
+				nspVarVarInc = (mt_rand()/(float)RAND_MAX) * 0.01 - 0.005;
 				break;
 			case 'X':
 			case 27:
@@ -283,9 +284,9 @@ star_end:
 		}
 	}
 
-	if ((rand() % 1000) == 1)
+	if ((mt_rand() % 1000) == 1)
 	{
-		nspVarVarInc = (rand()/(float)RAND_MAX) * 0.01 - 0.005;
+		nspVarVarInc = (mt_rand()/(float)RAND_MAX) * 0.01 - 0.005;
 	}
 
 	nspVarInc += nspVarVarInc;
@@ -318,8 +319,8 @@ void JE_starlib_init( void )
 		/* RANDOMIZE; */
 		for (x = 0; x < starlib_MAX_STARS; x++)
 		{
-			star[x].spX = (rand() % 64000) - 32000;
-			star[x].spY = (rand() % 40000) - 20000;
+			star[x].spX = (mt_rand() % 64000) - 32000;
+			star[x].spY = (mt_rand() % 40000) - 20000;
 			star[x].spZ = x+1;
 		}
 	}
@@ -340,13 +341,13 @@ void JE_resetValues( void )
 void JE_changeSetup( JE_byte setupType )
 {
 	stepCounter = 0;
-	changeTime = (rand() % 1000);
+	changeTime = (mt_rand() % 1000);
 
 	if (setupType > 0)
 	{
 		setup = setupType;
 	} else {
-		setup = rand() % (MAX_TYPES + 1);
+		setup = mt_rand() % (MAX_TYPES + 1);
 	}
 
 	if (setup == 1)
@@ -363,15 +364,15 @@ void JE_newStar( void )
 {
 	if (setup == 0)
 	{
-		tempX = (rand() % 64000) - 32000;
-		tempY = (rand() % 40000) - 20000;
+		tempX = (mt_rand() % 64000) - 32000;
+		tempY = (mt_rand() % 40000) - 20000;
 	} else {
 		nsp = nsp + nspVarInc; /* YKS: < lol */
 		switch (setup)
 		{
 			case 1:
 				tempX = (int)(sin(nsp / 30) * 20000);
-				tempY = (rand() % 40000) - 20000;
+				tempY = (mt_rand() % 40000) - 20000;
 				break;
 			case 2:
 				tempX = (int)(cos(nsp) * 20000);
@@ -398,8 +399,8 @@ void JE_newStar( void )
 				tempY = (int)(cos(nsp) * 20000);
 				break;
 			case 7:
-				tempX = rand() % 65535;
-				if ((rand() % 2) == 0)
+				tempX = mt_rand() % 65535;
+				if ((mt_rand() % 2) == 0)
 				{
 					tempY = (int)(cos(nsp / 80) * 10000) + 15000;
 				} else {

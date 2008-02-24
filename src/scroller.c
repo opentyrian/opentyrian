@@ -24,6 +24,7 @@
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
+#include "mtrand.h"
 #include "newshape.h"
 #include "nortsong.h"
 #include "starfade.h"
@@ -105,7 +106,7 @@ struct coin_def_type coin_defs[] =
 /* Text is an array of strings terminated by a NULL */
 void scroller_sine( const struct about_text_type text[] )
 {
-	bool ale = rand() % 2;
+	bool ale = mt_rand() % 2;
 
 	int visible_lines = surface_height / LINE_HEIGHT + 1;
 	int current_line = -visible_lines;
@@ -121,12 +122,12 @@ void scroller_sine( const struct about_text_type text[] )
 	} else {
 		for (int i = 0; i < MAX_COINS; i++)
 		{
-			coins[i].x = rand() % (surface_width - 12);
-			coins[i].y = rand() % (surface_height - 20 - 14);
+			coins[i].x = mt_rand() % (surface_width - 12);
+			coins[i].y = mt_rand() % (surface_height - 20 - 14);
 			
-			coins[i].vel = (rand() % 4) + 1;
-			coins[i].type = rand() % COUNTOF(coin_defs);
-			coins[i].cur_frame = rand() % coin_defs[coins[i].type].frame_count;
+			coins[i].vel = (mt_rand() % 4) + 1;
+			coins[i].type = mt_rand() % COUNTOF(coin_defs);
+			coins[i].cur_frame = mt_rand() % coin_defs[coins[i].type].frame_count;
 			coins[i].backwards = false;
 		}
 	}
@@ -244,12 +245,12 @@ void scroller_sine( const struct about_text_type text[] )
 				coin->y += coin->vel;
 				if (coin->y > surface_height - 14)
 				{
-					coin->x = rand() % (surface_width - 12);
+					coin->x = mt_rand() % (surface_width - 12);
 					coin->y = 0;
 					
-					coin->vel = (rand() % 4) + 1;
-					coin->type = rand() % COUNTOF(coin_defs);
-					coin->cur_frame = rand() % coin_defs[coin->type].frame_count;
+					coin->vel = (mt_rand() % 4) + 1;
+					coin->type = mt_rand() % COUNTOF(coin_defs);
+					coin->cur_frame = mt_rand() % coin_defs[coin->type].frame_count;
 				}
 			}
 		} else {
@@ -257,10 +258,10 @@ void scroller_sine( const struct about_text_type text[] )
 			{
 				while (beer[i].vx == 0)
 				{
-					beer[i].x = rand() % (surface_width - 24);
-					beer[i].y = rand() % (surface_height - 28 - 50);
+					beer[i].x = mt_rand() % (surface_width - 24);
+					beer[i].y = mt_rand() % (surface_height - 28 - 50);
 					
-					beer[i].vx = (rand() % 5) - 2;
+					beer[i].vx = (mt_rand() % 5) - 2;
 				}
 				
 				beer[i].vy++;
@@ -275,11 +276,11 @@ void scroller_sine( const struct about_text_type text[] )
 				{
 					if ((beer[i].vy) < 8) // make sure the beer bounces!
 					{
-						beer[i].vy += rand() % 2;
+						beer[i].vy += mt_rand() % 2;
 					} else if (beer[i].vy > 16) { // make sure the beer doesn't bounce too high
 						beer[i].vy = 16;
 					}
-					beer[i].vy = -beer[i].vy + (rand() % 3 - 1);
+					beer[i].vy = -beer[i].vy + (mt_rand() % 3 - 1);
 					
 					beer[i].x += (beer[i].vx > 0 ? 1 : -1) * (i % 2 ? 1 : -1);
 				}

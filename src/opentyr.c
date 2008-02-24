@@ -29,6 +29,7 @@
 #include "keyboard.h"
 #include "loudness.h"
 #include "mainint.h"
+#include "mtrand.h"
 #include "musmast.h"
 #include "network.h"
 #include "newshape.h"
@@ -261,7 +262,7 @@ void opentyrian_menu( void )
 
 int main( int argc, char *argv[] )
 {
-	srand(time(NULL));
+	mt_srand(time(NULL));
 
 	if (SDL_Init(0))
 	{

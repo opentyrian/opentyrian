@@ -26,6 +26,7 @@
 #include "jukebox.h"
 #include "keyboard.h"
 #include "loudness.h"
+#include "mtrand.h"
 #include "network.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -168,7 +169,7 @@ void JE_jukeboxGo( void )
 
 		if ( ( (repeated && !fade) || !playing) && !youStopped)
 		{
-			currentJukeboxSong = ( rand() % MUSIC_NUM );
+			currentJukeboxSong = ( mt_rand() % MUSIC_NUM );
 			JE_playNewSong();
 		}
 

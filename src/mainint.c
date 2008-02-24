@@ -31,6 +31,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 #include "loudness.h"
+#include "mtrand.h"
 #include "network.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -1114,7 +1115,7 @@ JE_boolean JE_nextEpisode( void )
 			JE_playCredits();
 		}
 		
-		if (jumpBackToEpisode1 && (rand() % 6) == 0)
+		if (jumpBackToEpisode1 && (mt_rand() % 6) == 0)
 		{
 			pItems[1-1] = 23;
 			pItems[2-1] = 24;
@@ -1191,7 +1192,7 @@ void JE_initPlayerData( void )
 	/* twoplayerarcade:=false; */
 	twoPlayerMode = false;
 
-	secretHint = (rand()%3) + 1;
+	secretHint = (mt_rand()%3) + 1;
 
 	armorLevel = ships[pItems[11]].dmg;
 	portPower[0] = 1;
@@ -2336,9 +2337,9 @@ void JE_playCredits( void )
 		
 		if (x % 200 == 0)
 		{
-			currentship = (rand() % 11) + 1;
-			shipxwait = (rand() % 80) + 10;
-			if ((rand() % 2) == 1)
+			currentship = (mt_rand() % 11) + 1;
+			shipxwait = (mt_rand() % 80) + 10;
+			if ((mt_rand() % 2) == 1)
 			{
 				shipx = 1;
 				shipxc = 0;
@@ -2358,7 +2359,7 @@ void JE_playCredits( void )
 			if (shipx == 1 || shipx == 900)
 				shipxc = 0;
 			shipxca = -shipxca;
-			shipxwait = (rand() % 40) + 15;
+			shipxwait = (mt_rand() % 40) + 15;
 		}
 		shipxc += shipxca;
 		shipx += shipxc;
@@ -3162,7 +3163,7 @@ void JE_mainKeyboardInput( void )
 		/* {IN-GAME RANDOM MUSIC SELECTION} */
 		if (keysactive[SDLK_SCROLLOCK])
 		{
-			tempW = (rand() % MUSIC_NUM)+1;
+			tempW = (mt_rand() % MUSIC_NUM)+1;
 			JE_playSong(tempW);
 		}
 	}
@@ -3320,16 +3321,16 @@ redo:
 			{
 				levelEndFxWait--;
 			} else {
-				levelEndFxWait = (rand() % 6) + 3;
-				if ((rand() % 3) == 1)
+				levelEndFxWait = (mt_rand() % 6) + 3;
+				if ((mt_rand() % 3) == 1)
 					soundQueue[6] = 9;
 				else
 					soundQueue[5] = 11;
 			}
-			tempW = *PX_ + (rand() % 32) - 16;
-			tempW2 = *PY_ + (rand() % 32) - 16;
+			tempW = *PX_ + (mt_rand() % 32) - 16;
+			tempW2 = *PY_ + (mt_rand() % 32) - 16;
 
-			JE_setupExplosionLarge(false, 0, *PX_ + (rand() % 32) - 16, *PY_ + (rand() % 32) - 16 + 7);
+			JE_setupExplosionLarge(false, 0, *PX_ + (mt_rand() % 32) - 16, *PY_ + (mt_rand() % 32) - 16 + 7);
 			JE_setupExplosionLarge(false, 0, *PX_, *PY_ + 7);
 
 			if (levelEnd > 0)
@@ -4008,7 +4009,7 @@ redo:
 							if (shotRepeat[10-1] > 0)
 								shotRepeat[10-1]--;
 							else {
-									JE_initPlayerShot(0, 10, tempW + (rand() % 8) - 4, (*PY_) + (rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
+									JE_initPlayerShot(0, 10, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
 									shotRepeat[10-1] = abs(tempI2) - 1;
 							}
 						}
