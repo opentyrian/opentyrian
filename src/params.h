@@ -23,11 +23,10 @@
 #include "opentyr.h"
 
 
-extern JE_boolean timMode, richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, useBios, noSound, quikJuke, noRetrace, joyMax, forceAveraging, forceMaxVolume, soundInfoReport;
-extern JE_boolean stupidWindows;
-extern JE_boolean isNetworkGame, isNetworkActive;
+extern JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
+extern JE_boolean isNetworkGame;
 extern JE_boolean tyrianXmas;
-extern const char pars[18][9];
+extern const char pars[][9];
 
 void JE_paramCheck( int argc, char *argv[] );
 

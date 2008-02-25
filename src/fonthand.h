@@ -62,7 +62,6 @@ void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_b
 void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font );
 void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow );
 void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_byte brightness, JE_byte font );
-JE_char JE_bright( JE_boolean makebright );
 
 void JE_updateWarning( void );
 void JE_outTextGlow( JE_word x, JE_word y, const char *s );

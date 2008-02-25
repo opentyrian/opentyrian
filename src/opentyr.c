@@ -279,6 +279,8 @@ int main( int argc, char *argv[] )
 	printf("This is free software, and you are welcome to redistribute it\n");
 	printf("under certain conditions.  See the file GPL.txt for details.\n\n");
 
+	JE_paramCheck(argc, argv);
+
 	JE_scanForEpisodes();
 
 	recordFileNum = 1;
@@ -291,8 +293,6 @@ int main( int argc, char *argv[] )
 	init_keyboard();
 
 	/* TODO: Tyrian originally checked availible memory here. */
-
-	JE_paramCheck(argc, argv);
 
 	if (scanForJoystick)
 	{
@@ -396,14 +396,27 @@ int main( int argc, char *argv[] )
 
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/
-
+	
 	JE_loadPals();
-
+	
 	SDL_LockSurface(VGAScreen);
+	
+	if (isNetworkGame)
+	{
+		if (network_init())
+		{
+			network_tyrian_halt(3, false);
+		}
+	}
+	
+	loadDestruct = false;
+	stoppedDemo = false;
+	
 	JE_main();
+	
 	SDL_UnlockSurface(VGAScreen);
-
+	
 	JE_closeVGA256();
-
+	
 	return 0;
 }

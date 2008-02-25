@@ -85,8 +85,6 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 
 	setjasondelay2(1);
 
-	JE_setNetByte(0);
-
 	if (useLastBank)
 	{
 		bank = 15;
@@ -131,13 +129,9 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 				if (!ESCPressed)
 				{
 					setjasondelay(frameCountMax);
-
-					JE_updateStream();
-					if (netQuit)
-					{
-						return;
-					}
-
+					
+					NETWORK_BUSY_KEEP_ALIVE();
+					
 					for (z = loc - 28; z <= loc; z++)
 					{
 						if (z >= 0 && z < maxloc)
@@ -167,7 +161,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 						{
 							JE_updateWarning();
 						}
-						JE_updateStream();
+						
 						SDL_Delay(16);
 					} while (!(delaycount() == 0 || ESCPressed));
 					JE_showVGA();
@@ -498,7 +492,7 @@ JE_boolean JE_playerSelect( void )
 					if (sel == 4)
 					{
 						/* TODO: NETWORK */
-						printf("-!- networking not implemented\n");
+						printf("-!- networking via menu not implemented\n");
 						exit(-1);
 					}
 					break;
@@ -1147,7 +1141,9 @@ JE_boolean JE_nextEpisode( void )
 		{
 			do
 			{
-				JE_updateStream();
+				NETWORK_BUSY_KEEP_ALIVE();
+				
+				SDL_Delay(16);
 			} while (!JE_anyButton());
 		}
 		JE_fadeBlack(15);
@@ -1403,7 +1399,7 @@ void JE_loadOrderingInfo( void )
 void JE_doInGameSetup( void )
 {
 	haltGame = false;
-	/* TODO: NETWORK */
+	
 	if (yourInGameMenuRequest)
 	{
 		useButtonAssign = false; /*Joystick button remapping*/
@@ -1412,28 +1408,82 @@ void JE_doInGameSetup( void )
 			reallyEndLevel = true;
 			playerEndLevel = true;
 		}
-		if (!isNetworkGame)
-		{
-			/* TODO: NETWORK */
-		}
 		quitRequested = false;
+		
+		keysactive[SDLK_ESCAPE] = false;
 		keysactive[SDLK_RETURN] = false;
-	}
-	
-	if (isNetworkActive && !isNetworkGame)
-	{
-		/* TODO: NETWORK */
+		
+		if (isNetworkGame)
+		{
+			if (!playerEndLevel)
+			{
+				network_prepare(PACKET_WAITING);
+				network_send(4);  // PACKET_WAITING
+			} else {
+				network_prepare(PACKET_GAME_QUIT);
+				network_send(4);  // PACKET_GAMEQUIT
+			}
+		}
 	}
 	
 	if (isNetworkGame)
 	{
-		/* TODO: NETWORK */
+		SDL_Surface *temp_surface = VGAScreen;
+		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
+		
+		if (!yourInGameMenuRequest)
+		{
+			JE_barShade(3, 60, 257, 80); /*Help Box*/
+			JE_barShade(5, 62, 255, 78);
+			tempScreenSeg = VGAScreen;
+			JE_dString(10, 65, "Other player in options menu.", SMALL_FONT_SHAPES);
+			JE_showVGA();
+			
+			while (network_state_is_latest() || (SDLNet_Read16(&packet_in->data[0]) != PACKET_WAITING && SDLNet_Read16(&packet_in->data[0]) != PACKET_GAME_QUIT))
+			{
+				service_SDL_events(false);
+				JE_showVGA();
+				
+				if (network_keep_alive() && network_is_sync())
+				{
+					network_prepare(PACKET_WAITING);
+					network_send(4);  // PACKET_WAITING
+				}
+				network_check();
+				SDL_Delay(16);
+			}
+			
+			if (SDLNet_Read16(&packet_in->data[0]) == PACKET_GAME_QUIT)
+			{
+				reallyEndLevel = true;
+				playerEndLevel = true;
+			}
+		} else {
+			/*
+			JE_barShade(3, 160, 257, 180); /-*Help Box*-/
+			JE_barShade(5, 162, 255, 178);
+			tempScreenSeg = VGAScreen;
+			JE_dString(10, 165, "Waiting for other player.", SMALL_FONT_SHAPES);
+			JE_showVGA();
+			*/
+		}
+		
+		while (!network_is_sync())
+		{
+			service_SDL_events(false);
+			
+			network_check();
+			SDL_Delay(16);
+		}
+		
+		VGAScreen = temp_surface; /* side-effect of game_screen */
 	}
 	
 	useButtonAssign = true;  /*Joystick button remapping*/
-	/* TODO: NETWORK */
 	yourInGameMenuRequest = false;
-	skipStarShowVGA = true;
+	
+	tempScreenSeg = VGAScreen;
+	//skipStarShowVGA = true;
 }
 
 JE_boolean JE_inGameSetup( void )
@@ -1722,11 +1772,6 @@ void JE_inGameHelp( void )
 	} while (!inputDetected);
 	
 	textErase = 1;
-	
-	if (isNetworkGame)
-	{
-		/* TODO: NETWORK */
-	}
 	
 	VGAScreen = temp_surface;
 }
@@ -2412,7 +2457,8 @@ void JE_playCredits( void )
 		if (currentpic == maxShape[EXTRA_SHAPES])
 			JE_outTextAdjust(5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
 		
-		JE_updateStream();
+		NETWORK_BUSY_KEEP_ALIVE();
+		
 		int delaycount_temp;
 		if ((delaycount_temp = target2 - SDL_GetTicks()) > 0)
 			SDL_Delay(delaycount_temp);
@@ -2473,13 +2519,6 @@ void JE_endLevelAni( void )
 	memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
 	strcpy(lastLevelName, levelName);
 	
-	JE_setNetByte(0);
-	
-	JE_updateStream();
-	JE_updateStream();
-	JE_updateStream();
-	JE_updateStream();
-	
 	JE_wipeKey();
 	frameCountMax = 4;
 	textGlowFont = SMALL_FONT_SHAPES;
@@ -2504,10 +2543,6 @@ void JE_endLevelAni( void )
 		JE_outTextGlow(20, 20, tempStr);
 	}
 	
-	JE_updateStream();
-	if (netQuit)
-		exit(0);
-	
 	if (twoPlayerMode)
 	{
 		sprintf(tempStr, "%s %d", miscText[41-1], score);
@@ -2518,10 +2553,6 @@ void JE_endLevelAni( void )
 	} else {
 		sprintf(tempStr, "%s %d", miscText[28-1], score);
 		JE_outTextGlow(30, 50, tempStr);
-		
-		JE_updateStream();
-		if (netQuit)
-			exit(0);
 	}
 	
 	if (totalEnemy == 0)
@@ -2538,17 +2569,9 @@ void JE_endLevelAni( void )
 		editorLevel += temp / 5;
 	}
 	
-	JE_updateStream();
-	if (netQuit)
-		exit(0);
-	
 	if (!onePlayerAction && !twoPlayerMode)
 	{
 		JE_outTextGlow(30, 120, miscText[4-1]);   /*Cubes*/
-		
-		JE_updateStream();
-		if (netQuit)
-			exit(0);
 		
 		if (cubeMax > 0)
 		{
@@ -2562,14 +2585,13 @@ void JE_endLevelAni( void )
 			}
 			for (temp = 1; temp <= cubeMax; temp++)
 			{
+				NETWORK_BUSY_KEEP_ALIVE();
+				
 				JE_playSampleNum(18);
 				x = 20 + 30 * temp;
 				y = 135;
 				JE_drawCube(x, y, 9, 0);
 				JE_showVGA();
-				JE_updateStream();
-				if (netQuit)
-					exit(0);
 				
 				for (i = -15; i <= 10; i++)
 				{
@@ -2582,10 +2604,6 @@ void JE_endLevelAni( void )
 					}
 					JE_waitRetrace();
 					JE_showVGA();
-					
-					JE_updateStream();
-					if (netQuit)
-						exit(0);
 					
 					int delaycount_temp;
 					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
@@ -2603,10 +2621,6 @@ void JE_endLevelAni( void )
 					JE_waitRetrace();
 					JE_showVGA();
 					
-					JE_updateStream();
-					if (netQuit)
-						exit(0);
-					
 					int delaycount_temp;
 					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 						SDL_Delay(delaycount_temp);
@@ -2618,10 +2632,6 @@ void JE_endLevelAni( void )
 		
 	}
 
-	JE_updateStream();
-	if (netQuit)
-		exit(0);
-	
 	if (frameCountMax != 0)
 	{
 		frameCountMax = 6;
@@ -2631,9 +2641,6 @@ void JE_endLevelAni( void )
 	}
 	temp2 = twoPlayerMode ? 150 : 160;
 	JE_outTextGlow(90, temp2, miscText[5-1]);
-	JE_updateStream();
-	if (netQuit)
-		exit(0);
 	
 	if (!constantPlay)
 	{
@@ -2642,30 +2649,12 @@ void JE_endLevelAni( void )
 			setjasondelay(1);
 			JE_waitRetrace();
 			
-			JE_updateStream();
-			if (netQuit)
-				exit(0);
+			NETWORK_BUSY_KEEP_ALIVE();
 			
 			int delaycount_temp;
 			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
 				SDL_Delay(delaycount_temp);
 		} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
-	}
-	
-	/*Synchronize the network*/
-	if (isNetworkGame)
-	{
-		tempScreenSeg = VGAScreenSeg; /* sega000 */
-		
-		frameCountMax = 0;
-		JE_outTextGlow(10, 165, "Waiting for other player.");
-		
-		exchangeCount = 1;
-		
-		/* TODO: NETWORK */
-	} else if (isNetworkActive)
-	{
-		/* TODO: NETWORK */
 	}
 	
 	JE_fadeBlack(15);
@@ -2674,10 +2663,8 @@ void JE_endLevelAni( void )
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
-	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1],
-	  shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
-	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1],
-	  shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
+	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
+	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
 	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, filter, brightness);
 }
 
@@ -2763,7 +2750,6 @@ void JE_operation( JE_byte slot )
 			JE_textShade(70, 70, levelName, 11, 4, DARKEN);
 			
 			do {
-				
 				flash = (flash == 8 * 16 + 10) ? 8 * 16 + 2 : 8 * 16 + 10;
 				temp3 = (temp3 == 6) ? 2 : 6;
 				
@@ -2775,7 +2761,6 @@ void JE_operation( JE_byte slot )
 				JE_bar(tempW + 1, 89, tempW + 5, 94, flash);
 				
 				JE_showVGA();
-				
 			} while (!JE_waitAction(14, false));
 			
 			if (mouseButton > 0)
@@ -2942,7 +2927,7 @@ void JE_mainKeyboardInput( void )
 
 	/* { Network Request Commands } */
 
-	if (!isNetworkGame || gameQuitDelay == 0)
+	if (!isNetworkGame)
 	{
 		/* { Edited Ships } for Player 1 */
 		if (extraAvail && keysactive[SDLK_TAB] && !isNetworkGame && !superTyrian)
@@ -2951,7 +2936,7 @@ void JE_mainKeyboardInput( void )
 			{
 				if (0 /* keyactive[x+1] The number keys, TODO: doesn't exactly work like that under SDL */)
 				{
-					/* TODO */
+					/* TODO: shipedit */
 				}
 			}
 		}
@@ -2963,7 +2948,7 @@ void JE_mainKeyboardInput( void )
 			{
 				if (0 /* keyactive[x+1] The number keys, TODO: doesn't exactly work like that under SDL */)
 				{
-					/* TODO */
+					/* TODO: shipedit */
 				}
 			}
 		}
@@ -3194,11 +3179,6 @@ void JE_pauseGame( void )
 
 	done = false;
 
-	if (isNetworkGame)
-	{
-		/* TODO: NETWORK */
-	}
-
 	newkey = false;
 
 	do
@@ -3207,39 +3187,33 @@ void JE_pauseGame( void )
 
 		JE_joystick2();
 
-		if (isNetworkActive)
-		{
-			/* TODO: NETWORK */
-		}
-
 		if (superPause)
 		{
 			if ((newkey && (lastkey_sym != SDLK_F11) && !(lastkey_sym == SDLK_LALT) && !(lastkey_sym == SDLK_c) && !(lastkey_sym == SDLK_SPACE)) || (JE_mousePosition(&mouseX, &mouseY) > 0) || button[1] || button[2] || button[3]) 
 			{
 				if (isNetworkGame)
 				{
-					/* TODO: NETWORK */
+					network_prepare(PACKET_WAITING);
+					network_send(4);  // PACKET_WAITING
 				} else {
 					done = true;
 				}
 			}
-		} else {
-			if ((newkey && lastkey_sym != SDLK_F11) || JE_mousePosition(&mouseX, &mouseY) > 0 || button[0] || button[1] || button[2] || button[3])
+		} else if ((newkey && lastkey_sym != SDLK_F11) || JE_mousePosition(&mouseX, &mouseY) > 0 || button[0] || button[1] || button[2] || button[3]) {
+			if (isNetworkGame)
 			{
-				if (isNetworkGame)
-				{
-					/* TODO: NETWORK */
-				} else {
-					done = true;
-				}
+				network_prepare(PACKET_WAITING);
+				network_send(4);  // PACKET_WAITING
+			} else {
+				done = true;
 			}
 		}
-
+		
+		NETWORK_BUSY_KEEP_ALIVE();
+		
 		if (isNetworkGame)
-		{
-			/* TODO: NETWORK */
-		}
-
+			done = !network_state_is_latest() && (SDLNet_Read16(&packet_in->data[0]) == PACKET_WAITING || SDLNet_Read16(&packet_out->data[0]) == PACKET_WAITING);
+		
 		if (lastkey_sym == SDLK_p)
 		{
 			repause = true;
@@ -3248,11 +3222,21 @@ void JE_pauseGame( void )
 		wait_delay();
 	} while (!done);
 
+	if (isNetworkGame)
+	{
+		while (!network_is_sync())
+		{
+			service_SDL_events(false);
+			
+			network_check();
+			SDL_Delay(16);
+		}
+	}
+	
 	JE_setVol(tyrMusicVolume, fxVolume);
 
-	/* TODO: NETWORK */
 	tempScreenSeg = VGAScreen;
-	skipStarShowVGA = true;
+	//skipStarShowVGA = true;
 }
 
 void JE_playerMovement( JE_byte inputDevice_,
@@ -3292,12 +3276,13 @@ void JE_playerMovement( JE_byte inputDevice_,
 		}
 	}
 
-redo:
-
 	if (isNetworkGame && thisPlayerNum == playerNum_)
 	{
-		/* TODO: NETWORK */
+		network_state_prepare();
+		memset(&packet_out->data[4], 0, 10);
 	}
+
+redo:
 
 	if (isNetworkGame)
 	{
@@ -3377,17 +3362,15 @@ redo:
 
 			}
 		}
-	} else
-	if (constantDie)
-	{
+	} else if (constantDie)	{
 		if (*playerStillExploding_ == 0)
 		{
 
 			*shield_ = 0;
 			if (*armorLevel_ > 0)
+			{
 				(*armorLevel_)--;
-			else {
-				gameQuitDelay = 60;
+			} else {
 				*playerAlive_ = false;
 				*playerStillExploding_ = 60;
 				levelEnd = 40;
@@ -3603,7 +3586,29 @@ redo:
 
 				if (isNetworkGame && playerNum_ == thisPlayerNum)
 				{
-					/* TODO: NETWORK */
+					Uint16 buttons = 0;
+					for (int i = 4 - 1; i >= 0; i--)
+					{
+						buttons <<= 1;
+						buttons |= button[i];
+					}
+					
+					SDLNet_Write16(*PX_ - *mouseX_, &packet_state_out[0]->data[4]);
+					SDLNet_Write16(*PY_ - *mouseY_, &packet_state_out[0]->data[6]);
+					SDLNet_Write16(accelXC,         &packet_state_out[0]->data[8]);
+					SDLNet_Write16(accelYC,         &packet_state_out[0]->data[10]);
+					SDLNet_Write16(buttons,         &packet_state_out[0]->data[12]);
+					
+					*PX_ = *mouseX_;
+					*PY_ = *mouseY_;
+					
+					button[0] = false;
+					button[1] = false;
+					button[2] = false;
+					button[3] = false;
+				
+					accelXC = 0;
+					accelYC = 0;
 				}
 			}  /*isNetworkGame*/
 
@@ -3611,9 +3616,37 @@ redo:
 
 			moveOk = true;
 
-			if (isNetworkGame)
+			if (isNetworkGame && !network_state_is_reset())
 			{
-				/* TODO: NETWORK */
+				if (playerNum_ != thisPlayerNum)
+				{
+					if (thisPlayerNum == 2)
+						difficultyLevel = SDLNet_Read16(&packet_state_in[0]->data[16]);
+					
+					Uint16 buttons = SDLNet_Read16(&packet_state_in[0]->data[12]);
+					for (int i = 0; i < 4; i++)
+					{
+						button[i] = buttons & 1;
+						buttons >>= 1;
+					}
+					
+					*PX_ += (Sint16)SDLNet_Read16(&packet_state_in[0]->data[4]);
+					*PY_ += (Sint16)SDLNet_Read16(&packet_state_in[0]->data[6]);
+					accelXC = (Sint16)SDLNet_Read16(&packet_state_in[0]->data[8]);
+					accelYC = (Sint16)SDLNet_Read16(&packet_state_in[0]->data[10]);
+				} else {
+					Uint16 buttons = SDLNet_Read16(&packet_state_out[network_delay]->data[12]);
+					for (int i = 0; i < 4; i++)
+					{
+						button[i] = buttons & 1;
+						buttons >>= 1;
+					}
+					
+					*PX_ += (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[4]);
+					*PY_ += (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[6]);
+					accelXC = (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[8]);
+					accelYC = (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[10]);
+				}
 			}
 
 			/*Street-Fighter codes*/
@@ -4572,9 +4605,12 @@ void JE_mainGamePlayerFunctions( void )
 
 char *JE_getName( JE_byte pnum )
 {
-	STUB();
-
-	return NULL;
+	if (pnum == thisPlayerNum && network_player_name[0] != '\0')
+		return network_player_name;
+	else if (network_opponent_name[0] != '\0')
+		return network_opponent_name;
+	
+	return miscText[49 + pnum - 1-1];
 }
 
 void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,

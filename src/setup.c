@@ -31,6 +31,7 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "params.h"
 #include "starfade.h"
 #include "starlib.h"
 #include "varz.h"
@@ -94,7 +95,9 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 			}
 		}
 #endif
-
+		
+		NETWORK_BUSY_KEEP_ALIVE();
+		
 		SDL_Delay(16); /* <MXD> attempt non-processor-based wait, implement a real delay later */
 		if (*waitTime > 0)
 		{

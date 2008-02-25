@@ -21,7 +21,7 @@ endif
 
 ifeq ($(PLATFORM), WINDOWS)
 	SDL_CFLAGS := -I/mingw/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
-	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -mwindows
+	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows
 endif
 ifeq ($(PLATFORM), GP2X)
 	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math -funroll-loops
@@ -31,7 +31,7 @@ ifeq ($(PLATFORM), GP2X)
 endif
 ifeq ($(PLATFORM), UNIX)
 	SDL_CFLAGS := $(shell sdl-config --cflags)
-	SDL_LDFLAGS := $(shell sdl-config --libs)
+	SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_net
 endif
 
 

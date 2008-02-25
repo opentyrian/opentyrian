@@ -309,12 +309,10 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 			JE_showVGA();
 			JE_mouseReplace();
 		}
-
-		if (time == 0 && isNetworkGame)
-		{
-			/* TODO: NETWORK */
-		}
-
+		
+		NETWORK_BUSY_KEEP_ALIVE();
+		
+		SDL_Delay(16);
 	} while (!(inputDetected || delaycount() == 0 || netQuit));
 
 	return inputDetected;

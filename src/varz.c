@@ -1526,7 +1526,6 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 				if (playerAlive && !youAreCheating)
 				{
 					levelTimer = false;
-					gameQuitDelay = 10;
 					*playerAlive = false;
 					*playerStillExploding = 60;
 					levelEnd = 40;

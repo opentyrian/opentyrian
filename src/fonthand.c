@@ -23,6 +23,7 @@
 #include "newshape.h"
 #include "network.h"
 #include "nortsong.h"
+#include "params.h"
 #include "vga256d.h"
 
 
@@ -672,21 +673,11 @@ void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank
 	}
 }
 
-JE_char JE_bright( JE_boolean makebright )
-{
-	if (makebright)
-	{
-		return '~';
-	} else {
-		return '\0';
-	}
-}
-
 void JE_updateWarning( void )
 {
 	if (delaycount2() == 0)
-    { /*Update Color Bars*/
-
+	{ /*Update Color Bars*/
+		
 		warningCol += warningColChange;
 		if (warningCol > 14 * 16 + 10 || warningCol < 14 * 16 + 4)
 		{
@@ -713,8 +704,6 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 	JE_integer z;
 	JE_byte c = 15;
 
-	JE_setNetByte(0);
-	
 	if (warningRed)
 	{
 		c = 7;
@@ -735,11 +724,8 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 			{
 				frameCountMax = 0;
 			}
-			JE_updateStream();
-			if (netQuit)
-			{
-				exit(0);
-			}
+			
+			NETWORK_BUSY_KEEP_ALIVE();
 			
 			JE_waitRetrace();
 			JE_showVGA();
@@ -757,11 +743,8 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 		{
 			frameCountMax = 0;
 		}
-		JE_updateStream();
-		if (netQuit)
-		{
-			exit(0);
-		}
+		
+		NETWORK_BUSY_KEEP_ALIVE();
 		
 		JE_waitRetrace();
 		JE_showVGA();
