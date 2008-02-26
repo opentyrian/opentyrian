@@ -15,7 +15,7 @@ ENEMY_NUM:16 = 850
 
 // Size in bytes: 0x50
 // Bullet patterns
-struct {
+struct weapons {
 	drain:16 // Filler, not used
 	shotRepeat:8 // Rate of fire (lower == faster)
 	multi:8 // How many to shoot at once (use to shoot multiple pattern frames at once)
@@ -46,11 +46,11 @@ struct {
 } WEAP_NUM+1 (780+1)
 
 // Weapons:
-struct {
+struct weaponPort {
 	str_len:8 = 0x1E // Pascal string length, leave alone
 	name:str30 // Weapon name
 	opnum:8 // How many firing modes weapon has. (1 or 2, only really works for rear guns)
-	2x { // Weapon patterns (What it does, it's an index into the patterns structure). One for each firing mode.
+	2x { // Weapon patterns (What it does, it's an index into the weapons structure). One for each firing mode.
 		11x op:16 // Each entry corresponds to a power level
 	}
 	cost:16 // How much does the weapon cost. Upgrades are calculated off this.
@@ -59,7 +59,7 @@ struct {
 } PORT_NUM+1 (42+1)
 
 // Special moves, those things that show up in the upper left corner with a fake charging bar
-struct {
+struct special {
 	str_len:8 = 0x1E // Pascal string length, leave alone
 	name:str30 // Name
 	itemGraphic:16 // The graphic that's displayed during gameplay
@@ -69,7 +69,7 @@ struct {
 } SPECIAL_NUM+1 (46+1)
 
 // Generators
-struct {
+struct powerSys {
 	str_len:8 = 0x1E // Pascal string length
 	name:str30 // Name
 	itemGraphic:16 // Graphic that's displayed in the shop
@@ -79,7 +79,7 @@ struct {
 } POWER_NUM+1 (6+1)
 
 // Ships
-struct {
+struct ships {
 	str_len:8 = 0x1E // String length
 	name:str30 // Name
 	shipGraphic:16 // Graphic used in-game
@@ -92,7 +92,7 @@ struct {
 } SHIP_NUM+1 (13+1)
 
 // Sidekicks
-struct {
+struct options {
 	str_len:8 = 0x1E // String length
 	name:str30 // Name
 	pwr:8 // Number of charge stages
@@ -111,14 +111,14 @@ struct {
 	opspd:s8 // Unused
 	ani:8 // Number of frames in animation
 	20x gr:16 // In-game sprite for each animation frame
-	wport:8 // Weapon used for power usage, etc (index into weapons array)
-	wpnum:16 // Bullet pattern
+	wport:8 // Weapon used for power usage, etc (index into weaponPort array)
+	wpnum:16 // Bullet pattern (index into weapon array)
 	ammo:8 // Amount of ammo
 	stop:8 // Unused
 	iconGr:8 // Icon in ammo indicators
 } OPTION_NUM+1 (30+1)
 
-struct {
+struct shields {
 	str_len:8 = 0x1E // String length
 	name:str30 // Name
 	tpwr:8 // Generator power needed to charge
@@ -127,16 +127,17 @@ struct {
 	cost:16 // Cost in shop
 } SHIELD_NUM+1 (10+1)
 
-struct {
-	ani:8
-	tur:8
-	freq:8
-	xmove:s8
-	ymove:s8
+// Enemy definitions (warning: some of this may be wrong)
+struct enemyDat {
+	ani:8 // Number of frames in animation
+	3x tur:8 // Type of shot to fire (index into weapon) (1st: downwards, 2nd: right, 3rd: left)
+	3x freq:8 // Wait between shots
+	xmove:s8 // Horizontal speed
+	ymove:s8 // Vertical speed
 	xaccel:s8
 	yaccel:s8
-	xcaccel:s8
-	ycaccel:s8
+	xcaccel:s8 // Horizontal acceleration, more is less
+	ycaccel:s8 // Vertical acceleration
 	startx:s16
 	starty:s16
 	startxc:s8
