@@ -32,10 +32,11 @@
 #include "varz.h"
 #include "vga256d.h"
 
+#include "SDL.h"
+#include "SDL_net.h"
+
 #include <assert.h>
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_net.h>
 
 #define NETWORK_VERSION       1            // increment whenever networking changes might create incompatability
 #define NETWORK_PORT          1333         // UDP
