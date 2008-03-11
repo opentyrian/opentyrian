@@ -48,7 +48,7 @@ const struct about_text_type about_text[] =
 	{0x00, ""},
 	{0x30, "----- ~Developers~ -----"}, /* in alphabetical order */
 	{0x00, ""},
-	{0x03, "MindlessXD"},
+	{0x03, "Mindless"},
 	{0x06, "mwolson"},
 	{0x04, "syntaxglitch"},
 	{0x07, "yuriks"},
