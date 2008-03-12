@@ -31,7 +31,7 @@
 #ifdef TARGET_GP2X
 #	define surface_height 240
 #else
-#	define surface_height 240
+#	define surface_height 200
 #endif // TARGET_GP2X
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
