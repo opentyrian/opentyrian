@@ -67,9 +67,8 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 			newkey = true;
 			lastkey_sym = SDLK_RETURN;
 		}
-
-#ifdef NDEBUG
-		if (mouseInstalled)
+		
+		if (mouseInstalled && input_grabbed)
 		{
 			if (abs(mouse_y - 100) > 10)
 			{
@@ -94,7 +93,6 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 				newkey = true;
 			}
 		}
-#endif
 		
 		NETWORK_BUSY_KEEP_ALIVE();
 		

@@ -137,8 +137,6 @@ extern JE_SaveFilesType saveFiles;
 extern JE_SaveGameTemp saveTemp;
 extern JE_word editorLevel;
 
-extern bool fullscreen_set, fullscreen_enabled;
-
 void JE_initProcessorType( void );
 void JE_setNewGameSpeed( void );
 void JE_loadConfiguration( void );

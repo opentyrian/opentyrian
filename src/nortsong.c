@@ -231,11 +231,11 @@ void JE_playSong ( JE_word songnum )
 	{
 		return;
 	}
-
-
-	#ifndef NDEBUG
+	
+#ifndef NDEBUG
 	printf("Loading song number %d...\n", songnum);
-	#endif
+#endif
+	
 	if (songnum == 0) /* SYN: Trying to play song 0 was doing strange things D: */
 	{
 		JE_stopSong();

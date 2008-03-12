@@ -20,10 +20,12 @@
 #include "opentyr.h"
 #include "vga256d.h"
 
+#include "keyboard.h"
 #include "newshape.h" // For tempScreenSeg
 #include "config.h" // For fullscreen stuff
 
 #include "SDL.h"
+#include <assert.h>
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>
@@ -42,6 +44,8 @@ JE_word speed; /* JE: holds timer speed for 70Hz */
 
 JE_byte scancode;
 JE_byte outcol;
+
+bool fullscreen_enabled = false;
 
 SDL_Color vga_palette[] = {
 	{0, 0, 0}, {0, 0, 168}, {0, 168, 0}, {0, 168, 168}, {168, 0, 0}, {168, 0, 168}, {168, 84, 0}, {168, 168, 168}, {84, 84, 84}, {84, 84, 252}, {84, 252, 84}, {84, 252, 252}, {252, 84, 84}, {252, 84, 252}, {252, 252, 84}, {252, 252, 252},
@@ -64,14 +68,28 @@ SDL_Color vga_palette[] = {
 
 void JE_initVGA256( void )
 {
-	static JE_boolean initd = false;
-	SDL_Color *col_buf;
-	int i;
-
-	if (!initd)
+	SDL_Color palette_buffer[256];
+	int was_init = SDL_WasInit(SDL_INIT_VIDEO);
+	
+	if (was_init)
 	{
-		initd = true;
-		fullscreen_enabled = fullscreen_set;
+		assert(display_surface->format->BitsPerPixel == 8);
+		assert(display_surface->format->palette != NULL);
+		
+#ifdef TARGET_GP2X
+		return;
+#endif
+		
+		memcpy(palette_buffer, display_surface->format->palette->colors, sizeof(palette_buffer));
+	} else {
+		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
+		{
+video_error:
+			printf("Display initialization failed: %s\n", SDL_GetError());
+			exit(1);
+		}
+		
+		SDL_WM_SetCaption("OpenTyrian (ctrl-backspace to kill)", NULL);
 		
 #ifdef _WIN32
 		if (!SDL_getenv("SDL_VIDEODRIVER"))
@@ -79,49 +97,43 @@ void JE_initVGA256( void )
 			SDL_putenv("SDL_VIDEODRIVER=directx");
 		}
 #endif
-
-		if (SDL_InitSubSystem(SDL_INIT_VIDEO) != -1)
-		{
-			#ifdef SCALE2X
-			int w = surface_width*2, h = surface_height*2;
-			#else
-			int w = surface_width, h = surface_height;
-			#endif
-
-			Uint32 flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0);
-			display_surface = SDL_SetVideoMode(w, h, 8, flags);
-
-			if (display_surface == NULL)
-			{
-				goto video_error;
-			}
-		} else {
-		video_error:
-			printf("Display initialization failed: %s\n", SDL_GetError());
-			exit(1);
-		}
 		
-		SDL_WM_SetCaption("OpenTyrian (ctrl-backspace to kill)", NULL);
+		memcpy(palette_buffer, vga_palette, sizeof(palette_buffer));
+	}
 		
-#ifndef SCALE2X
+#ifdef SCALE2X
+	int w = surface_width * 2, h = surface_height * 2;
+#else
+	int w = surface_width, h = surface_height;
+#endif
+		
+	display_surface = SDL_SetVideoMode(w, h, 8, SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0));
+	
+	if (display_surface == NULL)
+	{
+		goto video_error;
+	}
+	
+	SDL_SetColors(display_surface, palette_buffer, 0, 256);
+	
+	if (!was_init)
+	{
+#ifdef TARGET_GP2X
 		VGAScreen = VGAScreenSeg = display_surface;
 #else
 		VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
-#endif /* SCALE2X */
+#endif /* TARGET_GP2X */
 		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
 		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
-	}
-
-#if defined(TARGET_GP2X) || defined(NDEBUG)
-	/* Remove the cursor from the top-left corner of the screen  */
-	SDL_ShowCursor(0);
-#endif
 	
-	SDL_FillRect(display_surface, NULL, 0x0);
-#ifdef SCALE2X
-	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
-#endif /* SCALE2X */
-	SDL_FillRect(game_screen, NULL, 0x0);
+		SDL_FillRect(display_surface, NULL, 0x0);
+#ifdef TARGET_GP2X
+		SDL_FillRect(VGAScreenSeg, NULL, 0x0);
+#endif /* TARGET_GP2X */
+		SDL_FillRect(game_screen, NULL, 0x0);
+	}
+	
+	input_grab();
 	
 	JE_showVGA();
 }
@@ -143,8 +155,9 @@ void JE_clr256( void )
 
 void JE_showVGA( void )
 {
-#ifdef SCALE2X
+#ifndef TARGET_GP2X
 	/* 8-bit specific */
+#ifdef SCALE2X
 	for (int y = 0; y < surface_height; y++)
 	{
 		for (int x = 0; x < surface_width; x++)
@@ -155,10 +168,14 @@ void JE_showVGA( void )
 		memcpy(&((Uint8 *)display_surface->pixels)[(y * 2 + 1) * display_surface->pitch],
 		       &((Uint8 *)display_surface->pixels)[(y * 2) * display_surface->pitch], surface_width * 2);
 	}
-	SDL_Flip(display_surface);
 #else
-	SDL_Flip(VGAScreen);
+	for (int y = 0; y < surface_height; y++)
+	{
+		memcpy(&((Uint8 *)display_surface->pixels)[y * display_surface->pitch], &((Uint8 *)VGAScreen->pixels)[y * VGAScreen->pitch], display_surface->w);
+	}
 #endif /* SCALE2X */
+#endif /* TARGET_GP2X */
+	SDL_Flip(display_surface);
 }
 
 void JE_showVGARetrace( void )

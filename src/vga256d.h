@@ -31,7 +31,7 @@
 #ifdef TARGET_GP2X
 #	define surface_height 240
 #else
-#	define surface_height 200
+#	define surface_height 240
 #endif // TARGET_GP2X
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
@@ -40,7 +40,6 @@ typedef JE_shape16B *JE_shape16;
 typedef JE_byte JE_screentype[65535]; /* [0..65534] */
 typedef JE_screentype *JE_screenptr;
 
-extern SDL_Color vga_palette[];
 extern JE_boolean mouseInstalled;
 extern JE_char k;
 extern SDL_Surface *display_surface;
@@ -50,6 +49,10 @@ extern SDL_Surface *VGAScreen2;
 extern JE_word speed; /* JE: holds timer speed for 70Hz */
 extern JE_byte scancode;
 extern JE_byte outcol;
+
+extern bool fullscreen_enabled;
+
+extern SDL_Color vga_palette[];
 
 void JE_initVGA256( void );
 void set_fullscreen( bool full );

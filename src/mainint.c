@@ -1411,7 +1411,6 @@ void JE_doInGameSetup( void )
 		quitRequested = false;
 		
 		keysactive[SDLK_ESCAPE] = false;
-		keysactive[SDLK_RETURN] = false;
 		
 		if (isNetworkGame)
 		{
@@ -3416,10 +3415,11 @@ redo:
 						button[2-1] = mouse_pressed[1];
 						button[3-1] = mouse_threeButton ? mouse_pressed[2] : mouse_pressed[1];
 
-#ifdef NDEBUG
-						mouseXC = mouse_x - 159;
-						mouseYC = mouse_y - 100;
-#endif
+						if (input_grabbed)
+						{
+							mouseXC = mouse_x - 159;
+							mouseYC = mouse_y - 100;
+						}
 
 						if (( inputDevice_ == 2 || inputDevice_ == 0 ) && mouseInstalled
 						    && (!isNetworkGame || playerNum_ == thisPlayerNum)

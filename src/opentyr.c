@@ -60,7 +60,7 @@ const char *opentyrian_str = "OpenTyrian";
 const char *opentyrian_menu_items[] =
 {
 	"About OpenTyrian",
-	"Fullscreen",
+	"Toggle Fullscreen",
 	/* "Play Destruct", */
 	"Jukebox",
 	"Return to Main Menu"
@@ -168,30 +168,22 @@ void opentyrian_menu( void )
 
 	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
 	JE_playSong(currentJukeboxSong);
-
+	
 	do
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-
+		
 		for (int i = 0; i <= maxSel; i++)
 		{
 			const char *text = opentyrian_menu_items[i];
-			if (i == 1) /* fullscreen */
-			{
-				static char buf[12+3+17+1];
-				snprintf(buf, sizeof(buf), "Fullscreen: %s%s",
-				         (fullscreen_set ? "On" : "Off"),
-				         (fullscreen_set != fullscreen_enabled ? " -Please restart-" : ""));
-				text = buf;
-			}
-
+			
 			JE_outTextAdjust(JE_fontCenter(text, SMALL_FONT_SHAPES),
 			                 (i != maxSel) ? (i * 16 + 32) : 118, text,
 			                 15, (i != sel ? -4 : -2), SMALL_FONT_SHAPES, true);
 		}
-
+		
 		JE_showVGA();
-
+		
 		if (fade_in)
 		{
 			fade_in = false;
@@ -233,7 +225,8 @@ void opentyrian_menu( void )
 							fade_in = true;
 							break;
 						case 1: /* Fullscreen */
-							fullscreen_set = !fullscreen_set;
+							fullscreen_enabled = !fullscreen_enabled;
+							JE_initVGA256();
 							JE_playSampleNum(SELECT);
 							break;
 						case 2: /* Jukebox */

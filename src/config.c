@@ -235,8 +235,6 @@ JE_word editorLevel;   /*Initial value 800*/
 
 JE_word x;
 
-bool fullscreen_set = false, fullscreen_enabled;
-
 const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 
 void JE_decryptString( char *s, JE_byte len )
@@ -710,10 +708,10 @@ void JE_loadConfiguration( void )
 		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 
 		/* Fullscreen settings */
-		Uint8 tmp;
-		efread(&tmp, 1, 1, fi);
+		Uint8 temp;
+		efread(&temp, 1, 1, fi);
 
-		fullscreen_set = (tmp == 1);
+		fullscreen_enabled = (temp == 1);
 
 		fclose(fi);
 	} else {
@@ -732,7 +730,7 @@ void JE_loadConfiguration( void )
 		inputDevice1 = 0;
 		inputDevice2 = 0;
 
-		fullscreen_set = false;
+		fullscreen_enabled = false;
 	}
 
 	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
@@ -959,8 +957,8 @@ void JE_saveConfiguration( void )
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 
 		/* New fullscreen stuff */
-		Uint8 tmp = (fullscreen_set ? 1 : 0);
-		efwrite(&tmp, 1, 1, f);
+		Uint8 temp = (fullscreen_enabled ? 1 : 0);
+		efwrite(&temp, 1, 1, f);
 	
 		fclose(f);
 #if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)

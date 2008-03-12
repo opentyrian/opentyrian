@@ -323,11 +323,9 @@ JE_boolean JE_anyButton( void )
 
 void JE_setMousePosition( JE_word mouseX, JE_word mouseY )
 {
-	if (mouseInstalled)
+	if (mouseInstalled && input_grabbed)
 	{
-#ifdef NDEBUG
 		SDL_WarpMouse(mouseX, mouseY);
-#endif
 	}
 }
 

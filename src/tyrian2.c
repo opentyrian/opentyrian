@@ -8438,7 +8438,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 
 	JE_wipeKey();
 	wait_noinput(true, true, joystick_installed);
-
+	
 	JE_barShade(65, 55, 255, 155);
 
 	do {

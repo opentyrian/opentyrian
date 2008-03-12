@@ -19,6 +19,7 @@
  */
 #include "opentyr.h"
 #include "keyboard.h"
+#include "vga256d.h"
 
 #include "joystick.h"
 
@@ -38,6 +39,14 @@ Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
 
 int numkeys;
 Uint8 *keysactive;
+
+#ifdef NDEBUG
+bool input_grab_enabled = true,
+#else
+bool input_grab_enabled = false,
+#endif
+     input_grabbed = false;
+
 
 void flush_events_buffer( void )
 {
@@ -83,10 +92,24 @@ void init_keyboard( void )
 	keydown = mousedown = false;
 
 	SDL_EnableUNICODE(1);
+}
 
-#ifdef NDEBUG
-	SDL_WM_GrabInput(SDL_GRAB_ON);
-#endif
+void input_grab( void )
+{
+#ifdef TARGET_GP2X
+	input_grabbed = true;
+#else /* TARGET_GP2X */
+	input_grabbed = input_grab_enabled || fullscreen_enabled;
+#endif /* TARGET_GP2X */
+	
+	if (input_grabbed)
+	{
+		SDL_ShowCursor(0);
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	} else {
+		SDL_ShowCursor(1);
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	}
 }
 
 void service_SDL_events( JE_boolean clear_new )
@@ -108,13 +131,34 @@ void service_SDL_events( JE_boolean clear_new )
 				mouse_yrel = ev.motion.yrel;
 				break;
 			case SDL_KEYDOWN:
-				/* Emergency kill: Ctrl+Pause */
-				if (ev.key.keysym.sym == SDLK_BACKSPACE && (ev.key.keysym.mod & KMOD_CTRL))
+				if (ev.key.keysym.mod & KMOD_CTRL)
 				{
-					puts("\n\n\nCtrl+Backspace pressed. Doing emergency quit.\n");
-					SDL_Quit();
-					exit(1);
+					/* emergency kill */
+					if (ev.key.keysym.sym == SDLK_BACKSPACE)
+					{
+						puts("\n\n\nCtrl+Backspace pressed. Doing emergency quit.\n");
+						SDL_Quit();
+						exit(1);
+					}
+					
+					/* toggle input grab */
+					if (ev.key.keysym.sym == SDLK_F10)
+					{
+						input_grab_enabled = !input_grab_enabled;
+						input_grab();
+						break;
+					}
 				}
+				if (ev.key.keysym.mod & KMOD_ALT) {
+					/* toggle fullscreen */
+					if (ev.key.keysym.sym == SDLK_RETURN)
+					{
+						fullscreen_enabled = !fullscreen_enabled;
+						JE_initVGA256();
+						break;
+					}
+				}
+				
 				newkey = true;
 				lastkey_sym = ev.key.keysym.sym;
 				lastkey_mod = ev.key.keysym.mod;
@@ -125,6 +169,12 @@ void service_SDL_events( JE_boolean clear_new )
 				keydown = false;
 				return;
 			case SDL_MOUSEBUTTONDOWN:
+				if (!input_grabbed)
+				{
+					input_grab_enabled = !input_grab_enabled;
+					input_grab();
+					break;
+				}
 			case SDL_MOUSEBUTTONUP:
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
 				{
