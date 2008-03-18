@@ -73,12 +73,12 @@ void JE_initVGA256( void )
 	
 	if (was_init)
 	{
-		assert(display_surface->format->BitsPerPixel == 8);
-		assert(display_surface->format->palette != NULL);
-		
 #ifdef TARGET_GP2X
 		return;
 #endif
+		
+		assert(display_surface->format->BitsPerPixel == 8);
+		assert(display_surface->format->palette != NULL);
 		
 		memcpy(palette_buffer, display_surface->format->palette->colors, sizeof(palette_buffer));
 	} else {
@@ -138,13 +138,14 @@ video_error:
 	JE_showVGA();
 }
 
-void JE_initVGA256X( void )
-{
-	JE_initVGA256();
-}
-
 void JE_closeVGA256( void )
 {
+#ifndef TARGET_GP2X
+	SDL_FreeSurface(VGAScreenSeg);
+#endif /* TARGET_GP2X */
+	SDL_FreeSurface(VGAScreen2);
+	SDL_FreeSurface(game_screen);
+	
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 

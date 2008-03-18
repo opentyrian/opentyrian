@@ -722,18 +722,18 @@ void JE_loadMainShapeTables( void )
 
 	FILE *f;
 
-	typedef JE_longint JE_ShpPosType[SHP_NUM + 1]; /* [1..shpnum + 1] */
-
-	JE_ShpPosType shpPos;
+	JE_longint shpPos[SHP_NUM + 1]; /* [1..shpnum + 1] */;
 	JE_word shpNumb;
-
+	
+	int i;
+	
 	if (tyrianXmas)
 	{
 		JE_resetFile(&f, "tyrianc.shp");
 	} else {
 		JE_resetFile(&f, "tyrian.shp");
 	}
-
+	
 	efread(&shpNumb, sizeof(JE_word), 1, f);
 	for (x = 0; x < shpNumb; x++)
 	{
@@ -741,35 +741,38 @@ void JE_loadMainShapeTables( void )
 	}
 	fseek(f, 0, SEEK_END);
 	shpPos[shpNumb] = ftell(f);
-
-	/*fclose(f);*/
-
-	/*Load EST shapes*/
-	for (temp = 0; temp < 7; temp++)
+	
+	// interface, option sprites
+	for (i = 0; i < 7; i++)
 	{
-		fseek(f, shpPos[temp], SEEK_SET);
-		JE_newLoadShapesB(shapeReorderList[temp], f);
+		fseek(f, shpPos[i], SEEK_SET);
+		JE_newLoadShapesB(shapeReorderList[i], f);
 	}
-
-	shapesC1Size = shpPos[temp + 1] - shpPos[temp];
+	
+	// player shot sprites
+	shapesC1Size = shpPos[i + 1] - shpPos[i];
 	JE_loadCompShapesB(&shapesC1, f, shapesC1Size);
-	temp++;
-
-	shapes9Size = shpPos[temp + 1] - shpPos[temp];
+	i++;
+	
+	// player ship sprites
+	shapes9Size = shpPos[i + 1] - shpPos[i];
 	JE_loadCompShapesB(&shapes9 , f, shapes9Size);
-	temp++;
-
-	eShapes6Size = shpPos[temp + 1] - shpPos[temp];
+	i++;
+	
+	// power-up sprites
+	eShapes6Size = shpPos[i + 1] - shpPos[i];
 	JE_loadCompShapesB(&eShapes6, f, eShapes6Size);
-	temp++;
-
-	eShapes5Size = shpPos[temp + 1] - shpPos[temp];
+	i++;
+	
+	// coins, datacubes, etc sprites
+	eShapes5Size = shpPos[i + 1] - shpPos[i];
 	JE_loadCompShapesB(&eShapes5, f, eShapes5Size);
-	temp++;
-
-	shapesW2Size = shpPos[temp + 1] - shpPos[temp];
+	i++;
+	
+	// more player shot sprites
+	shapesW2Size = shpPos[i + 1] - shpPos[i];
 	JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
-
+	
 	fclose(f);
 }
 

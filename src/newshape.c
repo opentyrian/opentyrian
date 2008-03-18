@@ -33,18 +33,16 @@
 
 SDL_Surface *tempScreenSeg = NULL;
 
-JE_ShapeArrayType *shapeArray;
+JE_ShapeArrayType *shapeArray = NULL;
 
 JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],        /* [1..maxtable,1..maximumshape] */
         shapeY[MAX_TABLE][MAXIMUM_SHAPE];        /* [1..maxtable,1..maximumshape] */
 JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];     /* [1..maxtable,1..maximumshape] */
 JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable,1..maximumshape] */
 
-JE_byte maxShape[MAX_TABLE];                    /* [1..maxtable] */
+JE_byte maxShape[MAX_TABLE] = { 0 };             /* [1..maxtable] */
 
-JE_byte mouseGrabShape[24*28];                 /* [1..24*28] */
-
-JE_boolean loadOverride = false;
+JE_byte mouseGrabShape[24 * 28];                 /* [1..24*28] */
 
 /*
   Colors:
@@ -58,56 +56,21 @@ JE_boolean loadOverride = false;
 
 void JE_newLoadShapesB( JE_byte table, FILE *f )
 {
-	JE_word min = 0,
-	        max = 0;
-
-	JE_word tempW;
-	JE_word z;
-
-	efread(&tempW, sizeof(JE_word), 1, f);
-	maxShape[table] = tempW;
-
-	if (!loadOverride)
+	efread(&maxShape[table], sizeof(JE_word), 1, f);
+	
+	for (int i = 0; i < maxShape[table]; i++)
 	{
-		min = 1;
-		max = maxShape[table];
-	}
-
-	if (min > 1)
-	{
-		for (z = 0; z < min-1; z++)
+		shapeExist[table][i] = getc(f);
+		
+		if (shapeExist[table][i])
 		{
-			shapeExist[table][z] = getc(f);
-
-			if (shapeExist[table][z])
-			{
-				efread(&shapeX   [table][z], sizeof(JE_word), 1, f);
-				efread(&shapeY   [table][z], sizeof(JE_word), 1, f);
-				efread(&shapeSize[table][z], sizeof(JE_word), 1, f);
-
-				(*shapeArray)[table][z] = malloc(shapeX[table][z] * shapeY[table][z]);
-
-				efread((*shapeArray)[table][z], sizeof(JE_byte), shapeSize[table][z], f);
-
-				free((*shapeArray)[table][z]);
-			}
-		}
-	}
-
-	for (z = min-1; z < max; z++)
-	{
-		tempW = z-min+1;
-		shapeExist[table][tempW] = getc(f);
-
-		if (shapeExist[table][tempW])
-		{
-			efread(&shapeX   [table][tempW], sizeof(JE_word), 1, f);
-			efread(&shapeY   [table][tempW], sizeof(JE_word), 1, f);
-			efread(&shapeSize[table][tempW], sizeof(JE_word), 1, f);
-
-			(*shapeArray)[table][tempW] = malloc(shapeX[table][tempW]*shapeY[table][tempW]);
-
-			efread((*shapeArray)[table][tempW], sizeof(JE_byte), shapeSize[table][tempW], f);
+			efread(&shapeX   [table][i], sizeof(JE_word), 1, f);
+			efread(&shapeY   [table][i], sizeof(JE_word), 1, f);
+			efread(&shapeSize[table][i], sizeof(JE_word), 1, f);
+			
+			(*shapeArray)[table][i] = malloc(shapeX[table][i] * shapeY[table][i]);
+			
+			efread((*shapeArray)[table][i], sizeof(JE_byte), shapeSize[table][i], f);
 		}
 	}
 }
@@ -221,19 +184,16 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 
 void JE_newPurgeShapes( JE_byte table )
 {
-	JE_word x;
-
-	if (maxShape[table] > 0)
+	for (int i = 0; i < maxShape[table]; i++)
 	{
-		for (x = 0; x < maxShape[table]; x++)
+		if (shapeExist[table][i])
 		{
-			if (shapeExist[table][x])
-			{
-				free((*shapeArray)[table][x]);
-				shapeExist[table][x] = false;
-			}
+			free((*shapeArray)[table][i]);
+			shapeExist[table][i] = false;
 		}
 	}
+	
+	maxShape[table] = 0;
 }
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
@@ -359,22 +319,6 @@ void JE_mouseReplace( void )
 
 void newshape_init( void )
 {
-	int i;
-
 	tempScreenSeg = VGAScreen;
-	for (i = 0; i < MAX_TABLE; i++)
-	{
-		maxShape[i] = 0;
-	}
 	shapeArray = malloc(sizeof(JE_ShapeArrayType));
-}
-
-void JE_drawNext( JE_byte draw )
-{
-	STUB();
-}
-
-void JE_drawNShape (void *shape, JE_word xsize, JE_word ysize)
-{
-	STUB();
 }

@@ -220,9 +220,9 @@ JE_byte statBar[2], statCol[2]; /* [1..2] */
 JE_Map1Buffer *map1BufferTop, *map1BufferBot;
 
 /* Shape/Map Data - All in one Segment! */
-struct JE_MegaDataType1 *megaData1;
-struct JE_MegaDataType2 *megaData2;
-struct JE_MegaDataType3 *megaData3;
+struct JE_MegaDataType1 *megaData1 = NULL;
+struct JE_MegaDataType2 *megaData2 = NULL;
+struct JE_MegaDataType3 *megaData3 = NULL;
 
 /* Secret Level Display */
 JE_byte flash;
@@ -688,19 +688,48 @@ void JE_drawOptionLevel( void )
 
 void JE_tyrianHalt( JE_byte code )
 {
-	if (code != 9)
+	JE_closeVGA256();
+	
+	if (scanForJoystick)
 	{
-		JE_closeVGA256();
+		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 	}
-
+	
 	/* TODO: NETWORK */
-
-	JE_newPurgeShapes(PLANET_SHAPES);
-	JE_newPurgeShapes(FONT_SHAPES);
-	JE_newPurgeShapes(SMALL_FONT_SHAPES);
-	JE_newPurgeShapes(WEAPON_SHAPES);
-	JE_newPurgeShapes(FACE_SHAPES);
-
+	
+	free(megaData1);
+	megaData1 = NULL;
+	free(megaData2);
+	megaData2 = NULL;
+	free(megaData3);
+	megaData3 = NULL;
+	
+	for (int i = 0; i < MAX_TABLE; i++)
+	{
+		JE_newPurgeShapes(i);
+	}
+	
+	free(shapesC1);
+	shapesC1 = NULL;
+	
+	free(shapes9);
+	shapes9 = NULL;
+	
+	free(eShapes6);
+	eShapes6 = NULL;
+	
+	free(eShapes5);
+	eShapes5 = NULL;
+	
+	free(shapesW2);
+	shapesW2 = NULL;
+	
+	free(shapes6);
+	shapes6 = NULL;
+	
+	free(shapeArray);
+	shapeArray = NULL;
+	
 	/* YKS: Here the original free'd everythig in the memory.
 	 * Since the OS does this for us I can save some typing. =] */
 
@@ -719,7 +748,7 @@ void JE_tyrianHalt( JE_byte code )
 
 	/* endkeyboard; */
 
-	if (code != 9)
+	if (code == 9)
 	{
 		/* OutputString('call=file0002.EXE' + #0'); TODO? */
 	}
@@ -744,7 +773,8 @@ void JE_tyrianHalt( JE_byte code )
 		       "You'll need the 2.1 patch, though!\n"
 		       "\n");
 	}
-
+	
+	SDL_Quit();
 	exit(code);
 }
 

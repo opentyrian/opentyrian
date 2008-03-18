@@ -50,8 +50,7 @@ extern JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],
 extern JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];
 extern JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE];
 extern JE_byte maxShape[MAX_TABLE];
-extern JE_byte mouseGrabShape[24*28];
-extern JE_boolean loadOverride;
+extern JE_byte mouseGrabShape[24 * 28];
 /*extern JE_word min, max;*/
 
 void JE_newLoadShapes( JE_byte table, char *shapefile );
@@ -71,8 +70,5 @@ void JE_mouseStart( void );
 void JE_mouseReplace( void );
 
 void newshape_init( void );
-
-void JE_drawNext( JE_byte draw );
-void JE_drawNShape (void *shape, JE_word xsize, JE_word ysize);
 
 #endif /* NEWSHAPE_H */
