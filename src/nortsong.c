@@ -68,9 +68,8 @@ JE_byte jConfigure = 0;
 JE_byte soundActive = true;
 JE_byte musicActive = true;
 
-JE_byte *digiFx[SOUND_NUM + 9]; /* [1..soundnum + 9] */
+JE_byte *digiFx[SOUND_NUM + 9] = { NULL }; /* [1..soundnum + 9] */
 JE_word fxSize[SOUND_NUM + 9]; /* [1..soundnum + 9] */
-int allocd_digifx = false;
 
 
 JE_word fxVolume = 128; /* Default value, should be loaded from config */
@@ -181,11 +180,10 @@ void JE_loadSndFile( void )
 	{
 		fseek(fi, sndPos[0][z], SEEK_SET);
 		fxSize[z] = (sndPos[0][z+1] - sndPos[0][z]); /* Store sample sizes */
-		if (allocd_digifx) free(digiFx[z]);
+		free(digiFx[z]);
 		digiFx[z] = malloc(fxSize[z]);
 		efread(digiFx[z], 1, fxSize[z], fi); /* JE: Load sample to buffer */
 	}
-	allocd_digifx = true;
 
 	fclose(fi);
 

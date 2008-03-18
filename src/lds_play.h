@@ -24,7 +24,8 @@
 
 
 int lds_update( void );
-int lds_load( JE_byte* );
+int lds_load( JE_byte * );
+void lds_free( void );
 void lds_rewind( int ); /* default value: subsong = -1 */
 
 #define REFRESH 70.0f

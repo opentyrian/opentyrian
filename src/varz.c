@@ -23,6 +23,8 @@
 #include "config.h"
 #include "episodes.h"
 #include "joystick.h"
+#include "lds_play.h"
+#include "loudness.h"
 #include "mtrand.h"
 #include "network.h"
 #include "newshape.h"
@@ -730,8 +732,14 @@ void JE_tyrianHalt( JE_byte code )
 	free(shapeArray);
 	shapeArray = NULL;
 	
-	/* YKS: Here the original free'd everythig in the memory.
-	 * Since the OS does this for us I can save some typing. =] */
+	for (int i = 0; i < SOUND_NUM + 9; i++)
+	{
+		free(digiFx[i]);
+	}
+	
+	JE_deinitialize();
+	
+	lds_free();
 
 	/* JE_endMusic(soundeffects); TODO */
 

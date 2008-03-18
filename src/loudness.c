@@ -36,9 +36,9 @@ float music_volume = 0.6f;
 SDL_mutex *soundmutex = NULL;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
-SAMPLE_TYPE *channel_buffer[SFX_CHANNELS];
-SAMPLE_TYPE *channel_pos[SFX_CHANNELS];
-Uint32 channel_len[SFX_CHANNELS];
+SAMPLE_TYPE *channel_buffer[SFX_CHANNELS] = { NULL };
+SAMPLE_TYPE *channel_pos[SFX_CHANNELS] = { NULL };
+Uint32 channel_len[SFX_CHANNELS] = { 0 };
 Uint8 channel_vol[SFX_CHANNELS];
 int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
@@ -69,12 +69,6 @@ void JE_initialize(JE_word soundblaster, JE_word midi, JE_boolean mixenable, JE_
 	{
 		printf("Couldn't create mutex! Oh noes!\n");
 		exit(-1);
-	}
-
-	for (i = 0; i < SFX_CHANNELS; i++)
-	{
-		channel_buffer[i] = channel_pos[i] = NULL;
-		channel_len[i] = 0;
 	}
 
 	opl_init();
@@ -180,8 +174,17 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 
 void JE_deinitialize( void )
 {
-	/* SYN: TODO: Clean up any other audio stuff, if necessary. This should only be called when we're quitting. */
+	/* SYN: Clean up any other audio stuff, if necessary. This should only be called when we're quitting. */
+	
+	for (int i = 0; i < SFX_CHANNELS; i++)
+	{
+		free(channel_buffer[i]);
+		channel_buffer[i] = channel_pos[i] = NULL;
+		channel_len[i] = 0;
+	}
+	
 	opl_deinit();
+	
 	SDL_CloseAudio();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }

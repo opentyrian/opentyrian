@@ -121,7 +121,7 @@ int lds_load(JE_byte *music_location)
 	/* load patches */
 	memcpy(&numpatch, pos, sizeof(Uint16)); numpatch = SDL_SwapLE16(numpatch); pos += 2;
 
-	if (soundbank) free(soundbank);
+	free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 
 	for(i = 0; i < numpatch; i++) {
@@ -166,11 +166,11 @@ int lds_load(JE_byte *music_location)
 	/* load positions */
 	memcpy(&numposi, pos, sizeof(Uint16)); numposi = SDL_SwapLE16(numposi); pos += 2;
 
-	if (positions) free(positions);
+	free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
 
-	for(i = 0; i < numposi; i++)
-		for(j = 0; j < 9; j++) {
+	for (i = 0; i < numposi; i++)
+		for (j = 0; j < 9; j++) {
 			/*
 			* patnum is a pointer inside the pattern space, but patterns are 16bit
 			* word fields anyway, so it ought to be an even number (hopefully) and
@@ -202,6 +202,18 @@ int lds_load(JE_byte *music_location)
 	lds_rewind(-1);*/
 
 	return true;
+}
+
+void lds_free( void )
+{
+	free(soundbank);
+	soundbank = NULL;
+	
+	free(positions);
+	positions = NULL;
+	
+	free(patterns);
+	patterns = NULL;
 }
 
 void lds_rewind(int subsong)

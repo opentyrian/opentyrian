@@ -56,7 +56,11 @@ JE_byte mouseGrabShape[24 * 28];                 /* [1..24*28] */
 
 void JE_newLoadShapesB( JE_byte table, FILE *f )
 {
-	efread(&maxShape[table], sizeof(JE_word), 1, f);
+	JE_word temp;
+	
+	efread(&temp, sizeof(JE_word), 1, f);
+	
+	maxShape[table] = temp;
 	
 	for (int i = 0; i < maxShape[table]; i++)
 	{
@@ -189,6 +193,7 @@ void JE_newPurgeShapes( JE_byte table )
 		if (shapeExist[table][i])
 		{
 			free((*shapeArray)[table][i]);
+			
 			shapeExist[table][i] = false;
 		}
 	}
