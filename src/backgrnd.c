@@ -695,9 +695,9 @@ void JE_smoothies3( void ) /* iced motion blur */
 
 	for (i = 184 * game_screen->pitch; i; i--)
 	{
-			*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | 0x80;
-			s++;
-			src++;
+		*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | 0x80;
+		s++;
+		src++;
 	}
 	VGAScreen = game_screen;
 }
@@ -710,9 +710,9 @@ void JE_smoothies4( void ) /* motion blur */
 
 	for (i = 184 * game_screen->pitch; i; i--)
 	{
-			*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | (*src & 0xf0);
-			s++;
-			src++;
+		*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | (*src & 0xf0);
+		s++;
+		src++;
 	}
 	VGAScreen = game_screen;
 }

@@ -41,7 +41,7 @@ JE_ButtonAssign joyButtonAssign;
 JE_boolean useButtonAssign = false;
 
 /* Joystick Data */
-Sint16 jMinX, jMaxX, jMinY, jMaxY, jCenterX, jCenterY, joyX, joyY;
+Sint16 joyX, joyY;
 Sint16 lastJoyX,  lastJoyY;
 Sint16 lastJoyXb, lastJoyYb;
 Sint16 lastJoyXc, lastJoyYc;
@@ -151,17 +151,17 @@ void JE_joystick2( void )
 #ifndef TARGET_GP2X
 		if (!joyMax)
 		{
-			joystickUp    = joyY < (jCenterY - jCenterY / 2);
-			joystickDown  = joyY > (jCenterY + jCenterY / 2);
+			joystickUp    = joyY < -32768 / 2;
+			joystickDown  = joyY > 32767 / 2;
 			
-			joystickLeft  = joyX < (jCenterX - jCenterY / 2);
-			joystickRight = joyX > (jCenterX + jCenterX / 2);
+			joystickLeft  = joyX < -32768 / 2;
+			joystickRight = joyX > 32767 / 2;
 		} else {
-			joystickUp    = joyY < (jCenterY - jCenterY / 5);
-			joystickDown  = joyY > (jCenterY + jCenterY / 5);
+			joystickUp    = joyY < -32768 / 5;
+			joystickDown  = joyY > 32767 / 5;
 			
-			joystickLeft  = joyX < (jCenterX - jCenterY / 5);
-			joystickRight = joyX > (jCenterX + jCenterX / 5);
+			joystickLeft  = joyX < -32768 / 5;
+			joystickRight = joyX > 32767 / 5;
 		}
 		
 		joystickInput = joystickUp || joystickDown || joystickLeft || joystickRight || button[0] || button[1] || button[2] || button[3];
@@ -321,8 +321,6 @@ void JE_joystickInit( void )
 			JE_joystick1();
 		}
 
-		jCenterX = joyX;
-		jCenterY = joyY;
 		joystickUp = false;
 		joystickDown = false;
 		joystickLeft = false;

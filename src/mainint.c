@@ -3446,14 +3446,14 @@ redo:
 						button[2-1] = button[2-1] | tempButton[2-1];
 						button[3-1] = button[3-1] | tempButton[3-1];
 
-						if (joyY < jCenterY / 2)
+						if (joyY < -32768 / 2)
 							*PY_ -= CURRENT_KEY_SPEED;
-						if (joyY > jCenterY + jCenterY / 2)
+						if (joyY > 32767 / 2)
 							*PY_ += CURRENT_KEY_SPEED;
 
-						if (joyX < jCenterX / 2)
+						if (joyX < -32768 / 2)
 							*PX_ -= CURRENT_KEY_SPEED;
-						if (joyX > jCenterX + jCenterX / 2)
+						if (joyX > 32767 / 2)
 							*PX_ += CURRENT_KEY_SPEED;
 					}
 

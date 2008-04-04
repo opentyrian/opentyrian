@@ -257,21 +257,20 @@ int main( int argc, char *argv[] )
 {
 	mt_srand(time(NULL));
 
-	if (SDL_Init(0))
-	{
-		printf("Failed to initialize SDL: %s\n", SDL_GetError());
-	}
-
-	/* JE_detectCFG(); YKS: Removed */
-
-	printf("\nWelcome to... >> OpenTyrian v0.1 <<\n\n");
+	printf("\nWelcome to... >> OpenTyrian Classic v0.1 <<\n\n");
 
 	printf("Copyright (C) 2007 The OpenTyrian Development Team\n\n");
 
 	printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	printf("This is free software, and you are welcome to redistribute it\n");
 	printf("under certain conditions.  See the file GPL.txt for details.\n\n");
-
+	
+	if (SDL_Init(0))
+	{
+		printf("Failed to initialize SDL: %s\n", SDL_GetError());
+		return -1;
+	}
+	
 	JE_paramCheck(argc, argv);
 
 	JE_scanForEpisodes();
@@ -292,7 +291,7 @@ int main( int argc, char *argv[] )
 		JE_joystickInit();
 		if (joystick_installed)
 		{
-			printf("Joystick detected. %d %d\n", jCenterX, jCenterY);
+			printf("Joystick detected.\n");
 		} else {
 			printf("No joystick found.\n");
 		}

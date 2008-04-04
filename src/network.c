@@ -88,6 +88,29 @@ JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 
 JE_boolean portConfigChange, portConfigDone;
 
+/* networking deals in two types of packets
+
+acknowledged packets:
+receiving: the client expects to receive no packets with a higher sync id
+           until it has acknowledged the current packet's sync id, thus
+           these packets are always expected to be in order and reliable (there
+           are currently no checks to make sure a packet matches the expected
+           sync id, these duplicate packets are not expected to cause adverse
+           effects)
+sending:   the client sends a packet only after the previous packet's sync id
+           has been aknowledged; it does, however, resend the current packet
+           (using the same sync id) after a specified timeout since it may have
+           been lost
+
+state packets:
+receiving: the client places the packet in a queue and retrieves it by its sync
+           id when needed, if a packet is not available when needed it is
+           requested via an acknowledged packet
+sending:   the client sends a packet once (although it could send an xor of
+           previous packets to avoid the effects of packet loss), it retains
+           only the previously sent packets it expects might be requested for
+           resending
+*/
 
 int network_check( void )
 {
