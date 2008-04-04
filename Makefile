@@ -30,7 +30,7 @@ ifeq ($(PLATFORM), GP2X)
 	STRIP := $(GP2X_CHAIN)strip
 endif
 ifeq ($(PLATFORM), UNIX)
-	SDL_CFLAGS := $(shell sdl-config --cflags)
+	SDL_CFLAGS := $(shell sdl-config --cflags) -DTARGET_UNIX
 	SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_net
 endif
 

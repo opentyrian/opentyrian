@@ -1219,7 +1219,7 @@ void JE_sortHighScores( void )
 void JE_highScoreScreen( void )
 {
 	int min = 1;
-	int max = 1;
+	int max = 3;
 
 	int x, y, z;
 	short int chg;
@@ -1231,14 +1231,7 @@ void JE_highScoreScreen( void )
 	JE_showVGA();
 	JE_fadeColor(10);
 	tempScreenSeg = VGAScreen;
-
-	while (max < EPISODE_MAX && episodeAvail[max+1])
-	{
-		max++;
-	}
-
-	max = 3; /* TODO: Ep 4 high scores are not stored! */
-
+	
 	quit = false;
 	x = 1;
 	chg = 1;
@@ -1247,7 +1240,7 @@ void JE_highScoreScreen( void )
 
 	do
 	{
-		if (episodeAvail[x])
+		if (episodeAvail[x-1])
 		{
 			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
@@ -1300,7 +1293,7 @@ void JE_highScoreScreen( void )
 				JE_drawShape2x2( 90, 180, 279, shapes6);
 			}
 
-			if ( ( (x < 2) && episodeAvail[2] ) || ( (x < 3) && episodeAvail[3] ) )
+			if ( ( (x < 2) && episodeAvail[2-1] ) || ( (x < 3) && episodeAvail[3-1] ) )
 			{
 				JE_drawShape2x2( 220, 180, 281, shapes6);
 			}

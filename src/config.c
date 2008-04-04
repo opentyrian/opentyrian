@@ -33,6 +33,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 
 /* Configuration Load/Save handler */
@@ -665,11 +667,16 @@ void JE_loadConfiguration( void )
 	int y;
 
 	errorActive = true;
-
-	if (!JE_isCFGThere())
+	
+	char cfgfile[1000] = "tyrian.cfg";
+#ifdef TARGET_UNIX
+	if (getenv("HOME"))
+		snprintf(cfgfile, sizeof(cfgfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.cfg");
+#endif /* HOME */
+	
+	fi = fopen_check(cfgfile, "rb");
+	if (fi && get_stream_size(fi) == 17 + sizeof(keySettings) + sizeof(joyButtonAssign))
 	{
-		JE_resetFile(&fi, "tyrian.cfg");
-
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
 		background2 = 0;
@@ -715,6 +722,8 @@ void JE_loadConfiguration( void )
 
 		fclose(fi);
 	} else {
+		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n\n");
+		
 		memcpy(&joyButtonAssign, &defaultJoyButtonAssign, sizeof(joyButtonAssign));
 		/*midiPort = 1;*/ /* We don't care about this. */
 		soundEffects = 1;
@@ -741,10 +750,13 @@ void JE_loadConfiguration( void )
 
 	JE_setVol(tyrMusicVolume, fxVolume);
 
-	dont_die = true;
-	JE_resetFile(&fi, "tyrian.sav");
-	dont_die = false;
-
+	char savfile[1000] = "tyrian.sav";
+#ifdef TARGET_UNIX
+	if (getenv("HOME"))
+		snprintf(savfile, sizeof(savfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.sav");
+#endif /* HOME */
+	
+	fi = fopen_check(savfile, "rb");
 	if (fi)
 	{
 
@@ -855,6 +867,15 @@ void JE_loadConfiguration( void )
 
 void JE_saveConfiguration( void )
 {
+#ifdef TARGET_UNIX
+	if (getenv("HOME"))
+	{
+		char dir[1000];
+		snprintf(dir, sizeof(dir), "%s/.opentyrian", getenv("HOME"));
+		mkdir(dir, 0755);
+	}
+#endif /* HOME */
+	
 	FILE *f;
 	JE_byte *p, junk = 0;
 	int z;
@@ -917,12 +938,19 @@ void JE_saveConfiguration( void )
 		
 		memcpy(p, &tempSaveFile.highScoreDiff, sizeof(JE_byte)); p++;
 	}
-
+	
 	saveTemp[SIZEOF_SAVEGAMETEMP - 6] = editorLevel >> 8;
 	saveTemp[SIZEOF_SAVEGAMETEMP - 5] = editorLevel;
-
+	
 	JE_encryptSaveTemp();
-	f = fopen_check("tyrian.sav", "wb");
+	
+	char savfile[1000] = "tyrian.sav";
+#ifdef TARGET_UNIX
+	if (getenv("HOME"))
+		snprintf(savfile, sizeof(savfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.sav");
+#endif /* HOME */
+	
+	f = fopen_check(savfile, "wb");
 	if (f)
 	{
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
@@ -932,8 +960,14 @@ void JE_saveConfiguration( void )
 #endif
 	}
 	JE_decryptSaveTemp();
-
-	f = fopen_check("tyrian.cfg", "wb");
+	
+	char cfgfile[1000] = "tyrian.cfg";
+#ifdef TARGET_UNIX
+	if (getenv("HOME"))
+		snprintf(cfgfile, sizeof(cfgfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.cfg");
+#endif /* HOME */
+	
+	f = fopen_check(cfgfile, "wb");
 	if (f)
 	{
 		efwrite(&background2, 1, 1, f);

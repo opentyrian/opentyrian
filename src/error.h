@@ -28,7 +28,7 @@ extern JE_boolean dont_die;
 extern JE_char dir[256];
 extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
-extern char err_msg[128];
+extern char err_msg[1000];
 
 void JE_outputString( JE_char* s );
 
@@ -43,7 +43,6 @@ void JE_resetFile( FILE **f, const char *filename );
 void JE_resetText( FILE **f, const char *filename );
 char *JE_locateFile( const char *filename );
 void JE_findTyrian( const char *filename );
-JE_boolean JE_isCFGThere( void );
 /* void JE_OutputString( char *s ); Obscure DOS trick (?) */
 JE_longint JE_getFileSize( const char *filename );
 

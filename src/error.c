@@ -35,7 +35,7 @@ JE_boolean errorOccurred = false;
 
 JE_boolean dont_die = false;
 
-char err_msg[128] = "No error!?";
+char err_msg[1000] = "No error!?";
 
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
 
@@ -65,17 +65,21 @@ FILE *fopen_check( const char *file, const char *mode )
 		switch (errno)
 		{
 			case EACCES:
-				strcpy(buf, "Access denied");
+				strcpy(buf, "access denied");
+				break;
+			case ENOENT:
+				strcpy(buf, "no such file");
 				break;
 			default:
-				strcpy(buf, "Unknown error");
+				strcpy(buf, "unknown error");
 				break;
 		}
-		snprintf(err_msg, sizeof err_msg, "ERROR opening %s: %s\n", file, buf);
-		printf("%s", err_msg);
+		snprintf(err_msg, sizeof(err_msg), "warning: failed to open '%s' (mode '%s'): %s\n", file, mode, buf);
+		fprintf(stderr, "%s", err_msg);
+		
 		return NULL;
 	}
-
+	
 	return f;
 }
 
@@ -202,24 +206,6 @@ void JE_resetText( FILE **f, const char *filename )
 
 	tmp = JE_locateFile(filename);
 	*f = tmp ? fopen_check(tmp, "r") : NULL;
-}
-
-JE_boolean JE_isCFGThere( void ) /* Warning: It actually returns false when the config file exists */
-{
-	FILE *f;
-
-	dont_die = true;
-	JE_resetFile(&f, "tyrian.cfg");
-	dont_die = false;
-
-	if (f && get_stream_size(f) == 17 + sizeof(keySettings) + sizeof(joyButtonAssign))
-	{
-		fclose(f);
-		return false;
-	} else {
-		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n");
-		return true;
-	}
 }
 
 void JE_DetectCFG( void )
