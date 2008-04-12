@@ -101,7 +101,7 @@ video_error:
 		memcpy(palette_buffer, vga_palette, sizeof(palette_buffer));
 	}
 		
-#ifdef SCALE2X
+#ifdef SCALE_2X
 	int w = surface_width * 2, h = surface_height * 2;
 #else
 	int w = surface_width, h = surface_height;
@@ -158,7 +158,7 @@ void JE_showVGA( void )
 {
 #ifndef TARGET_GP2X
 	/* 8-bit specific */
-#ifdef SCALE2X
+#ifdef SCALE_2X
 	for (int y = 0; y < surface_height; y++)
 	{
 		for (int x = 0; x < surface_width; x++)
@@ -174,7 +174,7 @@ void JE_showVGA( void )
 	{
 		memcpy(&((Uint8 *)display_surface->pixels)[y * display_surface->pitch], &((Uint8 *)VGAScreen->pixels)[y * VGAScreen->pitch], display_surface->w);
 	}
-#endif /* SCALE2X */
+#endif /* SCALE_2X */
 #endif /* TARGET_GP2X */
 	SDL_Flip(display_surface);
 }

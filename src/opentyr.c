@@ -67,7 +67,7 @@ const char *opentyrian_menu_items[] =
 };
 
 /* zero-terminated strncpy */
-char *strnztcpy( char *to, char *from, size_t count )
+char *strnztcpy( char *to, const char *from, size_t count )
 {
 	to[count] = '\0';
 	return strncpy(to, from, count);
@@ -154,7 +154,7 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
 void opentyrian_menu( void )
 {
 	int sel = 0;
-	int maxSel = COUNTOF(opentyrian_menu_items) - 1;
+	const int maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	bool quit = false, fade_in = true;
 
 	JE_fadeBlack(10);
@@ -257,7 +257,7 @@ int main( int argc, char *argv[] )
 {
 	mt_srand(time(NULL));
 
-	printf("\nWelcome to... >> OpenTyrian Classic v0.1 <<\n\n");
+	printf("\nWelcome to... >> OpenTyrian Classic revision " SVN_REV " <<\n\n");
 
 	printf("Copyright (C) 2007 The OpenTyrian Development Team\n\n");
 

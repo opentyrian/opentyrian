@@ -200,7 +200,7 @@ int network_check( void )
 						break;
 						
 					default:
-						printf("-!- bad packet %d received\n", SDLNet_Read16(&packet_temp->data[0]));
+						printf("warning: bad packet %d received\n", SDLNet_Read16(&packet_temp->data[0]));
 						return 0;
 						break;
 				}
@@ -244,7 +244,7 @@ int network_acknowledge( Uint16 sync )
 void network_prepare( Uint16 type )
 {
 	if (!network_is_sync())
-		printf("-!- network is not syncronized (previous packet remains unsent)\n");
+		printf("warning: network is not syncronized (previous packet remains unsent)\n");
 	
 	SDLNet_Write16(type, &packet_out->data[0]);
 	SDLNet_Write16(++last_out_sync, &packet_out->data[2]);
@@ -290,7 +290,7 @@ void network_state_prepare( void )
 {
 	if (packet_state_out[0])
 	{
-		printf("-!- state packet overwritten (previous packet remains unsent)\n");
+		printf("warning: state packet overwritten (previous packet remains unsent)\n");
 	} else {
 		packet_state_out[0] = SDLNet_AllocPacket(NETWORK_PACKET_SIZE);
 		packet_state_out[0]->len = 28;
@@ -450,17 +450,17 @@ int network_connect( void ) {
 	
 	if (SDLNet_Read16(&packet_in->data[4]) != NETWORK_VERSION)
 	{
-		printf("-!- network version did not match opponent's\n");
+		printf("error: network version did not match opponent's\n");
 		network_tyrian_halt(4, true);
 	}
 	if (SDLNet_Read16(&packet_in->data[6]) != network_delay)
 	{
-		printf("-!- network delay did not match opponent's\n");
+		printf("error: network delay did not match opponent's\n");
 		network_tyrian_halt(5, true);
 	}
 	if (SDLNet_Read16(&packet_in->data[10]) == thisPlayerNum)
 	{
-		printf("-!- player number conflicts with opponent's\n");
+		printf("error: player number conflicts with opponent's\n");
 		network_tyrian_halt(6, true);
 	}
 	
@@ -542,7 +542,7 @@ int network_init( void )
 	
 	if (network_delay * 2 > NETWORK_PACKET_QUEUE - 2)
 	{
-		printf("-!- network delay would overflow packet queue\n");
+		printf("error: network delay would overflow packet queue\n");
 		return -4;
 	}
 	

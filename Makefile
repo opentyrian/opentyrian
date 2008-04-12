@@ -39,7 +39,16 @@ CFLAGS := --std=c99 -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -
 LDFLAGS := $(SDL_LDFLAGS) -lm
 
 ifeq ($(SCALE_2X), 1)
-	CFLAGS += -DSCALE2X
+	CFLAGS += -DSCALE_2X
+endif
+
+SVN_REV := $(shell svnversion -n)
+ifneq ($(SVN_REV), )
+	ifeq ($(SVN_REV), exported)
+		SVN_REV := unknown
+	endif
+	
+	CFLAGS += -DSVN_REV=\"$(SVN_REV)\"
 endif
 
 ####################################################

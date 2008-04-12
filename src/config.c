@@ -267,7 +267,7 @@ void JE_readCryptLn( FILE* f, char *s )
 
 void JE_skipCryptLn( FILE* f )
 {
-	char size;
+	int size;
 
 	size = getc(f);
 	fseek(f, size, SEEK_CUR);

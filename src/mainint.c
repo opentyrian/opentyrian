@@ -492,7 +492,7 @@ JE_boolean JE_playerSelect( void )
 					if (sel == 4)
 					{
 						/* TODO: NETWORK */
-						printf("-!- networking via menu not implemented\n");
+						printf("error: networking via menu not implemented\n");
 						exit(-1);
 					}
 					break;
