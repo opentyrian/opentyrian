@@ -42,7 +42,7 @@ ifeq ($(SCALE_2X), 1)
 	CFLAGS += -DSCALE_2X
 endif
 
-SVN_REV := $(shell svnversion -n)
+SVN_REV := $(shell svnversion src -n)
 ifneq ($(SVN_REV), )
 	ifeq ($(SVN_REV), exported)
 		SVN_REV := unknown

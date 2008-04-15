@@ -1,15 +1,60 @@
-06/02/2007
-HOLOVID RELEASE ALPHA 01
-Breaking News
+OpenTyrian Classic
+========================================
 
-Authorities report that a Gencore special task force, working from a secret 
-lab at Deliani, are engaged in a project to reimplent the historically 
-significant "videogame" entitled ~Tyrian~, a work regarded by historians as 
-a cultural artifact of utmost importance, and by the Church of Zinglon as a 
-holy prophecy. News of this effort have caused uproar through the galaxy, 
-but Gencore remains silent on the matter and officially-released details are 
-sparse. When approached for comment, Gencore Chancellor Transon Lohk 
-replied, "Who are you and what are you doing in my house? Get out!"
+OpenTyrian is an open-source port of the DOS game Tyrian.
 
-Stay tuned for updates to this galaxy-shaking event!
- 
+Tyrian is an arcade-style vertical scrolling shooter.  The story is set
+in 20,031 where you play as Trent Hawkins, a skilled fighter-pilot employed
+to fight MicroSol and save the galaxy.
+
+Tyrian features a story mode, one- and two-player arcade modes, and networked
+multiplayer.
+
+== Additional Necessary Files ==========
+Tyrian 2.1 data files (http://camanis.net/opentyrian/tyrian21.zip)
+
+== Keyboard Controls ===================
+ctrl-backspace -- kill OpenTyrian
+alt-enter      -- fullscreen
+ctrl-f10       -- ungrab mouse
+
+arrow keys     -- ship movement
+space          -- fire weapons
+enter          -- toggle rear weapon mode
+ctrl/alt       -- fire left/right sidekick
+
+== Network Multiplayer =================
+Currently OpenTyrian does not have an arena; as such, networked games must be
+initiated manually via the command line simultaniously by both players.
+
+syntax: tyrian --net host playernumber playername
+
+where host is the IP address of your opponent, playernumber is either 1 or 2
+depending on which ship you intend to pilot, and playername is your alias
+
+== Missing Features ====================
+ShipEdit is planned to be included in the future.  It has not yet been
+implemented because the developers keep procrastinating.
+
+== Links ===============================
+project: http://opentyrian.googlecode.com/
+forums:  http://tyrian2k.proboards23.com/index.cgi?board=opentyriangeneral
+
+== Credits =============================
+OpenTyrian Development Team:
+ * Mindless
+ * mwolson
+ * syntaxglitch
+ * yuriks
+
+Tyrian Development Team:
+ * Jason Emery (programmer)
+ * Robert Allen (producer)
+ * Daniel Cook (artist)
+ * Alexander Brandon and Andreas Molnar (music composers)
+
+FM emulator: MAME and DOSBox
+
+Loudness player: AdPlug
+
+README: AshTR

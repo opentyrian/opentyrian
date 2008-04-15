@@ -4180,7 +4180,7 @@ void JE_titleScreen( JE_boolean animate )
 					}
 					JE_loadPic(4, false);
 					
-					JE_textShade(2, 192, "Classic revision " SVN_REV, 15, 0, PART_SHADE);
+					JE_textShade(2, 192, opentyrian_version, 15, 0, PART_SHADE);
 					
 					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 					
@@ -4233,19 +4233,19 @@ void JE_titleScreen( JE_boolean animate )
 						{
 							tempY = JE_fontCenter(opentyrian_str, SMALL_FONT_SHAPES);
 							
-							JE_outTextAdjust(tempY-1,tempX-1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY+1,tempX+1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY+1,tempX-1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY-1,tempX+1,opentyrian_str,15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY,tempX,opentyrian_str,15,-3,SMALL_FONT_SHAPES,false);
+							JE_outTextAdjust(tempY-1, tempX-1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY+1, tempX+1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY+1, tempX-1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY-1, tempX+1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY, tempX, opentyrian_str, 15, -3, SMALL_FONT_SHAPES, false);
 						} else {
-							tempY = JE_fontCenter(menuText[temp],SMALL_FONT_SHAPES);
+							tempY = JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES);
 							
-							JE_outTextAdjust(tempY-1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY+1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY+1,tempX-1,menuText[temp],15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY-1,tempX+1,menuText[temp],15,-10,SMALL_FONT_SHAPES,false);
-							JE_outTextAdjust(tempY,tempX,menuText[temp],15,-3,SMALL_FONT_SHAPES,false);
+							JE_outTextAdjust(tempY-1, tempX-1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY+1, tempX+1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY+1, tempX-1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY-1, tempX+1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY, tempX, menuText[temp], 15, -3, SMALL_FONT_SHAPES, false);
 						}
 					}
 					JE_showVGA();

@@ -61,7 +61,7 @@ typedef bool   JE_boolean;
 typedef char   JE_char;
 typedef double JE_real;
 
-extern const char *opentyrian_str;
+extern const char *opentyrian_str, *opentyrian_version;
 
 char *strnztcpy( char *to, const char *from, size_t count );
 
