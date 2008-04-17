@@ -6423,7 +6423,7 @@ item_screen_start:
 				rightPower = false;
 			}
 
-			/* Write title for which submenu this is, e.g., "Left Sidekick" */
+			/* submenu title  e.g., "Left Sidekick" */
 			JE_dString(74 + JE_fontCenter(menuInt[1][curSel[1]-1], FONT_SHAPES), 10, menuInt[1][curSel[1]-1], FONT_SHAPES);
 
 			temp2 = pItems[pItemButtonMap[curSel[1]-2]-1]; /* get index into pItems for current submenu  */
@@ -6489,11 +6489,11 @@ item_screen_start:
 
 				JE_getShipInfo();
 
-				/* Owned item bar */
+				/* item-owned marker */
 				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
-					JE_drawShape2(298, tempY+2, 247, shapes9);
+					JE_drawShape2(298, tempY+2, 247, shapes6);
 				}
 
 				/* Draw DONE */
@@ -6523,12 +6523,11 @@ item_screen_start:
 					char buf[20];
 
 					snprintf(buf, sizeof buf, "Cost: %d", tempW3);
-					JE_textShade(187, tempY+10, buf, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
+					JE_textShade(187, tempY+10, buf, temp2 / 16, temp2 % 16 - 8 - temp4, DARKEN);
 				}
 			}
 		} /* /weapon upgrade */
 
-		/* Not sure what this is doing */
 		if (curMenu == 4 && (curSel[1] >= 2 && curSel[1] <= 7 && curSel[1] != 4))
 		{
 			joystickWaitMax = 20;
@@ -6761,11 +6760,10 @@ item_screen_start:
 			newPal = 0;
 		}
 
-		/* datacube title */
+		/* datacube title under face */
 		if ( ( (curMenu == 7) || (curMenu == 8) ) && (curSel[7] < menuChoices[7]) )
 		{
-			JE_textShade (75 - JE_textWidth(cubeHdr2[curSel[7] - 2], TINY_FONT) / 2, 173,
-				cubeHdr2[curSel[7] - 2], 14, 3, DARKEN);
+			JE_textShade (75 - JE_textWidth(cubeHdr2[curSel[7] - 2], TINY_FONT) / 2, 173, cubeHdr2[curSel[7] - 2], 14, 3, DARKEN);
 		}
 
 		/* SYN: Everything above was just drawing the screen. In the rest of it, we process
