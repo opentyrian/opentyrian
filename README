@@ -11,7 +11,8 @@ Tyrian features a story mode, one- and two-player arcade modes, and networked
 multiplayer.
 
 == Additional Necessary Files ==========
-Tyrian 2.1 data files (http://camanis.net/opentyrian/tyrian21.zip)
+Tyrian 2.1 data files which have been released for free
+http://camanis.net/opentyrian/tyrian21.zip
 
 == Keyboard Controls ===================
 ctrl-backspace -- kill OpenTyrian
@@ -39,22 +40,5 @@ implemented because the developers keep procrastinating.
 == Links ===============================
 project: http://opentyrian.googlecode.com/
 forums:  http://tyrian2k.proboards23.com/index.cgi?board=opentyriangeneral
-
-== Credits =============================
-OpenTyrian Development Team:
- * Mindless
- * mwolson
- * syntaxglitch
- * yuriks
-
-Tyrian Development Team:
- * Jason Emery (programmer)
- * Robert Allen (producer)
- * Daniel Cook (artist)
- * Alexander Brandon and Andreas Molnar (music composers)
-
-FM emulator: MAME and DOSBox
-
-Loudness player: AdPlug
 
 README: AshTR
