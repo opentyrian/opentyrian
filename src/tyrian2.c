@@ -2134,7 +2134,7 @@ level_loop:
 			{
 				if (enemyAvail[b] == 0)
 				{
-					if (z == MAX_PWEAPON)
+					if (z == MAX_PWEAPON - 1)
 					{
 						temp = 25 - abs(zinglonDuration - 25);
 						tempB = abs(enemy[b].ex + enemy[b].mapoffset - (PX + 7)) < temp;
@@ -2220,7 +2220,7 @@ level_loop:
 						
 						if (tempI > tempI2)
 						{
-							if (z != MAX_PWEAPON)
+							if (z != MAX_PWEAPON - 1)
 							{
 									if (enemy[b].armorleft != 255)
 									{
@@ -2401,7 +2401,7 @@ level_loop:
 						{
 							tempI2 += 250;
 						} else {
-							if (z != MAX_PWEAPON)
+							if (z != MAX_PWEAPON - 1)
 							{
 								if (tempI2 <= tempI)
 								{
