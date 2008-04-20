@@ -23,6 +23,7 @@
 #include "network.h"
 
 #include <ctype.h>
+#include <errno.h>
 #include <string.h>
 #include <time.h>
 
@@ -177,8 +178,9 @@ void JE_paramCheck( int argc, char *argv[] )
 				case 'd':
 					if (argc > i + 1)
 					{
-						int temp = atoi(argv[++i]);
-						if (temp > 0)
+						errno = 0;
+						int temp = strtol(argv[++i], (char **)NULL, 10);
+						if (errno == 0)
 							network_delay = 1 + temp;
 					} else {
 						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);

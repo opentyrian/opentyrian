@@ -23,50 +23,18 @@
 #include "fmopl.h"
 #include "loudness.h"
 
-
 const unsigned short note_table[12] = {363, 385, 408, 432, 458, 485, 514, 544, 577, 611, 647, 686};
 const unsigned char op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
-int use16bit, stereo;
 #define opl 0
 
-void opl_update( Sint16 *buf, int samples )
+void opl_update( OPLSAMPLE *buf, int samples )
 {
-	int i;
-
-	if (use16bit)
-	{
-		YM3812UpdateOne(opl, buf, samples);
-
-		if (stereo)
-			for(i = samples - 1; i >= 0; i--) {
-				buf[i*2] = buf[i];
-				buf[i*2+1] = buf[i];
-			}
-	} else {
-		short *tempbuf = malloc(sizeof(Sint16) * (stereo ? samples * 2 : samples));
-		int i;
-
-		YM3812UpdateOne(opl, tempbuf, samples);
-
-		if (stereo)
-			for (i = samples - 1; i >= 0; i--) {
-				tempbuf[i*2] = tempbuf[i];
-				tempbuf[i*2+1] = tempbuf[i];
-			}
-
-		for (i = 0; i < (stereo ? samples * 2 : samples); i++)
-			((char *)buf)[i] = (tempbuf[i] >> 8) ^ 0x80;
-
-		free(tempbuf);
-	}
+	YM3812UpdateOne(opl, buf, samples);
 }
 
 void opl_init( void )
 {
-	use16bit = (BYTES_PER_SAMPLE == 2);
-	stereo = 0;
-
 	YM3812Init(1, 3579545, 11025 * OUTPUT_QUALITY);
 }
 

@@ -22,14 +22,15 @@
 
 #include "opentyr.h"
 
+#include "fmopl.h"
 
 extern const unsigned short note_table[12];	/* standard adlib note table */
 extern const unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
 
-void opl_update( Sint16 *buf, int samples );
+void opl_update( OPLSAMPLE *buf, int samples );
 void opl_init( void );
 void opl_deinit( void );
 void opl_reset( void );
-void opl_write(int, int);
+void opl_write( int, int );
 
 #endif /* FM_SYNTH_H */
