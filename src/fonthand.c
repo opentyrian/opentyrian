@@ -725,7 +725,7 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 				frameCountMax = 0;
 			}
 			
-			NETWORK_BUSY_KEEP_ALIVE();
+			NETWORK_KEEP_ALIVE();
 			
 			JE_waitRetrace();
 			JE_showVGA();
@@ -744,7 +744,7 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 			frameCountMax = 0;
 		}
 		
-		NETWORK_BUSY_KEEP_ALIVE();
+		NETWORK_KEEP_ALIVE();
 		
 		JE_waitRetrace();
 		JE_showVGA();

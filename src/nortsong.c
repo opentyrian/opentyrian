@@ -222,13 +222,11 @@ void JE_loadSndFile( void )
 
 }
 
-void JE_playSong ( JE_word songnum )
+void JE_playSong( JE_word songnum )
 {
 	/* If sound is disabled, bail out */
 	if (noSound)
-	{
 		return;
-	}
 	
 #ifndef NDEBUG
 	printf("Loading song number %d...\n", songnum);
@@ -242,31 +240,31 @@ void JE_playSong ( JE_word songnum )
 	}
 	if (currentSong != songnum && musicActive) /* Original also checked for midiport > 1 */
 	{
-		 /*ASM
-		 IN   al, $21
-		 push ax
-		 OR   al, 3
-		 out  $21, al
-		 END;*/
+		/*ASM
+		IN   al, $21
+		push ax
+		OR   al, 3
+		out  $21, al
+		END;*/
 
-		 JE_stopSong();
+		JE_stopSong();
 		currentSong = songnum;
-		 JE_loadSong (songnum);
-		 repeated = false;
-		 playing = true;
-		 JE_selectSong (1);
-		 /* JE_waitRetrace(); */
+		JE_loadSong (songnum);
+		repeated = false;
+		playing = true;
+		JE_selectSong (1);
+		/* JE_waitRetrace(); */
 
-		 /*ASM
-		 mov al, $36
-		 out $43, al
-		 mov ax, speed
-		 out $40, al
-		 mov al, ah
-		 out $40, al
-		 pop ax
-		 out $21, al
-		 END;*/
+		/*ASM
+		mov al, $36
+		out $43, al
+		mov ax, speed
+		out $40, al
+		mov al, ah
+		out $40, al
+		pop ax
+		out $21, al
+		END;*/
 	}
 }
 

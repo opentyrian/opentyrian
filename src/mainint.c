@@ -130,7 +130,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 				{
 					setjasondelay(frameCountMax);
 					
-					NETWORK_BUSY_KEEP_ALIVE();
+					NETWORK_KEEP_ALIVE();
 					
 					for (z = loc - 28; z <= loc; z++)
 					{
@@ -1144,7 +1144,7 @@ JE_boolean JE_nextEpisode( void )
 		{
 			do
 			{
-				NETWORK_BUSY_KEEP_ALIVE();
+				NETWORK_KEEP_ALIVE();
 				
 				SDL_Delay(16);
 			} while (!JE_anyButton());
@@ -1396,6 +1396,28 @@ void JE_doInGameSetup( void )
 {
 	haltGame = false;
 	
+	if (isNetworkGame)
+	{
+		network_prepare(PACKET_GAME_MENU);
+		network_send(4);  // PACKET_GAME_MENU
+		
+		while (true)
+		{
+			service_SDL_events(false);
+			
+			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_GAME_MENU)
+			{
+				network_update();
+				break;
+			}
+			
+			network_update();
+			network_check();
+			
+			SDL_Delay(16);
+		}
+	}
+	
 	if (yourInGameMenuRequest)
 	{
 		useButtonAssign = false; /*Joystick button remapping*/
@@ -1434,24 +1456,30 @@ void JE_doInGameSetup( void )
 			JE_dString(10, 65, "Other player in options menu.", SMALL_FONT_SHAPES);
 			JE_showVGA();
 			
-			while (network_state_is_latest() || (SDLNet_Read16(&packet_in->data[0]) != PACKET_WAITING && SDLNet_Read16(&packet_in->data[0]) != PACKET_GAME_QUIT))
+			while (true)
 			{
 				service_SDL_events(false);
 				JE_showVGA();
 				
-				if (network_keep_alive() && network_is_sync())
+				if (packet_in[0])
 				{
-					network_prepare(PACKET_WAITING);
-					network_send(4);  // PACKET_WAITING
+					if (SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_WAITING)
+					{
+						network_check();
+						break;
+					} else if (SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_GAME_QUIT) {
+						reallyEndLevel = true;
+						playerEndLevel = true;
+						
+						network_check();
+						break;
+					}
 				}
+				
+				network_update();
 				network_check();
+				
 				SDL_Delay(16);
-			}
-			
-			if (SDLNet_Read16(&packet_in->data[0]) == PACKET_GAME_QUIT)
-			{
-				reallyEndLevel = true;
-				playerEndLevel = true;
 			}
 		} else {
 			/*
@@ -1466,6 +1494,7 @@ void JE_doInGameSetup( void )
 		while (!network_is_sync())
 		{
 			service_SDL_events(false);
+			JE_showVGA();
 			
 			network_check();
 			SDL_Delay(16);
@@ -2452,7 +2481,7 @@ void JE_playCredits( void )
 		if (currentpic == maxShape[EXTRA_SHAPES])
 			JE_outTextAdjust(5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
 		
-		NETWORK_BUSY_KEEP_ALIVE();
+		NETWORK_KEEP_ALIVE();
 		
 		int delaycount_temp;
 		if ((delaycount_temp = target2 - SDL_GetTicks()) > 0)
@@ -2580,7 +2609,7 @@ void JE_endLevelAni( void )
 			}
 			for (temp = 1; temp <= cubeMax; temp++)
 			{
-				NETWORK_BUSY_KEEP_ALIVE();
+				NETWORK_KEEP_ALIVE();
 				
 				JE_playSampleNum(18);
 				x = 20 + 30 * temp;
@@ -2644,7 +2673,7 @@ void JE_endLevelAni( void )
 			setjasondelay(1);
 			JE_waitRetrace();
 			
-			NETWORK_BUSY_KEEP_ALIVE();
+			NETWORK_KEEP_ALIVE();
 			
 			int delaycount_temp;
 			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
@@ -3050,11 +3079,11 @@ void JE_mainKeyboardInput( void )
 	/* {In-Game Setup} */
 	if (keysactive[SDLK_ESCAPE])
 	{
-		yourInGameMenuRequest = true;
 		if (isNetworkGame)
 		{
 			inGameMenuRequest = true;
 		} else {
+			yourInGameMenuRequest = true;
 			JE_doInGameSetup();
 			skipStarShowVGA = true;
 		}
@@ -3153,7 +3182,7 @@ void JE_mainKeyboardInput( void )
 
 void JE_pauseGame( void )
 {
-	JE_boolean done;
+	JE_boolean done = false;
 	JE_word mouseX, mouseY;
 	
 	SDL_Surface *temp_surface;
@@ -3170,12 +3199,30 @@ void JE_pauseGame( void )
 	}
 	JE_setVol((tyrMusicVolume >> 1) + 10, fxVolume);
 
+	if (isNetworkGame)
+	{
+		network_prepare(PACKET_GAME_PAUSE);
+		network_send(4);  // PACKET_GAME_PAUSE
+		
+		while (true)
+		{
+			service_SDL_events(false);
+			
+			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_GAME_PAUSE)
+			{
+				network_update();
+				break;
+			}
+			
+			network_update();
+			network_check();
+			
+			SDL_Delay(16);
+		}
+	}
+	
 	newkey = false;
-
-	done = false;
-
-	newkey = false;
-
+	
 	do
 	{
 		setjasondelay(2);
@@ -3190,24 +3237,29 @@ void JE_pauseGame( void )
 				{
 					network_prepare(PACKET_WAITING);
 					network_send(4);  // PACKET_WAITING
-				} else {
-					done = true;
 				}
+				done = true;
 			}
 		} else if ((newkey && lastkey_sym != SDLK_F11) || JE_mousePosition(&mouseX, &mouseY) > 0 || button[0] || button[1] || button[2] || button[3]) {
 			if (isNetworkGame)
 			{
 				network_prepare(PACKET_WAITING);
 				network_send(4);  // PACKET_WAITING
-			} else {
+			}
+			done = true;
+		}
+		
+		if (isNetworkGame)
+		{
+			network_check();
+			
+			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_WAITING)
+			{
+				network_check();
+				
 				done = true;
 			}
 		}
-		
-		NETWORK_BUSY_KEEP_ALIVE();
-		
-		if (isNetworkGame)
-			done = !network_state_is_latest() && (SDLNet_Read16(&packet_in->data[0]) == PACKET_WAITING || SDLNet_Read16(&packet_out->data[0]) == PACKET_WAITING);
 		
 		if (lastkey_sym == SDLK_p)
 		{
@@ -3216,7 +3268,7 @@ void JE_pauseGame( void )
 
 		wait_delay();
 	} while (!done);
-
+	
 	if (isNetworkGame)
 	{
 		while (!network_is_sync())
@@ -3274,7 +3326,7 @@ void JE_playerMovement( JE_byte inputDevice_,
 	if (isNetworkGame && thisPlayerNum == playerNum_)
 	{
 		network_state_prepare();
-		memset(&packet_out->data[4], 0, 10);
+		memset(&packet_state_out[0]->data[4], 0, 10);
 	}
 
 redo:

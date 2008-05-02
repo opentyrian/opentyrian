@@ -275,7 +275,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 			JE_mouseReplace();
 		}
 		
-		NETWORK_BUSY_KEEP_ALIVE();
+		NETWORK_KEEP_ALIVE();
 		
 		SDL_Delay(16);
 	} while (!(inputDetected || delaycount() == 0 || netQuit));

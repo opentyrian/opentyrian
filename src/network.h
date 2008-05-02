@@ -26,18 +26,23 @@
 #include "SDL_net.h"
 
 
-#define PACKET_ACKNOWLEDGE  0x00    // 
+#define PACKET_ACKNOWLEDGE   0x00    // 
+#define PACKET_KEEP_ALIVE    0x01    // 
 
-#define PACKET_CONNECT      0x10    // version, delay, episodes, player_number, name
-#define PACKET_DETAILS      0x11    // episode, difficulty
+#define PACKET_CONNECT       0x10    // version, delay, episodes, player_number, name
+#define PACKET_DETAILS       0x11    // episode, difficulty
 
-#define PACKET_QUIT         0x20    // 
-#define PACKET_WAITING      0x21    // 
-#define PACKET_BUSY         0x22    // 
+#define PACKET_QUIT          0x20    // 
+#define PACKET_WAITING       0x21    // 
+#define PACKET_BUSY          0x22    // 
 
-#define PACKET_GAME_QUIT    0x30    // 
-#define PACKET_GAME_STATE   0x31    // <state>  ... these packets are not acknowledged
-#define PACKET_GAME_RESEND  0x32    // state_id
+#define PACKET_GAME_QUIT     0x30    // 
+#define PACKET_GAME_PAUSE    0x31    // 
+#define PACKET_GAME_MENU     0x32    // 
+
+#define PACKET_STATE_RESEND  0x40    // state_id
+#define PACKET_STATE         0x41    // <state>  (not acknowledged)
+#define PACKET_STATE_XOR     0x42    // <xor state>  (not acknowledged)
 
 extern int network_delay;
 
@@ -45,7 +50,8 @@ extern char *network_opponent_host;
 extern Uint16 network_player_port, network_opponent_port;
 extern char *network_player_name, *network_opponent_name;
 
-extern UDPpacket *packet_in, *packet_out,
+extern UDPpacket *packet_out_temp;
+extern UDPpacket *packet_in[], *packet_out[],
                  *packet_state_in[], *packet_state_out[];
 
 extern JE_integer thisPlayerNum;
@@ -57,19 +63,20 @@ extern JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 extern JE_boolean portConfigChange, portConfigDone;
 
 
+void network_prepare( Uint16 type );
+bool network_send( int len );
+bool network_send_no_ack( int len );
+
 int network_check( void );
 int network_acknowledge( Uint16 sync );
-void network_prepare( Uint16 type );
-int network_send( int len );
+bool network_update( void );
+
 bool network_is_sync( void );
 bool network_is_alive( void );
-void network_reset_keep_alive( void );
-bool network_keep_alive( void );
 
 void network_state_prepare( void );
 int network_state_send( void );
 bool network_state_update( void );
-bool network_state_is_latest( void );
 bool network_state_is_reset( void );
 void network_state_reset( void );
 
@@ -78,20 +85,15 @@ void network_tyrian_halt( int err, bool attempt_sync );
 
 int network_init( void );
 
-void network_packet_copy( UDPpacket *dst, UDPpacket *src );
+void packet_copy( UDPpacket *dst, UDPpacket *src );
+void packets_shift_up( UDPpacket **packet, int max_packets );
+void packets_shift_down( UDPpacket **packet, int max_packets );
 
 void JE_clearSpecialRequests( void );
 
-#define NETWORK_BUSY_KEEP_ALIVE() \
+#define NETWORK_KEEP_ALIVE() \
 		if (isNetworkGame) \
-		{ \
-			network_check(); \
-			if (network_keep_alive() && network_is_sync()) \
-			{ \
-				network_prepare(PACKET_BUSY); \
-				network_send(4); \
-			} \
-		}
+			network_check();
 
 
 #endif /* NETWORK_H */

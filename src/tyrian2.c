@@ -3043,23 +3043,20 @@ explosion_draw_overflow:
 			SDLNet_Write16(PYB,             &packet_state_out[0]->data[24]);
 			SDLNet_Write16(curLoc,          &packet_state_out[0]->data[26]);
 			
-			network_state_send();  // PACKET_STATE
+			network_state_send();
 			
 			if (network_state_update())
 			{
 				assert(SDLNet_Read16(&packet_state_in[0]->data[26]) == SDLNet_Read16(&packet_state_out[network_delay]->data[26]));
 				
-				requests = SDLNet_Read16(&packet_state_in[0]->data[14]) | SDLNet_Read16(&packet_state_out[network_delay]->data[14]);
+				requests = SDLNet_Read16(&packet_state_in[0]->data[14]) ^ SDLNet_Read16(&packet_state_out[network_delay]->data[14]);
 				if (requests & 1)
 				{
-					network_reset_keep_alive();
-					
 					JE_pauseGame();
 				}
 				if (requests & 2)
 				{
-					network_reset_keep_alive();
-					
+					yourInGameMenuRequest = SDLNet_Read16(&packet_state_out[network_delay]->data[14]) & 2;
 					JE_doInGameSetup();
 					yourInGameMenuRequest = false;
 					if (haltGame)
@@ -4110,8 +4107,8 @@ void JE_titleScreen( JE_boolean animate )
 				difficultyLevel++;  /*Make it one step harder for 2-player mode!*/
 				
 				network_prepare(PACKET_DETAILS);
-				SDLNet_Write16(episodeNum,      &packet_out->data[4]);
-				SDLNet_Write16(difficultyLevel, &packet_out->data[6]);
+				SDLNet_Write16(episodeNum,      &packet_out_temp->data[4]);
+				SDLNet_Write16(difficultyLevel, &packet_out_temp->data[6]);
 				network_send(8);  // PACKET_DETAILS
 			} else {
 				network_prepare(PACKET_QUIT);
@@ -4125,24 +4122,26 @@ void JE_titleScreen( JE_boolean animate )
 			JE_showVGA();
 			
 			// until opponent sends details packet
-			while (SDLNet_Read16(&packet_in->data[0]) != PACKET_DETAILS)
+			while (true)
 			{
 				service_SDL_events(false);
 				JE_showVGA();
 				
-				if (network_keep_alive() && network_is_sync())
-				{
-					network_prepare(PACKET_WAITING);
-					network_send(4);  // PACKET_WAITING
-				}
+				if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_DETAILS)
+					break;
+				
+				network_update();
 				network_check();
+				
 				SDL_Delay(16);
 			}
 			
-			JE_initEpisode(SDLNet_Read16(&packet_in->data[4]));
-			difficultyLevel = SDLNet_Read16(&packet_in->data[6]);
+			JE_initEpisode(SDLNet_Read16(&packet_in[0]->data[4]));
+			difficultyLevel = SDLNet_Read16(&packet_in[0]->data[6]);
 			initialDifficulty = difficultyLevel - 1;
 			JE_fadeBlack(10);
+			
+			network_update();
 		}
 		
 		score = 0;
@@ -4665,7 +4664,7 @@ void JE_displayText( void )
 
 		setjasondelay(1);
 
-		NETWORK_BUSY_KEEP_ALIVE();
+		NETWORK_KEEP_ALIVE();
 
 		int delaycount_temp;
 		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
@@ -6778,8 +6777,6 @@ item_screen_start:
 			jumpSection = true;
 		} else {
 
-			network_reset_keep_alive();
-			
 			do
 			{
 			/* Inner loop -- this handles animations on menus that need them and handles
@@ -6788,7 +6785,7 @@ item_screen_start:
 
 			   Also, I think all timing is handled in here. Somehow. */
 
-				NETWORK_BUSY_KEEP_ALIVE();
+				NETWORK_KEEP_ALIVE();
 
 				mouseCursor = 0;
 
@@ -7633,6 +7630,35 @@ item_screen_start:
 		
 	} while (!(quit || gameLoaded || jumpSection));
 
+	if (!quit && isNetworkGame)
+	{
+		JE_barShade(3, 3, 316, 196);
+		JE_barShade(1, 1, 318, 198);
+		JE_dString(10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
+		
+		network_prepare(PACKET_WAITING);
+		network_send(4);  // PACKET_WAITING
+		
+		while (true)
+		{
+			service_SDL_events(false);
+			JE_showVGA();
+			
+			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_WAITING)
+			{
+				network_update();
+				break;
+			}
+			
+			network_update();
+			network_check();
+			
+			SDL_Delay(16);
+		}
+		
+		network_state_reset();
+	}
+
 	if (isNetworkGame)
 	{
 		while (!network_is_sync())
@@ -7645,40 +7671,6 @@ item_screen_start:
 		}
 	}
 	
-	if (!quit && isNetworkGame)
-	{
-		JE_barShade(3, 3, 316, 196);
-		JE_barShade(1, 1, 318, 198);
-		JE_dString(10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
-		
-		network_reset_keep_alive();
-		
-		do {
-			service_SDL_events(false);
-			JE_showVGA();
-			
-			if (network_keep_alive() && network_is_sync())
-			{
-				network_prepare(PACKET_WAITING);
-				network_send(4);  // PACKET_WAITING
-			}
-			network_check();
-			
-			SDL_Delay(16);
-		} while (SDLNet_Read16(&packet_in->data[0]) != PACKET_WAITING);
-		
-		while (!network_is_sync())
-		{
-			service_SDL_events(false);
-			JE_showVGA();
-			
-			network_check();
-			SDL_Delay(16);
-		}
-		
-		network_state_reset();
-	}
-
 	if (gameLoaded)
 		JE_fadeBlack(10);
 }
