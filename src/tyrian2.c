@@ -6026,7 +6026,7 @@ JE_boolean buyActive, sellActive, sellViewActive, buyViewActive, /*flash,*/ purc
 JE_boolean leftPower, rightPower, rightPowerAfford;
 
 char cubeHdr[4][81];
-char cubeText[4][90][CUBE_WIDTH];
+char cubeText[4][90][CUBE_WIDTH+1];
 char cubeHdr2[4][13];
 JE_byte faceNum[4];
 JE_word cubeMaxY[4];
@@ -6825,8 +6825,7 @@ item_screen_start:
 
 					for (x = temp + 1; x <= temp + 10; x++)
 					{
-						/* if (x <= temp3 && x >= 0) */
-						if (x <= temp3)
+						if (x <= temp3 && x >= 0)
 						{
 							JE_outTextAndDarken(161, tempW, cubeText[curSel[7] - 2][x-1], 14, 3, TINY_FONT);
 							tempW += 12;
@@ -7692,11 +7691,11 @@ void JE_loadCubes( void )
 
 	memset(cubeText, 0, sizeof(cubeText));
 
-	for (cube = 1; cube <= cubeMax; cube++)
+	for (cube = 0; cube < cubeMax; cube++)
 	{
 		JE_resetFile(&f, cubeFile);
 
-		tempW = cubeList[cube-1];
+		tempW = cubeList[cube];
 
 		do
 		{
@@ -7707,10 +7706,10 @@ void JE_loadCubes( void )
 			tempW--;
 		} while (tempW != 0);
 
-		faceNum[cube-1] = atoi(strnztcpy(buffer, s + 4, 2));
+		faceNum[cube] = atoi(strnztcpy(buffer, s + 4, 2));
 
-		JE_readCryptLn(f, cubeHdr[cube-1]);
-		JE_readCryptLn(f, cubeHdr2[cube-1]);
+		JE_readCryptLn(f, cubeHdr[cube]);
+		JE_readCryptLn(f, cubeHdr2[cube]);
 
 		curWidth = 0;
 		x = 5;
@@ -7745,10 +7744,10 @@ void JE_loadCubes( void )
 							temp = s[pos - 1];
 
 							// Is printable character?
-							if (temp > ' ' && temp < 169 && fontMap[temp] > 0 && (*shapeArray)[5][fontMap[temp]] != NULL)
+							if (temp > ' ' && temp < 169 && fontMap[temp-33] != 255 && (*shapeArray)[5][fontMap[temp-33]] != NULL)
 							{
 								// Increase width by character's size
-								curWidth += shapeX[5][fontMap[temp]] + 1;
+								curWidth += shapeX[5][fontMap[temp-33]] + 1;
 							} else {
 								// No, so, is it a space?
 								if (temp == ' ')
@@ -7781,7 +7780,7 @@ void JE_loadCubes( void )
 					if (!endString || pastStringLen || pastStringWidth)
 					{
 						/*Start new line*/
-						strnztcpy(cubeText[cube-1][y-1], s + startPos - 1, endPos - startPos + 1);
+						strnztcpy(cubeText[cube][y-1], s + startPos - 1, endPos - startPos);
 						y++;
 						strnztcpy(s3, s + endPos, 255);
 						curWidth = curWidth - lastWidth;
@@ -7800,7 +7799,7 @@ void JE_loadCubes( void )
 				{
 					if (strlen(s3) != 0)
 					{
-						strcpy(cubeText[cube-1][y-1], s3);
+						strcpy(cubeText[cube][y-1], s3);
 					}
 					y++;
 					s3[0] = '\0';
@@ -7808,12 +7807,12 @@ void JE_loadCubes( void )
 			}
 		} while (s2[0] != '*');
 
-		strcpy(cubeText[cube-1][y-1], s3);
-		while (!strcmp(cubeText[cube-1][y-1], ""))
+		strcpy(cubeText[cube][y-1], s3);
+		while (!strcmp(cubeText[cube][y-1], ""))
 		{
 			y--;
 		}
-		cubeMaxY[cube-1] = y;
+		cubeMaxY[cube] = y;
 
 		fclose(f);
 	}
