@@ -6825,7 +6825,7 @@ item_screen_start:
 
 					for (x = temp + 1; x <= temp + 10; x++)
 					{
-						if (x <= temp3 && x >= 0)
+						if (x <= temp3)
 						{
 							JE_outTextAndDarken(161, tempW, cubeText[curSel[7] - 2][x-1], 14, 3, TINY_FONT);
 							tempW += 12;
