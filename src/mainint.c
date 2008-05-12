@@ -2956,11 +2956,42 @@ void JE_mainKeyboardInput( void )
 		/* { Edited Ships } for Player 1 */
 		if (extraAvail && keysactive[SDLK_TAB] && !isNetworkGame && !superTyrian)
 		{
-			for (x = 0; x < 10; x++)
+			for (x = SDLK_0; x < SDLK_9; x++)
 			{
-				if (0 /* keyactive[x+1] The number keys, TODO: doesn't exactly work like that under SDL */)
+				if (keysactive[x])
 				{
-					/* TODO: shipedit */
+					z = x == SDLK_0 ? 10 : x - SDLK_0;
+					pItems[11] = 90 + z;                     /*Ships*/
+					z = (z - 1) * 15;
+					pItems[0] = extraShips[z + 1];
+					pItems[1] = extraShips[z + 2];
+					pItems[10] = extraShips[z + 3];
+					pItems[3] = extraShips[z + 4];
+					pItems[4] = extraShips[z + 5];
+					pItems[5] = extraShips[z + 6];
+					/*Armor*/
+					pItems[9] = extraShips[z + 8];
+					memset(shotMultiPos, 0, sizeof(shotMultiPos));
+					JE_portConfigs();
+					if (portConfig[1] > tempW)
+						portConfig[1] = 1;
+					tempW = armorLevel;
+					JE_getShipInfo();
+					if (armorLevel > tempW && editShip1)
+						armorLevel = tempW;
+					editShip1 = true;
+					
+					SDL_Surface *temp_surface = VGAScreen;
+					VGAScreen = VGAScreenSeg;
+					JE_wipeShieldArmorBars();
+					JE_drawArmor();
+					JE_drawShield();
+					VGAScreen = temp_surface;
+					tempScreenSeg = VGAScreenSeg; /* sega000 */
+					JE_drawOptions();
+					tempScreenSeg = VGAScreenSeg; /* sega000 */
+					
+					keysactive[x] = false;
 				}
 			}
 		}
@@ -2968,11 +2999,42 @@ void JE_mainKeyboardInput( void )
 		/* for Player 2 */
 		if (extraAvail && keysactive[SDLK_CAPSLOCK] && !isNetworkGame && !superTyrian)
 		{
-			for (x = 0; x < 10; x++)
+			for (x = SDLK_0; x < SDLK_9; x++)
 			{
-				if (0 /* keyactive[x+1] The number keys, TODO: doesn't exactly work like that under SDL */)
+				if (keysactive[x])
 				{
-					/* TODO: shipedit */
+					z = x == SDLK_0 ? 10 : x - SDLK_0;
+					pItemsPlayer2[11] = 90 + z;
+					z = (z - 1) * 15;
+					pItemsPlayer2[0] = extraShips[z + 1];
+					pItemsPlayer2[1] = extraShips[z + 2];
+					pItemsPlayer2[10] = extraShips[z + 3];
+					pItemsPlayer2[3] = extraShips[z + 4];
+					pItemsPlayer2[4] = extraShips[z + 5];
+					pItemsPlayer2[5] = extraShips[z + 6];
+					/*Armor*/
+					pItemsPlayer2[9] = extraShips[z + 8];
+					memset(shotMultiPos, 0, sizeof(shotMultiPos));
+					JE_portConfigs();
+					if (portConfig[1] > tempW)
+						portConfig[1] = 1;
+					tempW = armorLevel2;
+					JE_getShipInfo();
+					if (armorLevel2 > tempW && editShip2)
+						armorLevel2 = tempW;
+					editShip2 = true;
+					
+					SDL_Surface *temp_surface = VGAScreen;
+					VGAScreen = VGAScreenSeg;
+					JE_wipeShieldArmorBars();
+					JE_drawArmor();
+					JE_drawShield();
+					VGAScreen = temp_surface;
+					tempScreenSeg = VGAScreenSeg; /* sega000 */
+					JE_drawOptions();
+					tempScreenSeg = VGAScreenSeg; /* sega000 */
+					
+					keysactive[x] = false;
 				}
 			}
 		}

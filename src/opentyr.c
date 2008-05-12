@@ -20,6 +20,7 @@
 #include "opentyr.h"
 
 #include "config.h"
+#include "editship.h"
 #include "episodes.h"
 #include "error.h"
 #include "fonthand.h"
@@ -382,7 +383,7 @@ int main( int argc, char *argv[] )
 
 	newshape_init();
 	JE_loadMainShapeTables();
-	/* TODO JE_loadExtraShapes;*/  /*Editship*/
+	JE_loadExtraShapes();  /*Editship*/
 
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/

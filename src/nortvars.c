@@ -428,27 +428,3 @@ JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 }
 
 /* TODO */
-
-
-/*
-these are all located in editship.c
-
-void JE_startNewShape( void )
-{
-	STUB();
-}
-
-void JE_endShape( void )
-{
-	STUB();
-}
-
-void JE_add( JE_byte nextbyte )
-{
-	STUB();
-}
-
-void JE_buildRec( void )
-{
-	STUB();
-}*/

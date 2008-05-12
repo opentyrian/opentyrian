@@ -21,6 +21,7 @@
 #include "varz.h"
 
 #include "config.h"
+#include "editship.h"
 #include "episodes.h"
 #include "joystick.h"
 #include "lds_play.h"
@@ -465,7 +466,7 @@ void JE_getShipInfo( void )
 	powerAdd  = powerSys[pItems[5]].power;
 	if (extraShip)
 	{
-		/* TODO armorLevel = editship.ships [base + 8]; */
+		armorLevel = extraShips[base + 7];
 	} else {
 		armorLevel = ships[pItems[11]].dmg;
 	}
@@ -483,7 +484,7 @@ void JE_getShipInfo( void )
 		base2 = (pItemsPlayer2[11] - 91) * 15;
 		shipGr2 = JE_SGr(pItemsPlayer2[11] - 90, &shipGr2ptr);
 
-		/* TODO baseArmor2 = editship.ships [base2 + 8];*/
+		baseArmor2 = extraShips[base2 + 7];
 	} else {
 		shipGr2 = 0;
 		armorLevel2 = 10;
@@ -518,10 +519,10 @@ JE_word JE_SGr( JE_word ship, JE_byte **ptr )
 
 	JE_word tempW = 1;
 
-	/* TODO tempW = editship.ships [ (ship - 1) * 15 + 1];*/
+	tempW = extraShips[(ship - 1) * 15];
 	if (tempW > 7)
 	{
-		/* TODO *ptr = extraShape;*/
+		*ptr = extraShapes;
 	}
 	return GR[tempW-1];
 }
