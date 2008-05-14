@@ -452,39 +452,29 @@ JE_byte *shipGrPtr, *shipGr2ptr;
 void JE_getShipInfo( void )
 {
 	JE_boolean extraShip, extraShip2;
-	JE_byte    base, base2;
-
+	
 	shipGrPtr = shapes9;
 	shipGr2ptr = shapes9;
-
+	
+	powerAdd  = powerSys[pItems[5]].power;
+	
 	extraShip = pItems[11] > 90;
 	if (extraShip)
 	{
-		base = (pItems[11] - 91) * 15;
-	}
-
-	powerAdd  = powerSys[pItems[5]].power;
-	if (extraShip)
-	{
+		JE_byte base = (pItems[11] - 91) * 15;
+		shipGr = JE_SGr(pItems[11] - 90, &shipGrPtr);
 		armorLevel = extraShips[base + 7];
 	} else {
+		shipGr = ships[pItems[11]].shipgraphic;
 		armorLevel = ships[pItems[11]].dmg;
 	}
-
-	if (extraShip)
-	{
-		shipGr = JE_SGr(pItems[11] - 90, &shipGrPtr);
-	} else {
-		shipGr = ships[pItems[11]].shipgraphic;
-	}
-
+	
 	extraShip2 = pItemsPlayer2[11] > 90;
 	if (extraShip2)
 	{
-		base2 = (pItemsPlayer2[11] - 91) * 15;
+		JE_byte base2 = (pItemsPlayer2[11] - 91) * 15;
 		shipGr2 = JE_SGr(pItemsPlayer2[11] - 90, &shipGr2ptr);
-
-		baseArmor2 = extraShips[base2 + 7];
+		baseArmor2 = extraShips[base2 + 7]; /* bug? */
 	} else {
 		shipGr2 = 0;
 		armorLevel2 = 10;
