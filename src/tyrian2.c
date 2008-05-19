@@ -6008,7 +6008,7 @@ JE_boolean backFromHelp;
 JE_byte lastSelect;
 JE_integer lastDirection;
 JE_byte skipMove;
-JE_byte tempPowerLevel[7];
+JE_byte tempPowerLevel[7]; /* [1..7] */
 JE_boolean firstMenu9, paletteChanged;
 JE_MenuChoiceType menuChoices;
 JE_longint shipValue;
@@ -6020,14 +6020,14 @@ JE_byte lastCurSel;
 JE_word mouseSetY;
 JE_boolean firstRun;
 JE_integer curMenu;
-JE_byte curSel[MAX_MENU];
+JE_byte curSel[MAX_MENU]; /* [1..maxmenu] */
 JE_byte curItemType, curItem, cursor;
 JE_boolean buyActive, sellActive, sellViewActive, buyViewActive, /*flash,*/ purchase, cannotAfford, slotFull;
 JE_boolean leftPower, rightPower, rightPowerAfford;
 
 char cubeHdr[4][81];
 char cubeText[4][90][CUBE_WIDTH+1];
-char cubeHdr2[4][13];
+char cubeHdr2[4][13]; /* [1..4] of string [12] */
 JE_byte faceNum[4];
 JE_word cubeMaxY[4];
 JE_byte currentCube;
@@ -6353,7 +6353,7 @@ item_screen_start:
 					temp2 = 28;
 				}
 
-				JE_textShade(166, 38 + (x - 2)*12, menuInt[curMenu][x-1], temp2 / 16, temp2 % 16 - 8, DARKEN);
+				JE_textShade(166, 38 + (x - 2)*12, menuInt[curMenu + 1][x-1], temp2 / 16, temp2 % 16 - 8, DARKEN);
 
 				if (x < 10) /* 10 = reset to defaults, 11 = done */
 				{
@@ -6423,7 +6423,7 @@ item_screen_start:
 			}
 
 			/* submenu title  e.g., "Left Sidekick" */
-			JE_dString(74 + JE_fontCenter(menuInt[1][curSel[1]-1], FONT_SHAPES), 10, menuInt[1][curSel[1]-1], FONT_SHAPES);
+			JE_dString(74 + JE_fontCenter(menuInt[2][curSel[1]-1], FONT_SHAPES), 10, menuInt[2][curSel[1]-1], FONT_SHAPES);
 
 			temp2 = pItems[pItemButtonMap[curSel[1]-2]-1]; /* get index into pItems for current submenu  */
 
@@ -6455,7 +6455,7 @@ item_screen_start:
 					case 1: /* ship */
 						if (temp > 90)
 						{
-							snprintf(tempStr, sizeof tempStr, "Custom Ship %d", temp - 90);
+							snprintf(tempStr, sizeof(tempStr), "Custom Ship %d", temp - 90);
 						} else {
 							strcpy(tempStr, ships[temp].name);
 						}
@@ -6797,9 +6797,6 @@ item_screen_start:
 
 				if (curMenu == 8)
 				{
-					/* TODO: The text wrapping on the datacubes is incorrect. Not a big deal really, but should
-					   probably be fixed at some point. */
-
 					if (mouseX > 164 && mouseX < 299 && mouseY > 47 && mouseY < 153)
 					{
 						if (mouseY > 100)
@@ -7869,13 +7866,13 @@ void JE_drawMenuHeader( void )
 			strcpy(tempStr, cubeHdr2[curSel[7]-2]);
 			break;
 		case 7:
-			strcpy(tempStr, menuInt[0][1]);
+			strcpy(tempStr, menuInt[1][1]);
 			break;
 		case 6:
-			strcpy(tempStr, menuInt[2][performSave + 1]);
+			strcpy(tempStr, menuInt[3][performSave + 1]);
 			break;
 		default:
-			strcpy(tempStr, menuInt[curMenu][0]);
+			strcpy(tempStr, menuInt[curMenu + 1][0]);
 			break;
 	}
 	JE_dString(74 + JE_fontCenter(tempStr, FONT_SHAPES), 10, tempStr, FONT_SHAPES);
@@ -7920,13 +7917,13 @@ void JE_drawMenuChoices( void )
 			tempY -= 16;
 		}
 
-		str = malloc(strlen(menuInt[curMenu][x-1])+2);
+		str = malloc(strlen(menuInt[curMenu + 1][x-1])+2);
 		if (curSel[curMenu] == x)
 		{
 			str[0] = '~';
-			strcpy(str+1, menuInt[curMenu][x-1]);
+			strcpy(str+1, menuInt[curMenu + 1][x-1]);
 		} else {
-			strcpy(str, menuInt[curMenu][x-1]);
+			strcpy(str, menuInt[curMenu + 1][x-1]);
 		}
 		JE_dString(166, tempY, str, SMALL_FONT_SHAPES);
 		free(str);
@@ -8665,13 +8662,13 @@ void JE_menuFunction( JE_byte select )
 			newNavY = navY;
 			menuChoices[3] = mapPNum + 2;
 			curSel[3] = 2;
-			strcpy(menuInt[3][0], "Next Level");
+			strcpy(menuInt[4][0], "Next Level");
 			for (x = 0; x < mapPNum; x++)
 			{
 				temp = mapPlanet[x];
-				strcpy(menuInt[3][x + 1], pName[temp-1]);
+				strcpy(menuInt[4][x + 1], pName[temp - 1]);
 			}
-			strcpy(menuInt[3][x+1], miscText[6-1]);
+			strcpy(menuInt[4][x + 1], miscText[5]);
 			break;
 		case 7:
 			if (JE_quitRequest(true))
@@ -9415,13 +9412,13 @@ void JE_genItemMenu( JE_byte itemNum )
 	menuChoices[4] = itemAvailMax[itemAvailMap[itemNum - 2] - 1] + 2;
 
 	temp3 = 2;
-	temp2 = pItems[pItemButtonMap[itemNum - 2] -1];
+	temp2 = pItems[pItemButtonMap[itemNum - 2] - 1];
 
-	strcpy(menuInt[4][0], menuInt[1][itemNum - 1]);
+	strcpy(menuInt[5][0], menuInt[2][itemNum - 1]);
 
-	for (tempW = 0; tempW < itemAvailMax[itemAvailMap[itemNum-2]-1]; tempW++)
+	for (tempW = 0; tempW < itemAvailMax[itemAvailMap[itemNum - 2] - 1]; tempW++)
 	{
-		temp = itemAvail[itemAvailMap[itemNum-2]-1][tempW];
+		temp = itemAvail[itemAvailMap[itemNum - 2] - 1][tempW];
 		switch (itemNum)
 		{
 		case 2:
@@ -9447,15 +9444,15 @@ void JE_genItemMenu( JE_byte itemNum )
 		{
 			temp3 = tempW + 2;
 		}
-		strcpy(menuInt[4][tempW+1], tempStr);
+		strcpy(menuInt[5][tempW], tempStr);
 	}
 
-	strcpy(menuInt[4][tempW+1], miscText[13]);
+	strcpy(menuInt[5][tempW], miscText[13]);
 
 	// YKS: I have no idea wtf this is doing, but I don't think it matters either, little of this function does
 	if (itemNum == 3 || itemNum == 4)
 	{
-		tempPowerLevel[tempW] = portPower[itemNum-1];
+		tempPowerLevel[tempW] = portPower[itemNum - 3];
 		if (tempPowerLevel[tempW] < 1)
 		{
 			tempPowerLevel[tempW] = 1;
