@@ -2956,7 +2956,7 @@ void JE_mainKeyboardInput( void )
 		/* { Edited Ships } for Player 1 */
 		if (extraAvail && keysactive[SDLK_TAB] && !isNetworkGame && !superTyrian)
 		{
-			for (x = SDLK_0; x < SDLK_9; x++)
+			for (x = SDLK_0; x <= SDLK_9; x++)
 			{
 				if (keysactive[x])
 				{
@@ -2999,7 +2999,7 @@ void JE_mainKeyboardInput( void )
 		/* for Player 2 */
 		if (extraAvail && keysactive[SDLK_CAPSLOCK] && !isNetworkGame && !superTyrian)
 		{
-			for (x = SDLK_0; x < SDLK_9; x++)
+			for (x = SDLK_0; x <= SDLK_9; x++)
 			{
 				if (keysactive[x])
 				{
