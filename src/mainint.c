@@ -4683,7 +4683,7 @@ void JE_mainGamePlayerFunctions( void )
 		                  &playerAlive, &playerStillExploding, pItems);
 	}
 
-	/*-----Horizontal Map Scrolling-----*/
+	/* == Parallax Map Scrolling == */
 	if (twoPlayerMode)
 	{
 		tempX = (PX + PXB) / 2;

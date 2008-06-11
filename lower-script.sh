@@ -10,7 +10,7 @@ read -p "Lowercase all files in $target directory? [y/N] " confirm
 
 if [[ `echo $confirm | tr '[:upper:]' '[:lower:]'` == 'y' ]]; then
 	for f in $target/*; do
-		g=`expr "$f" : '.*/\([^/]+\)' | tr '[:upper:]' '[:lower:]'`
+		g=`basename "$f" | tr '[:upper:]' '[:lower:]'`
 		mv -fv "$f" "$target/$g" 2> /dev/null
 	done
 fi

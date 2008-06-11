@@ -1,6 +1,6 @@
 # BUILD SETTINGS ###################################
 DEBUG := 0
-SCALE_2X := 0
+SCALE_2X := 1
 # Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
 
