@@ -27,9 +27,10 @@
 #include "mtrand.h"
 #include "newshape.h"
 #include "nortsong.h"
-#include "starfade.h"
+#include "palette.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
 
 
 const struct about_text_type about_text[] =
@@ -114,7 +115,7 @@ void scroller_sine( const struct about_text_type text[] )
 {
 	bool ale = mt_rand() % 2;
 
-	int visible_lines = surface_height / LINE_HEIGHT + 1;
+	int visible_lines = vga_height / LINE_HEIGHT + 1;
 	int current_line = -visible_lines;
 	int y = 0;
 	bool fade_in = true;
@@ -128,8 +129,8 @@ void scroller_sine( const struct about_text_type text[] )
 	} else {
 		for (int i = 0; i < MAX_COINS; i++)
 		{
-			coins[i].x = mt_rand() % (surface_width - 12);
-			coins[i].y = mt_rand() % (surface_height - 20 - 14);
+			coins[i].x = mt_rand() % (vga_width - 12);
+			coins[i].y = mt_rand() % (vga_height - 20 - 14);
 			
 			coins[i].vel = (mt_rand() % 4) + 1;
 			coins[i].type = mt_rand() % COUNTOF(coin_defs);
@@ -184,7 +185,7 @@ void scroller_sine( const struct about_text_type text[] )
 				{
 					for (int j = 0; j < LINE_HEIGHT; j++)
 					{
-						if (line_y + j >= 10 && line_y + j <= surface_height - 10)
+						if (line_y + j >= 10 && line_y + j <= vga_height - 10)
 						{
 							int foo = sin((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
 							memmove(&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j) + foo],
@@ -217,8 +218,8 @@ void scroller_sine( const struct about_text_type text[] )
 			}
 		}
 
-		JE_bar(0, 0, surface_width - 1, 14, 0);
-		JE_bar(0, surface_height - 14, surface_width - 1, surface_height - 1, 0);
+		JE_bar(0, 0, vga_width - 1, 14, 0);
+		JE_bar(0, vga_height - 14, vga_width - 1, vga_height - 1, 0);
 		
 		if (!ale)
 		{
@@ -249,9 +250,9 @@ void scroller_sine( const struct about_text_type text[] )
 				}
 				
 				coin->y += coin->vel;
-				if (coin->y > surface_height - 14)
+				if (coin->y > vga_height - 14)
 				{
-					coin->x = mt_rand() % (surface_width - 12);
+					coin->x = mt_rand() % (vga_width - 12);
 					coin->y = 0;
 					
 					coin->vel = (mt_rand() % 4) + 1;
@@ -264,21 +265,21 @@ void scroller_sine( const struct about_text_type text[] )
 			{
 				while (beer[i].vx == 0)
 				{
-					beer[i].x = mt_rand() % (surface_width - 24);
-					beer[i].y = mt_rand() % (surface_height - 28 - 50);
+					beer[i].x = mt_rand() % (vga_width - 24);
+					beer[i].y = mt_rand() % (vga_height - 28 - 50);
 					
 					beer[i].vx = (mt_rand() % 5) - 2;
 				}
 				
 				beer[i].vy++;
 				
-				if (beer[i].x + beer[i].vx > surface_width - 24 || beer[i].x + beer[i].vx < 0) // check if the beer hit the sides
+				if (beer[i].x + beer[i].vx > vga_width - 24 || beer[i].x + beer[i].vx < 0) // check if the beer hit the sides
 				{
 					beer[i].vx = -beer[i].vx;
 				}
 				beer[i].x += beer[i].vx;
 				
-				if (beer[i].y + beer[i].vy > surface_height - 28) // check if the beer hit the bottom
+				if (beer[i].y + beer[i].vy > vga_height - 28) // check if the beer hit the bottom
 				{
 					if ((beer[i].vy) < 8) // make sure the beer bounces!
 					{
@@ -302,7 +303,7 @@ void scroller_sine( const struct about_text_type text[] )
 		{
 			fade_in = false;
 			JE_fadeColor(10);
-			JE_setPalette(254, 63, 63, 63);
+			JE_setPalette(254, 255, 255, 255);
 		}
 		
 		int delaycount_temp = target - SDL_GetTicks();

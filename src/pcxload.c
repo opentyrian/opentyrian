@@ -21,8 +21,8 @@
 #include "pcxload.h"
 
 #include "error.h"
-#include "starfade.h"
-#include "vga256d.h"
+#include "palette.h"
+#include "video.h"
 
 
 void JE_loadPCX( char *file ) // this is only meant to load tshp2.pcx
@@ -39,11 +39,8 @@ void JE_loadPCX( char *file ) // this is only meant to load tshp2.pcx
 		for (int i = 0; i < 256; i++)
 		{
 			efread(&colors[i].r, 1, 1, f);
-			colors[i].r >>= 2;
 			efread(&colors[i].g, 1, 1, f);
-			colors[i].g >>= 2;
 			efread(&colors[i].b, 1, 1, f);
-			colors[i].b >>= 2;
 		}
 	}
 	

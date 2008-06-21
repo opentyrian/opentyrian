@@ -17,39 +17,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef PALLIB_H
+#define PALLIB_H
+
 #include "opentyr.h"
-#include "pallib.h"
 
-#include "error.h"
-#include "nortvars.h"
-#include "starfade.h"
+#define MAX_PAL 23
 
+typedef SDL_Color palette_t[256];
+typedef palette_t JE_PalType[MAX_PAL]; /* [1..maxpal] */
 
-JE_PalType palettes;
-JE_word palNum;
+extern JE_PalType palettes;
+extern JE_word palNum;
 
-void JE_loadPals( void )
-{
-	FILE *f;
-	int i;
+extern palette_t palette;
+extern Uint32 rgb_palette[256], yuv_palette[256];
 
-	palNum = 0;
+extern palette_t black, colors, colors2;
 
-	JE_resetFile(&f, "palette.dat");
-	while (palNum < MAX_PAL && !feof(f))
-	{
-		for (i = 0; i < 256; i++)
-		{
-			palettes[palNum][i].r = getc(f);
-			palettes[palNum][i].g = getc(f);
-			palettes[palNum][i].b = getc(f);
-		}
-		palNum++;
-	}
-	fclose(f);
-}
+void JE_loadPals( void );
+void JE_zPal( JE_byte palette );
 
-void JE_zPal( JE_byte palette )
-{
-	JE_updateColorsFast(&palettes[palette - 1]);
-}
+void JE_updateColorsFast( palette_t ColorBuffer );
+void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps );
+void JE_fadeBlack( JE_byte steps );
+void JE_fadeColor( JE_byte steps );
+void JE_fadeWhite( JE_byte steps );
+
+void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
+
+Uint32 rgb_to_yuv( int r, int g, int b );
+
+#endif /* PALLIB_H */

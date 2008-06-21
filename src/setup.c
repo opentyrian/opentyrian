@@ -31,11 +31,12 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "palette.h"
 #include "params.h"
-#include "starfade.h"
 #include "starlib.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
 
 #include "SDL.h"
 
@@ -128,7 +129,7 @@ void JE_jukeboxGo( void )
 	JE_fadeBlack(10);
 	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
 	JE_showVGA();
-	SDL_SetColors(display_surface, vga_palette, 0, 256); //JE_fadeColor(10);
+	JE_updateColorsFast(vga_palette); //JE_fadeColor(10);
 
 	JE_starlib_init();
 
@@ -252,8 +253,6 @@ void JE_jukeboxGo( void )
 			}
 		}
 
-		JE_showVGA();
-
 		if (newkey)
 		{
 			JE_newSpeed();
@@ -345,7 +344,7 @@ void JE_jukeboxGo( void )
 		}
 	} while (!quit);
 	
-	JE_fadeBlack(10);
+	JE_updateColorsFast(black); //JE_fadeBlack(10);
 	JE_setVol(255, fxVolume);
 }
 

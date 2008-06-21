@@ -19,7 +19,7 @@
  */
 #include "opentyr.h"
 #include "keyboard.h"
-#include "vga256d.h"
+#include "video.h"
 
 #include "joystick.h"
 
@@ -154,7 +154,7 @@ void service_SDL_events( JE_boolean clear_new )
 					if (ev.key.keysym.sym == SDLK_RETURN)
 					{
 						fullscreen_enabled = !fullscreen_enabled;
-						JE_initVGA256();
+						reinit_video();
 						break;
 					}
 				}

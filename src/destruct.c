@@ -28,10 +28,11 @@
 #include "mtrand.h"
 #include "newshape.h"
 #include "nortsong.h"
+#include "palette.h"
 #include "picload.h"
-#include "starfade.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
 
 
 void JE_destructMain( void );
@@ -1867,7 +1868,7 @@ void JE_superPixel( JE_word loc )
 
 void JE_helpScreen( void )
 {
-	JE_getVGA();
+	//JE_getVGA();  didn't do anything anyway?
 	JE_fadeBlack(15);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	JE_clr256();

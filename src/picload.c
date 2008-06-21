@@ -22,10 +22,9 @@
 
 #include "error.h"
 #include "nortvars.h"
-#include "pallib.h"
+#include "palette.h"
 #include "pcxmast.h"
-#include "starfade.h"
-#include "vga256d.h"
+#include "video.h"
 
 #include <string.h>
 
@@ -90,6 +89,6 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 	memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
 	if (storepal)
 	{
-		JE_updateColorsFast(&colors);
+		JE_updateColorsFast(colors);
 	}
 }

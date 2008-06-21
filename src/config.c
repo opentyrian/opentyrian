@@ -29,6 +29,8 @@
 #include "nortvars.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
+#include "video_scale.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -675,7 +677,7 @@ void JE_loadConfiguration( void )
 #endif /* HOME */
 	
 	fi = fopen_check(cfgfile, "rb");
-	if (fi && get_stream_size(fi) == 17 + sizeof(keySettings) + sizeof(joyButtonAssign))
+	if (fi && get_stream_size(fi) == 18 + sizeof(keySettings) + sizeof(joyButtonAssign))
 	{
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
@@ -714,12 +716,15 @@ void JE_loadConfiguration( void )
 
 		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 
-		/* Fullscreen settings */
+		/* display settings */
 		Uint8 temp;
+		
 		efread(&temp, 1, 1, fi);
-
-		fullscreen_enabled = (temp == 1);
-
+		fullscreen_enabled = (temp == true);
+		
+		efread(&temp, 1, 1, fi);
+		scaler = temp;
+		
 		fclose(fi);
 	} else {
 		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n\n");
@@ -990,10 +995,15 @@ void JE_saveConfiguration( void )
 
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 
-		/* New fullscreen stuff */
-		Uint8 temp = (fullscreen_enabled ? 1 : 0);
+		/* display settings */
+		Uint8 temp;
+		
+		temp = fullscreen_enabled;
 		efwrite(&temp, 1, 1, f);
-	
+		
+		temp = scaler;
+		efwrite(&temp, 1, 1, f);
+		
 		fclose(f);
 #if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
 		sync();

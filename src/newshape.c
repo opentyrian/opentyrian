@@ -29,6 +29,7 @@
 #include "params.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
 
 
 SDL_Surface *tempScreenSeg = NULL;

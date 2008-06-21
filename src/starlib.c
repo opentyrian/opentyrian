@@ -22,7 +22,7 @@
 
 #include "keyboard.h"
 #include "mtrand.h"
-#include "vga256d.h"
+#include "video.h"
 
 #include <ctype.h>
 

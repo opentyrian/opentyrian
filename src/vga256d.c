@@ -20,9 +20,11 @@
 #include "opentyr.h"
 #include "vga256d.h"
 
+#include "config.h" // For fullscreen stuff
 #include "keyboard.h"
 #include "newshape.h" // For tempScreenSeg
-#include "config.h" // For fullscreen stuff
+#include "palette.h"
+#include "video.h"
 
 #include "SDL.h"
 #include <assert.h>
@@ -34,11 +36,6 @@
 JE_boolean mouseInstalled = true;
 JE_char k;
 
-SDL_Surface *display_surface;
-SDL_Surface *VGAScreen, *VGAScreenSeg;
-SDL_Surface *game_screen;
-SDL_Surface *VGAScreen2;
-
 /* JE: From Nortsong */
 JE_word speed; /* JE: holds timer speed for 70Hz */
 
@@ -47,7 +44,7 @@ JE_byte outcol;
 
 bool fullscreen_enabled = false;
 
-SDL_Color vga_palette[] = {
+palette_t vga_palette = {
 	{0, 0, 0}, {0, 0, 168}, {0, 168, 0}, {0, 168, 168}, {168, 0, 0}, {168, 0, 168}, {168, 84, 0}, {168, 168, 168}, {84, 84, 84}, {84, 84, 252}, {84, 252, 84}, {84, 252, 252}, {252, 84, 84}, {252, 84, 252}, {252, 252, 84}, {252, 252, 252},
 	{0, 0, 0}, {20, 20, 20}, {32, 32, 32}, {44, 44, 44}, {56, 56, 56}, {68, 68, 68}, {80, 80, 80}, {96, 96, 96}, {112, 112, 112}, {128, 128, 128}, {144, 144, 144}, {160, 160, 160}, {180, 180, 180}, {200, 200, 200}, {224, 224, 224}, {252, 252, 252},
 	{0, 0, 252}, {64, 0, 252}, {124, 0, 252}, {188, 0, 252}, {252, 0, 252}, {252, 0, 188}, {252, 0, 124}, {252, 0, 64}, {252, 0, 0}, {252, 64, 0}, {252, 124, 0}, {252, 188, 0}, {252, 252, 0}, {188, 252, 0}, {124, 252, 0}, {64, 252, 0},
@@ -65,164 +62,6 @@ SDL_Color vga_palette[] = {
 	{44, 44, 64}, {48, 44, 64}, {52, 44, 64}, {60, 44, 64}, {64, 44, 64}, {64, 44, 60}, {64, 44, 52}, {64, 44, 48}, {64, 44, 44}, {64, 48, 44}, {64, 52, 44}, {64, 60, 44}, {64, 64, 44}, {60, 64, 44}, {52, 64, 44}, {48, 64, 44},
 	{44, 64, 44}, {44, 64, 48}, {44, 64, 52}, {44, 64, 60}, {44, 64, 64}, {44, 60, 64}, {44, 52, 64}, {44, 48, 64}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}
 };
-
-void JE_initVGA256( void )
-{
-	SDL_Color palette_buffer[256];
-	int was_init = SDL_WasInit(SDL_INIT_VIDEO);
-	
-	if (was_init)
-	{
-#ifdef TARGET_GP2X
-		return;
-#endif
-		
-		assert(display_surface->format->BitsPerPixel == 8);
-		assert(display_surface->format->palette != NULL);
-		
-		memcpy(palette_buffer, display_surface->format->palette->colors, sizeof(palette_buffer));
-	} else {
-		if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-		{
-video_error:
-			printf("Display initialization failed: %s\n", SDL_GetError());
-			exit(1);
-		}
-		
-		SDL_WM_SetCaption("OpenTyrian (ctrl-backspace to kill)", NULL);
-		
-#ifdef _WIN32
-		if (!SDL_getenv("SDL_VIDEODRIVER"))
-		{
-			SDL_putenv("SDL_VIDEODRIVER=directx");
-		}
-#endif
-		
-		memcpy(palette_buffer, vga_palette, sizeof(palette_buffer));
-	}
-		
-#ifdef SCALE_2X
-	int w = surface_width * 2, h = surface_height * 2;
-#else
-	int w = surface_width, h = surface_height;
-#endif
-		
-	display_surface = SDL_SetVideoMode(w, h, 8, SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0));
-	
-	if (display_surface == NULL)
-	{
-		goto video_error;
-	}
-	
-	SDL_SetColors(display_surface, palette_buffer, 0, 256);
-	
-	if (!was_init)
-	{
-#ifdef TARGET_GP2X
-		VGAScreen = VGAScreenSeg = display_surface;
-#else
-		VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
-#endif /* TARGET_GP2X */
-		VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
-		game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, surface_width, surface_height, 8, 0, 0, 0, 0);
-	
-		SDL_FillRect(display_surface, NULL, 0x0);
-#ifdef TARGET_GP2X
-		SDL_FillRect(VGAScreenSeg, NULL, 0x0);
-#endif /* TARGET_GP2X */
-		SDL_FillRect(game_screen, NULL, 0x0);
-	}
-	
-	input_grab();
-	
-	JE_showVGA();
-}
-
-void JE_closeVGA256( void )
-{
-#ifndef TARGET_GP2X
-	SDL_FreeSurface(VGAScreenSeg);
-#endif /* TARGET_GP2X */
-	SDL_FreeSurface(VGAScreen2);
-	SDL_FreeSurface(game_screen);
-	
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-}
-
-void JE_clr256( void )
-{
-	memset(VGAScreen->pixels, 0, VGAScreen->pitch * VGAScreen->h);
-}
-
-void JE_showVGA( void )
-{
-#ifndef TARGET_GP2X
-	/* 8-bit specific */
-#ifdef SCALE_2X
-	for (int y = 0; y < surface_height; y++)
-	{
-		for (int x = 0; x < surface_width; x++)
-		{
-			((Uint8 *)display_surface->pixels)[(y * display_surface->pitch + x) * 2] = 
-			((Uint8 *)display_surface->pixels)[(y * display_surface->pitch + x) * 2 + 1] = ((Uint8 *)VGAScreen->pixels)[y * VGAScreen->pitch + x];
-		}
-		memcpy(&((Uint8 *)display_surface->pixels)[(y * 2 + 1) * display_surface->pitch],
-		       &((Uint8 *)display_surface->pixels)[(y * 2) * display_surface->pitch], surface_width * 2);
-	}
-#else
-	for (int y = 0; y < surface_height; y++)
-	{
-		memcpy(&((Uint8 *)display_surface->pixels)[y * display_surface->pitch], &((Uint8 *)VGAScreen->pixels)[y * VGAScreen->pitch], display_surface->w);
-	}
-#endif /* SCALE_2X */
-#endif /* TARGET_GP2X */
-	SDL_Flip(display_surface);
-}
-
-void JE_showVGARetrace( void )
-{
-	SDL_Flip(VGAScreen);
-}
-
-void JE_getVGA( void )
-{
-	SDL_Flip(VGAScreen); /* TODO: YKS: This is probably not what we should do, but I don't see a way of doing it either. */
-}
-
-void JE_onScreen( void )
-{
-	STUB();
-}
-
-void JE_offScreen( void )
-{
-	STUB();
-}
-
-void JE_disableRefresh( void )
-{
-	/* This would normally blank the screen, but since it's hard to implement and not used I'll leave it as a no-op. */
-}
-
-void JE_enableRefresh( void )
-{
-	/* Same as JE_disable_refresh */
-}
-
-void JE_waitRetrace( void )
-{
-	/* nop */
-}
-
-void JE_waitPartialRetrace( void )
-{
-}
-
-void JE_waitNotRetrace( void )
-{
-}
-
-
 
 void JE_pix( JE_word x, JE_word y, JE_byte c )
 {
@@ -448,28 +287,6 @@ void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
 		vga[(int)(round(x) + round(y)) * VGAScreen->pitch] = e;
 		x += g; y += h;
 	}
-}
-
-void JE_getPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue )
-{
-	SDL_Color color;
-
-	color = VGAScreen->format->palette->colors[col];
-
-	*red = color.r >> 2;
-	*green = color.g >> 2;
-	*blue = color.b >> 2;
-}
-
-void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
-{
-	SDL_Color color;
-
-	color.r = red << 2;
-	color.g = green << 2;
-	color.b = blue << 2;
-
-	SDL_SetColors(display_surface, &color, col, 1);
 }
 
 void JE_drawGraphic( JE_word x, JE_word y, JE_ShapeTypeOne s )

@@ -27,10 +27,10 @@
 #include "keyboard.h"
 #include "mainint.h"
 #include "newshape.h"
-#include "starfade.h"
+#include "nortvars.h"
 #include "picload.h"
 #include "varz.h"
-#include "vga256d.h"
+#include "video.h"
 
 #include "SDL.h"
 #include "SDL_net.h"

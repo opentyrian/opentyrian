@@ -25,6 +25,7 @@
 #include "nortsong.h"
 #include "params.h"
 #include "vga256d.h"
+#include "video.h"
 
 
 const JE_byte fontMap[136] = /* [33..168] */
@@ -727,7 +728,7 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 			
 			NETWORK_KEEP_ALIVE();
 			
-			JE_waitRetrace();
+			//JE_waitRetrace();  didn't do anything anyway?
 			JE_showVGA();
 
 			int delaycount_temp;
@@ -746,7 +747,7 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 		
 		NETWORK_KEEP_ALIVE();
 		
-		JE_waitRetrace();
+		//JE_waitRetrace();  didn't do anything anyway?
 		JE_showVGA();
 
 		int delaycount_temp;

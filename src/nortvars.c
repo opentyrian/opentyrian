@@ -24,6 +24,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 #include "vga256d.h"
+#include "video.h"
 
 #include <ctype.h>
 

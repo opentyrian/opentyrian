@@ -253,7 +253,7 @@ void JE_playSong( JE_word songnum )
 		repeated = false;
 		playing = true;
 		JE_selectSong (1);
-		/* JE_waitRetrace(); */
+		//JE_waitRetrace();  didn't do anything anyway?
 
 		/*ASM
 		mov al, $36

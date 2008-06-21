@@ -31,6 +31,7 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "vga256d.h"
+#include "video.h"
 
 
 JE_byte fromTime;
@@ -681,7 +682,7 @@ void JE_drawOptionLevel( void )
 
 void JE_tyrianHalt( JE_byte code )
 {
-	JE_closeVGA256();
+	deinit_video();
 	
 	if (scanForJoystick)
 	{

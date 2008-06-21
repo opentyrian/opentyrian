@@ -22,7 +22,7 @@
 
 #include "config.h"
 #include "joystick.h"
-#include "vga256d.h"
+#include "video.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -111,7 +111,7 @@ void JE_errorHand( const char *s )
 {
 	if (errorActive)
 	{
-		JE_closeVGA256();
+		deinit_video();
 		printf("WARNING: Unable to find Tyrian data files.\n"
 		       "Stopped on file %s.\n"
 		       "OpenTyrian needs the Tyrian data files to run. Please read the README file.\n\n", s);

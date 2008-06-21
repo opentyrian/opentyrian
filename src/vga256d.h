@@ -23,51 +23,20 @@
 #include "opentyr.h"
 
 #include "nortvars.h"
-
-#include "SDL.h"
-
-
-#define surface_width 320
-#ifdef TARGET_GP2X
-#	define surface_height 240
-#else
-#	define surface_height 200
-#endif // TARGET_GP2X
+#include "palette.h"
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 typedef JE_shape16B *JE_shape16;
 /*typedef JE_byte JE_shapetypeone[168];*/ /* [0..168-1] originally: JE_word JE_shapetypeone[84]; [1..84] */
-typedef JE_byte JE_screentype[65535]; /* [0..65534] */
-typedef JE_screentype *JE_screenptr;
 
 extern JE_boolean mouseInstalled;
 extern JE_char k;
-extern SDL_Surface *display_surface;
-extern SDL_Surface *VGAScreen, *VGAScreenSeg;
-extern SDL_Surface *game_screen;
-extern SDL_Surface *VGAScreen2;
 extern JE_word speed; /* JE: holds timer speed for 70Hz */
 extern JE_byte scancode;
 extern JE_byte outcol;
 
-extern bool fullscreen_enabled;
+extern palette_t vga_palette;
 
-extern SDL_Color vga_palette[];
-
-void JE_initVGA256( void );
-void set_fullscreen( bool full );
-void JE_closeVGA256( void );
-void JE_clr256( void );
-void JE_showVGA( void );
-void JE_showVGARetrace( void );
-void JE_getVGA( void );
-void JE_onScreen( void );
-void JE_offScreen( void );
-void JE_disableRefresh( void );
-void JE_enableRefresh( void );
-void JE_waitRetrace( void );
-void JE_waitPartialRetrace( void );
-void JE_waitNotRetrace( void );
 void JE_pix( JE_word x, JE_word y, JE_byte c );
 void JE_pix2( JE_word x, JE_word y, JE_byte c );
 void JE_pixCool( JE_word x, JE_word y, JE_byte c );
@@ -95,8 +64,6 @@ void JE_getUpK( JE_char *k );
 JE_boolean JE_keyPressed( JE_char *kp );
 JE_boolean JE_kp( void );
 void JE_wait( JE_byte min, JE_byte sec, JE_byte hun );
-void JE_getPalette( JE_byte col, JE_byte *red, JE_byte *green, JE_byte *blue );
-void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
 void JE_darkenScreen( void );
 
 #endif /* VGA256D_H */

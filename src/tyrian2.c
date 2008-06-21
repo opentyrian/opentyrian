@@ -37,16 +37,16 @@
 #include "network.h"
 #include "newshape.h"
 #include "nortsong.h"
-#include "pallib.h"
+#include "palette.h"
 #include "params.h"
 #include "pcxload.h"
 #include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
 #include "sndmast.h"
-#include "starfade.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
 
 #include <assert.h>
 #include <ctype.h>
@@ -922,7 +922,7 @@ void JE_main( void )
 	shieldSet = 5;
 
 	/* Setup Graphics */
-	JE_updateColorsFast(&black);
+	JE_updateColorsFast(black);
 
 	/*debuginfo('Initiating Configuration');*/
 
@@ -3744,7 +3744,7 @@ new_game:
 								JE_clr256();
 								JE_showVGA();
 								memcpy(colors, palettes[7], sizeof(colors));
-								JE_updateColorsFast(&colors);
+								JE_updateColorsFast(colors);
 								break;
 
 							case 'B':
@@ -3868,7 +3868,7 @@ new_game:
 
 			/*debuginfo('Demo loaded.');*/
 		} else {
-			JE_fadeColors(&colors, &black, 0, 255, 50);
+			JE_fadeColors(colors, black, 0, 255, 50);
 		}
 
 
@@ -4249,7 +4249,7 @@ void JE_titleScreen( JE_boolean animate )
 					}
 					JE_showVGA();
 					
-					JE_fadeColors(&colors, &colors2, 0, 255, 20);
+					JE_fadeColors(colors, colors2, 0, 255, 20);
 					
 					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 				}
@@ -4559,13 +4559,13 @@ void JE_openingAnim( void )
 	if (!isNetworkGame && !stoppedDemo)
 	{
 		memcpy(colors, black, sizeof(colors));
-		memset(black, 63, sizeof(black));
-		JE_fadeColors(&colors, &black, 0, 255, 50);
+		memset(black, 255, sizeof(black));
+		JE_fadeColors(colors, black, 0, 255, 50);
 
 		JE_loadPic(10, false);
 		JE_showVGA();
 
-		JE_fadeColors(&black, &colors, 0, 255, 50);
+		JE_fadeColors(black, colors, 0, 255, 50);
 		memset(black, 0, sizeof(black));
 
 		setjasondelay(200);
@@ -6106,7 +6106,7 @@ void JE_itemScreen( void )
 	newPal = 0;
 	JE_showVGA();
 
-	JE_updateColorsFast(&colors);
+	JE_updateColorsFast(colors);
 
 	col = 1;
 	gameLoaded = false;
@@ -6846,7 +6846,7 @@ item_screen_start:
 					JE_mouseStart();
 					if (delaycount() == 1)
 					{
-						/* TODO JE_waitRetrace(); */
+						//JE_waitRetrace();  didn't do anything anyway?
 					}
 
 					JE_showVGA();
@@ -6905,7 +6905,7 @@ item_screen_start:
 
 						if (paletteChanged)
 						{
-							JE_updateColorsFast(&colors);
+							JE_updateColorsFast(colors);
 							paletteChanged = false;
 						}
 
@@ -6932,7 +6932,7 @@ item_screen_start:
 						}
 
 						JE_drawScore();
-						JE_waitRetrace();
+						//JE_waitRetrace();  didn't do anything anyway?
 
 						if (newPal > 0)
 						{
@@ -6945,7 +6945,7 @@ item_screen_start:
 
 						if (paletteChanged)
 						{
-							JE_updateColorsFast(&colors);
+							JE_updateColorsFast(colors);
 							paletteChanged = false;
 						}
 
@@ -8417,7 +8417,7 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 
 	JE_clearKeyboard();
 
-	JE_getVGA();
+	//JE_getVGA();  didn't do anything anyway?
 
 	quit = false;
 	select = false;
@@ -8788,7 +8788,7 @@ void JE_menuFunction( JE_byte select )
 				}
 				JE_rectangle(230, tempY - 2, 300, tempY + 7, col);
 
-				JE_waitRetrace();
+				//JE_waitRetrace();  didn't do anything anyway?
 				setjasondelay(1);
 				service_SDL_events(false);
 

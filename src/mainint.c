@@ -36,16 +36,16 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "nortvars.h"
-#include "pallib.h"
+#include "palette.h"
 #include "params.h"
 #include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
 #include "shpmast.h"
 #include "sndmast.h"
-#include "starfade.h"
 #include "varz.h"
 #include "vga256d.h"
+#include "video.h"
 
 #include <ctype.h>
 
@@ -268,7 +268,7 @@ void JE_helpSystem( JE_byte startTopic )
 						JE_dString(JE_fontCenter(topicName[temp], SMALL_FONT_SHAPES), temp * 20 + 40, buf, SMALL_FONT_SHAPES);
 					}
 
-					JE_waitRetrace();
+					//JE_waitRetrace();  didn't do anything anyway?
 					JE_showVGA();
 
 					tempW = 0;
@@ -1350,14 +1350,15 @@ void JE_highScoreScreen( void )
 
 void JE_gammaCorrect_func( JE_byte *col, JE_real r )
 {
-	*col = round(*col * r);
-	if (*col > 63)
+	int temp = round(*col * r);
+	if (temp > 255)
 	{
-		*col = 63;
+		temp = 255;
 	}
+	*col = temp;
 }
 
-void JE_gammaCorrect( JE_ColorType *colorBuffer, JE_byte gamma )
+void JE_gammaCorrect( palette_t *colorBuffer, JE_byte gamma )
 {
 	int x;
 	JE_real r = 1 + (JE_real)gamma / 10;
@@ -1380,7 +1381,7 @@ JE_boolean JE_gammaCheck( void )
 		gammaCorrection = (gammaCorrection + 1) % 4;
 		memcpy(colors, palettes[pcxpal[3-1]], sizeof(colors));
 		JE_gammaCorrect(&colors, gammaCorrection);
-		JE_updateColorsFast(&colors);
+		JE_updateColorsFast(colors);
 	}
 	return temp;
 }
@@ -1715,7 +1716,7 @@ void JE_inGameHelp( void )
 	tempScreenSeg = VGAScreenSeg;
 	JE_clearKeyboard();
 	JE_wipeKey();
-	JE_getVGA();
+	//JE_getVGA();  didn't do anything anyway?
 	
 	JE_barShade(1, 1, 262, 182); /*Main Box*/
 	JE_barShade(3, 3, 260, 180);
@@ -2547,7 +2548,7 @@ void JE_endLevelAni( void )
 	frameCountMax = 4;
 	textGlowFont = SMALL_FONT_SHAPES;
 	
-	JE_setPalette(254, 63, 63, 63);
+	JE_setPalette(254, 255, 255, 255);
 	
 	if (!levelTimer || levelTimerCountdown > 0 || !(episodeNum == 4))
 	{
@@ -2626,7 +2627,7 @@ void JE_endLevelAni( void )
 					{
 						frameCountMax = 0;
 					}
-					JE_waitRetrace();
+					//JE_waitRetrace();  didn't do anything anyway?
 					JE_showVGA();
 					
 					int delaycount_temp;
@@ -2642,7 +2643,7 @@ void JE_endLevelAni( void )
 					{
 						frameCountMax = 0;
 					}
-					JE_waitRetrace();
+					//JE_waitRetrace();  didn't do anything anyway?
 					JE_showVGA();
 					
 					int delaycount_temp;
@@ -2671,7 +2672,7 @@ void JE_endLevelAni( void )
 		do
 		{
 			setjasondelay(1);
-			JE_waitRetrace();
+			//JE_waitRetrace();  didn't do anything anyway?
 			
 			NETWORK_KEEP_ALIVE();
 			
