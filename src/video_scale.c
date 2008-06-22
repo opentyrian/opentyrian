@@ -3,6 +3,7 @@
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  * hq2x, hq3x, hq4x Copyright (C) 2003 MaxSt ( maxst@hiend3d.com )
+ * Scale2x, Scale3x Copyright (C) 2001, 2002, 2003, 2004 Andrea Mazzoleni
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,75 +46,96 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
 void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
 void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
 
+void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+
 int scale, scaler = 2;
 
 const struct scaler_struct scalers[] =
 {
-	{ 1, nn_16, nn_32,   "None" },
-	{ 2, nn_16, nn_32,   "2x" },
-	{ 2, NULL,  hq2x_32, "hq2x" },
-	{ 3, nn_16, nn_32,   "3x" },
-	{ 3, NULL,  hq3x_32, "hq3x" },
-	{ 4, nn_16, nn_32,   "4x" },
-	{ 4, NULL,  hq4x_32, "hq4x" },
+	{ 1, nn_16,      nn_32,      "None" },
+	{ 2, nn_16,      nn_32,      "2x" },
+	{ 2, scale2x_16, scale2x_32, "Scale2x" },
+	{ 2, NULL,       hq2x_32,    "hq2x" },
+	{ 3, nn_16,      nn_32,      "3x" },
+	{ 3, scale3x_16, scale3x_32, "Scale3x" },
+	{ 3, NULL,       hq3x_32,    "hq3x" },
+	{ 4, nn_16,      nn_32,      "4x" },
+	{ 4, NULL,       hq4x_32,    "hq4x" },
 };
 
 void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 {
-	Uint8 *src = src_surface->pixels,
+	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
-	int Bpp = dst_surface->format->BytesPerPixel;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
 	
-	for (int y = vga_height; y > 0; y--)
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
+	for (int y = height; y > 0; y--)
 	{
+		src_temp = src;
 		dst_temp = dst;
 		
-		for (int x = vga_width; x > 0; x--)
+		for (int x = width; x > 0; x--)
 		{
 			for (int z = scale; z > 0; z--)
 			{
 				*(Uint32 *)dst = rgb_palette[*src];
-				dst += Bpp;
+				dst += dst_Bpp;
 			}
 			src++;
 		}
 		
-		dst = dst_temp + display_surface->pitch;
+		src = src_temp + src_pitch;
+		dst = dst_temp + dst_pitch;
 		
 		for (int z = scale; z > 1; z--)
 		{
-			memcpy(dst, dst_temp, display_surface->pitch);
-			dst += display_surface->pitch;
+			memcpy(dst, dst_temp, dst_pitch);
+			dst += dst_pitch;
 		}
 	}
 }
 
 void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 {
-	Uint8 *src = src_surface->pixels,
+	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
-	int Bpp = dst_surface->format->BytesPerPixel;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
 	
-	for (int y = vga_height; y > 0; y--)
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
+	for (int y = height; y > 0; y--)
 	{
+		src_temp = src;
 		dst_temp = dst;
 		
-		for (int x = vga_width; x > 0; x--)
+		for (int x = width; x > 0; x--)
 		{
 			for (int z = scale; z > 0; z--)
 			{
 				*(Uint16 *)dst = rgb_palette[*src];
-				dst += Bpp;
+				dst += dst_Bpp;
 			}
 			src++;
 		}
 		
-		dst = dst_temp + display_surface->pitch;
+		src = src_temp + src_pitch;
+		dst = dst_temp + dst_pitch;
 		
 		for (int z = scale; z > 1; z--)
 		{
-			memcpy(dst, dst_temp, display_surface->pitch);
-			dst += display_surface->pitch;
+			memcpy(dst, dst_temp, dst_pitch);
+			dst += dst_pitch;
 		}
 	}
 }
@@ -220,51 +242,56 @@ inline bool diff(unsigned int w1, unsigned int w2)
 #define PIXEL00_70    interp7((Uint32 *)dst, c[5], c[4], c[2]);
 #define PIXEL00_90    interp9((Uint32 *)dst, c[5], c[4], c[2]);
 #define PIXEL00_100   interp10((Uint32 *)dst, c[5], c[4], c[2]);
-#define PIXEL01_0     *(Uint32 *)(dst + Bpp) = c[5];
-#define PIXEL01_10    interp1((Uint32 *)(dst + Bpp), c[5], c[3]);
-#define PIXEL01_11    interp1((Uint32 *)(dst + Bpp), c[5], c[2]);
-#define PIXEL01_12    interp1((Uint32 *)(dst + Bpp), c[5], c[6]);
-#define PIXEL01_20    interp2((Uint32 *)(dst + Bpp), c[5], c[2], c[6]);
-#define PIXEL01_21    interp2((Uint32 *)(dst + Bpp), c[5], c[3], c[6]);
-#define PIXEL01_22    interp2((Uint32 *)(dst + Bpp), c[5], c[3], c[2]);
-#define PIXEL01_60    interp6((Uint32 *)(dst + Bpp), c[5], c[6], c[2]);
-#define PIXEL01_61    interp6((Uint32 *)(dst + Bpp), c[5], c[2], c[6]);
-#define PIXEL01_70    interp7((Uint32 *)(dst + Bpp), c[5], c[2], c[6]);
-#define PIXEL01_90    interp9((Uint32 *)(dst + Bpp), c[5], c[2], c[6]);
-#define PIXEL01_100   interp10((Uint32 *)(dst + Bpp), c[5], c[2], c[6]);
-#define PIXEL10_0     *(Uint32 *)(dst + BpL) = c[5];
-#define PIXEL10_10    interp1((Uint32 *)(dst + BpL), c[5], c[7]);
-#define PIXEL10_11    interp1((Uint32 *)(dst + BpL), c[5], c[8]);
-#define PIXEL10_12    interp1((Uint32 *)(dst + BpL), c[5], c[4]);
-#define PIXEL10_20    interp2((Uint32 *)(dst + BpL), c[5], c[8], c[4]);
-#define PIXEL10_21    interp2((Uint32 *)(dst + BpL), c[5], c[7], c[4]);
-#define PIXEL10_22    interp2((Uint32 *)(dst + BpL), c[5], c[7], c[8]);
-#define PIXEL10_60    interp6((Uint32 *)(dst + BpL), c[5], c[4], c[8]);
-#define PIXEL10_61    interp6((Uint32 *)(dst + BpL), c[5], c[8], c[4]);
-#define PIXEL10_70    interp7((Uint32 *)(dst + BpL), c[5], c[8], c[4]);
-#define PIXEL10_90    interp9((Uint32 *)(dst + BpL), c[5], c[8], c[4]);
-#define PIXEL10_100   interp10((Uint32 *)(dst + BpL), c[5], c[8], c[4]);
-#define PIXEL11_0     *(Uint32 *)(dst + BpL + Bpp) = c[5];
-#define PIXEL11_10    interp1((Uint32 *)(dst + BpL + Bpp), c[5], c[9]);
-#define PIXEL11_11    interp1((Uint32 *)(dst + BpL + Bpp), c[5], c[6]);
-#define PIXEL11_12    interp1((Uint32 *)(dst + BpL + Bpp), c[5], c[8]);
-#define PIXEL11_20    interp2((Uint32 *)(dst + BpL + Bpp), c[5], c[6], c[8]);
-#define PIXEL11_21    interp2((Uint32 *)(dst + BpL + Bpp), c[5], c[9], c[8]);
-#define PIXEL11_22    interp2((Uint32 *)(dst + BpL + Bpp), c[5], c[9], c[6]);
-#define PIXEL11_60    interp6((Uint32 *)(dst + BpL + Bpp), c[5], c[8], c[6]);
-#define PIXEL11_61    interp6((Uint32 *)(dst + BpL + Bpp), c[5], c[6], c[8]);
-#define PIXEL11_70    interp7((Uint32 *)(dst + BpL + Bpp), c[5], c[6], c[8]);
-#define PIXEL11_90    interp9((Uint32 *)(dst + BpL + Bpp), c[5], c[6], c[8]);
-#define PIXEL11_100   interp10((Uint32 *)(dst + BpL + Bpp), c[5], c[6], c[8]);
+#define PIXEL01_0     *(Uint32 *)(dst + dst_Bpp) = c[5];
+#define PIXEL01_10    interp1((Uint32 *)(dst + dst_Bpp), c[5], c[3]);
+#define PIXEL01_11    interp1((Uint32 *)(dst + dst_Bpp), c[5], c[2]);
+#define PIXEL01_12    interp1((Uint32 *)(dst + dst_Bpp), c[5], c[6]);
+#define PIXEL01_20    interp2((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL01_21    interp2((Uint32 *)(dst + dst_Bpp), c[5], c[3], c[6]);
+#define PIXEL01_22    interp2((Uint32 *)(dst + dst_Bpp), c[5], c[3], c[2]);
+#define PIXEL01_60    interp6((Uint32 *)(dst + dst_Bpp), c[5], c[6], c[2]);
+#define PIXEL01_61    interp6((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL01_70    interp7((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL01_90    interp9((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL01_100   interp10((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL10_0     *(Uint32 *)(dst + dst_pitch) = c[5];
+#define PIXEL10_10    interp1((Uint32 *)(dst + dst_pitch), c[5], c[7]);
+#define PIXEL10_11    interp1((Uint32 *)(dst + dst_pitch), c[5], c[8]);
+#define PIXEL10_12    interp1((Uint32 *)(dst + dst_pitch), c[5], c[4]);
+#define PIXEL10_20    interp2((Uint32 *)(dst + dst_pitch), c[5], c[8], c[4]);
+#define PIXEL10_21    interp2((Uint32 *)(dst + dst_pitch), c[5], c[7], c[4]);
+#define PIXEL10_22    interp2((Uint32 *)(dst + dst_pitch), c[5], c[7], c[8]);
+#define PIXEL10_60    interp6((Uint32 *)(dst + dst_pitch), c[5], c[4], c[8]);
+#define PIXEL10_61    interp6((Uint32 *)(dst + dst_pitch), c[5], c[8], c[4]);
+#define PIXEL10_70    interp7((Uint32 *)(dst + dst_pitch), c[5], c[8], c[4]);
+#define PIXEL10_90    interp9((Uint32 *)(dst + dst_pitch), c[5], c[8], c[4]);
+#define PIXEL10_100   interp10((Uint32 *)(dst + dst_pitch), c[5], c[8], c[4]);
+#define PIXEL11_0     *(Uint32 *)(dst + dst_pitch + dst_Bpp) = c[5];
+#define PIXEL11_10    interp1((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[9]);
+#define PIXEL11_11    interp1((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6]);
+#define PIXEL11_12    interp1((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[8]);
+#define PIXEL11_20    interp2((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL11_21    interp2((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[9], c[8]);
+#define PIXEL11_22    interp2((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[9], c[6]);
+#define PIXEL11_60    interp6((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[8], c[6]);
+#define PIXEL11_61    interp6((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL11_70    interp7((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL11_90    interp9((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL11_100   interp10((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 
 void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 {
-	Uint8 *src = src_surface->pixels,
+	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
-	const int Bpp = 4; // dst_surface->format->BytesPerPixel;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
 	
-	int BpL = dst_surface->pitch;
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
 	int prevline, nextline;
+	
 	Uint32 w[10];
 	Uint32 c[10];
 	
@@ -279,40 +306,37 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	//   | w7 | w8 | w9 |
 	//   +----+----+----+
 	
-	for (int j = 0; j < vga_height; j++)
+	for (int j = 0; j < height; j++)
 	{
+		src_temp = src;
 		dst_temp = dst;
 		
-		prevline = (j > 0) ? -vga_width : 0;
-		nextline = (j < vga_height - 1) ? vga_width : 0;
+		prevline = (j > 0) ? -width : 0;
+		nextline = (j < height - 1) ? width : 0;
 		
-		for (int i = 0; i < vga_width; i++)
+		for (int i = 0; i < width; i++)
 		{
 			w[2] = *(src + prevline);
 			w[5] = *src;
 			w[8] = *(src + nextline);
 			
-			if (i>0)
+			if (i > 0)
 			{
 				w[1] = *(src + prevline - 1);
 				w[4] = *(src - 1);
 				w[7] = *(src + nextline - 1);
-			}
-			else
-			{
+			} else {
 				w[1] = w[2];
 				w[4] = w[5];
 				w[7] = w[8];
 			}
 			
-			if (i<vga_width-1)
+			if (i < width - 1)
 			{
 				w[3] = *(src + prevline + 1);
 				w[6] = *(src + 1);
 				w[9] = *(src + nextline + 1);
-			}
-			else
-			{
+			} else {
 				w[3] = w[2];
 				w[6] = w[5];
 				w[9] = w[8];
@@ -2985,10 +3009,11 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 			}
 			
 			src++;
-			dst += 2 * Bpp;
+			dst += 2 * dst_Bpp;
 		}
 		
-		dst = dst_temp + 2 * display_surface->pitch;
+		src = src_temp + src_pitch;
+		dst = dst_temp + 2 * dst_pitch;
 	}
 }
 
@@ -3001,60 +3026,65 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 #define PIXEL00_5   interp5((Uint32 *)dst, c[4], c[2]);
 #define PIXEL00_C   *(Uint32 *)dst   = c[5];
 
-#define PIXEL01_1   interp1((Uint32 *)(dst + Bpp), c[5], c[2]);
-#define PIXEL01_3   interp3((Uint32 *)(dst + Bpp), c[5], c[2]);
-#define PIXEL01_6   interp1((Uint32 *)(dst + Bpp), c[2], c[5]);
-#define PIXEL01_C   *(Uint32 *)(dst + Bpp) = c[5];
+#define PIXEL01_1   interp1((Uint32 *)(dst + dst_Bpp), c[5], c[2]);
+#define PIXEL01_3   interp3((Uint32 *)(dst + dst_Bpp), c[5], c[2]);
+#define PIXEL01_6   interp1((Uint32 *)(dst + dst_Bpp), c[2], c[5]);
+#define PIXEL01_C   *(Uint32 *)(dst + dst_Bpp) = c[5];
 
-#define PIXEL02_1M  interp1((Uint32 *)(dst + 2 * Bpp), c[5], c[3]);
-#define PIXEL02_1U  interp1((Uint32 *)(dst + 2 * Bpp), c[5], c[2]);
-#define PIXEL02_1R  interp1((Uint32 *)(dst + 2 * Bpp), c[5], c[6]);
-#define PIXEL02_2   interp2((Uint32 *)(dst + 2 * Bpp), c[5], c[2], c[6]);
-#define PIXEL02_4   interp4((Uint32 *)(dst + 2 * Bpp), c[5], c[2], c[6]);
-#define PIXEL02_5   interp5((Uint32 *)(dst + 2 * Bpp), c[2], c[6]);
-#define PIXEL02_C   *(Uint32 *)(dst + 2 * Bpp) = c[5];
+#define PIXEL02_1M  interp1((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[3]);
+#define PIXEL02_1U  interp1((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2]);
+#define PIXEL02_1R  interp1((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL02_2   interp2((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL02_4   interp4((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL02_5   interp5((Uint32 *)(dst + 2 * dst_Bpp), c[2], c[6]);
+#define PIXEL02_C   *(Uint32 *)(dst + 2 * dst_Bpp) = c[5];
 
-#define PIXEL10_1   interp1((Uint32 *)(dst + BpL), c[5], c[4]);
-#define PIXEL10_3   interp3((Uint32 *)(dst + BpL), c[5], c[4]);
-#define PIXEL10_6   interp1((Uint32 *)(dst + BpL), c[4], c[5]);
-#define PIXEL10_C   *(Uint32 *)(dst + BpL) = c[5];
+#define PIXEL10_1   interp1((Uint32 *)(dst + dst_pitch), c[5], c[4]);
+#define PIXEL10_3   interp3((Uint32 *)(dst + dst_pitch), c[5], c[4]);
+#define PIXEL10_6   interp1((Uint32 *)(dst + dst_pitch), c[4], c[5]);
+#define PIXEL10_C   *(Uint32 *)(dst + dst_pitch) = c[5];
 
-#define PIXEL11     *(Uint32 *)(dst + BpL + Bpp) = c[5];
+#define PIXEL11     *(Uint32 *)(dst + dst_pitch + dst_Bpp) = c[5];
 
-#define PIXEL12_1   interp1((Uint32 *)(dst + BpL + 2 * Bpp), c[5], c[6]);
-#define PIXEL12_3   interp3((Uint32 *)(dst + BpL + 2 * Bpp), c[5], c[6]);
-#define PIXEL12_6   interp1((Uint32 *)(dst + BpL + 2 * Bpp), c[6], c[5]);
-#define PIXEL12_C   *(Uint32 *)(dst + BpL + 2 * Bpp) = c[5];
+#define PIXEL12_1   interp1((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL12_3   interp3((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL12_6   interp1((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[6], c[5]);
+#define PIXEL12_C   *(Uint32 *)(dst + dst_pitch + 2 * dst_Bpp) = c[5];
 
-#define PIXEL20_1M  interp1((Uint32 *)(dst + 2 * BpL), c[5], c[7]);
-#define PIXEL20_1D  interp1((Uint32 *)(dst + 2 * BpL), c[5], c[8]);
-#define PIXEL20_1L  interp1((Uint32 *)(dst + 2 * BpL), c[5], c[4]);
-#define PIXEL20_2   interp2((Uint32 *)(dst + 2 * BpL), c[5], c[8], c[4]);
-#define PIXEL20_4   interp4((Uint32 *)(dst + 2 * BpL), c[5], c[8], c[4]);
-#define PIXEL20_5   interp5((Uint32 *)(dst + 2 * BpL), c[8], c[4]);
-#define PIXEL20_C   *(Uint32 *)(dst + 2 * BpL) = c[5];
+#define PIXEL20_1M  interp1((Uint32 *)(dst + 2 * dst_pitch), c[5], c[7]);
+#define PIXEL20_1D  interp1((Uint32 *)(dst + 2 * dst_pitch), c[5], c[8]);
+#define PIXEL20_1L  interp1((Uint32 *)(dst + 2 * dst_pitch), c[5], c[4]);
+#define PIXEL20_2   interp2((Uint32 *)(dst + 2 * dst_pitch), c[5], c[8], c[4]);
+#define PIXEL20_4   interp4((Uint32 *)(dst + 2 * dst_pitch), c[5], c[8], c[4]);
+#define PIXEL20_5   interp5((Uint32 *)(dst + 2 * dst_pitch), c[8], c[4]);
+#define PIXEL20_C   *(Uint32 *)(dst + 2 * dst_pitch) = c[5];
 
-#define PIXEL21_1   interp1((Uint32 *)(dst + 2 * BpL + Bpp), c[5], c[8]);
-#define PIXEL21_3   interp3((Uint32 *)(dst + 2 * BpL + Bpp), c[5], c[8]);
-#define PIXEL21_6   interp1((Uint32 *)(dst + 2 * BpL + Bpp), c[8], c[5]);
-#define PIXEL21_C   *(Uint32 *)(dst + 2 * BpL + Bpp) = c[5];
+#define PIXEL21_1   interp1((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[5], c[8]);
+#define PIXEL21_3   interp3((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[5], c[8]);
+#define PIXEL21_6   interp1((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[8], c[5]);
+#define PIXEL21_C   *(Uint32 *)(dst + 2 * dst_pitch + dst_Bpp) = c[5];
 
-#define PIXEL22_1M  interp1((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[9]);
-#define PIXEL22_1D  interp1((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[8]);
-#define PIXEL22_1R  interp1((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[6]);
-#define PIXEL22_2   interp2((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[6], c[8]);
-#define PIXEL22_4   interp4((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[6], c[8]);
-#define PIXEL22_5   interp5((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[6], c[8]);
-#define PIXEL22_C   *(Uint32 *)(dst + 2 * BpL + 2 * Bpp) = c[5];
+#define PIXEL22_1M  interp1((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[9]);
+#define PIXEL22_1D  interp1((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[8]);
+#define PIXEL22_1R  interp1((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL22_2   interp2((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL22_4   interp4((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL22_5   interp5((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[6], c[8]);
+#define PIXEL22_C   *(Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = c[5];
 
 void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 {
-	Uint8 *src = src_surface->pixels,
+	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
-	const int Bpp = 4; // dst_surface->format->BytesPerPixel;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
 	
-	int BpL = dst_surface->pitch;
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
 	int prevline, nextline;
+	
 	Uint32 w[10];
 	Uint32 c[10];
 	
@@ -3069,14 +3099,15 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	//   | w7 | w8 | w9 |
 	//   +----+----+----+
 	
-	for (int j = 0; j < vga_height; j++)
+	for (int j = 0; j < height; j++)
 	{
+		src_temp = src;
 		dst_temp = dst;
 		
-		prevline = (j > 0) ? -vga_width : 0;
-		nextline = (j < vga_height - 1) ? vga_width : 0;
+		prevline = (j > 0) ? -width : 0;
+		nextline = (j < height - 1) ? width : 0;
 		
-		for (int i = 0; i < vga_width; i++)
+		for (int i = 0; i < width; i++)
 		{
 			w[2] = *(src + prevline);
 			w[5] = *src;
@@ -3087,22 +3118,18 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 				w[1] = *(src + prevline - 1);
 				w[4] = *(src - 1);
 				w[7] = *(src + nextline - 1);
-			}
-			else
-			{
+			} else {
 				w[1] = w[2];
 				w[4] = w[5];
 				w[7] = w[8];
 			}
 			
-			if (i<vga_width-1)
+			if (i < width - 1)
 			{
 				w[3] = *(src + prevline + 1);
 				w[6] = *(src + 1);
 				w[9] = *(src + nextline + 1);
-			}
-			else
-			{
+			} else {
 				w[3] = w[2];
 				w[6] = w[5];
 				w[9] = w[8];
@@ -3129,7 +3156,7 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 			}
 			
 			for (int k=1; k<=9; k++)
-				c[k] = rgb_palette[w[k]] & 0xfcfcfcfc; // hq2x has a nasty inability to accept more than 6 bits for each component
+				c[k] = rgb_palette[w[k]] & 0xfcfcfcfc; // hq3x has a nasty inability to accept more than 6 bits for each component
 			
 			switch (pattern)
 			{
@@ -6748,12 +6775,14 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 			}
 			
 			src++;
-			dst += 3 * Bpp;
+			dst += 3 * dst_Bpp;
 		}
 		
-		dst = dst_temp + 3 * display_surface->pitch;
+		src = src_temp + src_pitch;
+		dst = dst_temp + 3 * dst_pitch;
 	}
 }
+
 
 #define PIXEL4_00_0     *(Uint32 *)(dst) = c[5];
 #define PIXEL4_00_11    interp1((Uint32 *)(dst), c[5], c[4]);
@@ -6763,148 +6792,152 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 #define PIXEL4_00_80    interp8((Uint32 *)(dst), c[5], c[1]);
 #define PIXEL4_00_81    interp8((Uint32 *)(dst), c[5], c[4]);
 #define PIXEL4_00_82    interp8((Uint32 *)(dst), c[5], c[2]);
-#define PIXEL4_01_0     *(Uint32 *)(dst + Bpp) = c[5];
-#define PIXEL4_01_10    interp1((Uint32 *)(dst + Bpp), c[5], c[1]);
-#define PIXEL4_01_12    interp1((Uint32 *)(dst + Bpp), c[5], c[2]);
-#define PIXEL4_01_14    interp1((Uint32 *)(dst + Bpp), c[2], c[5]);
-#define PIXEL4_01_21    interp2((Uint32 *)(dst + Bpp), c[2], c[5], c[4]);
-#define PIXEL4_01_31    interp3((Uint32 *)(dst + Bpp), c[5], c[4]);
-#define PIXEL4_01_50    interp5((Uint32 *)(dst + Bpp), c[2], c[5]);
-#define PIXEL4_01_60    interp6((Uint32 *)(dst + Bpp), c[5], c[2], c[4]);
-#define PIXEL4_01_61    interp6((Uint32 *)(dst + Bpp), c[5], c[2], c[1]);
-#define PIXEL4_01_82    interp8((Uint32 *)(dst + Bpp), c[5], c[2]);
-#define PIXEL4_01_83    interp8((Uint32 *)(dst + Bpp), c[2], c[4]);
-#define PIXEL4_02_0     *(Uint32 *)(dst + 2 * Bpp) = c[5];
-#define PIXEL4_02_10    interp1((Uint32 *)(dst + 2 * Bpp), c[5], c[3]);
-#define PIXEL4_02_11    interp1((Uint32 *)(dst + 2 * Bpp), c[5], c[2]);
-#define PIXEL4_02_13    interp1((Uint32 *)(dst + 2 * Bpp), c[2], c[5]);
-#define PIXEL4_02_21    interp2((Uint32 *)(dst + 2 * Bpp), c[2], c[5], c[6]);
-#define PIXEL4_02_32    interp3((Uint32 *)(dst + 2 * Bpp), c[5], c[6]);
-#define PIXEL4_02_50    interp5((Uint32 *)(dst + 2 * Bpp), c[2], c[5]);
-#define PIXEL4_02_60    interp6((Uint32 *)(dst + 2 * Bpp), c[5], c[2], c[6]);
-#define PIXEL4_02_61    interp6((Uint32 *)(dst + 2 * Bpp), c[5], c[2], c[3]);
-#define PIXEL4_02_81    interp8((Uint32 *)(dst + 2 * Bpp), c[5], c[2]);
-#define PIXEL4_02_83    interp8((Uint32 *)(dst + 2 * Bpp), c[2], c[6]);
-#define PIXEL4_03_0     *(Uint32 *)(dst + 3 * Bpp) = c[5];
-#define PIXEL4_03_11    interp1((Uint32 *)(dst + 3 * Bpp), c[5], c[2]);
-#define PIXEL4_03_12    interp1((Uint32 *)(dst + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_03_20    interp2((Uint32 *)(dst + 3 * Bpp), c[5], c[2], c[6]);
-#define PIXEL4_03_50    interp5((Uint32 *)(dst + 3 * Bpp), c[2], c[6]);
-#define PIXEL4_03_80    interp8((Uint32 *)(dst + 3 * Bpp), c[5], c[3]);
-#define PIXEL4_03_81    interp8((Uint32 *)(dst + 3 * Bpp), c[5], c[2]);
-#define PIXEL4_03_82    interp8((Uint32 *)(dst + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_10_0     *(Uint32 *)(dst + BpL) = c[5];
-#define PIXEL4_10_10    interp1((Uint32 *)(dst + BpL ), c[5], c[1]);
-#define PIXEL4_10_11    interp1((Uint32 *)(dst + BpL ), c[5], c[4]);
-#define PIXEL4_10_13    interp1((Uint32 *)(dst + BpL ), c[4], c[5]);
-#define PIXEL4_10_21    interp2((Uint32 *)(dst + BpL ), c[4], c[5], c[2]);
-#define PIXEL4_10_32    interp3((Uint32 *)(dst + BpL ), c[5], c[2]);
-#define PIXEL4_10_50    interp5((Uint32 *)(dst + BpL ), c[4], c[5]);
-#define PIXEL4_10_60    interp6((Uint32 *)(dst + BpL ), c[5], c[4], c[2]);
-#define PIXEL4_10_61    interp6((Uint32 *)(dst + BpL ), c[5], c[4], c[1]);
-#define PIXEL4_10_81    interp8((Uint32 *)(dst + BpL ), c[5], c[4]);
-#define PIXEL4_10_83    interp8((Uint32 *)(dst + BpL ), c[4], c[2]);
-#define PIXEL4_11_0     *(Uint32 *)(dst + BpL + Bpp) = c[5];
-#define PIXEL4_11_30    interp3((Uint32 *)(dst + BpL + Bpp), c[5], c[1]);
-#define PIXEL4_11_31    interp3((Uint32 *)(dst + BpL + Bpp), c[5], c[4]);
-#define PIXEL4_11_32    interp3((Uint32 *)(dst + BpL + Bpp), c[5], c[2]);
-#define PIXEL4_11_70    interp7((Uint32 *)(dst + BpL + Bpp), c[5], c[4], c[2]);
-#define PIXEL4_12_0     *(Uint32 *)(dst + BpL + 2 * Bpp) = c[5];
-#define PIXEL4_12_30    interp3((Uint32 *)(dst + BpL + 2 * Bpp), c[5], c[3]);
-#define PIXEL4_12_31    interp3((Uint32 *)(dst + BpL + 2 * Bpp), c[5], c[2]);
-#define PIXEL4_12_32    interp3((Uint32 *)(dst + BpL + 2 * Bpp), c[5], c[6]);
-#define PIXEL4_12_70    interp7((Uint32 *)(dst + BpL + 2 * Bpp), c[5], c[6], c[2]);
-#define PIXEL4_13_0     *(Uint32 *)(dst + BpL + 3 * Bpp) = c[5];
-#define PIXEL4_13_10    interp1((Uint32 *)(dst + BpL + 3 * Bpp), c[5], c[3]);
-#define PIXEL4_13_12    interp1((Uint32 *)(dst + BpL + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_13_14    interp1((Uint32 *)(dst + BpL + 3 * Bpp), c[6], c[5]);
-#define PIXEL4_13_21    interp2((Uint32 *)(dst + BpL + 3 * Bpp), c[6], c[5], c[2]);
-#define PIXEL4_13_31    interp3((Uint32 *)(dst + BpL + 3 * Bpp), c[5], c[2]);
-#define PIXEL4_13_50    interp5((Uint32 *)(dst + BpL + 3 * Bpp), c[6], c[5]);
-#define PIXEL4_13_60    interp6((Uint32 *)(dst + BpL + 3 * Bpp), c[5], c[6], c[2]);
-#define PIXEL4_13_61    interp6((Uint32 *)(dst + BpL + 3 * Bpp), c[5], c[6], c[3]);
-#define PIXEL4_13_82    interp8((Uint32 *)(dst + BpL + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_13_83    interp8((Uint32 *)(dst + BpL + 3 * Bpp), c[6], c[2]);
-#define PIXEL4_20_0     *(Uint32 *)(dst + 2 * BpL) = c[5];
-#define PIXEL4_20_10    interp1((Uint32 *)(dst + 2 * BpL ), c[5], c[7]);
-#define PIXEL4_20_12    interp1((Uint32 *)(dst + 2 * BpL ), c[5], c[4]);
-#define PIXEL4_20_14    interp1((Uint32 *)(dst + 2 * BpL ), c[4], c[5]);
-#define PIXEL4_20_21    interp2((Uint32 *)(dst + 2 * BpL ), c[4], c[5], c[8]);
-#define PIXEL4_20_31    interp3((Uint32 *)(dst + 2 * BpL ), c[5], c[8]);
-#define PIXEL4_20_50    interp5((Uint32 *)(dst + 2 * BpL ), c[4], c[5]);
-#define PIXEL4_20_60    interp6((Uint32 *)(dst + 2 * BpL ), c[5], c[4], c[8]);
-#define PIXEL4_20_61    interp6((Uint32 *)(dst + 2 * BpL ), c[5], c[4], c[7]);
-#define PIXEL4_20_82    interp8((Uint32 *)(dst + 2 * BpL ), c[5], c[4]);
-#define PIXEL4_20_83    interp8((Uint32 *)(dst + 2 * BpL ), c[4], c[8]);
-#define PIXEL4_21_0     *(Uint32 *)(dst + 2 * BpL + Bpp) = c[5];
-#define PIXEL4_21_30    interp3((Uint32 *)(dst + 2 * BpL + Bpp), c[5], c[7]);
-#define PIXEL4_21_31    interp3((Uint32 *)(dst + 2 * BpL + Bpp), c[5], c[8]);
-#define PIXEL4_21_32    interp3((Uint32 *)(dst + 2 * BpL + Bpp), c[5], c[4]);
-#define PIXEL4_21_70    interp7((Uint32 *)(dst + 2 * BpL + Bpp), c[5], c[4], c[8]);
-#define PIXEL4_22_0     *(Uint32 *)(dst + 2 * BpL + 2 * Bpp) = c[5];
-#define PIXEL4_22_30    interp3((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[9]);
-#define PIXEL4_22_31    interp3((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[6]);
-#define PIXEL4_22_32    interp3((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[8]);
-#define PIXEL4_22_70    interp7((Uint32 *)(dst + 2 * BpL + 2 * Bpp), c[5], c[6], c[8]);
-#define PIXEL4_23_0     *(Uint32 *)(dst + 2 * BpL + 3 * Bpp) = c[5];
-#define PIXEL4_23_10    interp1((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[5], c[9]);
-#define PIXEL4_23_11    interp1((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_23_13    interp1((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[6], c[5]);
-#define PIXEL4_23_21    interp2((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[6], c[5], c[8]);
-#define PIXEL4_23_32    interp3((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[5], c[8]);
-#define PIXEL4_23_50    interp5((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[6], c[5]);
-#define PIXEL4_23_60    interp6((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[5], c[6], c[8]);
-#define PIXEL4_23_61    interp6((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[5], c[6], c[9]);
-#define PIXEL4_23_81    interp8((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_23_83    interp8((Uint32 *)(dst + 2 * BpL + 3 * Bpp), c[6], c[8]);
-#define PIXEL4_30_0     *(Uint32 *)(dst + 3 * BpL) = c[5];
-#define PIXEL4_30_11    interp1((Uint32 *)(dst + 3 * BpL ), c[5], c[8]);
-#define PIXEL4_30_12    interp1((Uint32 *)(dst + 3 * BpL ), c[5], c[4]);
-#define PIXEL4_30_20    interp2((Uint32 *)(dst + 3 * BpL ), c[5], c[8], c[4]);
-#define PIXEL4_30_50    interp5((Uint32 *)(dst + 3 * BpL ), c[8], c[4]);
-#define PIXEL4_30_80    interp8((Uint32 *)(dst + 3 * BpL ), c[5], c[7]);
-#define PIXEL4_30_81    interp8((Uint32 *)(dst + 3 * BpL ), c[5], c[8]);
-#define PIXEL4_30_82    interp8((Uint32 *)(dst + 3 * BpL ), c[5], c[4]);
-#define PIXEL4_31_0     *(Uint32 *)(dst + 3 * BpL + Bpp) = c[5];
-#define PIXEL4_31_10    interp1((Uint32 *)(dst + 3 * BpL + Bpp), c[5], c[7]);
-#define PIXEL4_31_11    interp1((Uint32 *)(dst + 3 * BpL + Bpp), c[5], c[8]);
-#define PIXEL4_31_13    interp1((Uint32 *)(dst + 3 * BpL + Bpp), c[8], c[5]);
-#define PIXEL4_31_21    interp2((Uint32 *)(dst + 3 * BpL + Bpp), c[8], c[5], c[4]);
-#define PIXEL4_31_32    interp3((Uint32 *)(dst + 3 * BpL + Bpp), c[5], c[4]);
-#define PIXEL4_31_50    interp5((Uint32 *)(dst + 3 * BpL + Bpp), c[8], c[5]);
-#define PIXEL4_31_60    interp6((Uint32 *)(dst + 3 * BpL + Bpp), c[5], c[8], c[4]);
-#define PIXEL4_31_61    interp6((Uint32 *)(dst + 3 * BpL + Bpp), c[5], c[8], c[7]);
-#define PIXEL4_31_81    interp8((Uint32 *)(dst + 3 * BpL + Bpp), c[5], c[8]);
-#define PIXEL4_31_83    interp8((Uint32 *)(dst + 3 * BpL + Bpp), c[8], c[4]);
-#define PIXEL4_32_0     *(Uint32 *)(dst + 3 * BpL + 2 * Bpp) = c[5];
-#define PIXEL4_32_10    interp1((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[5], c[9]);
-#define PIXEL4_32_12    interp1((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[5], c[8]);
-#define PIXEL4_32_14    interp1((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[8], c[5]);
-#define PIXEL4_32_21    interp2((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[8], c[5], c[6]);
-#define PIXEL4_32_31    interp3((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[5], c[6]);
-#define PIXEL4_32_50    interp5((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[8], c[5]);
-#define PIXEL4_32_60    interp6((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[5], c[8], c[6]);
-#define PIXEL4_32_61    interp6((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[5], c[8], c[9]);
-#define PIXEL4_32_82    interp8((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[5], c[8]);
-#define PIXEL4_32_83    interp8((Uint32 *)(dst + 3 * BpL + 2 * Bpp), c[8], c[6]);
-#define PIXEL4_33_0     *(Uint32 *)(dst + 3 * BpL + 3 * Bpp) = c[5];
-#define PIXEL4_33_11    interp1((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_33_12    interp1((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[5], c[8]);
-#define PIXEL4_33_20    interp2((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[5], c[8], c[6]);
-#define PIXEL4_33_50    interp5((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[8], c[6]);
-#define PIXEL4_33_80    interp8((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[5], c[9]);
-#define PIXEL4_33_81    interp8((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[5], c[6]);
-#define PIXEL4_33_82    interp8((Uint32 *)(dst + 3 * BpL + 3 * Bpp), c[5], c[8]);
-
+#define PIXEL4_01_0     *(Uint32 *)(dst + dst_Bpp) = c[5];
+#define PIXEL4_01_10    interp1((Uint32 *)(dst + dst_Bpp), c[5], c[1]);
+#define PIXEL4_01_12    interp1((Uint32 *)(dst + dst_Bpp), c[5], c[2]);
+#define PIXEL4_01_14    interp1((Uint32 *)(dst + dst_Bpp), c[2], c[5]);
+#define PIXEL4_01_21    interp2((Uint32 *)(dst + dst_Bpp), c[2], c[5], c[4]);
+#define PIXEL4_01_31    interp3((Uint32 *)(dst + dst_Bpp), c[5], c[4]);
+#define PIXEL4_01_50    interp5((Uint32 *)(dst + dst_Bpp), c[2], c[5]);
+#define PIXEL4_01_60    interp6((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[4]);
+#define PIXEL4_01_61    interp6((Uint32 *)(dst + dst_Bpp), c[5], c[2], c[1]);
+#define PIXEL4_01_82    interp8((Uint32 *)(dst + dst_Bpp), c[5], c[2]);
+#define PIXEL4_01_83    interp8((Uint32 *)(dst + dst_Bpp), c[2], c[4]);
+#define PIXEL4_02_0     *(Uint32 *)(dst + 2 * dst_Bpp) = c[5];
+#define PIXEL4_02_10    interp1((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[3]);
+#define PIXEL4_02_11    interp1((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2]);
+#define PIXEL4_02_13    interp1((Uint32 *)(dst + 2 * dst_Bpp), c[2], c[5]);
+#define PIXEL4_02_21    interp2((Uint32 *)(dst + 2 * dst_Bpp), c[2], c[5], c[6]);
+#define PIXEL4_02_32    interp3((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_02_50    interp5((Uint32 *)(dst + 2 * dst_Bpp), c[2], c[5]);
+#define PIXEL4_02_60    interp6((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL4_02_61    interp6((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2], c[3]);
+#define PIXEL4_02_81    interp8((Uint32 *)(dst + 2 * dst_Bpp), c[5], c[2]);
+#define PIXEL4_02_83    interp8((Uint32 *)(dst + 2 * dst_Bpp), c[2], c[6]);
+#define PIXEL4_03_0     *(Uint32 *)(dst + 3 * dst_Bpp) = c[5];
+#define PIXEL4_03_11    interp1((Uint32 *)(dst + 3 * dst_Bpp), c[5], c[2]);
+#define PIXEL4_03_12    interp1((Uint32 *)(dst + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_03_20    interp2((Uint32 *)(dst + 3 * dst_Bpp), c[5], c[2], c[6]);
+#define PIXEL4_03_50    interp5((Uint32 *)(dst + 3 * dst_Bpp), c[2], c[6]);
+#define PIXEL4_03_80    interp8((Uint32 *)(dst + 3 * dst_Bpp), c[5], c[3]);
+#define PIXEL4_03_81    interp8((Uint32 *)(dst + 3 * dst_Bpp), c[5], c[2]);
+#define PIXEL4_03_82    interp8((Uint32 *)(dst + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_10_0     *(Uint32 *)(dst + dst_pitch) = c[5];
+#define PIXEL4_10_10    interp1((Uint32 *)(dst + dst_pitch ), c[5], c[1]);
+#define PIXEL4_10_11    interp1((Uint32 *)(dst + dst_pitch ), c[5], c[4]);
+#define PIXEL4_10_13    interp1((Uint32 *)(dst + dst_pitch ), c[4], c[5]);
+#define PIXEL4_10_21    interp2((Uint32 *)(dst + dst_pitch ), c[4], c[5], c[2]);
+#define PIXEL4_10_32    interp3((Uint32 *)(dst + dst_pitch ), c[5], c[2]);
+#define PIXEL4_10_50    interp5((Uint32 *)(dst + dst_pitch ), c[4], c[5]);
+#define PIXEL4_10_60    interp6((Uint32 *)(dst + dst_pitch ), c[5], c[4], c[2]);
+#define PIXEL4_10_61    interp6((Uint32 *)(dst + dst_pitch ), c[5], c[4], c[1]);
+#define PIXEL4_10_81    interp8((Uint32 *)(dst + dst_pitch ), c[5], c[4]);
+#define PIXEL4_10_83    interp8((Uint32 *)(dst + dst_pitch ), c[4], c[2]);
+#define PIXEL4_11_0     *(Uint32 *)(dst + dst_pitch + dst_Bpp) = c[5];
+#define PIXEL4_11_30    interp3((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[1]);
+#define PIXEL4_11_31    interp3((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[4]);
+#define PIXEL4_11_32    interp3((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[2]);
+#define PIXEL4_11_70    interp7((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[4], c[2]);
+#define PIXEL4_12_0     *(Uint32 *)(dst + dst_pitch + 2 * dst_Bpp) = c[5];
+#define PIXEL4_12_30    interp3((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[5], c[3]);
+#define PIXEL4_12_31    interp3((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[5], c[2]);
+#define PIXEL4_12_32    interp3((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_12_70    interp7((Uint32 *)(dst + dst_pitch + 2 * dst_Bpp), c[5], c[6], c[2]);
+#define PIXEL4_13_0     *(Uint32 *)(dst + dst_pitch + 3 * dst_Bpp) = c[5];
+#define PIXEL4_13_10    interp1((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[5], c[3]);
+#define PIXEL4_13_12    interp1((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_13_14    interp1((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[6], c[5]);
+#define PIXEL4_13_21    interp2((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[6], c[5], c[2]);
+#define PIXEL4_13_31    interp3((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[5], c[2]);
+#define PIXEL4_13_50    interp5((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[6], c[5]);
+#define PIXEL4_13_60    interp6((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[5], c[6], c[2]);
+#define PIXEL4_13_61    interp6((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[5], c[6], c[3]);
+#define PIXEL4_13_82    interp8((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_13_83    interp8((Uint32 *)(dst + dst_pitch + 3 * dst_Bpp), c[6], c[2]);
+#define PIXEL4_20_0     *(Uint32 *)(dst + 2 * dst_pitch) = c[5];
+#define PIXEL4_20_10    interp1((Uint32 *)(dst + 2 * dst_pitch ), c[5], c[7]);
+#define PIXEL4_20_12    interp1((Uint32 *)(dst + 2 * dst_pitch ), c[5], c[4]);
+#define PIXEL4_20_14    interp1((Uint32 *)(dst + 2 * dst_pitch ), c[4], c[5]);
+#define PIXEL4_20_21    interp2((Uint32 *)(dst + 2 * dst_pitch ), c[4], c[5], c[8]);
+#define PIXEL4_20_31    interp3((Uint32 *)(dst + 2 * dst_pitch ), c[5], c[8]);
+#define PIXEL4_20_50    interp5((Uint32 *)(dst + 2 * dst_pitch ), c[4], c[5]);
+#define PIXEL4_20_60    interp6((Uint32 *)(dst + 2 * dst_pitch ), c[5], c[4], c[8]);
+#define PIXEL4_20_61    interp6((Uint32 *)(dst + 2 * dst_pitch ), c[5], c[4], c[7]);
+#define PIXEL4_20_82    interp8((Uint32 *)(dst + 2 * dst_pitch ), c[5], c[4]);
+#define PIXEL4_20_83    interp8((Uint32 *)(dst + 2 * dst_pitch ), c[4], c[8]);
+#define PIXEL4_21_0     *(Uint32 *)(dst + 2 * dst_pitch + dst_Bpp) = c[5];
+#define PIXEL4_21_30    interp3((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[5], c[7]);
+#define PIXEL4_21_31    interp3((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[5], c[8]);
+#define PIXEL4_21_32    interp3((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[5], c[4]);
+#define PIXEL4_21_70    interp7((Uint32 *)(dst + 2 * dst_pitch + dst_Bpp), c[5], c[4], c[8]);
+#define PIXEL4_22_0     *(Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = c[5];
+#define PIXEL4_22_30    interp3((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[9]);
+#define PIXEL4_22_31    interp3((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_22_32    interp3((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[8]);
+#define PIXEL4_22_70    interp7((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL4_23_0     *(Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp) = c[5];
+#define PIXEL4_23_10    interp1((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[5], c[9]);
+#define PIXEL4_23_11    interp1((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_23_13    interp1((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[6], c[5]);
+#define PIXEL4_23_21    interp2((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[6], c[5], c[8]);
+#define PIXEL4_23_32    interp3((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[5], c[8]);
+#define PIXEL4_23_50    interp5((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[6], c[5]);
+#define PIXEL4_23_60    interp6((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[5], c[6], c[8]);
+#define PIXEL4_23_61    interp6((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[5], c[6], c[9]);
+#define PIXEL4_23_81    interp8((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_23_83    interp8((Uint32 *)(dst + 2 * dst_pitch + 3 * dst_Bpp), c[6], c[8]);
+#define PIXEL4_30_0     *(Uint32 *)(dst + 3 * dst_pitch) = c[5];
+#define PIXEL4_30_11    interp1((Uint32 *)(dst + 3 * dst_pitch ), c[5], c[8]);
+#define PIXEL4_30_12    interp1((Uint32 *)(dst + 3 * dst_pitch ), c[5], c[4]);
+#define PIXEL4_30_20    interp2((Uint32 *)(dst + 3 * dst_pitch ), c[5], c[8], c[4]);
+#define PIXEL4_30_50    interp5((Uint32 *)(dst + 3 * dst_pitch ), c[8], c[4]);
+#define PIXEL4_30_80    interp8((Uint32 *)(dst + 3 * dst_pitch ), c[5], c[7]);
+#define PIXEL4_30_81    interp8((Uint32 *)(dst + 3 * dst_pitch ), c[5], c[8]);
+#define PIXEL4_30_82    interp8((Uint32 *)(dst + 3 * dst_pitch ), c[5], c[4]);
+#define PIXEL4_31_0     *(Uint32 *)(dst + 3 * dst_pitch + dst_Bpp) = c[5];
+#define PIXEL4_31_10    interp1((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[5], c[7]);
+#define PIXEL4_31_11    interp1((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[5], c[8]);
+#define PIXEL4_31_13    interp1((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[8], c[5]);
+#define PIXEL4_31_21    interp2((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[8], c[5], c[4]);
+#define PIXEL4_31_32    interp3((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[5], c[4]);
+#define PIXEL4_31_50    interp5((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[8], c[5]);
+#define PIXEL4_31_60    interp6((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[5], c[8], c[4]);
+#define PIXEL4_31_61    interp6((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[5], c[8], c[7]);
+#define PIXEL4_31_81    interp8((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[5], c[8]);
+#define PIXEL4_31_83    interp8((Uint32 *)(dst + 3 * dst_pitch + dst_Bpp), c[8], c[4]);
+#define PIXEL4_32_0     *(Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp) = c[5];
+#define PIXEL4_32_10    interp1((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[5], c[9]);
+#define PIXEL4_32_12    interp1((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[5], c[8]);
+#define PIXEL4_32_14    interp1((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[8], c[5]);
+#define PIXEL4_32_21    interp2((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[8], c[5], c[6]);
+#define PIXEL4_32_31    interp3((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_32_50    interp5((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[8], c[5]);
+#define PIXEL4_32_60    interp6((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[5], c[8], c[6]);
+#define PIXEL4_32_61    interp6((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[5], c[8], c[9]);
+#define PIXEL4_32_82    interp8((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[5], c[8]);
+#define PIXEL4_32_83    interp8((Uint32 *)(dst + 3 * dst_pitch + 2 * dst_Bpp), c[8], c[6]);
+#define PIXEL4_33_0     *(Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp) = c[5];
+#define PIXEL4_33_11    interp1((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_33_12    interp1((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[8]);
+#define PIXEL4_33_20    interp2((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[8], c[6]);
+#define PIXEL4_33_50    interp5((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[8], c[6]);
+#define PIXEL4_33_80    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[9]);
+#define PIXEL4_33_81    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
+#define PIXEL4_33_82    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[8]);
 
 void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 {
-	Uint8 *src = src_surface->pixels,
+	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
-	const int Bpp = 4; // dst_surface->format->BytesPerPixel;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
 	
-	int BpL = dst_surface->pitch;
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
 	int prevline, nextline;
+	
 	Uint32 w[10];
 	Uint32 c[10];
 	
@@ -6919,14 +6952,15 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	//   | w7 | w8 | w9 |
 	//   +----+----+----+
 	
-	for (int j = 0; j < vga_height; j++)
+	for (int j = 0; j < height; j++)
 	{
+		src_temp = src;
 		dst_temp = dst;
 		
-		prevline = (j > 0) ? -vga_width : 0;
-		nextline = (j < vga_height - 1) ? vga_width : 0;
+		prevline = (j > 0) ? -width : 0;
+		nextline = (j < height - 1) ? width : 0;
 		
-		for (int i = 0; i < vga_width; i++)
+		for (int i = 0; i < width; i++)
 		{
 			w[2] = *(src + prevline);
 			w[5] = *src;
@@ -6937,22 +6971,18 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 				w[1] = *(src + prevline - 1);
 				w[4] = *(src - 1);
 				w[7] = *(src + nextline - 1);
-			}
-			else
-			{
+			} else {
 				w[1] = w[2];
 				w[4] = w[5];
 				w[7] = w[8];
 			}
 			
-			if (i<vga_width-1)
+			if (i < width - 1)
 			{
 				w[3] = *(src + prevline + 1);
 				w[6] = *(src + 1);
 				w[9] = *(src + nextline + 1);
-			}
-			else
-			{
+			} else {
 				w[3] = w[2];
 				w[6] = w[5];
 				w[9] = w[8];
@@ -6979,7 +7009,7 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 			}
 			
 			for (int k=1; k<=9; k++)
-				c[k] = rgb_palette[w[k]] & 0xfcfcfcfc; // hq2x has a nasty inability to accept more than 6 bits for each component
+				c[k] = rgb_palette[w[k]] & 0xfcfcfcfc; // hq4x has a nasty inability to accept more than 6 bits for each component
 			
 			switch (pattern)
 			{
@@ -11957,9 +11987,252 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 			}
 			
 			src++;
-			dst += 4 * Bpp;
+			dst += 4 * dst_Bpp;
 		}
 		
-		dst = dst_temp + 4 * display_surface->pitch;
+		src = src_temp + src_pitch;
+		dst = dst_temp + 4 * dst_pitch;
+	}
+}
+
+
+void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+{
+	Uint8 *src = src_surface->pixels, *src_temp,
+	      *dst = dst_surface->pixels, *dst_temp;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
+	
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
+	int prevline, nextline;
+	
+	Uint32 E0, E1, E2, E3, B, D, E, F, H;
+	for (int y = 0; y < height; y++)
+	{
+		src_temp = src;
+		dst_temp = dst;
+		
+		prevline = (y > 0) ? -src_pitch : 0;
+		nextline = (y < height - 1) ? src_pitch : 0;
+		
+		for (int x = 0; x < width; x++)
+		{
+			B = rgb_palette[*(src + prevline)];
+			D = rgb_palette[*(x > 0 ? src - 1 : src)];
+			E = rgb_palette[*src];
+			F = rgb_palette[*(x < width - 1 ? src + 1 : src)];
+			H = rgb_palette[*(src + nextline)];
+			
+			if (B != H && D != F) {
+				E0 = D == B ? D : E;
+				E1 = B == F ? F : E;
+				E2 = D == H ? D : E;
+				E3 = H == F ? F : E;
+			} else {
+				E0 = E1 = E2 = E3 = E;
+			}
+			
+			*(Uint32 *)dst = E0;
+			*(Uint32 *)(dst + dst_Bpp) = E1;
+			*(Uint32 *)(dst + dst_pitch) = E2;
+			*(Uint32 *)(dst + dst_pitch + dst_Bpp) = E3;
+			
+			src++;
+			dst += 2 * dst_Bpp;
+		}
+		
+		src = src_temp + src_pitch;
+		dst = dst_temp + 2 * dst_pitch;
+	}
+}
+
+void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+{
+	Uint8 *src = src_surface->pixels, *src_temp,
+	      *dst = dst_surface->pixels, *dst_temp;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
+	
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
+	int prevline, nextline;
+	
+	Uint16 E0, E1, E2, E3, B, D, E, F, H;
+	for (int y = 0; y < height; y++)
+	{
+		src_temp = src;
+		dst_temp = dst;
+		
+		prevline = (y > 0) ? -src_pitch : 0;
+		nextline = (y < height - 1) ? src_pitch : 0;
+		
+		for (int x = 0; x < width; x++)
+		{
+			B = rgb_palette[*(src + prevline)];
+			D = rgb_palette[*(x > 0 ? src - 1 : src)];
+			E = rgb_palette[*src];
+			F = rgb_palette[*(x < width - 1 ? src + 1 : src)];
+			H = rgb_palette[*(src + nextline)];
+			
+			if (B != H && D != F) {
+				E0 = D == B ? D : E;
+				E1 = B == F ? F : E;
+				E2 = D == H ? D : E;
+				E3 = H == F ? F : E;
+			} else {
+				E0 = E1 = E2 = E3 = E;
+			}
+			
+			*(Uint16 *)dst = E0;
+			*(Uint16 *)(dst + dst_Bpp) = E1;
+			*(Uint16 *)(dst + dst_pitch) = E2;
+			*(Uint16 *)(dst + dst_pitch + dst_Bpp) = E3;
+			
+			src++;
+			dst += 2 * dst_Bpp;
+		}
+		
+		src = src_temp + src_pitch;
+		dst = dst_temp + 2 * dst_pitch;
+	}
+}
+
+
+void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+{
+	Uint8 *src = src_surface->pixels, *src_temp,
+	      *dst = dst_surface->pixels, *dst_temp;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
+	
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
+	int prevline, nextline;
+	
+	Uint32 E0, E1, E2, E3, E4, E5, E6, E7, E8, A, B, C, D, E, F, G, H, I;
+	for (int y = 0; y < height; y++)
+	{
+		src_temp = src;
+		dst_temp = dst;
+		
+		prevline = (y > 0) ? -src_pitch : 0;
+		nextline = (y < height - 1) ? src_pitch : 0;
+		
+		for (int x = 0; x < width; x++)
+		{
+			A = rgb_palette[*(src + prevline - (x > 0 ? 1 : 0))];
+			B = rgb_palette[*(src + prevline)];
+			C = rgb_palette[*(src + prevline + (x < width - 1 ? 1 : 0))];
+			D = rgb_palette[*(src - (x > 0 ? 1 : 0))];
+			E = rgb_palette[*src];
+			F = rgb_palette[*(src + (x < width - 1 ? 1 : 0))];
+			G = rgb_palette[*(src + nextline - (x > 0 ? 1 : 0))];
+			H = rgb_palette[*(src + nextline)];
+			I = rgb_palette[*(src + nextline + (x < width - 1 ? 1 : 0))];
+			
+			if (B != H && D != F) {
+				E0 = D == B ? D : E;
+				E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
+				E2 = B == F ? F : E;
+				E3 = (D == B && E != G) || (D == H && E != A) ? D : E;
+				E4 = E;
+				E5 = (B == F && E != I) || (H == F && E != C) ? F : E;
+				E6 = D == H ? D : E;
+				E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
+				E8 = H == F ? F : E;
+			} else {
+				E0 = E1 = E2 = E3 = E4 = E5 = E6 = E7 = E8 = E;
+			}
+			
+			*(Uint32 *)dst = E0;
+			*(Uint32 *)(dst + dst_Bpp) = E1;
+			*(Uint32 *)(dst + 2 * dst_Bpp) = E2;
+			*(Uint32 *)(dst + dst_pitch) = E3;
+			*(Uint32 *)(dst + dst_pitch + dst_Bpp) = E4;
+			*(Uint32 *)(dst + dst_pitch + 2 * dst_Bpp) = E5;
+			*(Uint32 *)(dst + 2 * dst_pitch) = E6;
+			*(Uint32 *)(dst + 2 * dst_pitch + dst_Bpp) = E7;
+			*(Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = E8;
+			
+			src++;
+			dst += 3 * dst_Bpp;
+		}
+		
+		src = src_temp + src_pitch;
+		dst = dst_temp + 3 * dst_pitch;
+	}
+}
+
+void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+{
+	Uint8 *src = src_surface->pixels, *src_temp,
+	      *dst = dst_surface->pixels, *dst_temp;
+	int src_pitch = src_surface->pitch,
+	    dst_pitch = dst_surface->pitch;
+	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
+	
+	const int height = vga_height, // src_surface->h
+	          width = vga_width;   // src_surface->w
+	
+	int prevline, nextline;
+	
+	Uint16 E0, E1, E2, E3, E4, E5, E6, E7, E8, A, B, C, D, E, F, G, H, I;
+	for (int y = 0; y < height; y++)
+	{
+		src_temp = src;
+		dst_temp = dst;
+		
+		prevline = (y > 0) ? -src_pitch : 0;
+		nextline = (y < height - 1) ? src_pitch : 0;
+		
+		for (int x = 0; x < width; x++)
+		{
+			A = rgb_palette[*(src + prevline - (x > 0 ? 1 : 0))];
+			B = rgb_palette[*(src + prevline)];
+			C = rgb_palette[*(src + prevline + (x < width - 1 ? 1 : 0))];
+			D = rgb_palette[*(src - (x > 0 ? 1 : 0))];
+			E = rgb_palette[*src];
+			F = rgb_palette[*(src + (x < width - 1 ? 1 : 0))];
+			G = rgb_palette[*(src + nextline - (x > 0 ? 1 : 0))];
+			H = rgb_palette[*(src + nextline)];
+			I = rgb_palette[*(src + nextline + (x < width - 1 ? 1 : 0))];
+			
+			if (B != H && D != F) {
+				E0 = D == B ? D : E;
+				E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
+				E2 = B == F ? F : E;
+				E3 = (D == B && E != G) || (D == H && E != A) ? D : E;
+				E4 = E;
+				E5 = (B == F && E != I) || (H == F && E != C) ? F : E;
+				E6 = D == H ? D : E;
+				E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
+				E8 = H == F ? F : E;
+			} else {
+				E0 = E1 = E2 = E3 = E4 = E5 = E6 = E7 = E8 = E;
+			}
+			
+			*(Uint16 *)dst = E0;
+			*(Uint16 *)(dst + dst_Bpp) = E1;
+			*(Uint16 *)(dst + 2 * dst_Bpp) = E2;
+			*(Uint16 *)(dst + dst_pitch) = E3;
+			*(Uint16 *)(dst + dst_pitch + dst_Bpp) = E4;
+			*(Uint16 *)(dst + dst_pitch + 2 * dst_Bpp) = E5;
+			*(Uint16 *)(dst + 2 * dst_pitch) = E6;
+			*(Uint16 *)(dst + 2 * dst_pitch + dst_Bpp) = E7;
+			*(Uint16 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = E8;
+			
+			src++;
+			dst += 3 * dst_Bpp;
+		}
+		
+		src = src_temp + src_pitch;
+		dst = dst_temp + 3 * dst_pitch;
 	}
 }

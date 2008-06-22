@@ -32,6 +32,6 @@ struct scaler_struct {
 };
 
 extern int scale, scaler;
-extern const struct scaler_struct scalers[7];
+extern const struct scaler_struct scalers[9];
 
 #endif /* VIDEO_SCALE_H */
