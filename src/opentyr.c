@@ -235,7 +235,10 @@ void opentyrian_menu( void )
 							temp_scaler--;
 						} while ((display_surface->format->BitsPerPixel == 32 && scalers[temp_scaler].scaler32 == NULL) ||
 						         (display_surface->format->BitsPerPixel == 16 && scalers[temp_scaler].scaler16 == NULL));
-						JE_playSampleNum(CURSOR_MOVE);
+						if (display_surface->format->BitsPerPixel == 8)
+							temp_scaler = 0;
+						else
+							JE_playSampleNum(CURSOR_MOVE);
 					}
 					break;
 				case SDLK_RIGHT:
@@ -247,7 +250,10 @@ void opentyrian_menu( void )
 								temp_scaler = 0;
 						} while ((display_surface->format->BitsPerPixel == 32 && scalers[temp_scaler].scaler32 == NULL) ||
 						         (display_surface->format->BitsPerPixel == 16 && scalers[temp_scaler].scaler16 == NULL));
-						JE_playSampleNum(CURSOR_MOVE);
+						if (display_surface->format->BitsPerPixel == 8)
+							temp_scaler = 0;
+						else
+							JE_playSampleNum(CURSOR_MOVE);
 					}
 					break;
 				case SDLK_RETURN:
@@ -261,13 +267,17 @@ void opentyrian_menu( void )
 							fade_in = true;
 							break;
 						case 1: /* Fullscreen */
+							JE_playSampleNum(SELECT);
 							fullscreen_enabled = !fullscreen_enabled;
 							reinit_video();
-							JE_playSampleNum(SELECT);
 							break;
 						case 2: /* Scaler */
-							scaler = temp_scaler;
-							reinit_video();
+							JE_playSampleNum(SELECT);
+							if (scaler != temp_scaler)
+							{
+								scaler = temp_scaler;
+								reinit_video();
+							}
 							break;
 						case 3: /* Jukebox */
 							JE_playSampleNum(SELECT);

@@ -48,26 +48,27 @@ video_error:
 	
 	SDL_WM_SetCaption("OpenTyrian (ctrl-backspace to kill)", NULL);
 	
-#ifdef TARGET_GP2X
-	VGAScreen = VGAScreenSeg = display_surface;
-#else
+#ifndef TARGET_GP2X
 	VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 #endif /* TARGET_GP2X */
-	VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
-	game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
-	
-#ifdef TARGET_GP2X
-	SDL_FillRect(VGAScreenSeg, NULL, 0x0);
-#endif /* TARGET_GP2X */
-	SDL_FillRect(game_screen, NULL, 0x0);
 	
 	reinit_video();
 	
 	SDL_FillRect(display_surface, NULL, 0x0);
+	
+	VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
+	game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 }
 
 void reinit_video( void )
 {
+#ifdef TARGET_GP2X
+	if (display_surface)
+		return;
+	
+	scaler = 0;
+#endif /* TARGET_GP2X */
+	
 	scale = scalers[scaler].scale;
 	
 	int w = vga_width * scale,
@@ -75,9 +76,13 @@ void reinit_video( void )
 	int bpp = 32;
 	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen_enabled ? SDL_FULLSCREEN : 0);
 	
+#ifndef TARGET_GP2X
 	bpp = SDL_VideoModeOK(w, h, bpp, flags);
 	if (bpp == 24)
 		bpp = 32;
+#else /* TARGET_GP2X */
+	bpp = 8;
+#endif /* TARGET_GP2X */
 	
 	display_surface = SDL_SetVideoMode(w, h, bpp, flags);
 	
@@ -88,6 +93,10 @@ void reinit_video( void )
 	} else {
 		printf("initialized SDL video: %dx%dx%d\n", w, h, bpp);
 	}
+	
+#ifdef TARGET_GP2X
+	VGAScreen = VGAScreenSeg = display_surface;
+#endif /* TARGET_GP2X */
 	
 	input_grab();
 	
