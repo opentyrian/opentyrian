@@ -30,8 +30,8 @@ JE_MusicType musicData;
 JE_boolean repeated;
 JE_boolean playing;
 
-float sample_volume = 0.4f;
-float music_volume = 0.6f;
+float sample_volume = 0.9f;
+float music_volume = 0.7f;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
 SAMPLE_TYPE *channel_buffer[SFX_CHANNELS] = { NULL };
@@ -230,8 +230,8 @@ void JE_setVol(JE_word volume, JE_word sample)
 	/* printf("JE_setVol: music: %d, sample: %d\n", volume, sample); */
 	
 	if (volume > 0)
-		music_volume = volume * (float)(0.6 / 256.0);
-	sample_volume = sample * (float)(0.4 / 256.0);
+		music_volume = volume * (float)(1.0 / 256.0);
+	sample_volume = sample * (float)(0.7 / 256.0);
 }
 
 JE_word JE_getVol( void )

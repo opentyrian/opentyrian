@@ -148,9 +148,9 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 							}
 						}
 					}
-					if (b > 32 && b < 126 && z < maxloc)
+					if (b > 32 && b < 126 && --z < maxloc)
 					{
-						JE_newDrawCShapeShadow((*shapeArray)[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z-1] + 1, y + 1);
+						JE_newDrawCShapeShadow((*shapeArray)[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z] + 1, y + 1);
 					}
 					if (JE_anyButton())
 					{
