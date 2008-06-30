@@ -7673,6 +7673,8 @@ item_screen_start:
 
 void JE_loadCubes( void )
 {
+	/* the followinging code is swarming with bugs which have been implemented as best we can */
+	
 	char s[256] = "", s2[256] = "", s3[256] = "";
 	JE_byte cube;
 	JE_word x, y;
@@ -7711,9 +7713,8 @@ void JE_loadCubes( void )
 		curWidth = 0;
 		x = 5;
 		y = 1;
+		
 		s3[0] = '\0';
-
-		s2[0] = ' ';
 
 		do
 		{
@@ -7745,13 +7746,9 @@ void JE_loadCubes( void )
 							{
 								// Increase width by character's size
 								curWidth += shapeX[5][fontMap[temp-33]] + 1;
-							} else {
-								// No, so, is it a space?
-								if (temp == ' ')
-								{
-									// Add a fixed width for the space
-									curWidth += 6;
-								}
+							} else if (temp == ' ') {
+								// Add a fixed width for the space
+								curWidth += 6;
 							}
 
 							pos++;
@@ -7777,7 +7774,12 @@ void JE_loadCubes( void )
 					if (!endString || pastStringLen || pastStringWidth)
 					{
 						/*Start new line*/
-						strnztcpy(cubeText[cube][y-1], s + startPos - 1, endPos - startPos);
+						if (startPos - 1 < strlen(s))
+						{
+							strnztcpy(cubeText[cube][y-1], s + startPos - 1, endPos - startPos);
+						} else {
+							s[endPos] = '\0';
+						}
 						y++;
 						strnztcpy(s3, s + endPos, 255);
 						curWidth = curWidth - lastWidth;
