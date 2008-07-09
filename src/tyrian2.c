@@ -4240,10 +4240,10 @@ void JE_titleScreen( JE_boolean animate )
 						} else {
 							tempY = JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES);
 							
-							JE_outTextAdjust(tempY-1, tempX-1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY+1, tempX+1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY+1, tempX-1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY-1, tempX+1, menuText[temp], 15, -10,SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY-1, tempX-1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY+1, tempX+1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY+1, tempX-1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
+							JE_outTextAdjust(tempY-1, tempX+1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
 							JE_outTextAdjust(tempY, tempX, menuText[temp], 15, -3, SMALL_FONT_SHAPES, false);
 						}
 					}

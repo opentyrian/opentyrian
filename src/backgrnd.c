@@ -642,8 +642,8 @@ void JE_smoothies1( void ) /*Lava Effect*/
 	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i, j, temp;
 	
-	s += game_screen->pitch * 185;
-	src += game_screen->pitch * 185;
+	s += game_screen->pitch * 185 - 1;
+	src += game_screen->pitch * 185 - 1;
 	
 	for (i = 185 * game_screen->pitch; i; i -= 8)
 	{
@@ -652,7 +652,10 @@ void JE_smoothies1( void ) /*Lava Effect*/
 		
 		for (j = 8; j; j--)
 		{
-			*s = (((*(src + temp) & 0x0f) + (*(src + temp + game_screen->pitch) & 0x0f) + (i + temp < game_screen->pitch ? 0 : *(src + temp - game_screen->pitch) & 0x0f)) >> 2) | 0x70;
+			Uint8 temp_s = (*(src + temp) & 0x0f) * 2;
+			temp_s += *(s + temp + game_screen->pitch) & 0x0f;
+			temp_s += (i + temp < game_screen->pitch) ? 0 : *(s + temp - game_screen->pitch) & 0x0f;
+			*s = (temp_s >> 2) | 0x70;
 			s--;
 			src--;
 		}
@@ -666,8 +669,8 @@ void JE_smoothies2( void ) /*Water effect*/
 	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i, j, temp;
 
-	s += game_screen->pitch * 185;
-	src += game_screen->pitch * 185;
+	s += game_screen->pitch * 185 - 1;
+	src += game_screen->pitch * 185 - 1;
 
 	for (i = 185 * game_screen->pitch; i; i -= 8)
 	{
@@ -677,8 +680,11 @@ void JE_smoothies2( void ) /*Water effect*/
 		for (j = 8; j; j--)
 		{
 			if (*src & 0x30)
-				*s = (((*src & 0x0f) + (*(s + temp + game_screen->pitch) & 0x0f)) >> 1) | (SDAT[2-1] << 4);
-			else
+			{
+				Uint8 temp_s = *src & 0x0f;
+				temp_s += *(s + temp + game_screen->pitch) & 0x0f;
+				*s = (temp_s >> 1) | (SDAT[2-1] << 4);
+			} else
 				*s = *src;
 			s--;
 			src--;
@@ -692,7 +698,7 @@ void JE_smoothies3( void ) /* iced motion blur */
 	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
 	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i;
-
+	
 	for (i = 184 * game_screen->pitch; i; i--)
 	{
 		*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | 0x80;
@@ -707,7 +713,7 @@ void JE_smoothies4( void ) /* motion blur */
 	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
 	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
 	int i;
-
+	
 	for (i = 184 * game_screen->pitch; i; i--)
 	{
 		*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | (*src & 0xf0);

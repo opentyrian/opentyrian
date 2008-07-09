@@ -493,7 +493,7 @@ JE_boolean JE_playerSelect( void )
 					{
 						/* TODO: NETWORK */
 						printf("error: networking via menu not implemented\n");
-						exit(-1);
+						return false;
 					}
 					break;
 				case SDLK_ESCAPE:
@@ -599,7 +599,7 @@ startepisodeselect:
 			}
 		}
 
-	} while (!(quit || haltGame /*|| netQuit*/));
+	} while (!(quit || haltGame || netQuit));
 
 	return false; /*MXD assumes this default return value here*/
 }
@@ -705,7 +705,7 @@ JE_boolean JE_difficultySelect( void )
 			}
 		}
 
-	} while (!(quit || haltGame /*|| netQuit*/));
+	} while (!(quit || haltGame || netQuit));
 
 	return true; /*MXD assumes this default return value here*/
 }

@@ -22,7 +22,6 @@
 
 #include "opentyr.h"
 
-
 extern JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
 extern JE_boolean isNetworkGame;
 extern JE_boolean tyrianXmas;

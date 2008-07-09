@@ -27,8 +27,6 @@
 #include <string.h>
 #include <time.h>
 
-
-
 JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
 
 JE_boolean isNetworkGame;

@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef PALLIB_H
-#define PALLIB_H
+#ifndef PALETTE_H
+#define PALETTE_H
 
 #include "opentyr.h"
 
@@ -48,4 +48,4 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
 
 Uint32 rgb_to_yuv( int r, int g, int b );
 
-#endif /* PALLIB_H */
+#endif /* PALETTE_H */
