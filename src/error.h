@@ -25,10 +25,10 @@
 
 extern JE_word randomcount;
 extern JE_boolean dont_die;
-extern JE_char dir[256];
+extern JE_char dir[500];
 extern JE_boolean errorActive;
 extern JE_boolean errorOccurred;
-extern char err_msg[1000];
+extern char err_msg[];
 
 void JE_outputString( JE_char* s );
 
@@ -42,6 +42,11 @@ JE_boolean JE_find( const char *s );
 void JE_resetFile( FILE **f, const char *filename );
 void JE_resetText( FILE **f, const char *filename );
 char *JE_locateFile( const char *filename );
+
+#ifdef TARGET_MACOSX
+const char *tyrian_game_folder();
+#endif /* TARGET_MACOSX */
+
 void JE_findTyrian( const char *filename );
 /* void JE_OutputString( char *s ); Obscure DOS trick (?) */
 JE_longint JE_getFileSize( const char *filename );

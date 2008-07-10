@@ -28,7 +28,7 @@
 #include <stdio.h>
 
 JE_word randomcount;
-JE_char dir[256]; /* increase me */
+JE_char dir[500];
 
 JE_boolean errorActive = true;
 JE_boolean errorOccurred = false;
@@ -37,7 +37,9 @@ JE_boolean dont_die = false;
 
 char err_msg[1000] = "No error!?";
 
+#ifndef TARGET_MACOSX
 static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
+#endif
 
 long get_stream_size( FILE *f )
 {
@@ -56,7 +58,7 @@ long get_stream_size( FILE *f )
 
 FILE *fopen_check( const char *file, const char *mode )
 {
-	char buf[64];
+	char buf[50];
 	FILE *f;
 
 	errno = 0;
@@ -145,6 +147,10 @@ void JE_findTyrian( const char *filename )
 		/* Let's find it! */
 		printf("Searching for Tyrian files...\n\n");
 
+#ifdef TARGET_MACOSX
+		snprintf(dir, sizeof(dir), "%s", tyrian_game_folder());
+		printf("Tyrian data files found at %s\n\n", dir);
+#else /* TARGET_MACOSX */
 		for (int i = 0; i < COUNTOF(tyrian_searchpaths); i++)
 		{
 			strbuf = malloc(strlen(tyrian_searchpaths[i]) + strlen(filename) + 2);
@@ -161,6 +167,7 @@ void JE_findTyrian( const char *filename )
 			
 			free(strbuf);
 		}
+#endif /* TARGET_MACOSX */
 	}
 }
 

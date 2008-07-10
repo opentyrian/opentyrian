@@ -139,6 +139,7 @@ extern JE_word editorLevel;
 
 void JE_initProcessorType( void );
 void JE_setNewGameSpeed( void );
+const char *get_user_directory( void );
 void JE_loadConfiguration( void );
 void JE_saveConfiguration( void );
 void JE_readCryptLn( FILE* f, char *s );

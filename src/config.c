@@ -660,6 +660,18 @@ void JE_decryptSaveTemp( void )
 	memcpy(&saveTemp, &s2, sizeof(s2));
 }
 
+#ifndef TARGET_MACOSX
+const char *get_user_directory( void )
+{
+	static char userdir[500] = "";
+#ifdef TARGET_UNIX
+	if (strlen(userdir) == 0 && getenv("HOME"))
+		snprintf(userdir, sizeof(userdir), "%s/.opentyrian/", getenv("HOME"));
+#endif /* TARGET_UNIX */
+	return userdir;
+}
+#endif /* TARGET_MACOSX */
+
 void JE_loadConfiguration( void )
 {
 	FILE *fi;
@@ -670,11 +682,8 @@ void JE_loadConfiguration( void )
 
 	errorActive = true;
 	
-	char cfgfile[1000] = "tyrian.cfg";
-#ifdef TARGET_UNIX
-	if (getenv("HOME"))
-		snprintf(cfgfile, sizeof(cfgfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.cfg");
-#endif /* HOME */
+	char cfgfile[1000];
+	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
 	
 	fi = fopen_check(cfgfile, "rb");
 	if (fi && get_stream_size(fi) == 18 + sizeof(keySettings) + sizeof(joyButtonAssign))
@@ -754,12 +763,9 @@ void JE_loadConfiguration( void )
 	musicActive = true;
 
 	JE_setVol(tyrMusicVolume, fxVolume);
-
-	char savfile[1000] = "tyrian.sav";
-#ifdef TARGET_UNIX
-	if (getenv("HOME"))
-		snprintf(savfile, sizeof(savfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.sav");
-#endif /* HOME */
+	
+	char savfile[1000];
+	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
 	
 	fi = fopen_check(savfile, "rb");
 	if (fi)
@@ -949,11 +955,8 @@ void JE_saveConfiguration( void )
 	
 	JE_encryptSaveTemp();
 	
-	char savfile[1000] = "tyrian.sav";
-#ifdef TARGET_UNIX
-	if (getenv("HOME"))
-		snprintf(savfile, sizeof(savfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.sav");
-#endif /* HOME */
+	char savfile[1000];
+	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
 	
 	f = fopen_check(savfile, "wb");
 	if (f)
@@ -966,11 +969,8 @@ void JE_saveConfiguration( void )
 	}
 	JE_decryptSaveTemp();
 	
-	char cfgfile[1000] = "tyrian.cfg";
-#ifdef TARGET_UNIX
-	if (getenv("HOME"))
-		snprintf(cfgfile, sizeof(cfgfile), "%s/.opentyrian/%s", getenv("HOME"), "tyrian.cfg");
-#endif /* HOME */
+	char cfgfile[1000];
+	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
 	
 	f = fopen_check(cfgfile, "wb");
 	if (f)

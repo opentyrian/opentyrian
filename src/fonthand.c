@@ -475,11 +475,11 @@ JE_word JE_textWidth( const char *s, JE_byte font )
 {
 	JE_byte a, b;
 	JE_word x = 0;
-
+	
 	for (a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
-
+		
 		if ((b > 32) && (b < 126))
 		{
 			if (fontMap[b-33] != 255)
@@ -492,8 +492,8 @@ JE_word JE_textWidth( const char *s, JE_byte font )
 				x += 6;
 			}
 		}
-   }
-   return x;
+	}
+	return x;
 }
 
 void JE_textShade( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness, JE_byte shadetype )
@@ -517,7 +517,7 @@ void JE_textShade( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_sh
 		case TRICK:
 			JE_outTextModify(x, y, s, colorbank, brightness, TINY_FONT);
 			break;
-   }
+	}
 }
 
 void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness )
