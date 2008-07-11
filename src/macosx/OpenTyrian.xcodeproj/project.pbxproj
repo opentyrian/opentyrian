@@ -248,7 +248,7 @@
 		433BB7FF0E14192A00CCE3BF /* video_scale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video_scale.h; path = src/video_scale.h; sourceTree = "<group>"; };
 		433BB8000E14192A00CCE3BF /* video.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = video.c; path = src/video.c; sourceTree = "<group>"; };
 		433BB8010E14192A00CCE3BF /* video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video.h; path = src/video.h; sourceTree = "<group>"; };
-		437A38A40E0D2FF90097837C /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_net.framework; sourceTree = "<group>"; };
+		437A38A40E0D2FF90097837C /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_net.framework; path = /Library/Frameworks/SDL_net.framework; sourceTree = "<absolute>"; };
 		437A39590E0D3A770097837C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* OpenTyrian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenTyrian.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -277,6 +277,7 @@
 				433BB7D00E14192A00CCE3BF /* main.m */,
 			);
 			name = "Mac-specific Files";
+			path = ..;
 			sourceTree = SOURCE_ROOT;
 		};
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
@@ -425,7 +426,7 @@
 				433BB8010E14192A00CCE3BF /* video.h */,
 			);
 			name = "Untouched opentyrian Files";
-			path = ..;
+			path = ../..;
 			sourceTree = SOURCE_ROOT;
 		};
 		A43848C10CC5AE570007FEE0 /* Mac-specific Modifications */ = {
@@ -437,6 +438,7 @@
 				433BB7B50E14192A00CCE3BF /* error.h */,
 			);
 			name = "Mac-specific Modifications";
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -572,8 +574,8 @@
 				INFOPLIST_FILE = Info.plist;
 				OTHER_CFLAGS = "-DSCALE2X";
 				PRODUCT_NAME = OpenTyrian;
-				SDL_FRAMEWORK = SDL.framework;
-				SDL_NET_FRAMEWORK = SDL_net.framework;
+				SDL_FRAMEWORK = /Library/Frameworks/SDL.framework;
+				SDL_NET_FRAMEWORK = /Library/Frameworks/SDL_net.framework;
 				USER_HEADER_SEARCH_PATHS = "$(SDL_FRAMEWORK)/Headers $(SDL_NET_FRAMEWORK)/Headers";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -595,8 +597,8 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = OpenTyrian;
-				SDL_FRAMEWORK = SDL.framework;
-				SDL_NET_FRAMEWORK = SDL_net.framework;
+				SDL_FRAMEWORK = /Library/Frameworks/SDL.framework;
+				SDL_NET_FRAMEWORK = /Library/Frameworks/SDL_net.framework;
 				USER_HEADER_SEARCH_PATHS = "$(SDL_FRAMEWORK)/Headers $(SDL_NET_FRAMEWORK)/Headers";
 				WRAPPER_EXTENSION = app;
 			};
