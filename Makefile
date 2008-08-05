@@ -34,7 +34,7 @@ ifeq ($(PLATFORM), UNIX)
 endif
 
 
-CFLAGS := --std=c99 -fgnu89-inline -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wno-unused -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
+CFLAGS := --std=c99 -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wno-unused -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
 LDFLAGS := $(SDL_LDFLAGS) -lm
 
 SVN_REV := $(shell svnversion src -n)

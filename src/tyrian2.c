@@ -1005,11 +1005,6 @@ start_level:
 		}
 	}
 
-	if (isNetworkGame)
-	{
-		netQuit = false;
-	}
-
 	difficultyLevel = oldDifficultyLevel;   /*Return difficulty to normal*/
 
 	if (!playDemo)
@@ -4444,11 +4439,6 @@ void JE_titleScreen( JE_boolean animate )
 								JE_fadeBlack(10);
 								if (JE_playerSelect())
 								{
-									if (netQuit)
-									{
-										JE_tyrianHalt(9);
-									}
-									
 									if (JE_episodeSelect() && JE_difficultySelect())
 									{
 										gameLoaded = true;
@@ -8436,11 +8426,6 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 		colC = 1;
 
 		do {
-			if (netQuit)
-			{
-				JE_tyrianHalt(0);
-			}
-
 			setjasondelay(4);
 
 			/*scanCode = 0;
@@ -8524,11 +8509,6 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 		}
 
 	} while (!quit);
-
-	if (netQuit)
-	{
-		JE_tyrianHalt(0);
-	}
 
 	retval = select;
 	if (select)

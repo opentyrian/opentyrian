@@ -599,7 +599,7 @@ startepisodeselect:
 			}
 		}
 
-	} while (!(quit || haltGame || netQuit));
+	} while (!(quit || haltGame));
 
 	return false; /*MXD assumes this default return value here*/
 }
@@ -705,7 +705,7 @@ JE_boolean JE_difficultySelect( void )
 			}
 		}
 
-	} while (!(quit || haltGame || netQuit));
+	} while (!(quit || haltGame));
 
 	return true; /*MXD assumes this default return value here*/
 }
@@ -1586,7 +1586,6 @@ JE_boolean JE_inGameSetup( void )
 							
 							if (isNetworkGame)
 							{ /*Tell other computer to exit*/
-								netQuit = true;
 								haltGame = true;
 								playerEndLevel = true;
 							}
@@ -1700,8 +1699,7 @@ JE_boolean JE_inGameSetup( void )
 			}
 		}
 		
-	} while (!(quit || haltGame || netQuit));
-	netQuit = false;
+	} while (!(quit || haltGame));
 	
 	VGAScreen = temp_surface; /* side-effect of game_screen */
 	

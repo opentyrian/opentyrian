@@ -83,7 +83,6 @@ bool connected = false, quit = false;
 JE_integer thisPlayerNum = 0;  /* Player number on this PC (1 or 2) */
 
 JE_boolean haltGame = false;
-JE_boolean netQuit = false;
 
 JE_boolean moveOk;
 
@@ -616,17 +615,21 @@ connect_again:
 	{
 		service_SDL_events(false);
 		
+		// got a duplicate packet; process it again (but why?)
 		if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_CONNECT)
 			goto connect_again;
 		
 		network_check();
 		
+		// maybe opponent didn't get our packet
 		if (SDL_GetTicks() - last_out_tick > NET_RETRY)
 			goto connect_reset;
 		
 		SDL_Delay(16);
 	}
 	
+	// send another packet since sometimes the network syncs without both connect packets exchanged
+	// there should be a better way to handle this
 	network_prepare(PACKET_CONNECT);
 	SDLNet_Write16(NET_VERSION, &packet_out_temp->data[4]);
 	SDLNet_Write16(network_delay,   &packet_out_temp->data[6]);

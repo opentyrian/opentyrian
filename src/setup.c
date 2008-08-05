@@ -102,7 +102,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		{
 			(*waitTime)--;
 		}
-	} while (!(inputDetected || *waitTime == 1 || haltGame || netQuit));
+	} while (!(inputDetected || *waitTime == 1 || haltGame));
 }
 
 

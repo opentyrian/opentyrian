@@ -56,7 +56,6 @@ extern UDPpacket *packet_in[], *packet_out[],
 
 extern JE_integer thisPlayerNum;
 extern JE_boolean haltGame;
-extern JE_boolean netQuit;
 extern JE_boolean moveOk;
 extern JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 extern JE_boolean yourInGameMenuRequest, inGameMenuRequest;

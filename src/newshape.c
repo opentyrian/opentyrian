@@ -279,7 +279,7 @@ JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
 		NETWORK_KEEP_ALIVE();
 		
 		SDL_Delay(16);
-	} while (!(inputDetected || delaycount() == 0 || netQuit));
+	} while (!(inputDetected || delaycount() == 0));
 
 	return inputDetected;
 }
