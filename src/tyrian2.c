@@ -590,7 +590,7 @@ enemy_still_exists:
 				if (enemy[i].freq[j-1])
 				{
 					temp3 = enemy[i].tur[j-1];
-
+					
 					if (--enemy[i].eshotwait[j-1] == 0 && temp3)
 					{
 						enemy[i].eshotwait[j-1] = enemy[i].freq[j-1];
@@ -602,23 +602,22 @@ enemy_still_exists:
 								enemy[i].eshotwait[j-1] = (enemy[i].eshotwait[j-1] / 2) + 1;
 							}
 						}
-
+						
 						if (galagaMode && (enemy[i].eyc == 0 || (mt_rand() % 400) >= galagaShotFreq))
 							goto draw_enemy_end;
-
-						/* <MXD> replace with a switch */
-						if (temp3 == 252) /* Savara Boss DualMissile */
+						
+						switch (temp3)
 						{
-							if (enemy[i].ey > 20)
-							{
-								explosionMoveUp = -2 * VGAScreen->pitch;
-								JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
-								JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
-								explosionMoveUp = 0;
-							}
-						} else if (temp3 > 250) {
-							if (temp3 == 251) /* Suck-O-Magnet */
-							{
+							case 252: /* Savara Boss DualMissile */
+								if (enemy[i].ey > 20)
+								{
+									explosionMoveUp = -2 * VGAScreen->pitch;
+									JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
+									JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
+									explosionMoveUp = 0;
+								}
+								break;
+							case 251: /* Suck-O-Magnet */
 								tempI4 = 4 - (abs(PX - tempX) + abs(PY - tempY)) / 100;
 								if (PX > tempX)
 								{
@@ -626,8 +625,8 @@ enemy_still_exists:
 								} else {
 									lastTurn2 += tempI4;
 								}
-							} else if (temp3 == 253) /* Left ShortRange Magnet */
-							{
+								break;
+							case 253: /* Left ShortRange Magnet */
 								if (abs(PX + 25 - 14 - tempX) < 24 && abs(PY - tempY) < 28)
 								{
 									lastTurn2 += 2;
@@ -637,8 +636,8 @@ enemy_still_exists:
 								{
 									lastTurn2B += 2;
 								}
-							} else if (temp3 == 254) /* Left ShortRange Magnet */
-							{
+								break;
+							case 254: /* Left ShortRange Magnet */
 								if (abs(PX + 25 - 14 - tempX) < 24 && abs(PY - tempY) < 28)
 								{
 									lastTurn2 -= 2;
@@ -648,8 +647,8 @@ enemy_still_exists:
 								{
 									lastTurn2B -= 2;
 								}
-							} else if (temp3 == 255) /* Magneto RePulse!! */
-							{
+								break;
+							case 255: /* Magneto RePulse!! */
 								if (difficultyLevel != 1) /*DIF*/
 								{
 									if (j == 3)
@@ -668,141 +667,139 @@ enemy_still_exists:
 										}
 									}
 								}
-							}
-						} else {
-
+								break;
+							default:
 							/*Rot*/
-							for (tempCount = weapons[temp3].multi; tempCount > 0; tempCount--)
-							{
-								for (b = 0; b < ENEMY_SHOT_MAX; b++)
+								for (tempCount = weapons[temp3].multi; tempCount > 0; tempCount--)
 								{
-									if (enemyShotAvail[b] == 1)
+									for (b = 0; b < ENEMY_SHOT_MAX; b++)
 									{
-										break;
-									}
-								}
-								if (b == ENEMY_SHOT_MAX)
-								{
-									goto draw_enemy_end;
-								}
-
-								enemyShotAvail[b]--;
-
-								if (weapons[temp3].sound > 0)
-								{
-									do {
-										temp = mt_rand() % 8;
-									} while (temp == 3);
-									soundQueue[temp] = weapons[temp3].sound;
-								}
-
-								tempPos = weapons[temp3].max;
-
-								if (enemy[i].aniactive == 2)
-								{
-									enemy[i].aniactive = 1;
-								}
-
-								if (++enemy[i].eshotmultipos[j-1] > tempPos)
-								{
-									enemy[i].eshotmultipos[j-1] = 1;
-								}
-								tempPos = enemy[i].eshotmultipos[j-1];
-
-								if (j == 1)
-								{
-									temp2 = 4;
-								}
-
-								enemyShot[b].sx = tempX + weapons[temp3].bx[tempPos-1] + tempMapXOfs;
-								enemyShot[b].sy = tempY + weapons[temp3].by[tempPos-1];
-								enemyShot[b].sdmg = weapons[temp3].attack[tempPos-1];
-								enemyShot[b].tx = weapons[temp3].tx;
-								enemyShot[b].ty = weapons[temp3].ty;
-								enemyShot[b].duration = weapons[temp3].del[tempPos-1];
-								enemyShot[b].animate = 0;
-								enemyShot[b].animax = weapons[temp3].weapani;
-
-								enemyShot[b].sgr = weapons[temp3].sg[tempPos-1];
-								switch (j)
-								{
-									case 1:
-										enemyShot[b].syc = weapons[temp3].acceleration;
-										enemyShot[b].sxc = weapons[temp3].accelerationx;
-
-										enemyShot[b].sxm = weapons[temp3].sx[tempPos-1];
-										enemyShot[b].sym = weapons[temp3].sy[tempPos-1];
-										break;
-									case 3:
-										enemyShot[b].sxc = -weapons[temp3].acceleration;
-										enemyShot[b].syc = weapons[temp3].accelerationx;
-
-										enemyShot[b].sxm = -weapons[temp3].sy[tempPos-1];
-										enemyShot[b].sym = -weapons[temp3].sx[tempPos-1];
-										break;
-									case 2:
-										enemyShot[b].sxc = weapons[temp3].acceleration;
-										enemyShot[b].syc = -weapons[temp3].acceleration;
-
-										enemyShot[b].sxm = weapons[temp3].sy[tempPos-1];
-										enemyShot[b].sym = -weapons[temp3].sx[tempPos-1];
-										break;
-								}
-
-								if (weapons[temp3].aim > 0)
-								{
-									temp4 = weapons[temp3].aim;
-
-									/*DIF*/
-									if (difficultyLevel > 2)
-									{
-										temp4 += difficultyLevel - 2;
-									}
-
-									tempX2 = PX;
-									tempY2 = PY;
-
-									if (twoPlayerMode)
-									{
-
-										if (playerAliveB && !playerAlive)
+										if (enemyShotAvail[b] == 1)
 										{
-											temp = 1;
-										} else if (playerAlive && !playerAliveB)
+											break;
+										}
+									}
+									if (b == ENEMY_SHOT_MAX)
+									{
+										goto draw_enemy_end;
+									}
+									
+									enemyShotAvail[b]--;
+									
+									if (weapons[temp3].sound > 0)
+									{
+										do {
+											temp = mt_rand() % 8;
+										} while (temp == 3);
+										soundQueue[temp] = weapons[temp3].sound;
+									}
+									
+									tempPos = weapons[temp3].max;
+									
+									if (enemy[i].aniactive == 2)
+									{
+										enemy[i].aniactive = 1;
+									}
+									
+									if (++enemy[i].eshotmultipos[j-1] > tempPos)
+									{
+										enemy[i].eshotmultipos[j-1] = 1;
+									}
+									tempPos = enemy[i].eshotmultipos[j-1];
+									
+									if (j == 1)
+									{
+										temp2 = 4;
+									}
+									
+									enemyShot[b].sx = tempX + weapons[temp3].bx[tempPos-1] + tempMapXOfs;
+									enemyShot[b].sy = tempY + weapons[temp3].by[tempPos-1];
+									enemyShot[b].sdmg = weapons[temp3].attack[tempPos-1];
+									enemyShot[b].tx = weapons[temp3].tx;
+									enemyShot[b].ty = weapons[temp3].ty;
+									enemyShot[b].duration = weapons[temp3].del[tempPos-1];
+									enemyShot[b].animate = 0;
+									enemyShot[b].animax = weapons[temp3].weapani;
+									
+									enemyShot[b].sgr = weapons[temp3].sg[tempPos-1];
+									switch (j)
+									{
+										case 1:
+											enemyShot[b].syc = weapons[temp3].acceleration;
+											enemyShot[b].sxc = weapons[temp3].accelerationx;
+											
+											enemyShot[b].sxm = weapons[temp3].sx[tempPos-1];
+											enemyShot[b].sym = weapons[temp3].sy[tempPos-1];
+											break;
+										case 3:
+											enemyShot[b].sxc = -weapons[temp3].acceleration;
+											enemyShot[b].syc = weapons[temp3].accelerationx;
+											
+											enemyShot[b].sxm = -weapons[temp3].sy[tempPos-1];
+											enemyShot[b].sym = -weapons[temp3].sx[tempPos-1];
+											break;
+										case 2:
+											enemyShot[b].sxc = weapons[temp3].acceleration;
+											enemyShot[b].syc = -weapons[temp3].acceleration;
+											
+											enemyShot[b].sxm = weapons[temp3].sy[tempPos-1];
+											enemyShot[b].sym = -weapons[temp3].sx[tempPos-1];
+											break;
+									}
+									
+									if (weapons[temp3].aim > 0)
+									{
+										temp4 = weapons[temp3].aim;
+										
+										/*DIF*/
+										if (difficultyLevel > 2)
 										{
-											temp = 0;
+											temp4 += difficultyLevel - 2;
+										}
+										
+										tempX2 = PX;
+										tempY2 = PY;
+											
+										if (twoPlayerMode)
+										{
+											if (playerAliveB && !playerAlive)
+											{
+												temp = 1;
+											} else if (playerAlive && !playerAliveB)
+											{
+												temp = 0;
+											} else {
+												temp = mt_rand() % 2;
+											}
+											
+											if (temp == 1)
+											{
+												tempX2 = PXB - 25;
+												tempY2 = PYB;
+											}
+										}
+										
+										tempI = (tempX2 + 25) - tempX - tempMapXOfs - 4;
+										if (tempI == 0)
+										{
+											tempI++;
+										}
+										tempI2 = tempY2 - tempY;
+										if (tempI2 == 0)
+										{
+											tempI2++;
+										}
+										if (abs(tempI) > abs(tempI2))
+										{
+											tempI3 = abs(tempI);
 										} else {
-											temp = mt_rand() % 2;
+											tempI3 = abs(tempI2);
 										}
-
-										if (temp == 1)
-										{
-											tempX2 = PXB - 25;
-											tempY2 = PYB;
-										}
+										enemyShot[b].sxm = round(((float)tempI / tempI3) * temp4);
+										enemyShot[b].sym = round(((float)tempI2 / tempI3) * temp4);
 									}
-
-									tempI = (tempX2 + 25) - tempX - tempMapXOfs - 4;
-									if (tempI == 0)
-									{
-										tempI++;
-									}
-									tempI2 = tempY2 - tempY;
-									if (tempI2 == 0)
-									{
-										tempI2++;
-									}
-									if (abs(tempI) > abs(tempI2))
-									{
-										tempI3 = abs(tempI);
-									} else {
-										tempI3 = abs(tempI2);
-									}
-									enemyShot[b].sxm = round(((float)tempI / tempI3) * temp4);
-									enemyShot[b].sym = round(((float)tempI2 / tempI3) * temp4);
 								}
-							}
-
+								break;
 						}
 					}
 				}
@@ -8486,24 +8483,24 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 			{
 				switch (lastkey_sym)
 				{
-				case SDLK_LEFT:
-				case SDLK_RIGHT:
-					sel = !sel;
-					JE_playSampleNum(CURSOR_MOVE);
-					break;
-				case SDLK_TAB:
-					sel = !sel;
-					break;
-				case SDLK_RETURN:
-				case SDLK_SPACE:
-					quit = true;
-					select = (sel == 1);
-					break;
-				case SDLK_ESCAPE:
-					quit = true;
-					break;
-				default:
-					break;
+					case SDLK_LEFT:
+					case SDLK_RIGHT:
+						sel = !sel;
+						JE_playSampleNum(CURSOR_MOVE);
+						break;
+					case SDLK_TAB:
+						sel = !sel;
+						break;
+					case SDLK_RETURN:
+					case SDLK_SPACE:
+						quit = true;
+						select = (sel == 1);
+						break;
+					case SDLK_ESCAPE:
+						quit = true;
+						break;
+					default:
+						break;
 				}
 			}
 		}
