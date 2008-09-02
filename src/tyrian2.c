@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -1406,8 +1405,8 @@ start_level_first:
 	levelTimer = false;
 	randomExplosions = false;
 
-	lastSP = 0;
-	memset(SPZ, 0, sizeof(SPZ));
+	last_superpixel = 0;
+	memset(superpixels, 0, sizeof(superpixels));
 
 	returnActive = false;
 
@@ -9457,3 +9456,5 @@ void JE_scaleInPicture( void )
 		SDL_Delay(1);
 	}
 }
+
+// kate: tab-width 4; vim: set noet:

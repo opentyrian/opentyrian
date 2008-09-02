@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -75,3 +74,5 @@ void JE_updateButtons( void ); /*Uses ButtonAssign to find out*/
 void joystick_init( void );
 
 #endif /* JOYSTICK_H */
+
+// kate: tab-width 4; vim: set noet:

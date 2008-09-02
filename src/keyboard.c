@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -227,3 +226,5 @@ void JE_clearKeyboard( void )
 {
 	// /!\ Doesn't seems important. I think. D:
 }
+
+// kate: tab-width 4; vim: set noet:

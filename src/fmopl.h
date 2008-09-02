@@ -249,3 +249,5 @@ void CSMKeyControll(OPL_CH *CH);
 
 
 #endif
+
+// kate: tab-width 4; vim: set noet:

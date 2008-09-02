@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -347,3 +346,5 @@ void JE_waitFrameCount( void )
 {
 	/* TODO: I'm not sure how long this function should wait. Leaving it blank for now, it doesn't seem to hurt much... */
 }
+
+// kate: tab-width 4; vim: set noet:

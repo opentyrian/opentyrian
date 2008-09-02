@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -88,3 +87,5 @@ SU3SPIKE.SMP *Warning: Spikes Ahead
 DATA1.SMP    *Data Cube collected
 SPEEDINC.SMP *Unexplained Speed Increase
 */
+
+// kate: tab-width 4; vim: set noet:

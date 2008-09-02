@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -65,3 +64,5 @@ void JE_HBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth );
 void JE_loadHelpText( void );
 
 #endif /* HELPTEXT_H */
+
+// kate: tab-width 4; vim: set noet:

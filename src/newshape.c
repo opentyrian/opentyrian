@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -328,3 +327,5 @@ void newshape_init( void )
 	tempScreenSeg = VGAScreen;
 	shapeArray = malloc(sizeof(JE_ShapeArrayType));
 }
+
+// kate: tab-width 4; vim: set noet:

@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -171,3 +170,5 @@ TYPE 5: Shape Files
 
                    M 1 2 3 4  episode
 */
+
+// kate: tab-width 4; vim: set noet:

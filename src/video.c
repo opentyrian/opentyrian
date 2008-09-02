@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -142,3 +141,5 @@ void JE_showVGA( void )
 	
 	SDL_Flip(display_surface);
 }
+
+// kate: tab-width 4; vim: set noet:

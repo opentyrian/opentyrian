@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -52,3 +51,5 @@ void JE_findTyrian( const char *filename );
 JE_longint JE_getFileSize( const char *filename );
 
 #endif /* ERROR_H */
+
+// kate: tab-width 4; vim: set noet:

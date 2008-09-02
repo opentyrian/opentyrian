@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -28,3 +27,5 @@ extern JE_boolean notyetloadedpcx;
 void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal );
 
 #endif /* PICLOAD_H */
+
+// kate: tab-width 4; vim: set noet:

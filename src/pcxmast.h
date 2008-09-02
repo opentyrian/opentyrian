@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -33,3 +32,5 @@ extern const JE_byte facepal[12];       /* [1..12] */
 extern JE_pcxpostype pcxpos;
 
 #endif /* PCXMAST_H */
+
+// kate: tab-width 4; vim: set noet:

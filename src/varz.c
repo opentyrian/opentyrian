@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -408,9 +407,8 @@ JE_REXtype REXavail;
 REXdatType REXdat[20]; /* [1..20] */
 
 /*SuperPixels*/
-JE_byte SPZ[MAX_SP + 1]; /* [0..MaxSP] */
-SPLType SPL[MAX_SP + 1]; /* [0..MaxSP] */
-JE_word lastSP;
+superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
+unsigned int last_superpixel;
 
 /*MegaData*/
 JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
@@ -1671,52 +1669,52 @@ void JE_resetPlayerH( void )
 
 void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ) /* superpixels */
 {
-	JE_real tempr;
-	JE_integer tempx, tempy;
-	
 	for (temp = 0; temp < num; temp++)
 	{
-		if (++lastSP > MAX_SP)
-			lastSP = 0;
-		tempr = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
-		tempy = round(cos(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
-		tempx = round(sin(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
-		SPL[lastSP].location = (tempy + y) * VGAScreen->pitch + (tempx + x);
-		SPL[lastSP].movement = tempy * VGAScreen->pitch + tempx + VGAScreen->pitch;
-		SPL[lastSP].color = color;
-		SPZ[lastSP] = 15;
+		JE_real tempr = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
+		signed int tempy = round(cos(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
+		signed int tempx = round(sin(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
+		
+		if (++last_superpixel >= MAX_SUPERPIXELS)
+			last_superpixel = 0;
+		superpixels[last_superpixel].x = tempx + x;
+		superpixels[last_superpixel].y = tempy + y;
+		superpixels[last_superpixel].delta_x = tempx;
+		superpixels[last_superpixel].delta_y = tempy + 1;
+		superpixels[last_superpixel].color = color;
+		superpixels[last_superpixel].z = 15;
 	}
 }
 
 void JE_drawSP( void )
 {
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	
-	int i = MAX_SP + 1;
-	
-	while (i--)
+	for (int i = MAX_SUPERPIXELS; i--; )
 	{
-		if (SPZ[i])
+		if (superpixels[i].z)
 		{
-			SPL[i].location += SPL[i].movement;
+			superpixels[i].x += superpixels[i].delta_x;
+			superpixels[i].y += superpixels[i].delta_y;
 			
-			if (SPL[i].location < VGAScreen->h * VGAScreen->pitch)
+			if (superpixels[i].x < VGAScreen->w && superpixels[i].y < VGAScreen->h)
 			{
-				s = (Uint8 *)VGAScreen->pixels;
-				s += SPL[i].location;
+				Uint8 *s = (Uint8 *)VGAScreen->pixels; /* screen pointer, 8-bit specific */
+				s += superpixels[i].y * VGAScreen->pitch;
+				s += superpixels[i].x;
 				
-				*s = (((*s & 0x0f) + SPZ[i]) >> 1) + SPL[i].color;
-				if (SPL[i].location > 1)
-					*(s - 1) = (((*(s - 1) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
-				if (SPL[i].location < VGAScreen->h * VGAScreen->pitch - 1)
-					*(s + 1) = (((*(s + 1) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
-				if (SPL[i].location > VGAScreen->pitch)
-					*(s - VGAScreen->pitch) = (((*(s - VGAScreen->pitch) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
-				if (SPL[i].location < (VGAScreen->h - 1) * VGAScreen->pitch)
-					*(s + VGAScreen->pitch) = (((*(s + VGAScreen->pitch) & 0x0f) + (SPZ[i] >> 1)) >> 1) + SPL[i].color;
+				*s = (((*s & 0x0f) + superpixels[i].z) >> 1) + superpixels[i].color;
+				if (superpixels[i].x > 0)
+					*(s - 1) = (((*(s - 1) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
+				if (superpixels[i].x < VGAScreen->w - 1)
+					*(s + 1) = (((*(s + 1) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
+				if (superpixels[i].y > 0)
+					*(s - VGAScreen->pitch) = (((*(s - VGAScreen->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
+				if (superpixels[i].y < VGAScreen->h - 1)
+					*(s + VGAScreen->pitch) = (((*(s + VGAScreen->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
 			}
 			
-			SPZ[i]--;
+			superpixels[i].z--;
 		}
 	}
 }
+
+// kate: tab-width 4; vim: set noet:

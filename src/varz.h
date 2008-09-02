@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -33,7 +32,7 @@
 
 #define CURRENT_KEY_SPEED 1  /*Keyboard/Joystick movement rate*/
 
-#define MAX_SP 100
+#define MAX_SUPERPIXELS 101
 
 struct JE_SingleEnemyType
 {
@@ -195,10 +194,10 @@ typedef struct {
 } REXdatType;
 
 typedef struct {
-	JE_word location;
-	JE_word movement;
+	unsigned int x, y, z;
+	signed int delta_x, delta_y;
 	JE_byte color;
-} SPLType;
+} superpixel_type;
 
 extern JE_byte fromTime;
 extern JE_integer tempDat, tempDat2, tempDat3;
@@ -354,9 +353,8 @@ extern JE_word playerHX[20], playerHY[20];
 extern JE_word neat;
 extern JE_REXtype REXavail;
 extern REXdatType REXdat[20];
-extern JE_byte SPZ[MAX_SP + 1];
-extern SPLType SPL[MAX_SP + 1];
-extern JE_word lastSP;
+extern superpixel_type superpixels[MAX_SUPERPIXELS];
+extern unsigned int last_superpixel;
 extern JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
 extern JE_word avail;
 extern JE_word tempCount;
@@ -413,10 +411,13 @@ void JE_portConfigs( void );
 
 void JE_resetPlayerH( void );
 
-void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ); /*SuperPixels*/
+/*SuperPixels*/
+void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color );
 void JE_drawSP( void );
 
 void JE_drawOptionLevel( void );
 
 
 #endif /* VARZ_H */
+
+// kate: tab-width 4; vim: set noet:

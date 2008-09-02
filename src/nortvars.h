@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -83,3 +82,5 @@ void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape );
 void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape );
 
 #endif /* NORTVARS_H */
+
+// kate: tab-width 4; vim: set noet:

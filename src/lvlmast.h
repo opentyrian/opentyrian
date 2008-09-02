@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -54,3 +53,5 @@ extern const char lvlFile5[LVL_NUM_5][9]; /* [1..lvlnum5] of string [8] */
 /*! extern JE_LvlPosType lvlPos;*/
 
 #endif /* LVLMAST_H */
+
+// kate: tab-width 4; vim: set noet:

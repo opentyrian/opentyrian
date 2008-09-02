@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -722,3 +721,5 @@ void JE_smoothies4( void ) /* motion blur */
 	}
 	VGAScreen = game_screen;
 }
+
+// kate: tab-width 4; vim: set noet:

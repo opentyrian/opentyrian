@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -35,3 +34,5 @@ extern int scale, scaler;
 extern const struct scaler_struct scalers[9];
 
 #endif /* VIDEO_SCALE_H */
+
+// kate: tab-width 4; vim: set noet:

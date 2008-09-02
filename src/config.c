@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -32,6 +31,7 @@
 #include "video.h"
 #include "video_scale.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -679,7 +679,7 @@ void JE_loadConfiguration( void )
 	JE_byte *p;
 	JE_byte junk;
 	int y;
-
+	
 	errorActive = true;
 	
 	char cfgfile[1000];
@@ -1010,3 +1010,5 @@ void JE_saveConfiguration( void )
 #endif
 	}
 }
+
+// kate: tab-width 4; vim: set noet:

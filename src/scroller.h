@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -31,3 +30,4 @@ void scroller_sine( const struct about_text_type text[] );
 
 #endif /* SCROLLER_H */
 
+// kate: tab-width 4; vim: set noet:

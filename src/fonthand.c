@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -756,3 +755,5 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 	}
 	textGlowBrightness = 6;
 }
+
+// kate: tab-width 4; vim: set noet:

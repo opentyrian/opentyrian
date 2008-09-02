@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -24,3 +23,5 @@ void mt_srand(unsigned long s);
 unsigned long mt_rand(void);
 
 #endif /* MTRAND_H */
+
+// kate: tab-width 4; vim: set noet:

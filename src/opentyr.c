@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -459,3 +458,5 @@ int main( int argc, char *argv[] )
 	
 	return 0;
 }
+
+// kate: tab-width 4; vim: set noet:

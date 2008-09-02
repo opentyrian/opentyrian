@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -108,3 +107,5 @@ void JE_drawDots( void );
 void JE_drawPlanet( JE_byte planetNum );
 
 #endif /* TYRIAN2_H */
+
+// kate: tab-width 4; vim: set noet:

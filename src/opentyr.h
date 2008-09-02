@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -72,3 +71,5 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream );
 void opentyrian_menu( void );
 
 #endif /* OPENTYR_H */
+
+// kate: tab-width 4; vim: set noet:

@@ -93,3 +93,5 @@ unsigned long mt_rand(void)
   y ^= y >> 18;
   return y;
 }
+
+// kate: tab-width 4; vim: set noet:

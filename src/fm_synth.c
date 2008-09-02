@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -53,3 +52,5 @@ void opl_write(int reg, int val)
   YM3812Write(opl, 0, reg);
   YM3812Write(opl, 1, val);
 }
+
+// kate: tab-width 4; vim: set noet:

@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -41,3 +40,5 @@ extern const char soundTitle[SOUND_NUM + 9][9];
 extern const JE_byte windowTextSamples[9];
 
 #endif /* SNDMAST_H */
+
+// kate: tab-width 4; vim: set noet:

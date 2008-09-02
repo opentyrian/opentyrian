@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -168,3 +167,5 @@ JE_boolean JE_findNextEpisode( void );
 void JE_scanForEpisodes( void );
 
 #endif /* EPISODES_H */
+
+// kate: tab-width 4; vim: set noet:

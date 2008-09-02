@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -49,3 +48,5 @@ void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
 Uint32 rgb_to_yuv( int r, int g, int b );
 
 #endif /* PALETTE_H */
+
+// kate: tab-width 4; vim: set noet:

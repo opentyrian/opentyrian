@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -54,3 +53,5 @@ void JE_smoothies4( void );
 /*smoothies #9 is a vertical flip*/
 
 #endif /* BACKGRND_H */
+
+// kate: tab-width 4; vim: set noet:

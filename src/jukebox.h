@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -31,3 +30,5 @@ void JE_jukebox_selectSong( JE_word song );
 void JE_checkEndOfSong( void );
 
 #endif /* JUKEBOX_H */
+
+// kate: tab-width 4; vim: set noet:

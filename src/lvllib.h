@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -32,3 +31,5 @@ extern JE_word lvlNum;
 void JE_analyzeLevel( void );
 
 #endif /* LVLLIB_H */
+
+// kate: tab-width 4; vim: set noet:

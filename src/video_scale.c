@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  * hq2x, hq3x, hq4x Copyright (C) 2003 MaxSt ( maxst@hiend3d.com )
@@ -12236,3 +12235,5 @@ void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 		dst = dst_temp + 3 * dst_pitch;
 	}
 }
+
+// kate: tab-width 4; vim: set noet:

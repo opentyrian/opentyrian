@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -31,3 +30,5 @@ extern JE_shppostype shppos;
 void JE_analyzeShp( void );
 
 #endif /* SHPLIB_H */
+
+// kate: tab-width 4; vim: set noet:

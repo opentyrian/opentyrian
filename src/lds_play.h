@@ -1,5 +1,4 @@
-/* vim: set noet:
- *
+/* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007  The OpenTyrian Development Team
  *
@@ -69,3 +68,5 @@ void lds_setregs(unsigned char reg, unsigned char val);
 void lds_setregs_adv(unsigned char reg, unsigned char mask, unsigned char val);
 
 #endif /* LDS_PLAY_H */
+
+// kate: tab-width 4; vim: set noet:
