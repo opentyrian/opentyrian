@@ -4058,7 +4058,8 @@ redo:
 			tempI4 = *PY_ - *lastPY2_;
 			if (tempI4 < 1)
 				tempI4 = 0;
-			explosionFollowAmount = *PX_ - *lastPX2_ + tempI4 * 320;
+			explosionFollowAmountX = *PX_ - *lastPX2_;
+			explosionFollowAmountY = tempI4;
 			*lastPX2_ = *PX_;
 			*lastPY2_ = *PY_;
 
@@ -4628,9 +4629,9 @@ redo:
 			}
 		}
 
-	} else
-		explosionFollowAmount = 0; /*if (*playerAlive_)...*/
-
+	} else {
+		explosionFollowAmountX = explosionFollowAmountY = 0; /*if (*playerAlive_)...*/
+	}
 }
 
 void JE_mainGamePlayerFunctions( void )

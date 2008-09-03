@@ -290,13 +290,6 @@ JE_byte enemyShapeTables[6]; /* [1..6] */
 JE_boolean uniqueEnemy;
 JE_word superEnemy254Jump;
 
-/*ExplosionData*/
-ExplosionsType explosions[EXPLOSION_MAX]; /* [1..ExplosionMax] */
-JE_byte explodeAvail[EXPLOSION_MAX]; /* [1..ExplosionMax] */
-JE_integer explosionFollowAmount;
-JE_boolean playerFollow, fixedExplosions;
-JE_integer explosionMoveUp;
-
 /*EnemyShotData*/
 JE_boolean fireButtonHeld;
 JE_boolean enemyShotAvail[ENEMY_SHOT_MAX]; /* [1..Enemyshotmax] */
@@ -402,9 +395,14 @@ JE_word playerHX[20], playerHY[20]; /* [1..20] */
 JE_word neat;
 
 
+/*ExplosionData*/
+explosion_type explosions[MAX_EXPLOSIONS]; /* [1..ExplosionMax] */
+JE_integer explosionFollowAmountX, explosionFollowAmountY;
+JE_boolean playerFollow, fixedExplosions;
+JE_integer explosionMoveUp;
+
 /*Repeating Explosions*/
-JE_REXtype REXavail;
-REXdatType REXdat[20]; /* [1..20] */
+rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS]; /* [1..20] */
 
 /*SuperPixels*/
 superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
@@ -422,7 +420,7 @@ JE_real tempR, tempR2;
 /*JE_integer tempX, tempY;*/
 
 JE_boolean tempB;
-JE_byte temp, temp2, temp3, temp4, temp5, tempREX, tempPos;
+JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 JE_word tempX, tempY, tempX2, tempY2;
 JE_word tempW, tempW2, tempW3, tempW4, tempW5, tempOfs;
 
@@ -1433,28 +1431,30 @@ void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodeType )
 		{ 227, 14 },
 		{ 265, 14 }
 	};
-	int i;
 	
 	if (y > -16 && y < 190)
 	{
-		for(i = 0; i < EXPLOSION_MAX; i++)
+		for (int i = 0; i < MAX_EXPLOSIONS; i++)
 		{
-			if (explodeAvail[i] == 0)
+			if (explosions[i].ttl == 0)
 			{
-				explosions[i].explodeLoc = y * VGAScreen->pitch + x;
+				explosions[i].x = x;
+				explosions[i].y = y;
 				if (explodeType == 6)
 				{
-					explosions[i].explodeLoc += 12 * VGAScreen->pitch + 2;
+					explosions[i].y += 12;
+					explosions[i].x += 2;
 				} else if (explodeType == 98)
 				{
 					explodeType = 6;
 				}
 				explosions[i].explodeGr = explodeData[explodeType].egr + 1;
-				explodeAvail[i] = explodeData[explodeType].etime;
+				explosions[i].ttl = explodeData[explodeType].etime;
 				explosions[i].followPlayer = playerFollow;
 				explosions[i].fixedExplode = fixedExplosions;
-				explosions[i].fixedMovement = explosionMoveUp;
-				return;
+				explosions[i].delta_x = 0;
+				explosions[i].delta_y = explosionMoveUp;
+				break;
 			}
 		}
 	}
@@ -1462,8 +1462,6 @@ void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodeType )
 
 void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_integer x, JE_integer y )
 {
-	JE_byte z;
-
 	if (y >= 0)
 	{
 		if (enemyGround)
@@ -1491,16 +1489,16 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 		
 		if (exploNum)
 		{
-			for (z = 0; z < 20 /*REX maximum*/; z++)
+			for (int i = 0; i < MAX_REPEATING_EXPLOSIONS; i++)
 			{
-				if (REXavail[z] == 0)
+				if (rep_explosions[i].ttl == 0)
 				{
-					REXavail[z] = exploNum;
-					REXdat[z].delay = 2;
-					REXdat[z].ex = tempX;
-					REXdat[z].ey = tempY;
-					REXdat[z].big = tempB;
-					return;
+					rep_explosions[i].ttl = exploNum;
+					rep_explosions[i].delay = 2;
+					rep_explosions[i].x = tempX;
+					rep_explosions[i].y = tempY;
+					rep_explosions[i].big = tempB;
+					break;
 				}
 			}
 		}

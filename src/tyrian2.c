@@ -610,7 +610,7 @@ enemy_still_exists:
 							case 252: /* Savara Boss DualMissile */
 								if (enemy[i].ey > 20)
 								{
-									explosionMoveUp = -2 * VGAScreen->pitch;
+									explosionMoveUp = -2;
 									JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
 									JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
 									explosionMoveUp = 0;
@@ -1184,7 +1184,7 @@ start_level_first:
 	backMove = 1;
 	backMove2 = 2;
 	backMove3 = 3;
-	explodeMove = 2 * VGAScreen->pitch;
+	explodeMove = 2;
 	enemiesActive = true;
 	for(temp = 0; temp < 3; temp++)
 	{
@@ -1365,22 +1365,22 @@ start_level_first:
 	}
 
 	memset(enemyAvail,       1, sizeof(enemyAvail));
-	memset(explodeAvail,     0, sizeof(explodeAvail));
 	for (i = 0; i < COUNTOF(enemyShotAvail); i++)
 		enemyShotAvail[i] = 1;
-
+	
 	/*Initialize Shots*/
 	memset(playerShotData,   0, sizeof(playerShotData));
 	memset(shotAvail,        0, sizeof(shotAvail));
 	memset(shotMultiPos,     0, sizeof(shotMultiPos));
 	memset(shotRepeat,       1, sizeof(shotRepeat));
-
+	
 	memset(button,           0, sizeof(button));
-
-	memset(REXavail,         0, sizeof(REXavail));
-	memset(REXdat,           0, sizeof(REXdat));
+	
 	memset(globalFlags,      0, sizeof(globalFlags));
-
+	
+	memset(explosions,       0, sizeof(explosions));
+	memset(rep_explosions,   0, sizeof(rep_explosions));
+	
 	/* --- Clear Sound Queue --- */
 	memset(soundQueue,       0, sizeof(soundQueue));
 	soundQueue[3] = V_GOOD_LUCK;
@@ -2615,64 +2615,67 @@ enemy_shot_draw_overflow:
 
 	/*-------------------------- Sequenced Explosions -------------------------*/
 	enemyStillExploding = false;
-	for (tempREX = 0; tempREX < 20; tempREX++)
+	for (int i = 0; i < MAX_REPEATING_EXPLOSIONS; i++)
 	{
-		if (REXavail[tempREX] != 0)
+		if (rep_explosions[i].ttl != 0)
 		{
 			enemyStillExploding = true;
-			if (REXdat[tempREX].delay > 0)
+			
+			if (rep_explosions[i].delay > 0)
 			{
-				REXdat[tempREX].delay--;
-			} else {
-				REXdat[tempREX].ey += backMove2 + 1;
-				tempX = REXdat[tempREX].ex + (mt_rand() % 24) - 12;
-				tempY = REXdat[tempREX].ey + (mt_rand() % 27) - 24;
-				if (REXdat[tempREX].big)
-				{
-					JE_setupExplosionLarge(false, 2, tempX, tempY);
-					if (REXavail[tempREX] == 1 || mt_rand() % 5 == 1)
-					{
-						soundQueue[7] = 11;
-					} else {
-						soundQueue[6] = 9;
-					}
-					REXdat[tempREX].delay = 4 + (mt_rand() % 3);
-				} else {
-					JE_setupExplosion(tempX, tempY, 1);
-					soundQueue[5] = 4;
-					REXdat[tempREX].delay = 3;
-				}
-				REXavail[tempREX]--;
+				rep_explosions[i].delay--;
+				continue;
 			}
+			
+			rep_explosions[i].y += backMove2 + 1;
+			tempX = rep_explosions[i].x + (mt_rand() % 24) - 12;
+			tempY = rep_explosions[i].y + (mt_rand() % 27) - 24;
+			
+			if (rep_explosions[i].big)
+			{
+				JE_setupExplosionLarge(false, 2, tempX, tempY);
+				if (rep_explosions[i].ttl == 1 || mt_rand() % 5 == 1)
+				{
+					soundQueue[7] = 11;
+				} else {
+					soundQueue[6] = 9;
+				}
+				rep_explosions[i].delay = 4 + (mt_rand() % 3);
+			} else {
+				JE_setupExplosion(tempX, tempY, 1);
+				soundQueue[5] = 4;
+				rep_explosions[i].delay = 3;
+			}
+			
+			rep_explosions[i].ttl--;
 		}
 	}
 
 	/*---------------------------- Draw Explosions ----------------------------*/
-	for (j = 0; j < EXPLOSION_MAX; j++)
+	for (int j = 0; j < MAX_EXPLOSIONS; j++)
 	{
-		if (explodeAvail[j] != 0)
+		if (explosions[j].ttl != 0)
 		{
-			l = 0;
-			if (explosions[j].followPlayer == 1)
-			{
-				l = explosionFollowAmount;
-			}
 			if (explosions[j].fixedExplode != 1)
 			{
 				explosions[j].explodeGr++;
-				l = explodeMove;
+				explosions[j].y += explodeMove;
+			} else if (explosions[j].followPlayer == 1) {
+				explosions[j].x += explosionFollowAmountX;
+				explosions[j].y += explosionFollowAmountY;
 			}
-			explosions[j].explodeLoc += l + explosions[j].fixedMovement;
+			explosions[j].y += explosions[j].delta_y;
+			explosions[j].x += explosions[j].delta_x;
 			
 			s = (Uint8 *)VGAScreen->pixels;
-			s += explosions[j].explodeLoc;
+			s += explosions[j].y * VGAScreen->pitch + explosions[j].x;
 			
 			s_limit = (Uint8 *)VGAScreen->pixels;
 			s_limit += VGAScreen->h * VGAScreen->pitch;
 			
 			if (s + VGAScreen->pitch * 14 > s_limit)
 			{
-				explodeAvail[j] = 0;
+				explosions[j].ttl = 0;
 			} else {
 				p = shapes6;
 				p += SDL_SwapLE16(((JE_word *)p)[explosions[j].explodeGr - 1]);
@@ -2725,7 +2728,7 @@ enemy_shot_draw_overflow:
 				}
 explosion_draw_overflow:
 				
-				explodeAvail[j]--;
+				explosions[j].ttl--;
 			}
 		}
 	}
@@ -3123,7 +3126,7 @@ explosion_draw_overflow:
 		backMove = 1;
 		backMove2 = 2;
 		backMove3 = 3;
-		explodeMove = 2 * VGAScreen->pitch;
+		explodeMove = 2;
 		stopBackgroundNum = 0;
 		stopBackgrounds = false;
 		if (waitToEndLevel)
@@ -3159,7 +3162,7 @@ explosion_draw_overflow:
 			backMove = 1;
 			backMove2 = 2;
 			backMove3 = 3;
-			explodeMove = 2 * VGAScreen->pitch;
+			explodeMove = 2;
 		}
 	}
 
@@ -5126,9 +5129,9 @@ void JE_eventSystem( void )
 			backMove2 = eventRec[eventLoc-1].eventdat2;
 			if (backMove2 > 0)
 			{
-				explodeMove = backMove2 * VGAScreen->pitch;
+				explodeMove = backMove2;
 			} else {
-				explodeMove = backMove * VGAScreen->pitch;
+				explodeMove = backMove;
 			}
 			backMove3 = eventRec[eventLoc-1].eventdat3;
 
@@ -5515,7 +5518,7 @@ void JE_eventSystem( void )
 
 			backMove = eventRec[eventLoc-1].eventdat;
 			backMove2 = eventRec[eventLoc-1].eventdat2;
-			explodeMove = backMove2 * VGAScreen->pitch;
+			explodeMove = backMove2;
 			backMove3 = eventRec[eventLoc-1].eventdat3;
 			break;
 		case 31: /* Enemy Fire Override */

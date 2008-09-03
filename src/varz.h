@@ -27,12 +27,13 @@
 #define SA 7
 
 #define MAX_PWEAPON     81 /* 81*/
-#define EXPLOSION_MAX  200 /*200*/
 #define ENEMY_SHOT_MAX  60 /* 60*/
 
 #define CURRENT_KEY_SPEED 1  /*Keyboard/Joystick movement rate*/
 
-#define MAX_SUPERPIXELS 101
+#define MAX_EXPLOSIONS           200
+#define MAX_REPEATING_EXPLOSIONS 20
+#define MAX_SUPERPIXELS          1001
 
 struct JE_SingleEnemyType
 {
@@ -154,16 +155,6 @@ struct JE_MegaDataType3
 typedef JE_MultiEnemyType JE_EnemyType;
 typedef JE_byte JE_EnemyAvailType[100]; /* [1..100] */
 
-typedef JE_byte JE_REXtype[20]; /* [1..20] */
-
-typedef struct {
-	Sint32  explodeLoc;
-	JE_word explodeGr;
-	JE_byte followPlayer;
-	JE_byte fixedExplode;
-	Sint16 fixedMovement;
-} ExplosionsType;
-
 typedef struct {
 	JE_integer sx, sy;
 	JE_integer sxm, sym;
@@ -188,15 +179,25 @@ typedef struct {
 } PlayerShotDataType;
 
 typedef struct {
-	JE_byte delay;
-	JE_word ex, ey;
-	JE_boolean big;
-} REXdatType;
+	unsigned int ttl;
+	signed int x, y;
+	signed int delta_x, delta_y;
+	bool followPlayer;
+	JE_byte fixedExplode;
+	JE_word explodeGr;
+} explosion_type;
+
+typedef struct {
+	unsigned int delay;
+	unsigned int ttl;
+	unsigned int x, y;
+	bool big;
+} rep_explosion_type;
 
 typedef struct {
 	unsigned int x, y, z;
 	signed int delta_x, delta_y;
-	JE_byte color;
+	Uint8 color;
 } superpixel_type;
 
 extern JE_byte fromTime;
@@ -294,9 +295,8 @@ extern JE_word enemyOnScreen;
 extern JE_byte enemyShapeTables[6];
 extern JE_boolean uniqueEnemy;
 extern JE_word superEnemy254Jump;
-extern ExplosionsType explosions[EXPLOSION_MAX];
-extern JE_byte explodeAvail[EXPLOSION_MAX];
-extern JE_integer explosionFollowAmount;
+extern explosion_type explosions[MAX_EXPLOSIONS];
+extern JE_integer explosionFollowAmountX, explosionFollowAmountY;
 extern JE_boolean playerFollow, fixedExplosions;
 extern JE_integer explosionMoveUp;
 extern JE_boolean fireButtonHeld;
@@ -351,8 +351,7 @@ extern JE_byte chargeWait, chargeLevel, chargeMax, chargeGr, chargeGrWait;
 extern JE_boolean playerHNotReady;
 extern JE_word playerHX[20], playerHY[20];
 extern JE_word neat;
-extern JE_REXtype REXavail;
-extern REXdatType REXdat[20];
+extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
 extern JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
@@ -362,7 +361,7 @@ extern JE_integer tempI, tempI2, tempI3, tempI4, tempI5;
 extern JE_longint tempL;
 extern JE_real tempR, tempR2;
 extern JE_boolean tempB;
-extern JE_byte temp, temp2, temp3, temp4, temp5, tempREX, tempPos;
+extern JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 extern JE_word tempX, tempY, tempX2, tempY2;
 extern JE_word tempW, tempW2, tempW3, tempW4, tempW5, tempOfs;
 extern JE_boolean doNotSaveBackup;
