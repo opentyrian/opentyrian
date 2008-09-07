@@ -398,8 +398,6 @@ JE_word neat;
 /*ExplosionData*/
 explosion_type explosions[MAX_EXPLOSIONS]; /* [1..ExplosionMax] */
 JE_integer explosionFollowAmountX, explosionFollowAmountY;
-JE_boolean playerFollow, fixedExplosions;
-JE_integer explosionMoveUp;
 
 /*Repeating Explosions*/
 rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS]; /* [1..20] */
@@ -1371,12 +1369,12 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 	}
 }
 
-void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodeType )
+void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player )
 {
 	const struct {
-		JE_word egr;
-		JE_byte etime;
-	} explodeData[53] /* [1..53] */ = {
+		JE_word sprite;
+		JE_byte ttl;
+	} explosion_data[53] /* [1..53] */ = {
 		{ 144,  7 },
 		{ 120, 12 },
 		{ 190, 12 },
@@ -1440,20 +1438,20 @@ void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodeType )
 			{
 				explosions[i].x = x;
 				explosions[i].y = y;
-				if (explodeType == 6)
+				if (type == 6)
 				{
 					explosions[i].y += 12;
 					explosions[i].x += 2;
-				} else if (explodeType == 98)
+				} else if (type == 98)
 				{
-					explodeType = 6;
+					type = 6;
 				}
-				explosions[i].explodeGr = explodeData[explodeType].egr + 1;
-				explosions[i].ttl = explodeData[explodeType].etime;
-				explosions[i].followPlayer = playerFollow;
-				explosions[i].fixedExplode = fixedExplosions;
+				explosions[i].sprite = explosion_data[type].sprite;
+				explosions[i].ttl = explosion_data[type].ttl;
+				explosions[i].follow_player = follow_player;
+				explosions[i].fixed_position = fixed_position;
 				explosions[i].delta_x = 0;
-				explosions[i].delta_y = explosionMoveUp;
+				explosions[i].delta_y = delta_y;
 				break;
 			}
 		}
@@ -1466,15 +1464,15 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 	{
 		if (enemyGround)
 		{
-			JE_setupExplosion(x - 6, y - 14, 2);
-			JE_setupExplosion(x + 6, y - 14, 4);
-			JE_setupExplosion(x - 6, y,      3);
-			JE_setupExplosion(x + 6, y,      5);
+			JE_setupExplosion(x - 6, y - 14, 0,  2, false, false);
+			JE_setupExplosion(x + 6, y - 14, 0,  4, false, false);
+			JE_setupExplosion(x - 6, y,      0,  3, false, false);
+			JE_setupExplosion(x + 6, y,      0,  5, false, false);
 		} else {
-			JE_setupExplosion(x - 6, y - 14, 7);
-			JE_setupExplosion(x + 6, y - 14, 9);
-			JE_setupExplosion(x - 6, y,      8);
-			JE_setupExplosion(x + 6, y,     10);
+			JE_setupExplosion(x - 6, y - 14, 0,  7, false, false);
+			JE_setupExplosion(x + 6, y - 14, 0,  9, false, false);
+			JE_setupExplosion(x - 6, y,      0,  8, false, false);
+			JE_setupExplosion(x + 6, y,      0, 10, false, false);
 		}
 		
 		tempX = x;
@@ -1570,20 +1568,17 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 	} else {
 		*shield -= temp;
 		
-		if (!twoPlayerMode)
-			playerFollow = true;
-		JE_setupExplosion(*PX - 17, *PY - 12, 14);
-		JE_setupExplosion(*PX - 5 , *PY - 12, 15);
-		JE_setupExplosion(*PX + 7 , *PY - 12, 16);
-		JE_setupExplosion(*PX + 19, *PY - 12, 17);
+		JE_setupExplosion(*PX - 17, *PY - 12, 0, 14, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX - 5 , *PY - 12, 0, 15, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX + 7 , *PY - 12, 0, 16, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX + 19, *PY - 12, 0, 17, false, !twoPlayerMode ? true : false);
 		
-		JE_setupExplosion(*PX - 17, *PY + 2,  18);
-		JE_setupExplosion(*PX + 19, *PY + 2,  19);
+		JE_setupExplosion(*PX - 17, *PY + 2, 0,  18, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX + 19, *PY + 2, 0,  19, false, !twoPlayerMode ? true : false);
 		
-		JE_setupExplosion(*PX - 17, *PY + 16, 20);
-		JE_setupExplosion(*PX - 5 , *PY + 16, 21);
-		JE_setupExplosion(*PX + 7 , *PY + 16, 22);
-		playerFollow = false;
+		JE_setupExplosion(*PX - 17, *PY + 16, 0, 20, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX - 5 , *PY + 16, 0, 21, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX + 7 , *PY + 16, 0, 22, false, !twoPlayerMode ? true : false);
 	}
 	
 	JE_wipeShieldArmorBars();

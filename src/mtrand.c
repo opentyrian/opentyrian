@@ -55,43 +55,42 @@ static unsigned long *p0, *p1, *pm;
 
 void mt_srand(unsigned long s)
 {
-  int i;
-
-  x[0] = s & 0xffffffffUL;
-  for (i = 1; i < N; ++i) {
-    x[i] = (1812433253UL * (x[i - 1] ^ (x[i - 1] >> 30)) + i)
-      & 0xffffffffUL;           /* for >32 bit machines */
-  }
-  p0 = x;
-  p1 = x + 1;
-  pm = x + M;
+	int i;
+	
+	x[0] = s & 0xffffffffUL;
+	for (i = 1; i < N; ++i) {
+		x[i] = (1812433253UL * (x[i - 1] ^ (x[i - 1] >> 30)) + i)
+		     & 0xffffffffUL;           /* for >32 bit machines */
+	}
+	p0 = x;
+	p1 = x + 1;
+	pm = x + M;
 }
 
 /* generates a random number on the interval [0,0xffffffff] */
 unsigned long mt_rand(void)
 {
-  unsigned long y;
-
-  if (!p0) {
-    /* Default seed */
-    mt_srand(5489UL);
-  }
-  /* Twisted feedback */
-  y = *p0 = *pm++ ^ (((*p0 & UPPER_MASK) | (*p1 & LOWER_MASK)) >> 1)
-    ^ (-(*p1 & 1) & MATRIX_A);
-  p0 = p1++;
-  if (pm == x + N) {
-    pm = x;
-  }
-  if (p1 == x + N) {
-    p1 = x;
-  }
-  /* Temper */
-  y ^= y >> 11;
-  y ^= y << 7 & 0x9d2c5680UL;
-  y ^= y << 15 & 0xefc60000UL;
-  y ^= y >> 18;
-  return y;
+	unsigned long y;
+	
+	if (!p0) {
+		/* Default seed */
+		mt_srand(5489UL);
+	}
+	/* Twisted feedback */
+	y = *p0 = *pm++ ^ (((*p0 & UPPER_MASK) | (*p1 & LOWER_MASK)) >> 1) ^ (-(*p1 & 1) & MATRIX_A);
+	p0 = p1++;
+	if (pm == x + N) {
+		pm = x;
+	}
+	if (p1 == x + N) {
+		p1 = x;
+	}
+	/* Temper */
+	y ^= y >> 11;
+	y ^= y << 7 & 0x9d2c5680UL;
+	y ^= y << 15 & 0xefc60000UL;
+	y ^= y >> 18;
+	return y;
 }
 
 // kate: tab-width 4; vim: set noet:

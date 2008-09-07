@@ -4428,7 +4428,7 @@ redo:
 										optionAttachmentReturn = true;
 								} else {
 									optionAttachmentMove += 1 + optionAttachmentReturn;
-									JE_setupExplosion(option2X + 1, option2Y + 10, 0);
+									JE_setupExplosion(option2X + 1, option2Y + 10, 0, 0, false, false);
 								}
 
 							} else {
@@ -4992,9 +4992,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						score2 += tempI4 / 2;
 					} else
 						*score_ += tempI4;
-					fixedExplosions = true;
-					JE_setupExplosion(tempI3, enemy[z].ey, enemyDat[enemy[z].enemytype].explosiontype);
-					fixedExplosions = false;
+					JE_setupExplosion(tempI3, enemy[z].ey, 0, enemyDat[enemy[z].enemytype].explosiontype, true, false);
 				} else
 					if (playerInvulnerable_ == 0 && enemyAvail[z] == 0 &&
 					    enemyDat[enemy[z].enemytype].explosiontype % 2 == 0)
@@ -5052,7 +5050,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);
 											soundQueue[6] = 9;
 										} else {
-											JE_setupExplosion(tempI3, enemy[temp2].ey, 1);
+											JE_setupExplosion(tempI3, enemy[temp2].ey, 0, 1, false, false);
 											soundQueue[5] = 4;
 										}
 									}

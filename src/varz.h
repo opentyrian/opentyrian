@@ -23,6 +23,7 @@
 
 #include "episodes.h"
 
+#include <stdbool.h>
 
 #define SA 7
 
@@ -33,7 +34,7 @@
 
 #define MAX_EXPLOSIONS           200
 #define MAX_REPEATING_EXPLOSIONS 20
-#define MAX_SUPERPIXELS          1001
+#define MAX_SUPERPIXELS          101
 
 struct JE_SingleEnemyType
 {
@@ -182,9 +183,9 @@ typedef struct {
 	unsigned int ttl;
 	signed int x, y;
 	signed int delta_x, delta_y;
-	bool followPlayer;
-	JE_byte fixedExplode;
-	JE_word explodeGr;
+	bool fixed_position;
+	bool follow_player;
+	unsigned int sprite;
 } explosion_type;
 
 typedef struct {
@@ -297,8 +298,6 @@ extern JE_boolean uniqueEnemy;
 extern JE_word superEnemy254Jump;
 extern explosion_type explosions[MAX_EXPLOSIONS];
 extern JE_integer explosionFollowAmountX, explosionFollowAmountY;
-extern JE_boolean playerFollow, fixedExplosions;
-extern JE_integer explosionMoveUp;
 extern JE_boolean fireButtonHeld;
 extern JE_boolean enemyShotAvail[ENEMY_SHOT_MAX];
 extern EnemyShotType enemyShot[ENEMY_SHOT_MAX];
@@ -400,7 +399,7 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY, JE_byte temp,
                          JE_integer *armorLevel,
                          JE_shortint *shield );
 
-void JE_setupExplosion( JE_integer x, JE_integer y, JE_integer explodetype );
+void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player );
 void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );
 
 void JE_drawShield( void );

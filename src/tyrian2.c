@@ -610,10 +610,8 @@ enemy_still_exists:
 							case 252: /* Savara Boss DualMissile */
 								if (enemy[i].ey > 20)
 								{
-									explosionMoveUp = -2;
-									JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
-									JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, 6);
-									explosionMoveUp = 0;
+									JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, -2, 6, false, false);
+									JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, -2, 6, false, false);
 								}
 								break;
 							case 251: /* Suck-O-Magnet */
@@ -909,8 +907,6 @@ void JE_main( void )
 	loadTitleScreen = true;
 
 	/* Setup Player Items/General Data */
-	fixedExplosions = false;
-	explosionMoveUp = 0;
 	for (z = 0; z < 12; z++)
 	{
 		pItems[z] = 0;
@@ -1255,8 +1251,6 @@ start_level_first:
 	displayTime = 0;
 
 	JE_playSong(levelSong);
-
-	playerFollow = false;
 
 	/*if not JConfigure and (InputDevice=1) then CalibrateJoy;*/
 
@@ -2042,9 +2036,9 @@ level_loop:
 				{
 					if (playerShotData[z].shotTrail == 98)
 					{
-						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, playerShotData[z].shotTrail);
+						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, 0, playerShotData[z].shotTrail, false, false);
 					} else {
-						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);
+						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, 0, playerShotData[z].shotTrail, false, false);
 					}
 				}
 
@@ -2216,7 +2210,7 @@ level_loop:
 									if (enemy[b].armorleft != 255)
 									{
 										enemy[b].armorleft -= tempI2;
-										JE_setupExplosion(tempShotX, tempShotY, 0);
+										JE_setupExplosion(tempShotX, tempShotY, 0, 0, false, false);
 									} else {
 									JE_doSP(tempShotX + 6, tempShotY + 6, tempI2 / 2 + 3, tempI2 / 4 + 2, temp2);
 								}
@@ -2278,7 +2272,7 @@ level_loop:
 											
 											if (enemyDat[enemy[temp3].enemytype].esize != 1)
 											{
-												JE_setupExplosion(tempX, tempY - 6, 1);
+												JE_setupExplosion(tempX, tempY - 6, 0, 1, false, false);
 											} else {
 												JE_setupExplosionLarge(enemy[temp3].enemyground, enemy[temp3].explonum / 2, tempX, tempY);
 											}
@@ -2380,7 +2374,7 @@ level_loop:
 											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);
 											soundQueue[6] = 9;
 										} else {
-											JE_setupExplosion(tempI3, enemy[temp2].ey, 1);
+											JE_setupExplosion(tempI3, enemy[temp2].ey, 0, 1, false, false);
 											soundQueue[6] = 8;
 										}
 									}
@@ -2502,7 +2496,7 @@ draw_player_shot_loop_end:
 						
 						enemyShotAvail[z] = 1;
 						
-						JE_setupExplosion(tempX, tempY, 0);
+						JE_setupExplosion(tempX, tempY, 0, 0, false, false);
 						
 						switch (temp3)
 						{
@@ -2642,7 +2636,7 @@ enemy_shot_draw_overflow:
 				}
 				rep_explosions[i].delay = 4 + (mt_rand() % 3);
 			} else {
-				JE_setupExplosion(tempX, tempY, 1);
+				JE_setupExplosion(tempX, tempY, 0, 1, false, false);
 				soundQueue[5] = 4;
 				rep_explosions[i].delay = 3;
 			}
@@ -2656,11 +2650,11 @@ enemy_shot_draw_overflow:
 	{
 		if (explosions[j].ttl != 0)
 		{
-			if (explosions[j].fixedExplode != 1)
+			if (explosions[j].fixed_position != true)
 			{
-				explosions[j].explodeGr++;
+				explosions[j].sprite++;
 				explosions[j].y += explodeMove;
-			} else if (explosions[j].followPlayer == 1) {
+			} else if (explosions[j].follow_player == true) {
 				explosions[j].x += explosionFollowAmountX;
 				explosions[j].y += explosionFollowAmountY;
 			}
@@ -2678,7 +2672,7 @@ enemy_shot_draw_overflow:
 				explosions[j].ttl = 0;
 			} else {
 				p = shapes6;
-				p += SDL_SwapLE16(((JE_word *)p)[explosions[j].explodeGr - 1]);
+				p += SDL_SwapLE16(((JE_word *)p)[explosions[j].sprite]);
 				
 				if (explosionTransparent)
 				{
