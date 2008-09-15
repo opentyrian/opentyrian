@@ -1475,8 +1475,6 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 			JE_setupExplosion(x + 6, y,      0, 10, false, false);
 		}
 		
-		tempX = x;
-		tempY = y;
 		if (exploNum > 10)
 		{
 			exploNum -= 10;
@@ -1493,8 +1491,8 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 				{
 					rep_explosions[i].ttl = exploNum;
 					rep_explosions[i].delay = 2;
-					rep_explosions[i].x = tempX;
-					rep_explosions[i].y = tempY;
+					rep_explosions[i].x = x;
+					rep_explosions[i].y = y;
 					rep_explosions[i].big = tempB;
 					break;
 				}
@@ -1568,17 +1566,17 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 	} else {
 		*shield -= temp;
 		
-		JE_setupExplosion(*PX - 17, *PY - 12, 0, 14, false, !twoPlayerMode ? true : false);
-		JE_setupExplosion(*PX - 5 , *PY - 12, 0, 15, false, !twoPlayerMode ? true : false);
-		JE_setupExplosion(*PX + 7 , *PY - 12, 0, 16, false, !twoPlayerMode ? true : false);
-		JE_setupExplosion(*PX + 19, *PY - 12, 0, 17, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX - 17, *PY - 12, 0, 14, false, !twoPlayerMode);
+		JE_setupExplosion(*PX - 5 , *PY - 12, 0, 15, false, !twoPlayerMode);
+		JE_setupExplosion(*PX + 7 , *PY - 12, 0, 16, false, !twoPlayerMode);
+		JE_setupExplosion(*PX + 19, *PY - 12, 0, 17, false, !twoPlayerMode);
 		
-		JE_setupExplosion(*PX - 17, *PY + 2, 0,  18, false, !twoPlayerMode ? true : false);
-		JE_setupExplosion(*PX + 19, *PY + 2, 0,  19, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX - 17, *PY + 2, 0,  18, false, !twoPlayerMode);
+		JE_setupExplosion(*PX + 19, *PY + 2, 0,  19, false, !twoPlayerMode);
 		
-		JE_setupExplosion(*PX - 17, *PY + 16, 0, 20, false, !twoPlayerMode ? true : false);
-		JE_setupExplosion(*PX - 5 , *PY + 16, 0, 21, false, !twoPlayerMode ? true : false);
-		JE_setupExplosion(*PX + 7 , *PY + 16, 0, 22, false, !twoPlayerMode ? true : false);
+		JE_setupExplosion(*PX - 17, *PY + 16, 0, 20, false, !twoPlayerMode);
+		JE_setupExplosion(*PX - 5 , *PY + 16, 0, 21, false, !twoPlayerMode);
+		JE_setupExplosion(*PX + 7 , *PY + 16, 0, 22, false, !twoPlayerMode);
 	}
 	
 	JE_wipeShieldArmorBars();

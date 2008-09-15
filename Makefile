@@ -12,30 +12,34 @@ GP2X_CHAIN := $(GP2X_CHAINPREFIX)/bin/arm-open2x-linux-
 TARGET := tyrian
 OBJS := animlib.o backgrnd.o config.o destruct.o editship.o episodes.o error.o fm_synth.o fmopl.o fonthand.o helptext.o joystick.o jukebox.o keyboard.o lds_play.o loudness.o lvllib.o lvlmast.o mainint.o musmast.o mtrand.o network.o newshape.o nortsong.o nortvars.o opentyr.o palette.o params.o pcxload.o pcxmast.o picload.o scroller.o setup.o shplib.o shpmast.o sndmast.o starlib.o tyrian2.o varz.o vga256d.o video.o video_scale.o
 
+CFLAGS := --std=c99 -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wno-unused -I$(CURDIR)/src/
+LDFLAGS := -lm
+
 ifeq ($(DEBUG), 1)
-	DEBUG_FLAGS := -g3 -O0
+	DEBUG_FLAGS := -g3 -O0 -Werror
 else
-	DEBUG_FLAGS := -g -O2 -fomit-frame-pointer -DNDEBUG -fno-strict-aliasing
+	DEBUG_FLAGS := -g -O2 -DNDEBUG -fno-strict-aliasing
 endif
 
+ifeq ($(PLATFORM), UNIX)
+	CFLAGS := $(CFLAGS) -DTARGET_UNIX
+	SDL_CFLAGS := $(shell sdl-config --cflags)
+	SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_net
+endif
 ifeq ($(PLATFORM), WINDOWS)
 	SDL_CFLAGS := -I/mingw/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
 	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows
 endif
 ifeq ($(PLATFORM), GP2X)
-	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math -funroll-loops
-	SDL_LDFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --libs` -static -L$(GP2X_CHAINPREFIX)/lib
+	CFLAGS := $(CFLAGS) -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math -funroll-loops
+	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include
+	SDL_LDFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --libs` -L$(GP2X_CHAINPREFIX)/lib
 	CC := $(GP2X_CHAIN)gcc
 	STRIP := $(GP2X_CHAIN)strip
 endif
-ifeq ($(PLATFORM), UNIX)
-	SDL_CFLAGS := $(shell sdl-config --cflags) -DTARGET_UNIX
-	SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_net
-endif
 
-
-CFLAGS := --std=c99 -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wno-unused -Werror -I$(CURDIR)/src/ $(DEBUG_FLAGS) $(SDL_CFLAGS)
-LDFLAGS := $(SDL_LDFLAGS) -lm
+CFLAGS := $(CFLAGS) $(DEBUG_FLAGS) $(SDL_CFLAGS)
+LDFLAGS := $(CFLAGS) $(SDL_LDFLAGS)
 
 SVN_REV := $(shell svnversion src -n)
 ifneq ($(SVN_REV), )
@@ -43,7 +47,7 @@ ifneq ($(SVN_REV), )
 		SVN_REV := unknown
 	endif
 	
-	CFLAGS += -DSVN_REV=\"$(SVN_REV)\"
+	CFLAGS := $(CFLAGS) -DSVN_REV=\"$(SVN_REV)\"
 endif
 
 ####################################################
