@@ -31,6 +31,7 @@
 #include "loudness.h"
 #include "lvllib.h"
 #include "lvlmast.h"
+#include "menus.h"
 #include "mainint.h"
 #include "mtrand.h"
 #include "network.h"
@@ -4088,7 +4089,7 @@ void JE_titleScreen( JE_boolean animate )
 		{
 			JE_fadeBlack(10);
 			
-			if (JE_episodeSelect() && JE_difficultySelect())
+			if (select_episode() && select_difficulty())
 			{
 				initialDifficulty = difficultyLevel;
 				
@@ -4371,7 +4372,7 @@ void JE_titleScreen( JE_boolean animate )
 							pItems[2] = z+1;
 							pItems[11] = SAShip[z];
 							JE_fadeBlack(10);
-							if (JE_episodeSelect() && JE_difficultySelect())
+							if (select_episode() && select_difficulty())
 							{
 								/* Start special mode! */
 								JE_fadeBlack(10);
@@ -4430,9 +4431,9 @@ void JE_titleScreen( JE_boolean animate )
 						{
 							case 0: /* New game */
 								JE_fadeBlack(10);
-								if (JE_playerSelect())
+								if (select_gameplay())
 								{
-									if (JE_episodeSelect() && JE_difficultySelect())
+									if (select_episode() && select_difficulty())
 									{
 										gameLoaded = true;
 									} else {

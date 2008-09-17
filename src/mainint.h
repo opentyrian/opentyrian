@@ -44,9 +44,6 @@ JE_boolean JE_gammaCheck( void );
 /* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
 void JE_loadOrderingInfo( void );
 JE_boolean JE_nextEpisode( void );
-JE_boolean JE_episodeSelect( void );
-JE_boolean JE_difficultySelect( void );
-JE_boolean JE_playerSelect( void );
 void JE_helpSystem( JE_byte startTopic );
 void JE_doInGameSetup( void );
 JE_boolean JE_inGameSetup( void );
