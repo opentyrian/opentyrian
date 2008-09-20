@@ -41,9 +41,6 @@ extern char mainMenuHelp[34][66];
 extern char inGameText[6][21];          /* [1..6] of string [20] */
 extern char detailLevel[6][13];         /* [1..6] of string [12] */
 extern char gameSpeedText[5][13];       /* [1..5] of string [12] */
-extern char episodeName[6][31];         /* [0..5] of string [30] */
-extern char difficultyName[7][21];      /* [0..6] of string [20] */
-extern char playerName[5][26];          /* [0..4] of string [25] */
 extern char inputDevices[3][13];        /* [1..3] of string [12] */
 extern char networkText[4][21];         /* [1..4] of string [20] */
 extern char difficultyNameB[11][21];    /* [0..9] of string [20] */

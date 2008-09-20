@@ -23,6 +23,7 @@
 #include "episodes.h"
 #include "error.h"
 #include "fonthand.h"
+#include "menus.h"
 #include "newshape.h"
 
 #include <string.h>
@@ -63,9 +64,6 @@ char mainMenuHelp[34][66];
 char inGameText[6][21];            /* [1..6] of string [20] */
 char detailLevel[6][13];           /* [1..6] of string [12] */
 char gameSpeedText[5][13];         /* [1..5] of string [12] */
-char episodeName[6][31];           /* [0..5] of string [30] */
-char difficultyName[7][21];        /* [0..6] of string [20] */
-char playerName[5][26];            /* [0..4] of string [25] */
 char inputDevices[3][13];          /* [1..3] of string [12] */
 char networkText[4][21];           /* [1..4] of string [20] */
 char difficultyNameB[11][21];      /* [0..9] of string [20] */
@@ -240,19 +238,19 @@ void JE_loadHelpText( void )
 
 	for (i = 0; i <= 5; i++)
 	{
-		JE_readCryptLn(f, episodeName[i]);   /*Episode Names*/
+		JE_readCryptLn(f, episode_name[i]);
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
 	for (i = 0; i <= 6; i++)
 	{
-		JE_readCryptLn(f, difficultyName[i]);/*Difficulty Level*/
+		JE_readCryptLn(f, difficulty_name[i]);
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 
 	for (i = 0; i <= 4; i++)
 	{
-		JE_readCryptLn(f, playerName[i]);    /*Player Names*/
+		JE_readCryptLn(f, gameplay_name[i]);
 	}
 	JE_skipCryptLn(f); JE_skipCryptLn(f);
 

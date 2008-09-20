@@ -30,6 +30,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 #include "loudness.h"
+#include "menus.h"
 #include "mtrand.h"
 #include "network.h"
 #include "newshape.h"
@@ -851,8 +852,8 @@ JE_boolean JE_nextEpisode( void )
 		
 		tempScreenSeg = VGAScreen;
 		
-		JE_dString(JE_fontCenter(episodeName[episodeNum], SMALL_FONT_SHAPES),
-		           130, episodeName[episodeNum], SMALL_FONT_SHAPES);
+		JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 130,
+		           episode_name[episodeNum], SMALL_FONT_SHAPES);
 		
 		JE_dString(JE_fontCenter(miscText[5-1], SMALL_FONT_SHAPES), 185,
 		           miscText[5-1], SMALL_FONT_SHAPES);
@@ -965,13 +966,13 @@ void JE_highScoreScreen( void )
 		{
 			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
-			JE_dString( JE_fontCenter( miscText[51 - 1], FONT_SHAPES), 03, miscText[51 - 1], FONT_SHAPES);
-			JE_dString( JE_fontCenter( episodeName[x], SMALL_FONT_SHAPES), 30, episodeName[x], SMALL_FONT_SHAPES);
+			JE_dString(JE_fontCenter(miscText[51 - 1], FONT_SHAPES), 03, miscText[51 - 1], FONT_SHAPES);
+			JE_dString(JE_fontCenter(episode_name[x], SMALL_FONT_SHAPES), 30, episode_name[x], SMALL_FONT_SHAPES);
 
 			/* Player 1 */
 			temp = (x * 6) - 6;
 
-			JE_dString( JE_fontCenter( miscText[47 - 1], SMALL_FONT_SHAPES), 55, miscText[47 - 1], SMALL_FONT_SHAPES);
+			JE_dString(JE_fontCenter(miscText[47 - 1], SMALL_FONT_SHAPES), 55, miscText[47 - 1], SMALL_FONT_SHAPES);
 
 			for (z = 0; z < 3; z++)
 			{
@@ -1733,7 +1734,7 @@ void JE_highScoreCheck( void )
 				JE_loadPic(2, false);
 				
 				JE_dString(JE_fontCenter(miscText[51-1], FONT_SHAPES), 10, miscText[51-1], FONT_SHAPES);
-				JE_dString(JE_fontCenter(episodeName[episodeNum], SMALL_FONT_SHAPES), 35, episodeName[episodeNum], SMALL_FONT_SHAPES);
+				JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 35, episode_name[episodeNum], SMALL_FONT_SHAPES);
 				
 				for (b = 1; b <= 3; b++)
 				{

@@ -22,7 +22,6 @@
 #include "config.h"
 #include "episodes.h"
 #include "fonthand.h"
-#include "helptext.h"
 #include "keyboard.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -31,10 +30,12 @@
 #include "setup.h"
 #include "video.h"
 
+char episode_name[6][31], difficulty_name[7][21], gameplay_name[5][26];
+
 bool select_gameplay( void )
 {
 	JE_loadPic(2, false);
-	JE_dString(JE_fontCenter(playerName[0], FONT_SHAPES), 20, playerName[0], FONT_SHAPES);
+	JE_dString(JE_fontCenter(gameplay_name[0], FONT_SHAPES), 20, gameplay_name[0], FONT_SHAPES);
 	
 	int gameplay = 1,
 	    gameplay_max = 4;
@@ -44,7 +45,7 @@ bool select_gameplay( void )
 	{
 		for (int i = 1; i <= gameplay_max; i++)
 		{
-			JE_outTextAdjust(JE_fontCenter(playerName[i], SMALL_FONT_SHAPES), i * 24 + 30, playerName[i], 15, - 4 + (i == gameplay ? 2 : 0) - (i == 4 ? 4 : 0), SMALL_FONT_SHAPES, true);
+			JE_outTextAdjust(JE_fontCenter(gameplay_name[i], SMALL_FONT_SHAPES), i * 24 + 30, gameplay_name[i], 15, - 4 + (i == gameplay ? 2 : 0) - (i == 4 ? 4 : 0), SMALL_FONT_SHAPES, true);
 		}
 		JE_showVGA();
 		
@@ -112,7 +113,7 @@ bool select_gameplay( void )
 bool select_episode( void )
 {
 	JE_loadPic(2, false);
-	JE_dString(JE_fontCenter(episodeName[0], FONT_SHAPES), 20, episodeName[0], FONT_SHAPES);
+	JE_dString(JE_fontCenter(episode_name[0], FONT_SHAPES), 20, episode_name[0], FONT_SHAPES);
 	
 	int episode = 1,
 	    episode_max = EPISODE_MAX - 1;
@@ -122,7 +123,7 @@ bool select_episode( void )
 	{
 		for (int i = 1; i <= episode_max; i++)
 		{
-			JE_outTextAdjust(20, i * 30 + 20, episodeName[i], 15, -4 + (i == episode ? 2 : 0) - (!episodeAvail[i - 1] ? 4 : 0), SMALL_FONT_SHAPES, true);
+			JE_outTextAdjust(20, i * 30 + 20, episode_name[i], 15, -4 + (i == episode ? 2 : 0) - (!episodeAvail[i - 1] ? 4 : 0), SMALL_FONT_SHAPES, true);
 		}
 		JE_showVGA();
 		
@@ -188,7 +189,7 @@ bool select_episode( void )
 bool select_difficulty( void )
 {
 	JE_loadPic(2, false);
-	JE_dString(JE_fontCenter(difficultyName[0], FONT_SHAPES), 20, difficultyName[0], FONT_SHAPES);
+	JE_dString(JE_fontCenter(difficulty_name[0], FONT_SHAPES), 20, difficulty_name[0], FONT_SHAPES);
 	
 	difficultyLevel = 2;
 	int difficulty_max = 3;
@@ -198,7 +199,7 @@ bool select_difficulty( void )
 	{
 		for (int i = 1; i <= difficulty_max; i++)
 		{
-			JE_outTextAdjust(JE_fontCenter(difficultyName[i], SMALL_FONT_SHAPES), i * 24 + 30, difficultyName[i], 15, -4 + (i == difficultyLevel ? 2 : 0), SMALL_FONT_SHAPES, true);
+			JE_outTextAdjust(JE_fontCenter(difficulty_name[i], SMALL_FONT_SHAPES), i * 24 + 30, difficulty_name[i], 15, -4 + (i == difficultyLevel ? 2 : 0), SMALL_FONT_SHAPES, true);
 		}
 		JE_showVGA();
 		
