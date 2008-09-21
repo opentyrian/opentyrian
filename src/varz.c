@@ -158,7 +158,7 @@ const JE_byte shipCombosB[21] /* [1..21] */ =
   /*!! SUPER Tyrian !!*/
 const JE_byte superTyrianSpecials[4] /* [1..4] */ = {1,2,4,5};
 
-const JE_byte shipCombos[13][3] /* [0..12, 1..3] */ =
+const JE_byte shipCombos[14][3] /* [0..12, 1..3] */ =
 {
 	{ 5, 4, 7},  /*2nd Player ship*/
 	{ 1, 2, 0},  /*USP Talon*/
@@ -172,7 +172,8 @@ const JE_byte shipCombos[13][3] /* [0..12, 1..3] */ =
 	{ 1, 3, 0},  /*USP Fang*/
 	{ 7,16,17},  /*U-Ship*/
 	{ 2,11,12},  /*1st Player ship*/
-	{ 3, 8,10}   /*Nort ship*/
+	{ 3, 8,10},  /*Nort ship*/
+	{ 0, 0, 0}   // Dummy entry added for Stalker 21.126
 };
 
 /*Street-Fighter Commands*/
