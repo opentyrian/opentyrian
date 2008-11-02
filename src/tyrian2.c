@@ -2317,25 +2317,27 @@ level_loop:
 												tempW2 = 0;
 											}
 											JE_newEnemy(tempW2);
-											if ((superArcadeMode > 0) && (enemy[b-1].evalue > 30000))
-											{
-												superArcadePowerUp++;
-												if (superArcadePowerUp > 5)
+											if (b != 0) {
+												if ((superArcadeMode > 0) && (enemy[b-1].evalue > 30000))
 												{
-													superArcadePowerUp = 1;
+													superArcadePowerUp++;
+													if (superArcadePowerUp > 5)
+													{
+														superArcadePowerUp = 1;
+													}
+													enemy[b-1].egr[1-1] = 5 + superArcadePowerUp * 2;
+													enemy[b-1].evalue = 30000 + superArcadePowerUp;
 												}
-												enemy[b-1].egr[1-1] = 5 + superArcadePowerUp * 2;
-												enemy[b-1].evalue = 30000 + superArcadePowerUp;
+												
+												if (enemy[b-1].evalue != 0)
+												{
+													enemy[b-1].scoreitem = true;
+												} else {
+													enemy[b-1].scoreitem = false;
+												}
+												enemy[b-1].ex = enemy[temp2].ex;
+												enemy[b-1].ey = enemy[temp2].ey;
 											}
-											
-											if (enemy[b-1].evalue != 0)
-											{
-												enemy[b-1].scoreitem = true;
-											} else {
-												enemy[b-1].scoreitem = false;
-											}
-											enemy[b-1].ex = enemy[temp2].ex;
-											enemy[b-1].ey = enemy[temp2].ey;
 											b = zz;
 										}
 										
