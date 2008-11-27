@@ -7659,15 +7659,11 @@ item_screen_start:
 
 void JE_loadCubes( void )
 {
-	/* the followinging code is swarming with bugs which have been implemented as best we can */
-	
 	char s[256] = "", s2[256] = "", s3[256] = "";
-	JE_byte cube;
 	JE_word x, y;
 	JE_byte startPos, endPos, pos;
 	JE_boolean nextLine;
 	JE_boolean endString;
-	FILE *f;
 	JE_byte lastWidth, curWidth;
 	JE_boolean pastStringLen, pastStringWidth;
 	JE_byte temp;
@@ -7676,8 +7672,9 @@ void JE_loadCubes( void )
 
 	memset(cubeText, 0, sizeof(cubeText));
 
-	for (cube = 0; cube < cubeMax; cube++)
+	for (int cube = 0; cube < cubeMax; cube++)
 	{
+		FILE *f;
 		JE_resetFile(&f, cubeFile);
 
 		tempW = cubeList[cube];
@@ -7728,10 +7725,10 @@ void JE_loadCubes( void )
 							temp = s[pos - 1];
 
 							// Is printable character?
-							if (temp > ' ' && temp < 169 && fontMap[temp-33] != 255 && (*shapeArray)[5][fontMap[temp-33]] != NULL)
+							if (temp > ' ' && temp < 169 && fontMap[temp-33] != 255 && shapeArray[TINY_FONT][fontMap[temp-33]] != NULL)
 							{
 								// Increase width by character's size
-								curWidth += shapeX[5][fontMap[temp-33]] + 1;
+								curWidth += shapeX[TINY_FONT][fontMap[temp-33]] + 1;
 							} else if (temp == ' ') {
 								// Add a fixed width for the space
 								curWidth += 6;
@@ -8163,7 +8160,7 @@ void JE_drawPlanet( JE_byte planetNum )
 		{
 			tempZ += planetAni;
 		}
-		JE_newDrawCShapeDarken((*shapeArray)[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
+		JE_newDrawCShapeDarken(shapeArray[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
 		JE_newDrawCShapeNum(PLANET_SHAPES, tempZ+1, tempX, tempY);
 	}
 }

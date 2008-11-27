@@ -20,17 +20,15 @@
 #include "params.h"
 
 #include "network.h"
+#include "xmas.h"
 
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
-#include <time.h>
 
 JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
 
 JE_boolean isNetworkGame;
-
-JE_boolean tyrianXmas;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
@@ -51,9 +49,6 @@ void JE_paramCheck( int argc, char *argv[] )
 	quikJuke        = false;
 	forceAveraging  = false;
 
-	time_t now = time(NULL);
-	tyrianXmas = localtime(&now)->tm_mon == 11;
-	
 	const struct {
 		char short_opt;
 		char *long_opt;
@@ -122,7 +117,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					break;
 					
 				case 'x':
-					tyrianXmas = false;
+					xmas = false;
 					break;
 					
 				case 'n':
@@ -186,7 +181,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					break;
 				
 				case 'X':
-					tyrianXmas = true;
+					xmas = true;
 					break;
 					
 				case 'c':
@@ -266,10 +261,10 @@ void JE_paramCheck( int argc, char *argv[] )
 							forceAveraging = true;
 							break;
 						case 10:
-							tyrianXmas = false;
+							xmas = false;
 							break;
 						case 11:
-							tyrianXmas = true;
+							xmas = true;
 							break;
 						default:
 							/* YKS: This shouldn't ever be reached. */

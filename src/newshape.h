@@ -28,12 +28,12 @@
 #define NEW_BLACK         253
 
 /* Font faces */
-#define PLANET_SHAPES     0
-#define FONT_SHAPES       1
-#define SMALL_FONT_SHAPES 2
-#define FACE_SHAPES       3
-#define OPTION_SHAPES     4 /*Also contains help shapes*/
-#define TINY_FONT         5
+#define FONT_SHAPES       0
+#define SMALL_FONT_SHAPES 1
+#define TINY_FONT         2
+#define PLANET_SHAPES     3
+#define FACE_SHAPES       4
+#define OPTION_SHAPES     5 /*Also contains help shapes*/
 #define WEAPON_SHAPES     6
 #define EXTRA_SHAPES      7 /*Used for Ending pics*/
 
@@ -43,7 +43,7 @@
 typedef JE_byte *JE_ShapeArrayType[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable, 1..maximumshape] */
 
 extern SDL_Surface *tempScreenSeg;
-extern JE_ShapeArrayType *shapeArray;
+extern JE_ShapeArrayType shapeArray;
 extern JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],
                shapeY[MAX_TABLE][MAXIMUM_SHAPE];
 extern JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];
@@ -67,8 +67,6 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 JE_boolean JE_waitAction( JE_byte time, JE_boolean checkjoystick );
 void JE_mouseStart( void );
 void JE_mouseReplace( void );
-
-void newshape_init( void );
 
 #endif /* NEWSHAPE_H */
 

@@ -57,6 +57,8 @@ video_error:
 	
 	VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 	game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
+	
+	SDL_LockSurface(VGAScreen);
 }
 
 void reinit_video( void )
@@ -104,6 +106,8 @@ void reinit_video( void )
 
 void deinit_video( void )
 {
+	SDL_UnlockSurface(VGAScreen);
+	
 #ifndef TARGET_GP2X
 	SDL_FreeSurface(VGAScreenSeg);
 #endif /* TARGET_GP2X */

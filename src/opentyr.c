@@ -41,6 +41,7 @@
 #include "setup.h"
 #include "shpmast.h"
 #include "tyrian2.h"
+#include "xmas.h"
 #include "varz.h"
 #include "vga256d.h"
 #include "video.h"
@@ -360,32 +361,34 @@ int main( int argc, char *argv[] )
 	} else {
 		printf("No mouse found.\n");
 	}
-
-	if (tyrianXmas)
+	
+	xmas |= xmas_time();
+	if (xmas && (JE_getFileSize("tyrianc.shp") == 0 || JE_getFileSize("voicesc.snd") == 0))
 	{
-		if (JE_getFileSize("tyrianc.shp") == 0)
-		{
-			tyrianXmas = false;
-		}
-		/*if (JE_getFileSize("voicesc.shp") == 0) tyrianXmas = false;*/
-#ifndef TARGET_GP2X
-		if (tyrianXmas)
-		{
-			printf("*****************************\n"
-			       "Christmas has been detected.\n"
-			       "  Activate Christmas? (Y/N)\n"
-			       "*****************************\n");
-			wait_input(true, true, true);
-			if (lastkey_sym != SDLK_y)
-			{
-				tyrianXmas = false;
-			}
-		} else {
-			printf("Christmas is missing.\n");
-		}
-#endif /*TARGET_GP2X*/
+		xmas = false;
+		
+		printf("Christmas is missing.\n");
 	}
-
+	
+	
+	JE_loadPals();
+	JE_loadMainShapeTables(xmas ? "tyrianc.shp" : "tyrian.shp");
+	
+	tempScreenSeg = VGAScreen;
+	
+	
+	if (xmas)
+	{
+		if (!xmas_prompt())
+		{
+			xmas = false;
+			
+			free_main_shape_tables();
+			JE_loadMainShapeTables("tyrian.shp");
+		}
+	}
+	
+	
 	/* Default Options */
 	youAreCheating = false;
 	smoothScroll = true;
@@ -414,7 +417,7 @@ int main( int argc, char *argv[] )
 			printf ("SB port ***\n");
 			printf ("Interrupt ***\n");*/
 
-			JE_loadSndFile();
+			JE_loadSndFile("tyrian.snd", xmas ? "voicesc.snd" : "voices.snd");
 		}
 
 	}
@@ -428,16 +431,10 @@ int main( int argc, char *argv[] )
 	megaData2 = malloc(sizeof(*megaData2));
 	megaData3 = malloc(sizeof(*megaData3));
 
-	newshape_init();
-	JE_loadMainShapeTables();
 	JE_loadExtraShapes();  /*Editship*/
 
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/
-	
-	JE_loadPals();
-	
-	SDL_LockSurface(VGAScreen);
 	
 	if (isNetworkGame)
 	{
@@ -451,8 +448,6 @@ int main( int argc, char *argv[] )
 	stoppedDemo = false;
 	
 	JE_main();
-	
-	SDL_UnlockSurface(VGAScreen);
 	
 	deinit_video();
 	

@@ -99,7 +99,7 @@ void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integ
 void JE_frameDelay( JE_byte delay );
 
 void JE_loadSmpFile ( char *name, JE_byte samplenum);
-void JE_loadSndFile( void );
+void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile );
 void JE_playSampleNum ( JE_byte samplenum );
 
 void JE_fxDestruct ( JE_byte samplenum );

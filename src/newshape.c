@@ -33,7 +33,7 @@
 
 SDL_Surface *tempScreenSeg = NULL;
 
-JE_ShapeArrayType *shapeArray = NULL;
+JE_ShapeArrayType shapeArray = { { NULL } };
 
 JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],        /* [1..maxtable,1..maximumshape] */
         shapeY[MAX_TABLE][MAXIMUM_SHAPE];        /* [1..maxtable,1..maximumshape] */
@@ -72,9 +72,9 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 			efread(&shapeY   [table][i], sizeof(JE_word), 1, f);
 			efread(&shapeSize[table][i], sizeof(JE_word), 1, f);
 			
-			(*shapeArray)[table][i] = malloc(shapeX[table][i] * shapeY[table][i]);
+			shapeArray[table][i] = malloc(shapeX[table][i] * shapeY[table][i]);
 			
-			efread((*shapeArray)[table][i], sizeof(JE_byte), shapeSize[table][i], f);
+			efread(shapeArray[table][i], sizeof(JE_byte), shapeSize[table][i], f);
 		}
 	}
 }
@@ -153,7 +153,7 @@ void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y )
 	s_limit = (Uint8 *)tempScreenSeg->pixels;
 	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
 
-	for (p = (*shapeArray)[table][shape]; yloop < ysize; p++)
+	for (p = shapeArray[table][shape]; yloop < ysize; p++)
 	{
 		switch (*p)
 		{
@@ -192,7 +192,7 @@ void JE_newPurgeShapes( JE_byte table )
 	{
 		if (shapeExist[table][i])
 		{
-			free((*shapeArray)[table][i]);
+			free(shapeArray[table][i]);
 			
 			shapeExist[table][i] = false;
 		}
@@ -320,12 +320,6 @@ void JE_mouseReplace( void )
 	{
 		JE_drawShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 	}
-}
-
-void newshape_init( void )
-{
-	tempScreenSeg = VGAScreen;
-	shapeArray = malloc(sizeof(JE_ShapeArrayType));
 }
 
 // kate: tab-width 4; vim: set noet:

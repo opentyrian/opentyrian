@@ -25,6 +25,7 @@
 #include "joystick.h"
 #include "lds_play.h"
 #include "loudness.h"
+#include "mainint.h"
 #include "mtrand.h"
 #include "network.h"
 #include "newshape.h"
@@ -693,31 +694,10 @@ void JE_tyrianHalt( JE_byte code )
 	free(megaData3);
 	megaData3 = NULL;
 	
-	for (int i = 0; i < MAX_TABLE; i++)
-	{
-		JE_newPurgeShapes(i);
-	}
-	
-	free(shapesC1);
-	shapesC1 = NULL;
-	
-	free(shapes9);
-	shapes9 = NULL;
-	
-	free(eShapes6);
-	eShapes6 = NULL;
-	
-	free(eShapes5);
-	eShapes5 = NULL;
-	
-	free(shapesW2);
-	shapesW2 = NULL;
+	free_main_shape_tables();
 	
 	free(shapes6);
 	shapes6 = NULL;
-	
-	free(shapeArray);
-	shapeArray = NULL;
 	
 	for (int i = 0; i < SOUND_NUM + 9; i++)
 	{

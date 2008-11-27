@@ -23,7 +23,6 @@
 
 extern JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
 extern JE_boolean isNetworkGame;
-extern JE_boolean tyrianXmas;
 extern const char pars[][9];
 
 void JE_paramCheck( int argc, char *argv[] );

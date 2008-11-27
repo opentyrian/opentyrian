@@ -47,6 +47,7 @@
 #include "vga256d.h"
 #include "video.h"
 
+#include <assert.h>
 #include <ctype.h>
 
 
@@ -139,7 +140,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 							b = s[z];
 							if (b > 32 && b < 126)
 							{
-								JE_newDrawCShapeAdjust((*shapeArray)[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z], y, bank, glowcol[z]);
+								JE_newDrawCShapeAdjust(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z], y, bank, glowcol[z]);
 								glowcol[z] += glowcolc[z];
 								if (glowcol[z] > 9)
 								{
@@ -150,7 +151,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 					}
 					if (b > 32 && b < 126 && --z < maxloc)
 					{
-						JE_newDrawCShapeShadow((*shapeArray)[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z] + 1, y + 1);
+						JE_newDrawCShapeShadow(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z] + 1, y + 1);
 					}
 					if (JE_anyButton())
 					{
@@ -438,37 +439,31 @@ void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
 	efread(*shapes, sizeof(JE_byte), shapeSize, f);
 }
 
-void JE_loadMainShapeTables( void )
+void JE_loadMainShapeTables( char *shpfile )
 {
-	const JE_byte shapeReorderList[7] /* [1..7] */ = {1, 2, 5, 0, 3, 4, 6};
-
 	FILE *f;
-
-	JE_longint shpPos[SHP_NUM + 1]; /* [1..shpnum + 1] */;
+	
+	JE_resetFile(&f, shpfile);
+	
 	JE_word shpNumb;
-	
-	int i;
-	
-	if (tyrianXmas)
-	{
-		JE_resetFile(&f, "tyrianc.shp");
-	} else {
-		JE_resetFile(&f, "tyrian.shp");
-	}
+	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
 	
 	efread(&shpNumb, sizeof(JE_word), 1, f);
-	for (x = 0; x < shpNumb; x++)
+	assert(shpNumb + 1 <= COUNTOF(shpPos));
+	
+	for (int i = 0; i < shpNumb; i++)
 	{
-		efread(&shpPos[x], sizeof(JE_longint), 1, f);
+		efread(&shpPos[i], sizeof(JE_longint), 1, f);
 	}
 	fseek(f, 0, SEEK_END);
 	shpPos[shpNumb] = ftell(f);
 	
-	// interface, option sprites
+	int i;
+	// fonts, interface, option sprites
 	for (i = 0; i < 7; i++)
 	{
 		fseek(f, shpPos[i], SEEK_SET);
-		JE_newLoadShapesB(shapeReorderList[i], f);
+		JE_newLoadShapesB(i, f);
 	}
 	
 	// player shot sprites
@@ -496,6 +491,29 @@ void JE_loadMainShapeTables( void )
 	JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
 	
 	fclose(f);
+}
+
+void free_main_shape_tables( void )
+{
+	for (int i = 0; i < MAX_TABLE; i++)
+	{
+		JE_newPurgeShapes(i);
+	}
+	
+	free(shapesC1);
+	shapesC1 = NULL;
+	
+	free(shapes9);
+	shapes9 = NULL;
+	
+	free(eShapes6);
+	eShapes6 = NULL;
+	
+	free(eShapes5);
+	eShapes5 = NULL;
+	
+	free(shapesW2);
+	shapesW2 = NULL;
 }
 
 JE_word JE_powerLevelCost( JE_word base, JE_byte level )
@@ -2103,7 +2121,7 @@ void JE_playCredits( void )
 		setjasondelay2(1);
 		JE_clr256();
 		
-		JE_newDrawCShapeAdjust((*shapeArray)[EXTRA_SHAPES][currentpic-1], shapeX[EXTRA_SHAPES][currentpic-1], shapeY[EXTRA_SHAPES][currentpic-1], 319 - shapeX[EXTRA_SHAPES][currentpic-1], 100 - (shapeY[EXTRA_SHAPES][currentpic-1] / 2), 0, fade - 15);
+		JE_newDrawCShapeAdjust(shapeArray[EXTRA_SHAPES][currentpic-1], shapeX[EXTRA_SHAPES][currentpic-1], shapeY[EXTRA_SHAPES][currentpic-1], 319 - shapeX[EXTRA_SHAPES][currentpic-1], 100 - (shapeY[EXTRA_SHAPES][currentpic-1] / 2), 0, fade - 15);
 		
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
@@ -2408,8 +2426,8 @@ void JE_endLevelAni( void )
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
-	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
-	JE_newDrawCShapeDarken((*shapeArray)[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
+	JE_newDrawCShapeDarken(shapeArray[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
+	JE_newDrawCShapeDarken(shapeArray[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
 	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, filter, brightness);
 }
 

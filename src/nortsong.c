@@ -81,7 +81,7 @@ float jasondelay = 1000.0f / (1193180.0f / 0x4300);
 
 void setdelay( JE_byte delay )
 {
-	target = (delay << 4)+SDL_GetTicks(); /* delay << 4 == delay * 16 */
+	target = (delay * 16) + SDL_GetTicks();
 }
 
 void setjasondelay( int delay )
@@ -155,7 +155,7 @@ void JE_loadSong( JE_word songnum )
 	fclose(fi);
 }
 
-void JE_loadSndFile( void )
+void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile )
 {
 	FILE *fi;
 	JE_byte y, z;
@@ -165,7 +165,7 @@ void JE_loadSndFile( void )
 	JE_word sndNum;
 
 	/* SYN: Loading offsets into TYRIAN.SND */
-	JE_resetFile(&fi, "tyrian.snd");
+	JE_resetFile(&fi, effects_sndfile);
 	efread(&sndNum, sizeof(sndNum), 1, fi);
 
 	for (x = 0; x < sndNum; x++)
@@ -187,12 +187,8 @@ void JE_loadSndFile( void )
 	fclose(fi);
 
 	/* SYN: Loading offsets into VOICES.SND */
-	if (tyrianXmas)
-	{
-		JE_resetFile(&fi, "voicesc.snd");
-	} else {
-		JE_resetFile(&fi, "voices.snd");
-	}
+	JE_resetFile(&fi, voices_sndfile);
+	
 	efread(&sndNum, sizeof(sndNum), 1, fi);
 
 	for (x = 0; x < sndNum; x++)
