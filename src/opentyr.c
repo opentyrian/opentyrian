@@ -39,7 +39,6 @@
 #include "picload.h"
 #include "scroller.h"
 #include "setup.h"
-#include "shpmast.h"
 #include "tyrian2.h"
 #include "xmas.h"
 #include "varz.h"
