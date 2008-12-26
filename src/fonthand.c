@@ -727,12 +727,9 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 			
 			NETWORK_KEEP_ALIVE();
 			
-			//JE_waitRetrace();  didn't do anything anyway?
 			JE_showVGA();
-
-			int delaycount_temp;
-			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-				SDL_Delay(delaycount_temp);
+			
+			wait_delay();
 		}
 	for (z = (frameCountMax == 0) ? 6 : 12; z >= textGlowBrightness; z--)
 	{
@@ -746,12 +743,9 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 		
 		NETWORK_KEEP_ALIVE();
 		
-		//JE_waitRetrace();  didn't do anything anyway?
 		JE_showVGA();
 
-		int delaycount_temp;
-		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-			SDL_Delay(delaycount_temp);
+		wait_delay();
 	}
 	textGlowBrightness = 6;
 }

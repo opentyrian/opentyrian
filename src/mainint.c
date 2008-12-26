@@ -2239,9 +2239,7 @@ void JE_playCredits( void )
 		
 		NETWORK_KEEP_ALIVE();
 		
-		int delaycount_temp;
-		if ((delaycount_temp = target2 - SDL_GetTicks()) > 0)
-			SDL_Delay(delaycount_temp);
+		wait_delay();
 		
 		JE_showVGA();
 		if (JE_anyButton())
@@ -2382,12 +2380,10 @@ void JE_endLevelAni( void )
 					{
 						frameCountMax = 0;
 					}
-					//JE_waitRetrace();  didn't do anything anyway?
+					
 					JE_showVGA();
 					
-					int delaycount_temp;
-					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-						SDL_Delay(delaycount_temp);
+					wait_delay();
 				}
 				for (i = 10; i >= 0; i--)
 				{
@@ -2398,12 +2394,10 @@ void JE_endLevelAni( void )
 					{
 						frameCountMax = 0;
 					}
-					//JE_waitRetrace();  didn't do anything anyway?
+					
 					JE_showVGA();
 					
-					int delaycount_temp;
-					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-						SDL_Delay(delaycount_temp);
+					wait_delay();
 				}
 			}
 		} else {
@@ -2430,7 +2424,7 @@ void JE_endLevelAni( void )
 			
 			NETWORK_KEEP_ALIVE();
 			
-			service_wait_delay();
+			wait_delay();
 		} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
 	}
 	

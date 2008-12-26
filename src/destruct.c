@@ -1261,10 +1261,8 @@ void JE_destructMain( void )
 						keysactive[lastkey_sym] = false;
 					}
 					
-					int delaycount_temp;
-					if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-						SDL_Delay(delaycount_temp);
-						
+					wait_delay();
+					
 					if (keysactive[SDLK_ESCAPE])
 					{
 						destructQuit = true;

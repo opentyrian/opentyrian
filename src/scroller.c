@@ -305,11 +305,7 @@ void scroller_sine( const struct about_text_type text[] )
 			JE_setPalette(254, 255, 255, 255);
 		}
 		
-		int delaycount_temp = target - SDL_GetTicks();
-		if (delaycount_temp > 0)
-		{
-			SDL_Delay(delaycount_temp);
-		}
+		wait_delay();
 	}
 	
 	JE_fadeBlack(10);

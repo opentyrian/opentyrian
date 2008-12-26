@@ -144,9 +144,7 @@ void JE_starShowVGA( void )
 
 		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
 		{
-			int delaycount_temp;
-			if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-				SDL_Delay(delaycount_temp);
+			wait_delay();
 			setjasondelay(frameCountMax);
 		}
 
@@ -4602,9 +4600,7 @@ void JE_readTextSync( void )
 
 		/* TODO: NETWORK */
 
-		int delaycount_temp;
-		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-			SDL_Delay(delaycount_temp);
+		wait_delay();
 
 	} while (0 /* TODO: NETWORK */);
 }
@@ -4658,11 +4654,9 @@ void JE_displayText( void )
 		setjasondelay(1);
 
 		NETWORK_KEEP_ALIVE();
-
-		int delaycount_temp;
-		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-			SDL_Delay(delaycount_temp);
-
+		
+		wait_delay();
+		
 	} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1) || ESCPressed));
 	levelWarningDisplay = false;
 }
