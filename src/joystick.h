@@ -21,57 +21,61 @@
 
 #include "opentyr.h"
 
-#ifndef TARGET_GP2X
-typedef JE_boolean JE_ButtonType[4]; /* [1..4] */
-typedef JE_byte JE_ButtonAssign[4]; /* [1..4] */
-#else  /* TARGET_GP2X */
-typedef JE_boolean JE_ButtonType[19];
-typedef JE_byte JE_ButtonAssign[19];
+extern bool button[4];
 
-#ifndef GP2X_VK_UP
-#define GP2X_VK_UP              0
-#define GP2X_VK_DOWN            4
-#define GP2X_VK_LEFT            2
-#define GP2X_VK_RIGHT           6
-#define GP2X_VK_UP_LEFT         1
-#define GP2X_VK_UP_RIGHT        7
-#define GP2X_VK_DOWN_LEFT       3
-#define GP2X_VK_DOWN_RIGHT      5
-#define GP2X_VK_CLICK           18
-#define GP2X_VK_FA              12
-#define GP2X_VK_FB              13
-#define GP2X_VK_FX              15
-#define GP2X_VK_FY              14
-#define GP2X_VK_FL              10
-#define GP2X_VK_FR              11
-#define GP2X_VK_START           8
-#define GP2X_VK_SELECT          9
-#define GP2X_VK_VOL_UP          16
-#define GP2X_VK_VOL_DOWN        17
-#endif  /* GP2X_VK_UP */
 
-#endif  /* TARGET_GP2X */
+struct joystick_assignment_struct
+{
+	bool is_axis; // else button
+	bool axis_negative; // else positive
+	int num;
+};
 
-extern const JE_ButtonAssign defaultJoyButtonAssign;
-extern JE_ButtonType tempButton, button, joyButton;
-extern JE_boolean buttonHeld;
-extern JE_ButtonAssign joyButtonAssign;
-extern JE_boolean useButtonAssign;
-extern Sint16 joyX, joyY;
-extern JE_byte joystickError;
-extern JE_boolean joystickUp, joystickDown, joystickLeft, joystickRight, joystickInput;
-extern JE_boolean joystick_installed;
-extern JE_word joystickWait, joystickWaitMax;
+struct joystick_struct
+{
+	SDL_Joystick *handle;
+	
+	struct joystick_assignment_struct assignment[10][2]; // 0-3: directions, 4-9: actions
+	
+	bool analog;
+	int sensitivity, threshold;
+	
+	signed int x, y;
+	int analog_direction[4];
+	bool direction[4], direction_pressed[4]; // up, right, down, left  (_pressed, for emulating key presses)
+	
+	bool confirm, cancel;
+	bool action[6], action_pressed[6]; // fire, mode swap, left fire, right fire, menu, pause
+	
+	Uint32 joystick_delay;
+	bool input_pressed;
+};
 
-void JE_joystick1( void ); /*procedure to get JoyX, JoyY, Button1, Button2 of Joystick 1*/
-void JE_joystick2( void );
-JE_boolean JE_nextJoystickCheck( void );
-JE_boolean JE_joystickTranslate( void );
-void JE_joystickInit( void );
-JE_boolean JE_joystickNotHeld( void );
-void JE_updateButtons( void ); /*Uses ButtonAssign to find out*/
+extern bool joydown;
+extern bool ignore_joystick;
+extern int joysticks;
+extern struct joystick_struct *joystick;
 
-void joystick_init( void );
+int joystick_axis_reduce( int j, int value );
+bool joystick_analog_angle( int j, float *angle );
+
+void poll_joystick( int j );
+void poll_joysticks( void );
+
+void push_key( SDLKey key );
+void push_joysticks_as_keyboard( void );
+
+void init_joysticks( void );
+void deinit_joysticks( void );
+
+void reset_joystick_assignments( int j );
+bool load_joystick_assignments( int j );
+bool save_joystick_assignments( int j );
+FILE *seek_joystick_assignments( int j, bool read_only );
+
+bool detect_joystick_assignment( int j, struct joystick_assignment_struct *assignment );
+
+bool joystick_assignment_cmp( struct joystick_assignment_struct *a, struct joystick_assignment_struct *b );
 
 #endif /* JOYSTICK_H */
 

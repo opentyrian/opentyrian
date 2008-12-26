@@ -47,21 +47,22 @@ JE_boolean repeatedFade, continuousPlay;
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
-	JE_setMousePosition(160, 100);
-
+	set_mouse_position(160, 100);
+	
 	do
 	{
 		JE_showVGA();
-
+		
+		push_joysticks_as_keyboard();
 		service_SDL_events(true);
-
-		inputDetected = newkey | mousedown | JE_joystickNotHeld();
-
+		
+		inputDetected = newkey | mousedown;
+		
 		if (lastkey_sym == SDLK_SPACE)
 		{
 			lastkey_sym = SDLK_RETURN;
 		}
-
+		
 		if (mousedown)
 		{
 			newkey = true;
@@ -96,7 +97,8 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		
 		NETWORK_KEEP_ALIVE();
 		
-		SDL_Delay(16); /* <MXD> attempt non-processor-based wait, implement a real delay later */
+		SDL_Delay(16);
+		
 		if (*waitTime > 0)
 		{
 			(*waitTime)--;
@@ -175,6 +177,8 @@ void JE_jukeboxGo( void )
 		}
 
 		setdelay(1);
+		
+		push_joysticks_as_keyboard();
 		service_SDL_events(true);
 
 		JE_starlib_main();
@@ -204,11 +208,9 @@ void JE_jukeboxGo( void )
 			JE_outText(JE_fontCenter("Arrow keys change the song being played.", TINY_FONT), 180, "Arrow keys change the song being played.", 1, 0);
 		}
 
-		int delaycount_temp;
-		if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-			SDL_Delay(delaycount_temp);
-
 		JE_showVGA();
+		
+		wait_delay();
 
 		if (fade)
 		{
@@ -233,23 +235,10 @@ void JE_jukeboxGo( void )
 			JE_setTimerInt();
 		}
 
-		JE_joystick2();
 		if (JE_mousePosition(&x, &y) > 0 || button[0])
 		{
 			quit = true;
 			JE_wipeKey();
-		}
-
-		if (joystickInput)
-		{
-			if (joystickUp || joystickLeft)
-			{
-				currentJukeboxSong--;
-				JE_playNewSong();
-			} else if (joystickDown || joystickRight) {
-				currentJukeboxSong++;
-				JE_playNewSong();
-			}
 		}
 
 		if (newkey)

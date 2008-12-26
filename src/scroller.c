@@ -140,7 +140,7 @@ void scroller_sine( const struct about_text_type text[] )
 	
 	JE_fadeBlack(10);
 	
-	wait_noinput(true, true, joystick_installed);
+	wait_noinput(true, true, true);
 	
 	currentJukeboxSong = 41; /* BEER! =D */
 	JE_playSong(currentJukeboxSong);

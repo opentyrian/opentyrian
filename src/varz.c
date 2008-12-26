@@ -34,11 +34,8 @@
 #include "video.h"
 
 
-JE_byte fromTime;
 JE_integer tempDat, tempDat2, tempDat3;
 JE_boolean tempb2;
-
-JE_word test1;
 
 const JE_byte SANextShip[SA + 2] /* [0..SA + 1] */ = { 3, 8, 6, 2, 5, 1, 4, 3, 7};
 const JE_word SASpecialWeapon[SA] /* [1..SA] */  = { 7, 8, 9,10,11,12,13};
@@ -268,8 +265,6 @@ JE_boolean globalFlags[10]; /* [1..10] */
 JE_byte levelSong;
 
 JE_boolean drawGameSaved;
-
-JE_boolean repause;
 
 /* DESTRUCT game */
 JE_boolean loadDestruct;
@@ -679,11 +674,7 @@ void JE_drawOptionLevel( void )
 void JE_tyrianHalt( JE_byte code )
 {
 	deinit_video();
-	
-	if (scanForJoystick)
-	{
-		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-	}
+	deinit_joysticks();
 	
 	/* TODO: NETWORK */
 	

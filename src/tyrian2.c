@@ -55,6 +55,7 @@
 #include <string.h>
 #include <inttypes.h>
 
+int joystick_config = 0;
 
 JE_word statDmg[2]; /* [1..2] */
 JE_byte planetAni, planetAniWait;
@@ -917,11 +918,6 @@ void JE_main( void )
 	/* Setup Graphics */
 	JE_updateColorsFast(black);
 
-	/*debuginfo('Initiating Configuration');*/
-
-
-	/* Setup Input Device */
-	/*JConfigure:=false;*/
 
 	debug = false;
 
@@ -952,8 +948,6 @@ start_level:
 	{
 		JE_selectSong(0);
 	}
-
-	useButtonAssign = true; /*Joystick button remapping*/
 
 	JE_clearKeyboard();
 
@@ -994,7 +988,7 @@ start_level:
 		{
 			JE_fadeBlack(10);
 			/* JE_wipekey();*/
-			wait_noinput(true, true, joystick_installed);
+			wait_noinput(true, true, true);
 		}
 	}
 
@@ -1253,8 +1247,6 @@ start_level_first:
 
 	JE_playSong(levelSong);
 
-	/*if not JConfigure and (InputDevice=1) then CalibrateJoy;*/
-
 	JE_drawPortConfigButtons();
 
 	/* --- MAIN LOOP --- */
@@ -1332,16 +1324,6 @@ start_level_first:
 	/*Destruction Ratio*/
 	totalEnemy = 0;
 	enemyKilled = 0;
-
-	/*InputDevices*/
-	if (twoPlayerMode && !isNetworkGame)
-	{
-		playerDevice1 = inputDevice1;
-		playerDevice2 = inputDevice2;
-	} else {
-		playerDevice1 = 0;
-		playerDevice2 = 0;
-	}
 
 	astralDuration = 0;
 
@@ -2962,7 +2944,7 @@ explosion_draw_overflow:
 				} else {
 					JE_dString(120, 60, miscText[21], FONT_SHAPES);
 				}
-				JE_setMousePosition(159, 100);
+				set_mouse_position(159, 100);
 				if (firstGameOver)
 				{
 					if (!playDemo)
@@ -2975,8 +2957,8 @@ explosion_draw_overflow:
 
 				if (!playDemo)
 				{
+					push_joysticks_as_keyboard();
 					service_SDL_events(true);
-					JE_joystick2();
 					if (playDemo ||
 					   (newkey || button[0] || button[1] || button[2]) ||
 					   (newmouse))
@@ -3012,6 +2994,32 @@ explosion_draw_overflow:
 			if (skipStarShowVGA)
 			{
 				goto level_loop;
+			}
+		}
+		
+		if (pause_pressed)
+		{
+			pause_pressed = false;
+			
+			if (isNetworkGame)
+			{
+				pauseRequest = true;
+			} else {
+				JE_pauseGame();
+			}
+		}
+		
+		if (ingamemenu_pressed)
+		{
+			ingamemenu_pressed = false;
+			
+			if (isNetworkGame)
+			{
+				inGameMenuRequest = true;
+			} else {
+				yourInGameMenuRequest = true;
+				JE_doInGameSetup();
+				skipStarShowVGA = true;
 			}
 		}
 	}
@@ -3107,14 +3115,6 @@ explosion_draw_overflow:
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 
 	JE_starShowVGA();
-
-	/*??*/
-	if (repause && superPause)
-	{
-		repause = false;
-		JE_pauseGame();
-		keysactive[SDLK_p] = false;
-	}
 
 	/*Start backgrounds if no enemies on screen
 	  End level if number of enemies left to kill equals 0.*/
@@ -3595,7 +3595,6 @@ new_game:
 							case 'U':
 								if (!constantPlay)
 								{
-									/* TODO: NETWORK */
 									memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 									tempX = atoi(strnztcpy(buffer, s + 3, 3));
@@ -3603,16 +3602,17 @@ new_game:
 									memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
 									service_SDL_events(true);
+									
 									for (z = 0; z <= 199; z++)
 									{
-										service_SDL_events(false);
-										if (!newkey && !ESCPressed)
+										if (!newkey)
 										{
 											vga = VGAScreen->pixels;
 											vga2 = VGAScreen2->pixels;
 											pic = pic_buffer + (199 - z) * 320;
 
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
+											
 											for (y = 0; y < 199; y++)
 											{
 												if (y <= z)
@@ -3625,15 +3625,18 @@ new_game:
 												}
 												vga += VGAScreen->pitch;
 											}
+											
 											JE_showVGA();
-											wait_delay();
-
+											
 											if (isNetworkGame)
 											{
 												/* TODO: NETWORK */
 											}
+											
+											service_wait_delay();
 										}
 									}
+									
 									memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
 								}
 								break;
@@ -3651,14 +3654,14 @@ new_game:
 									service_SDL_events(true);
 									for (z = 0; z <= 199; z++)
 									{
-										service_SDL_events(false);
-										if (!newkey && !ESCPressed)
+										if (!newkey)
 										{
 											vga = VGAScreen->pixels;
 											vga2 = VGAScreen2->pixels;
 											pic = pic_buffer;
-
+											
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
+											
 											for (y = 0; y < 199; y++)
 											{
 												if (y <= 199 - z)
@@ -3671,15 +3674,18 @@ new_game:
 												}
 												vga += VGAScreen->pitch;
 											}
+											
 											JE_showVGA();
-											wait_delay();
-
+											
 											if (isNetworkGame)
 											{
 												/* TODO: NETWORK */
 											}
+											
+											service_wait_delay();
 										}
 									}
+									
 									memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
 								}
 								break;
@@ -3695,16 +3701,17 @@ new_game:
 									memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
 									service_SDL_events(true);
+									
 									for (z = 0; z <= 318; z++)
 									{
-										service_SDL_events(false);
-										if (!newkey && !ESCPressed)
+										if (!newkey)
 										{
 											vga = VGAScreen->pixels;
 											vga2 = VGAScreen2->pixels;
 											pic = pic_buffer;
-
+											
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
+											
 											for(y = 0; y < 200; y++)
 											{
 												memcpy(vga, vga2 + z, 319 - z);
@@ -3714,15 +3721,18 @@ new_game:
 												vga += z;
 												pic += 320;
 											}
+											
 											JE_showVGA();
-											wait_delay();
-
+											
 											if (isNetworkGame)
 											{
 												/* TODO: NETWORK */
 											}
+											
+											service_wait_delay();
 										}
 									}
+									
 									memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
 								}
 								break;
@@ -4073,9 +4083,6 @@ void JE_titleScreen( JE_boolean animate )
 	gameLoaded = false;
 	jumpSection = false;
 
-	joystickWaitMax = 80;
-	joystickWait = 0;
-
 	if (isNetworkGame)
 	{
 		JE_loadPic(2, false);
@@ -4202,15 +4209,15 @@ void JE_titleScreen( JE_boolean animate )
 					{
 						for (temp = 61; temp >= 4; temp -= 2)
 						{
-							int i;
-							
 							setjasondelay(2);
+							
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 							
 							JE_newDrawCShapeNum(PLANET_SHAPES, 147, 11, temp);
 							
 							JE_showVGA();
-							wait_delay();
+							
+							service_wait_delay();
 						}
 					}
 					moveTyrianLogoUp = false;
@@ -4456,8 +4463,8 @@ void JE_titleScreen( JE_boolean animate )
 											score2 = 0;
 											pItems[11] = 11;
 											difficultyLevel++;
-											inputDevice1 = 1;
-											inputDevice2 = 2;
+											inputDevice[0] = 1;
+											inputDevice[1] = 2;
 										} else {
 											if (richMode)
 											{
@@ -6067,13 +6074,12 @@ void JE_itemScreen( void )
 		8: read data cube
 		9: 2 player arcade game menu
 		10: 1 player arcade game menu
-		11: different options menu
+		11: network game options
 		12: joystick settings
+		13: super tyrian
 	*/
 
 	JE_loadCubes();
-
-	JE_wipeKey();
 
 	tempScreenSeg = VGAScreen;
 
@@ -6081,9 +6087,6 @@ void JE_itemScreen( void )
 
 	first = true;
 	refade = false;
-
-	joystickWaitMax = 10;
-	joystickWait = 0;
 
 	JE_playSong(songBuy);
 
@@ -6217,7 +6220,7 @@ item_screen_start:
 		}
 
 		/* Draw menu choices for simple menus */
-		if ((curMenu >= 0 && curMenu <= 3) || (curMenu >= 9 && curMenu <= 13))
+		if ((curMenu >= 0 && curMenu <= 3) || (curMenu >= 9 && curMenu <= 11) || curMenu == 13)
 		{
 			JE_drawMenuChoices();
 		}
@@ -6234,15 +6237,6 @@ item_screen_start:
 			{
 				JE_newDrawCShapeDarkenNum(OPTION_SHAPES, 35, 190 + x*18 + 2, 37+1);
 				JE_newDrawCShapeNum(OPTION_SHAPES, 35, 190 + x*18, 37);
-			}
-		}
-
-		/* Joystick settings menu */
-		if (curMenu == 12)
-		{
-			for (temp = 1; temp <= 4; temp++)
-			{
-				JE_textShade(214, 34 + temp*24 - 8, joyButtonNames[joyButtonAssign[temp-1]-1], 15, 2, DARKEN);
 			}
 		}
 
@@ -6290,7 +6284,7 @@ item_screen_start:
 				{
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(305, 38 + (x - min) * 11);
+						set_mouse_position(305, 38 + (x - min) * 11);
 					}
 				}
 
@@ -6333,7 +6327,7 @@ item_screen_start:
 					temp2 = 15;
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(305, 38 + (x - 2)*12);
+						set_mouse_position(305, 38 + (x - 2) * 12);
 					}
 				} else {
 					temp2 = 28;
@@ -6354,6 +6348,75 @@ item_screen_start:
 			}
 
 			menuChoices[5] = 11;
+		}
+
+		/* Joystick settings menu */
+		if (curMenu == 12)
+		{
+			char *menu_item[] = 
+			{
+				"JOYSTICK",
+				"ANALOG AXES",
+				" SENSITIVITY",
+				" THRESHOLD",
+				menuInt[6][1],
+				menuInt[6][4],
+				menuInt[6][2],
+				menuInt[6][3],
+				menuInt[6][5],
+				menuInt[6][6],
+				menuInt[6][7],
+				menuInt[6][8],
+				"MENU",
+				"PAUSE",
+				menuInt[6][9],
+				menuInt[6][10]
+			};
+			
+			for (int i = 0; i < COUNTOF(menu_item); i++)
+			{
+				int temp = (i == curSel[curMenu] - 2) ? 15 : 28;
+				
+				JE_textShade(166, 38 + i * 8, menu_item[i], temp / 16, temp % 16 - 8, DARKEN);
+				
+				temp = (i == curSel[curMenu] - 2) ? 252 : 250;
+				
+				char value[30] = "";
+				if (joysticks == 0 && i < 14)
+				{
+					sprintf(value, "-");
+				} else if (i == 0) {
+					sprintf(value, "%d", joystick_config);
+				} else if (i == 1) {
+					sprintf(value, "%s", joystick[joystick_config].analog ? "TRUE" : "FALSE");
+				} else if (i < 4) {
+					if (!joystick[joystick_config].analog)
+						temp -= 3;
+					sprintf(value, "%d", i == 2 ? joystick[joystick_config].sensitivity : joystick[joystick_config].threshold);
+				} else if (i < 14) {
+					bool comma = false;
+					for (int k = 0; k < COUNTOF(*joystick->assignment); k++)
+					{
+						if (joystick[joystick_config].assignment[i - 4][k].num == -1)
+							continue;
+						
+						if (comma)
+							strcat(value, ", ");
+						comma = true;
+						
+						char temp[7];
+						snprintf(temp, sizeof(temp), "%s%s %0d",
+						         joystick[joystick_config].assignment[i - 4][k].is_axis ? "AX" : "BTN",
+						         joystick[joystick_config].assignment[i - 4][k].is_axis ? joystick[joystick_config].assignment[i - 4][k].axis_negative ? "-" : "+" : "",
+						         joystick[joystick_config].assignment[i - 4][k].num + 1);
+						strcat(value, temp);
+					}
+				}
+				
+				JE_textShade(236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
+			}
+			
+			menuChoices[curMenu] = COUNTOF(menu_item) + 1;
 		}
 
 		/* Upgrade weapon submenus, with weapon sim */
@@ -6465,7 +6528,7 @@ item_screen_start:
 				{
 					if (keyboardUsed)
 					{
-						JE_setMousePosition(305, tempY+10);
+						set_mouse_position(305, tempY + 10);
 					}
 					temp2 = 15;
 				} else {
@@ -6513,16 +6576,9 @@ item_screen_start:
 			}
 		} /* /weapon upgrade */
 
-		if (curMenu == 4 && (curSel[1] >= 2 && curSel[1] <= 7 && curSel[1] != 4))
-		{
-			joystickWaitMax = 20;
-		} else {
-			joystickWaitMax = 10;
-		}
-
 		/* Draw current money and shield/armor bars, when appropriate */
 		/* YKS: Ouch */
-		if ((curMenu == 0 || curMenu == 1 || curMenu == 6) || ((curMenu == 10 || curMenu == 11) && onePlayerAction) || ((curMenu == 2 || curMenu == 5) && !twoPlayerMode) || (curMenu == 4 && (curSel[1] >= 1 && curSel[1] <= 6)))
+		if (((curMenu <= 2 || curMenu == 5 || curMenu == 6 || curMenu >= 10) && !twoPlayerMode) || (curMenu == 4 && (curSel[1] >= 1 && curSel[1] <= 6)))
 		{
 			if (curMenu != 4)
 			{
@@ -6536,7 +6592,7 @@ item_screen_start:
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
-		if (((curMenu >= 0 && curMenu <= 2) || curMenu == 5 || curMenu == 6 || (curMenu >= 9 && curMenu <= 11) || curMenu == 13) || (curMenu == 4 && (curSel[1] == 2 || curSel[1] == 5)))
+		if (((curMenu >= 0 && curMenu <= 2) || curMenu == 5 || curMenu == 6 || curMenu >= 9) || (curMenu == 4 && (curSel[1] == 2 || curSel[1] == 5)))
 		{
 			if (twoPlayerMode)
 			{
@@ -6649,7 +6705,7 @@ item_screen_start:
 						{
 							if (keyboardUsed)
 							{
-								JE_setMousePosition(305, 38 + (x - 1) * 28 + 6);
+								set_mouse_position(305, 38 + (x - 1) * 28 + 6);
 							}
 							temp2 = 252;
 						} else {
@@ -6666,7 +6722,7 @@ item_screen_start:
 					{
 						if (keyboardUsed)
 						{
-							JE_setMousePosition(305, 38 + (x - 1) * 28 + 6);
+							set_mouse_position(305, 38 + (x - 1) * 28 + 6);
 						}
 						temp2 = 252;
 					} else {
@@ -6714,11 +6770,22 @@ item_screen_start:
 		/* 2 player input devices */
 		if (curMenu == 9)
 		{
-			char temp[64];
-			sprintf(temp, "%s%s", curSel[3] == x ? "~" : "", inputDevices[inputDevice1-1]);
-			JE_dString(186, 38 + 2 * 16, temp, SMALL_FONT_SHAPES);
-			sprintf(temp, "%s%s", curSel[4] == x ? "~" : "", inputDevices[inputDevice2-1]);
-			JE_dString(186, 38 + 4 * 16, temp, SMALL_FONT_SHAPES);
+			for (int i = 0; i < COUNTOF(inputDevice); i++)
+			{
+				if (inputDevice[i] > 2 + joysticks)
+				{
+					inputDevice[i] = inputDevice[i == 0 ? 1 : 0] == 1 ? 2 : 1;
+				}
+				
+				char temp[64];
+				if (joysticks > 1 && inputDevice[i] > 2)
+				{
+					sprintf(temp, "%s %d", inputDevices[2], inputDevice[i] - 2);
+				} else {
+					sprintf(temp, "%s", inputDevices[inputDevice[i] - 1]);
+				}
+				JE_dString(186, 38 + 2 * (i + 1) * 16, temp, SMALL_FONT_SHAPES);
+			}
 		}
 
 
@@ -6830,10 +6897,6 @@ item_screen_start:
 					}
 
 					JE_mouseStart();
-					if (delaycount() == 1)
-					{
-						//JE_waitRetrace();  didn't do anything anyway?
-					}
 
 					JE_showVGA();
 
@@ -6845,7 +6908,6 @@ item_screen_start:
 					JE_mouseReplace();
 
 					setjasondelay(1);
-					wait_delay();
 				} else {
 					/* current menu is not 8 (read data cube) */
 
@@ -6859,11 +6921,6 @@ item_screen_start:
 						{
 							JE_dString(170, 140, miscText[68 - 1], FONT_SHAPES);
 						}
-					}
-
-					if (curMenu == 12 && curSel[curMenu] == 6 && joystick_installed)
-					{
-						JE_drawJoystick();
 					}
 
 					if (curMenu == 7 && curSel[7] < menuChoices[7])
@@ -6905,17 +6962,9 @@ item_screen_start:
 
 						JE_mouseReplace();
 						
-						int delaycount_temp;
-						if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-							SDL_Delay(delaycount_temp);
 					} else { /* current menu is anything but weapon sim or datacube */
 
-						if (curMenu == 8) /* SYN: menu 8 is a datacube... this should never happen?! */
-						{
-							setjasondelay(0);
-						} else {
-							setjasondelay(2);
-						}
+						setjasondelay(2);
 
 						JE_drawScore();
 						//JE_waitRetrace();  didn't do anything anyway?
@@ -6945,37 +6994,15 @@ item_screen_start:
 							backFromHelp = false;
 						}
 						
-						int delaycount_temp;
-						if ((delaycount_temp = target - SDL_GetTicks()) > 0)
-							SDL_Delay(delaycount_temp);
 					}
 				}
 				
-				 do {
-					service_SDL_events(false);
-					mouseButton = JE_mousePosition(&mouseX, &mouseY); 
-					inputDetected = ((mouseButton > 0) || newkey);
-					
-					if (JE_joystickTranslate())
-					{
-							if (lastkey_sym == SDLK_RETURN || lastkey_sym == SDLK_ESCAPE)
-							{
-								if (buttonHeld)
-								{
-									lastkey_sym = 0;
-									inputDetected = false;
-								} else {
-									buttonHeld = true;
-									inputDetected = true;
-								}
-							} else {
-								buttonHeld = false;
-								inputDetected = true;
-							}
-					} else {
-						buttonHeld = false;
-					}
-				} while (!inputDetected && delaycount() != 0);
+				wait_delay();
+				
+				push_joysticks_as_keyboard();
+				service_SDL_events(false);
+				mouseButton = JE_mousePosition(&mouseX, &mouseY); 
+				inputDetected = newkey || mouseButton > 0;
 				
 				if (curMenu != 6)
 				{
@@ -7030,14 +7057,21 @@ item_screen_start:
 						yChg = 2;
 						inputDetected = false;
 					}
-
-					if (keysactive[SDLK_UP] || joystickUp)
+					
+					bool joystick_up = false, joystick_down = false;
+					for (int j = 0; j < joysticks; j++)
+					{
+						joystick_up |= joystick[j].direction[0];
+						joystick_down |= joystick[j].direction[2];
+					}
+					
+					if (keysactive[SDLK_UP] || joystick_up)
 					{
 						yChg = -1;
 						inputDetected = false;
 					}
 
-					if (keysactive[SDLK_DOWN] || joystickDown)
+					if (keysactive[SDLK_DOWN] || joystick_down)
 					{
 						yChg = 1;
 						inputDetected = false;
@@ -7298,7 +7332,7 @@ item_screen_start:
 					}
 					else if (menuEsc[curMenu] == 0)
 					{
-						if (JE_quitRequest(true))
+						if (JE_quitRequest())
 						{
 							gameLoaded = true;
 							mainLevel = 0;
@@ -7378,6 +7412,10 @@ item_screen_start:
 					{
 						portPower[curSel[1] - 3] = tempPowerLevel[curSel[4] - 2];
 					}
+					if (curMenu == 12 && joysticks > 0 && !joystick[joystick_config].analog && curSel[curMenu] == 5) // joystick config, disable items when digital
+					{
+						curSel[curMenu] = 3;
+					}
 					break;
 
 				case SDLK_DOWN:
@@ -7405,6 +7443,10 @@ item_screen_start:
 					{
 						portPower[curSel[1] - 3] = tempPowerLevel[curSel[4] - 2];
 					}
+					if (curMenu == 12 && joysticks > 0 && !joystick[joystick_config].analog && curSel[curMenu] == 4) // joystick config, disable items when digital
+					{
+						curSel[curMenu] = 6;
+					}
 					break;
 
 				case SDLK_HOME:
@@ -7429,12 +7471,35 @@ item_screen_start:
 					break;
 
 				case SDLK_LEFT:
-					if (curMenu == 12 && curSel[curMenu] < 6)
+					if (curMenu == 12) // joystick settings menu
 					{
-						joyButtonAssign[curSel[curMenu] - 2]--;
-						if (joyButtonAssign[curSel[curMenu] - 2] < 1)
+						if (joysticks > 0)
 						{
-							joyButtonAssign[curSel[curMenu] - 2] = 5;
+							switch (curSel[curMenu])
+							{
+								case 2:
+									if (joystick_config == 0)
+										joystick_config = joysticks;
+									joystick_config--;
+									break;
+								case 3:
+									joystick[joystick_config].analog = !joystick[joystick_config].analog;
+									break;
+								case 4:
+									if (joystick[joystick_config].sensitivity == 0)
+										joystick[joystick_config].sensitivity = 10;
+									else
+										joystick[joystick_config].sensitivity--;
+									break;
+								case 5:
+									if (joystick[joystick_config].threshold == 0)
+										joystick[joystick_config].threshold = 10;
+									else
+										joystick[joystick_config].threshold--;
+									break;
+								default:
+									break;
+							}
 						}
 					}
 
@@ -7443,24 +7508,22 @@ item_screen_start:
 						switch (curSel[curMenu])
 						{
 						case 3:
-							JE_playSampleNum(CURSOR_MOVE);
-							do {
-								inputDevice1--;
-								if (inputDevice1 < 1)
-								{
-									inputDevice1 = 3;
-								}
-							} while (inputDevice1 == inputDevice2);
-							break;
 						case 4:
 							JE_playSampleNum(CURSOR_MOVE);
+							
+							int temp = curSel[curMenu] - 3;
 							do {
-								inputDevice2--;
-								if (inputDevice2 < 1)
+								if (joysticks == 0)
 								{
-									inputDevice2 = 3;
+									inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
 								}
-							} while (inputDevice1 == inputDevice2);
+								if (inputDevice[temp] <= 1)
+								{
+									inputDevice[temp] = 2 + joysticks;
+								} else {
+									inputDevice[temp]--;
+								}
+							} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
 							break;
 						}
 					}
@@ -7517,12 +7580,30 @@ item_screen_start:
 					break;
 
 				case SDLK_RIGHT:
-					if (curMenu == 12 && curSel[curMenu] < 6)
+					if (curMenu == 12) // joystick settings menu
 					{
-						joyButtonAssign[curSel[curMenu] - 2]++;
-						if (joyButtonAssign[curSel[curMenu] - 2] > 5)
+						if (joysticks > 0)
 						{
-							joyButtonAssign[curSel[curMenu] - 2] = 1;
+							switch (curSel[curMenu])
+							{
+								case 2:
+									joystick_config++;
+									joystick_config %= joysticks;
+									break;
+								case 3:
+									joystick[joystick_config].analog = !joystick[joystick_config].analog;
+									break;
+								case 4:
+									joystick[joystick_config].sensitivity++;
+									joystick[joystick_config].sensitivity %= 11;
+									break;
+								case 5:
+									joystick[joystick_config].threshold++;
+									joystick[joystick_config].threshold %= 11;
+									break;
+								default:
+									break;
+							}
 						}
 					}
 
@@ -7531,24 +7612,22 @@ item_screen_start:
 						switch (curSel[curMenu])
 						{
 						case 3:
-							JE_playSampleNum(CURSOR_MOVE);
-							do {
-								inputDevice1++;
-								if (inputDevice1 > 3)
-								{
-									inputDevice1 = 1;
-								}
-							} while (inputDevice1 == inputDevice2);
-							break;
 						case 4:
 							JE_playSampleNum(CURSOR_MOVE);
+							
+							int temp = curSel[curMenu] - 3;
 							do {
-								inputDevice2++;
-								if (inputDevice2 > 3)
+								if (joysticks == 0)
 								{
-									inputDevice2 = 1;
+									inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
 								}
-							} while (inputDevice1 == inputDevice2);
+								if (inputDevice[temp] >= 2 + joysticks)
+								{
+									inputDevice[temp] = 1;
+								} else {
+									inputDevice[temp]++;
+								}
+							} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
 							break;
 						}
 					}
@@ -7870,12 +7949,7 @@ void JE_drawMenuChoices( void )
 
 	for (x = 2; x <= menuChoices[curMenu]; x++)
 	{
-		if (curMenu == 12)
-		{
-			tempY = 38 + (x-1) * 24 - 8;
-		} else {
-			tempY = 38 + (x-1) * 16;
-		}
+		tempY = 38 + (x-1) * 16;
 
 		if (curMenu == 0)
 		{
@@ -7915,7 +7989,7 @@ void JE_drawMenuChoices( void )
 
 		if (keyboardUsed && curSel[curMenu] == x)
 		{
-			JE_setMousePosition(305, tempY + 6);
+			set_mouse_position(305, tempY + 6);
 		}
 	}
 }
@@ -8314,8 +8388,11 @@ void JE_drawMainMenuHelpText( void )
 	JE_byte temp;
 
 	temp = curSel[curMenu] - 2;
-	if (curMenu < 3 || curMenu == 9 || curMenu > 10)
+	if (curMenu == 12) // joystick settings menu help
 	{
+		int help[16] = { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 24, 11 };
+		memcpy(tempStr, mainMenuHelp[help[curSel[curMenu] - 2]], sizeof(tempStr));
+	} else if (curMenu < 3 || curMenu == 9 || curMenu > 10)	{
 		memcpy(tempStr, mainMenuHelp[(menuHelp[curMenu][temp])-1], sizeof(tempStr));
 	} else {
 		if (curMenu == 5 && curSel[5] == 10)
@@ -8343,7 +8420,7 @@ void JE_whoa( void )
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
 	memset(VGAScreen->pixels, 0, VGAScreen->h * VGAScreen->pitch);
 
-	JE_wipeKey();
+	service_SDL_events(true);
 
 	tempW3 = 300;
 
@@ -8378,78 +8455,57 @@ void JE_whoa( void )
 		}
 
 		tempW3--;
-
-		wait_delay();
+		
 		JE_showVGA();
+		
+		wait_delay();
 	} while (!(tempW3 == 0 || JE_anyButton()));
 
 	levelWarningLines = 4;
 }
 
-JE_boolean JE_quitRequest( JE_boolean useMouse )
+JE_boolean JE_quitRequest( void )
 {
-	JE_boolean retval;
-	JE_byte sel;
-	JE_boolean quit, select;
-	JE_integer col, colC;
-
-	if (useMouse)
-	{
-		JE_mouseReplace();
-	}
-
-	JE_showVGA();
-
+	bool quit_selected = true, done = false;
+	
 	JE_clearKeyboard();
-
-	//JE_getVGA();  didn't do anything anyway?
-
-	quit = false;
-	select = false;
-
-	sel = 1;
-
 	JE_wipeKey();
-	wait_noinput(true, true, joystick_installed);
+	wait_noinput(true, true, true);
 	
 	JE_barShade(65, 55, 255, 155);
-
-	do {
-		col = 8;
-		colC = 1;
-
+	
+	while (!done)
+	{
+		Uint8 col = 8;
+		int colC = 1;
+		
 		do {
+			service_SDL_events(true);
 			setjasondelay(4);
-
-			/*scanCode = 0;
-			k = 0;*/
-
+			
 			JE_newDrawCShapeNum(OPTION_SHAPES, 36, 50, 50);
-			JE_textShade(70, 60, miscText[29 - 1], 0, 5, FULL_SHADE);
-			JE_helpBox(70, 90, miscText[30 + useMouse - 1], 30);
-
+			JE_textShade(70, 60, miscText[28], 0, 5, FULL_SHADE);
+			JE_helpBox(70, 90, miscText[30], 30);
+			
 			col += colC;
 			if (col > 8 || col < 2)
 			{
-				colC *= -1;
+				colC = -colC;
 			}
-
-			tempW = 54 + 45 - (JE_textWidth(miscText[10 - 1], FONT_SHAPES) >> 1);
-			tempW2 = 149 + 45 - (JE_textWidth(miscText[11 - 1], FONT_SHAPES) >> 1);
-
-			if (sel == 1)
-			{
-				tempI = col - 12;
-				tempI2 = -5;
-			} else {
-				tempI = -5;
-				tempI2 = col - 12;
-			}
-
-			JE_outTextAdjust(tempW, 128, miscText[10-1], 15, tempI, FONT_SHAPES, true);
-			JE_outTextAdjust(tempW2, 128, miscText[11-1], 15, tempI2, FONT_SHAPES, true);
-
-			if (useMouse && mouseInstalled)
+			
+			int temp_x, temp_c;
+			
+			temp_x = 54 + 45 - (JE_textWidth(miscText[9], FONT_SHAPES) / 2);
+			temp_c = quit_selected ? col - 12 : -5;
+			
+			JE_outTextAdjust(temp_x, 128, miscText[9], 15, temp_c, FONT_SHAPES, true);
+			
+			temp_x = 149 + 45 - (JE_textWidth(miscText[10], FONT_SHAPES) / 2);
+			temp_c = !quit_selected ? col - 12 : -5;
+			
+			JE_outTextAdjust(temp_x, 128, miscText[10], 15, temp_c, FONT_SHAPES, true);
+			
+			if (mouseInstalled)
 			{
 				JE_mouseStart();
 				JE_showVGA();
@@ -8457,69 +8513,64 @@ JE_boolean JE_quitRequest( JE_boolean useMouse )
 			} else {
 				JE_showVGA();
 			}
-
-			temp = useMouse;
-
-		} while (!JE_waitAction(0, false)); /* JE: {Use previous framecount} */
-
-
-		if (mouseButton > 0 && useMouse)
+			
+			wait_delay();
+			
+			push_joysticks_as_keyboard();
+			service_SDL_events(false);
+			
+		} while (!newkey && !mousedown);
+		
+		if (mousedown)
 		{
-			if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
+			if (lastmouse_y > 123 && lastmouse_y < 149)
 			{
-				quit = true;
-				select = true;
-			}
-			else if (mouseX > 151 && mouseX < 237 && mouseY > 123 && mouseY < 149)
-			{
-				quit = true;
-			}
-		} else {
-			if (newkey)
-			{
-				switch (lastkey_sym)
+				if (lastmouse_x > 56 && lastmouse_x < 142)
 				{
-					case SDLK_LEFT:
-					case SDLK_RIGHT:
-						sel = !sel;
-						JE_playSampleNum(CURSOR_MOVE);
-						break;
-					case SDLK_TAB:
-						sel = !sel;
-						break;
-					case SDLK_RETURN:
-					case SDLK_SPACE:
-						quit = true;
-						select = (sel == 1);
-						break;
-					case SDLK_ESCAPE:
-						quit = true;
-						break;
-					default:
-						break;
+					quit_selected = true;
+					done = true;
+				}
+				else if (lastmouse_x > 151 && lastmouse_x < 237)
+				{
+					quit_selected = false;
+					done = true;
 				}
 			}
+			mousedown = false;
+		} else if (newkey) {
+			switch (lastkey_sym)
+			{
+				case SDLK_LEFT:
+				case SDLK_RIGHT:
+				case SDLK_TAB:
+					quit_selected = !quit_selected;
+					JE_playSampleNum(CURSOR_MOVE);
+					break;
+				case SDLK_RETURN:
+				case SDLK_SPACE:
+					done = true;
+					break;
+				case SDLK_ESCAPE:
+					quit_selected = false;
+					done = true;
+					break;
+				default:
+					break;
+			}
 		}
-
-	} while (!quit);
-
-	retval = select;
-	if (select)
-	{
-		JE_playSampleNum(ESC);
-	} else {
-		JE_playSampleNum(CLICK);
 	}
-
-	if (isNetworkGame && select)
+	
+	JE_playSampleNum(quit_selected ? ESC : CLICK);
+	
+	if (isNetworkGame && quit_selected)
 	{
 		network_prepare(PACKET_QUIT);
 		network_send(4);  // PACKET QUIT
 		
 		network_tyrian_halt(0, true);
 	}
-
-	return retval;
+	
+	return quit_selected;
 }
 
 void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
@@ -8646,7 +8697,7 @@ void JE_menuFunction( JE_byte select )
 			strcpy(menuInt[4][x + 1], miscText[5]);
 			break;
 		case 7:
-			if (JE_quitRequest(true))
+			if (JE_quitRequest())
 			{
 				gameLoaded = true;
 				mainLevel = 0;
@@ -8749,31 +8800,33 @@ void JE_menuFunction( JE_byte select )
 			tempY = 38 + (curSelect - 2) * 12;
 			JE_textShade(236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
 			JE_showVGA();
-
+			
+			wait_noinput(true, true, true);
+			
 			col = 248;
 			colC = 1;
 
-			newkey = false;
-
 			do {
+				setjasondelay(1);
+				
 				col += colC;
 				if (col < 243 || col > 248)
 				{
 					colC *= -1;
 				}
 				JE_rectangle(230, tempY - 2, 300, tempY + 7, col);
-
-				//JE_waitRetrace();  didn't do anything anyway?
-				setjasondelay(1);
-				service_SDL_events(false);
-
+				
+				poll_joysticks();
+				service_SDL_events(true);
+				
 				JE_showVGA();
-			} while (!newkey);
-
-			tempB = true;
-
-			printf("key: %d", lastkey_sym);
-
+				
+				wait_delay();
+			} while (!newkey && !mousedown && !joydown);
+			
+			tempB = newkey;
+			
+			// already used?
 			for (x = 0; x < 8; x++)
 			{
 				if (keySettings[x] == lastkey_sym)
@@ -8782,13 +8835,12 @@ void JE_menuFunction( JE_byte select )
 					JE_playSampleNum(false);
 				}
 			}
-
-			/* SYN: I don't know why some of these are disallowed */
-			if ( lastkey_sym != SDLK_ESCAPE &&
-				 lastkey_sym != SDLK_F11 &&
-				 lastkey_sym != SDLK_s &&
-				 lastkey_sym != SDLK_m &&
-				 lastkey_sym != SDLK_p &&
+			
+			if ( lastkey_sym != SDLK_ESCAPE && // reserved for menu
+				 lastkey_sym != SDLK_F11 &&    // reserved for gamma
+				 lastkey_sym != SDLK_s &&      // reserved for sample mute
+				 lastkey_sym != SDLK_m &&      // reserved for music mute
+				 lastkey_sym != SDLK_p &&      // reserved for pause
 				 tempB )
 			{
 				JE_playSampleNum(CLICK);
@@ -8848,9 +8900,6 @@ void JE_menuFunction( JE_byte select )
 
 	case 8:
 		curMenu = 7;
-		/*scanCode = 0;*/
-		joystickUp = false;
-		joystickDown = false;
 		break;
 
 	case 9:
@@ -8861,30 +8910,28 @@ void JE_menuFunction( JE_byte select )
 			jumpSection = true;
 			break;
 		case 3:
-			JE_playSampleNum(CURSOR_MOVE);
-			do {
-				inputDevice1++;
-				if (inputDevice1 > 3)
-				{
-					inputDevice1 = 1;
-				}
-			} while (inputDevice1 == inputDevice2);
-			break;
 		case 4:
 			JE_playSampleNum(CURSOR_MOVE);
+			
+			int temp = curSel[curMenu] - 3;
 			do {
-				inputDevice2++;
-				if (inputDevice2 > 3)
+				if (joysticks == 0)
 				{
-					inputDevice2 = 1;
+					inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
 				}
-			} while (inputDevice1 == inputDevice2);
+				if (inputDevice[temp] >= 2 + joysticks)
+				{
+					inputDevice[temp] = 1;
+				} else {
+					inputDevice[temp]++;
+				}
+			} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
 			break;
 		case 5:
 			curMenu = 2;
 			break;
 		case 6:
-			if (JE_quitRequest(true))
+			if (JE_quitRequest())
 			{
 				gameLoaded = true;
 				mainLevel = 0;
@@ -8901,10 +8948,10 @@ void JE_menuFunction( JE_byte select )
 			jumpSection = true;
 			break;
 		case 3:
-			curMenu = 11;
+			curMenu = 2;
 			break;
 		case 4:
-			if (JE_quitRequest(true))
+			if (JE_quitRequest())
 			{
 				gameLoaded = true;
 				mainLevel = 0;
@@ -8929,40 +8976,36 @@ void JE_menuFunction( JE_byte select )
 		break;
 
 	case 12:
+		if (joysticks == 0 && select != 17)
+			break;
+		
 		switch (select)
 		{
 		case 2:
+			joystick_config++;
+			joystick_config %= joysticks;
+			break;
 		case 3:
+			joystick[joystick_config].analog = !joystick[joystick_config].analog;
+			break;
 		case 4:
+			if (joystick[joystick_config].analog)
+			{
+				joystick[joystick_config].sensitivity++;
+				joystick[joystick_config].sensitivity %= 11;
+			}
+			break;
 		case 5:
-			joyButtonAssign[select - 2]++;
-			if (joyButtonAssign[select - 2] > 5)
+			if (joystick[joystick_config].analog)
 			{
-				joyButtonAssign[select - 2] = 1;
+				joystick[joystick_config].threshold++;
+				joystick[joystick_config].threshold %= 11;
 			}
 			break;
-		case 6:
-			if (joystick_installed)
-			{
-				do
-				{
-					JE_drawJoystick();
-					JE_helpBox(35, 35, mainMenuHelp[33 - 1], 18);
-					JE_showVGA();
-					if ( (joystickUp || joystickDown || joystickLeft || joystickRight) &&
-						 !( button[0] || button[1] || button[2] || button[3]) )
-					{
-						inputDetected = false;
-					}
-				} while (!JE_anyButton());
-
-				if (button[0] || button[1] || button[2] || button[3])
-				{
-					/* TODO?  joystick calibration seems unnecessary */
-				}
-			}
+		case 16:
+			reset_joystick_assignments(joystick_config);
 			break;
-		case 7:
+		case 17:
 			if (isNetworkGame || onePlayerAction)
 			{
 				curMenu = 11;
@@ -8970,6 +9013,49 @@ void JE_menuFunction( JE_byte select )
 				curMenu = 2;
 			}
 			break;
+		default:
+			if (joysticks == 0)
+				break;
+			
+			// int temp = 254;
+			// JE_textShade(236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
+			
+			JE_rectangle(235, 21 + select * 8, 310, 30 + select * 8, 248);
+			
+			struct joystick_assignment_struct temp;
+			if (detect_joystick_assignment(joystick_config, &temp))
+			{
+				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
+				{
+					if (joystick_assignment_cmp(&temp, &joystick[joystick_config].assignment[select - 6][i]))
+					{
+						joystick[joystick_config].assignment[select - 6][i].num = -1;
+						goto joystick_assign_done;
+					}
+				}
+				
+				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
+				{
+					if (joystick[joystick_config].assignment[select - 6][i].num == -1)
+					{
+						joystick[joystick_config].assignment[select - 6][i] = temp;
+						goto joystick_assign_done;
+					}
+				}
+				
+				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
+				{
+					if (i == COUNTOF(*joystick->assignment) - 1)
+						joystick[joystick_config].assignment[select - 6][i] = temp;
+					else
+						joystick[joystick_config].assignment[select - 6][i] = joystick[joystick_config].assignment[select - 6][i + 1];
+				}
+				
+joystick_assign_done:
+				curSelect++;
+				
+				poll_joysticks();
+			}
 		}
 		break;
 
@@ -8987,7 +9073,7 @@ void JE_menuFunction( JE_byte select )
 			curMenu = 2;
 			break;
 		case 5:
-			if (JE_quitRequest(true))
+			if (JE_quitRequest())
 			{
 				if (isNetworkGame)
 				{
@@ -9012,7 +9098,7 @@ void JE_drawJoystick( void )
 
 void JE_funkyScreen( void )
 {
-	wait_noinput(true, true, joystick_installed);
+	wait_noinput(true, true, true);
 
 	Uint8 *s = game_screen->pixels; /* 8-bit specific */
 	Uint8 *src = VGAScreen2->pixels; /* 8-bit specific */

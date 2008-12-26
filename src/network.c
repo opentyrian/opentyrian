@@ -48,6 +48,7 @@
 #define NET_KEEP_ALIVE    1600         // ticks to wait between keep-alive packets
 #define NET_TIME_OUT      16000        // ticks to wait before considering connection dead
 
+bool isNetworkGame = false;
 int network_delay = 1 + 1;  // minimum is 1 + 0
 
 char *network_opponent_host = 0;
@@ -563,8 +564,8 @@ connect_reset:
 	// until opponent sends connect packet
 	while (true)
 	{
+		push_joysticks_as_keyboard();
 		service_SDL_events(false);
-		JE_joystickTranslate();
 		
 		if (newkey && lastkey_sym == SDLK_ESCAPE)
 			network_tyrian_halt(0, false);

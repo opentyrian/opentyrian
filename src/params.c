@@ -19,6 +19,7 @@
 #include "opentyr.h"
 #include "params.h"
 
+#include "joystick.h"
 #include "network.h"
 #include "xmas.h"
 
@@ -26,9 +27,7 @@
 #include <errno.h>
 #include <string.h>
 
-JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, scanForJoystick, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
-
-JE_boolean isNetworkGame;
+JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
@@ -43,7 +42,6 @@ void JE_paramCheck( int argc, char *argv[] )
 	robertWeird     = true;
 	richMode        = false;
 	recordDemo      = false;
-	scanForJoystick = true;
 	constantPlay    = false;
 	noSound         = false;
 	quikJuke        = false;
@@ -113,7 +111,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					
 				case 'j':
 					// Disables joystick detection
-					scanForJoystick = false;
+					ignore_joystick = true;
 					break;
 					
 				case 'x':
@@ -237,7 +235,7 @@ void JE_paramCheck( int argc, char *argv[] )
 							printf("Use a keyboard to record a demo.\n");
 							break;
 						case 2:
-							scanForJoystick = false;
+							ignore_joystick = true;
 							break;
 						case 3:
 							robertWeird = false;

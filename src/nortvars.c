@@ -33,7 +33,6 @@ JE_word y;
 const JE_byte NV_shapeactive   = 0x01;
 const JE_byte NV_shapeinactive = 0x00;
 
-JE_boolean scanForJoystick;
 JE_boolean inputDetected;
 JE_word lastMouseX, lastMouseY;
 
@@ -315,18 +314,9 @@ void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape )
 
 JE_boolean JE_anyButton( void )
 {
-	button[0] = false;
+	poll_joysticks();
 	service_SDL_events(true);
-	JE_joystick2();
-	return newkey || mousedown || button[0];
-}
-
-void JE_setMousePosition( JE_word mouseX, JE_word mouseY )
-{
-	if (mouseInstalled && input_grabbed)
-	{
-		SDL_WarpMouse(mouseX, mouseY);
-	}
+	return newkey || mousedown || joydown;
 }
 
 void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
@@ -413,20 +403,5 @@ void JE_wipeKey( void )
 {
 	// /!\ Doesn't seems to affect anything.
 }
-
-JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
-{
-	if (mouseInstalled)
-	{
-		service_SDL_events(false);
-		*mouseX = mouse_x;
-		*mouseY = mouse_y;
-		return mousedown ? lastmouse_but : 0;
-	}
-	
-	return 0;
-}
-
-/* TODO */
 
 // kate: tab-width 4; vim: set noet:

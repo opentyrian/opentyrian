@@ -118,8 +118,7 @@ extern JE_boolean twoPlayerMode, twoPlayerLinked, onePlayerAction, superTyrian, 
 extern JE_byte superArcadeMode;
 extern JE_byte superArcadePowerUp;
 extern JE_real linkGunDirec;
-extern JE_byte playerDevice1, playerDevice2;
-extern JE_byte inputDevice1, inputDevice2;
+extern JE_byte inputDevice[2];
 extern JE_byte secretHint;
 extern JE_byte background3over;
 extern JE_byte background2over;
@@ -129,7 +128,6 @@ extern JE_byte versionNum;
 extern JE_byte fastPlay;
 extern JE_boolean pentiumMode;
 extern JE_boolean playerPasswordInput;
-extern JE_byte inputDevice;
 extern JE_byte gameSpeed;
 extern JE_byte processorType;
 extern JE_SaveFilesType saveFiles;

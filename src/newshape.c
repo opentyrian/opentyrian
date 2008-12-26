@@ -253,36 +253,6 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	}
 }
 
-JE_boolean JE_waitAction( JE_byte time, JE_boolean checkJoystick )
-{
-	if (time > 0)
-	{
-		setjasondelay(time);
-	}
-
-	do
-	{
-		service_SDL_events(true);
-		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
-		mouseX = mouse_x;
-		mouseY = mouse_y;
-		inputDetected = newkey | mousedown | JE_joystickNotHeld();
-
-		if (time == 0 && temp != 0)
-		{
-			JE_mouseStart();
-			JE_showVGA();
-			JE_mouseReplace();
-		}
-		
-		NETWORK_KEEP_ALIVE();
-		
-		SDL_Delay(16);
-	} while (!(inputDetected || delaycount() == 0));
-
-	return inputDetected;
-}
-
 void JE_mouseStart( void )
 {
 	const JE_word mouseCursorGr[3] /* [1..3] */ = {273, 275, 277};

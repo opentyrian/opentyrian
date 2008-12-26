@@ -201,10 +201,8 @@ typedef struct {
 	Uint8 color;
 } superpixel_type;
 
-extern JE_byte fromTime;
 extern JE_integer tempDat, tempDat2, tempDat3;
 extern JE_boolean tempb2;
-extern JE_word test1;
 extern const JE_byte SANextShip[SA + 2];
 extern const JE_word SASpecialWeapon[SA];
 extern const JE_word SASpecialWeaponB[SA];
@@ -282,7 +280,6 @@ extern JE_boolean editShip1, editShip2;
 extern JE_boolean globalFlags[10];
 extern JE_byte levelSong;
 extern JE_boolean drawGameSaved;
-extern JE_boolean repause;
 extern JE_boolean loadDestruct;
 extern JE_word mapOrigin, mapPNum;
 extern JE_byte mapPlanet[5], mapSection[5];

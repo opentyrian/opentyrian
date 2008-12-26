@@ -33,6 +33,8 @@ extern JE_boolean performSave;
 extern JE_boolean jumpSection;
 extern JE_boolean useLastBank;
 
+extern bool pause_pressed, ingamemenu_pressed;
+
 /*void JE_textMenuWait ( JE_word waittime, JE_boolean dogamma );*/
 
 void JE_drawTextWindow( char *text );

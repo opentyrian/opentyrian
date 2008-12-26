@@ -16,11 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "keyboard.h"
-#include "video.h"
-
 #include "joystick.h"
+#include "keyboard.h"
+#include "network.h"
+#include "opentyr.h"
+#include "video.h"
+#include "video_scale.h"
 
 #include "SDL.h"
 
@@ -57,28 +58,28 @@ void flush_events_buffer( void )
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
 	service_SDL_events(false);
-	while (!((keyboard ? keydown : false) || (mouse ? mousedown : false) || (joystick ? button[0] : false)))
+	while (!((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
 	{
 		SDL_Delay(SDL_POLL_INTERVAL);
-		if (joystick)
-		{
-			JE_joystick2();
-		}
+		push_joysticks_as_keyboard();
 		service_SDL_events(false);
+		
+		if (isNetworkGame)
+			network_check();
 	}
 }
 
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
 	service_SDL_events(false);
-	while ((keydown && keyboard) || (mousedown && mouse) || (button[0] && joystick))
+	while ((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown))
 	{
 		SDL_Delay(SDL_POLL_INTERVAL);
-		if (joystick)
-		{
-			JE_joystick2();
-		}
+		poll_joysticks();
 		service_SDL_events(false);
+		
+		if (isNetworkGame)
+			network_check();
 	}
 }
 
@@ -111,6 +112,22 @@ void input_grab( void )
 	}
 }
 
+JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
+{
+	service_SDL_events(false);
+	*mouseX = mouse_x;
+	*mouseY = mouse_y;
+	return mousedown ? lastmouse_but : 0;
+}
+
+void set_mouse_position( int x, int y )
+{
+	if (input_grabbed)
+	{
+		SDL_WarpMouse(x * scale, y * scale);
+	}
+}
+
 void service_SDL_events( JE_boolean clear_new )
 {
 	SDL_Event ev;
@@ -124,10 +141,10 @@ void service_SDL_events( JE_boolean clear_new )
 		switch (ev.type)
 		{
 			case SDL_MOUSEMOTION:
-				mouse_x = ev.motion.x;
-				mouse_y = ev.motion.y;
-				mouse_xrel = ev.motion.xrel;
-				mouse_yrel = ev.motion.yrel;
+				mouse_x = ev.motion.x / scale;
+				mouse_y = ev.motion.y / scale;
+				mouse_xrel = ev.motion.xrel / scale;
+				mouse_yrel = ev.motion.yrel / scale;
 				break;
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)
@@ -179,8 +196,8 @@ void service_SDL_events( JE_boolean clear_new )
 				{
 					newmouse = true;
 					lastmouse_but = ev.button.button;
-					lastmouse_x = ev.button.x;
-					lastmouse_y = ev.button.y;
+					lastmouse_x = ev.button.x / scale;
+					lastmouse_y = ev.button.y / scale;
 					mousedown = true;
 				} else {
 					mousedown = false;

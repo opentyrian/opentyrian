@@ -202,8 +202,7 @@ JE_byte    superArcadeMode;
 JE_byte    superArcadePowerUp;
 
 JE_real linkGunDirec;
-JE_byte playerDevice1, playerDevice2;
-JE_byte inputDevice1, inputDevice2;
+JE_byte inputDevice[2] = { 1, 2 }; // 0:any  1:keyboard  2:mouse  3+:joystick
 
 JE_byte secretHint;
 JE_byte background3over;
@@ -228,7 +227,6 @@ JE_boolean pentiumMode;
 
 /* Savegame files */
 JE_boolean playerPasswordInput;
-JE_byte    inputDevice;  /* 0=Mouse   1=Joystick   2=Gravis GamePad */
 JE_byte    gameSpeed;
 JE_byte    processorType;  /* 1=386 2=486 3=Pentium Hyper */
 
@@ -338,8 +336,8 @@ void JE_saveGame( JE_byte slot, char *name )
 
 	saveFiles[slot-1].difficulty = difficultyLevel;
 	saveFiles[slot-1].secretHint = secretHint;
-	saveFiles[slot-1].input1 = inputDevice1;
-	saveFiles[slot-1].input2 = inputDevice2;
+	saveFiles[slot-1].input1 = inputDevice[0];
+	saveFiles[slot-1].input2 = inputDevice[1];
 
 	strcpy(saveFiles[slot-1].name, name);
 
@@ -403,9 +401,9 @@ void JE_loadGame( JE_byte slot )
 	cubeMax     = saveFiles[slot-1].cubes;
 	lastCubeMax = cubeMax;
 
-	secretHint   = saveFiles[slot-1].secretHint;
-	inputDevice1 = saveFiles[slot-1].input1;
-	inputDevice2 = saveFiles[slot-1].input2;
+	secretHint = saveFiles[slot-1].secretHint;
+	inputDevice[0] = saveFiles[slot-1].input1;
+	inputDevice[1] = saveFiles[slot-1].input2;
 
 	for (temp = 0; temp < 2; temp++)
 	{
@@ -672,12 +670,15 @@ const char *get_user_directory( void )
 }
 #endif /* TARGET_MACOSX */
 
+// for compatibility
+Uint8 joyButtonAssign[4] = {1, 4, 5, 5};
+Uint8 inputDevice_ = 0, jConfigure = 0, midiPort = 1;
+
 void JE_loadConfiguration( void )
 {
 	FILE *fi;
 	int z;
 	JE_byte *p;
-	JE_byte junk;
 	int y;
 	
 	errorActive = true;
@@ -686,23 +687,16 @@ void JE_loadConfiguration( void )
 	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
 	
 	fi = fopen_check(cfgfile, "rb");
-	if (fi && get_stream_size(fi) == 18 + sizeof(keySettings) + sizeof(joyButtonAssign))
+	if (fi && get_stream_size(fi) == 20 + sizeof(keySettings) + 2)
 	{
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
 		background2 = 0;
 		efread(&background2, 1, 1, fi);
 		efread(&gameSpeed, 1, 1, fi);
-
-		/* Wait what? */
-		efread(&inputDevice, 1, 1, fi);
-		inputDevice = 0;
-
+		
+		efread(&inputDevice_, 1, 1, fi);
 		efread(&jConfigure, 1, 1, fi);
-		if (jConfigure == 0) /* Dunno what this is about. */
-		{
-			jConfigure = 1;
-		}
 
 		efread(&versionNum, 1, 1, fi);
 		if (resetVersion)
@@ -711,17 +705,18 @@ void JE_loadConfiguration( void )
 		}
 
 		efread(&processorType, 1, 1, fi);
-		efread(&junk, 1, 1, fi); /* Unused variable -- was "BLOCKREAD (f, midiport   , 1);" */
+		efread(&midiPort, 1, 1, fi);
 		efread(&soundEffects, 1, 1, fi);
 		efread(&gammaCorrection, 1, 1, fi);
 		efread(&difficultyLevel, 1, 1, fi);
-		efread(joyButtonAssign, sizeof(*joyButtonAssign), COUNTOF(joyButtonAssign), fi); /* typically 4 bytes */
+		
+		efread(joyButtonAssign, 1, 4, fi);
 
 		efread(&tyrMusicVolume, 2, 1, fi);
 		efread(&fxVolume, 2, 1, fi);
 
-		efread(&inputDevice1, 1, 1, fi);
-		efread(&inputDevice2, 1, 1, fi);
+		efread(&inputDevice[0], 1, 1, fi);
+		efread(&inputDevice[1], 1, 1, fi);
 
 		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 
@@ -738,21 +733,15 @@ void JE_loadConfiguration( void )
 	} else {
 		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n\n");
 		
-		memcpy(&joyButtonAssign, &defaultJoyButtonAssign, sizeof(joyButtonAssign));
-		/*midiPort = 1;*/ /* We don't care about this. */
 		soundEffects = 1;
-		jConfigure = 0; /* TODO: Figure out what this is */
 		memcpy(&keySettings, &defaultKeySettings, sizeof(keySettings));
 		background2 = true;
-		inputDevice = 0;
 		tyrMusicVolume = 255;
 		fxVolume = 128;
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
-		inputDevice1 = 0;
-		inputDevice2 = 0;
-
+		
 		fullscreen_enabled = false;
 	}
 
@@ -888,7 +877,7 @@ void JE_saveConfiguration( void )
 #endif /* HOME */
 	
 	FILE *f;
-	JE_byte *p, junk = 0;
+	JE_byte *p;
 	int z;
 
 	p = saveTemp;
@@ -977,21 +966,23 @@ void JE_saveConfiguration( void )
 	{
 		efwrite(&background2, 1, 1, f);
 		efwrite(&gameSpeed, 1, 1, f);
-		efwrite(&inputDevice, 1, 1, f);
+		
+		efwrite(&inputDevice_, 1, 1, f);
 		efwrite(&jConfigure, 1, 1, f);
+		
 		efwrite(&versionNum, 1, 1, f);
 		efwrite(&processorType, 1, 1, f);
-		efwrite(&junk, 1, 1, f); /* This isn't needed. Was: fwrite(midiPort, 1, sizeof(midiPort), f);*/
+		efwrite(&midiPort, 1, 1, f);
 		efwrite(&soundEffects, 1, 1, f);
 		efwrite(&gammaCorrection, 1, 1, f);
 		efwrite(&difficultyLevel, 1, 1, f);
-		efwrite(joyButtonAssign, sizeof(*joyButtonAssign), COUNTOF(joyButtonAssign), f);
+		efwrite(joyButtonAssign, 1, 4, f);
 
 		efwrite(&tyrMusicVolume, 1, 2, f);
 		efwrite(&fxVolume, 1, 2, f);
 
-		efwrite(&inputDevice1, 1, 1, f);
-		efwrite(&inputDevice2, 1, 1, f);
+		efwrite(&inputDevice[0], 1, 1, f);
+		efwrite(&inputDevice[1], 1, 1, f);
 
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 

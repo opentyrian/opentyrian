@@ -45,7 +45,11 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 void init_keyboard( void );
 void input_grab( void );
+JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY );
+void set_mouse_position( int x, int y );
+
 void service_SDL_events( JE_boolean clear_new );
+
 void sleep_game( void );
 
 void JE_clearKeyboard( void );

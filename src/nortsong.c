@@ -62,7 +62,6 @@ JE_byte soundEffects = 1; /* TODO: Give this a real value, figure out what they 
 JE_word frameCount, frameCount2, frameCountMax;
 
 JE_byte currentSong = 0;
-JE_byte jConfigure = 0;
 
 JE_byte soundActive = true;
 JE_byte musicActive = true;
@@ -106,6 +105,13 @@ int delaycount2( void )
 
 void wait_delay( void )
 {
+	Sint32 delay = target - SDL_GetTicks();
+	if (delay > 0)
+		SDL_Delay(delay);
+}
+
+void service_wait_delay( void )
+{
 	while (SDL_GetTicks() < target)
 	{
 		SDL_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
@@ -115,15 +121,11 @@ void wait_delay( void )
 
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
-	newkey = newmouse = false;
-	service_SDL_events(false);
-	while (SDL_GetTicks() < target && !(keydown || !keyboard) && !(mousedown || !mouse) && !(button[0] || !joystick))
+	service_SDL_events(true);
+	while (SDL_GetTicks() < target && !((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
 	{
 		SDL_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
-		if (joystick)
-		{
-			JE_joystick2();
-		}
+		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 	}
 }

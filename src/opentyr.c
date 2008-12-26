@@ -332,23 +332,10 @@ int main( int argc, char *argv[] )
 
 	init_video();
 	init_keyboard();
-
+	init_joysticks();
+	
 	/* TODO: Tyrian originally checked availible memory here. */
-
-	if (scanForJoystick)
-	{
-		JE_joystickInit();
-		if (joystick_installed)
-		{
-			printf("Joystick detected.\n");
-		} else {
-			printf("No joystick found.\n");
-		}
-	} else {
-		printf("Joystick override.\n");
-		joystick_installed = false;
-	}
-
+	
 	if (mouseInstalled)
 	{
 		printf("Mouse Detected.   ");
@@ -448,7 +435,9 @@ int main( int argc, char *argv[] )
 	
 	JE_main();
 	
+	// typically we don't get here, see JE_tyrianHalt()
 	deinit_video();
+	deinit_joysticks();
 	
 	return 0;
 }

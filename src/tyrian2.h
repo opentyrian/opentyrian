@@ -58,7 +58,7 @@ void JE_drawScore( void );
 
 void JE_doStatBar( void );
 
-JE_boolean JE_quitRequest( JE_boolean usemouse );
+JE_boolean JE_quitRequest( void );
 
 void JE_whoa( void );
 
