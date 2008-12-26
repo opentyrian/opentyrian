@@ -43,6 +43,7 @@
 #define PACKET_STATE         0x41    // <state>  (not acknowledged)
 #define PACKET_STATE_XOR     0x42    // <xor state>  (not acknowledged)
 
+extern bool isNetworkGame;
 extern int network_delay;
 
 extern char *network_opponent_host;
