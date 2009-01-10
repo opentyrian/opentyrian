@@ -55,11 +55,6 @@ void JE_loadPals( void )
 	fclose(f);
 }
 
-void JE_zPal( JE_byte palette )
-{
-	JE_updateColorsFast(palettes[palette - 1]);
-}
-
 void JE_updateColorsFast( palette_t colorBuffer )
 {
 	for (int i = 0; i < 256; i++)

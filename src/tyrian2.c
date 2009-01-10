@@ -67,8 +67,7 @@ JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
 
 /* Level Event Data */
 JE_boolean quit, first, loadLevelOk, refade;
-/*JE_byte newPal, curPal, oldPal;*/
-int newPal, curPal, oldPal; /* SYN: Originally bytes, I hope this doesn't break anything */
+int newPal, curPal, oldPal;
 
 JE_word yLoc;
 JE_shortint yChg;
@@ -4190,13 +4189,13 @@ void JE_titleScreen( JE_boolean animate )
 					
 					
 					memcpy(colors2, colors, sizeof(colors));
-					for (temp = 256-16; temp < 256; temp++)
+					for (int i = 256 - 16; i < 256; i++)
 					{
-						colors[temp].r = 0;
-						colors[temp].g = 0;
-						colors[temp].b = 0;
+						colors[i].r = 0;
+						colors[i].g = 0;
+						colors[i].b = 0;
 					}
-					colors2[temp-1].r = 0;
+					colors2[255].r = 0;
 					
 					JE_showVGA();
 					JE_fadeColor(10);
@@ -4217,8 +4216,8 @@ void JE_titleScreen( JE_boolean animate )
 							
 							service_wait_delay();
 						}
+						moveTyrianLogoUp = false;
 					}
-					moveTyrianLogoUp = false;
 					
 					/* Draw Menu Text on Screen */
 					for (temp = 0; temp < menunum; temp++)
@@ -6085,8 +6084,10 @@ void JE_itemScreen( void )
 	JE_playSong(songBuy);
 
 	JE_loadPic(1, false);
-
+	
+	curPal = 1;
 	newPal = 0;
+	
 	JE_showVGA();
 
 	JE_updateColorsFast(colors);
@@ -6802,7 +6803,7 @@ item_screen_start:
 		{
 			curPal = newPal;
 			memcpy(colors, palettes[newPal - 1], sizeof(colors));
-			JE_zPal(newPal);
+			JE_updateColorsFast(palettes[newPal - 1]);
 			newPal = 0;
 		}
 
@@ -6934,7 +6935,7 @@ item_screen_start:
 						if (newPal > 0)
 						{
 							curPal = newPal;
-							JE_zPal(newPal);
+							JE_updateColorsFast(palettes[newPal - 1]);
 							newPal = 0;
 						}
 
@@ -6966,7 +6967,7 @@ item_screen_start:
 						if (newPal > 0)
 						{
 							curPal = newPal;
-							JE_zPal(newPal);
+							JE_updateColorsFast(palettes[newPal - 1]);
 							newPal = 0;
 						}
 

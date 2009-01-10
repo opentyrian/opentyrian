@@ -35,7 +35,6 @@ extern Uint32 rgb_palette[256], yuv_palette[256];
 extern palette_t black, colors, colors2;
 
 void JE_loadPals( void );
-void JE_zPal( JE_byte palette );
 
 void JE_updateColorsFast( palette_t ColorBuffer );
 void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps );
