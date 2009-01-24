@@ -3495,7 +3495,7 @@ new_game:
 
 								JE_fadeBlack(15);
 
-								tempb = JE_nextEpisode();
+								JE_nextEpisode();
 
 								if (jumpBackToEpisode1 && !twoPlayerMode)
 								{

@@ -820,43 +820,35 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 	return tempW2;
 }
 
-JE_boolean JE_nextEpisode( void )
+void JE_nextEpisode( void )
 {
-	JE_boolean found;
-	JE_integer x;
-	JE_longint temp;
-	
 	strcpy(lastLevelName, "Completed");
-	x = episodeNum;
-	found = JE_findNextEpisode();
 	
-	if (!isNetworkGame && !gameHasRepeated
-	    && (jumpBackToEpisode1 || x == 3)
-	    && x != 4
-	    && !constantPlay
-	    && pItems[9-1] != 4)
+	if (episodeNum == pItems[9-1] && !gameHasRepeated && episodeNum != 4 &&
+	    !isNetworkGame && !constantPlay)
 	{
 		JE_highScoreCheck();
-		gameHasRepeated = true;
 	}
 	
-	if (found)
+	unsigned int newEpisode = JE_findNextEpisode();
+	
+	if (jumpBackToEpisode1)
 	{
-		gameLoaded = true;
-		mainLevel = FIRST_LEVEL;
-		saveLevel = FIRST_LEVEL;
-		
-		if (jumpBackToEpisode1 && !isNetworkGame && x == 1)
+		// shareware version check
+		if (episodeNum == 1 &&
+			!isNetworkGame && !constantPlay)
 		{
 			JE_loadOrderingInfo();
 		}
 		
-		if (jumpBackToEpisode1 && x > 2 && !constantPlay)
+		if (episodeNum > 2 &&
+			!constantPlay)
 		{
 			JE_playCredits();
 		}
 		
-		if (jumpBackToEpisode1 && (mt_rand() % 6) == 0)
+		// randomly give player the SuperCarrot
+		if ((mt_rand() % 6) == 0)
 		{
 			pItems[1-1] = 23;
 			pItems[2-1] = 24;
@@ -866,40 +858,41 @@ JE_boolean JE_nextEpisode( void )
 			pItemsPlayer2[2-1] = 24;
 			memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
 		}
-		
-		JE_playSong(27);
-		
-		JE_clr256();
-		memcpy(colors, palettes[6-1], sizeof(colors));
-		
-		tempScreenSeg = VGAScreen;
-		
-		JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 130,
-		           episode_name[episodeNum], SMALL_FONT_SHAPES);
-		
-		JE_dString(JE_fontCenter(miscText[5-1], SMALL_FONT_SHAPES), 185,
-		           miscText[5-1], SMALL_FONT_SHAPES);
-		
-		JE_showVGA();
-		JE_fadeColor(15);
-		
-		JE_wipeKey();
-		if (!constantPlay)
-		{
-			do
-			{
-				NETWORK_KEEP_ALIVE();
-				
-				SDL_Delay(16);
-			} while (!JE_anyButton());
-		}
-		JE_fadeBlack(15);
-		
-	} else {
-		mainLevel = 0;
 	}
 	
-	return found;
+	if (newEpisode != episodeNum)
+		JE_initEpisode(newEpisode);
+		
+	gameLoaded = true;
+	mainLevel = FIRST_LEVEL;
+	saveLevel = FIRST_LEVEL;
+	
+	JE_playSong(27);
+	
+	JE_clr256();
+	memcpy(colors, palettes[6-1], sizeof(colors));
+	
+	tempScreenSeg = VGAScreen;
+	
+	JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 130, episode_name[episodeNum], SMALL_FONT_SHAPES);
+	
+	JE_dString(JE_fontCenter(miscText[5-1], SMALL_FONT_SHAPES), 185, miscText[5-1], SMALL_FONT_SHAPES);
+	
+	JE_showVGA();
+	JE_fadeColor(15);
+	
+	JE_wipeKey();
+	if (!constantPlay)
+	{
+		do
+		{
+			NETWORK_KEEP_ALIVE();
+			
+			SDL_Delay(16);
+		} while (!JE_anyButton());
+	}
+	
+	JE_fadeBlack(15);
 }
 
 void JE_initPlayerData( void )
@@ -2114,7 +2107,7 @@ void JE_playCredits( void )
 	
 	JE_newLoadShapes(EXTRA_SHAPES, "estsc.shp");
 	
-	setjasondelay(1000);
+	setjasondelay2(1000);
 	
 	if (currentSong != 9)
 		JE_playSong(9);
@@ -2135,7 +2128,7 @@ void JE_playCredits( void )
 	
 	for (x = 0; x < maxlen; x++)
 	{
-		setjasondelay2(1);
+		setjasondelay(1);
 		JE_clr256();
 		
 		JE_newDrawCShapeAdjust(shapeArray[EXTRA_SHAPES][currentpic-1], shapeX[EXTRA_SHAPES][currentpic-1], shapeY[EXTRA_SHAPES][currentpic-1], 319 - shapeX[EXTRA_SHAPES][currentpic-1], 100 - (shapeY[EXTRA_SHAPES][currentpic-1] / 2), 0, fade - 15);
@@ -2151,10 +2144,10 @@ void JE_playCredits( void )
 		if (fade == 15)
 			fadechg = 0;
 		
-		if (delaycount() == 0)
+		if (delaycount2() == 0)
 		{
 			fadechg = -1;
-			setjasondelay(900);
+			setjasondelay2(900);
 		}
 		
 		curpos = (x / 3) / 20;

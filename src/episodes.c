@@ -16,12 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "episodes.h"
 
+#include "config.h"
+#include "episodes.h"
 #include "error.h"
 #include "lvllib.h"
 #include "lvlmast.h"
+#include "opentyr.h"
 
 
 /* MAIN Weapons Data */
@@ -242,36 +243,30 @@ void JE_scanForEpisodes( void )
 	}
 }
 
-JE_boolean JE_findNextEpisode( void )
+unsigned int JE_findNextEpisode( void )
 {
-	JE_boolean found = false;
-	JE_byte newEpisode = episodeNum + 1;
-
+	unsigned int newEpisode = episodeNum;
+	
 	jumpBackToEpisode1 = false;
-
-	while (!found)
+	
+	while (true)
 	{
+		newEpisode++;
+		
 		if (newEpisode > EPISODE_MAX)
 		{
 			newEpisode = 1;
 			jumpBackToEpisode1 = true;
+			gameHasRepeated = true;
 		}
-
-		if (episodeAvail[newEpisode-1])
+		
+		if (episodeAvail[newEpisode-1] || newEpisode == episodeNum)
 		{
-			found = true;
+			break;
 		}
-
-		newEpisode++;
 	}
-	newEpisode--;
-
-	if (found)
-	{
-		JE_initEpisode(newEpisode);
-	}
-
-	return found;
+	
+	return newEpisode;
 }
 
 // kate: tab-width 4; vim: set noet:

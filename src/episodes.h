@@ -163,7 +163,7 @@ extern JE_boolean jumpBackToEpisode1;
 
 void JE_loadItemDat( void );
 void JE_initEpisode( JE_byte newEpisode );
-JE_boolean JE_findNextEpisode( void );
+unsigned int JE_findNextEpisode( void );
 void JE_scanForEpisodes( void );
 
 #endif /* EPISODES_H */
