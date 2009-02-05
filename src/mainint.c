@@ -50,6 +50,7 @@
 #include <assert.h>
 #include <ctype.h>
 
+bool button[4];
 
 #define MAX_PAGE 8
 #define TOPICS 6

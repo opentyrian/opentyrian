@@ -24,6 +24,7 @@
 #include "config.h"
 #include "palette.h"
 
+extern bool button[4]; // fire, left fire, right fire, mode swap
 
 extern JE_shortint constantLastX;
 extern JE_word textErase;

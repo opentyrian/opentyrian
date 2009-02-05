@@ -25,6 +25,7 @@
 #include "jukebox.h"
 #include "keyboard.h"
 #include "loudness.h"
+#include "mainint.h"
 #include "mtrand.h"
 #include "network.h"
 #include "newshape.h"

@@ -21,9 +21,6 @@
 
 #include "opentyr.h"
 
-extern bool button[4];
-
-
 struct joystick_assignment_struct
 {
 	bool is_axis; // else button
@@ -51,6 +48,7 @@ struct joystick_struct
 	bool input_pressed;
 };
 
+extern int joystick_repeat_delay;
 extern bool joydown;
 extern bool ignore_joystick;
 extern int joysticks;
@@ -74,7 +72,6 @@ bool save_joystick_assignments( int j );
 FILE *seek_joystick_assignments( int j, bool read_only );
 
 bool detect_joystick_assignment( int j, struct joystick_assignment_struct *assignment );
-
 bool joystick_assignment_cmp( struct joystick_assignment_struct *a, struct joystick_assignment_struct *b );
 
 #endif /* JOYSTICK_H */

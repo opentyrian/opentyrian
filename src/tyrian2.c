@@ -55,7 +55,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-int joystick_config = 0;
+int joystick_config = 0; // which joystick is being configured in menu
 
 JE_word statDmg[2]; /* [1..2] */
 JE_byte planetAni, planetAniWait;
@@ -2974,15 +2974,19 @@ explosion_draw_overflow:
 	}
 
 	/* Call Keyboard input handler */
-	service_SDL_events(false);
 	if (playDemo)
 	{
-		if (newkey || JE_anyButton() || button[0])
+		push_joysticks_as_keyboard();
+		service_SDL_events(false);
+		
+		if (newkey || newmouse)
 		{
 			reallyEndLevel = true;
 			stoppedDemo = true;
 		}
 	} else {
+		service_SDL_events(false);
+		
 		if (newkey)
 		{
 			skipStarShowVGA = false;
@@ -6381,7 +6385,7 @@ item_screen_start:
 				{
 					sprintf(value, "-");
 				} else if (i == 0) {
-					sprintf(value, "%d", joystick_config);
+					sprintf(value, "%d", joystick_config + 1);
 				} else if (i == 1) {
 					sprintf(value, "%s", joystick[joystick_config].analog ? "TRUE" : "FALSE");
 				} else if (i < 4) {
