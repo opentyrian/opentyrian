@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
- * Copyright (C) 2007  The OpenTyrian Development Team
+ * Copyright (C) 2007-2009  The OpenTyrian Development Team
  * hq2x, hq3x, hq4x Copyright (C) 2003 MaxSt ( maxst@hiend3d.com )
  * Scale2x, Scale3x Copyright (C) 2001, 2002, 2003, 2004 Andrea Mazzoleni
  *
