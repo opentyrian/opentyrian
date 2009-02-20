@@ -55,6 +55,8 @@
 #include <string.h>
 #include <inttypes.h>
 
+void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
+
 int joystick_config = 0; // which joystick is being configured in menu
 
 JE_word statDmg[2]; /* [1..2] */
@@ -228,243 +230,119 @@ void JE_newEnemy( int enemyOffset )
 	enemyAvail[b-1] = a;
 }
 
-void JE_drawEnemy( int enemyOffset )
+void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
 {
-	int i, j;
-
-	JE_byte *p; /* shape pointer */
+	Uint8 *p; /* shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
+	
+	s = (Uint8 *)surface->pixels;
+	s += (enemy[i].ey + y_offset) * surface->pitch + (enemy[i].ex + x_offset) + tempMapXOfs;
+	
+	s_limit = (Uint8 *)surface->pixels;
+	s_limit += surface->h * surface->pitch;
+	
+	p = enemy[i].shapeseg;
+	p += SDL_SwapLE16(((Uint16 *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + sprite_offset]);
+	
+	while (*p != 0x0f)
+	{
+		s += *p & 0x0f;
+		int count = (*p & 0xf0) >> 4;
+		if (count)
+		{
+			while (count--)
+			{
+				p++;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= surface->pixels)
+					*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
+				s++;
+			}
+		} else {
+			s -= 12;
+			s += surface->pitch;
+		}
+		p++;
+	}
+}
 
+void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just drawing
+{
 	PX -= 25;
-
-	for (i = enemyOffset - 25; i < enemyOffset; i++)
+	
+	for (int i = enemyOffset - 25; i < enemyOffset; i++)
 	{
 		if (enemyAvail[i] != 1)
 		{
 			enemy[i].mapoffset = tempMapXOfs;
-
+			
 			if (enemy[i].xaccel && enemy[i].xaccel - 89 > mt_rand() % 11)
 			{
 				if (PX > enemy[i].ex)
 				{
 					if (enemy[i].exc < enemy[i].xaccel - 89)
-					{
 						enemy[i].exc++;
-					}
-				} else {
+				}
+				else
+				{
 					if (enemy[i].exc >= 0 || -enemy[i].exc < enemy[i].xaccel - 89)
-					{
 						enemy[i].exc--;
-					}
 				}
 			}
-
+			
 			if (enemy[i].yaccel && enemy[i].yaccel - 89 > mt_rand() % 11)
 			{
 				if (PY > enemy[i].ey)
 				{
 					if (enemy[i].eyc < enemy[i].yaccel - 89)
-					{
 						enemy[i].eyc++;
-					}
-				} else {
+				}
+				else
+				{
 					if (enemy[i].eyc >= 0 || -enemy[i].eyc < enemy[i].yaccel - 89)
-					{
 						enemy[i].eyc--;
-					}
 				}
 			}
-
+			
  			if (enemy[i].ex + tempMapXOfs > -29 && enemy[i].ex + tempMapXOfs < 300)
 			{
 				if (enemy[i].aniactive == 1)
 				{
 					enemy[i].enemycycle++;
-
+					
 					if (enemy[i].enemycycle == enemy[i].animax)
-					{
 						enemy[i].aniactive = enemy[i].aniwhenfire;
-					} else {
-						if (enemy[i].enemycycle > enemy[i].ani)
-						{
-							enemy[i].enemycycle = enemy[i].animin;
-						}
-					}
+					else if (enemy[i].enemycycle > enemy[i].ani)
+						enemy[i].enemycycle = enemy[i].animin;
 				}
-
+				
 				if (enemy[i].egr[enemy[i].enemycycle - 1] == 999)
-				{
 					goto enemy_gone;
-				}
-
-				if (enemy[i].size == 1)
+				
+				if (enemy[i].size == 1) // 2x2 enemy
 				{
-					/* -------------------------  LARGE ENEMY -- Draw a 2x2 enemy ---------- */
-
 					if (enemy[i].ey > -13)
 					{
-						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey - 7) * VGAScreen->pitch + (enemy[i].ex - 6) + tempMapXOfs;
-
-						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->pitch;
-
-						p = enemy[i].shapeseg;
-						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1]);
-
-						while (*p != 0x0f)
-						{
-							s += *p & 0x0f;
-							j = (*p & 0xf0) >> 4;
-							if (j)
-							{
-								while (j--)
-								{
-									p++;
-									if (s >= s_limit)
-										goto enemy_draw_overflow;
-									if ((void *)s >= VGAScreen->pixels)
-										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
-									s++;
-								}
-							} else {
-								s -= 12;
-								s += VGAScreen->pitch;
-							}
-							p++;
-						}
-
-						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey - 7) * VGAScreen->pitch + (enemy[i].ex + 6) + tempMapXOfs;
-
-						p = enemy[i].shapeseg;
-						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1]]);
-
-						while (*p != 0x0f)
-						{
-							s += *p & 0x0f;
-							j = (*p & 0xf0) >> 4;
-							if (j)
-							{
-								while (j--)
-								{
-									p++;
-									if (s >= s_limit)
-										goto enemy_draw_overflow;
-									if ((void *)s >= VGAScreen->pixels)
-										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
-									s++;
-								}
-							} else {
-								s -= 12;
-								s += VGAScreen->pitch;
-							}
-							p++;
-						}
+						blit_enemy(VGAScreen, i, -6, -7, -1);
+						blit_enemy(VGAScreen, i,  6, -7,  0);
 					}
-
 					if (enemy[i].ey > -26 && enemy[i].ey < 182)
 					{
-						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey + 7) * VGAScreen->pitch + (enemy[i].ex - 6) + tempMapXOfs;
-
-						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->pitch;
-
-						p = enemy[i].shapeseg;
-						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 18]);
-
-						while (*p != 0x0f)
-						{
-							s += *p & 0x0f;
-							j = (*p & 0xf0) >> 4;
-							if (j)
-							{
-								while (j--)
-								{
-									p++;
-									if (s >= s_limit)
-										goto enemy_draw_overflow;
-									if ((void *)s >= VGAScreen->pixels)
-										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
-									s++;
-								}
-							} else {
-								s -= 12;
-								s += VGAScreen->pitch;
-							}
-							p++;
-						}
-
-						s = (Uint8 *)VGAScreen->pixels;
-						s += (enemy[i].ey + 7) * VGAScreen->pitch + (enemy[i].ex + 6) + tempMapXOfs;
-
-						p = enemy[i].shapeseg;
-						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + 19]);
-
-						while (*p != 0x0f)
-						{
-							s += *p & 0x0f;
-							j = (*p & 0xf0) >> 4;
-							if (j)
-							{
-								while (j--)
-								{
-									p++;
-									if (s >= s_limit)
-										goto enemy_draw_overflow;
-									if ((void *)s >= VGAScreen->pixels)
-										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
-									s++;
-								}
-							} else {
-								s -= 12;
-								s += VGAScreen->pitch;
-							}
-							p++;
-						}
-					}
-
-				} else {
-					if (enemy[i].ey > -13)
-					{
-						s = (Uint8 *)VGAScreen->pixels;
-						s += enemy[i].ey * VGAScreen->pitch + enemy[i].ex + tempMapXOfs;
-
-						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->pitch;
-
-						p = enemy[i].shapeseg;
-						p += SDL_SwapLE16(((JE_word *)p)[enemy[i].egr[enemy[i].enemycycle - 1] - 1]);
-
-						while (*p != 0x0f)
-						{
-							s += *p & 0x0f;
-							j = (*p & 0xf0) >> 4;
-							if (j)
-							{
-								while (j--)
-								{
-									p++;
-									if (s >= s_limit)
-										goto enemy_draw_overflow;
-									if ((void *)s >= VGAScreen->pixels)
-										*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
-									s++;
-								}
-							} else {
-								s -= 12;
-								s += VGAScreen->pitch;
-							}
-							p++;
-						}
+						blit_enemy(VGAScreen, i, -6,  7, 18);
+						blit_enemy(VGAScreen, i,  6,  7, 19);
 					}
 				}
-enemy_draw_overflow:
+				else
+				{
+					if (enemy[i].ey > -13)
+						blit_enemy(VGAScreen, i, 0, 0, -1);
+				}
+				
 				enemy[i].filter = 0;
 			}
-
+			
 			if (enemy[i].excc)
 			{
 				if (--enemy[i].exccw <= 0)
@@ -474,7 +352,9 @@ enemy_draw_overflow:
 						enemy[i].excc = -enemy[i].excc;
 						enemy[i].exrev = -enemy[i].exrev;
 						enemy[i].exccadd = -enemy[i].exccadd;
-					} else {
+					}
+					else
+					{
 						enemy[i].exc += enemy[i].exccadd;
 						enemy[i].exccw = enemy[i].exccwmax;
 						if (enemy[i].exc == enemy[i].exrev)
@@ -486,7 +366,7 @@ enemy_draw_overflow:
 					}
 				}
 			}
-
+			
 			if (enemy[i].eycc)
 			{
 				if (--enemy[i].eyccw <= 0)
@@ -496,7 +376,9 @@ enemy_draw_overflow:
 						enemy[i].eycc = -enemy[i].eycc;
 						enemy[i].eyrev = -enemy[i].eyrev;
 						enemy[i].eyccadd = -enemy[i].eyccadd;
-					} else {
+					}
+					else
+					{
 						enemy[i].eyc += enemy[i].eyccadd;
 						enemy[i].eyccw = enemy[i].eyccwmax;
 						if (enemy[i].eyc == enemy[i].eyrev)
@@ -508,71 +390,59 @@ enemy_draw_overflow:
 					}
 				}
 			}
-
+			
 			enemy[i].ey += enemy[i].fixedmovey;
-
+			
 			enemy[i].ex += enemy[i].exc;
 			if (enemy[i].ex < -80 || enemy[i].ex > 340)
-			{
 				goto enemy_gone;
-			}
-
+			
 			enemy[i].ey += enemy[i].eyc;
 			if (enemy[i].ey < -112 || enemy[i].ey > 190)
-			{
 				goto enemy_gone;
-			}
-
+			
 			goto enemy_still_exists;
-
+			
 enemy_gone:
 			/* enemy[i].egr[10] &= 0x00ff; <MXD> madness? */
 			enemyAvail[i] = 1;
 			goto draw_enemy_end;
-
+			
 enemy_still_exists:
-
+			
 			/*X bounce*/
 			if (enemy[i].ex <= enemy[i].xminbounce || enemy[i].ex >= enemy[i].xmaxbounce)
-			{
 				enemy[i].exc = -enemy[i].exc;
-			}
-
+			
 			/*Y bounce*/
 			if (enemy[i].ey <= enemy[i].yminbounce || enemy[i].ey >= enemy[i].ymaxbounce)
-			{
 				enemy[i].eyc = -enemy[i].eyc;
-			}
-
+			
 			/* Evalue != 0 - score item at boundary */
 			if (enemy[i].scoreitem)
 			{
 				if (enemy[i].ex < -5)
-				{
 					enemy[i].ex++;
-				}
 				if (enemy[i].ex > 245)
-				{
 					enemy[i].ex--;
-				}
 			}
-
+			
 			enemy[i].ey += tempBackMove;
-
+			
 			if (enemy[i].ex <= -24 || enemy[i].ex >= 296)
 				goto draw_enemy_end;
-
+			
 			tempX = enemy[i].ex;
 			tempY = enemy[i].ey;
-
+			
 			temp = enemy[i].enemytype;
-
+			
 			/* Enemy Shots */
 			if (enemy[i].edamaged == 1)
 				goto draw_enemy_end;
-
+			
 			enemyOnScreen++;
-
+			
 			if (enemy[i].iced)
 			{
 				enemy[i].iced--;
@@ -582,8 +452,8 @@ enemy_still_exists:
 				}
 				goto draw_enemy_end;
 			}
-
-			for (j = 3; j > 0; j--)
+			
+			for (int j = 3; j > 0; j--)
 			{
 				if (enemy[i].freq[j-1])
 				{
@@ -596,9 +466,7 @@ enemy_still_exists:
 						{
 							enemy[i].eshotwait[j-1] = (enemy[i].eshotwait[j-1] / 2) + 1;
 							if (difficultyLevel > 7)
-							{
 								enemy[i].eshotwait[j-1] = (enemy[i].eshotwait[j-1] / 2) + 1;
-							}
 						}
 						
 						if (galagaMode && (enemy[i].eyc == 0 || (mt_rand() % 400) >= galagaShotFreq))
@@ -650,16 +518,16 @@ enemy_still_exists:
 									if (j == 3)
 									{
 										enemy[i].filter = 112;
-									} else {
+									}
+									else
+									{
 										tempI4 = 4 - (abs(PX - tempX) + abs(PY - tempY)) / 20;
 										if (tempI4 > 0)
 										{
 											if (PX > tempX)
-											{
 												lastTurn2 += tempI4;
-											} else {
+											else
 												lastTurn2 -= tempI4;
-											}
 										}
 									}
 								}
@@ -671,42 +539,33 @@ enemy_still_exists:
 									for (b = 0; b < ENEMY_SHOT_MAX; b++)
 									{
 										if (enemyShotAvail[b] == 1)
-										{
 											break;
-										}
 									}
 									if (b == ENEMY_SHOT_MAX)
-									{
 										goto draw_enemy_end;
-									}
 									
 									enemyShotAvail[b]--;
 									
 									if (weapons[temp3].sound > 0)
 									{
-										do {
+										do
 											temp = mt_rand() % 8;
-										} while (temp == 3);
+										while (temp == 3);
 										soundQueue[temp] = weapons[temp3].sound;
 									}
 									
 									tempPos = weapons[temp3].max;
 									
 									if (enemy[i].aniactive == 2)
-									{
 										enemy[i].aniactive = 1;
-									}
 									
 									if (++enemy[i].eshotmultipos[j-1] > tempPos)
-									{
 										enemy[i].eshotmultipos[j-1] = 1;
-									}
+									
 									tempPos = enemy[i].eshotmultipos[j-1];
 									
 									if (j == 1)
-									{
 										temp2 = 4;
-									}
 									
 									enemyShot[b].sx = tempX + weapons[temp3].bx[tempPos-1] + tempMapXOfs;
 									enemyShot[b].sy = tempY + weapons[temp3].by[tempPos-1];
@@ -759,14 +618,11 @@ enemy_still_exists:
 										if (twoPlayerMode)
 										{
 											if (playerAliveB && !playerAlive)
-											{
 												temp = 1;
-											} else if (playerAlive && !playerAliveB)
-											{
+											else if (playerAlive && !playerAliveB)
 												temp = 0;
-											} else {
+											else
 												temp = mt_rand() % 2;
-											}
 											
 											if (temp == 1)
 											{
@@ -777,20 +633,14 @@ enemy_still_exists:
 										
 										tempI = (tempX2 + 25) - tempX - tempMapXOfs - 4;
 										if (tempI == 0)
-										{
 											tempI++;
-										}
 										tempI2 = tempY2 - tempY;
 										if (tempI2 == 0)
-										{
 											tempI2++;
-										}
 										if (abs(tempI) > abs(tempI2))
-										{
 											tempI3 = abs(tempI);
-										} else {
+										else
 											tempI3 = abs(tempI2);
-										}
 										enemyShot[b].sxm = round(((float)tempI / tempI3) * temp4);
 										enemyShot[b].sym = round(((float)tempI2 / tempI3) * temp4);
 									}
@@ -800,32 +650,32 @@ enemy_still_exists:
 					}
 				}
 			}
-
+			
 			/* Enemy Launch Routine */
 			if (enemy[i].launchfreq)
 			{
 				if (--enemy[i].launchwait == 0)
 				{
 					enemy[i].launchwait = enemy[i].launchfreq;
-
+					
 					if (enemy[i].launchspecial != 0)
 					{
 						/*Type  1 : Must be inline with player*/
 						if (abs(enemy[i].ey - PY) > 5)
 							goto draw_enemy_end;
 					}
-
+					
 					if (enemy[i].aniactive == 2)
 					{
 						enemy[i].aniactive = 1;
 					}
-
+					
 					if (enemy[i].launchtype == 0)
 						goto draw_enemy_end;
-
+					
 					tempW = enemy[i].launchtype;
 					JE_newEnemy(enemyOffset == 50 ? 75 : enemyOffset - 25);
-
+					
 					/*Launch Enemy Placement*/
 					if (b > 0)
 					{
@@ -838,43 +688,39 @@ enemy_still_exists:
 						}
 						if (enemy[b-1].launchtype > 0 && enemy[b-1].launchfreq == 0)
 						{
-
+							
 							if (enemy[b-1].launchtype > 90)
 							{
 								tempI += mt_rand() % ((enemy[b-1].launchtype - 90) * 4) - (enemy[b-1].launchtype - 90) * 2;
-							} else {
+							}
+							else
+							{
 								tempI4 = (PX + 25) - tempX - tempMapXOfs - 4;
 								if (tempI4 == 0)
-								{
 									tempI4++;
-								}
 								tempI5 = PY - tempY;
 								if (tempI5 == 0)
-								{
 									tempI5++;
-								}
 								if (abs(tempI4) > abs(tempI5))
-								{
 									tempI3 = abs(tempI4);
-								} else {
+								else
 									tempI3 = abs(tempI5);
-								}
 								enemy[b-1].exc = round(((float)tempI4 / tempI3) * enemy[b-1].launchtype);
 								enemy[b-1].eyc = round(((float)tempI5 / tempI3) * enemy[b-1].launchtype);
 							}
 						}
-
-						do {
+						
+						do
 							temp = mt_rand() % 8;
-						} while (temp == 3);
+						while (temp == 3);
 						soundQueue[temp] = randomEnemyLaunchSounds[(mt_rand() % 3)];
-
+						
 						if (enemy[i].launchspecial == 1
 							&& enemy[i].linknum < 100)
 						{
 							enemy[b-1].linknum = enemy[i].linknum;
 						}
-
+						
 						enemy[b-1].ex = tempI;
 						enemy[b-1].ey = tempI2;
 					}
