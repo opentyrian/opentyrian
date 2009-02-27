@@ -48,8 +48,6 @@ void JE_weaponSimUpdate( void );
 
 void JE_funkyScreen( void );
 
-void JE_drawJoystick( void );
-
 void JE_eventJump( JE_word jump );
 
 void JE_menuFunction( JE_byte select );

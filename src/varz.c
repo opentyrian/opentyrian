@@ -200,7 +200,7 @@ JE_boolean returnActive;
 JE_word galagaShotFreq;
 JE_longint galagaLife;
 
-JE_boolean debug; /*Debug Mode*/
+JE_boolean debug = false; /*Debug Mode*/
 Uint32 debugTime, lastDebugTime;
 JE_longint debugHistCount;
 JE_real debugHist;
@@ -274,7 +274,7 @@ JE_word mapOrigin, mapPNum;
 JE_byte mapPlanet[5], mapSection[5]; /* [1..5] */
 
 /* Interface Constants */
-JE_boolean loadTitleScreen;
+JE_boolean loadTitleScreen = true;
 JE_boolean moveTyrianLogoUp;
 JE_boolean skipStarShowVGA;
 
@@ -518,43 +518,32 @@ void JE_calcPurpleBall( JE_byte playernum )
 
 void JE_drawOptions( void )
 {
-	SDL_Surface *temp_surface = 0;
-
-	if (tempScreenSeg == VGAScreenSeg)
-	{
-		temp_surface = VGAScreen;
-		VGAScreen = VGAScreenSeg;
-	}
-
-	if(twoPlayerMode)
+	SDL_Surface *temp_surface = VGAScreen;
+	VGAScreen = VGAScreenSeg;
+	
+	if (twoPlayerMode)
 	{
 		option1Draw = 108;
 		option2Draw = 126;
 		if (pItemsPlayer2[3] == 0)
-		{
 			option1Draw = 0;
-		}
 		if (pItemsPlayer2[4] == 0)
-		{
 			option2Draw = 0;
-		}
 		option1Item = pItemsPlayer2[3];
 		option2Item = pItemsPlayer2[4];
 		tempX = PXB;
 		tempY = PYB;
-	} else {
+	}
+	else
+	{
 		option1Draw = 64;
 		option2Draw = 82;
 		option1Item = pItems[3];
 		option2Item = pItems[4];
 		if (option1Item == 0)
-		{
 			option1Draw = 0;
-		}
 		if (option2Item == 0)
-		{
 			option2Draw = 0;
-		}
 		tempX = PX;
 		tempY = PY;
 	}
@@ -566,10 +555,10 @@ void JE_drawOptions( void )
 	option2LastX = 0;
 	option2Y = tempY + 2;
 	option2LastY = 0;
-
+	
 	option1Ammo = options[option1Item].ammo;
 	option2Ammo = options[option2Item].ammo;
-
+	
 	optionAni1Go = options[option1Item].option == 1;
 	optionAni2Go = options[option2Item].option == 1;
 	option1Stop  = options[option1Item].stop;
@@ -582,81 +571,54 @@ void JE_drawOptions( void )
 	option2MinX  = -option2MaxX;
 	option2MaxY  = options[option2Item].opspd;
 	option2MinY  = -option2MaxY;
-
+	
 	if (option1Ammo > 0)
-	{
 		option1AmmoMax = option1Ammo / 10;
-	} else {
+	else
 		option1AmmoMax = 2;
-	}
 	if (option1AmmoMax == 0)
-	{
 		option1AmmoMax++;
-	}
 	option1AmmoRechargeWaitMax = (105 - option1Ammo) * 4;
 	option1AmmoRechargeWait = option1AmmoRechargeWaitMax;
-
+	
 	if (option2Ammo > 0)
-	{
 		option2AmmoMax = option2Ammo / 10;
-	} else {
+	else
 		option2AmmoMax = 2;
-	}
 	if (option2AmmoMax == 0)
-	{
 		option2AmmoMax++;
-	}
 	option2AmmoRechargeWaitMax = (105 - option2Ammo) * 4;
 	option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
-
+	
 	if (option1Draw > 0)
-	{
 		JE_c_bar(284, option1Draw, 284 + 28, option1Draw + 15, 0);
-	}
 	if (option2Draw > 0)
-	{
 		JE_c_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
-	}
-
+	
 	if (options[option1Item].icongr > 0)
-	{
-		JE_newDrawCShapeNum(OPTION_SHAPES, options[option1Item].icongr, 284, option1Draw);
-	}
+		blit_shape(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick
 	if (options[option2Item].icongr > 0)
-	{
-		JE_newDrawCShapeNum(OPTION_SHAPES, options[option2Item].icongr, 284, option2Draw);
-	}
-
+		blit_shape(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick
+	
 	if (option1Draw > 0)
-	{
 		JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);
-	}
 	if (option2Draw > 0)
-	{
 		JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
-	}
-
+	
 	if (option1Ammo == 0)
-	{
 		option1Ammo = -1;
-	}
 	if (option2Ammo == 0)
-	{
 		option2Ammo = -1;
-	}
-
+	
 	optionAni1 = 1;
 	optionAni2 = 1;
 	optionCharge1Wait = 20;
 	optionCharge2Wait = 20;
 	optionCharge1 = 0;
 	optionCharge2 = 0;
-
-	if (temp_surface)
-	{
-		VGAScreen = temp_surface;
-	}
-
+	
+	VGAScreen = temp_surface;
+	
 	JE_drawOptionLevel();
 }
 

@@ -56,10 +56,10 @@ void JE_newLoadShapes( JE_byte table, char *shapefile );
 void JE_newLoadShapesB( JE_byte table, FILE *f );
 void JE_newCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize );
 void JE_newDrawShape( JE_byte *shape, JE_word xsize, JE_word ysize );
-void JE_newDrawCShape( JE_byte *shape, JE_word xsize, JE_word ysize );
-void JE_newDrawCShapeNum( JE_byte table, JE_byte shape, JE_word x, JE_word y );
 void JE_newPurgeShapes( JE_byte table );
 /*void JE_OverrideLoadShapes( JE_byte table, char *shapefile, JE_word minimum, JE_word maximum );*/
+
+void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int shape ); // JE_newDrawCShapeNum
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
