@@ -6007,7 +6007,7 @@ item_screen_start:
 		{
 			for (int i = 1; i <= cubeMax; i++)
 			{
-				JE_newDrawCShapeDarkenNum(OPTION_SHAPES, 35, 190 + i * 18 + 2, 37 + 1);
+				blit_shape_dark(VGAScreenSeg, 190 + i * 18 + 2, 37 + 1, OPTION_SHAPES, 34, false);
 				blit_shape(VGAScreenSeg, 190 + i * 18, 37, OPTION_SHAPES, 34);  // data cube
 			}
 		}
@@ -7951,7 +7951,8 @@ void JE_drawPlanet( JE_byte planetNum )
 	{
 		if (PAni[planetNum])
 			tempZ += planetAni;
-		JE_newDrawCShapeDarken(shapeArray[PLANET_SHAPES][tempZ], shapeX[PLANET_SHAPES][tempZ], shapeY[PLANET_SHAPES][tempZ], tempX + 3, tempY + 3);
+		
+		blit_shape_dark(VGAScreenSeg, tempX + 3, tempY + 3, PLANET_SHAPES, tempZ, false);
 		blit_shape(VGAScreenSeg, tempX, tempY, PLANET_SHAPES, tempZ);  // planets
 	}
 }

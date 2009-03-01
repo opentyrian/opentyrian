@@ -84,90 +84,79 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 	JE_shortint glowcolc[60]; /* [1..60] */
 	JE_word textloc[60]; /* [1..60] */
 	JE_byte b = 0, bank;
-
+	
 	setjasondelay2(1);
-
-	if (useLastBank)
+	
+	bank = (warningRed) ? 7 : ((useLastBank) ? 15 : 14);
+	
+	if (s[0] == '\0')
+		return;
+	
+	if (frameCountMax == 0)
 	{
-		bank = 15;
-	} else {
-		bank = 14;
+		JE_textShade(x, y, s, bank, 0, PART_SHADE);
+		JE_showVGA();
 	}
-	if (warningRed)
+	else
 	{
-		bank = 7;
-	}
-
-	if (s[0])
-	{
-		if (frameCountMax == 0)
+		maxloc = strlen(s);
+		tempScreenSeg = VGAScreen;
+		for (z = 0; z < 60; z++)
 		{
-			JE_textShade(x, y, s, bank, 0, PART_SHADE);
-			JE_showVGA();
-		} else {
-
-			maxloc = strlen(s);
-			tempScreenSeg = VGAScreen;
-			for (z = 0; z < 60; z++)
+			glowcol[z] = -8;
+			glowcolc[z] = 1;
+		}
+		
+		loc = x;
+		for (z = 0; z < maxloc; z++)
+		{
+			textloc[z] = loc;
+			if (s[z] == ' ')
+				loc += 6;
+			else
+				loc += shapeX[TINY_FONT][fontMap[(int)s[z]-33]] + 1;
+		}
+		
+		for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
+		{
+			if (!ESCPressed)
 			{
-				glowcol[z] = -8;
-				glowcolc[z] = 1;
-			}
-
-			loc = x;
-			for (z = 0; z < maxloc; z++)
-			{
-				textloc[z] = loc;
-				if (s[z] == ' ')
+				setjasondelay(frameCountMax);
+				
+				NETWORK_KEEP_ALIVE();
+				
+				for (z = loc - 28; z <= loc; z++)
 				{
-					loc += 6;
-				} else {
-					loc += shapeX[TINY_FONT][fontMap[(int)s[z]-33]] + 1;
-				}
-			}
-
-			for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
-			{
-				if (!ESCPressed)
-				{
-					setjasondelay(frameCountMax);
-					
-					NETWORK_KEEP_ALIVE();
-					
-					for (z = loc - 28; z <= loc; z++)
+					if (z >= 0 && z < maxloc)
 					{
-						if (z >= 0 && z < maxloc)
+						b = s[z];
+						if (b > 32 && b < 126)
 						{
-							b = s[z];
-							if (b > 32 && b < 126)
+							JE_newDrawCShapeAdjust(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z], y, bank, glowcol[z]);
+							glowcol[z] += glowcolc[z];
+							if (glowcol[z] > 9)
 							{
-								JE_newDrawCShapeAdjust(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z], y, bank, glowcol[z]);
-								glowcol[z] += glowcolc[z];
-								if (glowcol[z] > 9)
-								{
-									glowcolc[z] = -1;
-								}
+								glowcolc[z] = -1;
 							}
 						}
 					}
-					if (b > 32 && b < 126 && --z < maxloc)
-					{
-						JE_newDrawCShapeShadow(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z] + 1, y + 1);
-					}
-					if (JE_anyButton())
-					{
-						frameCountMax = 0;
-					}
-					do {
-						if (levelWarningDisplay)
-						{
-							JE_updateWarning();
-						}
-						
-						SDL_Delay(16);
-					} while (!(delaycount() == 0 || ESCPressed));
-					JE_showVGA();
 				}
+				if (b > 32 && b < 126 && --z < maxloc)
+					blit_shape_dark(tempScreenSeg, textloc[z] + 1, y + 1, TINY_FONT, fontMap[b-33], true);
+				
+				if (JE_anyButton())
+					frameCountMax = 0;
+				
+				do
+				{
+					if (levelWarningDisplay)
+						JE_updateWarning();
+					
+					SDL_Delay(16);
+				}
+				while (!(delaycount() == 0 || ESCPressed));
+				
+				JE_showVGA();
 			}
 		}
 	}
@@ -2432,8 +2421,8 @@ void JE_endLevelAni( void )
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
-	JE_newDrawCShapeDarken(shapeArray[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 4, y + 4);
-	JE_newDrawCShapeDarken(shapeArray[OPTION_SHAPES][26-1], shapeX[OPTION_SHAPES][26-1], shapeY[OPTION_SHAPES][26 - 1], x + 3, y + 3);
+	blit_shape_dark(tempScreenSeg, x + 4, y + 4, OPTION_SHAPES, 25, false);
+	blit_shape_dark(tempScreenSeg, x + 3, y + 3, OPTION_SHAPES, 25, false);
 	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, filter, brightness);
 }
 

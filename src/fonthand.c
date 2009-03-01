@@ -67,22 +67,18 @@ void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font )
 		{
 			if (fontMap[b-33] != 255)
 			{
-				JE_newDrawCShapeDarken(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]],
-				                       shapeY[font][fontMap[b-33]], x + 2, y + 2);
-				JE_newDrawCShapeBright(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]],
-				                       shapeY[font][fontMap[b-33]], x, y, 15, defaultBrightness + (bright << 1));
+				blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, fontMap[b-33], false);
+				JE_newDrawCShapeBright(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, 15, defaultBrightness + (bright << 1));
 				x += shapeX[font][fontMap[b-33]] + 1;
 			}
-		} else {
-			if (b == 32)
-			{
-				x += 6;
-			} else {
-				if (b == 126)
-				{
-					bright = !bright;
-				}
-			}
+		}
+		else if (b == 32)
+		{
+			x += 6;
+		}
+		else if (b == 126)
+		{
+			bright = !bright;
 		}
 	}
 }
@@ -132,101 +128,6 @@ void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, int x
 			s += tempScreenSeg->pitch; yloop++;
 		}
 	}
-}
-
-void JE_newDrawCShapeShadow( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y )
-{
-	JE_word xloop = 0, yloop = 0;
-	JE_byte *p;       /* shape pointer */
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	s = (Uint8 *)tempScreenSeg->pixels;
-	s += y * tempScreenSeg->pitch + x;
-
-	s_limit = (Uint8 *)tempScreenSeg->pixels;
-	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
-
-	for (p = shape; yloop < ysize; p++)
-	{
-		switch (*p)
-		{
-			case 255: /* p transparent pixels */
-				p++;
-				s += *p; xloop += *p;
-				break;
-			case 254: /* next y */
-				s -= xloop; xloop = 0;
-				s += tempScreenSeg->pitch; yloop++;
-				break;
-			case 253: /* 1 transparent pixel */
-				s++; xloop++;
-				break;
-			default: /* set a pixel */
-				if (s >= s_limit)
-					return;
-				if ((void *)s >= tempScreenSeg->pixels)
-					*s = 0;
-				s++; xloop++;
-				break;
-		}
-		if (xloop == xsize)
-		{
-			s -= xloop; xloop = 0;
-			s += tempScreenSeg->pitch; yloop++;
-		}
-	}
-}
-
-void JE_newDrawCShapeDarken( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y )
-{
-	JE_word xloop = 0, yloop = 0;
-	JE_byte *p;       /* shape pointer */
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	s = (Uint8 *)tempScreenSeg->pixels;
-	s += y * tempScreenSeg->pitch + x;
-
-	s_limit = (Uint8 *)tempScreenSeg->pixels;
-	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
-
-	for (p = shape; yloop < ysize; p++)
-	{
-		/* (unported) compare the screen offset to 65535, if equal do case 253 */
-		switch (*p)
-		{
-			case 255: /* p transparent pixels */
-				p++;
-				s += *p; xloop += *p;
-				break;
-			case 254: /* next y */
-				s -= xloop; xloop = 0;
-				s += tempScreenSeg->pitch; yloop++;
-				break;
-			case 253: /* 1 transparent pixel */
-				s++; xloop++;
-				break;
-			default:  /* set a pixel */
-				if (s >= s_limit)
-					return;
-				if ((void *)s >= tempScreenSeg->pixels)
-					*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
-				s++; xloop++;
-				break;
-		}
-		if (xloop == xsize)
-		{
-			s -= xloop; xloop = 0;
-			s += tempScreenSeg->pitch; yloop++;
-		}
-	}
-}
-
-void JE_newDrawCShapeDarkenNum( JE_byte table, JE_byte shape, int x, int y )
-{
-	shape--; /* re-index */
-	JE_newDrawCShapeDarken(shapeArray[table][shape], shapeX[table][shape], shapeY[table][shape], x, y);
 }
 
 void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y )
@@ -523,38 +424,27 @@ void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shor
 {
 	JE_byte a, b;
 	JE_byte bright = 0;
-
+	
 	for (a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
-
+		
 		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255) && (shapeArray[TINY_FONT][fontMap[b-33]] != NULL))
 		{
 			if (brightness >= 0)
-			{
-				JE_newDrawCShapeBright(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]],
-				                       shapeY[TINY_FONT][fontMap[b-33]], x, y, colorbank, brightness + bright);
-			} else {
-				JE_newDrawCShapeShadow(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]],
-				                       shapeY[TINY_FONT][fontMap[b-33]], x, y);
-			}
-
+				JE_newDrawCShapeBright(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], x, y, colorbank, brightness + bright);
+			else
+				blit_shape_dark(tempScreenSeg, x, y, TINY_FONT, fontMap[b-33], true);
+			
 			x += shapeX[TINY_FONT][fontMap[b-33]] + 1;
-		} else {
-			if (b == 32)
-			{
-				x += 6;
-			} else {
-				if (b == 126)
-				{
-					if (bright > 0)
-					{
-						bright = 0;
-					} else {
-						bright = 4;
-					}
-				}
-			}
+		}
+		else if (b == 32)
+		{
+			x += 6;
+		}
+		else if (b == 126)
+		{
+			bright = (bright > 0) ? 0 : 4;
 		}
 	}
 	if (brightness >= 0)
@@ -566,21 +456,20 @@ void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shor
 void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_byte brightness, JE_byte font )
 {
 	JE_byte a, b;
-
+	
 	for (a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
-
+		
 		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
 		{
 			JE_newDrawCShapeModify(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, filter, brightness);
-
+			
 			x += shapeX[font][fontMap[b-33]] + 1;
-		} else {
-			if (b == 32)
-			{
-				x += 6;
-			}
+		}
+		else if (b == 32)
+		{
+			x += 6;
 		}
 	}
 }
@@ -588,21 +477,20 @@ void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_b
 void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font )
 {
 	JE_byte a, b;
-
+	
 	for (a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
-
+		
 		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
 		{
-			JE_newDrawCShapeDarken(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y);
-
+			blit_shape_dark(tempScreenSeg, x, y, font, fontMap[b-33], false);
+			
 			x += shapeX[font][fontMap[b-33]] + 1;
-		} else {
-			if (b == 32)
-			{
-				x += 6;
-			}
+		}
+		else if (b == 32)
+		{
+			x += 6;
 		}
 	}
 }
@@ -611,31 +499,27 @@ void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_s
 {
 	JE_byte a, b;
 	JE_boolean bright = false;
-
+	
 	for (a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
-
+		
 		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
 		{
 			if (shadow)
-			{
-				JE_newDrawCShapeDarken(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x + 2, y + 2);
-			}
-
+				blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, fontMap[b-33], false);
+			
 			JE_newDrawCShapeAdjust(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, filter, brightness + (bright << 2));
-
+			
 			x += shapeX[font][fontMap[b-33]] + 1;
-		} else {
-			if (b == 126)
-			{
-				bright = !bright;
-			} else {
-				if (b == 32)
-				{
-					x += 6;
-				}
-			}
+		}
+		else if (b == 126)
+		{
+			bright = !bright;
+		}
+		else if (b == 32)
+		{
+			x += 6;
 		}
 	}
 }
@@ -644,31 +528,24 @@ void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank
 {
 	JE_byte a, b;
 	JE_byte bright = 0;
-
+	
 	for (a = 0; s[a] != 0; a++)
 	{
 		b = s[a];
-
+		
 		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
 		{
 			JE_newDrawCShapeBrightAndDarken(shapeArray[font][fontMap[b-33]], shapeX[font][fontMap[b-33]], shapeY[font][fontMap[b-33]], x, y, colorbank, brightness + bright);
-
+			
 			x += shapeX[font][fontMap[b-33]] + 1;
-		} else {
-			if (b == 32)
-			{
-				x += 6;
-			} else {
-				if (b == 126)
-				{
-					if (bright > 0)
-					{
-						bright = 0;
-					} else {
-						bright = 4;
-					}
-				}
-			}
+		}
+		else if (b == 32)
+		{
+			x += 6;
+		}
+		else if (b == 126)
+		{
+			bright = (bright > 0) ? 0 : 4;
 		}
 	}
 }
@@ -686,13 +563,15 @@ void JE_updateWarning( void )
 		JE_bar(0, 0, 319, 5, warningCol);
 		JE_bar(0, 194, 319, 199, warningCol);
 		JE_showVGA();
-
+		
 		setjasondelay2(6);
-
+		
 		if (warningSoundDelay > 0)
 		{
 			warningSoundDelay--;
-		} else {
+		}
+		else
+		{
 			warningSoundDelay = 14;
 			JE_playSampleNum(17);
 		}
@@ -703,7 +582,7 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 {
 	JE_integer z;
 	JE_byte c = 15;
-
+	
 	if (warningRed)
 	{
 		c = 7;
@@ -744,7 +623,7 @@ void JE_outTextGlow( JE_word x, JE_word y, const char *s )
 		NETWORK_KEEP_ALIVE();
 		
 		JE_showVGA();
-
+		
 		wait_delay();
 	}
 	textGlowBrightness = 6;

@@ -162,6 +162,59 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 	}
 }
 
+void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black )
+{
+	if (index >= maxShape[table] || !shapeExist[table][index])
+	{
+		assert(false);
+		return;
+	}
+	
+	Uint8 *data = shapeArray[table][index];
+	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
+	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	{
+		switch (*data)
+		{
+			case 255:  // transparent pixels
+				data++;  // next byte tells how many
+				pixels += *data;
+				x_offset += *data;
+				break;
+				
+			case 254:  // next pixel row
+				break;
+				
+			case 253:  // 1 transparent pixel
+				pixels++;
+				x_offset++;
+				break;
+				
+			default:  // set a pixel
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll)
+					*pixels = black ? 0x00 : ((*pixels & 0xf0) | ((*pixels & 0x0f) / 2));
+				
+				pixels++;
+				x_offset++;
+				break;
+		}
+		if (*data == 254 || x_offset >= width)
+		{
+			pixels += tempScreenSeg->pitch - x_offset;
+			x_offset = 0;
+			y_offset++;
+		}
+	}
+}
+
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
