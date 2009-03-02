@@ -1758,7 +1758,9 @@ level_loop:
 						playerShotData[z].shotX -= 101;
 						playerShotData[z].shotX += PXChange;
 						playerShotData[z].shotY += PYChange;
-					} else {
+					}
+					else
+					{
 						playerShotData[z].shotX -= 120;
 						playerShotData[z].shotX += PXChange;
 					}
@@ -1779,90 +1781,83 @@ level_loop:
 					playerShotData[z].shotX += playerShotData[z].shotDevX;
 
 					if (abs(playerShotData[z].shotDevX) == playerShotData[z].shotCirSizeX)
-					{
 						playerShotData[z].shotDirX = -playerShotData[z].shotDirX;
-					}
 
 					playerShotData[z].shotDevY += playerShotData[z].shotDirY;
 					playerShotData[z].shotY += playerShotData[z].shotDevY;
 
 					if (abs(playerShotData[z].shotDevY) == playerShotData[z].shotCirSizeY)
-					{
 						playerShotData[z].shotDirY = -playerShotData[z].shotDirY;
-					}
+					
 					/*Double Speed Circle Shots - add a second copy of above loop*/
 				}
-
+				
 				tempShotX = playerShotData[z].shotX;
 				tempShotY = playerShotData[z].shotY;
-
+				
 				if (playerShotData[z].shotX < -34 || playerShotData[z].shotX > 290 ||
 				    playerShotData[z].shotY < -15 || playerShotData[z].shotY > 190)
 				{
 					shotAvail[z] = 0;
 					goto draw_player_shot_loop_end;
 				}
-
+				
 				if (playerShotData[z].shotTrail != 255)
 				{
 					if (playerShotData[z].shotTrail == 98)
-					{
 						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, 0, playerShotData[z].shotTrail, false, false);
-					} else {
+					else
 						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, 0, playerShotData[z].shotTrail, false, false);
-					}
 				}
-
+				
 				if (playerShotData[z].aimAtEnemy != 0)
 				{
 					if (--playerShotData[z].aimDelay == 0)
 					{
 						playerShotData[z].aimDelay = playerShotData[z].aimDelayMax;
-
+						
 						if (enemyAvail[playerShotData[z].aimAtEnemy] != 1)
 						{
 							if (playerShotData[z].shotX < enemy[playerShotData[z].aimAtEnemy].ex)
-							{
 								playerShotData[z].shotXM++;
-							} else {
+							else
 								playerShotData[z].shotXM--;
-							}
+							
 							if (playerShotData[z].shotY < enemy[playerShotData[z].aimAtEnemy].ey)
-							{
 								playerShotData[z].shotYM++;
-							} else {
+							else
 								playerShotData[z].shotYM--;
-							}
-						} else {
+						}
+						else
+						{
 							if (playerShotData[z].shotXM > 0)
-							{
 								playerShotData[z].shotXM++;
-							} else {
+							else
 								playerShotData[z].shotXM--;
-							}
 						}
 					}
 				}
-
+				
 				tempW = playerShotData[z].shotGr + playerShotData[z].shotAni;
 				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
-				{
 					playerShotData[z].shotAni = 0;
-				}
-
+				
 				tempI2 = playerShotData[z].shotDmg;
 				temp2 = playerShotData[z].shotBlastFilter;
 				chain = playerShotData[z].chainReaction;
 				playerNum = playerShotData[z].playerNumber;
-
+				
 				tempSpecial = tempW > 60000;
-
+				
 				if (tempSpecial)
 				{
-					JE_newDrawCShapeTrickNum(OPTION_SHAPES, tempW - 60000, tempShotX+1, tempShotY);
-					tempX2 = shapeX[OPTION_SHAPES][tempW - 60000 - 1] >> 1;
-					tempY2 = shapeY[OPTION_SHAPES][tempW - 60000 - 1] >> 1;
-				} else {
+					blit_shape_blend(VGAScreen, tempShotX+1, tempShotY, OPTION_SHAPES, tempW - 60001);
+					
+					tempX2 = shapeX[OPTION_SHAPES][tempW - 60001] / 2;
+					tempY2 = shapeY[OPTION_SHAPES][tempW - 60001] / 2;
+				}
+				else
+				{
 					if (tempW > 1000)
 					{
 						JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempW / 1000) << 4);
@@ -1871,19 +1866,17 @@ level_loop:
 					if (tempW > 500)
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-						{
 							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
-						}
 						JE_drawShape2(tempShotX+1, tempShotY, tempW - 500, shapesW2);
-					} else {
+					}
+					else
+					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-						{
 							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
-						}
 						JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
 					}
 				}
-
+				
 			}
 
 			for (b = 0; b < 100; b++)
@@ -1897,14 +1890,18 @@ level_loop:
 						temp2 = 9;
 						chain = 0;
 						tempI2 = 10;
-					} else if (tempSpecial) {
+					}
+					else if (tempSpecial)
+					{
 						tempB = ((enemy[b].enemycycle == 0) &&
 						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (25 + tempX2)) &&
 						        (abs(enemy[b].ey - tempShotY - 12 - tempY2)                 < (29 + tempY2))) ||
 						        ((enemy[b].enemycycle > 0) &&
 						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (13 + tempX2)) &&
 						        (abs(enemy[b].ey - tempShotY - 6 - tempY2)                  < (15 + tempY2)));
-					} else {
+					}
+					else
+					{
 						tempB = ((enemy[b].enemycycle == 0) &&
 						        (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX) < 25) && (abs(enemy[b].ey - tempShotY - 12) < 29)) ||
 						        ((enemy[b].enemycycle > 0) &&
@@ -1928,7 +1925,9 @@ level_loop:
 							tempI2 = 0;
 							doIced = 40;
 							enemy[b].iced = 40;
-						} else {
+						}
+						else
+						{
 							doIced = 0;
 							if (tempI2 >= 250)
 							{
@@ -1941,24 +1940,18 @@ level_loop:
 						
 						temp = enemy[b].linknum;
 						if (temp == 0)
-						{
 							temp = 255;
-						}
 						
 						if (enemy[b].armorleft < 255)
 						{
 							if (temp == statBar[1-1])
-							{
 								statCol[1-1] = 6;
-							}
 							if (temp == statBar[2-1])
-							{
 								statCol[2-1] = 6;
-							}
+							
 							if (enemy[b].enemyground)
-							{
 								enemy[b].filter = temp2;
-							}
+							
 							for (i = 0; i < 100; i++)
 							{
 								if (enemy[i].linknum == temp &&
@@ -1966,9 +1959,7 @@ level_loop:
 								    enemy[i].enemyground != 0)
 								{
 									if (doIced)
-									{
 										enemy[i].iced = doIced;
-									}
 									enemy[i].filter = temp2;
 								}
 							}
@@ -1978,11 +1969,13 @@ level_loop:
 						{
 							if (z != MAX_PWEAPON - 1)
 							{
-									if (enemy[b].armorleft != 255)
-									{
-										enemy[b].armorleft -= tempI2;
-										JE_setupExplosion(tempShotX, tempShotY, 0, 0, false, false);
-									} else {
+								if (enemy[b].armorleft != 255)
+								{
+									enemy[b].armorleft -= tempI2;
+									JE_setupExplosion(tempShotX, tempShotY, 0, 0, false, false);
+								}
+								else
+								{
 									JE_doSP(tempShotX + 6, tempShotY + 6, tempI2 / 2 + 3, tempI2 / 4 + 2, temp2);
 								}
 							}
@@ -2017,7 +2010,8 @@ level_loop:
 												enemy[temp3].animin = enemy[temp3].edgr;
 												enemy[temp3].enemycycle = enemy[temp3].animin - 1;
 												
-											} else if (enemy[temp3].edgr > 0)
+											}
+											else if (enemy[temp3].edgr > 0)
 											{
 												enemy[temp3].egr[1-1] = enemy[temp3].edgr;
 												enemy[temp3].ani = 1;
@@ -2034,29 +2028,25 @@ level_loop:
 											enemy[temp3].aniwhenfire = 0;
 											
 											if (enemy[temp3].armorleft > enemy[temp3].edlevel)
-											{
 												enemy[temp3].armorleft = enemy[temp3].edlevel;
-											}
 											
 											tempX = enemy[temp3].ex + enemy[temp3].mapoffset;
 											tempY = enemy[temp3].ey;
 											
 											if (enemyDat[enemy[temp3].enemytype].esize != 1)
-											{
 												JE_setupExplosion(tempX, tempY - 6, 0, 1, false, false);
-											} else {
+											else
 												JE_setupExplosionLarge(enemy[temp3].enemyground, enemy[temp3].explonum / 2, tempX, tempY);
-											}
 										}
 									}
 								}
 							}
-						} else {
+						}
+						else
+						{
 							
 							if ((temp == 254) && (superEnemy254Jump > 0))
-							{
 								JE_eventJump(superEnemy254Jump);
-							}
 						
 							for (temp2 = 0; temp2 < 100; temp2++)
 							{
@@ -2071,9 +2061,7 @@ level_loop:
 										tempI3 = enemy[temp2].ex + enemy[temp2].mapoffset;
 										
 										if (enemy[temp2].special)
-										{
 											globalFlags[enemy[temp2].flagnum] = enemy[temp2].setto;
-										}
 										
 										if ((enemy[temp2].enemydie > 0) &&
 											!((superArcadeMode > 0) &&
@@ -2092,19 +2080,16 @@ level_loop:
 												{
 													superArcadePowerUp++;
 													if (superArcadePowerUp > 5)
-													{
 														superArcadePowerUp = 1;
-													}
 													enemy[b-1].egr[1-1] = 5 + superArcadePowerUp * 2;
 													enemy[b-1].evalue = 30000 + superArcadePowerUp;
 												}
 												
 												if (enemy[b-1].evalue != 0)
-												{
 													enemy[b-1].scoreitem = true;
-												} else {
+												else
 													enemy[b-1].scoreitem = false;
-												}
+												
 												enemy[b-1].ex = enemy[temp2].ex;
 												enemy[b-1].ey = enemy[temp2].ey;
 											}
@@ -2116,13 +2101,13 @@ level_loop:
 											if (enemy[temp2].evalue == 1)
 											{
 												cubeMax++;
-											} else {
+											}
+											else
+											{
 												if ((playerNum < 2) || galagaMode)
-												{
 													score += enemy[temp2].evalue;
-												} else {
+												else
 													score2 += enemy[temp2].evalue;
-												}
 											}
 										}
 										
@@ -2146,7 +2131,9 @@ level_loop:
 										{
 											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);
 											soundQueue[6] = 9;
-										} else {
+										}
+										else
+										{
 											JE_setupExplosion(tempI3, enemy[temp2].ey, 0, 1, false, false);
 											soundQueue[6] = 8;
 										}
@@ -2158,18 +2145,20 @@ level_loop:
 						if (infiniteShot)
 						{
 							tempI2 += 250;
-						} else {
-							if (z != MAX_PWEAPON - 1)
+						}
+						else if (z != MAX_PWEAPON - 1)
+						{
+							if (tempI2 <= tempI)
 							{
-								if (tempI2 <= tempI)
-								{
-									shotAvail[z] = 0;
-									goto draw_player_shot_loop_end;
-								} else {
-									playerShotData[z].shotDmg -= tempI;
-								}
+								shotAvail[z] = 0;
+								goto draw_player_shot_loop_end;
+							}
+							else
+							{
+								playerShotData[z].shotDmg -= tempI;
 							}
 						}
+						
 					}
 				}
 			}
@@ -6422,7 +6411,7 @@ item_screen_start:
 				
 				JE_drawItem(6, pItems[3], 3, 84);
 				JE_drawItem(7, pItems[4], 129, 84);
-				JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 27, 28, 23, 15, shields[pItems[10-1]].mpwr - 10);  // ship illustration: shield
+				blit_shape_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[10-1]].mpwr - 10);  // ship illustration: shield
 			}
 		}
 		
@@ -6668,7 +6657,7 @@ item_screen_start:
 					if (curMenu == 7 && curSel[7] < menuChoices[7])
 					{
 						/* Draw flashy cube */
-						JE_newDrawCShapeModifyNum(OPTION_SHAPES, 26, 166, 38 + (curSel[7] - 2) * 28, 13, col);
+						blit_shape_hv_blend(VGAScreenSeg, 166, 38 + (curSel[7] - 2) * 28, OPTION_SHAPES, 25, 13, col);
 					}
 					
 					/* IF (curmenu = 5) AND (cursel [2] IN [3, 4, 6, 7, 8]) */

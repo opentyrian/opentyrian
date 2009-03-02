@@ -42,15 +42,6 @@ extern JE_shortint warningColChange;
 
 void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font );
 
-void JE_newDrawCShapeBright( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_shortint brightness );
-void JE_newDrawCShapeTrick( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y );
-void JE_newDrawCShapeTrickNum( JE_byte table, JE_byte shape, int x, int y );
-void JE_newDrawCShapeModify( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness );
-void JE_newDrawCShapeModifyNum( JE_byte table, JE_byte shape, int x, int y, JE_byte filter, JE_byte brightness );
-void JE_newDrawCShapeAdjust( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, Sint8 brightness );
-void JE_newDrawCShapeAdjustNum( JE_byte table, JE_byte shape, int x, int y, JE_byte filter, JE_byte brightness );
-void JE_newDrawCShapeBrightAndDarken( JE_byte *shape, JE_word xsize, JE_word ysize, int x, int y, JE_byte filter, JE_byte brightness );
-
 JE_word JE_fontCenter( const char *s, JE_byte font );
 JE_word JE_textWidth( const char *s, JE_byte font );
 void JE_textShade( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness, JE_byte shadetype );

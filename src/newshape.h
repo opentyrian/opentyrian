@@ -57,6 +57,10 @@ void JE_newCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word
 void JE_newPurgeShapes( JE_byte table );
 
 void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeNum
+void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeTrick
+void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeBright
+void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeAdjust
+void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeModify
 void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black ); // JE_newDrawCShapeDarken, JE_newDrawCShapeShadow
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );

@@ -132,7 +132,8 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 						b = s[z];
 						if (b > 32 && b < 126)
 						{
-							JE_newDrawCShapeAdjust(shapeArray[TINY_FONT][fontMap[b-33]], shapeX[TINY_FONT][fontMap[b-33]], shapeY[TINY_FONT][fontMap[b-33]], textloc[z], y, bank, glowcol[z]);
+							blit_shape_hv(VGAScreen, textloc[z], y, TINY_FONT, fontMap[b - 33], bank, glowcol[z]);
+							
 							glowcol[z] += glowcolc[z];
 							if (glowcol[z] > 9)
 							{
@@ -2123,7 +2124,7 @@ void JE_playCredits( void )
 		setjasondelay(1);
 		JE_clr256();
 		
-		JE_newDrawCShapeAdjust(shapeArray[EXTRA_SHAPES][currentpic-1], shapeX[EXTRA_SHAPES][currentpic-1], shapeY[EXTRA_SHAPES][currentpic-1], 319 - shapeX[EXTRA_SHAPES][currentpic-1], 100 - (shapeY[EXTRA_SHAPES][currentpic-1] / 2), 0, fade - 15);
+		blit_shape_hv(VGAScreenSeg, 319 - shapeX[EXTRA_SHAPES][currentpic-1], 100 - (shapeY[EXTRA_SHAPES][currentpic-1] / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
 		
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
@@ -2266,9 +2267,7 @@ void JE_endLevelAni( void )
 		
 		/*Special*/
 		if (pItems[11-1] < 21)
-		{
 			saveTemp[SAVE_FILES_SIZE + 81 + pItems[11-1]] = 1;
-		}
 		
 		/*Options*/
 		saveTemp[SAVE_FILES_SIZE + 51 + pItems[4-1]] = 1;
@@ -2289,19 +2288,21 @@ void JE_endLevelAni( void )
 	JE_setPalette(254, 255, 255, 255);
 	
 	if (!levelTimer || levelTimerCountdown > 0 || !(episodeNum == 4))
-	{
 		JE_playSampleNum(V_LEVEL_END);
-	} else {
+	else
 		JE_playSong(22);
-	}
-  
+	  
 	if (bonusLevel)
 	{
 		JE_outTextGlow(20, 20, miscText[17-1]);
-	} else if (playerAlive && (!twoPlayerMode || playerAliveB)) {
+	}
+	else if (playerAlive && (!twoPlayerMode || playerAliveB))
+	{
 		sprintf(tempStr, "%s %s", miscText[27-1], levelName);
 		JE_outTextGlow(20, 20, tempStr);
-	} else {
+	}
+	else
+	{
 		sprintf(tempStr, "%s %s", miscText[62-1], levelName);
 		JE_outTextGlow(20, 20, tempStr);
 	}
@@ -2313,24 +2314,19 @@ void JE_endLevelAni( void )
 		
 		sprintf(tempStr, "%s %d", miscText[42-1], score2);
 		JE_outTextGlow(30, 70, tempStr);
-	} else {
+	}
+	else
+	{
 		sprintf(tempStr, "%s %d", miscText[28-1], score);
 		JE_outTextGlow(30, 50, tempStr);
 	}
 	
-	if (totalEnemy == 0)
-	{
-		temp = 0;
-	} else {
-		temp = round(enemyKilled * 100 / totalEnemy);
-	}
+	temp = (totalEnemy == 0) ? 0 : round(enemyKilled * 100 / totalEnemy);
 	sprintf(tempStr, "%s %d%%", miscText[63-1], temp);
 	JE_outTextGlow(40, 90, tempStr);
 	
 	if (!constantPlay)
-	{
 		editorLevel += temp / 5;
-	}
 	
 	if (!onePlayerAction && !twoPlayerMode)
 	{
@@ -2339,13 +2335,11 @@ void JE_endLevelAni( void )
 		if (cubeMax > 0)
 		{
 			if (cubeMax > 4)
-			{
 				cubeMax = 4;
-			}
+			
 			if (frameCountMax != 0)
-			{
 				frameCountMax = 1;
-			}
+			
 			for (temp = 1; temp <= cubeMax; temp++)
 			{
 				NETWORK_KEEP_ALIVE();
@@ -2359,12 +2353,11 @@ void JE_endLevelAni( void )
 				for (i = -15; i <= 10; i++)
 				{
 					setjasondelay(frameCountMax);
-					tempScreenSeg = VGAScreenSeg; /* sega000 */
-					JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, 9, i);
+					
+					blit_shape_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
+					
 					if (JE_anyButton())
-					{
 						frameCountMax = 0;
-					}
 					
 					JE_showVGA();
 					
@@ -2373,19 +2366,20 @@ void JE_endLevelAni( void )
 				for (i = 10; i >= 0; i--)
 				{
 					setjasondelay(frameCountMax);
-					tempScreenSeg = VGAScreenSeg; /* sega000 */
-					JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, 9, i);
+					
+					blit_shape_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
+					
 					if (JE_anyButton())
-					{
 						frameCountMax = 0;
-					}
 					
 					JE_showVGA();
 					
 					wait_delay();
 				}
 			}
-		} else {
+		}
+		else
+		{
 			JE_outTextGlow(50, 135, miscText[15-1]);
 		}
 		
@@ -2423,7 +2417,7 @@ void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
 	blit_shape_dark(tempScreenSeg, x + 4, y + 4, OPTION_SHAPES, 25, false);
 	blit_shape_dark(tempScreenSeg, x + 3, y + 3, OPTION_SHAPES, 25, false);
-	JE_newDrawCShapeAdjustNum(OPTION_SHAPES, 26, x, y, filter, brightness);
+	blit_shape_hv(tempScreenSeg, x, y, OPTION_SHAPES, 25, filter, brightness);
 }
 
 void JE_handleChat( void )
