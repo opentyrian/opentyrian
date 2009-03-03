@@ -23,6 +23,7 @@
 #include "varz.h"
 #include "video.h"
 
+#include <assert.h>
 
 /*Special Background 2 and Background 3*/
 
@@ -63,176 +64,137 @@ void JE_darkenBackground( JE_word neat )  /* wild detail level */
 	}
 }
 
-void JE_drawBackground2( void )
+void blit_background_row( SDL_Surface *surface, int x, int y, Uint8 **map )
 {
-	JE_boolean useBackground1ofs;
-
-	JE_byte **bp, *src;
-	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
-
-	int i, j;
-	int x, y;
-
-	if (map2YDelayMax > 1)
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
+	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	for (int y = 0; y < 28; y++)
 	{
-		if (backMove2 < 2)
+		// not drawing on screen yet; skip y
+		if ((pixels + (12 * 24)) < pixels_ll)
 		{
-			if (map2YDelay == 1)
+			pixels += surface->pitch;
+			continue;
+		}
+		
+		for (int tile = 0; tile < 12; tile++)
+		{
+			Uint8 *data = *(map + tile);
+			
+			// no tile; skip tile
+			if (data == NULL)
 			{
-				backMove2 = 1;
-			} else {
-				backMove2 = 0;
+				pixels += 24;
+				continue;
+			}
+			
+			data += y * 24;
+			
+			for (int x = 24; x; x--)
+			{
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll && *data != 0)
+					*pixels = *data;
+				
+				pixels++;
+				data++;
 			}
 		}
+		
+		pixels += surface->pitch - 12 * 24;
 	}
+}
 
-	useBackground1ofs = smoothies[2-1];
+void blit_background_row_blend( SDL_Surface *surface, int x, int y, Uint8 **map )
+{
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
+	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	for (int y = 0; y < 28; y++)
+	{
+		// not drawing on screen yet; skip y
+		if ((pixels + (12 * 24)) < pixels_ll)
+		{
+			pixels += surface->pitch;
+			continue;
+		}
+		
+		for (int tile = 0; tile < 12; tile++)
+		{
+			Uint8 *data = *(map + tile);
+			
+			// no tile; skip tile
+			if (data == NULL)
+			{
+				pixels += 24;
+				continue;
+			}
+			
+			data += y * 24;
+			
+			for (int x = 24; x; x--)
+			{
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll && *data != 0)
+					*pixels = (*data & 0xf0) | (((*pixels & 0x0f) + (*data & 0x0f)) / 2);
+				
+				pixels++;
+				data++;
+			}
+		}
+		
+		pixels += surface->pitch - 12 * 24;
+	}
+}
 
-	/*Draw background*/
+void draw_background_1( SDL_Surface *surface )
+{
+	SDL_FillRect(surface, NULL, 0);
+	
+	Uint8 **map = (Uint8 **)mapYPos + mapXbpPos - 12;
+	
+	for (int i = -1; i < 7; i++)
+	{
+		blit_background_row(surface, mapXPos, (i * 28) + backPos, map);
+		
+		map += 14;
+	}
+}
 
-	/* BP is used by all backgrounds */
-
+void draw_background_2( SDL_Surface *surface )
+{
+	if (map2YDelayMax > 1 && backMove2 < 2)
+		backMove2 = (map2YDelay == 1) ? 1 : 0;
+	
 	if (background2 != 0)
 	{
-
-		/*Offset for top*/
-		s = VGAScreen->pixels;
-		s += 11 * 24;
-
-		if (useBackground1ofs != 0)
+		// water effect combines background 1 and 2 by syncronizing the x coordinate
+		int x = smoothies[1] ? mapXPos : mapX2Pos;
+		
+		Uint8 **map = (Uint8 **)mapY2Pos + (smoothies[1] ? mapXbpPos : mapX2bpPos) - 12;
+		
+		for (int i = -1; i < 7; i++)
 		{
-			s += mapXPos;
-			/* Map location number in BP */
-			bp = mapY2Pos + mapXbpPos;
-		} else {
-			s += mapX2Pos;
-			/* Map location number in BP */
-			bp = mapY2Pos + mapX2bpPos;
+			blit_background_row(surface, x, (i * 28) + backPos2, map);
+			
+			map += 14;
 		}
-
-		/*============BACKGROUND 2 TOP=============*/
-		if (backPos2 != 0)
-		{
-			for (i = 12; i; i--)
-			{
-				/* move to previous map X location */
-				bp--;
-
-				src = *bp;
-				if (src != NULL)
-				{
-					src += (28 - backPos2) * 24;
-
-					for (y = backPos2; y; y--)
-					{
-						for(x = 0; x < 24; x++)
-						{
-							if (src[x])
-							{
-								s[x] = src[x];
-							}
-						}
-
-						s += VGAScreen->pitch;
-						src += 24;
-					}
-
-					s -= backPos2 * VGAScreen->pitch;
-				}
-
-				s -= 24;
-			}
-
-			s += backPos2 * VGAScreen->pitch;
-			s += 24 * 12;
-
-			/* Increment Map Location for next line */
-			bp += 14 - 2;   /* 44+44 +4 (Map Width) */
-		}
-
-		bp += 14;
-
-		/*============BACKGROUND 2 CENTER=============*/
-
-		/* Screen 6 lines high */
-		for (i = 6; i; i--)
-		{
-			for (j = 12; j; j--)
-			{
-				/* move to previous map X location */
-				bp--;
-
-				src = *bp;
-				if (src != NULL)
-				{
-					for (y = 28; y; y--)
-					{
-						for(x = 0; x < 24; x++)
-						{
-							if (src[x])
-							{
-								s[x] = src[x];
-							}
-						}
-
-						s += VGAScreen->pitch;
-						src += 24;
-					}
-
-					/* AX=320*13+12 for subtracting from DI when done drawing a shape */
-					s -= VGAScreen->pitch * 28;
-				}
-
-				s -= 24;
-			}
-
-			/* Increment Map Location for next line */
-			bp += 14 + 14 - 2;  /* 44+44 +6 (Map Width) */
-			s += VGAScreen->pitch * 28 + 24 * 12;
-		}
-
-		if (backPos2 <= 15)
-		{
-			/*============BACKGROUND 2 BOTTOM=============*/
-			for (i = 12; i; i--)
-			{
-				/* move to previous map X location */
-				bp--;
-
-				src = *bp;
-				if (src != NULL)
-				{
-
-					for (y = 15 - backPos2 + 1; y; y--)
-					{
-						for(x = 0; x < 24; x++)
-						{
-							if (src[x])
-							{
-								s[x] = src[x];
-							}
-						}
-
-						s += VGAScreen->pitch;
-						src += 24;
-					}
-
-					s -= (15 - backPos2 + 1) * VGAScreen->pitch;
-				}
-
-				s -= 24;
-			}
-		}
-
 	}
-
+	
 	/*Set Movement of background*/
 	if (--map2YDelay == 0)
 	{
 		map2YDelay = map2YDelayMax;
-
+		
 		backPos2 += backMove2;
-
+		
 		if (backPos2 >  27)
 		{
 			backPos2 -= 28;
@@ -242,171 +204,27 @@ void JE_drawBackground2( void )
 	}
 }
 
-void JE_superBackground2( void )
+void draw_background_2_blend( SDL_Surface *surface )
 {
-	/*=======================BACKGROUNDS========================*/
-	/*=======================BACKGROUND 2========================*/
-	JE_byte **bp, *src;
-	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
-
-	int i, j;
-	int x, y;
-
-	if (map2YDelayMax > 1)
+	if (map2YDelayMax > 1 && backMove2 < 2)
+		backMove2 = (map2YDelay == 1) ? 1 : 0;
+	
+	Uint8 **map = (Uint8 **)mapY2Pos + mapX2bpPos - 12;
+	
+	for (int i = -1; i < 7; i++)
 	{
-		if (backMove2 < 2)
-		{
-			if (map2YDelay == 1)
-			{
-				backMove2 = 1;
-			} else {
-				backMove2 = 0;
-			}
-		}
+		blit_background_row_blend(surface, mapX2Pos, (i * 28) + backPos2, map);
+		
+		map += 14;
 	}
-
-	/*Draw background*/
-
-	/* BP is used by all backgrounds */
-
-	/*Offset for top*/
-	s = VGAScreen->pixels;
-	s += 11 * 24;
-
-	s += mapX2Pos;
-	/* Map location number in BP */
-	bp = mapY2Pos + mapX2bpPos;
-
-	/* Use DS for MegaDataSeg */
-	src = megaData2->mainmap[0][0];
-
-	/*============BACKGROUND 2 TOP=============*/
-	if (backPos2 != 0)
-	{
-		for (i = 12; i; i--)
-		{
-			/* move to previous map X location */
-			bp--;
-
-			src = *bp;
-			if (src != NULL)
-			{
-				src += (28 - backPos2) * 24;
-
-				for (y = backPos2; y; y--)
-				{
-					for(x = 0; x < 24; x++)
-					{
-						if (*src != 0)
-						{
-							*s = (((*s & 0x0f) + (*src & 0x0f)) / 2) | (*src & 0xf0);
-						}
-
-						s++;
-						src++;
-					}
-
-					s += VGAScreen->pitch - 24;
-				}
-
-				s -= backPos2 * VGAScreen->pitch;
-			}
-
-			s -= 24;
-		}
-
-		s += backPos2 * VGAScreen->pitch;
-		s += 24 * 12;
-
-		/* Increment Map Location for next line */
-		bp += 14 - 2;   /* 44+44 +4 (Map Width) */
-	}
-
-	bp += 14;
-
-	/*============BACKGROUND 2 CENTER=============*/
-
-	/* Screen 6 lines high */
-	for (i = 6; i; i--)
-	{
-		for (j = 12; j; j--)
-		{
-			/* move to previous map X location */
-			bp--;
-
-			src = *bp;
-			if (src != NULL)
-			{
-				for (y = 28; y; y--)
-				{
-					for(x = 0; x < 24; x++)
-					{
-						if (*src != 0)
-						{
-							*s = (((*s & 0x0f) + (*src & 0x0f)) / 2) | (*src & 0xf0);
-						}
-
-						s++;
-						src++;
-					}
-
-					s += VGAScreen->pitch - 24;
-				}
-
-				/* AX=320*13+12 for subtracting from DI when done drawing a shape */
-				s -= VGAScreen->pitch * 28;
-			}
-
-			s -= 24;
-		}
-
-		/* Increment Map Location for next line */
-		bp += 14 + 14 - 2;  /* 44+44 +6 (Map Width) */
-		s += VGAScreen->pitch * 28 + 24 * 12;
-	}
-
-	if (backPos2 <= 15)
-	{
-		/*============BACKGROUND 2 BOTTOM=============*/
-		for (i = 12; i; i--)
-		{
-			/* move to previous map X location */
-			bp--;
-
-			src = *bp;
-			if (src != NULL)
-			{
-
-				for (y = 15 - backPos2 + 1; y; y--)
-				{
-					for(x = 0; x < 24; x++)
-					{
-						if (*src != 0)
-						{
-							*s = (((*s & 0x0f) + (*src & 0x0f)) / 2) | (*src & 0xf0);
-						}
-
-						s++;
-						src++;
-					}
-
-					s += VGAScreen->pitch - 24;
-				}
-
-				s -= (15 - backPos2 + 1) * VGAScreen->pitch;
-			}
-
-			s -= 24;
-		}
-	}
-
+	
 	/*Set Movement of background*/
 	if (--map2YDelay == 0)
 	{
 		map2YDelay = map2YDelayMax;
-
+		
 		backPos2 += backMove2;
-
+		
 		if (backPos2 >  27)
 		{
 			backPos2 -= 28;
@@ -416,150 +234,26 @@ void JE_superBackground2( void )
 	}
 }
 
-void JE_drawBackground3( void )
+void draw_background_3( SDL_Surface *surface )
 {
-	JE_byte **bp, *src;
-	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
-
-	int i, j;
-	int x, y;
-
 	/* Movement of background */
-   backPos3 += backMove3;
-
+	backPos3 += backMove3;
+	
 	if (backPos3 > 27)
 	{
 		backPos3 -= 28;
 		mapY3--;
 		mapY3Pos -= 15;   /*Map Width*/
 	}
-
-	/* Offset for top*/
-	s = VGAScreen->pixels;
-	s += 11 * 24;
-
-	s += mapX3Pos;
-
-	/* Map location number in BP */
-	bp = mapY3Pos + mapX3bpPos;
-
-	/* Use DS for MegaDataSeg */
-	src = megaData3->mainmap[0][0];
-
-	/*============BACKGROUND 3 TOP=============*/
-	if (backPos3 != 0)
+	
+	Uint8 **map = (Uint8 **)mapY3Pos + mapX3bpPos - 12;
+	
+	for (int i = -1; i < 7; i++)
 	{
-		for (i = 12; i; i--)
-		{
-			/* move to previous map X location */
-			bp--;
-
-			src = *bp;
-			if (src != NULL)
-			{
-				src += (28 - backPos3) * 24;
-
-				for (y = backPos3; y; y--)
-				{
-					for(x = 0; x < 24; x++)
-					{
-						if (src[x])
-						{
-							s[x] = src[x];
-						}
-					}
-
-					s += VGAScreen->pitch;
-					src += 24;
-				}
-
-				s -= backPos3 * VGAScreen->pitch;
-			}
-
-			s -= 24;
-		}
-
-		s += backPos3 * VGAScreen->pitch;
-		s += 24 * 12;
-
-		/* Increment Map Location for next line */
-		bp += 15 - 3;
+		blit_background_row(surface, mapX3Pos, (i * 28) + backPos3, map);
+		
+		map += 15;
 	}
-
-	bp += 15;
-
-	/*============BACKGROUND 3 CENTER=============*/
-
-	/* Screen 14 lines high */
-	for (i = 6; i; i--)
-	{
-		for (j = 12; j; j--)
-		{
-			/* move to previous map X location */
-			bp--;
-
-			src = *bp;
-			if (src != NULL)
-			{
-				for (y = 28; y; y--)
-				{
-					for(x = 0; x < 24; x++)
-					{
-						if (src[x])
-						{
-							s[x] = src[x];
-						}
-					}
-
-					s += VGAScreen->pitch;
-					src += 24;
-				}
-
-				/* AX=320*13+12 for subtracting from DI when done drawing a shape */
-				s -= VGAScreen->pitch * 28;
-			}
-
-			s -= 24;
-		}
-
-		/* Increment Map Location for next line */
-		bp += 15 + 15 - 3;  /* 44+44 +6 (Map Width) */
-		s += VGAScreen->pitch * 28 + 24 * 12;
-	}
-
-	if (backPos3 <= 15)
-	{
-		/*============BACKGROUND 3 BOTTOM=============*/
-		for (i = 12; i; i--)
-		{
-			/* move to previous map X location */
-			bp--;
-
-			src = *bp;
-			if (src != NULL)
-			{
-
-				for (y = 15 - backPos3 + 1; y; y--)
-				{
-					for(x = 0; x < 24; x++)
-					{
-						if (src[x])
-						{
-							s[x] = src[x];
-						}
-					}
-
-					s += VGAScreen->pitch;
-					src += 24;
-				}
-
-				s -= (15 - backPos3 + 1) * VGAScreen->pitch;
-			}
-
-			s -= 24;
-		}
-	}
-
 }
 
 void JE_filterScreen( JE_shortint col, JE_shortint int_)

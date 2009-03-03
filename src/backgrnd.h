@@ -37,9 +37,14 @@ extern JE_boolean anySmoothies;
 extern JE_byte SDAT[9];
 
 void JE_darkenBackground( JE_word neat );
-void JE_drawBackground2( void );
-void JE_superBackground2( void );
-void JE_drawBackground3( void );
+
+void blit_background_row( SDL_Surface *surface, int x, int y, Uint8 **map );
+void blit_background_row_blend( SDL_Surface *surface, int x, int y, Uint8 **map );
+
+void draw_background_1( SDL_Surface *surface );
+void draw_background_2( SDL_Surface *surface );
+void draw_background_2_blend( SDL_Surface *surface );
+void draw_background_3( SDL_Surface *surface );
 
 void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
 

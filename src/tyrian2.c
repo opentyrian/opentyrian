@@ -1470,105 +1470,10 @@ level_loop:
 	
 	/*Draw background*/
 	if (astralDuration == 0)
-	{
-		/* BP is used by all backgrounds */
-
-		s = (Uint8 *)VGAScreen->pixels;
-
-		/* Offset for top */
-		s += 11 * 24;
-		s += mapXPos;
-
-		/* Map location number in BP */
-		bp = mapYPos;
-		bp += mapXbpPos;
-
-		if (backPos)
-		{
-			/* --- BACKGROUND 1 TOP --- */
-			for (i = 12; i; i--)
-			{
-
-				/* move to previous map X location */
-				bp--;
-
-				p = *bp;
-				p += (28 - backPos) * 24;
-
-				for (j = backPos; j; j--)
-				{
-					memcpy(s, p, 24);
-
-					s += VGAScreen->pitch;
-					p += 24;
-				}
-
-				s -= backPos * VGAScreen->pitch + 24;
-			}
-
-			s += 24 * 11;
-			s += backPos * VGAScreen->pitch + 24;
-
-			/* Increment Map Location for next line */
-			bp += 14 - 2;   /* (Map Width) */
-
-		}
-		bp += 14;   /* (Map Width) */
-
-		/* --- BACKGROUND 1 CENTER --- */
-
-		/* Outer loop - Screen 6 lines high */
-		for (i = 6; i; i--)
-		{
-			for (j = 12; j; j--)
-			{
-				/* move to previous map X location */
-				bp--;
-				p = *bp;
-
-				for (l = 0; l < 28; l++)
-				{
-					memcpy(s, p, 24);
-
-					s += VGAScreen->pitch;
-					p += 24;
-				}
-
-				s -= VGAScreen->pitch * 28 + 24;
-			}
-
-			/* Increment Map Location for next line */
-			bp += 14 + 14 - 2;  /* (Map Width) */
-
-			s += VGAScreen->pitch * 28 + 24 * 12;
-		}
-
-		if (backPos <= 15)
-		{
-			/* --- BACKGROUND 1 BOTTOM --- */
-			for (i = 12; i; i--)
-			{
-				/* move to previous map X location */
-				bp--;
-				p = *bp;
-
-				for (j = 15 - backPos + 1; j; j--)
-				{
-					memcpy(s, p, 24);
-
-					s += VGAScreen->pitch;
-					p += 24;
-				}
-
-				s -= (15 - backPos + 1) * VGAScreen->pitch + 24;
-			}
-		}
-	}
+		draw_background_1(VGAScreen);
 	else
-	{
 		JE_clr256();
-	}
-
+	
 	/*Set Movement of background 1*/
 	if (--map1YDelay == 0)
 	{
@@ -1631,7 +1536,7 @@ level_loop:
 	/*-----------------------BACKGROUND 2------------------------*/
 	if (background2over == 3)
 	{
-		JE_drawBackground2();
+		draw_background_2(VGAScreen);
 		background2 = true;
 	}
 
@@ -1640,9 +1545,9 @@ level_loop:
 		if (!(smoothies[2-1] && processorType < 4) && !(smoothies[1-1] && processorType == 3))
 		{
 			if (wild && !background2notTransparent)
-				JE_superBackground2();
+				draw_background_2_blend(VGAScreen);
 			else
-				JE_drawBackground2();
+				draw_background_2(VGAScreen);
 		}
 	}
 
@@ -1682,9 +1587,9 @@ level_loop:
 		if (background2over == 1)
 		{
 			if (wild && !background2notTransparent)
-				JE_superBackground2();
+				draw_background_2_blend(VGAScreen);
 			else
-				JE_drawBackground2();
+				draw_background_2(VGAScreen);
 		}
 	}
 
@@ -1695,7 +1600,7 @@ level_loop:
 	}
 
 	if (background3over == 2)
-		JE_drawBackground3();
+		draw_background_3(VGAScreen);
 
 	/* New Enemy */
 	if (enemiesActive && mt_rand() % 100 > levelEnemyFrequency)
@@ -1728,7 +1633,7 @@ level_loop:
 	}
 
 	if (background3over == 0)
-		JE_drawBackground3();
+		draw_background_3(VGAScreen);
 
 	/* Draw Top Enemy */
 	if (!topEnemyOver)
@@ -2171,26 +2076,20 @@ draw_player_shot_loop_end:
 	/* Player movement indicators for shots that track your ship */
 	lastPXShotMove = PX;
 	lastPYShotMove = PY;
-
+	
 	/*=================================*/
 	/*=======Collisions Detection======*/
 	/*=================================*/
-
+	
 	if (playerAlive && !endLevel)
-	{
-		JE_playerCollide(&PX, &PY, &lastTurn, &lastTurn2, &score, &armorLevel, &shield, &playerAlive,
-		                 &playerStillExploding, 1, playerInvulnerable1);
-	}
-
+		JE_playerCollide(&PX, &PY, &lastTurn, &lastTurn2, &score, &armorLevel, &shield, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
+	
 	if (twoPlayerMode && playerAliveB && !endLevel)
-		JE_playerCollide(&PXB, &PYB, &lastTurnB, &lastTurn2B, &score2, &armorLevel2, &shield2, &playerAliveB,
-		                 &playerStillExploding2, 2, playerInvulnerable2);
-
+		JE_playerCollide(&PXB, &PYB, &lastTurnB, &lastTurn2B, &score2, &armorLevel2, &shield2, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
+	
 	if (firstGameOver)
-	{
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
-	}
-
+	
 	if (!endLevel)
 	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
 
@@ -2337,12 +2236,10 @@ enemy_shot_draw_overflow:
 			}
 		}
 	}
-
+	
 	if (background3over == 1)
-	{
-		JE_drawBackground3();
-	}
-
+		draw_background_3(VGAScreen);
+	
 	/* Draw Top Enemy */
 	if (topEnemyOver)
 	{
@@ -2350,25 +2247,23 @@ enemy_shot_draw_overflow:
 		tempBackMove = backMove3;
 		JE_drawEnemy(75);
 	}
-
+	
 	/* Draw Sky Enemy */
 	if (skyEnemyOverAll)
 	{
 		lastEnemyOnScreen = enemyOnScreen;
-
+		
 		tempMapXOfs = mapX2Ofs;
 		tempBackMove = 0;
 		JE_drawEnemy(25);
-
+		
 		if (enemyOnScreen == lastEnemyOnScreen)
 		{
 			if (stopBackgroundNum == 2)
-			{
 				stopBackgroundNum = 9;
-			}
 		}
 	}
-
+	
 	/*-------------------------- Sequenced Explosions -------------------------*/
 	enemyStillExploding = false;
 	for (int i = 0; i < MAX_REPEATING_EXPLOSIONS; i++)
@@ -2390,16 +2285,20 @@ enemy_shot_draw_overflow:
 			if (rep_explosions[i].big)
 			{
 				JE_setupExplosionLarge(false, 2, tempX, tempY);
+				
 				if (rep_explosions[i].ttl == 1 || mt_rand() % 5 == 1)
-				{
 					soundQueue[7] = 11;
-				} else {
+				else
 					soundQueue[6] = 9;
-				}
+				
 				rep_explosions[i].delay = 4 + (mt_rand() % 3);
-			} else {
+			}
+			else
+			{
 				JE_setupExplosion(tempX, tempY, 0, 1, false, false);
+				
 				soundQueue[5] = 4;
+				
 				rep_explosions[i].delay = 3;
 			}
 			
@@ -2488,13 +2387,11 @@ explosion_draw_overflow:
 			}
 		}
 	}
-
+	
 	if (!portConfigChange)
-	{
 		portConfigDone = true;
-	}
-
-
+	
+	
 	/*-----------------------BACKGROUNDS------------------------*/
 	/*-----------------------BACKGROUND 2------------------------*/
 	if (!(smoothies[2-1] && processorType < 4) &&
@@ -2503,11 +2400,9 @@ explosion_draw_overflow:
 		if (background2over == 2)
 		{
 			if (wild && !background2notTransparent)
-			{
-				JE_superBackground2();
-			} else {
-				JE_drawBackground2();
-			}
+				draw_background_2_blend(VGAScreen);
+			else
+				draw_background_2(VGAScreen);
 		}
 	}
 
@@ -2515,17 +2410,14 @@ explosion_draw_overflow:
 	if ((playerAlive && armorLevel < 6) ||
 	    (twoPlayerMode && !galagaMode && playerAliveB && armorLevel2 < 6))
 	{
-		if (playerAlive && armorLevel < 6)
-		{
-			tempW2 = armorLevel;
-		} else {
-			tempW2 = armorLevel2;
-		}
+		tempW2 = (playerAlive && armorLevel < 6) ? armorLevel : armorLevel2;
 		
 		if (armorShipDelay > 0)
 		{
 			armorShipDelay--;
-		} else {
+		}
+		else
+		{
 			tempW = 560;
 			JE_newEnemy(50);
 			if (b > 0)
@@ -2543,14 +2435,14 @@ explosion_draw_overflow:
 				
 			tempW = tempW2 * 4 + 8;
 			if (warningSoundDelay > tempW)
-			{
 				warningSoundDelay = tempW;
-			}
 			
 			if (warningSoundDelay > 1)
 			{
 				warningSoundDelay--;
-			} else {
+			}
+			else
+			{
 				soundQueue[7] = 17;
 				warningSoundDelay = tempW;
 			}
@@ -2560,7 +2452,9 @@ explosion_draw_overflow:
 			{
 				warningColChange = -warningColChange;
 				warningCol = 113 + (14 - (tempW2 * 2));
-			} else if (warningCol < 113) {
+			}
+			else if (warningCol < 113)
+			{
 				warningColChange = -warningColChange;
 			}
 			JE_bar(24, 181, 138, 183, warningCol);
@@ -2573,15 +2467,9 @@ explosion_draw_overflow:
 	}
 
 	/*------- Random Explosions --------*/
-	if (randomExplosions)
-	{
-		if (mt_rand() % 10 == 1)
-		{
-			JE_setupExplosionLarge(false, 20, mt_rand() % 280, mt_rand() % 180);
-		}
-	}
-
-
+	if (randomExplosions && mt_rand() % 10 == 1)
+		JE_setupExplosionLarge(false, 20, mt_rand() % 280, mt_rand() % 180);
+	
 	/*=================================*/
 	/*=======The Sound Routine=========*/
 	/*=================================*/
@@ -2594,22 +2482,18 @@ explosion_draw_overflow:
 			{
 				temp = soundQueue[temp2];
 				if (temp2 == 3)
-				{
 					temp3 = fxPlayVol;
-				} else {
-					if (temp == 15)
-					{
-						temp3 = fxPlayVol / 4;
-					} else {   /*Lightning*/
-						temp3 = fxPlayVol / 2;
-					}
-				}
+				else if (temp == 15)
+					temp3 = fxPlayVol / 4;
+				else   /*Lightning*/
+					temp3 = fxPlayVol / 2;
+				
 				JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
 				soundQueue[temp2] = 0;
 			}
 		}
 	}
-
+	
 	if (returnActive && enemyOnScreen == 0)
 	{
 		JE_eventJump(65535);
@@ -2651,57 +2535,40 @@ explosion_draw_overflow:
 		JE_outTextAndDarken(90, 10, miscText[59], 15, (JE_byte)flash - 8, FONT_SHAPES);
 		flash += flashChange;
 		if (flash > 4 || flash == 0)
-		{
 			flashChange = -flashChange;
-		}
 	}
 
 	/*Pentium Speed Mode?*/
 	if (pentiumMode)
 	{
-		if (frameCountMax == 2)
-		{
-			frameCountMax = 3;
-		} else {
-			frameCountMax = 2;
-		}
+		frameCountMax = (frameCountMax == 2) ? 3 : 2;
 	}
-
+	
 	/*--------  Level Timer    ---------*/
-	if (levelTimer)
+	if (levelTimer && levelTimerCountdown > 0)
 	{
-		if (levelTimerCountdown > 0)
+		levelTimerCountdown--;
+		if (levelTimerCountdown == 0)
+			JE_eventJump(levelTimerJumpTo);
+		
+		if (levelTimerCountdown > 200)
 		{
-			levelTimerCountdown--;
-			if (levelTimerCountdown == 0)
-			{
-				JE_eventJump(levelTimerJumpTo);
-			}
-
-			if (levelTimerCountdown > 200)
-			{
-				if (levelTimerCountdown % 100 == 0)
-				{
-					soundQueue[7] = 17;
-				}
-
-				if (levelTimerCountdown % 10 == 0)
-				{
-					soundQueue[6] = 24;  /*28 or 24*/
-				}
-			} else {
-				if (levelTimerCountdown % 20 == 0)
-				{
-					soundQueue[7] = 17;
-				}
-			}
-
-			JE_textShade (140, 6, miscText[66], 7, (levelTimerCountdown % 20) / 3, FULL_SHADE);
-			sprintf(buffer, "%.1f", levelTimerCountdown / 100.0f);
-			JE_dString (100, 2, buffer, SMALL_FONT_SHAPES);
+			if (levelTimerCountdown % 100 == 0)
+				soundQueue[7] = 17;
+			
+			if (levelTimerCountdown % 10 == 0)
+				soundQueue[6] = 24;  /*28 or 24*/
 		}
+		else if (levelTimerCountdown % 20 == 0)
+		{
+				soundQueue[7] = 17;
+		}
+		
+		JE_textShade (140, 6, miscText[66], 7, (levelTimerCountdown % 20) / 3, FULL_SHADE);
+		sprintf(buffer, "%.1f", levelTimerCountdown / 100.0f);
+		JE_dString (100, 2, buffer, SMALL_FONT_SHAPES);
 	}
-
+	
 	/*GAME OVER*/
 	if (!constantPlay && !constantDie)
 	{
@@ -2710,17 +2577,17 @@ explosion_draw_overflow:
 			if (!(playerStillExploding == 0 && playerStillExploding2 == 0))
 			{
 				if (galagaMode)
-				{
 					playerStillExploding2 = 0;
-				}
+				
 				musicFade = true;
-			} else {
+			}
+			else
+			{
 				if (playDemo || normalBonusLevelCurrent || bonusLevelCurrent)
-				{
 					reallyEndLevel = true;
-				} else {
+				else
 					JE_dString(120, 60, miscText[21], FONT_SHAPES);
-				}
+				
 				set_mouse_position(159, 100);
 				if (firstGameOver)
 				{
@@ -2745,10 +2612,7 @@ explosion_draw_overflow:
 				}
 
 				if (isNetworkGame)
-				{
 					reallyEndLevel = true;
-				}
-
 			}
 		}
 	}
@@ -2764,7 +2628,9 @@ explosion_draw_overflow:
 			reallyEndLevel = true;
 			stoppedDemo = true;
 		}
-	} else {
+	}
+	else
+	{
 		service_SDL_events(false);
 		
 		if (newkey)
@@ -2783,11 +2649,9 @@ explosion_draw_overflow:
 			pause_pressed = false;
 			
 			if (isNetworkGame)
-			{
 				pauseRequest = true;
-			} else {
+			else
 				JE_pauseGame();
-			}
 		}
 		
 		if (ingamemenu_pressed)
@@ -2797,7 +2661,9 @@ explosion_draw_overflow:
 			if (isNetworkGame)
 			{
 				inGameMenuRequest = true;
-			} else {
+			}
+			else
+			{
 				yourInGameMenuRequest = true;
 				JE_doInGameSetup();
 				skipStarShowVGA = true;
