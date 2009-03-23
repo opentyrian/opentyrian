@@ -3112,7 +3112,9 @@ new_game:
 									sprintf(levelWarningText[1], "%s %d", miscText[41], score2);
 									strcpy(levelWarningText[2], "");
 									levelWarningLines = 3;
-								} else {
+								}
+								else
+								{
 									sprintf(levelWarningText[0], "%s %d", miscText[37], JE_totalScore(score, pItems));
 									strcpy(levelWarningText[1], "");
 									levelWarningLines = 2;
@@ -3121,9 +3123,8 @@ new_game:
 								for (x = 0; x < temp - 1; x++)
 								{
 									do
-									{
 										JE_readCryptLn(lvlFile, s);
-									} while (s[0] != '#');
+									while (s[0] != '#');
 								}
 
 								do
@@ -3131,15 +3132,14 @@ new_game:
 									JE_readCryptLn(lvlFile, s);
 									strcpy(levelWarningText[levelWarningLines], s);
 									levelWarningLines++;
-								} while (s[0] != '#');
+								}
+								while (s[0] != '#');
 								levelWarningLines--;
 
 								JE_wipeKey();
 								frameCountMax = 4;
 								if (!constantPlay)
-								{
 									JE_displayText();
-								}
 
 								JE_fadeBlack(15);
 
@@ -3153,12 +3153,7 @@ new_game:
 
 									if (superTyrian)
 									{
-										if (initialDifficulty == 8)
-										{
-											superArcadeMode = SA + 1;
-										} else {
-											superArcadeMode = 1;
-										}
+										superArcadeMode = (initialDifficulty == 8) ? SA + 1 : 1;
 
 										jumpSection = true;
 										loadTitleScreen = true;
@@ -3176,7 +3171,9 @@ new_game:
 										{
 											JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
 											JE_dString(JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
-										} else {
+										}
+										else
+										{
 											sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
 											JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
 										}
@@ -3184,11 +3181,10 @@ new_game:
 										if (SANextShip[superArcadeMode] < 7)
 										{
 											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
-										} else {
-											if (SANextShip[superArcadeMode] == 7)
-											{
-												trentWin = true;
-											}
+										}
+										else if (SANextShip[superArcadeMode] == 7)
+										{
+											trentWin = true;
 										}
 
 										sprintf(buffer, "Type %s at Title", specialName[SANextShip[superArcadeMode]-1]);
@@ -3196,21 +3192,18 @@ new_game:
 										JE_showVGA();
 
 										JE_fadeColor(50);
+										
 										if (!constantPlay)
-										{
-											while (!JE_anyButton());
-										}
+											wait_input(true, true, true);
 									}
 
 									jumpSection = true;
+									
 									if (isNetworkGame)
-									{
 										JE_readTextSync();
-									}
+									
 									if (superTyrian)
-									{
 										JE_fadeBlack(10);
-									}
 								}
 								break;
 
