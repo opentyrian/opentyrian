@@ -102,14 +102,8 @@ void input_grab( void )
 	input_grabbed = input_grab_enabled || fullscreen_enabled;
 #endif /* TARGET_GP2X */
 	
-	if (input_grabbed)
-	{
-		SDL_ShowCursor(0);
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-	} else {
-		SDL_ShowCursor(1);
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-	}
+	SDL_ShowCursor(input_grabbed ? SDL_DISABLE : SDL_ENABLE);
+	SDL_WM_GrabInput(input_grabbed ? SDL_GRAB_ON : SDL_GRAB_OFF);
 }
 
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
@@ -123,19 +117,16 @@ JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 void set_mouse_position( int x, int y )
 {
 	if (input_grabbed)
-	{
 		SDL_WarpMouse(x * scale, y * scale);
-	}
 }
 
 void service_SDL_events( JE_boolean clear_new )
 {
 	SDL_Event ev;
-
+	
 	if (clear_new)
-	{
 		newkey = newmouse = false;
-	}
+	
 	while (SDL_PollEvent(&ev))
 	{
 		switch (ev.type)
@@ -149,7 +140,7 @@ void service_SDL_events( JE_boolean clear_new )
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)
 				{
-					/* emergency kill */
+					/* <ctrl><bksp> emergency kill */
 					if (ev.key.keysym.sym == SDLK_BACKSPACE)
 					{
 						puts("\n\n\nCtrl+Backspace pressed. Doing emergency quit.\n");
@@ -157,7 +148,7 @@ void service_SDL_events( JE_boolean clear_new )
 						exit(1);
 					}
 					
-					/* toggle input grab */
+					/* <ctrl><f10> toggle input grab */
 					if (ev.key.keysym.sym == SDLK_F10)
 					{
 						input_grab_enabled = !input_grab_enabled;
@@ -165,11 +156,24 @@ void service_SDL_events( JE_boolean clear_new )
 						break;
 					}
 				}
-				if (ev.key.keysym.mod & KMOD_ALT) {
-					/* toggle fullscreen */
+				
+				if (ev.key.keysym.mod & KMOD_ALT)
+				{
+					/* <alt><enter> toggle fullscreen */
 					if (ev.key.keysym.sym == SDLK_RETURN)
 					{
 						fullscreen_enabled = !fullscreen_enabled;
+						reinit_video();
+						break;
+					}
+					
+					/* <alt><tab> disable input grab and fullscreen */
+					if (ev.key.keysym.sym == SDLK_TAB)
+					{
+						input_grab_enabled = false;
+						input_grab();
+						
+						fullscreen_enabled = false;
 						reinit_video();
 						break;
 					}
@@ -199,7 +203,9 @@ void service_SDL_events( JE_boolean clear_new )
 					lastmouse_x = ev.button.x / scale;
 					lastmouse_y = ev.button.y / scale;
 					mousedown = true;
-				} else {
+				}
+				else
+				{
 					mousedown = false;
 				}
 				switch (ev.button.button)
@@ -212,29 +218,10 @@ void service_SDL_events( JE_boolean clear_new )
 						mouse_pressed[2] = mousedown; break;
 				}
 				break;
-			/*case SDL_ACTIVEEVENT:
-				if (ev.active.type & SDL_APPACTIVE || !ev.active.gain)
-				{
-					sleep_game();
-				}
-				break;*/
 			case SDL_QUIT:
 				/* TODO: Call the cleanup code here. */
 				exit(0);
 				break;
-		}
-	}
-}
-
-void sleep_game( void )
-{
-	SDL_Event ev;
-
-	while (SDL_WaitEvent(&ev))
-	{
-		if (ev.type == SDL_ACTIVEEVENT /*&& ev.active.state & SDL_APPACTIVE*/ && ev.active.gain)
-		{
-			return;
 		}
 	}
 }
