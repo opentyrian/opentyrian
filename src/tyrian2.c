@@ -126,8 +126,6 @@ const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
 
 const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
 
-const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 24, 16 };
-
 void JE_starShowVGA( void )
 {
 	JE_byte *src;
@@ -6775,6 +6773,8 @@ item_screen_start:
 
 			if (tempB && (mouseY > 20) && (mouseX > 170) && (mouseX < 308) && (curMenu != 8))
 			{
+				const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 8, 16 };
+				
 				tempI = (mouseY - 38) / mouseSelectionY[curMenu]+2;
 
 				if (curMenu == 9)
@@ -6812,12 +6812,16 @@ item_screen_start:
 						score = JE_cashLeft();
 						curMenu = 1;
 						JE_playSampleNum(ITEM);
-					} else {
+					}
+					else
+					{
 						JE_playSampleNum(CLICK);
 						if (curSel[curMenu] == tempI)
 						{
 							JE_menuFunction(curSel[curMenu]);
-						} else {
+						}
+						else
+						{
 							if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
 							{
 								tempPowerLevel[curSel[4]-2] = portPower[curSel[1]-3];
@@ -6825,11 +6829,11 @@ item_screen_start:
 							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > score))
 							{
 								JE_playSampleNum(WRONG);
-							} else {
+							}
+							else
+							{
 								if (curSel[1] == 4)
-								{
 									portConfig[1] = 1;
-								}
 								curSel[curMenu] = tempI;
 							}
 
@@ -6841,9 +6845,6 @@ item_screen_start:
 					}
 				}
 
-				/*do {
-					mouseButton = JE_mousePosition(&tempX, &tempY);
-				} while (!(mouseButton == 0));*/
 				wait_noinput(false, true, false);
 			}
 
