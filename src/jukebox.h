@@ -21,13 +21,7 @@
 
 #include "opentyr.h"
 
-
-extern JE_boolean continuousPlay;
-extern JE_word currentJukeboxSong;
-
-void JE_playNewSelection( void );
-void JE_jukebox_selectSong( JE_word song );
-void JE_checkEndOfSong( void );
+void jukebox( void );
 
 #endif /* JUKEBOX_H */
 

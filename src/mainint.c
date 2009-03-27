@@ -29,6 +29,7 @@
 #include "helptext.h"
 #include "joystick.h"
 #include "keyboard.h"
+#include "lds_play.h"
 #include "loudness.h"
 #include "menus.h"
 #include "mtrand.h"

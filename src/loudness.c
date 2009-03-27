@@ -26,8 +26,7 @@
 
 /* SYN: These are externally accessible variables: */
 JE_MusicType musicData;
-JE_boolean repeated;
-JE_boolean playing;
+unsigned int musicSize;
 
 float sample_volume = 0.9f;
 float music_volume = 0.7f;
@@ -198,7 +197,7 @@ void JE_selectSong( JE_word value )
 			break;
 		case 1:
 		case 2:
-			lds_load((JE_byte *)musicData); /* Load song */
+			lds_load((JE_byte *)musicData, musicSize); /* Load song */
 			music_playing = true;
 			break;
 		default:

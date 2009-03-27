@@ -150,10 +150,9 @@ void JE_loadSong( JE_word songnum )
 	/* SYN: Now move to the start of the song we want, and load the number of bytes given by the
 	   difference in offsets between it and the next song. */
 	fseek(fi, songPos[songnum - 1], SEEK_SET);
-	efread(&musicData, 1, songPos[songnum] - songPos[songnum - 1], fi);
-
-	/* currentSong = songnum; */
-
+	musicSize = songPos[songnum] - songPos[songnum - 1];
+	efread(&musicData, 1, musicSize, fi);
+	
 	fclose(fi);
 }
 
@@ -229,39 +228,19 @@ void JE_playSong( JE_word songnum )
 	printf("Loading song number %d...\n", songnum);
 #endif
 	
-	if (songnum == 0) /* SYN: Trying to play song 0 was doing strange things D: */
+	if (songnum != currentSong)
 	{
 		JE_stopSong();
-		currentSong = 0;
-		return;
-	}
-	if (currentSong != songnum && musicActive) /* Original also checked for midiport > 1 */
-	{
-		/*ASM
-		IN   al, $21
-		push ax
-		OR   al, 3
-		out  $21, al
-		END;*/
-
-		JE_stopSong();
+		
+		if (songnum > 0)
+		{
+			JE_loadSong(songnum);
+			
+			if (musicActive)
+				JE_selectSong(1); // play song
+		}
+		
 		currentSong = songnum;
-		JE_loadSong (songnum);
-		repeated = false;
-		playing = true;
-		JE_selectSong (1);
-		//JE_waitRetrace();  didn't do anything anyway?
-
-		/*ASM
-		mov al, $36
-		out $43, al
-		mov ax, speed
-		out $40, al
-		mov al, ah
-		out $40, al
-		pop ax
-		out $21, al
-		END;*/
 	}
 }
 

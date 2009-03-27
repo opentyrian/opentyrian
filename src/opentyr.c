@@ -171,8 +171,7 @@ void opentyrian_menu( void )
 
 	JE_showVGA();
 
-	if (currentJukeboxSong == 0) currentJukeboxSong = 37; /* A Field for Mag */
-	JE_playSong(currentJukeboxSong);
+	JE_playSong(37); /* A Field for Mag */
 	
 	do
 	{
@@ -260,18 +259,22 @@ void opentyrian_menu( void )
 					{
 						case 0: /* About */
 							JE_playSampleNum(SELECT);
+							
 							scroller_sine(about_text);
+							
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 							JE_showVGA();
 							fade_in = true;
 							break;
 						case 1: /* Fullscreen */
 							JE_playSampleNum(SELECT);
+							
 							fullscreen_enabled = !fullscreen_enabled;
 							reinit_video();
 							break;
 						case 2: /* Scaler */
 							JE_playSampleNum(SELECT);
+							
 							if (scaler != temp_scaler)
 							{
 								scaler = temp_scaler;
@@ -280,7 +283,10 @@ void opentyrian_menu( void )
 							break;
 						case 3: /* Jukebox */
 							JE_playSampleNum(SELECT);
-							JE_jukeboxGo();
+							
+							JE_fadeBlack(10);
+							jukebox();
+							
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 							JE_showVGA();
 							fade_in = true;

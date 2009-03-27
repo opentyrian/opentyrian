@@ -19,38 +19,173 @@
 #include "opentyr.h"
 #include "jukebox.h"
 
+#include "fonthand.h"
+#include "joystick.h"
+#include "keyboard.h"
+#include "lds_play.h"
 #include "loudness.h"
 #include "mtrand.h"
+#include "newshape.h"
 #include "nortsong.h"
+#include "palette.h"
+#include "starlib.h"
+#include "vga256d.h"
+#include "video.h"
 
-
-JE_boolean continuousPlay = false;
-JE_word currentJukeboxSong = 0; /* SYN: used to be currentsong, but that name conflicted with elsewhere */
-
-void JE_playNewSelection( void )
+void jukebox( void )
 {
-	currentSong = ( mt_rand() % MUSIC_NUM );
-	JE_playSong(currentSong);
-}
-
-void JE_jukebox_selectSong( JE_word song )
-{
-	JE_selectSong(song);
-	repeated = false;
-	playing = true;
-}
-
-void JE_checkEndOfSong( void )
-{
-	if (!continuousPlay && (repeated || !playing) )
+	bool hide_text = false, quit = false;
+	
+	bool fade_looped_songs = true, fading = false;
+	bool fx = false, stopped = false;
+	
+	int song = currentSong - 1, fx_num = 0;
+	
+	SDL_FillRect(VGAScreenSeg, NULL, 0);
+	JE_showVGA();
+	JE_updateColorsFast(vga_palette); //JE_fadeColor(10);
+	
+	JE_starlib_init();
+	
+	int fade_volume = tyrMusicVolume;
+	
+	while (!quit)
 	{
-		JE_playNewSelection();
-		repeated = false;
+		if (songlooped && fade_looped_songs)
+			fading = true;
+		
+		if (fading)
+		{
+			if (fade_volume > 5)
+			{
+				fade_volume -= 2;
+			}
+			else
+			{
+				fade_volume = tyrMusicVolume;
+				
+				fading = false;
+			}
+			
+			JE_setVol(fade_volume, fxVolume);
+		}
+		
+		if ((!playing || (songlooped && fade_looped_songs && !fading)) && !stopped)
+		{
+			song = mt_rand() % MUSIC_NUM;
+			JE_playSong(song + 1);
+		}
+		
+		
+		setdelay(1);
+		
+		push_joysticks_as_keyboard();
+		service_SDL_events(true);
+		
+		SDL_FillRect(VGAScreenSeg, NULL, 0);
+		
+		// starlib input needs to be rewritten
+		JE_starlib_main();
+		
+		if (!hide_text)
+		{
+			char tempStr[64];
+			
+			tempScreenSeg = VGAScreenSeg;
+			
+			if (fx)
+			{
+				sprintf(tempStr, "%d %s", fx_num + 1, soundTitle[fx_num]);
+				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
+			}
+			else
+			{
+				sprintf(tempStr, "%d %s", song + 1, musicTitle[song]);
+				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
+			}
+			
+			strcpy(tempStr, "Press ESC to quit the jukebox.");
+			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 170, tempStr, 1, 0);
+			
+			strcpy(tempStr, "Arrow keys change the song being played.");
+			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 180, tempStr, 1, 0);
+		}
+		
+		JE_showVGA();
+		
+		wait_delay();
+		
+		Uint16 x, y;
+		if (JE_mousePosition(&x, &y) > 0)
+			quit = true;
+
+		if (newkey)
+		{
+			switch (lastkey_sym)
+			{
+			case SDLK_ESCAPE: // quit jukebox
+			case SDLK_q:
+				quit = true;
+				break;
+			case SDLK_SPACE:
+				hide_text = !hide_text;
+				break;
+				
+			case SDLK_f:
+				fading = !fading;
+				break;
+			case SDLK_n:
+				fade_looped_songs = !fade_looped_songs;
+				break;
+			
+			case SDLK_SLASH: // switch to sfx mode
+				fx = !fx;
+				break;
+			case SDLK_COMMA:
+				if (fx && --fx_num < 0)
+					fx_num = SOUND_NUM + 9 - 1;
+				break;
+			case SDLK_PERIOD:
+				if (fx && ++fx_num >= SOUND_NUM + 9)
+					fx_num = 0;
+				break;
+			case SDLK_SEMICOLON:
+				if (fx)
+					JE_playSampleNum(fx_num + 1);
+				break;
+				
+			case SDLK_LEFT:
+			case SDLK_UP:
+				if (--song < 0)
+					song = MUSIC_NUM - 1;
+				JE_playSong(song + 1);
+				stopped = false;
+				break;
+			case SDLK_RETURN:
+			case SDLK_RIGHT:
+			case SDLK_DOWN:
+				if (++song >= MUSIC_NUM)
+					song = 0;
+				JE_playSong(song + 1);
+				stopped = false;
+				break;
+			case SDLK_s: // stop song
+				JE_selectSong(0);
+				stopped = true;
+				break;
+			case SDLK_r: // restart song
+				JE_selectSong(1);
+				stopped = false;
+				break;
+				
+			default:
+				break;
+			}
+		}
 	}
-	if (continuousPlay && !playing)
-	{
-		JE_jukebox_selectSong(1);
-	}
+	
+	JE_updateColorsFast(black); //JE_fadeBlack(10);
+	JE_setVol(255, fxVolume);
 }
 
 // kate: tab-width 4; vim: set noet:

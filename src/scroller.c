@@ -142,8 +142,7 @@ void scroller_sine( const struct about_text_type text[] )
 	
 	wait_noinput(true, true, true);
 	
-	currentJukeboxSong = 41; /* BEER! =D */
-	JE_playSong(currentJukeboxSong);
+	JE_playSong(41); /* BEER */
 
 	while (!JE_anyButton())
 	{

@@ -21,16 +21,7 @@
 
 #include "opentyr.h"
 
-
-JE_boolean volumeActive, fx;
-JE_word fxNum;
-
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma );
-
-void JE_jukeboxGo( void );
-void JE_newSpeed( void );
-void JE_playNewSong( void );
-/* TODO */
 
 #endif /* SETUP_H */
 

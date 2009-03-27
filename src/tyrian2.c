@@ -28,6 +28,7 @@
 #include "helptext.h"
 #include "joystick.h"
 #include "keyboard.h"
+#include "lds_play.h"
 #include "loudness.h"
 #include "lvllib.h"
 #include "lvlmast.h"
@@ -1289,12 +1290,11 @@ level_loop:
 	{
 		JE_playSong(10);
 		musicFade = false;
-	} else {
-		if (!playing && musicActive && firstGameOver)
-		{
-			JE_playSong(levelSong);
-			playing = true;
-		}
+	}
+	else if (!playing && musicActive && firstGameOver)
+	{
+		JE_playSong(levelSong);
+		playing = true;
 	}
 
 
@@ -5211,7 +5211,7 @@ void JE_eventSystem( void )
 				JE_playSong(eventRec[eventLoc-1].eventdat);
 				if (!musicActive)
 				{
-					JE_selectSong (0);
+					JE_selectSong(0);
 				}
 				JE_setVol(tyrMusicVolume, fxVolume);
 			}

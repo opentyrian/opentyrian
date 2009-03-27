@@ -41,8 +41,7 @@
 typedef JE_byte JE_MusicType[20000];
 
 extern JE_MusicType musicData;
-extern JE_boolean repeated;
-extern JE_boolean playing;
+extern unsigned int musicSize;
 
 extern float sample_volume;
 extern float music_volume;

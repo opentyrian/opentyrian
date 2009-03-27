@@ -26,6 +26,7 @@
 #include "loudness.h"
 #include "nortsong.h"
 
+#include <assert.h>
 
 /* Note frequency table (16 notes / octave) */
 const Uint16 frequency[] = {
@@ -80,13 +81,13 @@ Position *positions = NULL;
 Uint8 fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
 Uint16 posplay, jumppos, speed;
 Uint16 *patterns = NULL;
-JE_boolean playing, songlooped;
+bool playing, songlooped;
 Uint16 numpatch, numposi, patterns_size, mainvolume;
 
 const Uint16 maxsound = 0x3f, maxpos = 0xff;
 Uint8 *read_pos;
 
-int lds_load(JE_byte *music_location)
+int lds_load( Uint8 *music_data, unsigned int music_size )
 {
 	Uint32	i, j;
 	SoundBank *sb;
@@ -95,7 +96,7 @@ int lds_load(JE_byte *music_location)
 	JE_byte *pos;
 	float templ;
 
-	pos = music_location;
+	pos = music_data;
 
 	/* load header */
 	mode = *(pos++);
@@ -106,6 +107,8 @@ int lds_load(JE_byte *music_location)
 		return false; */
 	}
 
+	// memcpy, don't dereference Uint16s that aren't word-aligned
+	// TODO: perhaps we should pass a file handle to this function instead?
 	memcpy(&speed, pos, sizeof(Uint16)); speed = SDL_SwapLE16(speed); pos += 2;
 	tempo = *(pos++);
 	pattlen = *(pos++);
@@ -123,7 +126,8 @@ int lds_load(JE_byte *music_location)
 	free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 
-	for(i = 0; i < numpatch; i++) {
+	for(i = 0; i < numpatch; i++)
+	{
 		sb = &soundbank[i];
 		sb->mod_misc = *(pos++);
 		sb->mod_vol = *(pos++);
@@ -163,13 +167,17 @@ int lds_load(JE_byte *music_location)
 	}
 
 	/* load positions */
-	memcpy(&numposi, pos, sizeof(Uint16)); numposi = SDL_SwapLE16(numposi); pos += 2;
+	memcpy(&numposi, pos, sizeof(Uint16));
+	numposi = SDL_SwapLE16(numposi);
+	pos += 2;
 
 	free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
 
 	for (i = 0; i < numposi; i++)
-		for (j = 0; j < 9; j++) {
+	{
+		for (j = 0; j < 9; j++)
+		{
 			/*
 			* patnum is a pointer inside the pattern space, but patterns are 16bit
 			* word fields anyway, so it ought to be an even number (hopefully) and
@@ -179,26 +187,25 @@ int lds_load(JE_byte *music_location)
 			positions[i * 9 + j].patnum = temp / 2;
 			positions[i * 9 + j].transpose = *(pos++);
 		}
+	}
 
 	/* load patterns */
 	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
-	remaining = (songPos[currentSong] - songPos[currentSong - 1]) - (pos - music_location); /* bytes remaining */
+	remaining = music_size - (pos - music_data); /* bytes remaining */
 
 	free(patterns);
-	patterns = malloc(sizeof(Uint16) * (remaining / 2 + 1));
-	/* patterns = malloc(temp + 1); */
-	for(i = 0; i < (remaining / 2 + 1); i++)
+	patterns = malloc(sizeof(Uint16) * (remaining / 2));
+	
+	for(i = 0; i < remaining / 2; i++)
 	{
-		memcpy(&patterns[i], pos, sizeof(Uint16)); patterns[i] = SDL_SwapLE16(patterns[i]); pos += 2;
+		memcpy(&patterns[i], pos, sizeof(Uint16));
+		patterns[i] = SDL_SwapLE16(patterns[i]);
+		pos += 2;
 	}
+	
+	assert(pos - music_data == music_size);
 
 	lds_rewind(-1);
-
-	/*templ = 0.0f;
-	while(lds_update() && templ < 600000) templ += 1000.0f / REFRESH;
-	printf("> %f\n", templ);
-
-	lds_rewind(-1);*/
 
 	return true;
 }
