@@ -635,6 +635,7 @@ void JE_drawOptionLevel( void )
 
 void JE_tyrianHalt( JE_byte code )
 {
+	deinit_audio();
 	deinit_video();
 	deinit_joysticks();
 	
@@ -657,13 +658,6 @@ void JE_tyrianHalt( JE_byte code )
 		free(digiFx[i]);
 	}
 	
-	JE_deinitialize();
-	
-	lds_free();
-
-	/* JE_endMusic(soundeffects); TODO */
-
-
 	if (code != 9)
 	{
 		/*

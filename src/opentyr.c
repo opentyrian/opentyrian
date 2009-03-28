@@ -387,13 +387,13 @@ int main( int argc, char *argv[] )
 	showMemLeft = false;
 	playerPasswordInput = true;
 
-	if (!noSound)
+	if (!audio_disabled)
 	{
 		printf("initializing SDL audio...\n");
 		
-		JE_initialize();
+		init_audio();
 		
-		load_song(0);
+		load_music();
 		
 		JE_loadSndFile("tyrian.snd", xmas ? "voicesc.snd" : "voices.snd");
 	}

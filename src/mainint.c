@@ -2101,8 +2101,7 @@ void JE_playCredits( void )
 	
 	setjasondelay2(1000);
 	
-	if (song_playing != 8)
-		play_song(8);
+	play_song(8);
 	
 	JE_resetFile(&f, "tyrian.cdt");
 	while (!feof(f))
@@ -2239,8 +2238,7 @@ void JE_playCredits( void )
 			if (x == maxlen - 1)
 			{
 				x--;
-				if (song_playing != 9)
-					play_song(9);
+				play_song(9);
 			}
 		}
 	}

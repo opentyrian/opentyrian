@@ -43,25 +43,20 @@ extern float music_volume;
 
 extern unsigned int song_playing;
 
+extern bool audio_disabled;
 
-void JE_initialize( void );
-void JE_deinitialize( void );
+bool init_audio( void );
+void deinit_audio( void );
 
-void load_song( int song_num );
+void load_music( void );
 void play_song( unsigned int song_num );
 void restart_song( void );
 void stop_song( void );
 void fade_song( void );
 
-/* TODO: Some of these procs take segment and offset or other weird arguments, the signature of many of these may change
-   as I make stuff more "sensible" */
-
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
 
 void JE_setVol(JE_word volume, JE_word sample);
-
-JE_word JE_getVol( void );
-JE_word JE_getSampleVol( void );
 
 #endif /* LOUDNESS_H */
 

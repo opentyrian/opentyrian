@@ -32,10 +32,12 @@ float music_volume = 0.7f;
 bool music_stopped = true;
 unsigned int song_playing = 0;
 
+bool audio_disabled = false;
+
 /* SYN: These shouldn't be used outside this file. Hands off! */
 FILE *music_file = NULL;
 Uint32 *song_offset;
-Uint16 song_count;
+Uint16 song_count = 0;
 
 
 SAMPLE_TYPE *channel_buffer[SFX_CHANNELS] = { NULL };
@@ -46,46 +48,47 @@ Uint8 channel_vol[SFX_CHANNELS];
 int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
 
-void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
+void audio_cb( void *userdata, unsigned char *feedme, int howmuch );
 
-void JE_initialize( void )
+void load_song( unsigned int song_num );
+
+
+bool init_audio( void )
 {
-	SDL_AudioSpec plz, got;
-	int i = 0;
-
+	if (audio_disabled)
+		return false;
+	
+	SDL_AudioSpec ask, got;
+	
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
 	{
 		printf("error: failed to initialize audio system: %s\n", SDL_GetError());
-		noSound = true;
-		return;
+		audio_disabled = true;
+		return false;
 	}
-
-	plz.freq = freq;
-#if (BYTES_PER_SAMPLE == 2)
-	plz.format = AUDIO_S16SYS;
-#else  /* BYTES_PER_SAMPLE */
-	plz.format = AUDIO_S8;
-#endif  /* BYTES_PER_SAMPLE */
-	plz.channels = 1;
-	plz.samples = 512;
-	plz.callback = audio_cb;
-
-	printf("\trequested  frequency: %d; buffer size: %d\n", plz.freq, plz.samples);
-
-	if (SDL_OpenAudio(&plz, &got) == -1)
+	
+	ask.freq = freq;
+	ask.format = (BYTES_PER_SAMPLE == 2) ? AUDIO_S16SYS : AUDIO_S8;
+	ask.channels = 1;
+	ask.samples = 512;
+	ask.callback = audio_cb;
+	
+	printf("\trequested  frequency: %d; buffer size: %d\n", ask.freq, ask.samples);
+	
+	if (SDL_OpenAudio(&ask, &got) == -1)
 	{
 		printf("error: failed to initialize SDL audio: %s\n", SDL_GetError());
-		noSound = true;
-		return;
+		audio_disabled = true;
+		return false;
 	}
-
+	
 	printf("\tobtained   frequency: %d; buffer size: %d\n", got.freq, got.samples);
-
+	
 	opl_init();
-
-	sound_init_state = true;
-
-	SDL_PauseAudio(0);
+	
+	SDL_PauseAudio(0); // unpause
+	
+	return true;
 }
 
 void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
@@ -161,29 +164,28 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 	}
 }
 
-void JE_deinitialize( void )
+void deinit_audio( void )
 {
-	/* SYN: Clean up any other audio stuff, if necessary. This should only be called when we're quitting. */
-	
-	for (int i = 0; i < SFX_CHANNELS; i++)
+	for (unsigned int i = 0; i < SFX_CHANNELS; i++)
 	{
 		free(channel_buffer[i]);
 		channel_buffer[i] = channel_pos[i] = NULL;
 		channel_len[i] = 0;
 	}
 	
-	if (sound_init_state)
+	if (!audio_disabled)
 		opl_deinit();
 	
 	SDL_CloseAudio();
+	
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	
+	lds_free();
 }
 
 
-void load_song( int song_num )
+void load_music( void )
 {
-	SDL_LockAudio();
-	
 	if (music_file == NULL)
 	{
 		JE_resetFile(&music_file, "music.mus");
@@ -197,13 +199,23 @@ void load_song( int song_num )
 		fseek(music_file, 0, SEEK_END);
 		song_offset[song_count] = ftell(music_file); // file size
 	}
+}
+
+void load_song( unsigned int song_num )
+{
+	if (audio_disabled)
+		return;
 	
-	printf("loading song %d...\n", song_num + 1);
+	SDL_LockAudio();
 	
 	if (song_num < song_count)
 	{
 		unsigned int song_size = song_offset[song_num + 1] - song_offset[song_num];
 		lds_load(music_file, song_offset[song_num], song_size);
+	}
+	else
+	{
+		printf("warning: failed to load song %d\n", song_num + 1);
 	}
 	
 	SDL_UnlockAudio();
@@ -211,18 +223,20 @@ void load_song( int song_num )
 
 void play_song( unsigned int song_num )
 {
-	if (noSound)
-		return;
+	if (song_num != song_playing)
+	{
+		load_song(song_num);
+		song_playing = song_num;
+	}
 	
-	load_song(song_num);
-	
-	song_playing = song_num;
 	music_stopped = !musicActive;
 }
 
 void restart_song( void )
 {
-	play_song(song_playing);
+	unsigned int temp = song_playing;
+	song_playing = -1;
+	play_song(temp);
 }
 
 void stop_song( void )
@@ -249,7 +263,7 @@ void JE_setVol(JE_word volume, JE_word sample)
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)
 {
-	if (noSound)
+	if (audio_disabled)
 		return;
 	
 	SDL_LockAudio();

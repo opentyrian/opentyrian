@@ -33,7 +33,7 @@
 #include <string.h>
 
 
-#define STUB() printf("!!! STUB: %s:%d:%s\n", __FILE__, __LINE__, __func__)
+#define STUB() printf("TODO: %s:%d %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 /* Gets number of elements in an array.
  * !!! USE WITH ARRAYS ONLY !!! */

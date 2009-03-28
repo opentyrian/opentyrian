@@ -1288,8 +1288,7 @@ level_loop:
 
 	if (!allPlayersGone && levelEnd > 0 && endLevel)
 	{
-		if (song_playing != 9)
-			play_song(9);
+		play_song(9);
 		musicFade = false;
 	}
 	else if (!playing && firstGameOver)
@@ -3805,8 +3804,7 @@ void JE_titleScreen( JE_boolean animate )
 			/* Animate instead of quickly fading in */
 			if (redraw)
 			{
-				if (song_playing != SONG_TITLE)
-					play_song(SONG_TITLE);
+				play_song(SONG_TITLE);
 				
 				menu = 0;
 				redraw = false;

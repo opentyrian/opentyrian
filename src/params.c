@@ -20,18 +20,20 @@
 #include "params.h"
 
 #include "joystick.h"
+#include "loudness.h"
 #include "network.h"
 #include "xmas.h"
 
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
 
-JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, noSound, quikJuke, joyMax, forceAveraging, stupidWindows;
+JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
-	"LOOT", "RECORD", "NOJOY", "NOROBERT", "CONSTANT", "DEATH", "NOSOUND", "JUKEBOX", "JOYMAX", "WEAKJOY", "NOXMAS", "YESXMAS"
+	"LOOT", "RECORD", "NOJOY", "NOROBERT", "CONSTANT", "DEATH", "NOSOUND", "JOYMAX", "WEAKJOY", "NOXMAS", "YESXMAS"
 };
 
 void JE_paramCheck( int argc, char *argv[] )
@@ -43,8 +45,6 @@ void JE_paramCheck( int argc, char *argv[] )
 	richMode        = false;
 	recordDemo      = false;
 	constantPlay    = false;
-	noSound         = false;
-	quikJuke        = false;
 	forceAveraging  = false;
 
 	const struct {
@@ -106,7 +106,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					
 				case 's':
 					// Disables sound/music usage
-					noSound = true;
+					audio_disabled = true;
 					break;
 					
 				case 'j':
@@ -247,26 +247,22 @@ void JE_paramCheck( int argc, char *argv[] )
 							constantDie = true;
 							break;
 						case 6:
-							noSound = true;
+							audio_disabled = true;
 							break;
 						case 7:
-							quikJuke = true;
-							break;
-						case 8:
 							joyMax = true;
 							break;
-						case 9:
+						case 8:
 							forceAveraging = true;
 							break;
-						case 10:
+						case 9:
 							xmas = false;
 							break;
-						case 11:
+						case 10:
 							xmas = true;
 							break;
 						default:
-							/* YKS: This shouldn't ever be reached. */
-							printf("!!! WARNING: Something's very wrong on %s:%d!\n", __FILE__, __LINE__);
+							assert(false);
 							break;
 					}
 				}
