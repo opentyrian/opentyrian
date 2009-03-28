@@ -19,19 +19,25 @@
 #include "opentyr.h"
 #include "loudness.h"
 
+#include "error.h"
 #include "fm_synth.h"
 #include "lds_play.h"
+#include "nortsong.h"
 #include "params.h"
 
-
-/* SYN: These are externally accessible variables: */
-JE_MusicType musicData;
-unsigned int musicSize;
 
 float sample_volume = 0.9f;
 float music_volume = 0.7f;
 
+bool music_stopped = true;
+unsigned int song_playing = 0;
+
 /* SYN: These shouldn't be used outside this file. Hands off! */
+FILE *music_file = NULL;
+Uint32 *song_offset;
+Uint16 song_count;
+
+
 SAMPLE_TYPE *channel_buffer[SFX_CHANNELS] = { NULL };
 SAMPLE_TYPE *channel_pos[SFX_CHANNELS] = { NULL };
 Uint32 channel_len[SFX_CHANNELS] = { 0 };
@@ -39,9 +45,6 @@ Uint8 channel_vol[SFX_CHANNELS];
 
 int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
-
-bool music_playing = false;
-
 
 void audio_cb(void *userdata, unsigned char *feedme, int howmuch);
 
@@ -91,7 +94,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 
 	SAMPLE_TYPE *feedme = (SAMPLE_TYPE *)sdl_buffer;
 
-	if (music_playing)
+	if (!music_stopped)
 	{
 		/* SYN: Simulate the fm synth chip */
 		SAMPLE_TYPE *music_pos = feedme;
@@ -176,50 +179,62 @@ void JE_deinitialize( void )
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
-void JE_play( void )
-{
-	/* SYN: This proc isn't necessary, because filling the buffer is handled in the SDL callback function.*/
-}
 
-/* SYN: selectSong is called with 0 to disable the current song. Calling it with 1 will start the current song if not playing,
-   or restart it if it is. */
-void JE_selectSong( JE_word value )
+void load_song( int song_num )
 {
-	if (noSound)
-		return;
-
 	SDL_LockAudio();
-
-	switch (value)
+	
+	if (music_file == NULL)
 	{
-		case 0:
-			music_playing = false;
-			break;
-		case 1:
-		case 2:
-			lds_load((JE_byte *)musicData, musicSize); /* Load song */
-			music_playing = true;
-			break;
-		default:
-			printf("JE_selectSong: fading TODO!\n");
-			/* TODO: Finish this FADING function! */
-			break;
+		JE_resetFile(&music_file, "music.mus");
+		
+		efread(&song_count, sizeof(song_count), 1, music_file);
+		song_count = song_count;
+		
+		song_offset = malloc((song_count + 1) * sizeof(song_offset));
+		
+		efread(song_offset, 4, song_count, music_file);
+		fseek(music_file, 0, SEEK_END);
+		song_offset[song_count] = ftell(music_file); // file size
 	}
-
+	
+	printf("loading song %d...\n", song_num + 1);
+	
+	if (song_num < song_count)
+	{
+		unsigned int song_size = song_offset[song_num + 1] - song_offset[song_num];
+		lds_load(music_file, song_offset[song_num], song_size);
+	}
+	
 	SDL_UnlockAudio();
 }
 
-void JE_samplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
+void play_song( unsigned int song_num )
 {
-	/* SYN: I don't think this function is used. */
+	if (noSound)
+		return;
+	
+	load_song(song_num);
+	
+	song_playing = song_num;
+	music_stopped = !musicActive;
+}
+
+void restart_song( void )
+{
+	play_song(song_playing);
+}
+
+void stop_song( void )
+{
+	music_stopped = true;
+}
+
+void fade_song( void )
+{
 	STUB();
 }
 
-void JE_bigSamplePlay(JE_word addlo, JE_word addhi, JE_word size, JE_word freq)
-{
-	/* SYN: I don't think this function is used. */
-	STUB();
-}
 
 /* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
 /* SYN: Either I'm misunderstanding Andreas's comments, or the information in them is inaccurate. */
@@ -230,34 +245,6 @@ void JE_setVol(JE_word volume, JE_word sample)
 	if (volume > 0)
 		music_volume = volume * (float)(1.0 / 256.0);
 	sample_volume = sample * (float)(0.7 / 256.0);
-}
-
-JE_word JE_getVol( void )
-{
-	STUB();
-	return 0;
-}
-
-JE_word JE_getSampleVol( void )
-{
-	STUB();
-	return 0;
-}
-
-void JE_multiSampleInit(JE_word addlo, JE_word addhi, JE_word dmalo, JE_word dmahi)
-{
-	/* SYN: I don't know if this function should do anything else. For now, it just checks to see if sound has
-	   been initialized and, if not, calls the main initialize function. */
-
-	if (!sound_init_state)
-	{
-		JE_initialize();
-	}
-}
-
-void JE_multiSampleMix( void )
-{
-	/* SYN: This proc isn't necessary, because the mixing is handled in the SDL callback function.*/
 }
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)

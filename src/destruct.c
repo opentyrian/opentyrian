@@ -1399,7 +1399,7 @@ void JE_generateTerrain( void )
 	    4 = highwalls
 	*/
 	
-	JE_playSong(goodsel[mt_rand() % 14]);
+	play_song(goodsel[mt_rand() % 14] - 1);
 	heightchange = (mt_rand() % 3) - 1;
 	
 	sinewave = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;

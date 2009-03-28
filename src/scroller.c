@@ -23,6 +23,7 @@
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
+#include "loudness.h"
 #include "mtrand.h"
 #include "newshape.h"
 #include "nortsong.h"
@@ -142,8 +143,8 @@ void scroller_sine( const struct about_text_type text[] )
 	
 	wait_noinput(true, true, true);
 	
-	JE_playSong(41); /* BEER */
-
+	play_song(40); // BEER
+	
 	while (!JE_anyButton())
 	{
 		setdelay(3);

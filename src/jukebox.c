@@ -39,7 +39,7 @@ void jukebox( void )
 	bool fade_looped_songs = true, fading = false;
 	bool fx = false, stopped = false;
 	
-	int song = currentSong - 1, fx_num = 0;
+	int fx_num = 0;
 	
 	SDL_FillRect(VGAScreenSeg, NULL, 0);
 	JE_showVGA();
@@ -71,11 +71,7 @@ void jukebox( void )
 		}
 		
 		if ((!playing || (songlooped && fade_looped_songs && !fading)) && !stopped)
-		{
-			song = mt_rand() % MUSIC_NUM;
-			JE_playSong(song + 1);
-		}
-		
+			play_song(mt_rand() % MUSIC_NUM);
 		
 		setdelay(1);
 		
@@ -100,7 +96,7 @@ void jukebox( void )
 			}
 			else
 			{
-				sprintf(tempStr, "%d %s", song + 1, musicTitle[song]);
+				sprintf(tempStr, "%d %s", song_playing + 1, musicTitle[song_playing]);
 				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
 			}
 			
@@ -118,7 +114,7 @@ void jukebox( void )
 		Uint16 x, y;
 		if (JE_mousePosition(&x, &y) > 0)
 			quit = true;
-
+		
 		if (newkey)
 		{
 			switch (lastkey_sym)
@@ -156,25 +152,21 @@ void jukebox( void )
 				
 			case SDLK_LEFT:
 			case SDLK_UP:
-				if (--song < 0)
-					song = MUSIC_NUM - 1;
-				JE_playSong(song + 1);
+				play_song((song_playing > 0 ? song_playing : MUSIC_NUM) - 1);
 				stopped = false;
 				break;
 			case SDLK_RETURN:
 			case SDLK_RIGHT:
 			case SDLK_DOWN:
-				if (++song >= MUSIC_NUM)
-					song = 0;
-				JE_playSong(song + 1);
+				play_song((song_playing + 1) % MUSIC_NUM);
 				stopped = false;
 				break;
 			case SDLK_s: // stop song
-				JE_selectSong(0);
+				stop_song();
 				stopped = true;
 				break;
 			case SDLK_r: // restart song
-				JE_selectSong(1);
+				restart_song();
 				stopped = false;
 				break;
 				

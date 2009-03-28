@@ -27,7 +27,6 @@
 #include "SDL.h"
 
 
-typedef JE_longint JE_SongPosType [MUSIC_NUM + 1]; /* [1..Musicnum + 1] */
 typedef JE_byte JE_DigiMixType [0x4ff];
 typedef JE_byte JE_AweType [35000];
 
@@ -54,14 +53,12 @@ extern Uint32 target, target2;
 extern const char hexa[17];
 extern JE_boolean mixEnable;
 
-extern JE_boolean notYetLoadedSound, notYetLoadedMusic;
-extern JE_SongPosType songPos;
+extern JE_boolean notYetLoadedSound;
 
 extern JE_byte soundEffects;
 
 extern JE_word frameCount, frameCount2, frameCountMax;
 
-extern JE_byte currentSong;
 extern JE_byte soundActive, musicActive;
 
 extern JE_byte *digiFx[SOUND_NUM + 9];
@@ -87,11 +84,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 
 void JE_resetTimerInt( void );
 void JE_setTimerInt( void );
-void JE_playSong ( JE_word songnum );
-void JE_loadSong( JE_word songnum );
 void JE_endMusic ( JE_byte soundeffects);
-void JE_stopSong( void );
-void JE_restartSong( void );
 void JE_reinit ( JE_boolean redo );
 void JE_aweStuff( void );
 void JE_setTimerInt( void );

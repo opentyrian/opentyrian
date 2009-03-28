@@ -87,126 +87,105 @@ Uint16 numpatch, numposi, patterns_size, mainvolume;
 const Uint16 maxsound = 0x3f, maxpos = 0xff;
 Uint8 *read_pos;
 
-int lds_load( Uint8 *music_data, unsigned int music_size )
+bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 {
-	Uint32	i, j;
 	SoundBank *sb;
-	int remaining;
-	Uint16 temp;
-	JE_byte *pos;
-	float templ;
-
-	pos = music_data;
+	
+	fseek(f, music_offset, SEEK_SET);
 
 	/* load header */
-	mode = *(pos++);
+	mode = fgetc(f);
 	if (mode > 2)
 	{
-		/* Error! */
-		/* printf("Error loading music! %d\n", mode);
-		return false; */
+		printf("error: failed to load music\n");
+		return false;
 	}
-
-	// memcpy, don't dereference Uint16s that aren't word-aligned
-	// TODO: perhaps we should pass a file handle to this function instead?
-	memcpy(&speed, pos, sizeof(Uint16)); speed = SDL_SwapLE16(speed); pos += 2;
-	tempo = *(pos++);
-	pattlen = *(pos++);
-
-	for(i = 0; i < 9; i++)
-	{
-		chandelay[i] = *(pos++);
-	}
-
-	regbd = *(pos++);
+	efread(&speed, 2, 1, f);
+	tempo = fgetc(f);
+	pattlen = fgetc(f);
+	for (unsigned int i = 0; i < 9; i++)
+		chandelay[i] = fgetc(f);
+	regbd = fgetc(f);
 
 	/* load patches */
-	memcpy(&numpatch, pos, sizeof(Uint16)); numpatch = SDL_SwapLE16(numpatch); pos += 2;
+	efread(&numpatch, 2, 1, f);
 
 	free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 
-	for(i = 0; i < numpatch; i++)
+	for (unsigned int i = 0; i < numpatch; i++)
 	{
 		sb = &soundbank[i];
-		sb->mod_misc = *(pos++);
-		sb->mod_vol = *(pos++);
-		sb->mod_ad = *(pos++);
-		sb->mod_sr = *(pos++);
-		sb->mod_wave = *(pos++);
-		sb->car_misc = *(pos++);
-		sb->car_vol = *(pos++);
-		sb->car_ad = *(pos++);
-		sb->car_sr = *(pos++);
-		sb->car_wave = *(pos++);
-		sb->feedback = *(pos++);
-		sb->keyoff = *(pos++);
-		sb->portamento = *(pos++);
-		sb->glide = *(pos++);
-		sb->finetune = *(pos++);
-		sb->vibrato = *(pos++);
-		sb->vibdelay = *(pos++);
-		sb->mod_trem = *(pos++);
-		sb->car_trem = *(pos++);
-		sb->tremwait = *(pos++);
-		sb->arpeggio = *(pos++);
-		for(j = 0; j < 12; j++)
-		{
-			sb->arp_tab[j] = *(pos++);
-		}
-		memcpy(&sb->start, pos, sizeof(Uint16)); sb->start = SDL_SwapLE16(sb->start); pos += 2;
-		memcpy(&sb->size, pos, sizeof(Uint16)); sb->size = SDL_SwapLE16(sb->size); pos += 2;
-		sb->fms = *(pos++);
-		memcpy(&sb->transp, pos, sizeof(Uint16)); sb->transp = SDL_SwapLE16(sb->transp); pos += 2;
-		sb->midinst = *(pos++);
-		sb->midvelo = *(pos++);
-		sb->midkey = *(pos++);
-		sb->midtrans = *(pos++);
-		sb->middum1 = *(pos++);
-		sb->middum2 = *(pos++);
+		sb->mod_misc = fgetc(f);
+		sb->mod_vol = fgetc(f);
+		sb->mod_ad = fgetc(f);
+		sb->mod_sr = fgetc(f);
+		sb->mod_wave = fgetc(f);
+		sb->car_misc = fgetc(f);
+		sb->car_vol = fgetc(f);
+		sb->car_ad = fgetc(f);
+		sb->car_sr = fgetc(f);
+		sb->car_wave = fgetc(f);
+		sb->feedback = fgetc(f);
+		sb->keyoff = fgetc(f);
+		sb->portamento = fgetc(f);
+		sb->glide = fgetc(f);
+		sb->finetune = fgetc(f);
+		sb->vibrato = fgetc(f);
+		sb->vibdelay = fgetc(f);
+		sb->mod_trem = fgetc(f);
+		sb->car_trem = fgetc(f);
+		sb->tremwait = fgetc(f);
+		sb->arpeggio = fgetc(f);
+		for (unsigned int j = 0; j < 12; j++)
+			sb->arp_tab[j] = fgetc(f);
+		efread(&sb->start, 2, 1, f);
+		efread(&sb->size, 2, 1, f);
+		sb->fms = fgetc(f);
+		efread(&sb->transp, 2, 1, f);
+		sb->midinst = fgetc(f);
+		sb->midvelo = fgetc(f);
+		sb->midkey = fgetc(f);
+		sb->midtrans = fgetc(f);
+		sb->middum1 = fgetc(f);
+		sb->middum2 = fgetc(f);
 	}
-
+	
 	/* load positions */
-	memcpy(&numposi, pos, sizeof(Uint16));
-	numposi = SDL_SwapLE16(numposi);
-	pos += 2;
-
+	efread(&numposi, 2, 1, f);
+	
 	free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
-
-	for (i = 0; i < numposi; i++)
+	
+	for (unsigned int i = 0; i < numposi; i++)
 	{
-		for (j = 0; j < 9; j++)
+		for (unsigned int j = 0; j < 9; j++)
 		{
 			/*
 			* patnum is a pointer inside the pattern space, but patterns are 16bit
 			* word fields anyway, so it ought to be an even number (hopefully) and
 			* we can just divide it by 2 to get our array index of 16bit words.
 			*/
-			memcpy(&temp, pos, sizeof(Uint16)); temp = SDL_SwapLE16(temp); pos += 2;
+			Uint16 temp;
+			efread(&temp, 2, 1, f);
 			positions[i * 9 + j].patnum = temp / 2;
-			positions[i * 9 + j].transpose = *(pos++);
+			positions[i * 9 + j].transpose = fgetc(f);
 		}
 	}
-
+	
 	/* load patterns */
-	pos += 2; /* ignore # of digital sounds (dunno what this is for) */
-	remaining = music_size - (pos - music_data); /* bytes remaining */
-
+	fseek(f, 2, SEEK_CUR); /* ignore # of digital sounds (dunno what this is for) */
+	
+	unsigned int remaining = music_size - (ftell(f) - music_offset);
+	
 	free(patterns);
 	patterns = malloc(sizeof(Uint16) * (remaining / 2));
 	
-	for(i = 0; i < remaining / 2; i++)
-	{
-		memcpy(&patterns[i], pos, sizeof(Uint16));
-		patterns[i] = SDL_SwapLE16(patterns[i]);
-		pos += 2;
-	}
+	for (unsigned int i = 0; i < remaining / 2; i++)
+		efread(&patterns[i], 2, 1, f);
 	
-	assert(pos - music_data == music_size);
-
 	lds_rewind(-1);
-
+	
 	return true;
 }
 
