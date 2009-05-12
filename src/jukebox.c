@@ -51,27 +51,30 @@ void jukebox( void )
 	
 	while (!quit)
 	{
-		if (songlooped && fade_looped_songs)
-			fading = true;
-		
-		if (fading)
+		if (!stopped && !audio_disabled)
 		{
-			if (fade_volume > 5)
+			if (songlooped && fade_looped_songs)
+				fading = true;
+			
+			if (fading)
 			{
-				fade_volume -= 2;
-			}
-			else
-			{
-				fade_volume = tyrMusicVolume;
+				if (fade_volume > 5)
+				{
+					fade_volume -= 2;
+				}
+				else
+				{
+					fade_volume = tyrMusicVolume;
+					
+					fading = false;
+				}
 				
-				fading = false;
+				set_volume(fade_volume, fxVolume);
 			}
 			
-			JE_setVol(fade_volume, fxVolume);
+			if (!playing || (songlooped && fade_looped_songs && !fading))
+				play_song(mt_rand() % MUSIC_NUM);
 		}
-		
-		if ((!playing || (songlooped && fade_looped_songs && !fading)) && !stopped)
-			play_song(mt_rand() % MUSIC_NUM);
 		
 		setdelay(1);
 		
@@ -85,20 +88,15 @@ void jukebox( void )
 		
 		if (!hide_text)
 		{
-			char tempStr[64];
+			char tempStr[60];
 			
 			tempScreenSeg = VGAScreenSeg;
 			
 			if (fx)
-			{
 				sprintf(tempStr, "%d %s", fx_num + 1, soundTitle[fx_num]);
-				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
-			}
 			else
-			{
 				sprintf(tempStr, "%d %s", song_playing + 1, musicTitle[song_playing]);
-				JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
-			}
+			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
 			
 			strcpy(tempStr, "Press ESC to quit the jukebox.");
 			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 170, tempStr, 1, 0);
@@ -111,6 +109,7 @@ void jukebox( void )
 		
 		wait_delay();
 		
+		// quit on mouse click
 		Uint16 x, y;
 		if (JE_mousePosition(&x, &y) > 0)
 			quit = true;
@@ -176,8 +175,9 @@ void jukebox( void )
 		}
 	}
 	
+	set_volume(tyrMusicVolume, fxVolume);
+	
 	JE_updateColorsFast(black); //JE_fadeBlack(10);
-	JE_setVol(255, fxVolume);
 }
 
 // kate: tab-width 4; vim: set noet:

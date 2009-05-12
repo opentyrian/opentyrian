@@ -219,6 +219,7 @@ JE_boolean explosionTransparent,
            background2notTransparent,
            tempb;
 
+JE_byte soundEffects; // dummy value for config
 JE_byte versionNum;   /* SW 1.0 and SW/Reg 1.1 = 0 or 1
                        * EA 1.2 = 2 */
 
@@ -730,28 +731,30 @@ void JE_loadConfiguration( void )
 		scaler = temp;
 		
 		fclose(fi);
-	} else {
+	}
+	else
+	{
 		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n\n");
 		
 		soundEffects = 1;
 		memcpy(&keySettings, &defaultKeySettings, sizeof(keySettings));
 		background2 = true;
-		tyrMusicVolume = 255;
-		fxVolume = 128;
+		tyrMusicVolume = fxVolume = 128;
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
 		
 		fullscreen_enabled = false;
 	}
-
-	tyrMusicVolume = (tyrMusicVolume > 255) ? 255 : tyrMusicVolume;
-	fxVolume = (fxVolume > 254) ? 254 : ((fxVolume < 14) ? 14 : fxVolume);
-
-	soundActive = true;
-	musicActive = true;
-
-	JE_setVol(tyrMusicVolume, fxVolume);
+	
+	if (tyrMusicVolume > 255)
+		tyrMusicVolume = 255;
+	if (fxVolume > 255)
+		fxVolume = 255;
+	
+	JE_calcFXVol();
+	
+	set_volume(tyrMusicVolume, fxVolume);
 	
 	char savfile[1000];
 	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
@@ -860,8 +863,7 @@ void JE_loadConfiguration( void )
 	}
 
 	errorActive = false;
-
-	JE_calcFXVol();
+	
 	JE_initProcessorType();
 }
 

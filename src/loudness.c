@@ -26,13 +26,12 @@
 #include "params.h"
 
 
-float sample_volume = 0.9f;
-float music_volume = 0.7f;
+float music_volume = 0, sample_volume = 0;
 
 bool music_stopped = true;
 unsigned int song_playing = 0;
 
-bool audio_disabled = false;
+bool audio_disabled = false, music_disabled = false, samples_disabled = false;
 
 /* SYN: These shouldn't be used outside this file. Hands off! */
 FILE *music_file = NULL;
@@ -94,10 +93,10 @@ bool init_audio( void )
 void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 {
 	static long ct = 0;
-
+	
 	SAMPLE_TYPE *feedme = (SAMPLE_TYPE *)sdl_buffer;
-
-	if (!music_stopped)
+	
+	if (!music_disabled && !music_stopped)
 	{
 		/* SYN: Simulate the fm synth chip */
 		SAMPLE_TYPE *music_pos = feedme;
@@ -116,7 +115,7 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 			- ct represents the margin between play time (representing # of samples) and tick speed of
 			the songs (70Hz by default). It keeps track of which one is ahead, because they don't
 			synch perfectly. */
-	
+			
 			/* set i to smaller of data requested by SDL and a value calculated from the refresh rate */
 			long i = (long)((ct / REFRESH) + 4) & ~3;
 			i = (i > remaining) ? remaining : i; /* i should now equal the number of samples we get */
@@ -134,32 +133,35 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 		}
 	}
 	
-	/* SYN: Mix sound channels and shove into audio buffer */
-	for (int ch = 0; ch < SFX_CHANNELS; ch++)
+	if (!samples_disabled)
 	{
-		float volume = sample_volume * (channel_vol[ch] / (float)SFX_CHANNELS);
-		
-		/* SYN: Don't copy more data than is in the channel! */
-		int qu = (howmuch > channel_len[ch] ? channel_len[ch] : howmuch) / BYTES_PER_SAMPLE;
-		for (int smp = 0; smp < qu; smp++)
+		/* SYN: Mix sound channels and shove into audio buffer */
+		for (int ch = 0; ch < SFX_CHANNELS; ch++)
 		{
+			float volume = sample_volume * (channel_vol[ch] / (float)SFX_CHANNELS);
+			
+			/* SYN: Don't copy more data than is in the channel! */
+			int qu = (howmuch > channel_len[ch] ? channel_len[ch] : howmuch) / BYTES_PER_SAMPLE;
+			for (int smp = 0; smp < qu; smp++)
+			{
 #if (BYTES_PER_SAMPLE == 2)
-			Sint32 clip = (Sint32)feedme[smp] + (Sint32)(channel_pos[ch][smp] * volume);
-			feedme[smp] = (clip > 0x7fff) ? 0x7fff : (clip <= -0x8000) ? -0x8000 : (Sint16)clip;
+				Sint32 clip = (Sint32)feedme[smp] + (Sint32)(channel_pos[ch][smp] * volume);
+				feedme[smp] = (clip > 0x7fff) ? 0x7fff : (clip <= -0x8000) ? -0x8000 : (Sint16)clip;
 #else  /* BYTES_PER_SAMPLE */
-			Sint16 clip = (Sint16)feedme[smp] + (Sint16)(channel_pos[ch][smp] * volume);
-			feedme[smp] = (clip > 0x7f) ? 0x7f : (clip <= -0x80) ? -0x80 : (Sint8)clip;
+				Sint16 clip = (Sint16)feedme[smp] + (Sint16)(channel_pos[ch][smp] * volume);
+				feedme[smp] = (clip > 0x7f) ? 0x7f : (clip <= -0x80) ? -0x80 : (Sint8)clip;
 #endif  /* BYTES_PER_SAMPLE */
-		}
-
-		channel_pos[ch] += qu;
-		channel_len[ch] -= qu * BYTES_PER_SAMPLE;
-
-		/* SYN: If we've emptied a channel buffer, let's free the memory and clear the channel. */
-		if (channel_len[ch] == 0)
-		{
-			free(channel_buffer[ch]);
-			channel_buffer[ch] = channel_pos[ch] = NULL;
+			}
+			
+			channel_pos[ch] += qu;
+			channel_len[ch] -= qu * BYTES_PER_SAMPLE;
+			
+			/* SYN: If we've emptied a channel buffer, let's free the memory and clear the channel. */
+			if (channel_len[ch] == 0)
+			{
+				free(channel_buffer[ch]);
+				channel_buffer[ch] = channel_pos[ch] = NULL;
+			}
 		}
 	}
 }
@@ -229,7 +231,7 @@ void play_song( unsigned int song_num )
 		song_playing = song_num;
 	}
 	
-	music_stopped = !musicActive;
+	music_stopped = false;
 }
 
 void restart_song( void )
@@ -249,27 +251,21 @@ void fade_song( void )
 	STUB();
 }
 
-
-/* Call with 0x1-0x100 for music volume, and 0x10 to 0xf0 for sample volume. */
-/* SYN: Either I'm misunderstanding Andreas's comments, or the information in them is inaccurate. */
-void JE_setVol(JE_word volume, JE_word sample)
+void set_volume( unsigned int music, unsigned int sample )
 {
-	/* printf("JE_setVol: music: %d, sample: %d\n", volume, sample); */
-	
-	if (volume > 0)
-		music_volume = volume * (float)(1.0 / 256.0);
-	sample_volume = sample * (float)(0.7 / 256.0);
+	music_volume = music * (1.5 / 255.0);
+	sample_volume = sample * (1.0 / 255.0);
 }
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)
 {
-	if (audio_disabled)
+	if (audio_disabled || samples_disabled)
 		return;
 	
 	SDL_LockAudio();
-
+	
 	free(channel_buffer[chan]);
-
+	
 	channel_len[chan] = size * BYTES_PER_SAMPLE * SAMPLE_SCALING;
 	channel_buffer[chan] = malloc(channel_len[chan]);
 	channel_pos[chan] = channel_buffer[chan];

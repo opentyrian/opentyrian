@@ -1344,16 +1344,16 @@ JE_boolean JE_inGameSetup( void )
 					switch (sel)
 					{
 						case 1:
-							JE_changeVolume(&tyrMusicVolume, -16, &fxVolume, 0);
-							if (!musicActive)
+							JE_changeVolume(&tyrMusicVolume, -12, &fxVolume, 0);
+							if (music_disabled)
 							{
-								musicActive = true;
+								music_disabled = false;
 								restart_song();
 							}
 							break;
 						case 2:
-							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -16);
-							soundActive = true;
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -12);
+							samples_disabled = false;
 							break;
 						case 3:
 							if (--processorType < 1)
@@ -1381,16 +1381,16 @@ JE_boolean JE_inGameSetup( void )
 					switch (sel)
 					{
 						case 1:
-							JE_changeVolume(&tyrMusicVolume, 16, &fxVolume, 0);
-							if (!musicActive)
+							JE_changeVolume(&tyrMusicVolume, 12, &fxVolume, 0);
+							if (music_disabled)
 							{
-								musicActive = true;
+								music_disabled = false;
 								restart_song();
 							}
 							break;
 						case 2:
-							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 16);
-							soundActive = true;
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 12);
+							samples_disabled = false;
 							break;
 						case 3:
 							if (++processorType > 4)
@@ -1794,24 +1794,6 @@ void JE_highScoreCheck( void )
 			}
 		}
 	}
-}
-
-void JE_setNewGameVol( void )
-{
-	if (!soundActive)
-	{
-		temp = 5;
-	} else {
-		temp = fxVolume;
-	}
-	if (!musicActive)
-	{
-		temp2 = 15;
-	} else {
-		temp2 = tyrMusicVolume;
-	}
-
-	JE_setVol(temp2, temp);
 }
 
 void JE_changeDifficulty( void )
@@ -2884,33 +2866,24 @@ void JE_mainKeyboardInput( void )
 	if (keysactive[SDLK_s])
 	{
 		keysactive[SDLK_s] = false;
-		soundActive = !soundActive;
-		if (soundActive)
-		{
-			JE_drawTextWindow(miscText[18]);
-		} else {
-			JE_drawTextWindow(miscText[17]);
-		}
-		JE_setNewGameVol();
+		
+		samples_disabled = !samples_disabled;
+		
+		JE_drawTextWindow(samples_disabled ? miscText[17] : miscText[18]);
 	}
-
+	
 	/* {MUTE MUSIC} */
 	if (keysactive[SDLK_m])
 	{
 		keysactive[SDLK_m] = false;
-		musicActive = !musicActive;
-		if (musicActive)
-		{
-			JE_drawTextWindow(miscText[36]);
+		
+		music_disabled = !music_disabled;
+		if (!music_disabled)
 			restart_song();
-		}
-		else
-		{
-			JE_drawTextWindow(miscText[35]);
-			stop_song();
-		}
+		
+		JE_drawTextWindow(music_disabled ? miscText[35] : miscText[36]);
 	}
-
+	
 	if (keysactive[SDLK_BACKSPACE])
 	{
 		/* toggle screenshot pause */
@@ -2986,8 +2959,9 @@ void JE_pauseGame( void )
 		VGAScreen = VGAScreenSeg;
 		JE_showVGA();
 	}
-	JE_setVol((tyrMusicVolume >> 1) + 10, fxVolume);
-
+	
+	set_volume(tyrMusicVolume / 2, fxVolume);
+	
 	if (isNetworkGame)
 	{
 		network_prepare(PACKET_GAME_PAUSE);
@@ -3056,7 +3030,7 @@ void JE_pauseGame( void )
 		}
 	}
 	
-	JE_setVol(tyrMusicVolume, fxVolume);
+	set_volume(tyrMusicVolume, fxVolume);
 
 	tempScreenSeg = VGAScreen;
 	//skipStarShowVGA = true;

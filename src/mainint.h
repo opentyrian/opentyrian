@@ -53,7 +53,6 @@ JE_boolean JE_inGameSetup( void );
 void JE_inGameHelp( void );
 void JE_sortHighScores( void );
 void JE_highScoreCheck( void );
-void JE_setNewGameVol( void );
 void JE_changeDifficulty( void );
 void JE_doDemoKeys( void );
 void JE_readDemoKeys( void );

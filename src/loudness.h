@@ -38,12 +38,11 @@
 #define SAMPLE_TYPE OPLSAMPLE
 #define BYTES_PER_SAMPLE (OPL_SAMPLE_BITS / 8)
 
-extern float sample_volume;
-extern float music_volume;
+extern float music_volume, sample_volume;
 
 extern unsigned int song_playing;
 
-extern bool audio_disabled;
+extern bool audio_disabled, music_disabled, samples_disabled;
 
 bool init_audio( void );
 void deinit_audio( void );
@@ -54,9 +53,9 @@ void restart_song( void );
 void stop_song( void );
 void fade_song( void );
 
-void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
+void set_volume( unsigned int music, unsigned int sample );
 
-void JE_setVol(JE_word volume, JE_word sample);
+void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
 
 #endif /* LOUDNESS_H */
 

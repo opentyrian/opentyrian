@@ -865,11 +865,9 @@ start_level:
 	doNotSaveBackup = false;
 
 start_level_first:
-
-	/*stopsequence;*/
-	/*debuginfo('Setting Master Sound Volume');*/
-	JE_setVol(tyrMusicVolume, fxVolume);
-
+	
+	set_volume(tyrMusicVolume, fxVolume);
+	
 	JE_loadCompShapes(&shapes6, &shapes6Size, '1');  /* Items */
 
 	endLevel = false;
@@ -1280,8 +1278,10 @@ level_loop:
 		if (tempVolume > 10)
 		{
 			tempVolume--;
-			JE_setVol(tempVolume, fxVolume);
-		} else {
+			set_volume(tempVolume, fxVolume);
+		}
+		else
+		{
 			musicFade = false;
 		}
 	}
@@ -2470,7 +2470,7 @@ explosion_draw_overflow:
 	/*=================================*/
 	/*=======The Sound Routine=========*/
 	/*=================================*/
-	if (soundEffects > 0 && soundActive && firstGameOver)
+	if (firstGameOver)
 	{
 		temp = 0;
 		for (temp2 = 0; temp2 < SFX_CHANNELS; temp2++)
@@ -2571,7 +2571,7 @@ explosion_draw_overflow:
 	{
 		if (allPlayersGone)
 		{
-			if (!(playerStillExploding == 0 && playerStillExploding2 == 0))
+			if (playerStillExploding > 0 || playerStillExploding2 > 0)
 			{
 				if (galagaMode)
 					playerStillExploding2 = 0;
@@ -2591,7 +2591,7 @@ explosion_draw_overflow:
 					if (!playDemo)
 					{
 						play_song(SONG_GAMEOVER);
-						JE_setVol(tyrMusicVolume, fxVolume);
+						set_volume(tyrMusicVolume, fxVolume);
 					}
 					firstGameOver = false;
 				}
@@ -5208,7 +5208,7 @@ void JE_eventSystem( void )
 			if (firstGameOver)
 			{
 				play_song(eventRec[eventLoc-1].eventdat - 1);
-				JE_setVol(tyrMusicVolume, fxVolume);
+				set_volume(tyrMusicVolume, fxVolume);
 			}
 			musicFade = false;
 			break;
@@ -6704,45 +6704,36 @@ item_screen_start:
 
 			if (curMenu == 2 || curMenu == 11)
 			{
-				if ((mouseX >= 221) && (mouseX <= 303) && (mouseY >= 70) && (mouseY <= 82))
+				if ((mouseX >= (225 - 4)) && (mouseY >= 70) && (mouseY <= 82))
 				{
-					if (!musicActive)
+					if (music_disabled)
 					{
-						musicActive = true;
+						music_disabled = false;
 						restart_song();
 					}
-
-					curSel[2] = 4;
-					temp = (mouseX - 221) / 4 * 12;
-
-					if (abs(tyrMusicVolume - temp) < 12)
-						tyrMusicVolume = temp;
-					else if (tyrMusicVolume < temp)
-						tyrMusicVolume += 12;
-					else
-						tyrMusicVolume -= 12;
 					
-					tempB = false;
+					curSel[2] = 4;
+					
+					tyrMusicVolume = (mouseX - (225 - 4)) / 4 * 12;
+					if (tyrMusicVolume > 255)
+						tyrMusicVolume = 255;
 				}
 				
-				if ((mouseX >= 221) && (mouseX <= 303) && (mouseY >= 86) && (mouseY <= 98))
+				if ((mouseX >= (225 - 4)) && (mouseY >= 86) && (mouseY <= 98))
 				{
-					soundActive = true;
+					samples_disabled = false;
+					
 					curSel[2] = 5;
-					temp = (mouseX - 221) / 4 * 12;
-					if (abs(fxVolume - temp) < 12)
-						fxVolume = temp;
-					else if (fxVolume < temp)
-						fxVolume += 12;
-					else
-						fxVolume -= 12;
+					
+					fxVolume = (mouseX - (225 - 4)) / 4 * 12;
+					if (fxVolume > 255)
+						fxVolume = 255;
 				}
-				
-				if (fxVolume > 254)
-					fxVolume = 254;
 				
 				JE_calcFXVol();
-				JE_setVol(tyrMusicVolume, fxVolume); /* NOTE: MXD killed this because it was broken */
+				
+				set_volume(tyrMusicVolume, fxVolume);
+				
 				JE_playSampleNum(CURSOR_MOVE);
 			}
 
@@ -7113,16 +7104,16 @@ item_screen_start:
 						switch (curSel[curMenu])
 						{
 						case 4:
-							JE_changeVolume(&tyrMusicVolume, -16, &fxVolume, 0);
-							if (!musicActive)
+							JE_changeVolume(&tyrMusicVolume, -12, &fxVolume, 0);
+							if (music_disabled)
 							{
-								musicActive = true;
+								music_disabled = false;
 								restart_song();
 							}
 							break;
 						case 5:
-							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -16);
-							soundActive = true;
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -12);
+							samples_disabled = false;
 							break;
 						}
 						break;
@@ -7215,16 +7206,16 @@ item_screen_start:
 						switch (curSel[curMenu])
 						{
 						case 4:
-							JE_changeVolume(&tyrMusicVolume, 16, &fxVolume, 0);
-							if (!musicActive)
+							JE_changeVolume(&tyrMusicVolume, 12, &fxVolume, 0);
+							if (music_disabled)
 							{
-								musicActive = true;
+								music_disabled = false;
 								restart_song();
 							}
 							break;
 						case 5:
-							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 16);
-							soundActive = true;
+							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 12);
+							samples_disabled = false;
 							break;
 						}
 						break;
@@ -8970,7 +8961,7 @@ draw_player_shot_loop_end:
 	
 	lastPower = temp;
 	
-	JE_waitFrameCount();
+	//JE_waitFrameCount();  TODO: didn't do anything?
 }
 
 void JE_genItemMenu( JE_byte itemNum )

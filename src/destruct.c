@@ -1224,21 +1224,19 @@ void JE_destructMain( void )
 						}
 					}
 					
-					if (soundEffects > 0 && soundActive)
+					temp = 0;
+					for (temp2 = 0; temp2 < 8; temp2++)
 					{
-						
-						temp = 0;
-						for (temp2 = 0; temp2 < 8; temp2++)
-							if (soundQueue[temp2] > 0)
-							{
-								temp = soundQueue[temp2];
-								if (temp2 == 7)
-									temp3 = fxPlayVol;
-								else
-									temp3 = fxPlayVol / 2;
-								JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
-								soundQueue[temp2] = 0;
-							}
+						if (soundQueue[temp2] > 0)
+						{
+							temp = soundQueue[temp2];
+							if (temp2 == 7)
+								temp3 = fxPlayVol;
+							else
+								temp3 = fxPlayVol / 2;
+							JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
+							soundQueue[temp2] = 0;
+						}
 					}
 					
 					if (keysactive[SDLK_F10])
@@ -1896,7 +1894,8 @@ void JE_helpScreen( void )
 
 void JE_pauseScreen( void )
 {
-	JE_setVol(tyrMusicVolume / 2 + 10, fxVolume);
+	set_volume(tyrMusicVolume / 2, fxVolume);
+	
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	JE_outText(JE_fontCenter(miscText[23-1], TINY_FONT), 90, miscText[23-1], 12, 5);
 	JE_showVGA();
@@ -1908,7 +1907,8 @@ void JE_pauseScreen( void )
 	
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
 	JE_showVGA();
-	JE_setVol(tyrMusicVolume, fxVolume);
+	
+	set_volume(tyrMusicVolume, fxVolume);
 }
 
 // kate: tab-width 4; vim: set noet:

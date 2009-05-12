@@ -55,22 +55,16 @@ extern JE_boolean mixEnable;
 
 extern JE_boolean notYetLoadedSound;
 
-extern JE_byte soundEffects;
-
 extern JE_word frameCount, frameCount2, frameCountMax;
-
-extern JE_byte soundActive, musicActive;
 
 extern JE_byte *digiFx[SOUND_NUM + 9];
 extern JE_word fxSize[SOUND_NUM + 9];
 
-extern JE_word fxVolume, fxPlayVol;
+extern JE_word tyrMusicVolume, fxVolume;
+extern JE_word fxPlayVol;
 extern JE_word tempVolume;
-extern JE_word tyrMusicVolume;
 
 extern float jasondelay;
-
-void JE_timerInt( void );
 
 void setdelay( JE_byte delay );
 void setjasondelay( int delay );
@@ -84,43 +78,12 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 
 void JE_resetTimerInt( void );
 void JE_setTimerInt( void );
-void JE_endMusic ( JE_byte soundeffects);
-void JE_reinit ( JE_boolean redo );
-void JE_aweStuff( void );
-void JE_setTimerInt( void );
+
 void JE_calcFXVol( void );
-void JE_changeVolume( JE_word *temp, JE_integer change, JE_word *fxvol, JE_integer fxchange );
-void JE_frameDelay( JE_byte delay );
+void JE_changeVolume( JE_word *music, int music_delta, JE_word *sample, int sample_delta );
 
-void JE_loadSmpFile ( char *name, JE_byte samplenum);
 void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile );
-void JE_playSampleNum ( JE_byte samplenum );
-
-void JE_fxDestruct ( JE_byte samplenum );
-
-void JE_waitFrameCount( void );
-
-char *JE_hexa2 (JE_byte data );
-char *JE_hexa4 (JE_word data );
-
-
-/* SYN: This stuff is probably unneeded, as it deals with sound hardware issues abstracted
-   away by SDL. Pascal code is left here as reference, just in case we want this stuff
-   later.
-
-midiportlist : ARRAY [1..10] OF
-  WORD =
-  ($0000, $0000, $1000, $0666, $0330, $0320, $0332, $0334, $0336, $0300);
-
-fxportlist : ARRAY [1..4] OF
-  WORD =
-  ($FFFF, $0000, $0666, $1000);
-
-dmalist : ARRAY [1..3] OF
-  WORD =
-  ($0000, $0003, $0001);
-
-*/
+void JE_playSampleNum( JE_byte samplenum );
 
 #endif /* NORTSONG_H */
 
