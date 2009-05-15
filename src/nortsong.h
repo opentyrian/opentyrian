@@ -57,8 +57,8 @@ extern JE_boolean notYetLoadedSound;
 
 extern JE_word frameCount, frameCount2, frameCountMax;
 
-extern JE_byte *digiFx[SOUND_NUM + 9];
-extern JE_word fxSize[SOUND_NUM + 9];
+extern JE_byte *digiFx[SAMPLE_COUNT];
+extern JE_word fxSize[SAMPLE_COUNT];
 
 extern JE_word tyrMusicVolume, fxVolume;
 extern JE_word fxPlayVol;

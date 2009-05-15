@@ -138,10 +138,10 @@ void jukebox( void )
 				break;
 			case SDLK_COMMA:
 				if (fx && --fx_num < 0)
-					fx_num = SOUND_NUM + 9 - 1;
+					fx_num = SAMPLE_COUNT - 1;
 				break;
 			case SDLK_PERIOD:
-				if (fx && ++fx_num >= SOUND_NUM + 9)
+				if (fx && ++fx_num >= SAMPLE_COUNT)
 					fx_num = 0;
 				break;
 			case SDLK_SEMICOLON:

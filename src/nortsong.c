@@ -56,8 +56,8 @@ JE_boolean notYetLoadedSound = true;
 
 JE_word frameCount, frameCount2, frameCountMax;
 
-JE_byte *digiFx[SOUND_NUM + 9] = { NULL }; /* [1..soundnum + 9] */
-JE_word fxSize[SOUND_NUM + 9]; /* [1..soundnum + 9] */
+JE_byte *digiFx[SAMPLE_COUNT] = { NULL }; /* [1..soundnum + 9] */
+JE_word fxSize[SAMPLE_COUNT]; /* [1..soundnum + 9] */
 
 
 JE_word tyrMusicVolume, fxVolume;
@@ -124,7 +124,7 @@ void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile )
 	JE_byte y, z;
 	JE_word x;
 	JE_longint templ;
-	JE_longint sndPos[2][SOUND_NUM + 1]; /* Reindexed by -1, dammit Jason */
+	JE_longint sndPos[2][SAMPLE_COUNT + 1];
 	JE_word sndNum;
 
 	/* SYN: Loading offsets into TYRIAN.SND */
@@ -161,7 +161,7 @@ void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile )
 	fseek(fi, 0, SEEK_END);
 	sndPos[1][sndNum] = ftell(fi); /* Store file size */
 
-	z = SOUND_NUM;
+	z = SAMPLE_COUNT - 9;
 
 	for (y = 0; y < sndNum; y++)
 	{
@@ -210,12 +210,12 @@ void JE_changeVolume( JE_word *music, int music_delta, JE_word *sample, int samp
 		if (music_temp > 255)
 		{
 			music_temp = 255;
-			JE_playSampleNum(WRONG);
+			JE_playSampleNum(S_CLINK);
 		}
 		else if (music_temp < 0)
 		{
 			music_temp = 0;
-			JE_playSampleNum(WRONG);
+			JE_playSampleNum(S_CLINK);
 		}
 	}
 	
@@ -224,12 +224,12 @@ void JE_changeVolume( JE_word *music, int music_delta, JE_word *sample, int samp
 		if (sample_temp > 255)
 		{
 			sample_temp = 255;
-			JE_playSampleNum(WRONG);
+			JE_playSampleNum(S_CLINK);
 		}
 		else if (sample_temp < 0)
 		{
 			sample_temp = 0;
-			JE_playSampleNum(WRONG);
+			JE_playSampleNum(S_CLINK);
 		}
 	}
 	

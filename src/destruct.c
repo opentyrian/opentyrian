@@ -1212,14 +1212,14 @@ void JE_destructMain( void )
 						{
 							rightScore += lModeScore[destructMode-1];
 							died = true;
-							soundQueue[7] = 30;
+							soundQueue[7] = V_CLEARED_PLATFORM;
 							endDelay = 80;
 						}
 						if (rightAvail == 0)
 						{
 							leftScore += rModeScore[destructMode-1];
 							died = true;
-							soundQueue[7] = 30;
+							soundQueue[7] = V_CLEARED_PLATFORM;
 							endDelay = 80;
 						}
 					}
@@ -1234,14 +1234,15 @@ void JE_destructMain( void )
 								temp3 = fxPlayVol;
 							else
 								temp3 = fxPlayVol / 2;
+							
 							JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
-							soundQueue[temp2] = 0;
+							
+							soundQueue[temp2] = S_NONE;
 						}
 					}
 					
 					if (keysactive[SDLK_F10])
 					{
-						keysactive[SDLK_F10] = false;
 						cpu = !cpu;
 						keysactive[SDLK_F10] = false;
 					}
@@ -1249,7 +1250,6 @@ void JE_destructMain( void )
 					if (keysactive[SDLK_p])
 					{
 						JE_pauseScreen();
-						keysactive[SDLK_p] = false;
 						keysactive[lastkey_sym] = false;
 					}
 					

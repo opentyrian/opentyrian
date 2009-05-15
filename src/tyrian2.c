@@ -1316,8 +1316,8 @@ level_loop:
 			
 			if (score >= galagaLife)
 			{
-				soundQueue[6] = 11;
-				soundQueue[7] = 21;
+				soundQueue[6] = S_EXPLOSION_11;
+				soundQueue[7] = S_SOUL_OF_ZINGLON;
 				
 				if (portPower[1-1] < 11)
 					portPower[1-1]++;
@@ -1604,7 +1604,7 @@ level_loop:
 	{
 		tempW = levelEnemy[mt_rand() % levelEnemyMax];
 		if (tempW == 2)
-			soundQueue[3] = 7;
+			soundQueue[3] = S_WEAPON_7;
 		JE_newEnemy(0);
 	}
 
@@ -1882,7 +1882,7 @@ level_loop:
 								}
 							}
 							
-							soundQueue[5] = 3;
+							soundQueue[5] = S_ENEMY_HIT;
 							
 							if ((tempI - tempI2 <= enemy[b].edlevel) &&
 							    ((!enemy[b].edamaged) ^ (enemy[b].edani < 0)))
@@ -2032,12 +2032,12 @@ level_loop:
 										if (enemyDat[enemy[temp2].enemytype].esize == 1)
 										{
 											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);
-											soundQueue[6] = 9;
+											soundQueue[6] = S_EXPLOSION_9;
 										}
 										else
 										{
 											JE_setupExplosion(tempI3, enemy[temp2].ey, 0, 1, false, false);
-											soundQueue[6] = 8;
+											soundQueue[6] = S_SELECT; // S_EXPLOSION_8
 										}
 									}
 								}
@@ -2284,9 +2284,9 @@ enemy_shot_draw_overflow:
 				JE_setupExplosionLarge(false, 2, tempX, tempY);
 				
 				if (rep_explosions[i].ttl == 1 || mt_rand() % 5 == 1)
-					soundQueue[7] = 11;
+					soundQueue[7] = S_EXPLOSION_11;
 				else
-					soundQueue[6] = 9;
+					soundQueue[6] = S_EXPLOSION_9;
 				
 				rep_explosions[i].delay = 4 + (mt_rand() % 3);
 			}
@@ -2294,7 +2294,7 @@ enemy_shot_draw_overflow:
 			{
 				JE_setupExplosion(tempX, tempY, 0, 1, false, false);
 				
-				soundQueue[5] = 4;
+				soundQueue[5] = S_EXPLOSION_4;
 				
 				rep_explosions[i].delay = 3;
 			}
@@ -2440,7 +2440,7 @@ explosion_draw_overflow:
 			}
 			else
 			{
-				soundQueue[7] = 17;
+				soundQueue[7] = S_WARNING;
 				warningSoundDelay = tempW;
 			}
 			
@@ -2475,7 +2475,7 @@ explosion_draw_overflow:
 		temp = 0;
 		for (temp2 = 0; temp2 < SFX_CHANNELS; temp2++)
 		{
-			if (soundQueue[temp2] > 0)
+			if (soundQueue[temp2] != S_NONE)
 			{
 				temp = soundQueue[temp2];
 				if (temp2 == 3)
@@ -2486,7 +2486,8 @@ explosion_draw_overflow:
 					temp3 = fxPlayVol / 2;
 				
 				JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
-				soundQueue[temp2] = 0;
+				
+				soundQueue[temp2] = S_NONE;
 			}
 		}
 	}
@@ -2551,14 +2552,14 @@ explosion_draw_overflow:
 		if (levelTimerCountdown > 200)
 		{
 			if (levelTimerCountdown % 100 == 0)
-				soundQueue[7] = 17;
+				soundQueue[7] = S_WARNING;
 			
 			if (levelTimerCountdown % 10 == 0)
-				soundQueue[6] = 24;  /*28 or 24*/
+				soundQueue[6] = S_CLICK;
 		}
 		else if (levelTimerCountdown % 20 == 0)
 		{
-				soundQueue[7] = 17;
+			soundQueue[7] = S_WARNING;
 		}
 		
 		JE_textShade (140, 6, miscText[66], 7, (levelTimerCountdown % 20) / 3, FULL_SHADE);
@@ -3930,14 +3931,14 @@ void JE_titleScreen( JE_boolean animate )
 							menu = menunum-1;
 						else
 							menu--;
-						JE_playSampleNum(CURSOR_MOVE);
+						JE_playSampleNum(S_CURSOR);
 						break;
 					case SDLK_DOWN:
 						if (menu == menunum-1)
 							menu = 0;
 						else
 							menu++;
-						JE_playSampleNum(CURSOR_MOVE);
+						JE_playSampleNum(S_CURSOR);
 						break;
 					default:
 						break;
@@ -4058,7 +4059,7 @@ void JE_titleScreen( JE_boolean animate )
 						quit = true;
 						break;
 					case SDLK_RETURN:
-						JE_playSampleNum(SELECT);
+						JE_playSampleNum(S_SELECT);
 						switch (menu)
 						{
 							case 0: /* New game */
@@ -6686,7 +6687,7 @@ item_screen_start:
 			if (curMenu == 7 && cubeMax == 0)
 			{
 				curMenu = 0;
-				JE_playSampleNum(ESC);
+				JE_playSampleNum(S_SPRING);
 				newPal = 1;
 				JE_wipeKey();
 			}
@@ -6696,7 +6697,7 @@ item_screen_start:
 				if ((mouseX > 258) && (mouseX < 290) && (mouseY > 159) && (mouseY < 171))
 				{
 					curMenu = 7;
-					JE_playSampleNum(ESC);
+					JE_playSampleNum(S_SPRING);
 				}
 			}
 
@@ -6734,7 +6735,7 @@ item_screen_start:
 				
 				set_volume(tyrMusicVolume, fxVolume);
 				
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 			}
 
 			if (tempB && (mouseY > 20) && (mouseX > 170) && (mouseX < 308) && (curMenu != 8))
@@ -6777,11 +6778,11 @@ item_screen_start:
 					{
 						score = JE_cashLeft();
 						curMenu = 1;
-						JE_playSampleNum(ITEM);
+						JE_playSampleNum(S_ITEM);
 					}
 					else
 					{
-						JE_playSampleNum(CLICK);
+						JE_playSampleNum(S_CLICK);
 						if (curSel[curMenu] == tempI)
 						{
 							JE_menuFunction(curSel[curMenu]);
@@ -6794,7 +6795,7 @@ item_screen_start:
 							}
 							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > score))
 							{
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							else
 							{
@@ -6818,7 +6819,7 @@ item_screen_start:
 			{
 				if ((mouseX >= 23) && (mouseX <= 36) && (mouseY >= 149) && (mouseY <= 168))
 				{
-					JE_playSampleNum(CURSOR_MOVE);
+					JE_playSampleNum(S_CURSOR);
 					switch (curSel[1])
 					{
 						case 3:
@@ -6826,7 +6827,7 @@ item_screen_start:
 							{
 								portPower[0]--;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 						case 4:
@@ -6834,7 +6835,7 @@ item_screen_start:
 							{
 								portPower[1]--;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 					}
@@ -6843,7 +6844,7 @@ item_screen_start:
 
 				if ((mouseX >= 119) && (mouseX <= 131) && (mouseY >= 149) && (mouseY <= 168))
 				{
-					JE_playSampleNum(CURSOR_MOVE);
+					JE_playSampleNum(S_CURSOR);
 					switch (curSel[1])
 					{
 						case 3:
@@ -6851,7 +6852,7 @@ item_screen_start:
 							{
 								portPower[0]++;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 						case 4:
@@ -6859,7 +6860,7 @@ item_screen_start:
 							{
 								portPower[1]++;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 					}
@@ -6888,7 +6889,7 @@ item_screen_start:
 					break;
 
 				case SDLK_ESCAPE:
-					JE_playSampleNum(ESC);
+					JE_playSampleNum(S_SPRING);
 					if ( (curMenu == 6) && quikSave)
 					{
 						curMenu = oldMenu;
@@ -6956,7 +6957,7 @@ item_screen_start:
 					lastDirection = -1;
 					if (curMenu != 8)
 					{
-						JE_playSampleNum(CURSOR_MOVE);
+						JE_playSampleNum(S_CURSOR);
 					}
 					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
 					{
@@ -6987,7 +6988,7 @@ item_screen_start:
 					lastDirection = 1;
 					if (curMenu != 8)
 					{
-						JE_playSampleNum(CURSOR_MOVE);
+						JE_playSampleNum(S_CURSOR);
 					}
 					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
 					{
@@ -7073,7 +7074,7 @@ item_screen_start:
 						{
 						case 3:
 						case 4:
-							JE_playSampleNum(CURSOR_MOVE);
+							JE_playSampleNum(S_CURSOR);
 							
 							int temp = curSel[curMenu] - 3;
 							do {
@@ -7094,7 +7095,7 @@ item_screen_start:
 
 					if (curMenu == 2 || curMenu == 4  || curMenu == 11)
 					{
-						JE_playSampleNum(CURSOR_MOVE);
+						JE_playSampleNum(S_CURSOR);
 					}
 
 					switch (curMenu)
@@ -7125,7 +7126,7 @@ item_screen_start:
 							{
 								portPower[0]--;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 						case 4:
@@ -7133,7 +7134,7 @@ item_screen_start:
 							{
 								portPower[1]--;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 						}
@@ -7175,7 +7176,7 @@ item_screen_start:
 						{
 						case 3:
 						case 4:
-							JE_playSampleNum(CURSOR_MOVE);
+							JE_playSampleNum(S_CURSOR);
 							
 							int temp = curSel[curMenu] - 3;
 							do {
@@ -7196,7 +7197,7 @@ item_screen_start:
 
 					if (curMenu == 2 || curMenu == 4  || curMenu == 11)
 					{
-						JE_playSampleNum(CURSOR_MOVE);
+						JE_playSampleNum(S_CURSOR);
 					}
 
 					switch (curMenu)
@@ -7227,7 +7228,7 @@ item_screen_start:
 							{
 								portPower[0]++;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 						case 4:
@@ -7235,7 +7236,7 @@ item_screen_start:
 							{
 								portPower[1]++;
 							} else {
-								JE_playSampleNum(WRONG);
+								JE_playSampleNum(S_CLINK);
 							}
 							break;
 						}
@@ -8083,7 +8084,7 @@ JE_boolean JE_quitRequest( void )
 				case SDLK_RIGHT:
 				case SDLK_TAB:
 					quit_selected = !quit_selected;
-					JE_playSampleNum(CURSOR_MOVE);
+					JE_playSampleNum(S_CURSOR);
 					break;
 				case SDLK_RETURN:
 				case SDLK_SPACE:
@@ -8099,7 +8100,7 @@ JE_boolean JE_quitRequest( void )
 		}
 	}
 	
-	JE_playSampleNum(quit_selected ? ESC : CLICK);
+	JE_playSampleNum(quit_selected ? S_SPRING : S_CLICK);
 	
 	if (isNetworkGame && quit_selected)
 	{
@@ -8194,7 +8195,7 @@ void JE_menuFunction( JE_byte select )
 
 	col = 0;
 	colC = -1;
-	JE_playSampleNum(CLICK);
+	JE_playSampleNum(S_CLICK);
 
 	curSelect = curSel[curMenu];
 
@@ -8311,7 +8312,7 @@ void JE_menuFunction( JE_byte select )
 				memcpy(portPower, lastPortPower, sizeof(portPower));
 				curSel[4] = lastCurSel; /* JE: Cancel */
 			} else {
-				JE_playSampleNum(ITEM);
+				JE_playSampleNum(S_ITEM);
 			}
 
 			score = JE_cashLeft();
@@ -8382,7 +8383,7 @@ void JE_menuFunction( JE_byte select )
 				 lastkey_sym != SDLK_p &&      // reserved for pause
 				 tempB )
 			{
-				JE_playSampleNum(CLICK);
+				JE_playSampleNum(S_CLICK);
 				keySettings[curSelect-2] = lastkey_sym;
 				curSelect++;
 			}
@@ -8450,7 +8451,7 @@ void JE_menuFunction( JE_byte select )
 			break;
 		case 3:
 		case 4:
-			JE_playSampleNum(CURSOR_MOVE);
+			JE_playSampleNum(S_CURSOR);
 			
 			int temp = curSel[curMenu] - 3;
 			do {

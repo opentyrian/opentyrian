@@ -20,7 +20,7 @@
 #include "sndmast.h"
 
 
-const char soundTitle[SOUND_NUM + 9][9] = /* [1..soundnum + 9] of string [8] */
+const char soundTitle[SAMPLE_COUNT][9] = /* [1..soundnum + 9] of string [8] */
 {
 	"SCALEDN2", /*1*/
 	"F2",       /*2*/
@@ -64,28 +64,15 @@ const char soundTitle[SOUND_NUM + 9][9] = /* [1..soundnum + 9] of string [8] */
 
 const JE_byte windowTextSamples[9] = /* [1..9] */
 {
-	SOUND_NUM + 6,
-	SOUND_NUM + 2,
-	SOUND_NUM + 3,
-	SOUND_NUM + 1,
-	SOUND_NUM + 6,
-	SOUND_NUM + 7,
-	SOUND_NUM + 9,
-	SOUND_NUM + 6,
-	SOUND_NUM + 3
+	V_DANGER,
+	V_BOSS,
+	V_ENEMIES,
+	V_CLEARED_PLATFORM,
+	V_DANGER,
+	V_SPIKES,
+	V_ACCELERATE,
+	V_DANGER,
+	V_ENEMIES
 };
-
-
-/*
-XCLEARED.SMP *Cleared Enemy Platforms
-SU2ENEMY.SMP *Large Enemy Ahead
-LARGEE.SMP   *Incoming Enemies -> Large Enemy Ahead
-SU1LUCK.SMP  *Good Luck
-XLEVEL.SMP   *Level Completed
-WARNING.SMP  *Warning (Enemies approaching from behind)
-SU3SPIKE.SMP *Warning: Spikes Ahead
-DATA1.SMP    *Data Cube collected
-SPEEDINC.SMP *Unexplained Speed Increase
-*/
 
 // kate: tab-width 4; vim: set noet:

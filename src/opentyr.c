@@ -214,7 +214,7 @@ void opentyrian_menu( void )
 					{
 						sel = maxSel;
 					}
-					JE_playSampleNum(CURSOR_MOVE);
+					JE_playSampleNum(S_CURSOR);
 					break;
 				case SDLK_DOWN:
 					sel++;
@@ -222,7 +222,7 @@ void opentyrian_menu( void )
 					{
 						sel = 0;
 					}
-					JE_playSampleNum(CURSOR_MOVE);
+					JE_playSampleNum(S_CURSOR);
 					break;
 				case SDLK_LEFT:
 					if (sel == 2)
@@ -236,7 +236,7 @@ void opentyrian_menu( void )
 						if (display_surface->format->BitsPerPixel == 8)
 							temp_scaler = 0;
 						else
-							JE_playSampleNum(CURSOR_MOVE);
+							JE_playSampleNum(S_CURSOR);
 					}
 					break;
 				case SDLK_RIGHT:
@@ -251,14 +251,14 @@ void opentyrian_menu( void )
 						if (display_surface->format->BitsPerPixel == 8)
 							temp_scaler = 0;
 						else
-							JE_playSampleNum(CURSOR_MOVE);
+							JE_playSampleNum(S_CURSOR);
 					}
 					break;
 				case SDLK_RETURN:
 					switch (sel)
 					{
 						case 0: /* About */
-							JE_playSampleNum(SELECT);
+							JE_playSampleNum(S_SELECT);
 							
 							scroller_sine(about_text);
 							
@@ -267,13 +267,13 @@ void opentyrian_menu( void )
 							fade_in = true;
 							break;
 						case 1: /* Fullscreen */
-							JE_playSampleNum(SELECT);
+							JE_playSampleNum(S_SELECT);
 							
 							fullscreen_enabled = !fullscreen_enabled;
 							reinit_video();
 							break;
 						case 2: /* Scaler */
-							JE_playSampleNum(SELECT);
+							JE_playSampleNum(S_SELECT);
 							
 							if (scaler != temp_scaler)
 							{
@@ -282,7 +282,7 @@ void opentyrian_menu( void )
 							}
 							break;
 						case 3: /* Jukebox */
-							JE_playSampleNum(SELECT);
+							JE_playSampleNum(S_SELECT);
 							
 							JE_fadeBlack(10);
 							jukebox();
@@ -293,13 +293,13 @@ void opentyrian_menu( void )
 							break;
 						default: /* Return to main menu */
 							quit = true;
-							JE_playSampleNum(ESC);
+							JE_playSampleNum(S_SPRING);
 							break;
 					}
 					break;
 				case SDLK_ESCAPE:
 					quit = true;
-					JE_playSampleNum(ESC);
+					JE_playSampleNum(S_SPRING);
 					return;
 				default:
 					break;

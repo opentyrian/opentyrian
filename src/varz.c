@@ -653,7 +653,7 @@ void JE_tyrianHalt( JE_byte code )
 	free(shapes6);
 	shapes6 = NULL;
 	
-	for (int i = 0; i < SOUND_NUM + 9; i++)
+	for (int i = 0; i < SAMPLE_COUNT; i++)
 	{
 		free(digiFx[i]);
 	}
@@ -949,7 +949,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 		case 3:
 			zinglonDuration = 50;
 			shotRepeat[9-1] = 100;
-			soundQueue[7] = 21;
+			soundQueue[7] = S_SOUL_OF_ZINGLON;
 			break;
 		/*Attractor*/
 		case 4:
@@ -959,17 +959,14 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 				    && enemy[temp].evalue != 0)
 				{
 					if (PX > enemy[temp].ex)
-					{
 						enemy[temp].exc++;
-					} else if (PX < enemy[temp].ex) {
+					else if (PX < enemy[temp].ex)
 						enemy[temp].exc--;
-					}
+					
 					if (PY > enemy[temp].ey)
-					{
 						enemy[temp].eyc++;
-					} else if (PY < enemy[temp].ey) {
+					else if (PY < enemy[temp].ey)
 						enemy[temp].eyc--;
-					}
 				}
 			}
 			break;
@@ -983,9 +980,8 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 		case 11:
 		case 16:
 			if (flareDuration == 0)
-			{
 				flareStart = true;
-			}
+			
 			specialWeaponWpn = special[specialType].wpn;
 			linkToPlayer = false;
 			spraySpecial = false;
@@ -1007,7 +1003,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 					flareDuration = 50 + portPower[1-1] * 10;
 					zinglonDuration = 50;
 					shotRepeat[9-1] = 100;
-					soundQueue[7] = 21;
+					soundQueue[7] = S_SOUL_OF_ZINGLON;
 					break;
 				case 8:
 					specialWeaponFilter = -99;
@@ -1061,29 +1057,30 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 			break;
 		case 13:
 			if (playerNum == 1)
-			{
 				*armor += temp2 / 4 + 1;
-			} else {
+			else
 				armorLevel += temp2 / 4 + 1;
-			}
-			soundQueue[3] = 29;
+			
+			soundQueue[3] = S_POWERUP;
 			break;
 		case 14:
 			if (playerNum == 2)
-			{
 				*armor += temp2 / 4 + 1;
-			} else {
+			else
 				armorLevel2 += temp2 / 4 + 1;
-			}
-			soundQueue[3] = 29;
+			
+			soundQueue[3] = S_POWERUP;
 			break;
 		case 17:
-			soundQueue[3] = 29;
+			soundQueue[3] = S_POWERUP;
+			
 			if (pItems[4-1] == special[specialType].wpn)
 			{
 				pItems[5-1] = special[specialType].wpn;
 				shotMultiPos[4] = 0;
-			} else {
+			}
+			else
+			{
 				pItems[4-1] = special[specialType].wpn;
 				shotMultiPos[3] = 0;
 			}
@@ -1096,7 +1093,9 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shie
 			
 			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
-			soundQueue[4] = 29;
+			
+			soundQueue[4] = S_POWERUP;
+			
 			shotMultiPos[4-1] = 0;
 			break;
 	}
@@ -1106,13 +1105,10 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 {
 	if (pItems[11-1] > 0)
 	{
-		if (shotRepeat[9-1] == 0 && specialWait == 0 && flareDuration < 2 &&
-		    zinglonDuration < 2)
-		{
+		if (shotRepeat[9-1] == 0 && specialWait == 0 && flareDuration < 2 && zinglonDuration < 2)
 			JE_drawShape2(47, 4, 94, shapes9);
-		} else {
+		else
 			JE_drawShape2(47, 4, 93, shapes9);
-		}
 	}
 	
 	if (shotRepeat[9-1] > 0)
@@ -1134,29 +1130,29 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 			if (temp2 < 98)
 			{
 				if (*shield >= temp2)
-				{
 					*shield -= temp2;
-				} else {
+				else
 					tempB = false;
-				}
-			} else if (temp2 == 98) {
+			}
+			else if (temp2 == 98)
+			{
 				if (*shield < 4)
-				{
 					tempB = false;
-				}
 				temp2 = *shield;
 				*shield = 0;
-			} else if (temp2 == 99) {
+			}
+			else if (temp2 == 99)
+			{
 				temp2 = *shield / 2;
 				*shield = temp2;
-			} else {
+			}
+			else
+			{
 				temp2 -= 100;
 				if (*armor > temp2)
-				{
 					*armor -= temp2;
-				} else {
+				else
 					tempB = false;
-				}
 			}
 		}
 		
@@ -1185,7 +1181,9 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		if (!button[1-1] && !(superArcadeMode > 0 && (button[2-1] || button[3-1])))
 		{
 			fireButtonHeld = false;
-		} else if (shotRepeat[9-1] == 0 && !fireButtonHeld && !(flareDuration > 0) && specialWait == 0) {
+		}
+		else if (shotRepeat[9-1] == 0 && !fireButtonHeld && !(flareDuration > 0) && specialWait == 0)
+		{
 			fireButtonHeld = true;
 			JE_specialComplete(playerNum, armor, shield, pItems[11-1]);
 		}
@@ -1193,9 +1191,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 	}  /*Main End*/
 	
 	if (astralDuration > 0)
-	{
 		astralDuration--;
-	}
 	
 	shotAvail[MAX_PWEAPON-1] = 0;
 	if (flareDuration > 1)
@@ -1245,7 +1241,9 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 				{
 					JE_initPlayerShot(0, 9, PX, PY, mouseX, mouseY, specialWeaponWpn, playerNum);
 				}
-			} else {
+			}
+			else
+			{
 				JE_initPlayerShot(0, 9, mt_rand() % 280, mt_rand() % 180, mouseX, mouseY, specialWeaponWpn, playerNum);
 			}
 			
@@ -1265,14 +1263,11 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		{
 			specialWait = nextSpecialWait;
 		}
-	} else if (flareStart) {
+	}
+	else if (flareStart)
+	{
 		flareStart = false;
-		if (linkToPlayer)
-		{
-			shotRepeat[9-1] = 15;
-		} else {
-			shotRepeat[9-1] = 200;
-		}
+		shotRepeat[9-1] = linkToPlayer ? 15 : 200;
 		flareDuration = 0;
 		if (levelFilter == specialWeaponFilter)
 		{
@@ -1456,7 +1451,7 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
                          JE_shortint *shield )
 {
 	int playerDamage = 0;
-	soundQueue[7] = 27;
+	soundQueue[7] = S_SHIELD_HIT;
 	
 	/* Player Damage Routines */
 	if (*shield < temp)
@@ -1467,7 +1462,6 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 		
 		if (temp > 0)
 		{
-			
 			/*Through Shields - Now Armor */
 			if (*armorLevel < temp)
 			{
@@ -1480,14 +1474,15 @@ JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
 					*playerStillExploding = 60;
 					levelEnd = 40;
 					tempVolume = tyrMusicVolume;
-					soundQueue[1] = 22;
+					soundQueue[1] = S_EXPLOSION_22;
 				}
 				
 				/*Through Armor - Now What? */
-				
-			} else {
+			}
+			else
+			{
 				*armorLevel -= temp;
-				soundQueue[7] = 19;
+				soundQueue[7] = S_HULL_HIT;
 			}
 		}
 		

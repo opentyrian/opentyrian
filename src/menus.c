@@ -68,7 +68,7 @@ bool select_gameplay( void )
 				{
 					gameplay = gameplay_max;
 				}
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 				break;
 			case SDLK_DOWN:
 				gameplay++;
@@ -76,18 +76,18 @@ bool select_gameplay( void )
 				{
 					gameplay = 1;
 				}
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 				break;
 				
 			case SDLK_RETURN:
 				if (gameplay == 4)
 				{
-					JE_playSampleNum(ESC);
+					JE_playSampleNum(S_SPRING);
 					/* TODO: NETWORK */
 					printf("error: networking via menu not implemented\n");
 					break;
 				}
-				JE_playSampleNum(SELECT);
+				JE_playSampleNum(S_SELECT);
 				JE_fadeBlack(10);
 				
 				onePlayerAction = (gameplay == 2);
@@ -95,7 +95,7 @@ bool select_gameplay( void )
 				return true;
 				
 			case SDLK_ESCAPE:
-				JE_playSampleNum(ESC);
+				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				JE_fadeBlack(10); */
 				
@@ -146,7 +146,7 @@ bool select_episode( void )
 				{
 					episode = episode_max;
 				}
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 				break;
 			case SDLK_DOWN:
 				episode++;
@@ -154,16 +154,16 @@ bool select_episode( void )
 				{
 					episode = 1;
 				}
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 				break;
 				
 			case SDLK_RETURN:
 				if (!episodeAvail[episode - 1])
 				{
-					JE_playSampleNum(ESC);
+					JE_playSampleNum(S_SPRING);
 					break;
 				}
-				JE_playSampleNum(SELECT);
+				JE_playSampleNum(S_SELECT);
 				JE_fadeBlack(10);
 				
 				JE_initEpisode(episode);
@@ -171,7 +171,7 @@ bool select_episode( void )
 				return true;
 				
 			case SDLK_ESCAPE:
-				JE_playSampleNum(ESC);
+				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				JE_fadeBlack(10); */
 				
@@ -233,7 +233,7 @@ bool select_difficulty( void )
 				{
 					difficultyLevel = difficulty_max;
 				}
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 				break;
 			case SDLK_DOWN:
 				difficultyLevel++;
@@ -241,11 +241,11 @@ bool select_difficulty( void )
 				{
 					difficultyLevel = 1;
 				}
-				JE_playSampleNum(CURSOR_MOVE);
+				JE_playSampleNum(S_CURSOR);
 				break;
 				
 			case SDLK_RETURN:
-				JE_playSampleNum(SELECT);
+				JE_playSampleNum(S_SELECT);
 				/* fading handled elsewhere
 				JE_fadeBlack(10); */
 				
@@ -258,7 +258,7 @@ bool select_difficulty( void )
 				return true;
 				
 			case SDLK_ESCAPE:
-				JE_playSampleNum(ESC);
+				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				JE_fadeBlack(10); */
 				

@@ -21,22 +21,54 @@
 
 #include "opentyr.h"
 
+#define SAMPLE_COUNT 38
 
-#define SOUND_NUM 29
 
-#define CLICK        24
-#define WRONG        23
-#define ESC          16
-#define ITEM         18
-#define SELECT       8
-#define CURSOR_MOVE  28
-#define POWERUP      29
 
-#define V_GOOD_LUCK (SOUND_NUM + 4)
-#define V_LEVEL_END (SOUND_NUM + 5)
-#define V_DATA_CUBE (SOUND_NUM + 8)
+enum
+{
+	S_NONE,
+	S_WEAPON_1,
+	S_WEAPON_2,
+	S_ENEMY_HIT,
+	S_EXPLOSION_4,
+	S_WEAPON_5,
+	S_WEAPON_6,
+	S_WEAPON_7,
+	S_SELECT, // S_EXPLOSION_8
+	S_EXPLOSION_9,
+	S_WEAPON_10,
+	S_EXPLOSION_11,
+	S_EXPLOSION_12,
+	S_WEAPON_13,
+	S_WEAPON_14,
+	S_WEAPON_15,
+	S_SPRING,
+	S_WARNING,
+	S_ITEM,
+	S_HULL_HIT,
+	S_MACHINE_GUN,
+	S_SOUL_OF_ZINGLON,
+	S_EXPLOSION_22,
+	S_CLINK,
+	S_CLICK,
+	S_WEAPON_25,
+	S_WEAPON_26,
+	S_SHIELD_HIT,
+	S_CURSOR,
+	S_POWERUP,
+	V_CLEARED_PLATFORM, // 30
+	V_BOSS,
+	V_ENEMIES,
+	V_GOOD_LUCK,
+	V_LEVEL_END,
+	V_DANGER,
+	V_SPIKES,
+	V_DATA_CUBE,
+	V_ACCELERATE,
+};
 
-extern const char soundTitle[SOUND_NUM + 9][9];
+extern const char soundTitle[SAMPLE_COUNT][9];
 extern const JE_byte windowTextSamples[9];
 
 #endif /* SNDMAST_H */
