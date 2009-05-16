@@ -510,53 +510,46 @@ void free_main_shape_tables( void )
 	shapesW2 = NULL;
 }
 
-JE_word JE_powerLevelCost( JE_word base, JE_byte level )
+long weapon_upgrade_cost( long base_cost, unsigned int power )
 {
-	JE_byte x;
-	JE_word tempCost = 0;
-
-	if (level > 0 && level < 12)
-	{
-		for (x = 1; x <= level; x++)
-		{
-			tempCost += base * x;
-		}
-	}
-
-	return tempCost;
+	assert(power <= 11);
+	
+	unsigned int temp = 0;
+	
+	for (; power > 0; power--)
+		temp += power;
+	
+	return base_cost * temp;
 }
 
 JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 {
+	long cost = 0;
+	
 	switch (itemType)
 	{
-		case 2:
-			if (itemNum > 90)
-			{
-				tempW2 = 100;
-			} else {
-				tempW2 = ships[itemNum].cost;
-			}
-			break;
-		case 3:
-		case 4:
-			tempW2 = weaponPort[itemNum].cost;
-			downgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-3]-1);
-			upgradeCost = JE_powerLevelCost(tempW2, portPower[itemType-3]);
-			break;
-		case 5:
-			tempW2 = shields[itemNum].cost;
-			break;
-		case 6:
-			tempW2 = powerSys[itemNum].cost;
-			break;
-		case 7:
-		case 8:
-			tempW2 = options[itemNum].cost;
-			break;
+	case 2:
+		cost = (itemNum > 90) ? 100 : ships[itemNum].cost;
+		break;
+	case 3:
+	case 4:
+		cost = weaponPort[itemNum].cost;
+		downgradeCost = weapon_upgrade_cost(cost, portPower[itemType-3] - 1);
+		upgradeCost = weapon_upgrade_cost(cost, portPower[itemType-3]);
+		break;
+	case 5:
+		cost = shields[itemNum].cost;
+		break;
+	case 6:
+		cost = powerSys[itemNum].cost;
+		break;
+	case 7:
+	case 8:
+		cost = options[itemNum].cost;
+		break;
 	}
 
-	return tempW2;
+	return cost;
 }
 
 void JE_loadScreen( void )
@@ -763,58 +756,55 @@ void JE_loadScreen( void )
 
 JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems )
 {
-	JE_longint tempL = score;
-
-	tempL += JE_getValue(2, pItems[12-1]);
-	tempL += JE_getValue(3, pItems[1-1]);
-	tempL += JE_getValue(4, pItems[2-1]);
-	tempL += JE_getValue(5, pItems[10-1]);
-	tempL += JE_getValue(6, pItems[6-1]);
-	tempL += JE_getValue(7, pItems[4-1]);
-	tempL += JE_getValue(8, pItems[5-1]);
-
-	return tempL;
+	long temp = score;
+	
+	temp += JE_getValue(2, pItems[P_SHIP]);
+	temp += JE_getValue(3, pItems[P_FRONT]);
+	temp += JE_getValue(4, pItems[P_REAR]);
+	temp += JE_getValue(5, pItems[P_SHIELD]);
+	temp += JE_getValue(6, pItems[P_GENERATOR]);
+	temp += JE_getValue(7, pItems[P_LEFT_SIDEKICK]);
+	temp += JE_getValue(8, pItems[P_RIGHT_SIDEKICK]);
+	
+	return temp;
 }
 
 JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 {
-	JE_longint tempW2 = 0;
-	JE_byte z;
-
+	long value = 0;
+	
 	switch (itemType)
 	{
-		case 2:
-			tempW2 = ships[itemNum].cost;
-			break;
-		case 3:
-		case 4:
-			tempW2 = weaponPort[itemNum].cost;
-			tempW3 = tempW2;
-			for (z = 0; z < portPower[itemType-2-1]; z++)
-			{
-				tempW2 += JE_powerLevelCost(tempW3, z);
-			}
-			break;
-		case 5:
-			tempW2 = shields[itemNum].cost;
-			break;
-		case 6:
-			tempW2 = powerSys[itemNum].cost;
-			break;
-		case 7:
-		case 8:
-			tempW2 = options[itemNum].cost;
-			break;
+	case 2:
+		value = ships[itemNum].cost;
+		break;
+	case 3:
+	case 4:;
+		long base_value = weaponPort[itemNum].cost;
+		value = base_value;
+		for (unsigned int i = 1; i < portPower[itemType-3]; i++)
+			value += weapon_upgrade_cost(base_value, i);
+		break;
+	case 5:
+		value = shields[itemNum].cost;
+		break;
+	case 6:
+		value = powerSys[itemNum].cost;
+		break;
+	case 7:
+	case 8:
+		value = options[itemNum].cost;
+		break;
 	}
-
-	return tempW2;
+	
+	return value;
 }
 
 void JE_nextEpisode( void )
 {
 	strcpy(lastLevelName, "Completed");
 	
-	if (episodeNum == pItems[9-1] && !gameHasRepeated && episodeNum != 4 &&
+	if (episodeNum == pItems[P_EPISODE] && !gameHasRepeated && episodeNum != 4 &&
 	    !isNetworkGame && !constantPlay)
 	{
 		JE_highScoreCheck();
@@ -840,12 +830,12 @@ void JE_nextEpisode( void )
 		// randomly give player the SuperCarrot
 		if ((mt_rand() % 6) == 0)
 		{
-			pItems[1-1] = 23;
-			pItems[2-1] = 24;
-			pItems[12-1] = 2;
+			pItems[P_FRONT] = 23;
+			pItems[P_REAR] = 24;
+			pItems[P_SHIP] = 2;
 			portPower[1-1] = 1;
 			portPower[2-1] = 1;
-			pItemsPlayer2[2-1] = 24;
+			pItemsPlayer2[P_REAR] = 24;
 			memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
 		}
 	}
@@ -888,25 +878,25 @@ void JE_nextEpisode( void )
 void JE_initPlayerData( void )
 {
 	/* JE: New Game Items/Data */
-	pItems[0] = 1;  /* Normally 1 - Front Weapon */
-	pItems[1] = 0;  /* Normally 0 - Rear Weapon */
-	pItems[2] = 0;  /* SuperArcade mode */
-	pItems[3] = 0;  /* Left Option */
-	pItems[4] = 0;  /* Right Option */
-	pItems[5] = 2;  /* Generator */
-	pItems[6] = 2;
-	pItems[7] = 1;
-	pItems[8] = 0;  /* Starting Episode num */
-	pItems[9] = 4;  /* Shields */
-	pItems[10] = 0; /* Secret Weapons - Normally 0 */
-	pItems[11] = 1; /* Normally 1 - Player Ship */
+	pItems[P_FRONT] = 1;  /* Normally 1 - Front Weapon */
+	pItems[P_REAR] = 0;  /* Normally 0 - Rear Weapon */
+	pItems[P_SUPERARCADE] = 0;  /* SuperArcade mode */
+	pItems[P_LEFT_SIDEKICK] = 0;  /* Left Option */
+	pItems[P_RIGHT_SIDEKICK] = 0;  /* Right Option */
+	pItems[P_GENERATOR] = 2;  /* Generator */
+	pItems[P2_SIDEKICK_MODE] = 2;
+	pItems[P2_SIDEKICK_TYPE] = 1;
+	pItems[P_EPISODE] = 0;  /* Starting Episode num */
+	pItems[P_SHIELD] = 4;  /* Shields */
+	pItems[P_SPECIAL] = 0; /* Secret Weapons - Normally 0 */
+	pItems[P_SHIP] = 1; /* Normally 1 - Player Ship */
 	memcpy(pItemsBack2, pItems, sizeof(pItems));
 	memcpy(pItemsPlayer2, pItems, sizeof(pItems));
-	pItemsPlayer2[1] = 15; /* Player 2 starts with 15 - MultiCannon and 2 single shot options */
-	pItemsPlayer2[3] = 0;
-	pItemsPlayer2[4] = 0;
-	pItemsPlayer2[6] = 101; /* Player 2  Option Mode 101,102,103 */
-	pItemsPlayer2[7] = 0; /* Player 2  Option Type */
+	pItemsPlayer2[P_REAR] = 15; /* Player 2 starts with 15 - MultiCannon and 2 single shot options */
+	pItemsPlayer2[P_LEFT_SIDEKICK] = 0;
+	pItemsPlayer2[P_RIGHT_SIDEKICK] = 0;
+	pItemsPlayer2[P2_SIDEKICK_MODE] = 101; /* Player 2  Option Mode 101,102,103 */
+	pItemsPlayer2[P2_SIDEKICK_TYPE] = 0; /* Player 2  Option Type */
 	for (temp = 0; temp < 2; temp++)
 	{
 		portConfig[temp] = 1;
@@ -920,7 +910,7 @@ void JE_initPlayerData( void )
 
 	secretHint = (mt_rand()%3) + 1;
 
-	armorLevel = ships[pItems[11]].dmg;
+	armorLevel = ships[pItems[P_SHIP]].dmg;
 	portPower[0] = 1;
 	portPower[1] = 1;
 	portConfig[1] = 1;
@@ -1535,7 +1525,7 @@ void JE_highScoreCheck( void )
 	char stemp[41], tempstr[41];
 	JE_boolean fadein;
 	JE_byte a, b, c, q, z = 0;
-	JE_byte episodenum = pItems[9-1];
+	JE_byte episodenum = pItems[P_EPISODE];
 	char buffer[256];
 	
 	for (q = 1; q <= 2; q++)
@@ -1945,7 +1935,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 	JE_byte temp, temp2, temp3, temp4, temp5;
 	
 	/*Get direction*/
-	tempW = pItems_[11]; // Get player ship
+	tempW = pItems_[P_SHIP]; // Get player ship
 	if (playerNum_ == 2 && tempW < 15)
 	{
 		tempW = 0;
@@ -2242,20 +2232,20 @@ void JE_endLevelAni( void )
 	{
 		/*Grant Bonus Items*/
 		/*Front/Rear*/
-		saveTemp[SAVE_FILES_SIZE + pItems[1-1]] = 1;
-		saveTemp[SAVE_FILES_SIZE + pItems[2-1]] = 1;
-		saveTemp[SAVE_FILES_SIZE + pItemsPlayer2[1-1]] = 1;
-		saveTemp[SAVE_FILES_SIZE + pItemsPlayer2[2-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItems[P_FRONT]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItems[P_REAR]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItemsPlayer2[P_FRONT]] = 1;
+		saveTemp[SAVE_FILES_SIZE + pItemsPlayer2[P_REAR]] = 1;
 		
 		/*Special*/
-		if (pItems[11-1] < 21)
-			saveTemp[SAVE_FILES_SIZE + 81 + pItems[11-1]] = 1;
+		if (pItems[P_SPECIAL] < 21)
+			saveTemp[SAVE_FILES_SIZE + 81 + pItems[P_SPECIAL]] = 1;
 		
 		/*Options*/
-		saveTemp[SAVE_FILES_SIZE + 51 + pItems[4-1]] = 1;
-		saveTemp[SAVE_FILES_SIZE + 51 + pItems[5-1]] = 1;
-		saveTemp[SAVE_FILES_SIZE + 51 + pItemsPlayer2[4-1]] = 1;
-		saveTemp[SAVE_FILES_SIZE + 51 + pItemsPlayer2[5-1]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItems[P_LEFT_SIDEKICK]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItems[P_RIGHT_SIDEKICK]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItemsPlayer2[P_LEFT_SIDEKICK]] = 1;
+		saveTemp[SAVE_FILES_SIZE + 51 + pItemsPlayer2[P_RIGHT_SIDEKICK]] = 1;
 	}
 	
 	JE_changeDifficulty();
@@ -2453,13 +2443,13 @@ void JE_operation( JE_byte slot )
 			gameLoaded = true;
 			quit = true;
 			
-			if (pItems[3-1] > 0)
+			if (pItems[P_SUPERARCADE] > 0)
 			{
 				onePlayerAction = true;
-				if (pItems[3-1] == 255)
+				if (pItems[P_SUPERARCADE] == 255)
 					superTyrian = true;
 				else
-					superArcadeMode = pItems[3-1];
+					superArcadeMode = pItems[P_SUPERARCADE];
 			}
 		}
 	}
@@ -2612,9 +2602,9 @@ void JE_inGameDisplays( void )
 	}
 
 	/*Special Weapon?*/
-	if (pItems[11-1] > 0)
+	if (pItems[P_SPECIAL] > 0)
 	{
-		JE_drawShape2x2(25, 1, special[pItems[11-1]].itemgraphic, eShapes6);
+		JE_drawShape2x2(25, 1, special[pItems[P_SPECIAL]].itemgraphic, eShapes6);
 	}
 
 	/*Lives Left*/
@@ -2623,7 +2613,7 @@ void JE_inGameDisplays( void )
 		
 		for (temp = 0; temp < (onePlayerAction ? 1 : 2); temp++)
 		{
-			temp5 = (temp == 0 && pItems[11-1] > 0) ? 35 : 15;
+			temp5 = (temp == 0 && pItems[P_SPECIAL] > 0) ? 35 : 15;
 			tempW = (temp == 0) ? 30: 270;
 			
 			if (portPower[temp] > 5)
@@ -2690,16 +2680,16 @@ void JE_mainKeyboardInput( void )
 				if (keysactive[x])
 				{
 					z = x == SDLK_0 ? 10 : x - SDLK_0;
-					pItems[11] = 90 + z;                     /*Ships*/
+					pItems[P_SHIP] = 90 + z;                     /*Ships*/
 					z = (z - 1) * 15;
-					pItems[0] = extraShips[z + 1];
-					pItems[1] = extraShips[z + 2];
-					pItems[10] = extraShips[z + 3];
-					pItems[3] = extraShips[z + 4];
-					pItems[4] = extraShips[z + 5];
-					pItems[5] = extraShips[z + 6];
+					pItems[P_FRONT] = extraShips[z + 1];
+					pItems[P_REAR] = extraShips[z + 2];
+					pItems[P_SPECIAL] = extraShips[z + 3];
+					pItems[P_LEFT_SIDEKICK] = extraShips[z + 4];
+					pItems[P_RIGHT_SIDEKICK] = extraShips[z + 5];
+					pItems[P_GENERATOR] = extraShips[z + 6];
 					/*Armor*/
-					pItems[9] = extraShips[z + 8];
+					pItems[P_SHIELD] = extraShips[z + 8];
 					memset(shotMultiPos, 0, sizeof(shotMultiPos));
 					JE_portConfigs();
 					if (portConfig[1] > tempW)
@@ -2733,16 +2723,16 @@ void JE_mainKeyboardInput( void )
 				if (keysactive[x])
 				{
 					z = x == SDLK_0 ? 10 : x - SDLK_0;
-					pItemsPlayer2[11] = 90 + z;
+					pItemsPlayer2[P_SHIP] = 90 + z;
 					z = (z - 1) * 15;
-					pItemsPlayer2[0] = extraShips[z + 1];
-					pItemsPlayer2[1] = extraShips[z + 2];
-					pItemsPlayer2[10] = extraShips[z + 3];
-					pItemsPlayer2[3] = extraShips[z + 4];
-					pItemsPlayer2[4] = extraShips[z + 5];
-					pItemsPlayer2[5] = extraShips[z + 6];
+					pItemsPlayer2[P_FRONT] = extraShips[z + 1];
+					pItemsPlayer2[P_REAR] = extraShips[z + 2];
+					pItemsPlayer2[P_SPECIAL] = extraShips[z + 3];
+					pItemsPlayer2[P_LEFT_SIDEKICK] = extraShips[z + 4];
+					pItemsPlayer2[P_RIGHT_SIDEKICK] = extraShips[z + 5];
+					pItemsPlayer2[P_GENERATOR] = extraShips[z + 6];
 					/*Armor*/
-					pItemsPlayer2[9] = extraShips[z + 8];
+					pItemsPlayer2[P_SHIELD] = extraShips[z + 8];
 					memset(shotMultiPos, 0, sizeof(shotMultiPos));
 					JE_portConfigs();
 					if (portConfig[1] > tempW)
@@ -2789,10 +2779,10 @@ void JE_mainKeyboardInput( void )
 		{
 			nortShipRequest = true;
 		} else {
-			pItems[11] = 12;
-			pItems[10] = 13;
-			pItems[1] = 36;
-			pItems[2] = 37;
+			pItems[P_SHIP] = 12;
+			pItems[P_SPECIAL] = 13;
+			pItems[P_REAR] = 36;
+			pItems[P_SUPERARCADE] = 37;
 			shipGr = 1;
 		}
 	}
@@ -3063,9 +3053,9 @@ void JE_playerMovement( JE_byte inputDevice,
 	{
 		if (playerNum_ == 2)
 		{
-			tempW = weaponPort[pItemsPlayer2[2-1]].opnum;
+			tempW = weaponPort[pItemsPlayer2[P_REAR]].opnum;
 		} else {
-			tempW = weaponPort[pItems_[2-1]].opnum;
+			tempW = weaponPort[pItems_[P_REAR]].opnum;
 		}
 		if (portConfig[2-1] > tempW)
 		{
@@ -3674,11 +3664,11 @@ redo:
 					{
 						shotMultiPos[2-1] = 0;
 						JE_initPlayerShot(0, 2, *PX_ + 1 + round(sin(linkGunDirec) * 20), *PY_ + round(cos(linkGunDirec) * 20),
-						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[2-1]-1], playerNum_);
+						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[P_REAR]-1], playerNum_);
 						playerShotData[b].shotXM = -round(sin(linkGunDirec) * playerShotData[b].shotYM);
 						playerShotData[b].shotYM = -round(cos(linkGunDirec) * playerShotData[b].shotYM);
 
-						switch (pItems_[2-1])
+						switch (pItems_[P_REAR])
 						{
 							case 27:
 							case 32:
@@ -3890,12 +3880,12 @@ redo:
 							{
 								shotMultiPos[9-1] = 0;
 								shotMultiPos[11-1] = 0;
-								if (pItems[11-1] == SASpecialWeapon[superArcadeMode-1])
+								if (pItems[P_SPECIAL] == SASpecialWeapon[superArcadeMode-1])
 								{
-									pItems[11-1] = SASpecialWeaponB[superArcadeMode-1];
+									pItems[P_SPECIAL] = SASpecialWeaponB[superArcadeMode-1];
 									portConfig[2-1] = 2;
 								} else {
-									pItems[11-1] = SASpecialWeapon[superArcadeMode-1];
+									pItems[P_SPECIAL] = SASpecialWeapon[superArcadeMode-1];
 									portConfig[2-1] = 1;
 								}
 							} else {
@@ -3998,7 +3988,7 @@ redo:
 							{
 								shotMultiPos[6-1] = 0;
 								JE_initPlayerShot(16, 6, *PX_, *PY_, *mouseX_, *mouseY_,
-								                  chargeGunWeapons[pItemsPlayer2[2-1]-1] + chargeLevel, playerNum_);
+								                  chargeGunWeapons[pItemsPlayer2[P_REAR]-1] + chargeLevel, playerNum_);
 
 								if (chargeLevel > 0)
 								{
@@ -4483,7 +4473,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						
 						tempW = SAWeapon[superArcadeMode-1][tempI4 - 30000-1];
 						
-						if (tempW == pItems[1-1])
+						if (tempW == pItems[P_FRONT])
 						{
 							*score_ += 1000;
 							if (portPower[1-1] < 11)
@@ -4500,7 +4490,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							JE_calcPurpleBall(playerNum_);
 						}
 						
-						pItems[1-1] = tempW;
+						pItems[P_FRONT] = tempW;
 						*score_ += 200;
 						soundQueue[7] = S_POWERUP;
 						enemyAvail[z] = 1;
@@ -4510,7 +4500,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						if (playerNum_ == 1)
 						{
 							*score_ += 250;
-							pItems[11-1] = tempI4 - 32100;
+							pItems[P_SPECIAL] = tempI4 - 32100;
 							shotMultiPos[9-1] = 0;
 							shotRepeat[9-1] = 10;
 							shotMultiPos[11-1] = 0;
@@ -4538,16 +4528,16 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 								sprintf(tempStr, "%s %s", miscText[44-1], options[tempI4 - 32000].name);
 							JE_drawTextWindow(tempStr);
 							
-							if (tempI4 - 32000 != pItemsPlayer2[8-1])
-								pItemsPlayer2[7-1] = 100;
-							pItemsPlayer2[8-1] = tempI4 - 32000;
+							if (tempI4 - 32000 != pItemsPlayer2[P2_SIDEKICK_TYPE])
+								pItemsPlayer2[P2_SIDEKICK_MODE] = 100;
+							pItemsPlayer2[P2_SIDEKICK_TYPE] = tempI4 - 32000;
 							
-							if (pItemsPlayer2[7-1] < 103)
-								pItemsPlayer2[7-1]++;
+							if (pItemsPlayer2[P2_SIDEKICK_MODE] < 103)
+								pItemsPlayer2[P2_SIDEKICK_MODE]++;
 							
-							temp = pItemsPlayer2[7-1] - 100;
-							pItemsPlayer2[4-1] = optionSelect[pItemsPlayer2[8-1]][temp-1][1-1];
-							pItemsPlayer2[5-1] = optionSelect[pItemsPlayer2[8-1]][temp-1][2-1];
+							temp = pItemsPlayer2[P2_SIDEKICK_MODE] - 100;
+							pItemsPlayer2[P_LEFT_SIDEKICK] = optionSelect[pItemsPlayer2[P2_SIDEKICK_TYPE]][temp-1][1-1];
+							pItemsPlayer2[P_RIGHT_SIDEKICK] = optionSelect[pItemsPlayer2[P2_SIDEKICK_TYPE]][temp-1][2-1];
 							
 							
 							shotMultiPos[3-1] = 0;
@@ -4562,8 +4552,8 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							enemyAvail[z] = 1;
 							sprintf(tempStr, "%s %s", miscText[64-1], options[tempI4 - 32000].name);
 							JE_drawTextWindow(tempStr);
-							pItems[4-1] = tempI4 - 32000;
-							pItems[5-1] = tempI4 - 32000;
+							pItems[P_LEFT_SIDEKICK] = tempI4 - 32000;
+							pItems[P_RIGHT_SIDEKICK] = tempI4 - 32000;
 							shotMultiPos[3-1] = 0;
 							shotMultiPos[4-1] = 0;
 							tempScreenSeg = VGAScreenSeg;
@@ -4583,7 +4573,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							else
 								sprintf(tempStr, "%s %s", miscText[44-1], weaponPort[tempI4 - 31000].name);
 							JE_drawTextWindow(tempStr);
-							pItemsPlayer2[2-1] = tempI4 - 31000;
+							pItemsPlayer2[P_REAR] = tempI4 - 31000;
 							shotMultiPos[2-1] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
@@ -4592,7 +4582,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						{
 							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 31000].name);
 							JE_drawTextWindow(tempStr);
-							pItems[2-1] = tempI4 - 31000;
+							pItems[P_REAR] = tempI4 - 31000;
 							shotMultiPos[2] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
@@ -4609,7 +4599,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							else
 								sprintf(tempStr, "%s %s", miscText[43-1], weaponPort[tempI4 - 30000].name);
 							JE_drawTextWindow(tempStr);
-							pItems[1-1] = tempI4 - 30000;
+							pItems[P_FRONT] = tempI4 - 30000;
 							shotMultiPos[1-1] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
@@ -4618,7 +4608,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						{
 							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 30000].name);
 							JE_drawTextWindow(tempStr);
-							pItems[1-1] = tempI4 - 30000;
+							pItems[P_FRONT] = tempI4 - 30000;
 							shotMultiPos[1-1] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
@@ -4626,8 +4616,8 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						
 						if (enemyAvail[z] == 1)
 						{
-							pItems[11-1] = specialArcadeWeapon[tempI4 - 30000-1];
-							if (pItems[11-1] > 0)
+							pItems[P_SPECIAL] = specialArcadeWeapon[tempI4 - 30000-1];
+							if (pItems[P_SPECIAL] > 0)
 							{
 								shotMultiPos[9-1] = 0;
 								shotRepeat[9-1] = 0;
@@ -4719,9 +4709,9 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 					}
 					else if (tempI4 == -5)
 					{
-						pItems[1-1] = 25;         /*HOT DOG!*/
-						pItems[2-1] = 26;
-						pItemsPlayer2[2-1] = 26;
+						pItems[P_FRONT] = 25;         /*HOT DOG!*/
+						pItems[P_REAR] = 26;
+						pItemsPlayer2[P_REAR] = 26;
 						memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
 						portConfig[2-1] = 1;
 						memset(shotMultiPos, 0, sizeof(shotMultiPos));

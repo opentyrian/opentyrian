@@ -295,21 +295,21 @@ void JE_saveGame( JE_byte slot, char *name )
 	saveFiles[slot-1].gameHasRepeated = gameHasRepeated;
 	saveFiles[slot-1].level = saveLevel;
 
-	pItems[3-1] = superArcadeMode;
+	pItems[P_SUPERARCADE] = superArcadeMode;
 	if (superArcadeMode == 0 && onePlayerAction)
 	{
-		pItems[3-1] = 255;
+		pItems[P_SUPERARCADE] = 255;
 	}
 	if (superTyrian)
 	{
-		pItems[3-1] = 254;
+		pItems[P_SUPERARCADE] = 254;
 	}
 
 	memcpy(&saveFiles[slot-1].items, &pItems, sizeof(pItems));
 
 	if (superArcadeMode > 253)
 	{
-		pItems[3-1] = 0;
+		pItems[P_SUPERARCADE] = 0;
 	}
 	if (twoPlayerMode)
 	{
@@ -365,17 +365,17 @@ void JE_loadGame( JE_byte slot )
 	twoPlayerMode     = (slot-1) > 10;
 	difficultyLevel   = saveFiles[slot-1].difficulty;
 	memcpy(&pItems, &saveFiles[slot-1].items, sizeof(pItems));
-	superArcadeMode   = pItems[3-1];
+	superArcadeMode   = pItems[P_SUPERARCADE];
 
 	if (superArcadeMode == 255)
 	{
 		onePlayerAction = true;
 		superArcadeMode = 0;
-		pItems[3-1] = 0;
+		pItems[P_SUPERARCADE] = 0;
 	} else if (superArcadeMode == 254) {
 		onePlayerAction = true;
 		superArcadeMode = 0;
-		pItems[3-1] = 0;
+		pItems[P_SUPERARCADE] = 0;
 		superTyrian = true;
 	} else if (superArcadeMode > 0) {
 		onePlayerAction = true;
@@ -390,10 +390,10 @@ void JE_loadGame( JE_byte slot )
 	}
 
 	/* Compatibility with old version */
-	if (pItemsPlayer2[7-1] < 101)
+	if (pItemsPlayer2[P2_SIDEKICK_MODE] < 101)
 	{
-		pItemsPlayer2[7-1] = 101;
-		pItemsPlayer2[8-1] = pItemsPlayer2[4-1];
+		pItemsPlayer2[P2_SIDEKICK_MODE] = 101;
+		pItemsPlayer2[P2_SIDEKICK_TYPE] = pItemsPlayer2[P_LEFT_SIDEKICK];
 	}
 
 	score       = saveFiles[slot-1].score;

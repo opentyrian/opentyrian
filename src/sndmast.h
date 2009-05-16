@@ -27,7 +27,7 @@
 
 enum
 {
-	S_NONE,
+	S_NONE = 0,
 	S_WEAPON_1,
 	S_WEAPON_2,
 	S_ENEMY_HIT,

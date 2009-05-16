@@ -854,7 +854,7 @@ start_level:
 			{
 				superTyrian = false;
 				onePlayerAction = false;
-				pItems[2] = 0;
+				pItems[P_SUPERARCADE] = 0;
 			}
 			if (bonusLevelCurrent && !playerEndLevel)
 			{
@@ -1056,10 +1056,10 @@ start_level_first:
 
 	/* Setup Armor/Shield Data */
 	shieldWait = 1;
-	shield     = shields[pItems[10-1]].mpwr;
-	shieldT    = shields[pItems[10-1]].tpwr * 20;
+	shield     = shields[pItems[P_SHIELD]].mpwr;
+	shieldT    = shields[pItems[P_SHIELD]].tpwr * 20;
 	shieldMax  = shield * 2;
-	shield2    = shields[pItemsPlayer2[10-1]].mpwr;
+	shield2    = shields[pItemsPlayer2[P_SHIELD]].mpwr;
 	shieldMax2 = shield * 2;
 	JE_drawShield();
 	JE_drawArmor();
@@ -2715,10 +2715,10 @@ explosion_draw_overflow:
 				}
 				if (requests & 8)
 				{
-					pItems[12-1] = 12;
-					pItems[11-1] = 13;
-					pItems[1-1] = 36;
-					pItems[2-1] = 37;
+					pItems[P_SHIP] = 12;
+					pItems[P_SPECIAL] = 13;
+					pItems[P_FRONT] = 36;
+					pItems[P_REAR] = 37;
 					shipGr = 1;
 				}
 				
@@ -2971,9 +2971,9 @@ new_game:
 							case 'g':
 								galagaMode = true;   /*GALAGA mode*/
 								memcpy(&pItemsPlayer2, &pItems, sizeof(pItemsPlayer2));
-								pItemsPlayer2[1] = 15; /*Player 2 starts with 15 - MultiCannon and 2 single shot options*/
-								pItemsPlayer2[3] = 0;
-								pItemsPlayer2[4] = 0;
+								pItemsPlayer2[P_REAR] = 15; /*Player 2 starts with 15 - MultiCannon and 2 single shot options*/
+								pItemsPlayer2[P_LEFT_SIDEKICK] = 0;
+								pItemsPlayer2[P_RIGHT_SIDEKICK] = 0;
 								break;
 
 							case 'x':
@@ -2991,18 +2991,18 @@ new_game:
 
 								portPower[0] = 3;
 								portPower[1] = 0;
-								pItems[11] = 13;
-								pItems[ 0] = 39;
-								pItems[ 2] = 255;
+								pItems[P_SHIP] = 13;
+								pItems[P_FRONT] = 39;
+								pItems[P_SUPERARCADE] = 255;
 
-								pItems[1] = 0; /*Normally 0 - Rear Weapon*/
-								pItems[3] = 0;
-								pItems[4] = 0;
-								pItems[5] = 2;
-								pItems[6] = 2;
-								pItems[7] = 1;
-								pItems[9] = 4;
-								pItems[10] = 0; /*Secret Weapons*/
+								pItems[P_REAR] = 0; /*Normally 0 - Rear Weapon*/
+								pItems[P_LEFT_SIDEKICK] = 0;
+								pItems[P_RIGHT_SIDEKICK] = 0;
+								pItems[P_GENERATOR] = 2;
+								pItems[P2_SIDEKICK_MODE] = 2;
+								pItems[P2_SIDEKICK_TYPE] = 1;
+								pItems[P_SHIELD] = 4;
+								pItems[P_SPECIAL] = 0; /*Secret Weapons*/
 								break;
 
 							case 'J':
@@ -3020,7 +3020,7 @@ new_game:
 								break;
 							case 'w':
 								temp = atoi(strnztcpy(buffer, s + 3, 3));   /*Allowed to go to Time War?*/
-								if (pItems[11] == 13)
+								if (pItems[P_SHIP] == 13)
 								{
 									mainLevel = temp;
 									jumpSection = true;
@@ -3785,7 +3785,7 @@ void JE_titleScreen( JE_boolean animate )
 		score = 0;
 		score2 = 0;
 			
-		pItems[12-1] = 11;
+		pItems[P_SHIP] = 11;
 		
 		while (!network_is_sync())
 		{
@@ -3991,17 +3991,17 @@ void JE_titleScreen( JE_boolean animate )
 							JE_initEpisode(1);
 							superTyrian = true;
 							onePlayerAction = true;
-							pItems[11] = 13;
-							pItems[0] = 39;
-							pItems[2] = 254;
+							pItems[P_SHIP] = 13;
+							pItems[P_FRONT] = 39;
+							pItems[P_SUPERARCADE] = 254;
 							gameLoaded = true;
 							difficultyLevel = initialDifficulty;
 							score = 0;
 						}
 						else
 						{
-							pItems[2] = z+1;
-							pItems[11] = SAShip[z];
+							pItems[P_SUPERARCADE] = z+1;
+							pItems[P_SHIP] = SAShip[z];
 							JE_fadeBlack(10);
 							if (select_episode() && select_difficulty())
 							{
@@ -4011,7 +4011,7 @@ void JE_titleScreen( JE_boolean animate )
 								JE_clr256();
 								JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
 								JE_dString(JE_fontCenter(superShips[z+1], SMALL_FONT_SHAPES), 100, superShips[z+1], SMALL_FONT_SHAPES);
-								tempW = ships[pItems[11]].shipgraphic;
+								tempW = ships[pItems[P_SHIP]].shipgraphic;
 								if (tempW != 1)
 									JE_drawShape2x2(148, 70, tempW, shapes9);
 								
@@ -4025,12 +4025,12 @@ void JE_titleScreen( JE_boolean animate )
 								superArcadeMode = z+1;
 								gameLoaded = true;
 								score = 0;
-								pItems[0] = SAWeapon[z][0];
-								pItems[10] = SASpecialWeapon[z];
+								pItems[P_FRONT] = SAWeapon[z][0];
+								pItems[P_SPECIAL] = SASpecialWeapon[z];
 								if (z+1 == SA)
 								{
-									pItems[3] = 24;
-									pItems[4] = 24;
+									pItems[P_LEFT_SIDEKICK] = 24;
+									pItems[P_RIGHT_SIDEKICK] = 24;
 								}
 								difficultyLevel++;
 								initialDifficulty = difficultyLevel;
@@ -4079,13 +4079,13 @@ void JE_titleScreen( JE_boolean animate )
 									if (onePlayerAction)
 									{
 										score = 0;
-										pItems[11] = 8;
+										pItems[P_SHIP] = 8;
 									}
 									else if (twoPlayerMode)
 									{
 										score = 0;
 										score2 = 0;
-										pItems[11] = 11;
+										pItems[P_SHIP] = 11;
 										difficultyLevel++;
 										inputDevice[0] = 1;
 										inputDevice[1] = 2;
@@ -5591,7 +5591,7 @@ void JE_eventSystem( void )
 			break;
 
 		case 82: /*Give SPECIAL WEAPON*/
-			pItems[11-1] = eventRec[eventLoc-1].eventdat;
+			pItems[P_SPECIAL] = eventRec[eventLoc-1].eventdat;
 			shotMultiPos[9-1] = 0;
 			shotRepeat[9-1] = 0;
 			shotMultiPos[11-1] = 0;
@@ -6184,7 +6184,7 @@ item_screen_start:
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
-			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[10-1]].mpwr * 2, 2, 13);
+			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[P_SHIELD]].mpwr * 2, 2, 13);
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
@@ -6217,10 +6217,10 @@ item_screen_start:
 			}
 			else
 			{
-				if (pItems[12-1] > 90)
+				if (pItems[P_SHIP] > 90)
 					temp = 32;
-				else if (pItems[12-1] > 0)
-					temp = ships[pItems[12-1]].bigshipgraphic;
+				else if (pItems[P_SHIP] > 0)
+					temp = ships[pItems[P_SHIP]].bigshipgraphic;
 				else
 					temp = ships[pItemsBack[12-1]].bigshipgraphic;
 				
@@ -6242,29 +6242,29 @@ item_screen_start:
 				
 				blit_shape(VGAScreenSeg, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
 				
-				temp = pItems[5];
+				temp = pItems[P_GENERATOR];
 				
 				if (temp > 1)
 					temp--;
 				
 				blit_shape(VGAScreenSeg, generatorX[temp-1]+1, generatorY[temp-1]+1, WEAPON_SHAPES, temp + 15);  // ship illustration: generator
 				
-				if (pItems[0] > 0)
+				if (pItems[P_FRONT] > 0)
 				{
-					temp = tyrian2_weapons[pItems[0] - 1];
-					temp2 = frontWeaponList[pItems[0] - 1] - 1;
+					temp = tyrian2_weapons[pItems[P_FRONT] - 1];
+					temp2 = frontWeaponList[pItems[P_FRONT] - 1] - 1;
 					blit_shape(VGAScreenSeg, frontWeaponX[temp2]+1, frontWeaponY[temp2], WEAPON_SHAPES, temp - 1);  // ship illustration: front weapon
 				}
-				if (pItems[1] > 0)
+				if (pItems[P_REAR] > 0)
 				{
-					temp = tyrian2_weapons[pItems[1] - 1];
-					temp2 = rearWeaponList[pItems[1] - 1] - 1;
+					temp = tyrian2_weapons[pItems[P_REAR] - 1];
+					temp2 = rearWeaponList[pItems[P_REAR] - 1] - 1;
 					blit_shape(VGAScreenSeg, rearWeaponX[temp2], rearWeaponY[temp2], WEAPON_SHAPES, temp - 1);  // ship illustration: rear weapon
 				}
 				
-				JE_drawItem(6, pItems[3], 3, 84);
-				JE_drawItem(7, pItems[4], 129, 84);
-				blit_shape_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[10-1]].mpwr - 10);  // ship illustration: shield
+				JE_drawItem(6, pItems[P_LEFT_SIDEKICK], 3, 84);
+				JE_drawItem(7, pItems[P_RIGHT_SIDEKICK], 129, 84);
+				blit_shape_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[P_SHIELD]].mpwr - 10);  // ship illustration: shield
 			}
 		}
 		
@@ -6876,7 +6876,7 @@ item_screen_start:
 					if ( (curMenu == 4) && (curSel[1] == 4))
 					{
 						portConfig[1]++;
-						if (portConfig[1] > weaponPort[pItems[1-1]].opnum)
+						if (portConfig[1] > weaponPort[pItems[P_FRONT]].opnum)
 						{
 							portConfig[1] = 1;
 						}
@@ -7882,10 +7882,10 @@ JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byt
 
 void JE_doFunkyScreen( void )
 {
-	if (pItems[12-1] > 90)
+	if (pItems[P_SHIP] > 90)
 		temp = 32;
-	else if (pItems[12-1] > 0)
-		temp = ships[pItems[12-1]].bigshipgraphic;
+	else if (pItems[P_SHIP] > 0)
+		temp = ships[pItems[P_SHIP]].bigshipgraphic;
 	else
 		temp = ships[pItemsBack[12-1]].bigshipgraphic;
 	
@@ -8687,9 +8687,9 @@ void JE_funkyScreen( void )
 	}
 
 	verticalHeight = 9;
-	JE_outText(10, 2, ships[pItems[12-1]].name, 12, 3);
-	JE_helpBox(100, 20, shipInfo[pItems[12-1]-1][0], 40);
-	JE_helpBox(100, 100, shipInfo[pItems[12-1]-1][1], 40);
+	JE_outText(10, 2, ships[pItems[P_SHIP]].name, 12, 3);
+	JE_helpBox(100, 20, shipInfo[pItems[P_SHIP]-1][0], 40);
+	JE_helpBox(100, 100, shipInfo[pItems[P_SHIP]-1][1], 40);
 	verticalHeight = 7;
 
 	JE_outText(JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
@@ -8818,10 +8818,10 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 		if (shotRepeat[3 - 1] > 0)
 			shotRepeat[3 - 1]--;
 		else
-			JE_initPlayerShot(options[pItems[4-1]].wport, 3, option1X, option1Y, mouseX, mouseY, options[pItems[4-1]].wpnum, 1);
+			JE_initPlayerShot(options[pItems[P_LEFT_SIDEKICK]].wport, 3, option1X, option1Y, mouseX, mouseY, options[pItems[P_LEFT_SIDEKICK]].wpnum, 1);
 	}
 	
-	if (options[pItems[5-1]].tr == 2)
+	if (options[pItems[P_RIGHT_SIDEKICK]].tr == 2)
 	{
 		option2X = PX;
 		option2Y = PY - 20;
@@ -8839,7 +8839,7 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 		if (shotRepeat[4 - 1] > 0)
 			shotRepeat[4 - 1]--;
 		else
-			JE_initPlayerShot(options[pItems[5-1]].wport, 4, option2X, option2Y, mouseX, mouseY, options[pItems[5-1]].wpnum, 1);
+			JE_initPlayerShot(options[pItems[P_RIGHT_SIDEKICK]].wport, 4, option2X, option2Y, mouseX, mouseY, options[pItems[P_RIGHT_SIDEKICK]].wpnum, 1);
 	}
 	
 	/* Player Shot Images */

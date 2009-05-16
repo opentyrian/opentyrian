@@ -60,7 +60,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 void JE_func( JE_byte col );
 void JE_sort( void );
 
-JE_word JE_powerLevelCost( JE_word base, JE_byte level );
+long weapon_upgrade_cost( long base_cost, unsigned int power );
 JE_longint JE_getCost( JE_byte itemType, JE_word itemNum );
 JE_longint JE_getValue( JE_byte itemType, JE_word itemNum );
 JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems );
