@@ -1966,8 +1966,8 @@ level_loop:
 											globalFlags[enemy[temp2].flagnum] = enemy[temp2].setto;
 										
 										if ((enemy[temp2].enemydie > 0) &&
-											!((superArcadeMode > 0) &&
-											(enemyDat[enemy[temp2].enemydie].value == 30000)))
+										    !((superArcadeMode != SA_NONE) &&
+										      (enemyDat[enemy[temp2].enemydie].value == 30000)))
 										{
 											zz = b;
 											tempW = enemy[temp2].enemydie;
@@ -1978,7 +1978,7 @@ level_loop:
 											}
 											JE_newEnemy(tempW2);
 											if (b != 0) {
-												if ((superArcadeMode > 0) && (enemy[b-1].evalue > 30000))
+												if ((superArcadeMode != SA_NONE) && (enemy[b-1].evalue > 30000))
 												{
 													superArcadePowerUp++;
 													if (superArcadePowerUp > 5)
@@ -3153,31 +3153,31 @@ new_game:
 
 									if (superTyrian)
 									{
+										// if completed Zinglon's Revenge, show SuperTyrian code
+										// if completed SuperTyrian, show Nort-Ship code
+										
 										superArcadeMode = (initialDifficulty == 8) ? SA + 1 : 1;
-
+										
 										jumpSection = true;
 										loadTitleScreen = true;
 									}
-
+									
 									if (superArcadeMode < SA + 2)
 									{
-										if (SANextShip[superArcadeMode] == 9)
+										if (SANextShip[superArcadeMode] == SA_DESTRUCT)
 										{
+											sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
+											JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
+											
 											sprintf(buffer, "Or play... %s", specialName[7]);
 											JE_dString(80, 180, buffer, SMALL_FONT_SHAPES);
 										}
-
-										if (SANextShip[superArcadeMode] != 9)
+										else
 										{
 											JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
 											JE_dString(JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
 										}
-										else
-										{
-											sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
-											JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
-										}
-
+										
 										if (SANextShip[superArcadeMode] < 7)
 										{
 											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
@@ -3186,11 +3186,11 @@ new_game:
 										{
 											trentWin = true;
 										}
-
+										
 										sprintf(buffer, "Type %s at Title", specialName[SANextShip[superArcadeMode]-1]);
 										JE_dString(JE_fontCenter(buffer, SMALL_FONT_SHAPES), 160, buffer, SMALL_FONT_SHAPES);
 										JE_showVGA();
-
+										
 										JE_fadeColor(50);
 										
 										if (!constantPlay)
@@ -4288,10 +4288,8 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 	JE_byte temp;
 	int t = 0;
 
-	if (superArcadeMode > 0 && tempW == 534)
-	{
+	if (superArcadeMode != SA_NONE && tempW == 534)
 		tempW = 533;
-	}
 
 	enemyShapeTables[5-1] = 21;   /*Coins&Gems*/
 	enemyShapeTables[6-1] = 26;   /*Two-Player Stuff*/
@@ -4300,7 +4298,9 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 	{
 		temp = tempI2;
 		uniqueEnemy = false;
-	} else {
+	}
+	else
+	{
 		temp = enemyDat[tempW].shapebank;
 	}
 
@@ -5170,13 +5170,13 @@ void JE_eventSystem( void )
 		case 33: /* Enemy From other Enemies */
 			if (!((eventRec[eventLoc-1].eventdat == 512 || eventRec[eventLoc-1].eventdat == 513) && (twoPlayerMode || onePlayerAction || superTyrian)))
 			{
-				if (superArcadeMode > 0)
+				if (superArcadeMode != SA_NONE)
 				{
 					if (eventRec[eventLoc-1].eventdat == 534)
-					{
 						eventRec[eventLoc-1].eventdat = 827;
-					}
-				} else {
+				}
+				else
+				{
 					if (eventRec[eventLoc-1].eventdat == 533
 					    && (portPower[1-1] == 11 || (mt_rand() % 15) < portPower[1-1])
 					    && !superTyrian)
@@ -5185,9 +5185,7 @@ void JE_eventSystem( void )
 					}
 				}
 				if (eventRec[eventLoc-1].eventdat == 534 && superTyrian)
-				{
 					eventRec[eventLoc-1].eventdat = 828 + superTyrianSpecials[mt_rand() % 4];
-				}
 
 				for (temp = 0; temp < 100; temp++)
 				{
@@ -6200,7 +6198,7 @@ item_screen_start:
 				snprintf(buf, sizeof buf, "%s %d", miscText[41], score2);
 				JE_textShade(25, 60, buf, 15, 0, FULL_SHADE);
 			}
-			else if (superArcadeMode > 0 || superTyrian)
+			else if (superArcadeMode != SA_NONE || superTyrian)
 			{
 				helpBoxColor = 15;
 				helpBoxBrightness = 4;
@@ -6211,9 +6209,9 @@ item_screen_start:
 				helpBoxBrightness = 1;
 				
 				JE_textShade(25, 50, superShips[SA+1], 15, 0, FULL_SHADE);
-				JE_helpBox(25, 60, weaponPort[pItems[1 - 1]].name, 22);
+				JE_helpBox(25, 60, weaponPort[pItems[P_FRONT]].name, 22);
 				JE_textShade(25, 120, superShips[SA+2], 15, 0, FULL_SHADE);
-				JE_helpBox(25, 130, special[pItems[11 - 1]].name, 22);
+				JE_helpBox(25, 130, special[pItems[P_SPECIAL]].name, 22);
 			}
 			else
 			{

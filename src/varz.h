@@ -27,6 +27,14 @@
 
 #define SA 7
 
+enum
+{
+	SA_NONE = 0,
+	SA_DESTRUCT = 9,
+	SA_SUPERTYRIAN = 254,
+	SA_ARCADE = 255,
+};
+
 #define MAX_PWEAPON     81 /* 81*/
 #define ENEMY_SHOT_MAX  60 /* 60*/
 

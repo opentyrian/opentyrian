@@ -296,14 +296,10 @@ void JE_saveGame( JE_byte slot, char *name )
 	saveFiles[slot-1].level = saveLevel;
 
 	pItems[P_SUPERARCADE] = superArcadeMode;
-	if (superArcadeMode == 0 && onePlayerAction)
-	{
-		pItems[P_SUPERARCADE] = 255;
-	}
+	if (superArcadeMode == SA_NONE && onePlayerAction)
+		pItems[P_SUPERARCADE] = SA_ARCADE;
 	if (superTyrian)
-	{
-		pItems[P_SUPERARCADE] = 254;
-	}
+		pItems[P_SUPERARCADE] = SA_SUPERTYRIAN;
 
 	memcpy(&saveFiles[slot-1].items, &pItems, sizeof(pItems));
 
@@ -366,26 +362,32 @@ void JE_loadGame( JE_byte slot )
 	difficultyLevel   = saveFiles[slot-1].difficulty;
 	memcpy(&pItems, &saveFiles[slot-1].items, sizeof(pItems));
 	superArcadeMode   = pItems[P_SUPERARCADE];
-
-	if (superArcadeMode == 255)
+	
+	if (superArcadeMode == SA_ARCADE)
 	{
 		onePlayerAction = true;
-		superArcadeMode = 0;
-		pItems[P_SUPERARCADE] = 0;
-	} else if (superArcadeMode == 254) {
+		superArcadeMode = SA_NONE;
+		pItems[P_SUPERARCADE] = SA_NONE;
+	}
+	else if (superArcadeMode == SA_SUPERTYRIAN)
+	{
 		onePlayerAction = true;
-		superArcadeMode = 0;
-		pItems[P_SUPERARCADE] = 0;
 		superTyrian = true;
-	} else if (superArcadeMode > 0) {
+		superArcadeMode = SA_NONE;
+		pItems[P_SUPERARCADE] = SA_NONE;
+	}
+	else if (superArcadeMode != SA_NONE)
+	{
 		onePlayerAction = true;
 	}
-
+	
 	if (twoPlayerMode)
 	{
 		memcpy(&pItemsPlayer2, &saveFiles[slot-1].lastItems, sizeof(pItemsPlayer2));
 		onePlayerAction = false;
-	} else {
+	}
+	else
+	{
 		memcpy(&pItemsBack2, &saveFiles[slot-1].lastItems, sizeof(pItemsBack2));
 	}
 

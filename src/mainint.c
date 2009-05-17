@@ -878,46 +878,49 @@ void JE_nextEpisode( void )
 void JE_initPlayerData( void )
 {
 	/* JE: New Game Items/Data */
-	pItems[P_FRONT] = 1;  /* Normally 1 - Front Weapon */
-	pItems[P_REAR] = 0;  /* Normally 0 - Rear Weapon */
-	pItems[P_SUPERARCADE] = 0;  /* SuperArcade mode */
-	pItems[P_LEFT_SIDEKICK] = 0;  /* Left Option */
-	pItems[P_RIGHT_SIDEKICK] = 0;  /* Right Option */
-	pItems[P_GENERATOR] = 2;  /* Generator */
-	pItems[P2_SIDEKICK_MODE] = 2;
-	pItems[P2_SIDEKICK_TYPE] = 1;
-	pItems[P_EPISODE] = 0;  /* Starting Episode num */
-	pItems[P_SHIELD] = 4;  /* Shields */
-	pItems[P_SPECIAL] = 0; /* Secret Weapons - Normally 0 */
-	pItems[P_SHIP] = 1; /* Normally 1 - Player Ship */
+	
+	pItems[P_SHIP] = 1;            // USP Talon
+	pItems[P_FRONT] = 1;           // Pulse-Cannon
+	pItems[P_REAR] = 0;            // None
+	pItems[P_SHIELD] = 4;          // Gencore High Energy Shield
+	pItems[P_GENERATOR] = 2;       // Advanced MR-12
+	pItems[P_LEFT_SIDEKICK] = 0;   // None
+	pItems[P_RIGHT_SIDEKICK] = 0;  // None
+	pItems[P_SPECIAL] = 0;         // None
+	pItems[P2_SIDEKICK_MODE] = 2;  //! not sure
+	pItems[P2_SIDEKICK_TYPE] = 1;  //! not sure
+	
+	pItems[P_SUPERARCADE] = SA_NONE;  // not SuperArcade
+	pItems[P_EPISODE] = 0;            // initial episode number
+	
 	memcpy(pItemsBack2, pItems, sizeof(pItems));
+	
 	memcpy(pItemsPlayer2, pItems, sizeof(pItems));
-	pItemsPlayer2[P_REAR] = 15; /* Player 2 starts with 15 - MultiCannon and 2 single shot options */
-	pItemsPlayer2[P_LEFT_SIDEKICK] = 0;
-	pItemsPlayer2[P_RIGHT_SIDEKICK] = 0;
-	pItemsPlayer2[P2_SIDEKICK_MODE] = 101; /* Player 2  Option Mode 101,102,103 */
-	pItemsPlayer2[P2_SIDEKICK_TYPE] = 0; /* Player 2  Option Type */
-	for (temp = 0; temp < 2; temp++)
-	{
-		portConfig[temp] = 1;
-	}
+	pItemsPlayer2[P_REAR] = 15;             // Vulcan Cannon
+	pItemsPlayer2[P_LEFT_SIDEKICK] = 0;     // None
+	pItemsPlayer2[P_RIGHT_SIDEKICK] = 0;    // None
+	pItemsPlayer2[P2_SIDEKICK_MODE] = 101;  // 101, 102, 103
+	pItemsPlayer2[P2_SIDEKICK_TYPE] = 0;    // None
+	
 	gameHasRepeated = false;
 	onePlayerAction = false;
-	superArcadeMode = 0;
+	superArcadeMode = SA_NONE;
 	superTyrian = false;
-	/* twoplayerarcade:=false; */
 	twoPlayerMode = false;
-
-	secretHint = (mt_rand()%3) + 1;
-
+	
+	secretHint = (mt_rand() % 3) + 1;
+	
 	armorLevel = ships[pItems[P_SHIP]].dmg;
+	
 	portPower[0] = 1;
 	portPower[1] = 1;
+	
+	portConfig[0] = 1;
 	portConfig[1] = 1;
-
+	
 	mainLevel = FIRST_LEVEL;
 	saveLevel = FIRST_LEVEL;
-
+	
 	strcpy(lastLevelName, miscText[20-1]);
 }
 
@@ -2788,7 +2791,7 @@ void JE_mainKeyboardInput( void )
 	}
 
 	/* {Cheating} */
-	if (!isNetworkGame && !twoPlayerMode && !superTyrian && superArcadeMode == 0)
+	if (!isNetworkGame && !twoPlayerMode && !superTyrian && superArcadeMode == SA_NONE)
 	{
 		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && keysactive[SDLK_F6])
 		{
@@ -2804,7 +2807,7 @@ void JE_mainKeyboardInput( void )
 			JE_drawTextWindow(miscText[63-1]);
 		}
 
-		if (constantPlay && keysactive[SDLK_c] && !superTyrian && superArcadeMode == 0)
+		if (constantPlay && keysactive[SDLK_c] && !superTyrian && superArcadeMode == SA_NONE)
 		{
 			youAreCheating = !youAreCheating;
 			keysactive[SDLK_c] = false;
@@ -2833,7 +2836,7 @@ void JE_mainKeyboardInput( void )
 
 	/* {CHEAT-SKIP LEVEL} */
 	if (keysactive[SDLK_F2] && keysactive[SDLK_F6] && (keysactive[SDLK_F7] || keysactive[SDLK_F8]) && !keysactive[SDLK_F9]
-	    && !superTyrian && superArcadeMode == 0)
+	    && !superTyrian && superArcadeMode == SA_NONE)
 	{
 		if (isNetworkGame)
 		{
@@ -3876,7 +3879,7 @@ redo:
 
 							shotMultiPos[2-1] = 0;
 
-							if (superArcadeMode > 0 && superArcadeMode <= SA)
+							if (superArcadeMode != SA_NONE && superArcadeMode <= SA)
 							{
 								shotMultiPos[9-1] = 0;
 								shotMultiPos[11-1] = 0;
@@ -3884,18 +3887,19 @@ redo:
 								{
 									pItems[P_SPECIAL] = SASpecialWeaponB[superArcadeMode-1];
 									portConfig[2-1] = 2;
-								} else {
+								}
+								else
+								{
 									pItems[P_SPECIAL] = SASpecialWeapon[superArcadeMode-1];
 									portConfig[2-1] = 1;
 								}
-							} else {
+							}
+							else
+							{
 								portConfig[2-1]++;
 								JE_portConfigs();
 								if (portConfig[2-1] > tempW)
-								{
 									portConfig[2-1] = 1;
-								}
-
 							}
 
 							JE_drawPortConfigButtons();
@@ -4466,7 +4470,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						enemyAvail[z] = 1;
 						soundQueue[7] = S_POWERUP;
 					}
-					else if (superArcadeMode > 0 && tempI4 > 30000)
+					else if (superArcadeMode != SA_NONE && tempI4 > 30000)
 					{
 						shotMultiPos[1-1] = 0;
 						shotRepeat[1-1] = 10;
