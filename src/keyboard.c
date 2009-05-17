@@ -103,7 +103,9 @@ void input_grab( void )
 #endif /* TARGET_GP2X */
 	
 	SDL_ShowCursor(input_grabbed ? SDL_DISABLE : SDL_ENABLE);
+#ifdef NDEBUG
 	SDL_WM_GrabInput(input_grabbed ? SDL_GRAB_ON : SDL_GRAB_OFF);
+#endif
 }
 
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )

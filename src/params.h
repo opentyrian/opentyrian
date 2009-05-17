@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-extern JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
+extern JE_boolean richMode, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
 extern const char pars[][9];
 
 void JE_paramCheck( int argc, char *argv[] );

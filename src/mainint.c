@@ -887,8 +887,8 @@ void JE_initPlayerData( void )
 	pItems[P_LEFT_SIDEKICK] = 0;   // None
 	pItems[P_RIGHT_SIDEKICK] = 0;  // None
 	pItems[P_SPECIAL] = 0;         // None
-	pItems[P2_SIDEKICK_MODE] = 2;  //! not sure
-	pItems[P2_SIDEKICK_TYPE] = 1;  //! not sure
+	pItems[P2_SIDEKICK_MODE] = 2;  // not sure
+	pItems[P2_SIDEKICK_TYPE] = 1;  // not sure
 	
 	pItems[P_SUPERARCADE] = SA_NONE;  // not SuperArcade
 	pItems[P_EPISODE] = 0;            // initial episode number
@@ -1878,58 +1878,71 @@ void JE_changeDifficulty( void )
 
 }
 
-void JE_doDemoKeys( void )
+bool load_next_demo( void )
 {
-	if (lastKey[0] > 0)
-	{
-		PY -= CURRENT_KEY_SPEED;
-	}
-	if (lastKey[1] > 0)
-	{
-		PY += CURRENT_KEY_SPEED;
-	}
-	if (lastKey[2] > 0)
-	{
-		PX -= CURRENT_KEY_SPEED;
-	}
-	if (lastKey[3] > 0)
-	{
-		PX += CURRENT_KEY_SPEED;
-	}
-	if (lastKey[4] > 0)
-	{
-		button[1-1] = true;
-	}
-	if (lastKey[5] > 0)
-	{
-		button[4-1] = true;
-	}
-	if (lastKey[6] > 0)
-	{
-		button[2-1] = true;
-	}
-	if (lastKey[7] > 0)
-	{
-		button[3-1] = true;
-	}
+	if (++demo_num > 5)
+		demo_num = 1;
+	
+	char demo_filename[9];
+	snprintf(demo_filename, sizeof(demo_filename), "demo.%d", demo_num);
+	JE_resetFile(&demo_file, demo_filename);
+	
+	difficultyLevel = 2;
+	bonusLevelCurrent = false;
+	
+	Uint8 temp = fgetc(demo_file);
+	JE_initEpisode(temp);
+	efread(levelName, 1, 10, demo_file); levelName[10] = '\0';
+	lvlFileNum = fgetc(demo_file);
+	efread(pItems, sizeof(Uint8), 12, demo_file);
+	efread(portPower, sizeof(Uint8), 5, demo_file);
+	levelSong = fgetc(demo_file);
+	
+	demo_keys_wait = 0;
+	demo_keys = next_demo_keys = 0;
+	
+	printf("loaded demo '%s'\n", demo_filename);
+	
+	return true;
 }
 
-void JE_readDemoKeys( void )
+bool replay_demo_keys( void )
 {
-	temp = nextDemoOperation;
+	if (demo_keys_wait == 0)
+		if (read_demo_keys() == false)
+			return false;
+	
+	if (demo_keys_wait > 0)
+		demo_keys_wait--;
+	
+	if (demo_keys & (1 << 0))
+		PY -= CURRENT_KEY_SPEED;
+	if (demo_keys & (1 << 1))
+		PY += CURRENT_KEY_SPEED;
+	
+	if (demo_keys & (1 << 2))
+		PX -= CURRENT_KEY_SPEED;
+	if (demo_keys & (1 << 3))
+		PX += CURRENT_KEY_SPEED;
+	
+	button[0] = (bool)(demo_keys & (1 << 4));
+	button[3] = (bool)(demo_keys & (1 << 5));
+	button[1] = (bool)(demo_keys & (1 << 6));
+	button[2] = (bool)(demo_keys & (1 << 7));
+	
+	return true;
+}
 
-	lastKey[0] = (temp & 0x01) > 0;
-	lastKey[1] = (temp & 0x02) > 0;
-	lastKey[2] = (temp & 0x04) > 0;
-	lastKey[3] = (temp & 0x08) > 0;
-	lastKey[4] = (temp & 0x10) > 0;
-	lastKey[6] = (temp & 0x40) > 0;
-	lastKey[7] = (temp & 0x80) > 0;
-
-	temp = getc(recordFile);
-	temp2 = getc(recordFile);
-	lastMoveWait = temp << 8 | temp2;
-	nextDemoOperation = getc(recordFile);
+bool read_demo_keys( void )
+{
+	demo_keys = next_demo_keys;
+	
+	efread(&demo_keys_wait, sizeof(Uint16), 1, demo_file);
+	demo_keys_wait = SDL_Swap16(demo_keys_wait);
+	
+	next_demo_keys = getc(demo_file);
+	
+	return !feof(demo_file);
 }
 
 /*Street Fighter codes*/
@@ -3181,8 +3194,12 @@ redo:
 	}
 
 
-	if (*playerAlive_)
-	{  /*Global throughout entire remaining part of routine*/
+	if (!*playerAlive_)
+	{
+		explosionFollowAmountX = explosionFollowAmountY = 0;
+		return;
+	}
+	
 		if (!endLevel)
 		{
 
@@ -3201,9 +3218,24 @@ redo:
 				if (endLevel)
 				{
 					*PY_ -= 2;
-				} else {
+				}
+				else 
+				{
+					if (record_demo || play_demo)
+						inputDevice = 1;  // keyboard is required device for demo recording
+					
+					// demo playback input
+					if (play_demo)
+					{
+						if (!replay_demo_keys())
+						{
+							endLevel = true;
+							levelEnd = 40;
+						}
+					}
+					
 					/* joystick input */
-					if ((inputDevice == 0 || inputDevice >= 3) && joysticks > 0 && !playDemo && !recordDemo)
+					if ((inputDevice == 0 || inputDevice >= 3) && joysticks > 0)
 					{
 						int j = inputDevice  == 0 ? 0 : inputDevice - 3;
 						int j_max = inputDevice == 0 ? joysticks : inputDevice - 3 + 1;
@@ -3217,7 +3249,9 @@ redo:
 								mouseYC += joystick_axis_reduce(j, joystick[j].y);
 								
 								link_gun_analog = joystick_analog_angle(j, &link_gun_angle);
-							} else {
+							}
+							else
+							{
 								*PX_ += joystick[j].direction[3] ? -CURRENT_KEY_SPEED : 0 + joystick[j].direction[1] ? CURRENT_KEY_SPEED : 0;
 								*PY_ += joystick[j].direction[0] ? -CURRENT_KEY_SPEED : 0 + joystick[j].direction[2] ? CURRENT_KEY_SPEED : 0;
 							}
@@ -3235,7 +3269,7 @@ redo:
 					service_SDL_events(false);
 					
 					/* mouse input */
-					if ((inputDevice == 0 || inputDevice == 2) && mouseInstalled && !playDemo && !recordDemo)
+					if ((inputDevice == 0 || inputDevice == 2) && mouseInstalled)
 					{
 						button[0] |= mouse_pressed[0];
 						button[1] |= mouse_pressed[1];
@@ -3253,83 +3287,58 @@ redo:
 					}
 
 					/* keyboard input */
-					if (inputDevice == 0 || inputDevice == 1)
+					if ((inputDevice == 0 || inputDevice == 1) && !play_demo)
 					{
-
-						if (playDemo)
-						{
-							if (feof(recordFile))
-							{
-								endLevel = true;
-								levelEnd = 40;
-							} else {
-
-								JE_doDemoKeys();
-								if (lastMoveWait > 1)
-									lastMoveWait--;
-								else {
-									JE_readDemoKeys();
-								}
-
-							}
-
-						} else {
-							if (keysactive[keySettings[1-1]])
-								*PY_ -= CURRENT_KEY_SPEED;
-							if (keysactive[keySettings[2-1]])
-								*PY_ += CURRENT_KEY_SPEED;
-
-							if (keysactive[keySettings[3-1]])
-								*PX_ -= CURRENT_KEY_SPEED;
-							if (keysactive[keySettings[4-1]])
-								*PX_ += CURRENT_KEY_SPEED;
-
-							if (keysactive[keySettings[5-1]])
-								button[1-1] = true;
-							if (keysactive[keySettings[6-1]])
-								button[4-1] = true;
-							if (keysactive[keySettings[7-1]])
-								button[2-1] = true;
-							if (keysactive[keySettings[8-1]])
-								button[3-1] = true;
-						}
-
+						if (keysactive[keySettings[0]])
+							*PY_ -= CURRENT_KEY_SPEED;
+						if (keysactive[keySettings[1]])
+							*PY_ += CURRENT_KEY_SPEED;
+						
+						if (keysactive[keySettings[2]])
+							*PX_ -= CURRENT_KEY_SPEED;
+						if (keysactive[keySettings[3]])
+							*PX_ += CURRENT_KEY_SPEED;
+						
+						button[0] |= keysactive[keySettings[4]];
+						button[3] |= keysactive[keySettings[5]];
+						button[1] |= keysactive[keySettings[6]];
+						button[2] |= keysactive[keySettings[7]];
+						
 						if (constantPlay)
 						{
-							button[1-1] = true;
-							button[2-1] = true;
-							button[3-1] = true;
-							button[4-1] = true;
+							for (unsigned int i = 0; i < 4; i++)
+								button[i] = true;
+							
 							(*PY_)++;
 							*PX_ += constantLastX;
 						}
-
-
-						if (recordDemo)
+						
+						// TODO: check if demo recording still works
+						if (record_demo)
 						{
-							tempB = false;
-							for (temp = 0; temp < 8; temp++)
+							bool new_input = false;
+							
+							for (unsigned int i = 0; i < 8; i++)
 							{
-								if (lastKey[temp] != keysactive[keySettings[temp]])
-								{
-									tempB = true;
-								}
+								bool temp = demo_keys & (1 << i);
+								if (temp != keysactive[keySettings[i]])
+									new_input = true;
 							}
-
-							lastMoveWait++;
-							if (tempB)
+							
+							demo_keys_wait++;
+							
+							if (new_input)
 							{
-								fputc(lastMoveWait >> 8, recordFile);
-								fputc(lastMoveWait & 0xff, recordFile);
-
-								for (temp = 0; temp < 8; temp++)
-									lastKey[temp] = keysactive[keySettings[temp]];
-								temp = (lastKey[1-1]     ) + (lastKey[2-1] << 1) + (lastKey[3-1] << 2) + (lastKey[4-1] << 3) +
-								       (lastKey[5-1] << 4) + (lastKey[6-1] << 5) + (lastKey[7-1] << 6) + (lastKey[8-1] << 7);
-
-								fputc(temp, recordFile);
-
-								lastMoveWait = 0;
+								demo_keys_wait = SDL_Swap16(demo_keys_wait);
+								efwrite(&demo_keys_wait, sizeof(Uint16), 1, demo_file);
+								
+								demo_keys = 0;
+								for (unsigned int i = 0; i < 8; i++)
+									demo_keys |= keysactive[keySettings[i]] ? (1 << i) : 0;
+								
+								fputc(demo_keys, demo_file);
+								
+								demo_keys_wait = 0;
 							}
 						}
 					}
@@ -3431,7 +3440,9 @@ redo:
 					*PY_ += (Sint16)SDLNet_Read16(&packet_state_in[0]->data[6]);
 					accelXC = (Sint16)SDLNet_Read16(&packet_state_in[0]->data[8]);
 					accelYC = (Sint16)SDLNet_Read16(&packet_state_in[0]->data[10]);
-				} else {
+				}
+				else
+				{
 					Uint16 buttons = SDLNet_Read16(&packet_state_out[network_delay]->data[12]);
 					for (int i = 0; i < 4; i++)
 					{
@@ -3469,42 +3480,38 @@ redo:
 				if (twoPlayerMode && twoPlayerLinked && playerNum_ == 2
 				    && (*PX_ != *mouseX_ || *PY_ != *mouseY_))
 				{
-
 					if (button[0])
 					{
 						if (link_gun_analog)
 						{
 							linkGunDirec = link_gun_angle;
-						} else {
-							if (abs(*PX_ - *mouseX_) > abs(*PY_ - *mouseY_))
-							{
-								tempR = (*PX_ - *mouseX_ > 0) ? M_PI_2 : (M_PI + M_PI_2);
-							} else {
-								tempR = (*PY_ - *mouseY_ > 0) ? 0 : M_PI;
-							}
-
-							tempR2 = linkGunDirec - tempR;
-
-							if (fabs(linkGunDirec - tempR) < 0.3)
-							{
-								linkGunDirec = tempR;
-							} else if (linkGunDirec < tempR && linkGunDirec - tempR > -3.24) {
-								linkGunDirec += 0.2;
-							} else if (linkGunDirec - tempR < M_PI) {
-								linkGunDirec -= 0.2;
-							} else {
-								linkGunDirec += 0.2;
-							}
 						}
-
-						if (linkGunDirec >= 2 * M_PI)
+						else
 						{
-							linkGunDirec -= 2 * M_PI;
-						} else if (linkGunDirec < 0) {
-							linkGunDirec += 2 * M_PI;
+							if (abs(*PX_ - *mouseX_) > abs(*PY_ - *mouseY_))
+								tempR = (*PX_ - *mouseX_ > 0) ? M_PI_2 : (M_PI + M_PI_2);
+							else
+								tempR = (*PY_ - *mouseY_ > 0) ? 0 : M_PI;
+							
+							tempR2 = linkGunDirec - tempR;
+							
+							if (fabs(linkGunDirec - tempR) < 0.3)
+								linkGunDirec = tempR;
+							else if (linkGunDirec < tempR && linkGunDirec - tempR > -3.24)
+								linkGunDirec += 0.2;
+							else if (linkGunDirec - tempR < M_PI)
+								linkGunDirec -= 0.2;
+							else
+								linkGunDirec += 0.2;
 						}
-
-					} else if (!galagaMode) {
+						
+						if (linkGunDirec >= 2 * M_PI)
+							linkGunDirec -= 2 * M_PI;
+						else if (linkGunDirec < 0)
+							linkGunDirec += 2 * M_PI;
+					}
+					else if (!galagaMode)
+					{
 						twoPlayerLinked = false;
 					}
 				}
@@ -3524,8 +3531,11 @@ redo:
 		{
 
 			if (levelEnd == 0)
+			{
 				reallyEndLevel = true;
-			else {
+			}
+			else
+			{
 				*PY_ -= levelEndWarp;
 				if (*PY_ < -200)
 					reallyEndLevel = true;
@@ -3552,21 +3562,23 @@ redo:
 						{
 							JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 13, shapes9ptr_);
 							JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 51, shapes9ptr_);
-						} else
-							if (shipGr_ == 1)
-							{
-								JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 220, shapes9ptr_);
-								JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 222, shapes9ptr_);
-							} else
-								JE_drawShape2x2(*PX_ - 5, tempW2 - 7, shipGr_, shapes9ptr_);
+						}
+						else if (shipGr_ == 1)
+						{
+							JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 220, shapes9ptr_);
+							JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 222, shapes9ptr_);
+						}
+						else
+						{
+							JE_drawShape2x2(*PX_ - 5, tempW2 - 7, shipGr_, shapes9ptr_);
+						}
 					}
 				}
-
 			}
 		}
 
-		if (playDemo)
-			JE_dString(115, 10, miscText[8-1], SMALL_FONT_SHAPES);
+		if (play_demo)
+			JE_dString(115, 10, miscText[7], SMALL_FONT_SHAPES); // insert coin
 
 		if (*playerAlive_ && !endLevel)
 		{
@@ -4332,10 +4344,6 @@ redo:
 				optionCharge2Wait = 20;
 			}
 		}
-
-	} else {
-		explosionFollowAmountX = explosionFollowAmountY = 0; /*if (*playerAlive_)...*/
-	}
 }
 
 void JE_mainGamePlayerFunctions( void )

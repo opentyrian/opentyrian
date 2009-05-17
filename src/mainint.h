@@ -54,8 +54,11 @@ void JE_inGameHelp( void );
 void JE_sortHighScores( void );
 void JE_highScoreCheck( void );
 void JE_changeDifficulty( void );
-void JE_doDemoKeys( void );
-void JE_readDemoKeys( void );
+
+bool load_next_demo( void );
+bool replay_demo_keys( void );
+bool read_demo_keys( void );
+
 void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer mouseX_, JE_integer mouseY_, JE_PItemsType pItems_ );
 void JE_func( JE_byte col );
 void JE_sort( void );

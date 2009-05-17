@@ -22,6 +22,7 @@
 #include "joystick.h"
 #include "loudness.h"
 #include "network.h"
+#include "varz.h"
 #include "xmas.h"
 
 #include <assert.h>
@@ -29,7 +30,7 @@
 #include <errno.h>
 #include <string.h>
 
-JE_boolean richMode, recordDemo, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
+JE_boolean richMode, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
@@ -43,14 +44,16 @@ void JE_paramCheck( int argc, char *argv[] )
 
 	robertWeird     = true;
 	richMode        = false;
-	recordDemo      = false;
 	constantPlay    = false;
 	forceAveraging  = false;
 
-	const struct {
+	const struct
+	{
 		char short_opt;
 		char *long_opt;
-	} options[] = {
+	}
+	options[] =
+	{
 		{ 'h', "help" },
 		
 		{ 's', "no-sound" },
@@ -84,7 +87,9 @@ void JE_paramCheck( int argc, char *argv[] )
 						break;
 					}
 				}
-			} else {
+			}
+			else
+			{
 				// could have support for multiple options following a -
 				match = argv[i][1];
 			}
@@ -135,7 +140,9 @@ void JE_paramCheck( int argc, char *argv[] )
 								
 								network_opponent_host = malloc(temp + 1);
 								strnztcpy(network_opponent_host, argv[i], temp);
-							} else {
+							}
+							else
+							{
 								network_opponent_host = malloc(strlen(argv[i]) + 1);
 								strcpy(network_opponent_host, argv[i]);
 							}
@@ -147,7 +154,9 @@ void JE_paramCheck( int argc, char *argv[] )
 						
 						network_player_name = malloc(strlen(argv[++i]) + 1);
 						strcpy(network_player_name, argv[i]);
-					} else {
+					}
+					else
+					{
 						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
 						exit(-1);
 					}
@@ -159,7 +168,9 @@ void JE_paramCheck( int argc, char *argv[] )
 						int temp = atoi(argv[++i]);
 						if (temp > 0 && temp < 49152)
 							network_player_port = temp;
-					} else {
+					}
+					else
+					{
 						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
 						exit(-1);
 					}
@@ -172,7 +183,9 @@ void JE_paramCheck( int argc, char *argv[] )
 						int temp = strtol(argv[++i], (char **)NULL, 10);
 						if (errno == 0)
 							network_delay = 1 + temp;
-					} else {
+					}
+					else
+					{
 						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
 						exit(-1);
 					}
@@ -194,11 +207,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					break;
 					
 				case 'r':
-					/* Records all level and stores the last one in DEMOREC.num file
-					   (When a file is taken, it increments "num" until no file is found)
-					   Note: Mouse and joystick are disabled when recording */
-					recordDemo = true;
-					printf("Use a keyboard to record a demo.\n\n");
+					record_demo = true;
 					break;
 					
 				case 'l':
@@ -211,8 +220,9 @@ void JE_paramCheck( int argc, char *argv[] )
 					exit(-1);
 					break;
 			}
-			
-		} else {
+		}
+		else
+		{
 			// legacy parameter support
 			
 			tempStr = argv[i];
@@ -220,7 +230,7 @@ void JE_paramCheck( int argc, char *argv[] )
 			{
 				tempStr[y] = toupper(tempStr[y]);
 			}
-	
+			
 			for (y = 0; y < COUNTOF(pars); y++)
 			{
 				if (strcmp(tempStr, pars[y]) == 0)
@@ -231,8 +241,7 @@ void JE_paramCheck( int argc, char *argv[] )
 							richMode = true;
 							break;
 						case 1:
-							recordDemo = true;
-							printf("Use a keyboard to record a demo.\n");
+							record_demo = true;
 							break;
 						case 2:
 							ignore_joystick = true;
@@ -267,7 +276,6 @@ void JE_paramCheck( int argc, char *argv[] )
 					}
 				}
 			}
-			
 		}
 	}
 }

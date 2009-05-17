@@ -332,27 +332,10 @@ int main( int argc, char *argv[] )
 
 	JE_scanForEpisodes();
 
-	recordFileNum = 1;
-	playDemoNum = 0;
-	playDemo = false;
-
 	init_video();
 	init_keyboard();
 	init_joysticks();
-	
-	/* TODO: Tyrian originally checked availible memory here. */
-	
-	if (mouseInstalled)
-	{
-		printf("Mouse Detected.   ");
-		if (mouse_threeButton)
-		{
-			printf("Mouse driver reports three buttons.");
-		}
-		printf("\n");
-	} else {
-		printf("No mouse found.\n");
-	}
+	printf("assuming mouse detected\n"); // SDL can't tell us if there isn't one
 	
 	xmas |= xmas_time();
 	if (xmas && (JE_getFileSize("tyrianc.shp") == 0 || JE_getFileSize("voicesc.snd") == 0))
@@ -362,22 +345,16 @@ int main( int argc, char *argv[] )
 		printf("Christmas is missing.\n");
 	}
 	
-	
 	JE_loadPals();
 	JE_loadMainShapeTables(xmas ? "tyrianc.shp" : "tyrian.shp");
 	
 	tempScreenSeg = VGAScreen;
-	
-	
-	if (xmas)
+	if (xmas && !xmas_prompt())
 	{
-		if (!xmas_prompt())
-		{
-			xmas = false;
-			
-			free_main_shape_tables();
-			JE_loadMainShapeTables("tyrian.shp");
-		}
+		xmas = false;
+		
+		free_main_shape_tables();
+		JE_loadMainShapeTables("tyrian.shp");
 	}
 	
 	
@@ -401,11 +378,9 @@ int main( int argc, char *argv[] )
 	{
 		printf("audio disabled\n");
 	}
-
-	if (recordDemo)
-	{
-		printf("Game will be recorded.\n");
-	}
+	
+	if (record_demo)
+		printf("demo recording enabled (input limited to keyboard)\n");
 
 	megaData1 = malloc(sizeof(*megaData1));
 	megaData2 = malloc(sizeof(*megaData2));
@@ -425,7 +400,7 @@ int main( int argc, char *argv[] )
 	}
 	
 	loadDestruct = false;
-	stoppedDemo = false;
+	stopped_demo = false;
 	
 	JE_main();
 	

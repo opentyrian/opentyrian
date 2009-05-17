@@ -178,10 +178,6 @@ const JE_byte shipCombos[14][3] /* [0..12, 1..3] */ =
 JE_byte SFCurrentCode[2][21]; /* [1..2, 1..21] */
 JE_byte SFExecuted[2]; /* [1..2] */
 
-
-/*Happy*/
-JE_boolean stoppedDemo;
-
 /*Special General Data*/
 JE_byte lvlFileNum;
 JE_word maxEvent, eventLoc;
@@ -232,14 +228,12 @@ JE_shortint flashChange;
 JE_byte displayTime;
 
 /* Demo Stuff */
-JE_boolean firstEvent;
-FILE *recordFile;
-JE_word recordFileNum;
-JE_byte lastKey[8]; /* [1..8] */
-JE_word lastMoveWait, nextMoveWait;
-JE_byte nextDemoOperation;
-JE_boolean playDemo;
-JE_byte playDemoNum;
+bool play_demo = false, record_demo = false, stopped_demo = false;
+Uint8 demo_num = 0;
+FILE *demo_file = NULL;
+
+Uint8 demo_keys, next_demo_keys;
+Uint16 demo_keys_wait;
 
 /* Sound Effects Queue */
 JE_byte soundQueue[8]; /* [0..7] */

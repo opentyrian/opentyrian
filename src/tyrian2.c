@@ -779,9 +779,6 @@ start_level:
 	if (galagaMode)
 		twoPlayerMode = false;
 	
-	if (playDemo)
-		stop_song();
-	
 	JE_clearKeyboard();
 	
 	if (eShapes1 != NULL)
@@ -814,20 +811,26 @@ start_level:
 		JE_setTimerInt();
 	}
 
-	if (recordDemo || playDemo)
+	if (play_demo || record_demo)
 	{
-		fclose(recordFile);
-		if (playDemo)
+		if (demo_file)
 		{
+			fclose(demo_file);
+			demo_file = NULL;
+		}
+		
+		if (play_demo)
+		{
+			stop_song();
 			JE_fadeBlack(10);
-			/* JE_wipekey();*/
+			
 			wait_noinput(true, true, true);
 		}
 	}
 
 	difficultyLevel = oldDifficultyLevel;   /*Return difficulty to normal*/
 
-	if (!playDemo)
+	if (!play_demo)
 	{
 		if (((playerAlive || (twoPlayerMode && playerAliveB))
 		   || normalBonusLevelCurrent || bonusLevelCurrent)
@@ -991,7 +994,7 @@ start_level_first:
 	playerInvulnerable1 = 100;
 	playerInvulnerable2 = 100;
 
-	newkey = false;
+	newkey = newmouse = false;
 
 	/* Initialize Level Data and Debug Mode */
 	levelEnd = 255;
@@ -1101,41 +1104,40 @@ start_level_first:
 	/* JE_setVol(tyrMusicVolume, fxPlayVol >> 2); NOTE: MXD killed this because it was broken */
 
 	/*Save backup game*/
-	if (!playDemo && !doNotSaveBackup)
+	if (!play_demo && !doNotSaveBackup)
 	{
 		temp = twoPlayerMode ? 22 : 11;
 		JE_saveGame(temp, "LAST LEVEL    ");
 	}
-
-	memset(lastKey, 0, sizeof(lastKey));
-	if (recordDemo && !playDemo)
+	
+	if (!play_demo && record_demo)
 	{
-		dont_die = true;
+		Uint8 new_demo_num = 0;
+		
+		dont_die = true; // for JE_find
 		do
 		{
-			sprintf(tempStr, "demorec.%d", recordFileNum);
-			tempb = JE_find(tempStr);
-			if (tempb)
-			{
-				recordFileNum++;
-			}
-		} while (tempb);
+			sprintf(tempStr, "demorec.%d", new_demo_num++);
+		}
+		while (JE_find(tempStr)); // until file doesn't exist
 		dont_die = false;
-
-		recordFile = fopen_check(tempStr, "wb");
-		if (!recordFile)
+		
+		demo_file = fopen_check(tempStr, "wb");
+		if (!demo_file)
 		{
+			printf("error: failed to open '%s' (mode '%s')\n", tempStr, "wb");
 			exit(1);
 		}
-
-		efwrite(&episodeNum, 1, 1, recordFile);
-		efwrite(levelName, 1, 10, recordFile);
-		efwrite(&lvlFileNum, 1, 1, recordFile);
-		efwrite(pItems, 1, 12, recordFile);
-		efwrite(portPower, 1, 5, recordFile);
-		efwrite(&levelSong, 1, 1, recordFile);
-
-		lastMoveWait = 0;
+		
+		efwrite(&episodeNum, 1,  1, demo_file);
+		efwrite(levelName,   1, 10, demo_file);
+		efwrite(&lvlFileNum, 1,  1, demo_file);
+		efwrite(pItems,      1, 12, demo_file);
+		efwrite(portPower,   1,  5, demo_file);
+		efwrite(&levelSong,  1,  1, demo_file);
+		
+		demo_keys = 0;
+		demo_keys_wait = 0;
 	}
 
 	twoPlayerLinked = false;
@@ -2581,15 +2583,15 @@ explosion_draw_overflow:
 			}
 			else
 			{
-				if (playDemo || normalBonusLevelCurrent || bonusLevelCurrent)
+				if (play_demo || normalBonusLevelCurrent || bonusLevelCurrent)
 					reallyEndLevel = true;
 				else
-					JE_dString(120, 60, miscText[21], FONT_SHAPES);
+					JE_dString(120, 60, miscText[21], FONT_SHAPES); // game over
 				
 				set_mouse_position(159, 100);
 				if (firstGameOver)
 				{
-					if (!playDemo)
+					if (!play_demo)
 					{
 						play_song(SONG_GAMEOVER);
 						set_volume(tyrMusicVolume, fxVolume);
@@ -2597,13 +2599,11 @@ explosion_draw_overflow:
 					firstGameOver = false;
 				}
 
-				if (!playDemo)
+				if (!play_demo)
 				{
 					push_joysticks_as_keyboard();
 					service_SDL_events(true);
-					if (playDemo ||
-					   (newkey || button[0] || button[1] || button[2]) ||
-					   (newmouse))
+					if ((newkey || button[0] || button[1] || button[2]) || newmouse)
 					{
 						reallyEndLevel = true;
 					}
@@ -2615,8 +2615,7 @@ explosion_draw_overflow:
 		}
 	}
 
-	/* Call Keyboard input handler */
-	if (playDemo)
+	if (play_demo) // input kills demo
 	{
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
@@ -2624,10 +2623,10 @@ explosion_draw_overflow:
 		if (newkey || newmouse)
 		{
 			reallyEndLevel = true;
-			stoppedDemo = true;
+			stopped_demo = true;
 		}
 	}
-	else
+	else // input handling for pausing, menu, cheats
 	{
 		service_SDL_events(false);
 		
@@ -2637,9 +2636,7 @@ explosion_draw_overflow:
 			JE_mainKeyboardInput();
 			newkey = false;
 			if (skipStarShowVGA)
-			{
 				goto level_loop;
-			}
 		}
 		
 		if (pause_pressed)
@@ -2834,7 +2831,6 @@ void JE_loadMap( void )
 
 
 	FILE *f;
-/*	FILE *f2;*/
 	JE_char k2, k3;
 	JE_word x, y;
 	JE_integer yy, z, a, b;
@@ -2860,7 +2856,7 @@ void JE_loadMap( void )
 	/*Defaults*/
 	songBuy = DEFAULT_SONG_BUY;  /*Item Screen default song*/
 
-	if (loadTitleScreen || playDemo)
+	if (loadTitleScreen || play_demo)
 	{
 		JE_openingAnim();
 		JE_titleScreen(true);
@@ -2880,13 +2876,15 @@ new_game:
 		JE_titleScreen(true);
 		loadTitleScreen = false;
 	}
-
+	
 	gameLoaded = false;
-
-
+	
 	first = true;
-
-	if (!playDemo && !loadDestruct)
+	
+	if (loadDestruct)
+		return;
+	
+	if (!play_demo)
 	{
 		do
 		{
@@ -2989,20 +2987,21 @@ new_game:
 
 								score = 0;
 
+								pItems[P_SHIP] = 13;           // The Stalker 21.126
+								pItems[P_FRONT] = 39;          // Atomic RailGun
+								pItems[P_REAR] = 0;            // None
+								pItems[P_LEFT_SIDEKICK] = 0;   // None
+								pItems[P_RIGHT_SIDEKICK] = 0;  // None
+								pItems[P_GENERATOR] = 2;       // Advanced MR-12
+								pItems[P_SHIELD] = 4;          // Advanced Integrity Field
+								pItems[P_SPECIAL] = 0;         // None
+								pItems[P2_SIDEKICK_MODE] = 2;  // not sure
+								pItems[P2_SIDEKICK_TYPE] = 1;  // not sure
+								
+								pItems[P_SUPERARCADE] = SA_ARCADE; // wrong? shoudn't matter though
+								
 								portPower[0] = 3;
 								portPower[1] = 0;
-								pItems[P_SHIP] = 13;
-								pItems[P_FRONT] = 39;
-								pItems[P_SUPERARCADE] = 255;
-
-								pItems[P_REAR] = 0; /*Normally 0 - Rear Weapon*/
-								pItems[P_LEFT_SIDEKICK] = 0;
-								pItems[P_RIGHT_SIDEKICK] = 0;
-								pItems[P_GENERATOR] = 2;
-								pItems[P2_SIDEKICK_MODE] = 2;
-								pItems[P2_SIDEKICK_TYPE] = 1;
-								pItems[P_SHIELD] = 4;
-								pItems[P_SPECIAL] = 0; /*Secret Weapons*/
 								break;
 
 							case 'J':
@@ -3477,208 +3476,183 @@ new_game:
 
 		} while (!loadLevelOk);
 	}
-
-	if (!loadDestruct)
+	
+	if (play_demo)
 	{
-
-		if (playDemo)
+		load_next_demo();
+	}
+	else
+	{
+		JE_fadeColors(colors, black, 0, 255, 50);
+	}
+	
+	
+	JE_resetFile(&lvlFile, levelFile);
+	fseek(lvlFile, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
+	
+	char_mapFile = fgetc(lvlFile);
+	char_shapeFile = fgetc(lvlFile);
+	efread(&mapX,  sizeof(JE_word), 1, lvlFile);
+	efread(&mapX2, sizeof(JE_word), 1, lvlFile);
+	efread(&mapX3, sizeof(JE_word), 1, lvlFile);
+	
+	efread(&levelEnemyMax, sizeof(JE_word), 1, lvlFile);
+	for (x = 0; x < levelEnemyMax; x++)
+	{
+		efread(&levelEnemy[x], sizeof(JE_word), 1, lvlFile);
+	}
+	
+	efread(&maxEvent, sizeof(JE_word), 1, lvlFile);
+	for (x = 0; x < maxEvent; x++)
+	{
+		efread(&eventRec[x].eventtime, sizeof(JE_word), 1, lvlFile);
+		efread(&eventRec[x].eventtype, sizeof(JE_byte), 1, lvlFile);
+		efread(&eventRec[x].eventdat,  sizeof(JE_integer), 1, lvlFile);
+		efread(&eventRec[x].eventdat2, sizeof(JE_integer), 1, lvlFile);
+		efread(&eventRec[x].eventdat3, sizeof(JE_shortint), 1, lvlFile);
+		efread(&eventRec[x].eventdat5, sizeof(JE_shortint), 1, lvlFile);
+		efread(&eventRec[x].eventdat6, sizeof(JE_shortint), 1, lvlFile);
+		efread(&eventRec[x].eventdat4, sizeof(JE_byte), 1, lvlFile);
+	}
+	eventRec[x].eventtime = 65500;  /*Not needed but just in case*/
+	
+	/*debuginfo('Level loaded.');*/
+	
+	/*debuginfo('Loading Map');*/
+	
+	/* MAP SHAPE LOOKUP TABLE - Each map is directly after level */
+	efread(mapSh, sizeof(JE_word), sizeof(mapSh) / sizeof(JE_word), lvlFile);
+	for (temp = 0; temp < 3; temp++)
+	{
+		for (temp2 = 0; temp2 < 128; temp2++)
 		{
-
-			difficultyLevel = 2;
-			sprintf(tempStr, "demo.%d", playDemoNum);
-			JE_resetFile(&recordFile, tempStr);
-
-			bonusLevelCurrent = false;
-
-			temp = fgetc(recordFile);
-			JE_initEpisode(temp);
-			efread(levelName, 1, 10, recordFile); levelName[10] = '\0';
-			lvlFileNum = fgetc(recordFile);
-			efread(pItems, sizeof(JE_byte), 12, recordFile);
-			efread(portPower, sizeof(JE_byte), 5, recordFile);
-			levelSong = fgetc(recordFile);
-
-			temp = fgetc(recordFile);
-			temp2 = fgetc(recordFile);
-			lastMoveWait = (temp << 8) | temp2;
-			nextDemoOperation = fgetc(recordFile);
-
-			firstEvent = true;
-
-			/*debuginfo('Demo loaded.');*/
+			mapSh[temp][temp2] = SDL_Swap16(mapSh[temp][temp2]);
+		}
+	}
+	
+	/* Read Shapes.DAT */
+	sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
+	JE_resetFile(&shpFile, tempStr);
+	
+	for (z = 0; z < 600; z++)
+	{
+		shapeBlank = fgetc(shpFile);
+		
+		if (shapeBlank)
+		{
+			memset(shape, 0, sizeof(shape));
 		} else {
-			JE_fadeColors(colors, black, 0, 255, 50);
+			efread(shape, sizeof(JE_byte), sizeof(shape), shpFile);
 		}
-
-
-		JE_resetFile(&lvlFile, levelFile);
-		fseek(lvlFile, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
-
-		char_mapFile = fgetc(lvlFile);
-		char_shapeFile = fgetc(lvlFile);
-		efread(&mapX,  sizeof(JE_word), 1, lvlFile);
-		efread(&mapX2, sizeof(JE_word), 1, lvlFile);
-		efread(&mapX3, sizeof(JE_word), 1, lvlFile);
-
-		efread(&levelEnemyMax, sizeof(JE_word), 1, lvlFile);
-		for (x = 0; x < levelEnemyMax; x++)
+		
+		/* Match 1 */
+		for (x = 0; x <= 71; x++)
 		{
-			efread(&levelEnemy[x], sizeof(JE_word), 1, lvlFile);
-		}
-
-		efread(&maxEvent, sizeof(JE_word), 1, lvlFile);
-		for (x = 0; x < maxEvent; x++)
-		{
-			efread(&eventRec[x].eventtime, sizeof(JE_word), 1, lvlFile);
-			efread(&eventRec[x].eventtype, sizeof(JE_byte), 1, lvlFile);
-			efread(&eventRec[x].eventdat,  sizeof(JE_integer), 1, lvlFile);
-			efread(&eventRec[x].eventdat2, sizeof(JE_integer), 1, lvlFile);
-			efread(&eventRec[x].eventdat3, sizeof(JE_shortint), 1, lvlFile);
-			efread(&eventRec[x].eventdat5, sizeof(JE_shortint), 1, lvlFile);
-			efread(&eventRec[x].eventdat6, sizeof(JE_shortint), 1, lvlFile);
-			efread(&eventRec[x].eventdat4, sizeof(JE_byte), 1, lvlFile);
-		}
-		eventRec[x].eventtime = 65500;  /*Not needed but just in case*/
-
-		/*debuginfo('Level loaded.');*/
-
-		/*debuginfo('Loading Map');*/
-
-		/* MAP SHAPE LOOKUP TABLE - Each map is directly after level */
-		efread(mapSh, sizeof(JE_word), sizeof(mapSh) / sizeof(JE_word), lvlFile);
-		for (temp = 0; temp < 3; temp++)
-		{
-			for (temp2 = 0; temp2 < 128; temp2++)
+			if (mapSh[0][x] == z+1)
 			{
-				mapSh[temp][temp2] = SDL_Swap16(mapSh[temp][temp2]);
+				memcpy(megaData1->shapes[x].sh, shape, sizeof(JE_DanCShape));
+				
+				ref[0][x] = (JE_byte *)megaData1->shapes[x].sh;
 			}
 		}
-
-		/* Read Shapes.DAT */
-		sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
-		JE_resetFile(&shpFile, tempStr);
-
-		for (z = 0; z < 600; z++)
+		
+		/* Match 2 */
+		for (x = 0; x <= 71; x++)
 		{
-			shapeBlank = fgetc(shpFile);
-
-			if (shapeBlank)
+			if (mapSh[1][x] == z+1)
 			{
-				memset(shape, 0, sizeof(shape));
-			} else {
-				efread(shape, sizeof(JE_byte), sizeof(shape), shpFile);
-			}
-
-			/* Match 1 */
-			for (x = 0; x <= 71; x++)
-			{
-				if (mapSh[0][x] == z+1)
+				if (x != 71 && !shapeBlank)
 				{
-					memcpy(megaData1->shapes[x].sh, shape, sizeof(JE_DanCShape));
-
-					ref[0][x] = (JE_byte *)megaData1->shapes[x].sh;
-				}
-			}
-
-			/* Match 2 */
-			for (x = 0; x <= 71; x++)
-			{
-				if (mapSh[1][x] == z+1)
-				{
-					if (x != 71 && !shapeBlank)
+					memcpy(megaData2->shapes[x].sh, shape, sizeof(JE_DanCShape));
+					
+					y = 1;
+					for (yy = 0; yy < (24 * 28) >> 1; yy++)
 					{
-						memcpy(megaData2->shapes[x].sh, shape, sizeof(JE_DanCShape));
-
-						y = 1;
-						for (yy = 0; yy < (24 * 28) >> 1; yy++)
+						if (shape[yy] == 0)
 						{
-							if (shape[yy] == 0)
-							{
-								y = 0;
-							}
+							y = 0;
 						}
-
-						megaData2->shapes[x].fill = y;
-						ref[1][x] = (JE_byte *)megaData2->shapes[x].sh;
-					} else {
-						ref[1][x] = NULL;
 					}
+					
+					megaData2->shapes[x].fill = y;
+					ref[1][x] = (JE_byte *)megaData2->shapes[x].sh;
+				} else {
+					ref[1][x] = NULL;
 				}
 			}
-
-			/*Match 3*/
-			for (x = 0; x <= 71; x++)
+		}
+		
+		/*Match 3*/
+		for (x = 0; x <= 71; x++)
+		{
+			if (mapSh[2][x] == z+1)
 			{
-				if (mapSh[2][x] == z+1)
+				if (x < 70 && !shapeBlank)
 				{
-					if (x < 70 && !shapeBlank)
+					memcpy(megaData3->shapes[x].sh, shape, sizeof(JE_DanCShape));
+					
+					y = 1;
+					for (yy = 0; yy < (24 * 28) >> 1; yy++)
 					{
-						memcpy(megaData3->shapes[x].sh, shape, sizeof(JE_DanCShape));
-
-						y = 1;
-						for (yy = 0; yy < (24 * 28) >> 1; yy++)
+						if (shape[yy] == 0)
 						{
-							if (shape[yy] == 0)
-							{
-								y = 0;
-							}
+							y = 0;
 						}
-
-						megaData3->shapes[x].fill = y;
-						ref[2][x] = (JE_byte *)megaData3->shapes[x].sh;
-					} else {
-						ref[2][x] = NULL;
 					}
+					
+					megaData3->shapes[x].fill = y;
+					ref[2][x] = (JE_byte *)megaData3->shapes[x].sh;
+				} else {
+					ref[2][x] = NULL;
 				}
 			}
 		}
-
-		fclose(shpFile);
-
-		efread(mapBuf, sizeof(JE_byte), 14 * 300, lvlFile);
-		bufLoc = 0;              /* MAP NUMBER 1 */
-		for (y = 0; y < 300; y++)
+	}
+	
+	fclose(shpFile);
+	
+	efread(mapBuf, sizeof(JE_byte), 14 * 300, lvlFile);
+	bufLoc = 0;              /* MAP NUMBER 1 */
+	for (y = 0; y < 300; y++)
+	{
+		for (x = 0; x < 14; x++)
 		{
-			for (x = 0; x < 14; x++)
-			{
-				megaData1->mainmap[y][x] = ref[0][mapBuf[bufLoc]];
-				bufLoc++;
-			}
+			megaData1->mainmap[y][x] = ref[0][mapBuf[bufLoc]];
+			bufLoc++;
 		}
-
-		efread(mapBuf, sizeof(JE_byte), 14 * 600, lvlFile);
-		bufLoc = 0;              /* MAP NUMBER 2 */
-		for (y = 0; y < 600; y++)
+	}
+	
+	efread(mapBuf, sizeof(JE_byte), 14 * 600, lvlFile);
+	bufLoc = 0;              /* MAP NUMBER 2 */
+	for (y = 0; y < 600; y++)
+	{
+		for (x = 0; x < 14; x++)
 		{
-			for (x = 0; x < 14; x++)
-			{
-				megaData2->mainmap[y][x] = ref[1][mapBuf[bufLoc]];
-				bufLoc++;
-			}
+			megaData2->mainmap[y][x] = ref[1][mapBuf[bufLoc]];
+			bufLoc++;
 		}
-
-		efread(mapBuf, sizeof(JE_byte), 15 * 600, lvlFile);
-		bufLoc = 0;              /* MAP NUMBER 3 */
-		for (y = 0; y < 600; y++)
+	}
+	
+	efread(mapBuf, sizeof(JE_byte), 15 * 600, lvlFile);
+	bufLoc = 0;              /* MAP NUMBER 3 */
+	for (y = 0; y < 600; y++)
+	{
+		for (x = 0; x < 15; x++)
 		{
-			for (x = 0; x < 15; x++)
-			{
-				megaData3->mainmap[y][x] = ref[2][mapBuf[bufLoc]];
-				bufLoc++;
-			}
+			megaData3->mainmap[y][x] = ref[2][mapBuf[bufLoc]];
+			bufLoc++;
 		}
-
-		fclose(lvlFile);
-
-		/* Note: The map data is automatically calculated with the correct mapsh
-		value and then the pointer is calculated using the formula (MAPSH-1)*168.
-		Then, we'll automatically add S2Ofs to get the exact offset location into
-		the shape table! This makes it VERY FAST! */
-
-		/*debuginfo('Map file done.');*/
-		/* End of find loop for LEVEL??.DAT */
-	} /*LoadDestruct?*/
-
+	}
+	
+	fclose(lvlFile);
+	
+	/* Note: The map data is automatically calculated with the correct mapsh
+	value and then the pointer is calculated using the formula (MAPSH-1)*168.
+	Then, we'll automatically add S2Ofs to get the exact offset location into
+	the shape table! This makes it VERY FAST! */
+	
+	/*debuginfo('Map file done.');*/
+	/* End of find loop for LEVEL??.DAT */
 }
 
 void JE_titleScreen( JE_boolean animate )
@@ -3708,9 +3682,8 @@ void JE_titleScreen( JE_boolean animate )
 
 	tempScreenSeg = VGAScreen;
 
-	playDemo = false;
-
-	stoppedDemo = false;
+	play_demo = false;
+	stopped_demo = false;
 
 	first  = true;
 	redraw = true;
@@ -3913,11 +3886,7 @@ void JE_titleScreen( JE_boolean animate )
 			JE_textMenuWait(&waitForDemo, false);
 			
 			if (waitForDemo == 1)
-			{
-				playDemo = true;
-				if (++playDemoNum > 5)
-					playDemoNum = 1;
-			}
+				play_demo = true;
 			
 			if (keysactive[SDLK_LALT] && keysactive[SDLK_x])
 				quit = true;
@@ -4130,16 +4099,13 @@ void JE_titleScreen( JE_boolean animate )
 								redraw = true;
 								fadeIn = true;
 								break;
-							case 4: /* Ordering info, now OpenTyrian menu*/
+							case 4: /* Ordering info, now OpenTyrian menu */
 								opentyrian_menu();
 								redraw = true;
 								fadeIn = true;
 								break;
 							case 5: /* Demo */
-								JE_initPlayerData();
-								playDemo = true;
-								if (playDemoNum++ > 4)
-									playDemoNum = 1;
+								play_demo = true;
 								break;
 							case 6: /* Quit */
 								quit = true;
@@ -4152,7 +4118,7 @@ void JE_titleScreen( JE_boolean animate )
 				}
 			}
 		}
-		while (!(quit || gameLoaded || jumpSection || playDemo || loadDestruct));
+		while (!(quit || gameLoaded || jumpSection || play_demo || loadDestruct));
 		
 	trentWinsGame:
 		JE_fadeBlack(15);
@@ -4168,7 +4134,7 @@ void JE_openingAnim( void )
 
 	moveTyrianLogoUp = true;
 
-	if (!isNetworkGame && !stoppedDemo)
+	if (!isNetworkGame && !stopped_demo)
 	{
 		memcpy(colors, black, sizeof(colors));
 		memset(black, 255, sizeof(black));
