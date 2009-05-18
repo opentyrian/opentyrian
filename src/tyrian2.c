@@ -826,7 +826,7 @@ start_level:
 		if (play_demo)
 		{
 			stop_song();
-			JE_fadeBlack(10);
+			fade_black(10);
 			
 			wait_noinput(true, true, true);
 		}
@@ -848,15 +848,9 @@ start_level:
 		else
 		{
 			fade_song();
+			fade_black(10);
 			
-			JE_fadeBlack(10);
-			if (twoPlayerMode)
-			{
-				temp = 22;
-			} else {
-				temp = 11;
-			}
-			JE_loadGame(temp);
+			JE_loadGame(twoPlayerMode ? 22 : 11);
 			if (doNotSaveBackup)
 			{
 				superTyrian = false;
@@ -3154,24 +3148,23 @@ new_game:
 
 								if (jumpBackToEpisode1 && !twoPlayerMode)
 								{
-
-									JE_loadPic(1, false);
+									JE_loadPic(1, false); // huh?
 									JE_clr256();
-
+									
 									if (superTyrian)
 									{
-										// if completed Zinglon's Revenge, show SuperTyrian code
-										// if completed SuperTyrian, show Nort-Ship code
+										// if completed Zinglon's Revenge, show SuperTyrian and Destruct codes
+										// if completed SuperTyrian, show Nort-Ship Z code
 										
-										superArcadeMode = (initialDifficulty == 8) ? SA + 1 : 1;
+										superArcadeMode = (initialDifficulty == 8) ? 8 : 1;
 										
 										jumpSection = true;
 										loadTitleScreen = true;
 									}
 									
-									if (superArcadeMode < SA + 2)
+									if (superArcadeMode < SA_ENGAGE)
 									{
-										if (SANextShip[superArcadeMode] == SA_DESTRUCT)
+										if (SANextShip[superArcadeMode] == SA_ENGAGE)
 										{
 											sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
 											JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
@@ -3185,14 +3178,10 @@ new_game:
 											JE_dString(JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
 										}
 										
-										if (SANextShip[superArcadeMode] < 7)
-										{
+										if (SANextShip[superArcadeMode] < SA_NORTSHIPZ)
 											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
-										}
-										else if (SANextShip[superArcadeMode] == 7)
-										{
+										else if (SANextShip[superArcadeMode] == SA_NORTSHIPZ)
 											trentWin = true;
-										}
 										
 										sprintf(buffer, "Type %s at Title", specialName[SANextShip[superArcadeMode]-1]);
 										JE_dString(JE_fontCenter(buffer, SMALL_FONT_SHAPES), 160, buffer, SMALL_FONT_SHAPES);
@@ -3929,21 +3918,21 @@ void JE_titleScreen( JE_boolean animate )
 					nameGo[z]++;
 					if (strlen(specialName[z]) == nameGo[z])
 					{
-						if (z == SA)
+						if (z+1 == SA_DESTRUCT)
 						{
 							loadDestruct = true;
 						}
-						else if (z == SA+1)
+						else if (z+1 == SA_ENGAGE)
 						{
 							/* SuperTyrian */
 							
 							JE_playSampleNum(37);
 							JE_whoa();
-							JE_clr256();
-							JE_outText(10, 10, "Cheat codes have been disabled.", 15, 4);
 							
 							initialDifficulty = keysactive[SDLK_SCROLLOCK] ? 6 : 8;
 							
+							JE_clr256();
+							JE_outText(10, 10, "Cheat codes have been disabled.", 15, 4);							
 							if (initialDifficulty == 8)
 								JE_outText(10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
 							else
@@ -3956,29 +3945,32 @@ void JE_titleScreen( JE_boolean animate )
 							char buf[10+1+15+1];
 							snprintf(buf, sizeof(buf), "%s %s", miscTextB[4], pName[0]);
 							JE_dString(JE_fontCenter(buf, FONT_SHAPES), 110, buf, FONT_SHAPES);
+							
 							play_song(16);
 							JE_playSampleNum(35);
 							JE_showVGA();
 							
-							JE_wipeKey();
-							
 							wait_input(true, true, true);
 							
-							constantDie = false;
 							JE_initEpisode(1);
+							constantDie = false;
 							superTyrian = true;
 							onePlayerAction = true;
-							pItems[P_SHIP] = 13;
-							pItems[P_FRONT] = 39;
-							pItems[P_SUPERARCADE] = 254;
 							gameLoaded = true;
 							difficultyLevel = initialDifficulty;
 							score = 0;
+							
+							pItems[P_SHIP] = 13;           // The Stalker 21.126
+							pItems[P_FRONT] = 39;          // Atomic RailGun
+							
+							pItems[P_SUPERARCADE] = SA_SUPERTYRIAN;
 						}
 						else
 						{
-							pItems[P_SUPERARCADE] = z+1;
 							pItems[P_SHIP] = SAShip[z];
+							
+							pItems[P_SUPERARCADE] = z+1;
+							
 							JE_fadeBlack(10);
 							if (select_episode() && select_difficulty())
 							{
@@ -4001,16 +3993,16 @@ void JE_titleScreen( JE_boolean animate )
 								onePlayerAction = true;
 								superArcadeMode = z+1;
 								gameLoaded = true;
+								initialDifficulty = ++difficultyLevel;
 								score = 0;
+								
 								pItems[P_FRONT] = SAWeapon[z][0];
 								pItems[P_SPECIAL] = SASpecialWeapon[z];
-								if (z+1 == SA)
+								if (superArcadeMode == SA_NORTSHIPZ)
 								{
-									pItems[P_LEFT_SIDEKICK] = 24;
-									pItems[P_RIGHT_SIDEKICK] = 24;
+									pItems[P_LEFT_SIDEKICK] = 24;   // Companion Ship Quicksilver
+									pItems[P_RIGHT_SIDEKICK] = 24;  // Companion Ship Quicksilver
 								}
-								difficultyLevel++;
-								initialDifficulty = difficultyLevel;
 							}
 							else
 							{

@@ -299,20 +299,17 @@ void JE_saveGame( JE_byte slot, char *name )
 		pItems[P_SUPERARCADE] = SA_ARCADE;
 	if (superTyrian)
 		pItems[P_SUPERARCADE] = SA_SUPERTYRIAN;
-
+	
 	memcpy(&saveFiles[slot-1].items, &pItems, sizeof(pItems));
-
+	
 	if (superArcadeMode > 253)
-	{
-		pItems[P_SUPERARCADE] = 0;
-	}
+		pItems[P_SUPERARCADE] = SA_NONE;
+	
 	if (twoPlayerMode)
-	{
 		memcpy(&saveFiles[slot-1].lastItems, &pItemsPlayer2, sizeof(pItemsPlayer2));
-	} else {
+	else
 		memcpy(&saveFiles[slot-1].lastItems, &pItemsBack2, sizeof(pItemsBack2));
-	}
-
+	
 	saveFiles[slot-1].score  = score;
 	saveFiles[slot-1].score2 = score2;
 	memcpy(&saveFiles[slot-1].levelName, &lastLevelName, sizeof(lastLevelName));
@@ -326,7 +323,9 @@ void JE_saveGame( JE_byte slot, char *name )
 			temp = 4; /* JE: {Episodemax is 4 for completion purposes} */
 		}
 		saveFiles[slot-1].episode = temp;
-	} else {
+	}
+	else
+	{
 		saveFiles[slot-1].episode = episodeNum;
 	}
 

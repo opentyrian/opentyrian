@@ -37,7 +37,7 @@
 JE_integer tempDat, tempDat2, tempDat3;
 JE_boolean tempb2;
 
-const JE_byte SANextShip[SA + 2] /* [0..SA + 1] */ = { 3, 9, 6, 2, 5, 1, 4, 3, 7 };
+const JE_byte SANextShip[SA + 2] /* [0..SA + 1] */ = { 3, 9, 6, 2, 5, 1, 4, 3, 7 }; // 0 -> 3 -> 2 -> 6 -> 4 -> 5 -> 1 -> 9 -> 7
 const JE_word SASpecialWeapon[SA] /* [1..SA] */  = { 7, 8, 9, 10, 11, 12, 13 };
 const JE_word SASpecialWeaponB[SA] /* [1..SA] */ = {37, 6, 15, 40, 16, 14, 41 };
 const JE_byte SAShip[SA] /* [1..SA] */ = { 3, 1, 5, 10, 2, 11, 12 };
