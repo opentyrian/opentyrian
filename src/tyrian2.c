@@ -4151,17 +4151,17 @@ void intro_logos( void )
 	setjasondelay(200);
 	wait_delayorinput(true, true, true);
 	
-	fade_black();
+	fade_black(10);
 	
 	JE_loadPic(12, false);
 	JE_showVGA();
 	
-	fade_palette(palettes[pcxpal[12-1]], 10, 0, 255);
+	fade_palette(colors, 10, 0, 255);
 	
 	setjasondelay(200);
 	wait_delayorinput(true, true, true);
 	
-	fade_black();
+	fade_black(10);
 }
 
 void JE_readTextSync( void )
