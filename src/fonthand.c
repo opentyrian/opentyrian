@@ -104,11 +104,10 @@ JE_word JE_textWidth( const char *s, JE_byte font )
 			{
 				x += shapeX[font][fontMap[b-33]] + 1;
 			}
-		} else {
-			if (b == 32)
-			{
-				x += 6;
-			}
+		}
+		else if (b == 32)
+		{
+			x += 6;
 		}
 	}
 	return x;

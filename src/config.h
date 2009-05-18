@@ -143,7 +143,6 @@ extern JE_boolean superPause, explosionTransparent, youAreCheating, displayScore
 extern JE_byte versionNum;
 extern JE_byte fastPlay;
 extern JE_boolean pentiumMode;
-extern JE_boolean playerPasswordInput;
 extern JE_byte gameSpeed;
 extern JE_byte processorType;
 extern JE_SaveFilesType saveFiles;

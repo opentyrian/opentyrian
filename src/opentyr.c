@@ -361,9 +361,8 @@ int main( int argc, char *argv[] )
 	/* Default Options */
 	youAreCheating = false;
 	smoothScroll = true;
-	showMemLeft = false;
-	playerPasswordInput = true;
-
+	loadDestruct = false;
+	
 	if (!audio_disabled)
 	{
 		printf("initializing SDL audio...\n");
@@ -398,9 +397,6 @@ int main( int argc, char *argv[] )
 			network_tyrian_halt(3, false);
 		}
 	}
-	
-	loadDestruct = false;
-	stopped_demo = false;
 	
 	JE_main();
 	

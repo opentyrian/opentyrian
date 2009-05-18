@@ -58,6 +58,10 @@
 
 void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
 
+void intro_logos( void );
+
+bool skip_intro_logos = false;
+
 int joystick_config = 0; // which joystick is being configured in menu
 
 JE_word statDmg[2]; /* [1..2] */
@@ -2623,7 +2627,9 @@ explosion_draw_overflow:
 		if (newkey || newmouse)
 		{
 			reallyEndLevel = true;
+			
 			stopped_demo = true;
+			skip_intro_logos = true;
 		}
 	}
 	else // input handling for pausing, menu, cheats
@@ -2858,7 +2864,9 @@ void JE_loadMap( void )
 
 	if (loadTitleScreen || play_demo)
 	{
-		JE_openingAnim();
+		if (!skip_intro_logos && !isNetworkGame)
+			intro_logos();
+		moveTyrianLogoUp = true;
 		JE_titleScreen(true);
 		loadTitleScreen = false;
 	}
@@ -4128,42 +4136,32 @@ void JE_titleScreen( JE_boolean animate )
 	}
 }
 
-void JE_openingAnim( void )
+void intro_logos( void )
 {
-	/*JE_clr256();*/
-
-	moveTyrianLogoUp = true;
-
-	if (!isNetworkGame && !stopped_demo)
-	{
-		memcpy(colors, black, sizeof(colors));
-		memset(black, 255, sizeof(black));
-		JE_fadeColors(colors, black, 0, 255, 50);
-
-		JE_loadPic(10, false);
-		JE_showVGA();
-
-		JE_fadeColors(black, colors, 0, 255, 50);
-		memset(black, 0, sizeof(black));
-
-		setjasondelay(200);
-		while (!JE_anyButton() && (signed int)(target - SDL_GetTicks()) > 0)
-			SDL_Delay(16);
-
-		JE_fadeBlack(15);
-
-		JE_loadPic(12, false);
-		JE_showVGA();
-
-		memcpy(colors, palettes[pcxpal[12-1]], sizeof(colors));
-		JE_fadeColor(10);
-
-		setjasondelay(200);
-		while (!JE_anyButton() && (signed int)(target - SDL_GetTicks()) > 0)
-			SDL_Delay(16);
-
-		JE_fadeBlack(10);
-	}
+	SDL_FillRect(VGAScreen, NULL, 0);
+	
+	SDL_Color white = { 255, 255, 255 };
+	fade_solid(&white, 50, 0, 255);
+	
+	JE_loadPic(10, false);
+	JE_showVGA();
+	
+	fade_palette(colors, 50, 0, 255);
+	
+	setjasondelay(200);
+	wait_delayorinput(true, true, true);
+	
+	fade_black();
+	
+	JE_loadPic(12, false);
+	JE_showVGA();
+	
+	fade_palette(palettes[pcxpal[12-1]], 10, 0, 255);
+	
+	setjasondelay(200);
+	wait_delayorinput(true, true, true);
+	
+	fade_black();
 }
 
 void JE_readTextSync( void )

@@ -83,7 +83,6 @@ void JE_starShowVGA( void );
 void JE_main( void );
 void JE_loadMap( void );
 void JE_titleScreen( JE_boolean animate );
-void JE_openingAnim( void );
 void JE_readTextSync( void );
 void JE_displayText( void );
 

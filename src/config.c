@@ -227,7 +227,6 @@ JE_byte    fastPlay;
 JE_boolean pentiumMode;
 
 /* Savegame files */
-JE_boolean playerPasswordInput;
 JE_byte    gameSpeed;
 JE_byte    processorType;  /* 1=386 2=486 3=Pentium Hyper */
 

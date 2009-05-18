@@ -24,6 +24,7 @@
 #include "nortvars.h"
 #include "video.h"
 
+#include <assert.h>
 
 JE_PalType palettes;
 JE_word palNum;
@@ -62,13 +63,75 @@ void JE_updateColorsFast( palette_t colorBuffer )
 		palette[i].r = colorBuffer[i].r;
 		palette[i].g = colorBuffer[i].g;
 		palette[i].b = colorBuffer[i].b;
-		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
-		yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+		
+#ifndef TARGET_GP2X
+			rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
+			yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+#endif // TARGET_GP2X
 	}
 	
 #ifdef TARGET_GP2X
 	SDL_SetColors(display_surface, palette, 0, 256);
 #endif /* TARGET_GP2X */
+}
+
+void fade_palette( palette_t target, int steps, unsigned int first_color, unsigned int last_color )
+{
+	assert(steps > 0);
+	
+	static int diff[256][3];
+	for (unsigned int i = first_color; i <= last_color; i++)
+	{
+		diff[i][0] = (int)target[i].r - palette[i].r;
+		diff[i][1] = (int)target[i].g - palette[i].g;
+		diff[i][2] = (int)target[i].b - palette[i].b;
+	}
+	
+	for (; steps > 0; steps--)
+	{
+		setdelay(1);
+		
+		for (unsigned int i = first_color; i <= last_color; i++)
+		{
+			int delta[3] = { diff[i][0] / steps, diff[i][1] / steps, diff[i][2] / steps };
+			
+			diff[i][0] -= delta[0];
+			diff[i][1] -= delta[1];
+			diff[i][2] -= delta[2];
+			
+			palette[i].r += delta[0];
+			palette[i].g += delta[1];
+			palette[i].b += delta[2];
+			
+#ifndef TARGET_GP2X
+			rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
+			yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+#endif // TARGET_GP2X
+		}
+		
+#ifndef TARGET_GP2X
+		JE_showVGA();
+#else // TARGET_GP2X
+		SDL_SetColors(display_surface, palette, 0, 256);
+#endif // TARGET_GP2X
+		
+		wait_delay();
+	}
+}
+
+void fade_solid( SDL_Color *color, int steps, unsigned int first_color, unsigned int last_color )
+{
+	static palette_t solid;
+	for (unsigned int i = first_color; i <= last_color; i++)
+		memcpy(&solid[i], color, sizeof(SDL_Color));
+	
+	fade_palette(solid, steps, first_color, last_color);
+}
+
+void fade_black( int steps )
+{
+	SDL_Color black = { 0, 0, 0 };
+	fade_solid(&black, steps, 0, 255);
 }
 
 void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps )

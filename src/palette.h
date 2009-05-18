@@ -37,6 +37,11 @@ extern palette_t black, colors, colors2;
 void JE_loadPals( void );
 
 void JE_updateColorsFast( palette_t ColorBuffer );
+
+void fade_palette( palette_t target, int steps, unsigned int first_color, unsigned int last_color );
+void fade_solid( SDL_Color *color, int steps, unsigned int first_color, unsigned int last_color );
+void fade_black( int steps );
+
 void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps );
 void JE_fadeBlack( JE_byte steps );
 void JE_fadeColor( JE_byte steps );
