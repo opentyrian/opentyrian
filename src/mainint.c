@@ -890,7 +890,6 @@ void JE_initPlayerData( void )
 	pItems[P2_SIDEKICK_MODE] = 2;  // not sure
 	pItems[P2_SIDEKICK_TYPE] = 1;  // not sure
 	
-	pItems[P_SUPERARCADE] = SA_NONE;  // not SuperArcade
 	pItems[P_EPISODE] = 0;            // initial episode number
 	
 	memcpy(pItemsBack2, pItems, sizeof(pItems));
@@ -921,7 +920,7 @@ void JE_initPlayerData( void )
 	mainLevel = FIRST_LEVEL;
 	saveLevel = FIRST_LEVEL;
 	
-	strcpy(lastLevelName, miscText[20-1]);
+	strcpy(lastLevelName, miscText[19]);
 }
 
 void JE_sortHighScores( void )
@@ -2458,15 +2457,6 @@ void JE_operation( JE_byte slot )
 			JE_loadGame(slot);
 			gameLoaded = true;
 			quit = true;
-			
-			if (pItems[P_SUPERARCADE] > 0)
-			{
-				onePlayerAction = true;
-				if (pItems[P_SUPERARCADE] == 255)
-					superTyrian = true;
-				else
-					superArcadeMode = pItems[P_SUPERARCADE];
-			}
 		}
 	}
 	else if (slot % 11 != 0)
@@ -2798,7 +2788,6 @@ void JE_mainKeyboardInput( void )
 			pItems[P_SHIP] = 12;
 			pItems[P_SPECIAL] = 13;
 			pItems[P_REAR] = 36;
-			pItems[P_SUPERARCADE] = 37;
 			shipGr = 1;
 		}
 	}
@@ -3891,7 +3880,7 @@ redo:
 
 							shotMultiPos[2-1] = 0;
 
-							if (superArcadeMode != SA_NONE && superArcadeMode <= SA)
+							if (superArcadeMode != SA_NONE && superArcadeMode <= SA_NORTSHIPZ)
 							{
 								shotMultiPos[9-1] = 0;
 								shotMultiPos[11-1] = 0;
