@@ -818,7 +818,7 @@ void JE_nextEpisode( void )
 		if (episodeNum == 1 &&
 			!isNetworkGame && !constantPlay)
 		{
-			JE_loadOrderingInfo();
+			// JE_loadOrderingInfo();
 		}
 		
 		if (episodeNum > 2 &&
@@ -1103,13 +1103,6 @@ JE_boolean JE_gammaCheck( void )
 		JE_updateColorsFast(colors);
 	}
 	return temp;
-}
-
-/* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
-void JE_loadOrderingInfo( void )
-{
-	/* YKS: Unused on the port */
-	STUB();
 }
 
 void JE_doInGameSetup( void )

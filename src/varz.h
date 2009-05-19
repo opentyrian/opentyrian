@@ -226,7 +226,6 @@ extern const JE_byte specialArcadeWeapon[PORT_NUM];
 extern const JE_byte optionSelect[16][3][2];
 extern const JE_word PGR[21];
 extern const JE_byte PAni[21];
-extern const JE_byte pItemButtonMap[7];
 extern const JE_word linkGunWeapons[38];
 extern const JE_word chargeGunWeapons[38];
 extern const JE_word linkMultiGr[17];

@@ -24,57 +24,24 @@
 #include "varz.h"
 #include "helptext.h"
 
-
-#define CUBE_WIDTH 35
-#define LINE_WIDTH 150
-
 extern JE_word statDmg[2];
-
-void JE_scaleInPicture( void );
+extern JE_boolean first;
+extern char tempStr[31];
+extern JE_byte itemAvail[9][10], itemAvailMax[9];
 
 void JE_createNewEventEnemy( JE_byte enemytypeofs, JE_word enemyoffset );
-
-void JE_genItemMenu( JE_byte itemnum );
-
-/*void JE_drawBackground3( void );*/
-
-void JE_weaponViewFrame( JE_byte testshotnum );
 
 void JE_doNetwork( void );
 
 void JE_makeEnemy( struct JE_SingleEnemyType *enemy );
 
-void JE_weaponSimUpdate( void );
-
-void JE_funkyScreen( void );
-
 void JE_eventJump( JE_word jump );
-
-void JE_menuFunction( JE_byte select );
-
-void JE_drawScore( void );
 
 void JE_doStatBar( void );
 
-JE_boolean JE_quitRequest( void );
-
 void JE_whoa( void );
 
-void JE_drawMainMenuHelpText( void );
-
-void JE_doFunkyScreen( void );
-
-JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist );
-
-void JE_computeDots( void );
-
 void JE_barX ( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col );
-
-void JE_initWeaponView( void );
-
-void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 );
-
-typedef JE_byte JE_MenuChoiceType[MAX_MENU];
 
 void JE_newEnemy( int enemyOffset );
 void JE_drawEnemy( int enemyOffset );
@@ -88,20 +55,6 @@ void JE_displayText( void );
 
 JE_boolean JE_searchFor( JE_byte PLType );
 void JE_eventSystem( void );
-
-JE_longint JE_cashLeft( void );
-void JE_loadCubes( void );
-void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y );
-void JE_itemScreen( void );
-
-void JE_drawMenuHeader( void );
-void JE_drawMenuChoices( void );
-void JE_updateNavScreen( void );
-
-void JE_drawNavLines( JE_boolean dark );
-void JE_drawLines( JE_boolean dark );
-void JE_drawDots( void );
-void JE_drawPlanet( JE_byte planetNum );
 
 #endif /* TYRIAN2_H */
 
