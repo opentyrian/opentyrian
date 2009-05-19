@@ -36,27 +36,29 @@ void jukebox( void )
 {
 	bool hide_text = false, quit = false;
 	
-	bool fade_looped_songs = true, fading = false;
-	bool fx = false, stopped = false;
+	bool fade_looped_songs = true, fading_song = false;
+	bool stopped = false;
 	
+	bool fx = false;
 	int fx_num = 0;
 	
-	SDL_FillRect(VGAScreenSeg, NULL, 0);
-	JE_showVGA();
-	JE_updateColorsFast(vga_palette); //JE_fadeColor(10);
+	int palette_fade_steps = 15;
+	
+	int diff[256][3];
+	init_step_fade_palette(diff, vga_palette, 0, 255);
 	
 	JE_starlib_init();
 	
 	int fade_volume = tyrMusicVolume;
 	
-	while (!quit)
+	while (!quit || palette_fade_steps > 0)
 	{
 		if (!stopped && !audio_disabled)
 		{
 			if (songlooped && fade_looped_songs)
-				fading = true;
+				fading_song = true;
 			
-			if (fading)
+			if (fading_song)
 			{
 				if (fade_volume > 5)
 				{
@@ -66,13 +68,13 @@ void jukebox( void )
 				{
 					fade_volume = tyrMusicVolume;
 					
-					fading = false;
+					fading_song = false;
 				}
 				
 				set_volume(fade_volume, fxVolume);
 			}
 			
-			if (!playing || (songlooped && fade_looped_songs && !fading))
+			if (!playing || (songlooped && fade_looped_songs && !fading_song))
 				play_song(mt_rand() % MUSIC_NUM);
 		}
 		
@@ -107,6 +109,9 @@ void jukebox( void )
 		
 		JE_showVGA();
 		
+		if (palette_fade_steps > 0)
+			step_fade_palette(diff, palette_fade_steps--, 0, 255);
+		
 		wait_delay();
 		
 		// quit on mouse click
@@ -121,13 +126,19 @@ void jukebox( void )
 			case SDLK_ESCAPE: // quit jukebox
 			case SDLK_q:
 				quit = true;
+				
+				palette_fade_steps = 15;
+				
+				SDL_Color black = { 0, 0, 0 };
+				init_step_fade_solid(diff, &black, 0, 255);
 				break;
+				
 			case SDLK_SPACE:
 				hide_text = !hide_text;
 				break;
 				
 			case SDLK_f:
-				fading = !fading;
+				fading_song = !fading_song;
 				break;
 			case SDLK_n:
 				fade_looped_songs = !fade_looped_songs;
@@ -176,8 +187,6 @@ void jukebox( void )
 	}
 	
 	set_volume(tyrMusicVolume, fxVolume);
-	
-	JE_updateColorsFast(black); //JE_fadeBlack(10);
 }
 
 // kate: tab-width 4; vim: set noet:

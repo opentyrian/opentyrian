@@ -75,45 +75,67 @@ void JE_updateColorsFast( palette_t colorBuffer )
 #endif /* TARGET_GP2X */
 }
 
-void fade_palette( palette_t target, int steps, unsigned int first_color, unsigned int last_color )
+void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int first_color, unsigned int last_color )
+{
+	for (unsigned int i = first_color; i <= last_color; i++)
+	{
+		diff[i][0] = (int)colors[i].r - palette[i].r;
+		diff[i][1] = (int)colors[i].g - palette[i].g;
+		diff[i][2] = (int)colors[i].b - palette[i].b;
+	}
+}
+
+void init_step_fade_solid( int diff[256][3], SDL_Color *color, unsigned int first_color, unsigned int last_color )
+{
+	for (unsigned int i = first_color; i <= last_color; i++)
+	{
+		diff[i][0] = (int)color->r - palette[i].r;
+		diff[i][1] = (int)color->g - palette[i].g;
+		diff[i][2] = (int)color->b - palette[i].b;
+	}
+}
+
+void step_fade_palette( int diff[256][3], int steps, unsigned int first_color, unsigned int last_color )
+{
+	assert(steps > 0);
+	
+	for (unsigned int i = first_color; i <= last_color; i++)
+	{
+		int delta[3] = { diff[i][0] / steps, diff[i][1] / steps, diff[i][2] / steps };
+		
+		diff[i][0] -= delta[0];
+		diff[i][1] -= delta[1];
+		diff[i][2] -= delta[2];
+		
+		palette[i].r += delta[0];
+		palette[i].g += delta[1];
+		palette[i].b += delta[2];
+		
+#ifndef TARGET_GP2X
+		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
+		yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+#endif // TARGET_GP2X
+	}
+	
+#ifndef TARGET_GP2X
+	JE_showVGA();
+#else // TARGET_GP2X
+	SDL_SetColors(display_surface, palette, 0, 256);
+#endif // TARGET_GP2X
+}
+
+void fade_palette( palette_t colors, int steps, unsigned int first_color, unsigned int last_color )
 {
 	assert(steps > 0);
 	
 	static int diff[256][3];
-	for (unsigned int i = first_color; i <= last_color; i++)
-	{
-		diff[i][0] = (int)target[i].r - palette[i].r;
-		diff[i][1] = (int)target[i].g - palette[i].g;
-		diff[i][2] = (int)target[i].b - palette[i].b;
-	}
+	init_step_fade_palette(diff, colors, first_color, last_color);
 	
 	for (; steps > 0; steps--)
 	{
 		setdelay(1);
 		
-		for (unsigned int i = first_color; i <= last_color; i++)
-		{
-			int delta[3] = { diff[i][0] / steps, diff[i][1] / steps, diff[i][2] / steps };
-			
-			diff[i][0] -= delta[0];
-			diff[i][1] -= delta[1];
-			diff[i][2] -= delta[2];
-			
-			palette[i].r += delta[0];
-			palette[i].g += delta[1];
-			palette[i].b += delta[2];
-			
-#ifndef TARGET_GP2X
-			rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
-			yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
-#endif // TARGET_GP2X
-		}
-		
-#ifndef TARGET_GP2X
-		JE_showVGA();
-#else // TARGET_GP2X
-		SDL_SetColors(display_surface, palette, 0, 256);
-#endif // TARGET_GP2X
+		step_fade_palette(diff, steps, first_color, last_color);
 		
 		wait_delay();
 	}
@@ -121,11 +143,19 @@ void fade_palette( palette_t target, int steps, unsigned int first_color, unsign
 
 void fade_solid( SDL_Color *color, int steps, unsigned int first_color, unsigned int last_color )
 {
-	static palette_t solid;
-	for (unsigned int i = first_color; i <= last_color; i++)
-		memcpy(&solid[i], color, sizeof(SDL_Color));
+	assert(steps > 0);
 	
-	fade_palette(solid, steps, first_color, last_color);
+	static int diff[256][3];
+	init_step_fade_solid(diff, color, first_color, last_color);
+	
+	for (; steps > 0; steps--)
+	{
+		setdelay(1);
+		
+		step_fade_palette(diff, steps, first_color, last_color);
+		
+		wait_delay();
+	}
 }
 
 void fade_black( int steps )

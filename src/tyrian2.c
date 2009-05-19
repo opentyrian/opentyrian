@@ -2989,7 +2989,7 @@ new_game:
 								extraGame = true;
 								break;
 
-							case 'e': /*ENGAGE mode*/
+							case 'e': // ENGAGE mode, used for mini-games
 								doNotSaveBackup = true;
 								constantDie = false;
 								onePlayerAction = true;
@@ -3013,12 +3013,12 @@ new_game:
 								portPower[1] = 0;
 								break;
 
-							case 'J':
+							case 'J':  // section jump
 								temp = atoi(strnztcpy(buffer, s + 3, 3));
 								mainLevel = temp;
 								jumpSection = true;
 								break;
-							case '2':
+							case '2':  // two-player section jump
 								temp = atoi(strnztcpy(buffer, s + 3, 3));
 								if (twoPlayerMode || onePlayerAction)
 								{
@@ -3026,7 +3026,7 @@ new_game:
 									jumpSection = true;
 								}
 								break;
-							case 'w':
+							case 'w':  // Stalker 21.126 section jump
 								temp = atoi(strnztcpy(buffer, s + 3, 3));   /*Allowed to go to Time War?*/
 								if (pItems[P_SHIP] == 13)
 								{
