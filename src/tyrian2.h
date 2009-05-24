@@ -24,7 +24,16 @@
 #include "varz.h"
 #include "helptext.h"
 
-extern JE_word statDmg[2];
+typedef struct
+{
+	Uint8 link_num;
+	Uint8 armor;
+	Uint8 color;
+}
+boss_bar_t;
+
+extern boss_bar_t boss_bar[2];
+
 extern JE_boolean first;
 extern char tempStr[31];
 extern JE_byte itemAvail[9][10], itemAvailMax[9];
@@ -36,8 +45,6 @@ void JE_doNetwork( void );
 void JE_makeEnemy( struct JE_SingleEnemyType *enemy );
 
 void JE_eventJump( JE_word jump );
-
-void JE_doStatBar( void );
 
 void JE_whoa( void );
 
@@ -55,6 +62,8 @@ void JE_displayText( void );
 
 JE_boolean JE_searchFor( JE_byte PLType );
 void JE_eventSystem( void );
+
+void draw_boss_bar( void );
 
 #endif /* TYRIAN2_H */
 

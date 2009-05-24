@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <string.h>
 
 JE_boolean richMode, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;

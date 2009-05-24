@@ -57,7 +57,7 @@ void intro_logos( void );
 
 bool skip_intro_logos = false;
 
-JE_word statDmg[2]; /* [1..2] */
+boss_bar_t boss_bar[2];
 
 /* Level Event Data */
 JE_boolean quit, first, loadLevelOk;
@@ -155,30 +155,6 @@ void JE_starShowVGA( void )
 	
 	quitRequested = false;
 	skipStarShowVGA = false;
-}
-
-void JE_newEnemy( int enemyOffset )
-{
-	int i;
-
-	b = 0;
-
-	for(i = enemyOffset; i < enemyOffset + 25; i++)
-	{
-		if (enemyAvail[i] == 1)
-		{
-			b = i + 1;
-			break;
-		}
-	}
-
-	if (b == 0)
-	{
-		return;
-	}
-
-	JE_makeEnemy(&enemy[b-1]);
-	enemyAvail[b-1] = a;
 }
 
 void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
@@ -979,7 +955,8 @@ start_level_first:
 	levelEnemyFrequency = 96;
 	quitRequested = false;
 
-	memset(statBar, 0, sizeof(statBar));
+	for (unsigned int i = 0; i < COUNTOF(boss_bar); i++)
+		boss_bar[i].link_num = 0;
 
 	forceEvents = false;  /*Force events to continue if background movement = 0*/
 
@@ -1794,23 +1771,22 @@ level_loop:
 						
 						if (enemy[b].armorleft < 255)
 						{
-							if (temp == statBar[1-1])
-								statCol[1-1] = 6;
-							if (temp == statBar[2-1])
-								statCol[2-1] = 6;
+							for (unsigned int i = 0; i < COUNTOF(boss_bar); i++)
+								if (temp == boss_bar[i].link_num)
+									boss_bar[i].color = 6;
 							
 							if (enemy[b].enemyground)
 								enemy[b].filter = temp2;
 							
-							for (i = 0; i < 100; i++)
+							for (unsigned int e = 0; e < COUNTOF(enemy); e++)
 							{
-								if (enemy[i].linknum == temp &&
-								    enemyAvail[i] != 1 &&
-								    enemy[i].enemyground != 0)
+								if (enemy[e].linknum == temp &&
+								    enemyAvail[e] != 1 &&
+								    enemy[e].enemyground != 0)
 								{
 									if (doIced)
-										enemy[i].iced = doIced;
-									enemy[i].filter = temp2;
+										enemy[e].iced = doIced;
+									enemy[e].filter = temp2;
 								}
 							}
 						}
@@ -1917,7 +1893,7 @@ level_loop:
 										    !((superArcadeMode != SA_NONE) &&
 										      (enemyDat[enemy[temp2].enemydie].value == 30000)))
 										{
-											zz = b;
+											int temp_b = b;
 											tempW = enemy[temp2].enemydie;
 											tempW2 = temp2 - (temp2 % 25);
 											if (enemyDat[tempW].value > 30000)
@@ -1943,7 +1919,7 @@ level_loop:
 												enemy[b-1].ex = enemy[temp2].ex;
 												enemy[b-1].ey = enemy[temp2].ey;
 											}
-											b = zz;
+											b = temp_b;
 										}
 										
 										if ((enemy[temp2].evalue > 0) && (enemy[temp2].evalue < 10000))
@@ -2694,11 +2670,7 @@ explosion_draw_overflow:
 		JE_filterScreen(levelFilter, levelBrightness);
 	}
 
-	/** Statbar **/
-	if (statBar[1-1] > 0 || statBar[2-1] > 0)
-	{
-		JE_doStatBar();
-	}
+	draw_boss_bar();
 
 	JE_inGameDisplays();
 
@@ -4164,8 +4136,23 @@ void JE_displayText( void )
 	levelWarningDisplay = false;
 }
 
+void JE_newEnemy( int enemyOffset )
+{
+	b = 0; // stupid global
+	
+	for (int i = enemyOffset; i < enemyOffset + 25; i++)
+	{
+		if (enemyAvail[i] == 1)
+		{
+			b = i+1;
+			JE_makeEnemy(&enemy[b-1]);
+			enemyAvail[b-1] = a;
+			break;
+		}
+	}
+}
 
-void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
+void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tempI2, b, a
 {
 	JE_byte temp;
 	int t = 0;
@@ -4270,21 +4257,17 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 			enemy->aniwhenfire = 2;
 			break;
 	}
-
+	
 	if (enemyDat[tempW].startxc != 0)
-	{
 		enemy->ex = enemyDat[tempW].startx + (mt_rand() % (enemyDat[tempW].startxc * 2)) - enemyDat[tempW].startxc + 1;
-	} else {
+	else
 		enemy->ex = enemyDat[tempW].startx + 1;
-	}
-
+	
 	if (enemyDat[tempW].startyc != 0)
-	{
 		enemy->ey = enemyDat[tempW].starty + (mt_rand() % (enemyDat[tempW].startyc * 2)) - enemyDat[tempW].startyc + 1;
-	} else {
+	else
 		enemy->ey = enemyDat[tempW].starty + 1;
-	}
-
+	
 	enemy->exc = enemyDat[tempW].xmove;
 	enemy->eyc = enemyDat[tempW].ymove;
 	enemy->excc = enemyDat[tempW].xcaccel;
@@ -4293,85 +4276,44 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 	enemy->exccwmax = enemy->exccw;
 	enemy->eyccw = abs(enemy->eycc);
 	enemy->eyccwmax = enemy->eyccw;
-	if (enemy->excc > 0)
-	{
-		enemy->exccadd = 1;
-	} else {
-		enemy->exccadd = -1;
-	}
-	if (enemy->eycc > 0)
-	{
-		enemy->eyccadd = 1;
-	} else {
-		enemy->eyccadd = -1;
-	}
-
+	enemy->exccadd = (enemy->excc > 0) ? 1 : -1;
+	enemy->eyccadd = (enemy->eycc > 0) ? 1 : -1;
 	enemy->special = false;
 	enemy->iced = 0;
 
 	if (enemyDat[tempW].xrev == 0)
-	{
 		enemy->exrev = 100;
-	} else {
-		if (enemyDat[tempW].xrev == -99)
-		{
-			enemy->exrev = 0;
-		} else {
-			enemy->exrev = enemyDat[tempW].xrev;
-		}
-	}
+	else if (enemyDat[tempW].xrev == -99)
+		enemy->exrev = 0;
+	else
+		enemy->exrev = enemyDat[tempW].xrev;
+	
 	if (enemyDat[tempW].yrev == 0)
-	{
 		enemy->eyrev = 100;
-	} else {
-		if (enemyDat[tempW].yrev == -99)
-		{
-			enemy->eyrev = 0;
-		} else {
-			enemy->eyrev = enemyDat[tempW].yrev;
-		}
-	}
-	if (enemy->xaccel > 0)
-	{
-		enemy->exca = 1;
-	} else {
-		enemy->exca = -1;
-	}
-	if (enemy->yaccel > 0)
-	{
-		enemy->eyca = 1;
-	} else {
-		enemy->eyca = - 1;
-	}
-
+	else if (enemyDat[tempW].yrev == -99)
+		enemy->eyrev = 0;
+	else
+		enemy->eyrev = enemyDat[tempW].yrev;
+	
+	enemy->exca = (enemy->xaccel > 0) ? 1 : -1;
+	enemy->eyca = (enemy->yaccel > 0) ? 1 : -1;
+	
 	enemy->enemytype = tempW;
-
+	
 	for (a = 0; a < 3; a++)
 	{
 		if (enemy->tur[a] == 252)
-		{
 			enemy->eshotwait[a] = 1;
-		} else {
-			if (enemy->tur[a] > 0)
-			{
-				enemy->eshotwait[a] = 20;
-			} else {
-				enemy->eshotwait[a] = 255;
-			}
-		}
+		else if (enemy->tur[a] > 0)
+			enemy->eshotwait[a] = 20;
+		else
+			enemy->eshotwait[a] = 255;
 	}
 	for (a = 0; a < 20; a++)
-	{
 		enemy->egr[a] = enemyDat[tempW].egraphic[a];
-	}
 	enemy->size = enemyDat[tempW].esize;
 	enemy->linknum = 0;
-	if (enemyDat[tempW].dani < 0)
-	{
-		enemy->edamaged = true;
-	} else {
-		enemy->edamaged = false;
-	}
+	enemy->edamaged = enemyDat[tempW].dani < 0;
 	enemy->enemydie = enemyDat[tempW].eenemydie;
 
 	enemy->freq[1-1] = enemyDat[tempW].freq[1-1];
@@ -4420,21 +4362,19 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 				break;
 		}
 		if (t > 10000)
-		{
 			t = 10000;
-		}
 		enemy->evalue = t;
-	} else {
+	}
+	else
+	{
 		enemy->evalue = enemyDat[tempW].value;
 	}
-
+	
 	t = 1;
 	if (enemyDat[tempW].armor > 0)
 	{
-
 		if (enemyDat[tempW].armor != 255)
 		{
-
 			switch (difficultyLevel)
 			{
 				case -1:
@@ -4470,30 +4410,31 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy )
 					t = enemyDat[tempW].armor * 8;
 					break;
 			}
-
+			
 			if (t > 254)
 			{
 				t = 254;
 			}
-
-		} else {
+		}
+		else
+		{
 			t = 255;
 		}
-
+		
 		enemy->armorleft = t;
 		
 		a = 0;
 		enemy->scoreitem = false;
-	} else {
+	}
+	else
+	{
 		a = 2;
 		enemy->armorleft = 255;
 		if (enemy->evalue != 0)
-		{
 			enemy->scoreitem = true;
-		}
 	}
 	/*The returning A value indicates what to set ENEMYAVAIL to */
-
+	
 	if (!enemy->scoreitem)
 	{
 		totalEnemy++;  /*Destruction ratio*/
@@ -4580,14 +4521,18 @@ void JE_eventJump( JE_word jump )
 	if (jump == 65535)
 	{
 		curLoc = returnLoc;
-	} else {
+	}
+	else
+	{
 		returnLoc = curLoc + 1;
 		curLoc = jump;
 	}
 	tempW = 0;
-	do {
+	do
+	{
 		tempW++;
-	} while (!(eventRec[tempW-1].eventtime >= curLoc));
+	}
+	while (!(eventRec[tempW-1].eventtime >= curLoc));
 	eventLoc = tempW - 1;
 }
 
@@ -5451,15 +5396,13 @@ void JE_eventSystem( void )
 			break;
 
 		case 79:
-			statBar[1-1] = eventRec[eventLoc-1].eventdat;
-			statBar[2-1] = eventRec[eventLoc-1].eventdat2;
+			boss_bar[0].link_num = eventRec[eventLoc-1].eventdat;
+			boss_bar[1].link_num = eventRec[eventLoc-1].eventdat2;
 			break;
 
-		case 80: /*Skip X events if not in 2-player mode*/
+		case 80: // skip X events if in 2-player mode
 			if (twoPlayerMode)
-			{
 				eventLoc += eventRec[eventLoc-1].eventdat;
-			}
 			break;
 
 		case 81: /*WRAP2*/
@@ -5541,60 +5484,49 @@ void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
 	JE_bar(x1, y2,     x2, y2,     col - 1);
 }
 
-void JE_doStatBar( void )
+void draw_boss_bar( void )
 {
-	for (temp2 = 0; temp2 < 2; temp2++)
+	for (unsigned int b = 0; b < COUNTOF(boss_bar); b++)
 	{
-		if (statBar[temp2] > 0)
+		if (boss_bar[b].link_num == 0)
+			continue;
+		
+		unsigned int armor = 256;  // higher than armor max
+		
+		for (unsigned int e = 0; e < COUNTOF(enemy); e++)  // find most damaged
 		{
-			statDmg[temp2] = 256;  /*Higher than maximum*/
-			for (temp = 0; temp < 100; temp++)
-			{
-				if (enemy[temp].linknum == statBar[temp2] && enemyAvail[temp] != 1)
-				{
-					if (enemy[temp].armorleft < statDmg[temp2])
-					{
-						statDmg[temp2] = enemy[temp].armorleft;
-					}
-				}
-			}
-			if (statDmg[temp2] == 256 || statDmg[temp2] == 0)
-			{
-				statBar[temp2] = 0;
-			}
+			if (enemyAvail[e] != 1 && enemy[e].linknum == boss_bar[b].link_num)
+				if (enemy[e].armorleft < armor)
+					armor = enemy[e].armorleft;
 		}
+		
+		if (armor > 255 || armor == 0)  // boss dead?
+			boss_bar[b].link_num = 0;
+		else
+			boss_bar[b].armor = (armor == 255) ? 254 : armor;  // 255 would make the bar too long
 	}
 	
-	if (statBar[1-1] == 0)
+	unsigned int bars = (boss_bar[0].link_num != 0 ? 1 : 0)
+	                  + (boss_bar[1].link_num != 0 ? 1 : 0);
+	
+	// if only one bar left, make it the first one
+	if (bars == 1 && boss_bar[0].link_num == 0)
 	{
-		statBar[1-1] = statBar[2-1];
-		statDmg[1-1] = statDmg[2-1];
-		statBar[2-1] = 0;
+		memcpy(&boss_bar[0], &boss_bar[1], sizeof(boss_bar_t));
+		boss_bar[1].link_num = 0;
 	}
 	
-	if (statBar[2-1] > 0)
-	{  /*2 bars*/
-		JE_barX(100, 7, 150, 12, 115);
-		JE_barX(125 - (statDmg[1-1] / 10), 7, 125 + (statDmg[1-1] + 5) / 10, 12, 118 + statCol[1-1]);
-		JE_barX(160, 7, 210, 12, 115);
-		JE_barX(185 - (statDmg[2-1] / 10), 7, 185 + (statDmg[2-1] + 5) / 10, 12, 118 + statCol[2-1]);
-	} else if (statBar[1-1] > 0) {  /*1 bar*/
-		tempW = 155;
-		if (levelTimer)
-		{
-			tempW = 250;
-		}
-		JE_barX(tempW - 26, 7, tempW + 26, 12, 115);
-		JE_barX(tempW - (statDmg[1-1] / 10), 7, tempW + (statDmg[1-1] + 5) / 10, 12, 118 + statCol[1-1]);
-	}
-	
-	if (statCol[1-1] > 0)
+	for (unsigned int b = 0; b < bars; b++)
 	{
-		statCol[1-1]--;
-	}
-	if (statCol[2-1] > 0)
-	{
-		statCol[2-1]--;
+		unsigned int x = (bars == 2)
+		               ? ((b == 0) ? 125 : 185)
+		               : ((levelTimer) ? 250 : 155);  // level timer and boss bar would overlap
+		
+		JE_barX(x - 25, 7, x + 25, 12, 115);
+		JE_barX(x - (boss_bar[b].armor / 10), 7, x + (boss_bar[b].armor + 5) / 10, 12, 118 + boss_bar[b].color);
+		
+		if (boss_bar[b].color > 0)
+			boss_bar[b].color--;
 	}
 }
 

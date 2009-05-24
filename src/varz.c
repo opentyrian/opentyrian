@@ -210,8 +210,6 @@ JE_word tempSS;
 JE_word totalEnemy;
 JE_word enemyKilled;
 
-JE_byte statBar[2], statCol[2]; /* [1..2] */
-
 /* Buffer */
 JE_Map1Buffer *map1BufferTop, *map1BufferBot;
 
@@ -417,7 +415,7 @@ JE_boolean doNotSaveBackup;
 JE_boolean tempSpecial;
 
 JE_word x, y;
-JE_integer a, b, c, d, z, zz;
+JE_integer a, b, c, d, z;
 JE_byte playerNum;
 
 JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to,
