@@ -27,47 +27,42 @@
 
 #include <string.h>
 
-
-JE_boolean notyetloadedpcx;
-JE_boolean notYetLoadedPCX = true;
-
 void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 {
-	typedef JE_byte JE_buftype[63000]; /* [1..63000] */
-
-	JE_word x;
-	JE_buftype buf;
-	FILE *PCXfile;
-
-	int i;
-	JE_byte *p;
-	Uint8 *s; /* screen pointer, 8-bit specific */
-
-	s = (Uint8 *)VGAScreen->pixels;
-
 	PCXnumber--;
-
+	
+	FILE *PCXfile;
 	JE_resetFile(&PCXfile, "tyrian.pic");
-
-	/*Same as old AnalyzePic*/
-	if (notYetLoadedPCX)
+	
+	static bool first = true;
+	if (first)
 	{
-		notYetLoadedPCX = false;
-		efread(&x, sizeof(JE_word), 1, PCXfile);
-		for (x = 0; x < PCX_NUM; x++)
+		first = false;
+		
+		Uint16 temp;
+		efread(&temp, sizeof(Uint16), 1, PCXfile);
+		for (int i = 0; i < PCX_NUM; i++)
 		{
-			efread(&pcxpos[x], sizeof(JE_longint), 1, PCXfile);
+			efread(&pcxpos[i], sizeof(JE_longint), 1, PCXfile);
 		}
 		fseek(PCXfile, 0, SEEK_END);
 		pcxpos[PCX_NUM] = ftell(PCXfile);
 	}
-
+	
 	fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
-	efread(buf, sizeof(JE_byte), pcxpos[PCXnumber + 1] - pcxpos[PCXnumber], PCXfile);
+	unsigned int size = pcxpos[PCXnumber + 1] - pcxpos[PCXnumber];
+	
+	Uint8 *buffer = malloc(size);
+	
+	efread(buffer, sizeof(Uint8), size, PCXfile);
 	fclose(PCXfile);
-
-	p = (JE_byte *)buf;
-	for (i = 0; i < 320 * 200; )
+	
+	Uint8 *p = buffer;
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	
+	s = (Uint8 *)VGAScreen->pixels;
+	
+	for (int i = 0; i < 320 * 200; )
 	{
 		if ((*p & 0xc0) == 0xc0)
 		{
@@ -84,12 +79,13 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 			s += VGAScreen->pitch - 320;
 		}
 	}
-
+	
+	free(buffer);
+	
 	memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
+	
 	if (storepal)
-	{
 		JE_updateColorsFast(colors);
-	}
 }
 
 // kate: tab-width 4; vim: set noet:

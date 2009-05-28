@@ -23,7 +23,6 @@
 #include "palette.h"
 #include "video.h"
 
-
 void JE_loadPCX( char *file ) // this is only meant to load tshp2.pcx
 {
 	FILE *f;

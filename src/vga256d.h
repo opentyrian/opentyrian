@@ -25,14 +25,11 @@
 #include "palette.h"
 
 typedef JE_word JE_shape16B[1]; /* [0.. 0] */
-typedef JE_shape16B *JE_shape16;
-/*typedef JE_byte JE_shapetypeone[168];*/ /* [0..168-1] originally: JE_word JE_shapetypeone[84]; [1..84] */
 
 extern JE_boolean mouseInstalled;
 extern JE_char k;
 extern JE_word speed; /* JE: holds timer speed for 70Hz */
 extern JE_byte scancode;
-extern JE_byte outcol;
 
 extern palette_t vga_palette;
 

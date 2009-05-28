@@ -39,7 +39,6 @@ JE_char k;
 JE_word speed; /* JE: holds timer speed for 70Hz */
 
 JE_byte scancode;
-JE_byte outcol;
 
 bool fullscreen_enabled = false;
 

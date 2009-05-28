@@ -30,35 +30,14 @@
 
 #include "SDL.h"
 
-
-JE_word w1;
-JE_AweType * awe_data;
-/*JE_word tempw;*/
-JE_word w2;
-JE_byte sberror;
-JE_byte sysintcount;
-JE_byte sbint;
-JE_AweType * awe_code;
-void * oldvector;
-JE_byte midiport;
-JE_byte sysintwait;
-JE_word sbport;
-JE_DigiMixType * digimix;
-JE_byte midierror;
-JE_longint address;
-JE_word intcount;
-JE_word dspversion;
-const char hexa[17] = "0123456789ABCDEF";
-
 Uint32 target, target2;
-JE_boolean mixEnable = false;
+
 JE_boolean notYetLoadedSound = true;
 
 JE_word frameCount, frameCount2, frameCountMax;
 
 JE_byte *digiFx[SAMPLE_COUNT] = { NULL }; /* [1..soundnum + 9] */
 JE_word fxSize[SAMPLE_COUNT]; /* [1..soundnum + 9] */
-
 
 JE_word tyrMusicVolume, fxVolume;
 JE_word fxPlayVol;
