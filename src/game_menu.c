@@ -91,8 +91,6 @@ JE_byte oldMenu;
 JE_boolean backFromHelp;
 JE_byte lastSelect;
 JE_integer lastDirection;
-JE_byte skipMove;
-JE_byte tempPowerLevel[7]; /* [1..7] */
 JE_boolean firstMenu9, paletteChanged;
 JE_MenuChoiceType menuChoices;
 JE_longint shipValue;
@@ -214,26 +212,26 @@ void JE_itemScreen( void )
 	curX = 1;
 	curY = 1;
 	curWindow = 1;
-
-	/* JE: (* Check for where Pitems and Select match up - if no match then add to the
-     itemavail list *) */
-	for (x = 0; x < 7; x++)
+	
+	int temp_weapon_power[7]; // assumes there'll never be more than 6 weapons to choose from, 7th is "Done"
+	
+	/* JE: (* Check for where Pitems and Select match up - if no match then add to the itemavail list *) */
+	for (int i = 0; i < 7; i++)
 	{
-		temp = pItemsBack2[pItemButtonMap[x] - 1];
-		temp2 = 0;
-
-		for (y = 0; y < itemAvailMax[itemAvailMap[x]-1]; y++)
+		int item = pItemsBack2[pItemButtonMap[i]-1];
+		
+		int slot = 0;
+		
+		for ( ; slot < itemAvailMax[itemAvailMap[i]-1]; ++slot)
 		{
-			if (itemAvail[itemAvailMap[x]-1][y] == temp)
-			{
-				temp2 = 1;
-			}
+			if (itemAvail[itemAvailMap[i]-1][slot] == item)
+				break;
 		}
-
-		if (temp2 == 0)
+		
+		if (slot == itemAvailMax[itemAvailMap[i]-1])
 		{
-			itemAvailMax[itemAvailMap[x]-1]++;
-			itemAvail[itemAvailMap[x]-1][itemAvailMax[itemAvailMap[x]-1]-1] = temp;
+			itemAvail[itemAvailMap[i]-1][slot] = item;
+			itemAvailMax[itemAvailMap[i]-1]++;
 		}
 	}
 
@@ -242,56 +240,50 @@ void JE_itemScreen( void )
 	keyboardUsed = false;
 	firstMenu9 = false;
 	backFromHelp = false;
-
-item_screen_start:
-
+	
+	/* JE: Sort items in merchant inventory */
+	for (x = 0; x < 9; x++)
+	{
+		if (itemAvailMax[x] > 1)
+		{
+			for (temp = 0; temp < itemAvailMax[x] - 1; temp++)
+			{
+				for (temp2 = temp; temp2 < itemAvailMax[x]; temp2++)
+				{
+					if (itemAvail[x][temp] == 0 || (itemAvail[x][temp] > itemAvail[x][temp2] && itemAvail[x][temp2] != 0))
+					{
+						temp3 = itemAvail[x][temp];
+						itemAvail[x][temp] = itemAvail[x][temp2];
+						itemAvail[x][temp2] = temp3;
+					}
+				}
+			}
+		}
+	}
+	
 	do
 	{
-		JE_getShipInfo();
-
 		quit = false;
-
+		
+		JE_getShipInfo();
+		
 		/* JE: If curMenu==1 and twoPlayerMode is on, then force move to menu 10 */
 		if (curMenu == 0)
 		{
 			if (twoPlayerMode)
-			{
 				curMenu = 9;
-			}
+			
 			if (isNetworkGame || onePlayerAction)
-			{
 				curMenu = 10;
-			}
+			
 			if (superTyrian)
-			{
 				curMenu = 13;
-			}
 		}
 
 		paletteChanged = false;
 
 		leftPower = false;
 		rightPower = false;
-
-		/* JE: Sort items in merchant inventory */
-		for (x = 0; x < 9; x++)
-		{
-			if (itemAvailMax[x] > 1)
-			{
-				for (temp = 0; temp < itemAvailMax[x] - 1; temp++)
-				{
-					for (temp2 = temp; temp2 < itemAvailMax[x]; temp2++)
-					{
-						if (itemAvail[x][temp] == 0 || (itemAvail[x][temp] > itemAvail[x][temp2] && itemAvail[x][temp2] != 0))
-						{
-							temp3 = itemAvail[x][temp];
-							itemAvail[x][temp] = itemAvail[x][temp2];
-							itemAvail[x][temp2] = temp3;
-						}
-					}
-				}
-			}
-		}
 
 		/* SYN: note reindexing... "firstMenu9" refers to Menu 8 here :( */
 		if (curMenu != 8 || firstMenu9)
@@ -300,9 +292,24 @@ item_screen_start:
 		}
 
 		defaultBrightness = -3;
-
-		/* JE: --- STEP I - Draw the menu --- */
-
+		
+		if (curMenu == 1 && (curSel[curMenu] == 3 || curSel[curMenu] == 4))
+		{
+			// reset every time we select upgrading front or back
+			int i = curSel[curMenu]-2;
+			int item = pItems[pItemButtonMap[i]-1];
+			
+			for (int slot = 0; slot < itemAvailMax[itemAvailMap[i]-1]; ++slot)
+			{
+				if (itemAvail[itemAvailMap[i]-1][slot] == item)
+					temp_weapon_power[slot] = portPower[pItemButtonMap[i]-1];
+				else
+					temp_weapon_power[slot] = 1;
+			}
+			
+			temp_weapon_power[itemAvailMax[itemAvailMap[i]-1]] = portPower[curSel[1]-3];
+		}
+		
 		/* play next level menu */
 		if (curMenu == 3)
 		{
@@ -325,12 +332,7 @@ item_screen_start:
 		{
 			JE_drawMenuChoices();
 		}
-
-		if (skipMove > 0)
-		{
-			skipMove--;
-		}
-
+		
 		/* Data cube icons */
 		if (curMenu == 0)
 		{
@@ -510,20 +512,18 @@ item_screen_start:
 			{
 				curSel[4] += lastDirection;
 				if (curSel[4] < 2)
-				{
 					curSel[4] = menuChoices[4];
-				}
-				if (curSel[4] > menuChoices[4])
-				{
+				else if (curSel[4] > menuChoices[4])
 					curSel[4] = 2;
-				}
 			}
-
+			
 			if (curSel[4] == menuChoices[4])
 			{
 				/* If cursor on "Done", use previous weapon */
 				pItems[pItemButtonMap[curSel[1]-2]-1] = pItemsBack[pItemButtonMap[curSel[1]-2]-1];
-			} else {
+			}
+			else
+			{
 				/* Otherwise display the selected weapon */
 				pItems[pItemButtonMap[curSel[1]-2]-1] = itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2];
 			}
@@ -531,13 +531,6 @@ item_screen_start:
 			/* Get power level info for front and rear weapons */
 			if ((curSel[1] == 3 && curSel[4] < menuChoices[4]) || (curSel[1] == 4 && curSel[4] < menuChoices[4]-1))
 			{
-				if (curSel[1] == 3)
-				{
-					temp = portPower[0]; /* Front weapon */
-				} else {
-					temp = portPower[1]; /* Rear weapon */
-				}
-
 				/* JE: Only needed if change */
 				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[5]-2]);
 
@@ -545,10 +538,11 @@ item_screen_start:
 				rightPower = portPower[curSel[1] - 3] < 11; /* Can upgrade */
 
 				if (rightPower)
-				{
 					rightPowerAfford = JE_cashLeft() >= upgradeCost; /* Can player afford an upgrade? */
-				}
-			} else {
+				
+			}
+			else
+			{
 				/* Nothing else can be upgraded / downgraded */
 				leftPower = false;
 				rightPower = false;
@@ -1234,31 +1228,24 @@ item_screen_start:
 				if (curMenu == 9)
 				{
 					if (tempI > 5)
-					{
 						tempI--;
-					}
 					if (tempI > 3)
-					{
 						tempI--;
-					}
 				}
 
 				if (curMenu == 0)
 				{
 					if (tempI > 7)
-					{
 						tempI = 7;
-					}
 				}
-
+				
+				// is play next level screen?
 				if (curMenu == 3)
 				{
-					if (tempI == menuChoices[curMenu]+1)
-					{
+					if (tempI == menuChoices[curMenu] + 1)
 						tempI = menuChoices[curMenu];
-					}
 				}
-
+				
 				if (tempI <= menuChoices[curMenu])
 				{
 					if ((curMenu == 4) && (tempI == menuChoices[4]))
@@ -1276,10 +1263,6 @@ item_screen_start:
 						}
 						else
 						{
-							if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
-							{
-								tempPowerLevel[curSel[4]-2] = portPower[curSel[1]-3];
-							}
 							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > score))
 							{
 								JE_playSampleNum(S_CLINK);
@@ -1290,11 +1273,11 @@ item_screen_start:
 									portConfig[1] = 1;
 								curSel[curMenu] = tempI;
 							}
-
+							
+							// in front or rear weapon upgrade screen?
 							if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
-							{
-								portPower[curSel[1]-3] = tempPowerLevel[curSel[4]-2];
-							}
+								portPower[curSel[1] - 3] = temp_weapon_power[curSel[4] - 2];
+							
 						}
 					}
 				}
@@ -1309,22 +1292,14 @@ item_screen_start:
 					JE_playSampleNum(S_CURSOR);
 					switch (curSel[1])
 					{
-						case 3:
-							if (leftPower)
-							{
-								portPower[0]--;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
-						case 4:
-							if (leftPower)
-							{
-								portPower[1]--;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
+					case 3:
+					case 4:
+						if (leftPower)
+							portPower[curSel[1]-3] = --temp_weapon_power[curSel[4]-2];
+						else
+							JE_playSampleNum(S_CLINK);
+						
+						break;
 					}
 					wait_noinput(false, true, false);
 				}
@@ -1334,406 +1309,365 @@ item_screen_start:
 					JE_playSampleNum(S_CURSOR);
 					switch (curSel[1])
 					{
-						case 3:
-							if (rightPower && rightPowerAfford)
-							{
-								portPower[0]++;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
-						case 4:
-							if (rightPower && rightPowerAfford)
-							{
-								portPower[1]++;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
+					case 3:
+					case 4:
+						if (rightPower && rightPowerAfford)
+							portPower[curSel[1]-3] = ++temp_weapon_power[curSel[4]-2];
+						else
+							JE_playSampleNum(S_CLINK);
+						
+						break;
 					}
 					wait_noinput(false, true, false);
 				}
 			}
-		} else {
-			if (newkey)
+		}
+		else if (newkey)
+		{
+			switch (lastkey_sym)
 			{
-				switch (lastkey_sym)
+			case SDLK_SLASH:
+				// if in rear weapon upgrade screen
+				if ( (curMenu == 4) && (curSel[1] == 4))
 				{
-				case SDLK_SPACE:
-					if ( (curMenu == 4) && (curSel[1] == 4))
+					// cycle weapon modes
+					if (++portConfig[1] > weaponPort[pItems[P_REAR]].opnum)
+						portConfig[1] = 1;
+				}
+				break;
+				
+			case SDLK_SPACE:
+			case SDLK_RETURN:
+				keyboardUsed = true;
+				
+				// if front or rear weapon, update "Done" power level
+				if (curMenu == 4 && (curSel[1] == 3 || curSel[1] == 4))
+					temp_weapon_power[itemAvailMax[itemAvailMap[curSel[1]-2]-1]] = portPower[curSel[1]-3];
+				
+				JE_menuFunction(curSel[curMenu]);
+				break;
+				
+			case SDLK_ESCAPE:
+				keyboardUsed = true;
+				
+				JE_playSampleNum(S_SPRING);
+				if ( (curMenu == 6) && quikSave)
+				{
+					curMenu = oldMenu;
+					newPal = oldPal;
+				}
+				else if (menuEsc[curMenu] == 0)
+				{
+					if (JE_quitRequest())
 					{
-						portConfig[1]++;
-						if (portConfig[1] > weaponPort[pItems[P_FRONT]].opnum)
-						{
-							portConfig[1] = 1;
-						}
+						gameLoaded = true;
+						mainLevel = 0;
 					}
-					/* SYN: Intentional fall-through! */
-
-				case SDLK_RETURN:
-					JE_menuFunction(curSel[curMenu]);
-					keyboardUsed = true;
-					break;
-
-				case SDLK_ESCAPE:
-					JE_playSampleNum(S_SPRING);
-					if ( (curMenu == 6) && quikSave)
+				}
+				else
+				{
+					if (curMenu == 4)
 					{
-						curMenu = oldMenu;
-						newPal = oldPal;
+						memcpy(pItems, pItemsBack, sizeof(pItems));
+						memcpy(portPower, lastPortPower, sizeof(portPower));
+						curSel[4] = lastCurSel;
+						score = JE_cashLeft();
 					}
-					else if (menuEsc[curMenu] == 0)
-					{
-						if (JE_quitRequest())
-						{
-							gameLoaded = true;
-							mainLevel = 0;
-						}
-					} else {
-						if (curMenu == 4)
-						{
-							memcpy(pItems, pItemsBack, sizeof(pItems));
-							memcpy(portPower, lastPortPower, sizeof(portPower));
-							curSel[4] = lastCurSel;
-							score = JE_cashLeft();
-						}
-						if (curMenu != 8)
-						{
-							newPal = 1;
-						}
-						curMenu = menuEsc[curMenu] - 1;
-
-					}
-					keyboardUsed = true;
-					break;
-
-				case SDLK_F1:
-					if (!isNetworkGame)
-					{
-						JE_helpSystem(2);
-						JE_fadeBlack(10);
-
-						play_song(songBuy);
-
-						JE_loadPic(1, false);
+					
+					if (curMenu != 8) // not data cube
 						newPal = 1;
-
-						switch (curMenu)
-						{
-						case 3:
-							newPal = 18;
-							break;
-						case 7:
-						case 8:
-							lastSelect = 0;
-							break;
-						}
-
-						memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
-
-						curPal = newPal;
-						memcpy(colors, palettes[newPal-1], sizeof(colors));
-						JE_showVGA();
-						newPal = 0;
-						backFromHelp = true;
-					}
-					break;
-
-				case SDLK_UP:
-					keyboardUsed = true;
-					lastDirection = -1;
-					if (curMenu != 8)
-					{
-						JE_playSampleNum(S_CURSOR);
-					}
-					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
-					{
-						tempPowerLevel[curSel[4] - 2] = portPower[curSel[1] - 3];
-						if (curSel[1] == 4)
-						{
-							// If Rear Weapon, reset firing pattern to default
-							portConfig[1] = 1;
-						}
-					}
-					curSel[curMenu]--;
-					if (curSel[curMenu] < 2)
-					{
-						curSel[curMenu] = menuChoices[curMenu];
-					}
-					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
-					{
-						portPower[curSel[1] - 3] = tempPowerLevel[curSel[4] - 2];
-					}
-					if (curMenu == 12 && joysticks > 0 && !joystick[joystick_config].analog && curSel[curMenu] == 5) // joystick config, disable items when digital
-					{
-						curSel[curMenu] = 3;
-					}
-					break;
-
-				case SDLK_DOWN:
-					keyboardUsed = true;
-					lastDirection = 1;
-					if (curMenu != 8)
-					{
-						JE_playSampleNum(S_CURSOR);
-					}
-					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
-					{
-						tempPowerLevel[curSel[4] - 2] = portPower[curSel[1] - 3];
-						if (curSel[1] == 4)
-						{
-							// If Rear Weapon, reset firing pattern to default
-							portConfig[1] = 1;
-						}
-					}
-					curSel[curMenu]++;
-					if (curSel[curMenu] > menuChoices[curMenu])
-					{
-						curSel[curMenu] = 2;
-					}
-					if ( (curMenu == 4) && (curSel[1] == 3 || curSel[1] == 4) )
-					{
-						portPower[curSel[1] - 3] = tempPowerLevel[curSel[4] - 2];
-					}
-					if (curMenu == 12 && joysticks > 0 && !joystick[joystick_config].analog && curSel[curMenu] == 4) // joystick config, disable items when digital
-					{
-						curSel[curMenu] = 6;
-					}
-					break;
-
-				case SDLK_HOME:
-					if (curMenu == 8)
-					{
-						yLoc = 0;
-					}
-					break;
-
-				case SDLK_END:
-					if (curMenu == 8)
-					{
-						yLoc = (cubeMaxY[currentCube] - 9) * 12;
-					}
-					break;
-
-				case SDLK_x: /* alt-X */
-					if (lastkey_mod == SDLK_RALT || lastkey_mod == SDLK_LALT)
-					{
-						JE_tyrianHalt(0);
-					}
-					break;
-
-				case SDLK_LEFT:
-					if (curMenu == 12) // joystick settings menu
-					{
-						if (joysticks > 0)
-						{
-							switch (curSel[curMenu])
-							{
-								case 2:
-									if (joystick_config == 0)
-										joystick_config = joysticks;
-									joystick_config--;
-									break;
-								case 3:
-									joystick[joystick_config].analog = !joystick[joystick_config].analog;
-									break;
-								case 4:
-									if (joystick[joystick_config].sensitivity == 0)
-										joystick[joystick_config].sensitivity = 10;
-									else
-										joystick[joystick_config].sensitivity--;
-									break;
-								case 5:
-									if (joystick[joystick_config].threshold == 0)
-										joystick[joystick_config].threshold = 10;
-									else
-										joystick[joystick_config].threshold--;
-									break;
-								default:
-									break;
-							}
-						}
-					}
-
-					if (curMenu == 9)
-					{
-						switch (curSel[curMenu])
-						{
-						case 3:
-						case 4:
-							JE_playSampleNum(S_CURSOR);
-							
-							int temp = curSel[curMenu] - 3;
-							do {
-								if (joysticks == 0)
-								{
-									inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
-								}
-								if (inputDevice[temp] <= 1)
-								{
-									inputDevice[temp] = 2 + joysticks;
-								} else {
-									inputDevice[temp]--;
-								}
-							} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
-							break;
-						}
-					}
-
-					if (curMenu == 2 || curMenu == 4  || curMenu == 11)
-					{
-						JE_playSampleNum(S_CURSOR);
-					}
-
+					
+					curMenu = menuEsc[curMenu] - 1;
+				}
+				break;
+				
+			case SDLK_F1:
+				if (!isNetworkGame)
+				{
+					JE_helpSystem(2);
+					JE_fadeBlack(10);
+					
+					play_song(songBuy);
+					
+					JE_loadPic(1, false);
+					newPal = 1;
+					
 					switch (curMenu)
 					{
-					case 2:
-					case 11:
+					case 3:
+						newPal = 18;
+						break;
+					case 7:
+					case 8:
+						lastSelect = 0;
+						break;
+					}
+					
+					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+					
+					curPal = newPal;
+					memcpy(colors, palettes[newPal-1], sizeof(colors));
+					JE_showVGA();
+					newPal = 0;
+					backFromHelp = true;
+				}
+				break;
+				
+			case SDLK_UP:
+				keyboardUsed = true;
+				lastDirection = -1;
+				
+				if (curMenu != 8) // not data cube
+					JE_playSampleNum(S_CURSOR);
+				
+				curSel[curMenu]--;
+				if (curSel[curMenu] < 2)
+					curSel[curMenu] = menuChoices[curMenu];
+				
+				// if in front or rear weapon upgrade screen
+				if (curMenu == 4 && (curSel[1] == 3 || curSel[1] == 4))
+				{
+					portPower[curSel[1] - 3] = temp_weapon_power[curSel[4] - 2];
+					if (curSel[curMenu] == 4)
+						portConfig[1] = 1;
+				}
+				
+				// if joystick config, skip disabled items when digital
+				if (curMenu == 12 && joysticks > 0 && !joystick[joystick_config].analog && curSel[curMenu] == 5)
+					curSel[curMenu] = 3;
+				
+				break;
+				
+			case SDLK_DOWN:
+				keyboardUsed = true;
+				lastDirection = 1;
+				
+				if (curMenu != 8) // not data cube
+					JE_playSampleNum(S_CURSOR);
+				
+				curSel[curMenu]++;
+				if (curSel[curMenu] > menuChoices[curMenu])
+					curSel[curMenu] = 2;
+				
+				// if in front or rear weapon upgrade screen
+				if (curMenu == 4 && (curSel[1] == 3 || curSel[1] == 4))
+				{
+					portPower[curSel[1] - 3] = temp_weapon_power[curSel[4] - 2];
+					if (curSel[curMenu] == 4)
+						portConfig[1] = 1;
+				}
+				
+				// if in joystick config, skip disabled items when digital
+				if (curMenu == 12 && joysticks > 0 && !joystick[joystick_config].analog && curSel[curMenu] == 4)
+					curSel[curMenu] = 6;
+				
+				break;
+				
+			case SDLK_HOME:
+				if (curMenu == 8) // data cube
+					yLoc = 0;
+				break;
+				
+			case SDLK_END:
+				if (curMenu == 8) // data cube
+					yLoc = (cubeMaxY[currentCube] - 9) * 12;
+				break;
+				
+			case SDLK_LEFT:
+				if (curMenu == 12) // joystick settings menu
+				{
+					if (joysticks > 0)
+					{
 						switch (curSel[curMenu])
 						{
-						case 4:
-							JE_changeVolume(&tyrMusicVolume, -12, &fxVolume, 0);
-							if (music_disabled)
-							{
-								music_disabled = false;
-								restart_song();
-							}
-							break;
-						case 5:
-							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -12);
-							samples_disabled = false;
-							break;
+							case 2:
+								if (joystick_config == 0)
+									joystick_config = joysticks;
+								joystick_config--;
+								break;
+							case 3:
+								joystick[joystick_config].analog = !joystick[joystick_config].analog;
+								break;
+							case 4:
+								if (joystick[joystick_config].sensitivity == 0)
+									joystick[joystick_config].sensitivity = 10;
+								else
+									joystick[joystick_config].sensitivity--;
+								break;
+							case 5:
+								if (joystick[joystick_config].threshold == 0)
+									joystick[joystick_config].threshold = 10;
+								else
+									joystick[joystick_config].threshold--;
+								break;
+							default:
+								break;
 						}
-						break;
+					}
+				}
+				
+				if (curMenu == 9)
+				{
+					switch (curSel[curMenu])
+					{
+					case 3:
 					case 4:
-						switch (curSel[1])
-						{
-						case 3:
-							if (leftPower)
-							{
-								portPower[0]--;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
-						case 4:
-							if (leftPower)
-							{
-								portPower[1]--;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
-						}
-						break;
-					}
-					break;
-
-				case SDLK_RIGHT:
-					if (curMenu == 12) // joystick settings menu
-					{
-						if (joysticks > 0)
-						{
-							switch (curSel[curMenu])
-							{
-								case 2:
-									joystick_config++;
-									joystick_config %= joysticks;
-									break;
-								case 3:
-									joystick[joystick_config].analog = !joystick[joystick_config].analog;
-									break;
-								case 4:
-									joystick[joystick_config].sensitivity++;
-									joystick[joystick_config].sensitivity %= 11;
-									break;
-								case 5:
-									joystick[joystick_config].threshold++;
-									joystick[joystick_config].threshold %= 11;
-									break;
-								default:
-									break;
-							}
-						}
-					}
-
-					if (curMenu == 9)
-					{
-						switch (curSel[curMenu])
-						{
-						case 3:
-						case 4:
-							JE_playSampleNum(S_CURSOR);
-							
-							int temp = curSel[curMenu] - 3;
-							do {
-								if (joysticks == 0)
-								{
-									inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
-								}
-								if (inputDevice[temp] >= 2 + joysticks)
-								{
-									inputDevice[temp] = 1;
-								} else {
-									inputDevice[temp]++;
-								}
-							} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
-							break;
-						}
-					}
-
-					if (curMenu == 2 || curMenu == 4  || curMenu == 11)
-					{
 						JE_playSampleNum(S_CURSOR);
-					}
-
-					switch (curMenu)
-					{
-					case 2:
-					case 11:
-						switch (curSel[curMenu])
-						{
-						case 4:
-							JE_changeVolume(&tyrMusicVolume, 12, &fxVolume, 0);
-							if (music_disabled)
+						
+						int temp = curSel[curMenu] - 3;
+						do {
+							if (joysticks == 0)
 							{
-								music_disabled = false;
-								restart_song();
+								inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
 							}
-							break;
-						case 5:
-							JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 12);
-							samples_disabled = false;
-							break;
+							if (inputDevice[temp] <= 1)
+							{
+								inputDevice[temp] = 2 + joysticks;
+							} else {
+								inputDevice[temp]--;
+							}
+						} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
+						break;
+					}
+				}
+				
+				if (curMenu == 2 || curMenu == 4  || curMenu == 11)
+				{
+					JE_playSampleNum(S_CURSOR);
+				}
+				
+				switch (curMenu)
+				{
+				case 2:
+				case 11:
+					switch (curSel[curMenu])
+					{
+					case 4:
+						JE_changeVolume(&tyrMusicVolume, -12, &fxVolume, 0);
+						if (music_disabled)
+						{
+							music_disabled = false;
+							restart_song();
 						}
 						break;
-					case 4:
-						switch (curSel[1])
-						{
-						case 3:
-							if (rightPower && rightPowerAfford)
-							{
-								portPower[0]++;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
-						case 4:
-							if (rightPower && rightPowerAfford)
-							{
-								portPower[1]++;
-							} else {
-								JE_playSampleNum(S_CLINK);
-							}
-							break;
-						}
+					case 5:
+						JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -12);
+						samples_disabled = false;
 						break;
 					}
 					break;
-
-				default:
+				case 4:
+					switch (curSel[1])
+					{
+					case 3:
+					case 4:
+						if (leftPower)
+							portPower[curSel[1]-3] = --temp_weapon_power[curSel[4]-2];
+						else
+							JE_playSampleNum(S_CLINK);
+						
+						break;
+					}
 					break;
 				}
+				break;
+				
+			case SDLK_RIGHT:
+				if (curMenu == 12) // joystick settings menu
+				{
+					if (joysticks > 0)
+					{
+						switch (curSel[curMenu])
+						{
+							case 2:
+								joystick_config++;
+								joystick_config %= joysticks;
+								break;
+							case 3:
+								joystick[joystick_config].analog = !joystick[joystick_config].analog;
+								break;
+							case 4:
+								joystick[joystick_config].sensitivity++;
+								joystick[joystick_config].sensitivity %= 11;
+								break;
+							case 5:
+								joystick[joystick_config].threshold++;
+								joystick[joystick_config].threshold %= 11;
+								break;
+							default:
+								break;
+						}
+					}
+				}
+				
+				if (curMenu == 9)
+				{
+					switch (curSel[curMenu])
+					{
+					case 3:
+					case 4:
+						JE_playSampleNum(S_CURSOR);
+						
+						int temp = curSel[curMenu] - 3;
+						do {
+							if (joysticks == 0)
+							{
+								inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
+							}
+							if (inputDevice[temp] >= 2 + joysticks)
+							{
+								inputDevice[temp] = 1;
+							} else {
+								inputDevice[temp]++;
+							}
+						} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
+						break;
+					}
+				}
+				
+				if (curMenu == 2 || curMenu == 4  || curMenu == 11)
+				{
+					JE_playSampleNum(S_CURSOR);
+				}
+				
+				switch (curMenu)
+				{
+				case 2:
+				case 11:
+					switch (curSel[curMenu])
+					{
+					case 4:
+						JE_changeVolume(&tyrMusicVolume, 12, &fxVolume, 0);
+						if (music_disabled)
+						{
+							music_disabled = false;
+							restart_song();
+						}
+						break;
+					case 5:
+						JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 12);
+						samples_disabled = false;
+						break;
+					}
+					break;
+				case 4:
+					switch (curSel[1])
+					{
+					case 3:
+					case 4:
+						if (rightPower && rightPowerAfford)
+							portPower[curSel[1]-3] = ++temp_weapon_power[curSel[4]-2];
+						else
+							JE_playSampleNum(S_CLINK);
+						
+						break;
+					}
+					break;
+				}
+				break;
+				
+			default:
+				break;
 			}
 		}
 		
@@ -2571,7 +2505,6 @@ void JE_genItemMenu( JE_byte itemNum )
 		case 3:
 		case 4:
 			strcpy(tempStr, weaponPort[temp].name);
-			tempPowerLevel[tempW] = 1;
 			break;
 		case 5:
 			strcpy(tempStr, shields[temp].name);
@@ -2590,18 +2523,9 @@ void JE_genItemMenu( JE_byte itemNum )
 		}
 		strcpy(menuInt[5][tempW], tempStr);
 	}
-
+	
 	strcpy(menuInt[5][tempW], miscText[13]);
-
-	// YKS: I have no idea wtf this is doing, but I don't think it matters either, little of this function does
-	if (itemNum == 3 || itemNum == 4)
-	{
-		tempPowerLevel[tempW] = portPower[itemNum - 3];
-		if (tempPowerLevel[tempW] < 1)
-		{
-			tempPowerLevel[tempW] = 1;
-		}
-	}
+	
 	curSel[4] = temp3;
 }
 
@@ -2611,6 +2535,7 @@ void JE_scaleInPicture( void )
 	{
 		if (JE_anyButton())
 			i = 160;
+		
 		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i - 1, 100 + round(i * 0.625f) - 1);
 		JE_showVGA();
 		
@@ -2692,9 +2617,10 @@ void JE_menuFunction( JE_byte select )
 		if (select == 9)
 		{
 			curMenu = 0;
-		} else {
+		}
+		else
+		{
 			lastDirection = 1;
-			skipMove = 0;
 			memcpy(lastPortPower, portPower, sizeof(lastPortPower));
 			memcpy(pItemsBack, pItems, sizeof(pItemsBack));
 			tempScore = score;
@@ -2743,20 +2669,15 @@ void JE_menuFunction( JE_byte select )
 		break;
 
 	case 4:
-		if (curSel[4] < menuChoices[4] && robertWeird)
+		if (curSel[4] < menuChoices[4])
 		{
-			tempPowerLevel[curSel[4] - 1] = portPower[curSel[1] - 2];
+			// select done
 			curSel[4] = menuChoices[4];
-		} else {
-			if (curSel[4] == menuChoices[4] && !robertWeird)
-			{
-				memcpy(pItems, pItemsBack, sizeof(pItems));
-				memcpy(portPower, lastPortPower, sizeof(portPower));
-				curSel[4] = lastCurSel; /* JE: Cancel */
-			} else {
-				JE_playSampleNum(S_ITEM);
-			}
-
+		}
+		else // if done is selected
+		{
+			JE_playSampleNum(S_ITEM);
+			
 			score = JE_cashLeft();
 			curMenu = 1;
 		}

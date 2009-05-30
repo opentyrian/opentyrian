@@ -31,11 +31,11 @@
 #include <inttypes.h>
 #include <string.h>
 
-JE_boolean richMode, robertWeird, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
+JE_boolean richMode, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
-	"LOOT", "RECORD", "NOJOY", "NOROBERT", "CONSTANT", "DEATH", "NOSOUND", "JOYMAX", "WEAKJOY", "NOXMAS", "YESXMAS"
+	"LOOT", "RECORD", "NOJOY", "CONSTANT", "DEATH", "NOSOUND", "JOYMAX", "WEAKJOY", "NOXMAS", "YESXMAS"
 };
 
 void JE_paramCheck( int argc, char *argv[] )
@@ -43,7 +43,6 @@ void JE_paramCheck( int argc, char *argv[] )
 	char *tempStr;
 	JE_word y;
 
-	robertWeird     = true;
 	richMode        = false;
 	constantPlay    = false;
 	forceAveraging  = false;
@@ -248,27 +247,24 @@ void JE_paramCheck( int argc, char *argv[] )
 							ignore_joystick = true;
 							break;
 						case 3:
-							robertWeird = false;
-							break;
-						case 4:
 							constantPlay = true;
 							break;
-						case 5:
+						case 4:
 							constantDie = true;
 							break;
-						case 6:
+						case 5:
 							audio_disabled = true;
 							break;
-						case 7:
+						case 6:
 							joyMax = true;
 							break;
-						case 8:
+						case 7:
 							forceAveraging = true;
 							break;
-						case 9:
+						case 8:
 							xmas = false;
 							break;
-						case 10:
+						case 9:
 							xmas = true;
 							break;
 						default:
