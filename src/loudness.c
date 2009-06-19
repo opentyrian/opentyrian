@@ -168,6 +168,8 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 
 void deinit_audio( void )
 {
+	SDL_PauseAudio(1); // pause
+	
 	for (unsigned int i = 0; i < SFX_CHANNELS; i++)
 	{
 		free(channel_buffer[i]);

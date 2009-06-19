@@ -87,14 +87,14 @@ const JE_boolean systemAni[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {false, false, 
 
 const JE_byte weaponSystems[SYSTEM_TYPES][SHOT_TYPES] /*[1..SYSTEM_TYPES, 1..SHOT_TYPES]*/ =
 {
-	{1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-	{1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-	{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}
+	{1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // normal
+	{0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // nuke
+	{0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0}, // dirt
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // worthless
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, // magnet
+	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}, // laser
+	{1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, // jumper
+	{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}  // helicopter
 };
 
 const JE_byte leftGraphicBase[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {1, 6, 11, 58, 63, 68, 96, 153};
@@ -103,7 +103,6 @@ const JE_byte rightGraphicBase[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {20, 25, 30
 const JE_byte lModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 0, 5, 0};
 const JE_byte rModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 5, 0, 1};
 
-JE_byte cpu;
 JE_byte destructMode;  /*Game Mode - See Tyrian.HTX*/
 
 JE_byte arenaType;
@@ -114,10 +113,22 @@ JE_integer Lc_Angle, Lc_Power, Lc_Fire;
 JE_boolean L_Left, L_Right, L_Up, L_Down, L_Change, L_Fire, L_Weapon;
 JE_byte NoL_Down;
 
-JE_word leftScore, rightScore;
-JE_byte leftAvail, rightAvail;
+struct
+{
+	bool is_cpu;
+	unsigned int score;
+}
+player[2];
 
-JE_byte leftAni[MAX_INSTALLATIONS], rightAni[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
+struct
+{
+	unsigned int ani_frame;
+	
+	unsigned int health;
+}
+unit[2][20];
+
+JE_byte leftAvail, rightAvail;
 
 JE_byte leftSel, rightSel;
 
@@ -128,8 +139,7 @@ JE_shortint leftLastMove[MAX_INSTALLATIONS], rightLastMove[MAX_INSTALLATIONS]; /
 JE_byte leftShotType[MAX_INSTALLATIONS], leftSystem[MAX_INSTALLATIONS],
         rightShotType[MAX_INSTALLATIONS], rightSystem[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
 
-JE_word leftDmg[MAX_INSTALLATIONS], rightDmg[MAX_INSTALLATIONS],
-        leftX[MAX_INSTALLATIONS], rightX[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
+JE_word leftX[MAX_INSTALLATIONS], rightX[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
 
 JE_real leftAngle[MAX_INSTALLATIONS], leftPower[MAX_INSTALLATIONS], leftYMov[MAX_INSTALLATIONS], leftY[MAX_INSTALLATIONS],
         rightAngle[MAX_INSTALLATIONS], rightPower[MAX_INSTALLATIONS], rightYMov[MAX_INSTALLATIONS], rightY[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
@@ -166,7 +176,6 @@ JE_integer destructTempX;
 JE_integer destructTempY;
 JE_real destructTempR, destructTempR2;
 
-JE_byte exploSoundChannel;
 JE_boolean explosionAvail[EXPLO_MAX]; /*[1..explomax]*/
 struct {
 	JE_word x;
@@ -199,21 +208,34 @@ void JE_destructMain( void )
 	JE_loadPic(11, false);
 	JE_introScreen();
 	
-	cpu = 1;
-	leftScore = 0;
-	rightScore = 0;
+	player[0].is_cpu = true;
+	
+	for (unsigned int i = 0; i < COUNTOF(player); ++i)
+		player[i].score = 0;
 	
 	do {
 		JE_modeSelect();
 		
 		if (!destructQuit)
 		{
-			do {
+			do
+			{
 				destructQuit = false;
 				endOfGame = false;
 				
 				destructFirstTime = true;
 				JE_loadPic(11, false);
+				
+				// reset units
+				for (unsigned int p = 0; p < COUNTOF(unit); ++p)
+				{
+					for (unsigned int u = 0; u < COUNTOF(unit[p]); ++u)
+					{
+						unit[p][u].ani_frame = 0;
+						
+						unit[p][u].health = 0;
+					}
+				}
 				
 				haveWalls = mt_rand() % 2;
 				
@@ -233,9 +255,8 @@ void JE_destructMain( void )
 					rightLastMove[z] = 0;
 					leftYMov[z] = 0;
 					rightYMov[z] = 0;
-					leftAni[z] = 0;
-					rightAni[z] = 0;
-					if (cpu > 0)
+					
+					if (player[0].is_cpu)
 					{
 						if (systemAngle[leftSystem[z]-1] || leftSystem[z] == 8)
 						{
@@ -274,7 +295,7 @@ void JE_destructMain( void )
 					if (!died)
 					{
 						/*LeftSkipNoShooters*/
-						while (leftShotType[leftSel-1] == 0 || leftDmg[leftSel-1] == 0)
+						while (leftShotType[leftSel-1] == 0 || unit[0][leftSel-1].health == 0)
 						{
 							leftSel++;
 							if (leftSel > MAX_INSTALLATIONS)
@@ -282,7 +303,7 @@ void JE_destructMain( void )
 						}
 						
 						/*RightSkipNoShooters*/
-						while (rightShotType[rightSel-1] == 0 || rightDmg[rightSel-1] == 0)
+						while (rightShotType[rightSel-1] == 0 || unit[1][rightSel-1].health == 0)
 						{
 							rightSel++;
 							if (rightSel > MAX_INSTALLATIONS)
@@ -291,7 +312,7 @@ void JE_destructMain( void )
 					}
 					
 					for (z = 0; z < MAX_INSTALLATIONS; z++)
-						if (leftDmg[z] > 0)
+						if (unit[0][z].health > 0)
 						{
 							if (leftSystem[z] != 4)
 							{
@@ -323,7 +344,7 @@ void JE_destructMain( void )
 									if (JE_stabilityCheck(leftX[z], round(leftY[z])))
 										leftY[z] += 1;
 								}
-								temp = leftGraphicBase[leftSystem[z]-1] + leftAni[z];
+								temp = leftGraphicBase[leftSystem[z]-1] + unit[0][z].ani_frame;
 								if (leftSystem[z] == 8)
 								{
 									if (leftLastMove[z] < -2)
@@ -338,11 +359,11 @@ void JE_destructMain( void )
 								
 								JE_drawShape2(leftX[z], round(leftY[z]) - 13, temp, eShapes1);
 							} else {
-								JE_drawShape2(leftX[z], round(leftY[z]) - 13, leftGraphicBase[leftSystem[z]-1] + leftAni[z], eShapes1);
+								JE_drawShape2(leftX[z], round(leftY[z]) - 13, leftGraphicBase[leftSystem[z]-1] + unit[0][z].ani_frame, eShapes1);
 							}
 						}
 					for (z = 0; z < MAX_INSTALLATIONS; z++)
-						if (rightDmg[z] > 0)
+						if (unit[1][z].health > 0)
 						{
 							if (rightSystem[z] != 4)
 							{
@@ -381,7 +402,7 @@ void JE_destructMain( void )
 										}
 									}
 								
-								temp = rightGraphicBase[rightSystem[z]-1] + rightAni[z];
+								temp = rightGraphicBase[rightSystem[z]-1] + unit[1][z].ani_frame;
 								if (rightSystem[z] == 8)
 								{
 									if (rightLastMove[z] < -2)
@@ -396,7 +417,7 @@ void JE_destructMain( void )
 								
 								JE_drawShape2(rightX[z], round(rightY[z]) - 13, temp, eShapes1);
 							} else {
-								JE_drawShape2(rightX[z], round(rightY[z]) - 13, rightGraphicBase[rightSystem[z]-1] + rightAni[z], eShapes1);
+								JE_drawShape2(rightX[z], round(rightY[z]) - 13, rightGraphicBase[rightSystem[z]-1] + unit[1][z].ani_frame, eShapes1);
 							}
 						}
 					
@@ -406,24 +427,18 @@ void JE_destructMain( void )
 							leftPower[z] = 6;
 						if (rightSystem[z] == 6)
 							rightPower[z] = 6;
-						
-						if (leftAni[z] == 0)
+					}
+					
+					for (unsigned int p = 0; p < COUNTOF(unit); ++p)
+					{
+						for (unsigned int u = 0; u < COUNTOF(unit[p]); ++u)
 						{
-							if (systemAni[leftSystem[z]-1])
-								leftAni[z]++;
-						} else {
-							leftAni[z]++;
-							if (leftAni[z] >= 4)
-								leftAni[z] = 0;
-						}
-						if (rightAni[z] == 0)
-						{
-							if (systemAni[rightSystem[z]-1])
-								rightAni[z]++;
-						} else {
-							rightAni[z]++;
-							if (rightAni[z] >= 4)
-								rightAni[z] = 0;
+							// if unit does not animate continuously and is not currently animated
+							if (!systemAni[ (p == 0 ? leftSystem[u] : rightSystem[u]) -1] && unit[p][u].ani_frame == 0)
+								continue;
+							
+							if (++unit[p][u].ani_frame > 3)
+								unit[p][u].ani_frame = 0;
 						}
 					}
 					
@@ -454,29 +469,29 @@ void JE_destructMain( void )
 							if (exploRec[z].explocolor == 252)
 								for (temp2 = 0; temp2 < MAX_INSTALLATIONS; temp2++)
 								{
-									if (leftDmg[temp2] > 0 && destructTempX > leftX[temp2] && destructTempX < leftX[temp2] + 11 && destructTempY > leftY[temp2] - 11 && destructTempY < leftY[temp2])
+									if (unit[0][temp2].health > 0 && destructTempX > leftX[temp2] && destructTempX < leftX[temp2] + 11 && destructTempY > leftY[temp2] - 11 && destructTempY < leftY[temp2])
 									{
-										leftDmg[temp2]--;
-										if (leftDmg[temp2] == 0)
+										unit[0][temp2].health--;
+										if (unit[0][temp2].health == 0)
 										{
 											JE_makeExplosion(leftX[temp2] + 5, round(leftY[temp2]) - 5, (leftSystem[temp2] == 8) * 2);
 											if (leftSystem[temp2] != 4)
 											{
 												leftAvail--;
-												rightScore++;
+												player[1].score++;
 											}
 										}
 									}
-									if (rightDmg[temp2] > 0 && destructTempX > rightX[temp2] && destructTempX < rightX[temp2] + 11 && destructTempY > rightY[temp2] - 11 && destructTempY < rightY[temp2])
+									if (unit[1][temp2].health > 0 && destructTempX > rightX[temp2] && destructTempX < rightX[temp2] + 11 && destructTempY > rightY[temp2] - 11 && destructTempY < rightY[temp2])
 									{
-										rightDmg[temp2]--;
-										if (rightDmg[temp2] == 0)
+										unit[1][temp2].health--;
+										if (unit[1][temp2].health == 0)
 										{
 											JE_makeExplosion(rightX[temp2] + 5, round(rightY[temp2]) - 5, (rightSystem[temp2] == 8) * 2);
 											if (rightSystem[temp2] != 4)
 											{
 												rightAvail--;
-												leftScore++;
+												player[0].score++;
 											}
 										}
 									}
@@ -531,7 +546,7 @@ void JE_destructMain( void )
 								
 								/*Check left hits*/
 								for (temp2 = 0; temp2 < MAX_INSTALLATIONS; temp2++)
-									if (leftDmg[temp2] > 0)
+									if (unit[0][temp2].health > 0)
 									{
 										if (destructTempX > leftX[temp2] && destructTempX < leftX[temp2] + 11 && destructTempY > leftY[temp2] - 13 && destructTempY < leftY[temp2])
 										{
@@ -542,7 +557,7 @@ void JE_destructMain( void )
 								
 								/*Check right hits*/
 								for (temp2 = 0; temp2 < MAX_INSTALLATIONS; temp2++)
-									if (rightDmg[temp2] > 0)
+									if (unit[1][temp2].health > 0)
 									{
 										if (destructTempX > rightX[temp2] && destructTempX < rightX[temp2] + 11 && destructTempY > rightY[temp2] - 13 && destructTempY < rightY[temp2])
 										{
@@ -656,118 +671,116 @@ void JE_destructMain( void )
 					
 					L_Weapon = false;
 					
-					switch (cpu)
+					if (player[0].is_cpu)
 					{
-						case 1:
-							
-							if (mt_rand() % 100 > 80)
-							{
-								Lc_Angle += (mt_rand() % 3) - 1;
-								if (Lc_Angle > 1)
-									Lc_Angle = 1;
-								if (Lc_Angle < -1)
-									Lc_Angle = -1;
-							}
-							if (mt_rand() % 100 > 90)
-							{
-								if (Lc_Angle > 0 && leftAngle[leftSel-1] > (M_PI / 2.0f) - (M_PI / 9.0f))
-									Lc_Angle = 0;
-								if (Lc_Angle < 0 && leftAngle[leftSel-1] < M_PI / 8.0f)
-									Lc_Angle = 0;
-							}
-							
-							if (mt_rand() % 100 > 93)
-							{
-								Lc_Power += (mt_rand() % 3) - 1;
-								if (Lc_Power > 1)
-									Lc_Power = 1;
-								if (Lc_Power < -1)
-									Lc_Power = -1;
-							}
-							if (mt_rand() % 100 > 90)
-							{
-								if (Lc_Power > 0 && leftPower[leftSel-1] > 4)
-									Lc_Power = 0;
-								if (Lc_Power < 0 && leftPower[leftSel-1] < 3)
-									Lc_Power = 0;
-								if (leftPower[leftSel-1] < 2)
-									Lc_Power = 1;
-							}
-							
-							for (x = 0; x < MAX_INSTALLATIONS; x++)
-								if (leftSystem[x] == 8 && leftDmg[x] > 0)
-									leftSel = x + 1;
-							
-							if (leftSystem[leftSel-1] == 8)
-							{
-								if (!leftYInAir[leftSel-1])
-									Lc_Power = 1;
-								if (mt_rand() % leftX[leftSel-1] > 100)
-									Lc_Power = 1;
-								if (mt_rand() % 240 > leftX[leftSel-1])
-									L_Right = true;
-								else if ((mt_rand() % 20) + 300 < leftX[leftSel-1])
-									L_Left = true;
-								else if (mt_rand() % 30 == 1)
-									Lc_Angle = (mt_rand() % 3) - 1;
-								if (leftX[leftSel-1] > 295 && leftLastMove[leftSel-1] > 1)
-								{
-									L_Left = true;
-									L_Right = false;
-								}
-								if (leftSystem[leftSel-1] != 8 || leftLastMove[leftSel-1] > 3 || (leftX[leftSel-1] > 160 && leftLastMove[leftSel-1] > -3))
-								{
-									if (mt_rand() % (int)round(leftY[leftSel-1]) < 150 && leftYMov[leftSel-1] < 0.01f && (leftX[leftSel-1] < 160 || leftLastMove[leftSel-1] < 2))
-										L_Fire = true;
-									NoL_Down = (5 - abs(leftLastMove[leftSel-1])) * (5 - abs(leftLastMove[leftSel-1])) + 3;
-									Lc_Power = 1;
-								} else
-									L_Fire = false;
-								
-								z = 0;
-								for (x = 0; x < MAX_INSTALLATIONS; x++)
-									if (abs(rightX[x] - leftX[leftSel-1]) < 8)
-									{
-										if (rightSystem[x] == 4)
-											L_Fire = false;
-										else {
-											L_Left = false;
-											L_Right = false;
-											if (leftLastMove[leftSel-1] < -1)
-												leftLastMove[leftSel-1]++;
-											else if (leftLastMove[leftSel-1] > 1)
-												leftLastMove[leftSel-1]--;
-										}
-									}
-							} else {
-								Lc_Fire = 1;
-							}
-							
-							if (mt_rand() % 200 > 198)
-							{
-								L_Change = true;
+						if (mt_rand() % 100 > 80)
+						{
+							Lc_Angle += (mt_rand() % 3) - 1;
+							if (Lc_Angle > 1)
+								Lc_Angle = 1;
+							if (Lc_Angle < -1)
+								Lc_Angle = -1;
+						}
+						if (mt_rand() % 100 > 90)
+						{
+							if (Lc_Angle > 0 && leftAngle[leftSel-1] > (M_PI / 2.0f) - (M_PI / 9.0f))
 								Lc_Angle = 0;
+							if (Lc_Angle < 0 && leftAngle[leftSel-1] < M_PI / 8.0f)
+								Lc_Angle = 0;
+						}
+						
+						if (mt_rand() % 100 > 93)
+						{
+							Lc_Power += (mt_rand() % 3) - 1;
+							if (Lc_Power > 1)
+								Lc_Power = 1;
+							if (Lc_Power < -1)
+								Lc_Power = -1;
+						}
+						if (mt_rand() % 100 > 90)
+						{
+							if (Lc_Power > 0 && leftPower[leftSel-1] > 4)
 								Lc_Power = 0;
-								Lc_Fire = 0;
-							}
-							
-							if (mt_rand() % 100 > 98 || leftShotType[leftSel-1] == 1)
-								L_Weapon = true;
-							
-							if (Lc_Angle > 0)
-								L_Left = true;
-							if (Lc_Angle < 0)
+							if (Lc_Power < 0 && leftPower[leftSel-1] < 3)
+								Lc_Power = 0;
+							if (leftPower[leftSel-1] < 2)
+								Lc_Power = 1;
+						}
+						
+						// prefer helicopter
+						for (x = 0; x < MAX_INSTALLATIONS; x++)
+							if (leftSystem[x] == 8 && unit[1][x].health > 0)
+								leftSel = x + 1;
+						
+						if (leftSystem[leftSel-1] == 8)
+						{
+							if (!leftYInAir[leftSel-1])
+								Lc_Power = 1;
+							if (mt_rand() % leftX[leftSel-1] > 100)
+								Lc_Power = 1;
+							if (mt_rand() % 240 > leftX[leftSel-1])
 								L_Right = true;
-							if (Lc_Power > 0)
-								L_Up = true;
-							if (Lc_Power < 0 && NoL_Down == 0)
-								L_Down = true;
-							if (Lc_Fire > 0)
-								L_Fire = true;
-							
-							if (leftYMov[leftSel-1] < -0.1f && leftSystem[leftSel-1] == 8)
+							else if ((mt_rand() % 20) + 300 < leftX[leftSel-1])
+								L_Left = true;
+							else if (mt_rand() % 30 == 1)
+								Lc_Angle = (mt_rand() % 3) - 1;
+							if (leftX[leftSel-1] > 295 && leftLastMove[leftSel-1] > 1)
+							{
+								L_Left = true;
+								L_Right = false;
+							}
+							if (leftSystem[leftSel-1] != 8 || leftLastMove[leftSel-1] > 3 || (leftX[leftSel-1] > 160 && leftLastMove[leftSel-1] > -3))
+							{
+								if (mt_rand() % (int)round(leftY[leftSel-1]) < 150 && leftYMov[leftSel-1] < 0.01f && (leftX[leftSel-1] < 160 || leftLastMove[leftSel-1] < 2))
+									L_Fire = true;
+								NoL_Down = (5 - abs(leftLastMove[leftSel-1])) * (5 - abs(leftLastMove[leftSel-1])) + 3;
+								Lc_Power = 1;
+							} else
 								L_Fire = false;
-							break;
+							
+							z = 0;
+							for (x = 0; x < MAX_INSTALLATIONS; x++)
+								if (abs(rightX[x] - leftX[leftSel-1]) < 8)
+								{
+									if (rightSystem[x] == 4)
+										L_Fire = false;
+									else {
+										L_Left = false;
+										L_Right = false;
+										if (leftLastMove[leftSel-1] < -1)
+											leftLastMove[leftSel-1]++;
+										else if (leftLastMove[leftSel-1] > 1)
+											leftLastMove[leftSel-1]--;
+									}
+								}
+						} else {
+							Lc_Fire = 1;
+						}
+						
+						if (mt_rand() % 200 > 198)
+						{
+							L_Change = true;
+							Lc_Angle = 0;
+							Lc_Power = 0;
+							Lc_Fire = 0;
+						}
+						
+						if (mt_rand() % 100 > 98 || leftShotType[leftSel-1] == 1)
+							L_Weapon = true;
+						
+						if (Lc_Angle > 0)
+							L_Left = true;
+						if (Lc_Angle < 0)
+							L_Right = true;
+						if (Lc_Power > 0)
+							L_Up = true;
+						if (Lc_Power < 0 && NoL_Down == 0)
+							L_Down = true;
+						if (Lc_Fire > 0)
+							L_Fire = true;
+						
+						if (leftYMov[leftSel-1] < -0.1f && leftSystem[leftSel-1] == 8)
+							L_Fire = false;
 					}
 					
 					if (leftSystem[leftSel-1] == 8)
@@ -805,9 +818,9 @@ void JE_destructMain( void )
 					JE_rectangle(16, 1, 144, 10, 240);
 					JE_drawShape2(  4, 0, 190 + leftShotType[leftSel-1], eShapes1);
 					JE_outText( 20, 3, weaponNames[leftShotType[leftSel-1]-1], 15, 2);
-					sprintf(tempstr, "dmg~%d~", leftDmg[leftSel-1]);
+					sprintf(tempstr, "dmg~%d~", unit[0][leftSel-1].health);
 					JE_outText( 75, 3, tempstr, 15, 0);
-					sprintf(tempstr, "pts~%d~", leftScore);
+					sprintf(tempstr, "pts~%d~", player[0].score);
 					JE_outText(110, 3, tempstr, 15, 0);
 					JE_bar(175, 3, 184, 8, 241);
 					JE_rectangle(174, 2, 185, 9, 242);
@@ -817,9 +830,9 @@ void JE_destructMain( void )
 					JE_rectangle(186, 1, 313, 10, 240);
 					JE_drawShape2(174, 0, 190 + rightShotType[rightSel-1], eShapes1);
 					JE_outText(190, 3, weaponNames[rightShotType[rightSel-1]-1], 15, 2);
-					sprintf(tempstr, "dmg~%d~", rightDmg[rightSel-1]);
+					sprintf(tempstr, "dmg~%d~", unit[1][rightSel-1].health);
 					JE_outText(245, 3, tempstr, 15, 0);
-					sprintf(tempstr, "pts~%d~", rightScore);
+					sprintf(tempstr, "pts~%d~", player[1].score);
 					JE_outText(280, 3, tempstr, 15, 0);
 					
 					JE_showVGA();
@@ -1005,7 +1018,7 @@ void JE_destructMain( void )
 											{
 												rightX[x] += 2;
 											}
-											leftAni[leftSel-1] = 1;
+											unit[0][leftSel-1].ani_frame = 1;
 										break;
 								}
 							}
@@ -1198,7 +1211,7 @@ void JE_destructMain( void )
 											{
 												leftX[x] -= 2;
 											}
-										rightAni[rightSel-1] = 1;
+										unit[1][rightSel-1].ani_frame = 1;
 										break;
 								}
 							}
@@ -1210,14 +1223,14 @@ void JE_destructMain( void )
 					{
 						if (leftAvail == 0)
 						{
-							rightScore += lModeScore[destructMode-1];
+							player[1].score += lModeScore[destructMode-1];
 							died = true;
 							soundQueue[7] = V_CLEARED_PLATFORM;
 							endDelay = 80;
 						}
 						if (rightAvail == 0)
 						{
-							leftScore += rModeScore[destructMode-1];
+							player[0].score += rModeScore[destructMode-1];
 							died = true;
 							soundQueue[7] = V_CLEARED_PLATFORM;
 							endDelay = 80;
@@ -1243,7 +1256,7 @@ void JE_destructMain( void )
 					
 					if (keysactive[SDLK_F10])
 					{
-						cpu = !cpu;
+						player[0].is_cpu = !player[0].is_cpu;
 						keysactive[SDLK_F10] = false;
 					}
 					
@@ -1276,15 +1289,17 @@ void JE_destructMain( void )
 					
 					if (endDelay > 0)
 						endDelay--;
-				} while (!destructQuit && !(died && endDelay == 0));
+				}
+				while (!destructQuit && !(died && endDelay == 0));
 				
 				destructQuit = false;
 				died = false;
 				JE_fadeBlack(25);
-			} while (!endOfGame);
+			}
+			while (!endOfGame);
 		}
-		
-	} while (!destructQuit);
+	}
+	while (!destructQuit);
 }
 
 void JE_introScreen( void )
@@ -1432,9 +1447,6 @@ void JE_generateTerrain( void )
 		dirtHeight[x] = newheight;
 	}
 	
-	memset(leftDmg, 0, sizeof(leftDmg));
-	memset(rightDmg, 0, sizeof(rightDmg));
-	
 	tempW = 0;
 	leftAvail = 0;
 	
@@ -1453,7 +1465,7 @@ void JE_generateTerrain( void )
 				tempW++;
 			}
 		}
-		leftDmg[x] = baseDamage[leftSystem[x]-1];
+		unit[0][x].health = baseDamage[leftSystem[x]-1];
 		if (leftSystem[x] != 4)
 			leftAvail++;
 	}
@@ -1478,7 +1490,7 @@ void JE_generateTerrain( void )
 				tempW++;
 			}
 		}
-		rightDmg[x] = baseDamage[rightSystem[x]-1];
+		unit[1][x].health = baseDamage[rightSystem[x]-1];
 		if (rightSystem[x] != 4)
 			rightAvail++;
 	}
@@ -1703,10 +1715,9 @@ void JE_makeExplosion( JE_word destructTempX, JE_word destructTempY, JE_byte sho
 
 void JE_eSound( JE_byte sound )
 {
-	if (exploSoundChannel < 1)
-		exploSoundChannel = 1;
-	exploSoundChannel++;
-	if (exploSoundChannel > 5)
+	static int exploSoundChannel = 0;
+	
+	if (++exploSoundChannel > 5)
 		exploSoundChannel = 1;
 	
 	soundQueue[exploSoundChannel] = sound;

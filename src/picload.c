@@ -49,11 +49,10 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 		pcxpos[PCX_NUM] = ftell(PCXfile);
 	}
 	
-	fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
 	unsigned int size = pcxpos[PCXnumber + 1] - pcxpos[PCXnumber];
-	
 	Uint8 *buffer = malloc(size);
 	
+	fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
 	efread(buffer, sizeof(Uint8), size, PCXfile);
 	fclose(PCXfile);
 	
