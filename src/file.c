@@ -16,33 +16,48 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef ERROR_H
-#define ERROR_H
 
-#include "opentyr.h"
+#include "file.h"
 
+#include <errno.h>
 
-extern JE_boolean dont_die;
-extern JE_char dir[500];
-extern JE_boolean errorActive;
-extern JE_boolean errorOccurred;
+// check if file can be opened for reading
+bool file_exists( const char *file )
+{
+	FILE *f = fopen(file, "r");
+	if (f != NULL)
+		fclose(f);
+	return (f != NULL);
+}
 
-void JE_outputString( JE_char* s );
+// warn (but do not die) when fopen fails
+FILE *fopen_warn( const char *file, const char *mode )
+{
+	errno = 0;
+	
+	FILE *f = fopen(file, mode);
+	
+	if (!f)
+	{
+		char buf[100];
+		snprintf(buf, sizeof(buf), "warning: failed to open '%s'", file);
+		perror(buf);
+	}
+	
+	return f;
+}
 
-void JE_DetectCFG( void );
-
-void JE_errorHand( const char *s );
-void JE_resetFile( FILE **f, const char *filename );
-void JE_resetText( FILE **f, const char *filename );
-char *JE_locateFile( const char *filename );
-
-#ifdef TARGET_MACOSX
-const char *tyrian_game_folder();
-#endif /* TARGET_MACOSX */
-
-void JE_findTyrian( const char *filename );
-JE_longint JE_getFileSize( const char *filename );
-
-#endif /* ERROR_H */
+// returns end-of-file position
+long ftell_eof( FILE *f )
+{
+	long pos = ftell(f);
+	
+	fseek(f, 0, SEEK_END);
+	long size = ftell(f);
+	
+	fseek(f, pos, SEEK_SET);
+	
+	return size;
+}
 
 // kate: tab-width 4; vim: set noet:

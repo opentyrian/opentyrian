@@ -18,6 +18,7 @@
  */
 
 #include "config.h"
+#include "file.h"
 #include "joystick.h"
 #include "keyboard.h"
 #include "nortsong.h"
@@ -373,7 +374,7 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 	
 	const int entry_size = 3 + 3 + COUNTOF(joystick->assignment) * COUNTOF(*joystick->assignment) * 3;
 	
-	FILE *f = fopen(cfg_file, read_only ? "rb" : "rb+");
+	FILE *f = fopen_warn(cfg_file, read_only ? "rb" : "rb+");
 	
 	if (f != NULL)
 	{
@@ -419,7 +420,7 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 	{
 		if (f == NULL) // create new config
 		{
-			f = fopen(cfg_file, "wb+");
+			f = fopen_warn(cfg_file, "wb+");
 			if (f == NULL)
 				return f;
 			

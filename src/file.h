@@ -16,33 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef FILE_H
+#define FILE_H
 
-#include "opentyr.h"
+#include <stdbool.h>
+#include <stdio.h>
 
+bool file_exists( const char *file );
+FILE *fopen_warn( const char *file, const char *mode );
+long ftell_eof( FILE *f );
 
-extern JE_boolean dont_die;
-extern JE_char dir[500];
-extern JE_boolean errorActive;
-extern JE_boolean errorOccurred;
-
-void JE_outputString( JE_char* s );
-
-void JE_DetectCFG( void );
-
-void JE_errorHand( const char *s );
-void JE_resetFile( FILE **f, const char *filename );
-void JE_resetText( FILE **f, const char *filename );
-char *JE_locateFile( const char *filename );
-
-#ifdef TARGET_MACOSX
-const char *tyrian_game_folder();
-#endif /* TARGET_MACOSX */
-
-void JE_findTyrian( const char *filename );
-JE_longint JE_getFileSize( const char *filename );
-
-#endif /* ERROR_H */
+#endif // FILE_H
 
 // kate: tab-width 4; vim: set noet:

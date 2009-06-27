@@ -21,6 +21,7 @@
 
 #include "episodes.h"
 #include "error.h"
+#include "file.h"
 #include "joystick.h"
 #include "loudness.h"
 #include "mtrand.h"
@@ -675,8 +676,8 @@ void JE_loadConfiguration( void )
 	char cfgfile[1000];
 	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
 	
-	fi = fopen_check(cfgfile, "rb");
-	if (fi && get_stream_size(fi) == 20 + sizeof(keySettings) + 2)
+	fi = fopen_warn(cfgfile, "rb");
+	if (fi && ftell_eof(fi) == 20 + sizeof(keySettings) + 2)
 	{
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
@@ -747,7 +748,7 @@ void JE_loadConfiguration( void )
 	char savfile[1000];
 	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
 	
-	fi = fopen_check(savfile, "rb");
+	fi = fopen_warn(savfile, "rb");
 	if (fi)
 	{
 
@@ -937,7 +938,7 @@ void JE_saveConfiguration( void )
 	char savfile[1000];
 	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
 	
-	f = fopen_check(savfile, "wb");
+	f = fopen_warn(savfile, "wb");
 	if (f)
 	{
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
@@ -951,7 +952,7 @@ void JE_saveConfiguration( void )
 	char cfgfile[1000];
 	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
 	
-	f = fopen_check(cfgfile, "wb");
+	f = fopen_warn(cfgfile, "wb");
 	if (f)
 	{
 		efwrite(&background2, 1, 1, f);

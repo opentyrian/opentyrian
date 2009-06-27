@@ -16,17 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "error.h"
-
 #include "config.h"
+#include "error.h"
+#include "file.h"
 #include "joystick.h"
+#include "opentyr.h"
 #include "video.h"
 
-#include <errno.h>
 #include <stdio.h>
 
-JE_word randomcount;
 JE_char dir[500];
 
 JE_boolean errorActive = true;
@@ -34,57 +32,9 @@ JE_boolean errorOccurred = false;
 
 JE_boolean dont_die = false;
 
-char err_msg[1000] = "No error!?";
-
 #ifndef TARGET_MACOSX
-static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian2k" };
+static const char *tyrian_searchpaths[] = { "data", "tyrian", "tyrian21" };
 #endif
-
-long get_stream_size( FILE *f )
-{
-	long size = 0;
-	long pos;
-
-	pos = ftell(f);
-
-	fseek(f, 0, SEEK_END);
-	size = ftell(f);
-
-	fseek(f, pos, SEEK_SET);
-
-	return size;
-}
-
-FILE *fopen_check( const char *file, const char *mode )
-{
-	char buf[50];
-	FILE *f;
-
-	errno = 0;
-	f = fopen(file, mode);
-	if (!f)
-	{
-		switch (errno)
-		{
-			case EACCES:
-				strcpy(buf, "access denied");
-				break;
-			case ENOENT:
-				strcpy(buf, "no such file");
-				break;
-			default:
-				strcpy(buf, "unknown error");
-				break;
-		}
-		snprintf(err_msg, sizeof(err_msg), "warning: failed to open '%s' (mode '%s'): %s\n", file, mode, buf);
-		fprintf(stderr, "%s", err_msg);
-		
-		return NULL;
-	}
-	
-	return f;
-}
-
 
 JE_longint JE_getFileSize( const char *filename )
 {
@@ -122,24 +72,11 @@ void JE_errorHand( const char *s )
 	}
 }
 
-JE_boolean JE_find( const char *s )
-{
-	FILE *f;
-
-	if ((f = fopen(s, "r")))
-	{
-		fclose(f);
-		return true;
-	} else {
-		return false;
-	}
-}
-
 void JE_findTyrian( const char *filename )
 {
 	char *strbuf;
 
-	if (JE_find(filename))
+	if (file_exists(filename))
 	{
 		dir[0] = '\0';
 	} else {
@@ -155,7 +92,7 @@ void JE_findTyrian( const char *filename )
 			strbuf = malloc(strlen(tyrian_searchpaths[i]) + strlen(filename) + 2);
 			
 			sprintf(strbuf, "%s/%s", tyrian_searchpaths[i], filename);
-			if (JE_find(strbuf))
+			if (file_exists(strbuf))
 			{
 				free(strbuf);
 				
@@ -174,7 +111,7 @@ char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 {
 	static JE_char buf[1024];
 
-	if (JE_find(filename))
+	if (file_exists(filename))
 	{
 		strcpy(buf, filename);
 	} else {
@@ -184,7 +121,7 @@ char *JE_locateFile( const char *filename ) /* !!! WARNING: Non-reentrant !!! */
 		}
 
 		snprintf(buf, sizeof buf, "%s%s", dir, filename);
-		if (!JE_find(buf))
+		if (!file_exists(buf))
 		{
 			if (dont_die)
 			{
@@ -204,7 +141,7 @@ void JE_resetFile( FILE **f, const char *filename )
 	char *tmp;
 
 	tmp = JE_locateFile(filename);
-	*f = tmp ? fopen_check(tmp, "rb") : NULL;
+	*f = tmp ? fopen_warn(tmp, "rb") : NULL;
 }
 
 void JE_resetText( FILE **f, const char *filename )
@@ -212,7 +149,7 @@ void JE_resetText( FILE **f, const char *filename )
 	char *tmp;
 
 	tmp = JE_locateFile(filename);
-	*f = tmp ? fopen_check(tmp, "r") : NULL;
+	*f = tmp ? fopen_warn(tmp, "r") : NULL;
 }
 
 void JE_DetectCFG( void )

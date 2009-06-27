@@ -21,6 +21,7 @@
 #include "destruct.h"
 #include "episodes.h"
 #include "error.h"
+#include "file.h"
 #include "fonthand.h"
 #include "game_menu.h"
 #include "joystick.h"
@@ -1042,15 +1043,12 @@ start_level_first:
 		{
 			sprintf(tempStr, "demorec.%d", new_demo_num++);
 		}
-		while (JE_find(tempStr)); // until file doesn't exist
+		while (file_exists(tempStr)); // until file doesn't exist
 		dont_die = false;
 		
-		demo_file = fopen_check(tempStr, "wb");
+		demo_file = fopen_warn(tempStr, "wb");
 		if (!demo_file)
-		{
-			printf("error: failed to open '%s' (mode '%s')\n", tempStr, "wb");
 			exit(1);
-		}
 		
 		efwrite(&episodeNum, 1,  1, demo_file);
 		efwrite(levelName,   1, 10, demo_file);

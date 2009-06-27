@@ -20,6 +20,7 @@
 #include "config.h"
 #include "episodes.h"
 #include "error.h"
+#include "file.h"
 #include "lvllib.h"
 #include "lvlmast.h"
 #include "opentyr.h"
@@ -239,7 +240,7 @@ void JE_scanForEpisodes( void )
 	for (temp = 0; temp < EPISODE_MAX; temp++)
 	{
 		sprintf(buf, "%styrian%d.lvl", dir, temp + 1);
-		episodeAvail[temp] = JE_find(buf);
+		episodeAvail[temp] = file_exists(buf);
 	}
 }
 
