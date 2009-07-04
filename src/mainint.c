@@ -1514,85 +1514,67 @@ void JE_inGameHelp( void )
 
 void JE_highScoreCheck( void )
 {
-	JE_longint tempscore = 0;
-	JE_byte num, flash;
-	JE_boolean quit, cancel;
-	char stemp[41], tempstr[41];
-	JE_boolean fadein;
-	JE_byte a, b, c, q, z = 0;
-	JE_byte episodenum = pItems[P_EPISODE];
-	char buffer[256];
+	Sint32 temp_score;
 	
-	for (q = 1; q <= 2; q++)
+	for (int temp_p = 0; temp_p < (twoPlayerMode ? 2 : 1); ++temp_p)
 	{
-		if (q == 1 || twoPlayerMode)
+		JE_sortHighScores();
+		
+		int p = temp_p;
+		
+		if (twoPlayerMode)
 		{
-			JE_sortHighScores();
+			// ask for the highest scorer first
+			if (score < score2)
+				p = (temp_p == 0) ? 1 : 0;
 			
-			if (twoPlayerMode)
+			temp_score = (p == 0) ? score : score2;
+		}
+		else
+		{
+			// single player highscore includes cost of upgrades
+			temp_score = JE_totalScore(score, pItems);
+		}
+		
+		int slot;
+		const int first_slot = (pItems[P_EPISODE] - 1) * 6 + (twoPlayerMode ? 3 : 0),
+		          slot_limit = first_slot + 3;
+		
+		for (slot = first_slot; slot < slot_limit; ++slot)
+		{
+			if (temp_score > saveFiles[slot].highScore1)
+				break;
+		}
+		
+		// did you get a high score?
+		if (slot < slot_limit)
+		{
+			// shift down old scores
+			for (int i = slot_limit - 1; i > slot; --i)
 			{
-				z = q;
-				if (score < score2)
-				{
-					z = (q == 1) ? 2 : 1;
-				}
-				switch (z)
-				{
-					case 1:
-						tempscore = score;
-						break;
-					case 2:
-						tempscore = score2;
-						break;
-				}
-			}
-			else
-			{
-				tempscore = JE_totalScore(score, pItems);
-			}
-			
-			num = episodenum * 6 - 6 + twoPlayerMode * 3;
-			
-			b = 0;
-			for (a = 3; a >= 1; a--)
-			{
-				if (tempscore > saveFiles[num + a-1].highScore1)
-				{
-					b = a;
-				}
+				saveFiles[i].highScore1 = saveFiles[i - 1].highScore1;
+				strcpy(saveFiles[i].highScoreName, saveFiles[i - 1].highScoreName);
 			}
 			
-			/* Did you get a high score? */
-			if (b > 0)
+			wait_noinput(false, true, false);
+			
+			JE_clr256();
+			JE_showVGA();
+			memcpy(colors, palettes[0], sizeof(colors));
+			
+			play_song(33);
+			
 			{
-				a = num;     /*store old num*/
-				num += b;
-				
-				if (b != 3)
-				{
-					for (c = a + 3; c >= (a + 3) - (b - 1); c--)
-					{
-						saveFiles[c-1].highScore1 = saveFiles[c - 1-1].highScore1;
-						strcpy(saveFiles[c-1].highScoreName, saveFiles[c - 1-1].highScoreName);
-					}
-				}
-				
-				JE_clr256();
-				JE_showVGA();
-				memcpy(colors, palettes[1-1], sizeof(colors));
-				
-				play_song(33);
-				
 				/* Enter Thy name */
-				quit = false;
-				cancel = false;
-				strcpy(stemp, "                              ");
+				
+				JE_byte flash = 8 * 16 + 10;
+				JE_boolean fadein = true;
+				JE_boolean quit = false, cancel = false;
+				char stemp[30], tempstr[30];
+				char buffer[256];
+				
+				strcpy(stemp, "                             ");
 				temp = 0;
-				fadein = true;
-				
-				flash = 8 * 16 + 10;
-				
-				wait_noinput(false, true, false);
 				
 				JE_barShade(65, 55, 255, 155);
 				
@@ -1600,9 +1582,9 @@ void JE_highScoreCheck( void )
 				{
 					service_SDL_events(true);
 					
-					JE_dString(JE_fontCenter(miscText[52-1], FONT_SHAPES), 3, miscText[52-1], FONT_SHAPES);
+					JE_dString(JE_fontCenter(miscText[51], FONT_SHAPES), 3, miscText[51], FONT_SHAPES);
 					
-					temp3 = twoPlayerMode ? 57 + z : 53;
+					temp3 = twoPlayerMode ? 58 + p : 53;
 					
 					JE_dString(JE_fontCenter(miscText[temp3-1], SMALL_FONT_SHAPES), 30, miscText[temp3-1], SMALL_FONT_SHAPES);
 					
@@ -1610,15 +1592,15 @@ void JE_highScoreCheck( void )
 					
 					if (twoPlayerMode)
 					{
-						sprintf(buffer, "%s %s", miscText[48 + z-1], miscText[54-1]);
+						sprintf(buffer, "%s %s", miscText[48 + p], miscText[53]);
 						JE_textShade(60, 55, buffer, 11, 4, FULL_SHADE);
 					}
 					else
 					{
-						JE_textShade(60, 55, miscText[54-1], 11, 4, FULL_SHADE);
+						JE_textShade(60, 55, miscText[53], 11, 4, FULL_SHADE);
 					}
 					
-					sprintf(buffer, "%s %d", miscText[38-1], tempscore);
+					sprintf(buffer, "%s %d", miscText[37], temp_score);
 					JE_textShade(70, 70, buffer, 11, 4, FULL_SHADE);
 					
 					do
@@ -1728,24 +1710,24 @@ void JE_highScoreCheck( void )
 				
 				if (!cancel)
 				{
-					saveFiles[num-1].highScore1 = tempscore;
-					strcpy(saveFiles[num-1].highScoreName, stemp);
-					saveFiles[num-1].highScoreDiff = difficultyLevel;
+					saveFiles[slot].highScore1 = temp_score;
+					strcpy(saveFiles[slot].highScoreName, stemp);
+					saveFiles[slot].highScoreDiff = difficultyLevel;
 				}
 				
 				JE_fadeBlack(15);
 				JE_loadPic(2, false);
 				
-				JE_dString(JE_fontCenter(miscText[51-1], FONT_SHAPES), 10, miscText[51-1], FONT_SHAPES);
+				JE_dString(JE_fontCenter(miscText[50], FONT_SHAPES), 10, miscText[50], FONT_SHAPES);
 				JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 35, episode_name[episodeNum], SMALL_FONT_SHAPES);
 				
-				for (b = 1; b <= 3; b++)
+				for (int i = first_slot; i < slot_limit; ++i)
 				{
-					if (a + b != num)
+					if (i != slot)
 					{
-						sprintf(buffer, "~#%d:~  %d", b, saveFiles[a + b-1].highScore1);
-						JE_textShade( 20, (b * 12) + 65, buffer, 15, 0, FULL_SHADE);
-						JE_textShade(150, (b * 12) + 65, saveFiles[a + b-1].highScoreName, 15, 2, FULL_SHADE);
+						sprintf(buffer, "~#%d:~  %d", (i - first_slot + 1), saveFiles[i].highScore1);
+						JE_textShade( 20, ((i - first_slot + 1) * 12) + 65, buffer, 15, 0, FULL_SHADE);
+						JE_textShade(150, ((i - first_slot + 1) * 12) + 65, saveFiles[i].highScoreName, 15, 2, FULL_SHADE);
 					}
 				}
 				
@@ -1753,30 +1735,26 @@ void JE_highScoreCheck( void )
 				
 				JE_fadeColor(15);
 				
-				textGlowFont = TINY_FONT;
+				sprintf(buffer, "~#%d:~  %d", (slot - first_slot + 1), saveFiles[slot].highScore1);
+				
 				frameCountMax = 6;
+				textGlowFont = TINY_FONT;
+				
 				textGlowBrightness = 10;
-				sprintf(buffer, "~#%d:~  %d", num - a, saveFiles[num-1].highScore1);
-				JE_outTextGlow( 20, (num - a) * 12 + 65, buffer);
+				JE_outTextGlow( 20, (slot - first_slot + 1) * 12 + 65, buffer);
 				textGlowBrightness = 10;
-				JE_outTextGlow(150, (num - a) * 12 + 65, saveFiles[num-1].highScoreName);
+				JE_outTextGlow(150, (slot - first_slot + 1) * 12 + 65, saveFiles[slot].highScoreName);
+				textGlowBrightness = 10;
+				JE_outTextGlow(JE_fontCenter(miscText[4], TINY_FONT), 180, miscText[4]);
+				
+				JE_showVGA();
 				
 				if (frameCountMax != 0)
-				{
-					frameCountMax = 6;
-					temp = 1;
-				}
-				else
-				{
-					temp = 0;
-				}
-				textGlowBrightness = 10;
-				JE_outTextGlow(JE_fontCenter(miscText[5-1], TINY_FONT), 180, miscText[5-1]);
-				JE_showVGA();
-				while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
+					wait_input(true, true, true);
 				
 				JE_fadeBlack(15);
 			}
+			
 		}
 	}
 }
