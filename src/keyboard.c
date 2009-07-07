@@ -35,7 +35,7 @@ unsigned char lastkey_char;
 Uint8 lastmouse_but;
 Uint16 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {false, false, false};
-Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
+Uint16 mouse_x, mouse_y;
 
 int numkeys;
 Uint8 *keysactive;
@@ -119,7 +119,11 @@ JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 void set_mouse_position( int x, int y )
 {
 	if (input_grabbed)
+	{
 		SDL_WarpMouse(x * scale, y * scale);
+		mouse_x = x;
+		mouse_y = y;
+	}
 }
 
 void service_SDL_events( JE_boolean clear_new )
@@ -136,8 +140,6 @@ void service_SDL_events( JE_boolean clear_new )
 			case SDL_MOUSEMOTION:
 				mouse_x = ev.motion.x / scale;
 				mouse_y = ev.motion.y / scale;
-				mouse_xrel = ev.motion.xrel / scale;
-				mouse_yrel = ev.motion.yrel / scale;
 				break;
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)

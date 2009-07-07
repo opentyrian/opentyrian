@@ -34,7 +34,7 @@ extern unsigned char lastkey_char;
 extern Uint8 lastmouse_but;
 extern Uint16 lastmouse_x, lastmouse_y;
 extern JE_boolean mouse_pressed[3];
-extern Uint16 mouse_x, mouse_y, mouse_xrel, mouse_yrel;
+extern Uint16 mouse_x, mouse_y;
 extern int numkeys;
 extern Uint8 *keysactive;
 
