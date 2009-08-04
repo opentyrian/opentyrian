@@ -453,9 +453,9 @@ void JE_destructMain( void )
 						
 						for (temp = 0; temp < exploRec[z].explofill; temp++)
 						{
-							destructTempR = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
-							destructTempY = exploRec[z].y + round(cos(destructTempR) * ((float)mt_rand() / RAND_MAX) * exploRec[z].explowidth);
-							destructTempX = exploRec[z].x + round(sin(destructTempR) * ((float)mt_rand() / RAND_MAX) * exploRec[z].explowidth);
+							destructTempR = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
+							destructTempY = exploRec[z].y + round(cos(destructTempR) * ((float)mt_rand() / MT_RAND_MAX) * exploRec[z].explowidth);
+							destructTempX = exploRec[z].x + round(sin(destructTempR) * ((float)mt_rand() / MT_RAND_MAX) * exploRec[z].explowidth);
 							
 							if (destructTempY < 200 && destructTempY > 15)
 							{
@@ -529,7 +529,7 @@ void JE_destructMain( void )
 								shotRec[z].y -= shotRec[z].ymov;
 								shotRec[z].ymov = -shotRec[z].ymov * 0.8f;
 								if (shotRec[z].xmov == 0)
-									shotRec[z].xmov += ((float)mt_rand() / RAND_MAX) - 0.5f;
+									shotRec[z].xmov += ((float)mt_rand() / MT_RAND_MAX) - 0.5f;
 							}
 						}
 						
@@ -1415,17 +1415,17 @@ void JE_generateTerrain( void )
 	play_song(goodsel[mt_rand() % 14] - 1);
 	heightchange = (mt_rand() % 3) - 1;
 	
-	sinewave = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
-	sinewave2 = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
-	cosinewave = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
-	cosinewave2 = ((float)mt_rand() / RAND_MAX) * M_PI / 50.0f + 0.01f;
+	sinewave = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
+	sinewave2 = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
+	cosinewave = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
+	cosinewave2 = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
 	HC1 = 20;
 	
 	switch (arenaType)
 	{
 		case 1:
-			sinewave = M_PI - ((float)mt_rand() / RAND_MAX) * 0.3f;
-			sinewave2 = M_PI - ((float)mt_rand() / RAND_MAX) * 0.3f;
+			sinewave = M_PI - ((float)mt_rand() / MT_RAND_MAX) * 0.3f;
+			sinewave2 = M_PI - ((float)mt_rand() / MT_RAND_MAX) * 0.3f;
 			break;
 		case 2:
 			HC1 = 100;
@@ -1548,9 +1548,9 @@ void JE_generateTerrain( void )
 			
 			for (z = 1; z <= y * y * 2; z++)
 			{
-				destructTempR = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempR = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
+				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
 					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 25;
 			}
@@ -1567,9 +1567,9 @@ void JE_generateTerrain( void )
 			
 			for (z = 1; z < y * y * 2; z++)
 			{
-				destructTempR = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempR = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
+				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
+				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
 				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
 					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 0;
 			}

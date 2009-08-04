@@ -244,7 +244,7 @@ star_end:
 				JE_resetValues();
 				break;
 			case 'S':
-				nspVarVarInc = (mt_rand()/(float)RAND_MAX) * 0.01 - 0.005;
+				nspVarVarInc = ((float)mt_rand() / MT_RAND_MAX) * 0.01 - 0.005;
 				break;
 			case 'X':
 			case 27:
@@ -285,7 +285,7 @@ star_end:
 
 	if ((mt_rand() % 1000) == 1)
 	{
-		nspVarVarInc = (mt_rand()/(float)RAND_MAX) * 0.01 - 0.005;
+		nspVarVarInc = ((float)mt_rand() / MT_RAND_MAX) * 0.01 - 0.005;
 	}
 
 	nspVarInc += nspVarVarInc;

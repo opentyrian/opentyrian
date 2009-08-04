@@ -1575,9 +1575,9 @@ void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte col
 {
 	for (temp = 0; temp < num; temp++)
 	{
-		JE_real tempr = ((float)mt_rand() / RAND_MAX) * (M_PI * 2);
-		signed int tempy = round(cos(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
-		signed int tempx = round(sin(tempr) * ((float)mt_rand() / RAND_MAX) * explowidth);
+		JE_real tempr = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
+		signed int tempy = round(cos(tempr) * ((float)mt_rand() / MT_RAND_MAX) * explowidth);
+		signed int tempx = round(sin(tempr) * ((float)mt_rand() / MT_RAND_MAX) * explowidth);
 		
 		if (++last_superpixel >= MAX_SUPERPIXELS)
 			last_superpixel = 0;
