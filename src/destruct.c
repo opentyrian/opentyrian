@@ -709,7 +709,7 @@ void JE_destructMain( void )
 						
 						// prefer helicopter
 						for (x = 0; x < MAX_INSTALLATIONS; x++)
-							if (leftSystem[x] == 8 && unit[1][x].health > 0)
+							if (leftSystem[x] == 8 && unit[0][x].health > 0)
 								leftSel = x + 1;
 						
 						if (leftSystem[leftSel-1] == 8)
