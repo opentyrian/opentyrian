@@ -19,12 +19,22 @@
 #ifndef FILE_H
 #define FILE_H
 
+#include "SDL_endian.h"
 #include <stdbool.h>
 #include <stdio.h>
 
 bool file_exists( const char *file );
 FILE *fopen_warn( const char *file, const char *mode );
 long ftell_eof( FILE *f );
+
+// endian-swapping fread/fwrite
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+size_t efread( void *buffer, size_t size, size_t num, FILE *stream );
+size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream );
+#else
+#define efread fread
+#define efwrite fwrite
+#endif
 
 #endif // FILE_H
 

@@ -16,9 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 #include "file.h"
 
+#include "SDL.h"
 #include <errno.h>
 
 // check if file can be opened for reading
@@ -59,5 +59,68 @@ long ftell_eof( FILE *f )
 	
 	return size;
 }
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+// endian-swapping fread
+size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
+{
+	size_t f = fread(buffer, size, num, stream);
+	
+	switch (size)
+	{
+		case 2:
+			for (size_t i = 0; i < num; i++)
+				((Uint16 *)buffer)[i] = SDL_Swap16(((Uint16 *)buffer)[i]);
+			break;
+		case 4:
+			for (size_t i = 0; i < num; i++)
+				((Uint32 *)buffer)[i] = SDL_Swap32(((Uint32 *)buffer)[i]);
+			break;
+		case 8:
+			for (size_t i = 0; i < num; i++)
+				((Uint64 *)buffer)[i] = SDL_Swap64(((Uint64 *)buffer)[i]);
+			break;
+		default:
+			break;
+	}
+	
+	return f;
+}
+
+// endian-swapping fwrite
+size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
+{
+	void *swap_buffer;
+	
+	switch (size)
+	{
+		case 2:
+			swap_buffer = malloc(size * num);
+			for (size_t i = 0; i < num; i++)
+				((Uint16 *)swap_buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
+			break;
+		case 4:
+			swap_buffer = malloc(size * num);
+			for (size_t i = 0; i < num; i++)
+				((Uint32 *)swap_buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
+			break;
+		case 8:
+			swap_buffer = malloc(size * num);
+			for (size_t i = 0; i < num; i++)
+				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
+			break;
+		default:
+			swap_buffer = buffer;
+			break;
+	}
+	
+	size_t f = fwrite(swap_buffer, size, num, stream);
+	
+	if (swap_buffer != buffer)
+		free(swap_buffer);
+	
+	return f;
+}
+#endif
 
 // kate: tab-width 4; vim: set noet:

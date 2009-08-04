@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "picload.h"
-
 #include "error.h"
+#include "file.h"
 #include "nortvars.h"
+#include "opentyr.h"
 #include "palette.h"
 #include "pcxmast.h"
+#include "picload.h"
 #include "video.h"
 
 #include <string.h>

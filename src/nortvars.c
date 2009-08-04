@@ -16,12 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "nortvars.h"
-
 #include "error.h"
+#include "file.h"
 #include "joystick.h"
 #include "keyboard.h"
+#include "nortvars.h"
+#include "opentyr.h"
 #include "vga256d.h"
 #include "video.h"
 

@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "helptext.h"
-
 #include "config.h"
 #include "episodes.h"
 #include "error.h"
+#include "file.h"
 #include "fonthand.h"
+#include "helptext.h"
 #include "menus.h"
 #include "newshape.h"
+#include "opentyr.h"
 
 #include <string.h>
 

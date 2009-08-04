@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "file.h"
+#include "fm_synth.h"
+#include "lds_play.h"
+#include "loudness.h"
+#include "nortsong.h"
+#include "opentyr.h"
+
+#include <assert.h>
 
 /* A substantial amount of this code has been copied and adapted from adplug.
    Thanks, guys! Adplug is awesome! :D */
-#include "opentyr.h"
-#include "lds_play.h"
-
-#include "fm_synth.h"
-#include "loudness.h"
-#include "nortsong.h"
-
-#include <assert.h>
 
 /* Note frequency table (16 notes / octave) */
 const Uint16 frequency[] = {
