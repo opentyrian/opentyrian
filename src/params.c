@@ -16,12 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "params.h"
-
+#include "file.h"
 #include "joystick.h"
 #include "loudness.h"
 #include "network.h"
+#include "opentyr.h"
+#include "params.h"
 #include "varz.h"
 #include "xmas.h"
 
@@ -60,6 +60,8 @@ void JE_paramCheck( int argc, char *argv[] )
 		{ 'j', "no-joystick" },
 		{ 'x', "no-xmas" },
 		
+		{ 't', "data" },
+		
 		{ 'n', "net" },
 		{ 'p', "net-port" },
 		{ 'd', "net-delay" },
@@ -90,7 +92,7 @@ void JE_paramCheck( int argc, char *argv[] )
 			}
 			else
 			{
-				// could have support for multiple options following a -
+				// TODO: could have support for multiple options following a -
 				match = argv[i][1];
 			}
 			
@@ -103,6 +105,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					       "  --no-sound                               Disable audio\n"
 					       "  --no-joystick                            Disable joystick/gamepad input\n"
 					       "  --no-xmas                                Disable Christmas mode\n\n"
+					       "  --data <directory>                       Set Tyrian data directory\n\n"
 					       "  --net <host>[:<port>] <number> <name>    Start a networked game\n"
 					       "  --net-port <port>                        Local port to bind\n"
 					       "  --net-delay <frames>                     Set lag-compensation delay\n");
@@ -121,6 +124,19 @@ void JE_paramCheck( int argc, char *argv[] )
 					
 				case 'x':
 					xmas = false;
+					break;
+					
+				// set custom Tyrian data directory
+				case 't':
+					if (argc > i + 1)
+					{
+						custom_data_dir = argv[++i];
+					}
+					else
+					{
+						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
+						exit(-1);
+					}
 					break;
 					
 				case 'n':
