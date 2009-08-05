@@ -649,10 +649,10 @@ void JE_decryptSaveTemp( void )
 #ifndef TARGET_MACOSX
 const char *get_user_directory( void )
 {
-	static char userdir[500] = "";
+	static char userdir[500] = ".";
 #ifdef TARGET_UNIX
 	if (strlen(userdir) == 0 && getenv("HOME"))
-		snprintf(userdir, sizeof(userdir), "%s/.opentyrian/", getenv("HOME"));
+		snprintf(userdir, sizeof(userdir), "%s/.opentyrian", getenv("HOME"));
 #endif /* TARGET_UNIX */
 	return userdir;
 }
