@@ -649,14 +649,21 @@ void JE_decryptSaveTemp( void )
 #ifndef TARGET_MACOSX
 const char *get_user_directory( void )
 {
-	static char userdir[500] = ".";
+	static char user_dir[500] = "";
+	
+	if (strlen(user_dir) == 0)
+	{
 #ifdef TARGET_UNIX
-	if (strlen(userdir) == 0 && getenv("HOME"))
-		snprintf(userdir, sizeof(userdir), "%s/.opentyrian", getenv("HOME"));
-#endif /* TARGET_UNIX */
-	return userdir;
+		if (getenv("HOME"))
+			snprintf(user_dir, sizeof(user_dir), "%s/.opentyrian", getenv("HOME"));
+#else
+		strcpy(user_dir, ".");
+#endif // TARGET_UNIX
+	}
+	
+	return user_dir;
 }
-#endif /* TARGET_MACOSX */
+#endif // TARGET_MACOSX
 
 // for compatibility
 Uint8 joyButtonAssign[4] = {1, 4, 5, 5};
