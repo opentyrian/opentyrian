@@ -84,7 +84,7 @@ bool select_gameplay( void )
 				{
 					JE_playSampleNum(S_SPRING);
 					/* TODO: NETWORK */
-					printf("error: networking via menu not implemented\n");
+					fprintf(stderr, "error: networking via menu not implemented\n");
 					break;
 				}
 				JE_playSampleNum(S_SELECT);

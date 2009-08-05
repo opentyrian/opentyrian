@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "error.h"
 #include "file.h"
 #include "nortvars.h"
 #include "opentyr.h"
@@ -31,8 +30,7 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 {
 	PCXnumber--;
 	
-	FILE *PCXfile;
-	JE_resetFile(&PCXfile, "tyrian.pic");
+	FILE *f = dir_fopen_die(data_dir(), "tyrian.pic", "rb");
 	
 	static bool first = true;
 	if (first)
@@ -40,21 +38,21 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 		first = false;
 		
 		Uint16 temp;
-		efread(&temp, sizeof(Uint16), 1, PCXfile);
+		efread(&temp, sizeof(Uint16), 1, f);
 		for (int i = 0; i < PCX_NUM; i++)
 		{
-			efread(&pcxpos[i], sizeof(JE_longint), 1, PCXfile);
+			efread(&pcxpos[i], sizeof(JE_longint), 1, f);
 		}
-		fseek(PCXfile, 0, SEEK_END);
-		pcxpos[PCX_NUM] = ftell(PCXfile);
+		
+		pcxpos[PCX_NUM] = ftell_eof(f);
 	}
 	
 	unsigned int size = pcxpos[PCXnumber + 1] - pcxpos[PCXnumber];
 	Uint8 *buffer = malloc(size);
 	
-	fseek(PCXfile, pcxpos[PCXnumber], SEEK_SET);
-	efread(buffer, sizeof(Uint8), size, PCXfile);
-	fclose(PCXfile);
+	fseek(f, pcxpos[PCXnumber], SEEK_SET);
+	efread(buffer, sizeof(Uint8), size, f);
+	fclose(f);
 	
 	Uint8 *p = buffer;
 	Uint8 *s; /* screen pointer, 8-bit specific */

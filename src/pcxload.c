@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "error.h"
 #include "file.h"
 #include "opentyr.h"
 #include "palette.h"
@@ -25,10 +24,9 @@
 
 void JE_loadPCX( char *file ) // this is only meant to load tshp2.pcx
 {
-	FILE *f;
 	Uint8 *s = VGAScreen->pixels; /* 8-bit specific */
 	
-	JE_resetFile(&f, file);
+	FILE *f = dir_fopen_die(data_dir(), file, "rb");
 	
 	fseek(f, -769, SEEK_END);
 	

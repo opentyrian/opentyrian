@@ -16,10 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 #include "config.h"
 #include "episodes.h"
-#include "error.h"
 #include "file.h"
 #include "lvllib.h"
 #include "lvlmast.h"
@@ -62,10 +60,12 @@ void JE_loadItemDat( void )
 
 	if (episodeNum > 3)
 	{
-		JE_resetFile(&lvlFile, levelFile);
+		lvlFile = dir_fopen_die(data_dir(), levelFile, "rb");
 		fseek(lvlFile, lvlPos[lvlNum-1], SEEK_SET);
-	} else {
-		JE_resetFile(&lvlFile, "tyrian.hdt");
+	}
+	else
+	{
+		lvlFile = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
 		efread(&episode1DataLoc, sizeof(JE_longint), 1, lvlFile);
 		fseek(lvlFile, episode1DataLoc, SEEK_SET);
 	}
@@ -231,16 +231,11 @@ void JE_initEpisode( JE_byte newEpisode )
 
 void JE_scanForEpisodes( void )
 {
-	JE_byte temp;
-
-	char buf[sizeof(dir) + 11];
-
-	JE_findTyrian("tyrian1.lvl"); /* need to know where to scan */
-
-	for (temp = 0; temp < EPISODE_MAX; temp++)
+	for (int temp = 0; temp < EPISODE_MAX; temp++)
 	{
-		sprintf(buf, "%styrian%d.lvl", dir, temp + 1);
-		episodeAvail[temp] = file_exists(buf);
+		char buf[11];
+		sprintf(buf, "tyrian%d.lvl", temp + 1);
+		episodeAvail[temp] = dir_file_exists(data_dir(), buf);
 	}
 }
 

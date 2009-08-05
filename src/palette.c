@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "palette.h"
-
-#include "error.h"
+#include "file.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "opentyr.h"
+#include "palette.h"
 #include "video.h"
 
 #include <assert.h>
@@ -37,15 +36,13 @@ palette_t colors, colors2;
 
 void JE_loadPals( void )
 {
-	FILE *f;
-	int i;
-
 	palNum = 0;
-
-	JE_resetFile(&f, "palette.dat");
+	
+	FILE *f = dir_fopen_die(data_dir(), "palette.dat", "rb");
+	
 	while (palNum < MAX_PAL && !feof(f))
 	{
-		for (i = 0; i < 256; i++)
+		for (int i = 0; i < 256; i++)
 		{
 			palettes[palNum][i].r = getc(f) << 2;
 			palettes[palNum][i].g = getc(f) << 2;
@@ -53,6 +50,7 @@ void JE_loadPals( void )
 		}
 		palNum++;
 	}
+	
 	fclose(f);
 }
 

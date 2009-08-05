@@ -236,7 +236,7 @@ void init_joysticks( void )
 	
 	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK))
 	{
-		printf("warning: failed to initialize joystick system: %s\n", SDL_GetError());
+		fprintf(stderr, "warning: failed to initialize joystick system: %s\n", SDL_GetError());
 		ignore_joystick = true;
 		return;
 	}
@@ -369,12 +369,9 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 	for (int i = 0; joystick_name[i] != '\0'; i++)
 		joystick_xor ^= joystick_name[i];
 	
-	char cfg_file[1000];
-	snprintf(cfg_file, sizeof(cfg_file), "%s" "joystick.cfg", get_user_directory());
-	
 	const int entry_size = 3 + 3 + COUNTOF(joystick->assignment) * COUNTOF(*joystick->assignment) * 3;
 	
-	FILE *f = fopen_warn(cfg_file, read_only ? "rb" : "rb+");
+	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.cfg", read_only ? "rb" : "rb+");
 	
 	if (f != NULL)
 	{
@@ -420,7 +417,7 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 	{
 		if (f == NULL) // create new config
 		{
-			f = fopen_warn(cfg_file, "wb+");
+			f = dir_fopen_warn(get_user_directory(), "joystick.cfg", "wb+");
 			if (f == NULL)
 				return f;
 			

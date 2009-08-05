@@ -16,12 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-
 #include "config.h"
 #include "editship.h"
 #include "episodes.h"
-#include "error.h"
+#include "file.h"
 #include "fonthand.h"
 #include "helptext.h"
 #include "joystick.h"
@@ -35,6 +33,7 @@
 #include "newshape.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "opentyr.h"
 #include "params.h"
 #include "picload.h"
 #include "scroller.h"
@@ -260,11 +259,11 @@ int main( int argc, char *argv[] )
 	printf("assuming mouse detected\n"); // SDL can't tell us if there isn't one
 	
 	xmas |= xmas_time();
-	if (xmas && (JE_getFileSize("tyrianc.shp") == 0 || JE_getFileSize("voicesc.snd") == 0))
+	if (xmas && (!dir_file_exists(data_dir(), "tyrianc.shp") || !dir_file_exists(data_dir(), "voicesc.snd")))
 	{
 		xmas = false;
 		
-		printf("Christmas is missing.\n");
+		fprintf(stderr, "warning: Christmas is missing.\n");
 	}
 	
 	JE_loadPals();

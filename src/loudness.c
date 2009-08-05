@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "error.h"
 #include "file.h"
 #include "fm_synth.h"
 #include "lds_play.h"
@@ -60,7 +59,7 @@ bool init_audio( void )
 	
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
 	{
-		printf("error: failed to initialize audio system: %s\n", SDL_GetError());
+		fprintf(stderr, "error: failed to initialize audio system: %s\n", SDL_GetError());
 		audio_disabled = true;
 		return false;
 	}
@@ -75,7 +74,7 @@ bool init_audio( void )
 	
 	if (SDL_OpenAudio(&ask, &got) == -1)
 	{
-		printf("error: failed to initialize SDL audio: %s\n", SDL_GetError());
+		fprintf(stderr, "error: failed to initialize SDL audio: %s\n", SDL_GetError());
 		audio_disabled = true;
 		return false;
 	}
@@ -191,16 +190,14 @@ void load_music( void )
 {
 	if (music_file == NULL)
 	{
-		JE_resetFile(&music_file, "music.mus");
+		music_file = dir_fopen_die(data_dir(), "music.mus", "rb");
 		
 		efread(&song_count, sizeof(song_count), 1, music_file);
-		song_count = song_count;
 		
 		song_offset = malloc((song_count + 1) * sizeof(song_offset));
 		
 		efread(song_offset, 4, song_count, music_file);
-		fseek(music_file, 0, SEEK_END);
-		song_offset[song_count] = ftell(music_file); // file size
+		song_offset[song_count] = ftell_eof(music_file);
 	}
 }
 
@@ -218,7 +215,7 @@ void load_song( unsigned int song_num )
 	}
 	else
 	{
-		printf("warning: failed to load song %d\n", song_num + 1);
+		fprintf(stderr, "warning: failed to load song %d\n", song_num + 1);
 	}
 	
 	SDL_UnlockAudio();

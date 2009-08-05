@@ -17,34 +17,99 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "file.h"
+#include "opentyr.h"
 
 #include "SDL.h"
 #include <errno.h>
 
-// check if file can be opened for reading
-bool file_exists( const char *file )
+char *custom_data_dir = ".";
+
+const char *data_dir( void )
 {
-	FILE *f = fopen(file, "r");
-	if (f != NULL)
-		fclose(f);
-	return (f != NULL);
+	const char *dirs[] =
+	{
+		custom_data_dir,
+		"data",
+#ifdef TARGET_MACOSX
+		tyrian_game_folder(),
+#endif
+		"/usr/share/opentyrian/data"
+	};
+	
+	static const char *dir = NULL;
+	
+	if (dir != NULL)
+		return dir;
+	
+	for (int i = 0; i < COUNTOF(dirs); ++i)
+	{
+		FILE *f = dir_fopen(dirs[i], "tyrian1.lvl", "rb");
+		if (f)
+		{
+			fclose(f);
+			
+			dir = dirs[i];
+			break;
+		}
+	}
+	
+	if (dir == NULL)
+		dir = "";
+	
+	return dir;
 }
 
-// warn (but do not die) when fopen fails
-FILE *fopen_warn( const char *file, const char *mode )
+// prepend directory and fopen
+FILE *dir_fopen( const char *dir, const char *file, const char *mode )
+{
+	char *path = malloc(strlen(dir) + 1 + strlen(file) + 1);
+	sprintf(path, "%s/%s", dir, file);
+	
+	FILE *f = fopen(path, mode);
+	
+	free(path);
+	
+	return f;
+}
+
+// warn when dir_fopen fails
+FILE *dir_fopen_warn(  const char *dir, const char *file, const char *mode )
 {
 	errno = 0;
 	
-	FILE *f = fopen(file, mode);
+	FILE *f = dir_fopen(dir, file, mode);
 	
 	if (!f)
+		fprintf(stderr, "warning: failed to open '%s': %s\n", file, strerror(errno));
+	
+	return f;
+}
+
+// die when dir_fopen fails
+FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
+{
+	errno = 0;
+	
+	FILE *f = dir_fopen(dir, file, mode);
+	
+	if (f == NULL)
 	{
-		char buf[100];
-		snprintf(buf, sizeof(buf), "warning: failed to open '%s'", file);
-		perror(buf);
+		fprintf(stderr, "error: failed to open '%s': %s\n", file, strerror(errno));
+		fprintf(stderr, "error: One or more of the required Tyrian 2.1 data files could not be found.\n"
+		                "       Please read the README file.\n");
+		exit(1);
 	}
 	
 	return f;
+}
+
+// check if file can be opened for reading
+bool dir_file_exists( const char *dir, const char *file )
+{
+	FILE *f = dir_fopen(dir, file, "rb");
+	if (f != NULL)
+		fclose(f);
+	return (f != NULL);
 }
 
 // returns end-of-file position

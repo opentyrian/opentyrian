@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "error.h"
 #include "file.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -99,15 +98,16 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 
 void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile )
 {
-	FILE *fi;
 	JE_byte y, z;
 	JE_word x;
 	JE_longint templ;
 	JE_longint sndPos[2][SAMPLE_COUNT + 1];
 	JE_word sndNum;
 
+	FILE *fi;
+	
 	/* SYN: Loading offsets into TYRIAN.SND */
-	JE_resetFile(&fi, effects_sndfile);
+	fi = dir_fopen_die(data_dir(), effects_sndfile, "rb");
 	efread(&sndNum, sizeof(sndNum), 1, fi);
 
 	for (x = 0; x < sndNum; x++)
@@ -129,7 +129,7 @@ void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile )
 	fclose(fi);
 
 	/* SYN: Loading offsets into VOICES.SND */
-	JE_resetFile(&fi, voices_sndfile);
+	fi = dir_fopen_die(data_dir(), voices_sndfile, "rb");
 	
 	efread(&sndNum, sizeof(sndNum), 1, fi);
 

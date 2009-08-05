@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "error.h"
 #include "file.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -82,11 +81,9 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 
 void JE_newLoadShapes( JE_byte table, char *shapefile )
 {
-	FILE *f;
-	
 	JE_newPurgeShapes(table);
 	
-	JE_resetFile(&f, shapefile);
+	FILE *f = dir_fopen_die(data_dir(), shapefile, "rb");
 	
 	JE_newLoadShapesB(table, f);
 	

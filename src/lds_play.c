@@ -97,7 +97,7 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 	mode = fgetc(f);
 	if (mode > 2)
 	{
-		printf("error: failed to load music\n");
+		fprintf(stderr, "error: failed to load music\n");
 		return false;
 	}
 	efread(&speed, 2, 1, f);

@@ -20,7 +20,6 @@
 #include "config.h"
 #include "editship.h"
 #include "episodes.h"
-#include "error.h"
 #include "file.h"
 #include "fonthand.h"
 #include "helptext.h"
@@ -435,9 +434,7 @@ void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
 
 void JE_loadMainShapeTables( char *shpfile )
 {
-	FILE *f;
-	
-	JE_resetFile(&f, shpfile);
+	FILE *f = dir_fopen_die(data_dir(), shpfile, "rb");
 	
 	JE_word shpNumb;
 	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
@@ -1855,7 +1852,7 @@ bool load_next_demo( void )
 	
 	char demo_filename[9];
 	snprintf(demo_filename, sizeof(demo_filename), "demo.%d", demo_num);
-	JE_resetFile(&demo_file, demo_filename);
+	demo_file = dir_fopen_die(data_dir(), demo_filename, "rb"); // TODO: only play demos from existing file (instead of dying)
 	
 	difficultyLevel = 2;
 	bonusLevelCurrent = false;
@@ -1880,7 +1877,7 @@ bool replay_demo_keys( void )
 {
 	if (demo_keys_wait == 0)
 		if (read_demo_keys() == false)
-			return false;
+			return false; // no more keys
 	
 	if (demo_keys_wait > 0)
 		demo_keys_wait--;
@@ -2048,7 +2045,6 @@ void JE_playCredits( void )
 	JE_word x, max = 0, maxlen = 0;
 	JE_integer curpos, newpos;
 	JE_byte yloc;
-	FILE *f;
 	JE_byte currentpic = 1, fade = 0;
 	JE_shortint fadechg = 1;
 	JE_byte currentship = 0;
@@ -2061,7 +2057,7 @@ void JE_playCredits( void )
 	
 	play_song(8);
 	
-	JE_resetFile(&f, "tyrian.cdt");
+	FILE *f = dir_fopen_die(data_dir(), "tyrian.cdt", "rb");
 	while (!feof(f))
 	{
 		maxlen += 20 * 3;

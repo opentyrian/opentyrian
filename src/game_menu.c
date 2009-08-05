@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "config.h"
-#include "error.h"
+#include "file.h"
 #include "fonthand.h"
 #include "game_menu.h"
 #include "joystick.h"
@@ -1735,8 +1735,7 @@ void JE_loadCubes( void )
 
 	for (int cube = 0; cube < cubeMax; cube++)
 	{
-		FILE *f;
-		JE_resetFile(&f, cubeFile);
+		FILE *f = dir_fopen_die(data_dir(), cubeFile, "rb");
 
 		tempW = cubeList[cube];
 

@@ -18,7 +18,6 @@
  */
 #include "config.h"
 #include "episodes.h"
-#include "error.h"
 #include "file.h"
 #include "fonthand.h"
 #include "helptext.h"
@@ -140,11 +139,11 @@ void JE_HBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth )
 
 void JE_loadHelpText( void )
 {
-	FILE *f; int i;
-
-	JE_resetFile(&f, "tyrian.hdt");
+	FILE *f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
 	efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
 	JE_skipCryptLn(f);
+
+	int i;
 
 	for (i = 0; i < MAX_HELP_MESSAGE; i++)
 	{

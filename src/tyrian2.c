@@ -20,7 +20,6 @@
 #include "backgrnd.h"
 #include "destruct.h"
 #include "episodes.h"
-#include "error.h"
 #include "file.h"
 #include "fonthand.h"
 #include "game_menu.h"
@@ -1038,15 +1037,13 @@ start_level_first:
 	{
 		Uint8 new_demo_num = 0;
 		
-		dont_die = true; // for JE_find
 		do
 		{
 			sprintf(tempStr, "demorec.%d", new_demo_num++);
 		}
-		while (file_exists(tempStr)); // until file doesn't exist
-		dont_die = false;
+		while (dir_file_exists(get_user_directory(), tempStr)); // until file doesn't exist
 		
-		demo_file = fopen_warn(tempStr, "wb");
+		demo_file = dir_fopen_warn(get_user_directory(), tempStr, "wb");
 		if (!demo_file)
 			exit(1);
 		
@@ -2815,7 +2812,7 @@ new_game:
 	{
 		do
 		{
-			JE_resetFile(&lvlFile, macroFile);
+			lvlFile = dir_fopen_die(data_dir(), macroFile, "rb");
 
 			x = 0;
 			jumpSection = false;
@@ -3402,7 +3399,7 @@ new_game:
 	else
 		fade_black(50);
 	
-	JE_resetFile(&lvlFile, levelFile);
+	lvlFile = dir_fopen_die(data_dir(), levelFile, "rb");
 	fseek(lvlFile, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
 	
 	char_mapFile = fgetc(lvlFile);
@@ -3447,7 +3444,7 @@ new_game:
 	
 	/* Read Shapes.DAT */
 	sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
-	JE_resetFile(&shpFile, tempStr);
+	shpFile = dir_fopen_die(data_dir(), tempStr, "rb");
 	
 	for (z = 0; z < 600; z++)
 	{
@@ -4725,7 +4722,7 @@ void JE_eventSystem( void )
 		case 16:
 			if (eventRec[eventLoc-1].eventdat > 9)
 			{
-				printf("error: event 16: bad event data\n");
+				fprintf(stderr, "warning: event 16: bad event data\n");
 			} else {
 				JE_drawTextWindow(outputs[eventRec[eventLoc-1].eventdat-1]);
 				soundQueue[3] = windowTextSamples[eventRec[eventLoc-1].eventdat-1];
@@ -5296,7 +5293,6 @@ void JE_eventSystem( void )
 			break;
 
 		case 71:
-			printf("warning: event 71: possibly bad map repositioning\n");
 			if (((((intptr_t)mapYPos - (intptr_t)&megaData1->mainmap) / sizeof(JE_byte *)) * 2) <= eventRec[eventLoc-1].eventdat2) /* <MXD> ported correctly? */
 			{
 				JE_eventJump(eventRec[eventLoc-1].eventdat);
@@ -5373,7 +5369,6 @@ void JE_eventSystem( void )
 			break;
 
 		case 77:
-			printf("warning: event 77: possibly bad map repositioning\n");
 			mapYPos = &megaData1->mainmap[0][0];
 			mapYPos += eventRec[eventLoc-1].eventdat / 2;
 			if (eventRec[eventLoc-1].eventdat2 > 0)
@@ -5404,7 +5399,6 @@ void JE_eventSystem( void )
 			break;
 
 		case 81: /*WRAP2*/
-			printf("warning: event 81: possibly bad map repositioning\n");
 			BKwrap2   = &megaData2->mainmap[0][0];
 			BKwrap2   += eventRec[eventLoc-1].eventdat / 2;
 			BKwrap2to = &megaData2->mainmap[0][0];
@@ -5419,7 +5413,7 @@ void JE_eventSystem( void )
 			shotRepeat[11-1] = 0;
 			break;
 		default:
-			printf("warning: event %d: unhandled event\n", eventRec[eventLoc-1].eventtype);
+			fprintf(stderr, "warning: event %d: unhandled event\n", eventRec[eventLoc-1].eventtype);
 			break;
 	}
 

@@ -23,8 +23,20 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-bool file_exists( const char *file );
-FILE *fopen_warn( const char *file, const char *mode );
+extern char *custom_data_dir;
+
+#ifdef TARGET_MACOSX
+const char *tyrian_game_folder();
+#endif /* TARGET_MACOSX */
+
+const char *data_dir( void );
+
+FILE *dir_fopen( const char *dir, const char *file, const char *mode );
+FILE *dir_fopen_warn( const char *dir, const char *file, const char *mode );
+FILE *dir_fopen_die( const char *dir, const char *file, const char *mode );
+
+bool dir_file_exists( const char *dir, const char *file );
+
 long ftell_eof( FILE *f );
 
 // endian-swapping fread/fwrite

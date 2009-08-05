@@ -112,7 +112,7 @@ bool network_send( int len )
 		packet_copy(packet_out[i], packet_out_temp);
 	} else {
 		// connection is probably bad now
-		printf("warning: outbound packet queue overflow\n");
+		fprintf(stderr, "warning: outbound packet queue overflow\n");
 		return false;
 	}
 	
@@ -316,7 +316,7 @@ int network_check( void )
 						break;
 						
 					default:
-						printf("warning: bad packet %d received\n", SDLNet_Read16(&packet_temp->data[0]));
+						fprintf(stderr, "warning: bad packet %d received\n", SDLNet_Read16(&packet_temp->data[0]));
 						return 0;
 						break;
 				}
@@ -372,7 +372,7 @@ void network_state_prepare( void )
 {
 	if (packet_state_out[0])
 	{
-		printf("warning: state packet overwritten (previous packet remains unsent)\n");
+		fprintf(stderr, "warning: state packet overwritten (previous packet remains unsent)\n");
 	} else {
 		packet_state_out[0] = SDLNet_AllocPacket(NET_PACKET_SIZE);
 		packet_state_out[0]->len = 28;
@@ -585,17 +585,17 @@ connect_reset:
 connect_again:
 	if (SDLNet_Read16(&packet_in[0]->data[4]) != NET_VERSION)
 	{
-		printf("error: network version did not match opponent's\n");
+		fprintf(stderr, "error: network version did not match opponent's\n");
 		network_tyrian_halt(4, true);
 	}
 	if (SDLNet_Read16(&packet_in[0]->data[6]) != network_delay)
 	{
-		printf("error: network delay did not match opponent's\n");
+		fprintf(stderr, "error: network delay did not match opponent's\n");
 		network_tyrian_halt(5, true);
 	}
 	if (SDLNet_Read16(&packet_in[0]->data[10]) == thisPlayerNum)
 	{
-		printf("error: player number conflicts with opponent's\n");
+		fprintf(stderr, "error: player number conflicts with opponent's\n");
 		network_tyrian_halt(6, true);
 	}
 	
@@ -701,20 +701,20 @@ int network_init( void )
 	
 	if (network_delay * 2 > NET_PACKET_QUEUE - 2)
 	{
-		printf("error: network delay would overflow packet queue\n");
+		fprintf(stderr, "error: network delay would overflow packet queue\n");
 		return -4;
 	}
 	
 	if (SDLNet_Init() == -1)
 	{
-		printf("SDLNet_Init: %s\n", SDLNet_GetError());
+		fprintf(stderr, "error: SDLNet_Init: %s\n", SDLNet_GetError());
 		return -1;
 	}
 	
 	socket = SDLNet_UDP_Open(network_player_port);
 	if (!socket)
 	{
-		printf("SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+		fprintf(stderr, "error: SDLNet_UDP_Open: %s\n", SDLNet_GetError());
 		return -2;
 	}
 	

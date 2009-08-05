@@ -16,17 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
 #include "config.h"
-
 #include "episodes.h"
-#include "error.h"
 #include "file.h"
 #include "joystick.h"
 #include "loudness.h"
 #include "mtrand.h"
 #include "nortsong.h"
 #include "nortvars.h"
+#include "opentyr.h"
 #include "varz.h"
 #include "vga256d.h"
 #include "video.h"
@@ -640,7 +638,7 @@ void JE_decryptSaveTemp( void )
 	/* Barf and die if save file doesn't validate */
 	if (!correct)
 	{
-		printf("Error reading save file!\n");
+		fprintf(stderr, "Error reading save file!\n");
 		exit(255);
 	}
 
@@ -671,12 +669,7 @@ void JE_loadConfiguration( void )
 	JE_byte *p;
 	int y;
 	
-	errorActive = true;
-	
-	char cfgfile[1000];
-	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
-	
-	fi = fopen_warn(cfgfile, "rb");
+	fi = dir_fopen_warn(get_user_directory(), "tyrian.cfg", "rb");
 	if (fi && ftell_eof(fi) == 20 + sizeof(keySettings) + 2)
 	{
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
@@ -745,10 +738,7 @@ void JE_loadConfiguration( void )
 	
 	set_volume(tyrMusicVolume, fxVolume);
 	
-	char savfile[1000];
-	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
-	
-	fi = fopen_warn(savfile, "rb");
+	fi = dir_fopen_warn(get_user_directory(), "tyrian.sav", "rb");
 	if (fi)
 	{
 
@@ -850,8 +840,6 @@ void JE_loadConfiguration( void )
 			}
 		}
 	}
-
-	errorActive = false;
 	
 	JE_initProcessorType();
 }
@@ -935,10 +923,7 @@ void JE_saveConfiguration( void )
 	
 	JE_encryptSaveTemp();
 	
-	char savfile[1000];
-	snprintf(savfile, sizeof(savfile), "%s" "tyrian.sav", get_user_directory());
-	
-	f = fopen_warn(savfile, "wb");
+	f = dir_fopen_warn(get_user_directory(), "tyrian.sav", "wb");
 	if (f)
 	{
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
@@ -949,10 +934,7 @@ void JE_saveConfiguration( void )
 	}
 	JE_decryptSaveTemp();
 	
-	char cfgfile[1000];
-	snprintf(cfgfile, sizeof(cfgfile), "%s" "tyrian.cfg", get_user_directory());
-	
-	f = fopen_warn(cfgfile, "wb");
+	f = dir_fopen_warn(get_user_directory(), "tyrian.cfg", "wb");
 	if (f)
 	{
 		efwrite(&background2, 1, 1, f);
