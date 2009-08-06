@@ -64,13 +64,14 @@
 #define WALL_MAX 20
 #define SHOT_MAX 40
 #define EXPLO_MAX 40
+#define KEY_OPTION_MAX 4
 
 #define SHOT_TYPES 17
 #define SYSTEM_TYPES 8
 
 #define MAX_INSTALLATIONS 20
 
-/* There are an swful lot of index-1s scattered throughout the code.
+/* There are an awful lot of index-1s scattered throughout the code.
  * I plan to eventually change them all and to be able to properly
  * enumerate from 0 up.
  */
@@ -87,9 +88,65 @@ enum de_weapon_t { WEAPON_TRACER = 1, WEAPON_SMALL = 2, WEAPON_LARGE = 3,
                    WEAPON_MEGALASER = 13, WEAPON_LASERTRACER = 14,
                    WEAPON_MEGABLAST = 15, WEAPON_MINI = 16, WEAPON_BOMB = 17 };
 enum de_trails_t { TRAILS_NONE = 0, TRAILS_NORMAL = 1, TRAILS_FULL = 2 };
+/* keys and moves should line up. */
+enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT = 1,  KEY_UP = 2,  KEY_DOWN = 3,  KEY_CHANGE = 4,  KEY_FIRE = 5,  KEY_CYUP = 6,  KEY_CYDN = 7,  KEY_MAX = 8};
+enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT = 1, MOVE_UP = 2, MOVE_DOWN = 3, MOVE_CHANGE = 4, MOVE_FIRE = 5, MOVE_CYUP = 6, MOVE_CYDN = 7, MOVE_MAX = 8};
+
 /* The tracerlaser is dummied out.  It works but (probably due to the low
  * SHOT_MAX) is not assigned to anything.  The bomb does not work.
  */
+
+
+/*** Structs ***/
+struct destruct_unit_s {
+
+	unsigned int ani_frame;
+	unsigned int health;
+};
+struct destruct_shot_s {
+
+	double x;
+	double y;
+	double xmov;
+	double ymov;
+	bool gravity;
+	unsigned int shottype;
+	int shotdur; /* This looks to be unused */
+	unsigned int trail4x, trail4y, trail4c,
+	             trail3x, trail3y, trail3c,
+	             trail2x, trail2y, trail2c,
+	             trail1x, trail1y, trail1c;
+};
+struct destruct_explo_s {
+
+	JE_word x;
+	JE_byte y;
+	JE_byte explowidth;
+	JE_byte explomax;
+	JE_byte explofill;
+	JE_byte explocolor;
+};
+struct destruct_moves_s {
+	bool actions[MOVE_MAX];
+};
+struct destruct_keys_s {
+	SDLKey Config[KEY_MAX][KEY_OPTION_MAX];
+};
+struct destruct_ai_s {
+
+	int c_Angle, c_Power, c_Fire;
+	unsigned int c_noDown;
+};
+struct destruct_player_s {
+
+	bool is_cpu;
+	struct destruct_ai_s aiMemory;
+
+	struct destruct_moves_s moves;
+	struct destruct_keys_s  keys;
+
+	unsigned int score;
+};
 
 /*** Function decs ***/
 void JE_destructMain( void );
@@ -104,6 +161,7 @@ void DE_ResetPlayers( void );
 void DE_ResetUnits( void );
 void DE_ResetWeapons( void );
 void DE_ResetLevel( void );
+void DE_ResetActions( void );
 
 void DE_RunTick( void );
 void DE_RunTickGravity( void );
@@ -175,6 +233,28 @@ const JE_byte rightGraphicBase[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {20, 25, 30
 const JE_byte lModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 0, 5, 0};
 const JE_byte rModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 5, 0, 1};
 
+const SDLKey defaultKeyConfig[PLAYER_MAX][KEY_MAX][KEY_OPTION_MAX] =
+{
+	{	{SDLK_c},
+		{SDLK_v},
+		{SDLK_a},
+		{SDLK_z},
+		{SDLK_LALT},
+		{SDLK_x, SDLK_LSHIFT},
+		{SDLK_LCTRL},
+		{SDLK_SPACE}
+	},
+	{	{SDLK_LEFT, SDLK_KP4},
+		{SDLK_RIGHT, SDLK_KP6},
+		{SDLK_UP, SDLK_KP8},
+		{SDLK_DOWN, SDLK_KP2},
+		{SDLK_BACKSLASH, SDLK_KP5},
+		{SDLK_INSERT, SDLK_RETURN, SDLK_KP0, SDLK_KP_ENTER},
+		{SDLK_PAGEUP, SDLK_KP9},
+		{SDLK_PAGEDOWN, SDLK_KP3}
+	}
+};
+
 
 /*** Globals ***/
 SDL_Surface *destructTempScreen;
@@ -187,25 +267,11 @@ JE_byte destructMode;  /*Game Mode - See Tyrian.HTX*/
 JE_byte arenaType;
 JE_boolean haveWalls;
 
-JE_integer Lc_Angle, Lc_Power, Lc_Fire;
 
-JE_boolean L_Left, L_Right, L_Up, L_Down, L_Change, L_Fire, L_CycleWeaponUp, L_CycleWeaponDown;
-JE_boolean R_Left, R_Right, R_Up, R_Down, R_Change, R_Fire, R_CycleWeaponUp, R_CycleWeaponDown;
-JE_byte NoL_Down, NoR_Down;
 
-struct
-{
-	bool is_cpu;
-	unsigned int score;
-}
-player[PLAYER_MAX];
 
-struct
-{
-	unsigned int ani_frame;
-	unsigned int health;
-}
-unit[PLAYER_MAX][MAX_INSTALLATIONS];
+struct destruct_player_s player[PLAYER_MAX];
+struct destruct_unit_s unit[PLAYER_MAX][MAX_INSTALLATIONS];
 
 JE_byte leftAvail, rightAvail;
 JE_byte leftSel, rightSel;
@@ -230,38 +296,18 @@ JE_byte wallsX[20], wallsY[20]; /*[1..20]*/
 JE_byte dirtHeight[320]; /*[0..319]*/
 
 JE_boolean destructShotAvail[SHOT_MAX]; /*[1..shotmax]*/
-struct {
-	JE_real x;
-	JE_real y;
-	JE_real xmov;
-	JE_real ymov;
-	JE_boolean gravity;
-	JE_byte shottype;
-	JE_longint shotdur;
-	JE_word trail4x, trail4y, trail4c,
-	        trail3x, trail3y, trail3c,
-	        trail2x, trail2y, trail2c,
-	        trail1x, trail1y, trail1c;
-} shotRec[SHOT_MAX]; /*[1..shotmax]*/
+
+struct destruct_shot_s shotRec[SHOT_MAX]; /*[1..shotmax]*/
 
 JE_boolean endOfGame, destructQuit;
 
 
 JE_boolean destructFound;
-
-JE_integer destructTempX;
-JE_integer destructTempY;
-JE_real destructTempR, destructTempR2;
+JE_real destructTempR;
 
 JE_boolean explosionAvail[EXPLO_MAX]; /*[1..explomax]*/
-struct {
-	JE_word x;
-	JE_byte y;
-	JE_byte explowidth;
-	JE_byte explomax;
-	JE_byte explofill;
-	JE_byte explocolor;
-} exploRec[EXPLO_MAX]; /*[1..explomax]*/
+
+struct destruct_explo_s exploRec[EXPLO_MAX]; /*[1..explomax]*/
 
 
 void JE_destructGame( void )
@@ -958,11 +1004,18 @@ void JE_pauseScreen( void )
  */
 void DE_ResetPlayers( void )
 {
+	unsigned int i;
 
-	for (unsigned int i = 0; i < COUNTOF(player); ++i)
+
+	for (i = 0; i < PLAYER_MAX; ++i)
 	{
 		player[i].is_cpu = false;
 		player[i].score = 0;
+		player[i].aiMemory.c_Angle = 0;
+		player[i].aiMemory.c_Power = 0;
+		player[i].aiMemory.c_Fire = 0;
+		player[i].aiMemory.c_noDown = 0;
+		memcpy(player[i].keys.Config, defaultKeyConfig[i], sizeof(player[i].keys.Config));
 	}
 }
 void DE_ResetUnits( void )
@@ -978,13 +1031,16 @@ void DE_ResetUnits( void )
 }
 void DE_ResetWeapons( void )
 {
-	for (x = 0; x < SHOT_MAX; x++)
+	unsigned int i;
+
+
+	for (i = 0; i < SHOT_MAX; i++)
 	{
-		destructShotAvail[x] = true;
+		destructShotAvail[i] = true;
 	}
-	for (x = 0; x < EXPLO_MAX; x++)
+	for (i = 0; i < EXPLO_MAX; i++)
 	{
-		explosionAvail[x] = true;
+		explosionAvail[i] = true;
 	}
 }
 void DE_ResetLevel( void )
@@ -997,11 +1053,6 @@ void DE_ResetLevel( void )
 
 	leftSel = 1;
 	rightSel = 1;
-
-	Lc_Angle = 2;
-	Lc_Power = 2;
-	Lc_Fire = 0;
-	NoL_Down = 0;
 
 	for (z = 0; z < MAX_INSTALLATIONS; z++)
 	{
@@ -1034,7 +1085,16 @@ void DE_ResetLevel( void )
 		rightShotType[z] = defaultWeapon[rightSystem[z]-1];
 	}
 }
+void DE_ResetActions( void )
+{
+	unsigned int i;
 
+
+	for(i = 0; i < PLAYER_MAX; i++)
+	{	/* Zero it all.  A memset would do the trick */
+		memset(&(player[i].moves), 0, sizeof(player[i].moves));
+	}
+}
 /* DE_RunTick
  *
  * Runs one tick.  One tick involves handling physics, drawing crap,
@@ -1042,14 +1102,18 @@ void DE_ResetLevel( void )
  */
 void DE_RunTick( void )
 {
+	unsigned int i;
+
+
 	setjasondelay(1);
 
 	memset(soundQueue, 0, sizeof(soundQueue));
-
 	JE_tempScreenChecking();
 
 	if (!died)
 	{
+		DE_ResetActions();
+
 		/* This code automatically switches the active unit if it is destroyed
 		 * and skips over the useless satellite */
 		while (leftShotType[leftSel-1] == 0 || unit[0][leftSel-1].health == 0)
@@ -1086,22 +1150,12 @@ void DE_RunTick( void )
 
 	/* These are used by the AI */
 	/* Todo: move when appropriate */
-
-	L_Left   = false;
-	L_Right  = false;
-	L_Up     = false;
-	L_Down   = false;
-	if (NoL_Down > 0)
-		NoL_Down--;
-	L_Change = false;
-	L_Fire   = false;
-
-	L_CycleWeaponUp = false;
-	L_CycleWeaponDown = false;
-
-	if (player[PLAYER_LEFT].is_cpu)
+	for(i = 0; i < PLAYER_MAX; i++)
 	{
-		DE_RunTickAI(PLAYER_LEFT);
+		if (player[i].is_cpu)
+		{
+			DE_RunTickAI(i);
+		}
 	}
 
 	DE_RunTickDrawCrosshairs();
@@ -1116,6 +1170,7 @@ void DE_RunTick( void )
 
 	DE_RunTickGetInput();
 	DE_RunTickProcessInput();
+
 
 	if (!died)
 	{
@@ -1323,7 +1378,7 @@ void DE_RunTickExplosions( void )
 	unsigned int i, j, k;
 	unsigned int tempPixelIndex;
 	int tempPosX, tempPosY;
-	float tempRadius;
+	double tempRadius;
 
 
 	/* Run through all open explosions.  They are not sorted in any way */
@@ -1598,86 +1653,127 @@ void DE_RunTickShots( void )
 		}
 	}
 }
-void DE_RunTickAI(enum de_player_t player)
+void DE_RunTickAI(enum de_player_t player_index)
 {
+	unsigned int i;
 
 
+	if (player[player_index].aiMemory.c_noDown > 0)
+	{
+		player[player_index].aiMemory.c_noDown--;
+	}
 
 	/* Until all structs are properly divvied up this must only apply to player1 */
 	if (mt_rand() % 100 > 80)
 	{
-		Lc_Angle += (mt_rand() % 3) - 1;
-		if (Lc_Angle > 1)
-			Lc_Angle = 1;
-		if (Lc_Angle < -1)
-			Lc_Angle = -1;
+		player[player_index].aiMemory.c_Angle += (mt_rand() % 3) - 1;
+		if (player[player_index].aiMemory.c_Angle > 1)
+		{
+			player[player_index].aiMemory.c_Angle = 1;
+		}
+		if (player[player_index].aiMemory.c_Angle < -1)
+		{
+			player[player_index].aiMemory.c_Angle = -1;
+		}
 	}
 	if (mt_rand() % 100 > 90)
 	{
-		if (Lc_Angle > 0 && leftAngle[leftSel-1] > (M_PI / 2.0f) - (M_PI / 9.0f))
-			Lc_Angle = 0;
-		if (Lc_Angle < 0 && leftAngle[leftSel-1] < M_PI / 8.0f)
-			Lc_Angle = 0;
+		if (player[player_index].aiMemory.c_Angle > 0 && leftAngle[leftSel-1] > (M_PI / 2.0f) - (M_PI / 9.0f))
+		{
+			player[player_index].aiMemory.c_Angle = 0;
+		}
+		if (player[player_index].aiMemory.c_Angle < 0 && leftAngle[leftSel-1] < M_PI / 8.0f)
+		{
+			player[player_index].aiMemory.c_Angle = 0;
+		}
 	}
 
 	if (mt_rand() % 100 > 93)
 	{
-		Lc_Power += (mt_rand() % 3) - 1;
-		if (Lc_Power > 1)
-			Lc_Power = 1;
-		if (Lc_Power < -1)
-			Lc_Power = -1;
+		player[player_index].aiMemory.c_Power += (mt_rand() % 3) - 1;
+		if (player[player_index].aiMemory.c_Power > 1)
+		{
+			player[player_index].aiMemory.c_Power = 1;
+		}
+		if (player[player_index].aiMemory.c_Power < -1)
+		{
+			player[player_index].aiMemory.c_Power = -1;
+		}
 	}
 	if (mt_rand() % 100 > 90)
 	{
-		if (Lc_Power > 0 && leftPower[leftSel-1] > 4)
-			Lc_Power = 0;
-		if (Lc_Power < 0 && leftPower[leftSel-1] < 3)
-			Lc_Power = 0;
+		if (player[player_index].aiMemory.c_Power > 0 && leftPower[leftSel-1] > 4)
+		{
+			player[player_index].aiMemory.c_Power = 0;
+		}
+		if (player[player_index].aiMemory.c_Power < 0 && leftPower[leftSel-1] < 3)
+		{
+			player[player_index].aiMemory.c_Power = 0;
+		}
 		if (leftPower[leftSel-1] < 2)
-			Lc_Power = 1;
+		{
+			player[player_index].aiMemory.c_Power = 1;
+		}
 	}
 
 	// prefer helicopter
-	for (x = 0; x < MAX_INSTALLATIONS; x++)
-		if (leftSystem[x] == 8 && unit[0][x].health > 0)
-			leftSel = x + 1;
+	for (i = 0; i < MAX_INSTALLATIONS; i++)
+	{
+		if (leftSystem[i] == UNIT_HELI && unit[player_index][i].health > 0)
+		{
+			leftSel = i + 1;
+			break;
+		}
+	}
 
-	if (leftSystem[leftSel-1] == 8)
+	if (leftSystem[leftSel-1] == UNIT_HELI)
 	{
 		if (!leftYInAir[leftSel-1])
-			Lc_Power = 1;
+		{
+			player[player_index].aiMemory.c_Power = 1;
+		}
 		if (mt_rand() % leftX[leftSel-1] > 100)
-			Lc_Power = 1;
+		{
+			player[player_index].aiMemory.c_Power = 1;
+		}
 		if (mt_rand() % 240 > leftX[leftSel-1])
-			L_Right = true;
+		{
+			player[player_index].moves.actions[MOVE_RIGHT] = true;
+		}
 		else if ((mt_rand() % 20) + 300 < leftX[leftSel-1])
-			L_Left = true;
+		{
+			player[player_index].moves.actions[MOVE_LEFT] = true;
+		}
 		else if (mt_rand() % 30 == 1)
-			Lc_Angle = (mt_rand() % 3) - 1;
+		{
+			player[player_index].aiMemory.c_Angle = (mt_rand() % 3) - 1;
+		}
 		if (leftX[leftSel-1] > 295 && leftLastMove[leftSel-1] > 1)
 		{
-			L_Left = true;
-			L_Right = false;
+			player[player_index].moves.actions[MOVE_LEFT] = true;
+			player[player_index].moves.actions[MOVE_RIGHT] = false;
 		}
-		if (leftSystem[leftSel-1] != 8 || leftLastMove[leftSel-1] > 3 || (leftX[leftSel-1] > 160 && leftLastMove[leftSel-1] > -3))
+		if (leftSystem[leftSel-1] != UNIT_HELI || leftLastMove[leftSel-1] > 3 || (leftX[leftSel-1] > 160 && leftLastMove[leftSel-1] > -3))
 		{
 			if (mt_rand() % (int)round(leftY[leftSel-1]) < 150 && leftYMov[leftSel-1] < 0.01f && (leftX[leftSel-1] < 160 || leftLastMove[leftSel-1] < 2))
-				L_Fire = true;
-			NoL_Down = (5 - abs(leftLastMove[leftSel-1])) * (5 - abs(leftLastMove[leftSel-1])) + 3;
-			Lc_Power = 1;
-		} else
-			L_Fire = false;
-
-		z = 0;
-		for (x = 0; x < MAX_INSTALLATIONS; x++)
-			if (abs(rightX[x] - leftX[leftSel-1]) < 8)
 			{
-				if (rightSystem[x] == 4)
-					L_Fire = false;
+				player[player_index].moves.actions[MOVE_FIRE] = true;
+			}
+			player[player_index].aiMemory.c_noDown = (5 - abs(leftLastMove[leftSel-1])) * (5 - abs(leftLastMove[leftSel-1])) + 3;
+			player[player_index].aiMemory.c_Power = 1;
+		} else
+		{
+			player[player_index].moves.actions[MOVE_FIRE] = false;
+		}
+
+		for (i = 0; i < MAX_INSTALLATIONS; i++)
+			if (abs(rightX[i] - leftX[leftSel-1]) < 8)
+			{
+				if (rightSystem[i] == 4)
+					player[player_index].moves.actions[MOVE_FIRE] = false;
 				else {
-					L_Left = false;
-					L_Right = false;
+					player[player_index].moves.actions[MOVE_LEFT] = false;
+					player[player_index].moves.actions[MOVE_RIGHT] = false;
 					if (leftLastMove[leftSel-1] < -1)
 						leftLastMove[leftSel-1]++;
 					else if (leftLastMove[leftSel-1] > 1)
@@ -1685,33 +1781,52 @@ void DE_RunTickAI(enum de_player_t player)
 				}
 			}
 	} else {
-		Lc_Fire = 1;
+		player[player_index].moves.actions[MOVE_FIRE] = 1;
 	}
 
 	if (mt_rand() % 200 > 198)
 	{
-		L_Change = true;
-		Lc_Angle = 0;
-		Lc_Power = 0;
-		Lc_Fire = 0;
+		player[player_index].moves.actions[MOVE_CHANGE] = true;
+		player[player_index].aiMemory.c_Angle = 0;
+		player[player_index].aiMemory.c_Power = 0;
+		player[player_index].aiMemory.c_Fire = 0;
 	}
 
 	if (mt_rand() % 100 > 98 || leftShotType[leftSel-1] == 1)
-		L_CycleWeaponDown = true;
-
-	if (Lc_Angle > 0)
-		L_Left = true;
-	if (Lc_Angle < 0)
-		L_Right = true;
-	if (Lc_Power > 0)
-		L_Up = true;
-	if (Lc_Power < 0 && NoL_Down == 0)
-		L_Down = true;
-	if (Lc_Fire > 0)
-		L_Fire = true;
+	{
+		player[player_index].moves.actions[MOVE_CYDN] = true;
+	}
+	if (player[player_index].aiMemory.c_Angle > 0)
+	{
+		player[player_index].moves.actions[MOVE_LEFT] = true;
+	}
+	if (player[player_index].aiMemory.c_Angle < 0)
+	{
+		player[player_index].moves.actions[MOVE_RIGHT] = true;
+	}
+	if (player[player_index].aiMemory.c_Power > 0)
+	{
+		player[player_index].moves.actions[MOVE_UP] = true;
+	}
+	if (player[player_index].aiMemory.c_Power < 0 && player[player_index].aiMemory.c_noDown == 0)
+	{
+		player[player_index].moves.actions[MOVE_DOWN] = true;
+	}
+	if (player[player_index].aiMemory.c_Fire > 0)
+	{
+		player[player_index].moves.actions[MOVE_FIRE] = true;
+	}
 
 	if (leftYMov[leftSel-1] < -0.1f && leftSystem[leftSel-1] == 8)
-		L_Fire = false;
+	{
+		player[player_index].moves.actions[MOVE_FIRE] = false;
+	}
+
+	/* This last hack was down in the processing section.
+	 * What exactly it was doing there I do not know */
+	if(leftSystem[leftSel-1] == UNIT_LASER || leftYInAir[leftSel-1]) {
+		player[player_index].aiMemory.c_Power = 0;
+	}
 }
 void DE_RunTickDrawCrosshairs( void )
 {
@@ -1784,113 +1899,52 @@ void DE_RunTickDrawHUD( void )
 }
 void DE_RunTickGetInput( void )
 {
-	R_Left   = false;
-	R_Right  = false;
-	R_Up     = false;
-	R_Down   = false;
-	if (NoR_Down > 0)
-	{
-		NoR_Down--;
-	}
-	R_Change = false;
-	R_Fire   = false;
+	unsigned int player_index, key_index, slot_index;
+	SDLKey key;
 
-	R_CycleWeaponUp = false;
-	R_CycleWeaponDown = false;
-
+	/* player.keys holds our key config.  Players will eventually be allowed
+	 * to can change their key mappings.  player.moves and player.keys
+	 * line up; rather than manually checking left and right we can
+	 * just loop through the indexes and set the actions as needed. */
 	service_SDL_events(true);
 
+	for(player_index = 0; player_index < PLAYER_MAX; player_index++)
+	{
+		for(key_index = 0; key_index < KEY_MAX; key_index++)
+		{
+			for(slot_index = 0; slot_index < KEY_OPTION_MAX; slot_index++)
+			{
+				key = player[player_index].keys.Config[key_index][slot_index];
+				if(key != SDLK_UNKNOWN && keysactive[key] == true)
+				{
+					/* The right key was clearly pressed */
+					player[player_index].moves.actions[key_index] = true;
 
-	/* Process player1 keys */
-	if(player[PLAYER_LEFT].is_cpu == false) {
-		if(keysactive[SDLK_c])
-		{
-			L_Left = true;
-		}
-		if(keysactive[SDLK_v])
-		{
-			L_Right = true;
-		}
-		if(keysactive[SDLK_a])
-		{
-			L_Up = true;
-		}
-		if(keysactive[SDLK_z])
-		{
-			L_Down = true;
-		}
-		if(keysactive[SDLK_LCTRL])
-		{
-			L_CycleWeaponUp = true;
-			keysactive[SDLK_LCTRL] = false;
-		}
-		if(keysactive[SDLK_SPACE])
-		{
-			L_CycleWeaponDown = true;
-			keysactive[SDLK_SPACE] = false;
-		}
-		if(keysactive[SDLK_LALT])
-		{
-			L_Change = true;
-			keysactive[SDLK_LALT] = false;
-		}
-		if(keysactive[SDLK_LSHIFT] || keysactive[SDLK_x])
-		{
-			L_Fire = true;
-		}
-	}
-
-
-	/* Process player2 keys */
-	if(player[PLAYER_RIGHT].is_cpu == false) {
-		if(keysactive[SDLK_KP4] || keysactive[SDLK_LEFT])
-		{
-			R_Left = true;
-		}
-		if(keysactive[SDLK_KP6] || keysactive[SDLK_RIGHT])
-		{
-			R_Right = true;
-		}
-		if(keysactive[SDLK_KP8] || keysactive[SDLK_UP])
-		{
-			R_Up = true;
-		}
-		if(keysactive[SDLK_KP2] || keysactive[SDLK_DOWN])
-		{
-			R_Down = true;
-		}
-		if(keysactive[SDLK_KP9] || keysactive[SDLK_PAGEUP])
-		{
-			R_CycleWeaponUp = true;
-			keysactive[SDLK_KP9] = keysactive[SDLK_PAGEUP] = false;
-		}
-		if(keysactive[SDLK_KP3] || keysactive[SDLK_PAGEDOWN])
-		{
-			R_CycleWeaponDown = true;
-			keysactive[SDLK_KP3] = keysactive[SDLK_PAGEDOWN] = false;
-		}
-		if(keysactive[SDLK_KP5] || keysactive[SDLK_BACKSLASH])
-		{
-			R_Change = true;
-			keysactive[SDLK_KP5] = keysactive[SDLK_BACKSLASH] = false;
-		}
-		if(keysactive[SDLK_KP0] || keysactive[SDLK_INSERT] || keysactive[SDLK_KP_ENTER] || keysactive[SDLK_RETURN])
-		{
-			R_Fire = true;
+					/* Some keys we want to toggle afterwards */
+					if(key_index == KEY_CHANGE ||
+					   key_index == KEY_CYUP   ||
+					   key_index == KEY_CYDN)
+					{
+						keysactive[key] = false;
+					}
+				}
+			}
 		}
 	}
 }
 void DE_RunTickProcessInput( void )
 {
 	unsigned int emptyShot, i;
+	unsigned int player_index;
 
 
 	if (leftAvail > 0)
 	{
+		player_index = 0;
 		if (systemAngle[leftSystem[leftSel-1]-1])
 		{
 			/*leftAnglechange*/
-			if (L_Left == true)
+			if (player[player_index].moves.actions[MOVE_LEFT] == true)
 			{
 				leftAngle[leftSel-1] += 0.01f;
 				if (leftAngle[leftSel-1] > M_PI / 2)
@@ -1899,7 +1953,7 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 			/*rightAnglechange*/
-			if (L_Right == true)
+			if (player[player_index].moves.actions[MOVE_RIGHT] == true)
 			{
 				leftAngle[leftSel-1] -= 0.01f;
 				if (leftAngle[leftSel-1] < 0)
@@ -1908,7 +1962,7 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 		} else if (leftSystem[leftSel-1] == UNIT_HELI) {
-			if (L_Left == true && leftX[leftSel-1] > 5)
+			if (player[player_index].moves.actions[MOVE_LEFT] == true && leftX[leftSel-1] > 5)
 				if (JE_stabilityCheck(leftX[leftSel-1] - 5, round(leftY[leftSel-1])))
 				{
 					if (leftLastMove[leftSel-1] > -5)
@@ -1921,7 +1975,7 @@ void DE_RunTickProcessInput( void )
 						leftYInAir[leftSel-1] = true;
 					}
 				}
-			if (L_Right == true && leftX[leftSel-1] < 305)
+			if (player[player_index].moves.actions[MOVE_RIGHT] == true && leftX[leftSel-1] < 305)
 				if (JE_stabilityCheck(leftX[leftSel-1] + 5, round(leftY[leftSel-1])))
 				{
 					if (leftLastMove[leftSel-1] < 5)
@@ -1937,7 +1991,7 @@ void DE_RunTickProcessInput( void )
 		}
 
 		/*Leftincreasepower*/
-		if (L_Up == true)
+		if (player[player_index].moves.actions[MOVE_UP] == true)
 		{
 			if (leftSystem[leftSel-1] == UNIT_HELI)
 			{
@@ -1952,11 +2006,10 @@ void DE_RunTickProcessInput( void )
 			} else {
 				leftYMov[leftSel-1] = -3;
 				leftYInAir[leftSel-1] = true;
-				Lc_Power = 0;
 			}
 		}
 		/*Leftdecreasepower*/
-		if (L_Down == true)
+		if (player[player_index].moves.actions[MOVE_DOWN] == true)
 		{
 			if (leftSystem[leftSel-1] == UNIT_HELI && leftYInAir[leftSel-1])
 			{
@@ -1970,7 +2023,7 @@ void DE_RunTickProcessInput( void )
 			}
 		}
 		/*Leftupweapon*/
-		if (L_CycleWeaponUp == true)
+		if (player[player_index].moves.actions[MOVE_CYUP] == true)
 		{
 			leftShotType[leftSel-1]++;
 			if (leftShotType[leftSel-1] > SHOT_TYPES)
@@ -1988,7 +2041,7 @@ void DE_RunTickProcessInput( void )
 			}
 		}
 		/*Leftdownweapon*/
-		if (L_CycleWeaponDown == true)
+		if (player[player_index].moves.actions[MOVE_CYDN] == true)
 		{
 			leftShotType[leftSel-1]--;
 			if (leftShotType[leftSel-1] < 1)
@@ -2007,7 +2060,7 @@ void DE_RunTickProcessInput( void )
 		}
 
 		/*Leftchange*/
-		if (L_Change == true)
+		if (player[player_index].moves.actions[MOVE_CHANGE] == true)
 		{
 			leftSel++;
 			if (leftSel > MAX_INSTALLATIONS)
@@ -2021,7 +2074,7 @@ void DE_RunTickProcessInput( void )
 		{
 			leftshotDelay--;
 		}
-		if (L_Fire == true && (leftshotDelay == 0))
+		if (player[player_index].moves.actions[MOVE_FIRE] == true && (leftshotDelay == 0))
 		{
 			leftshotDelay = shotDelay[leftShotType[leftSel-1]-1];
 
@@ -2047,7 +2100,7 @@ void DE_RunTickProcessInput( void )
 						shotRec[emptyShot-1].y = leftY[leftSel-1] + 1;
 						shotRec[emptyShot-1].ymov = 0.5f + leftYMov[leftSel-1] * 0.1f;
 						shotRec[emptyShot-1].xmov = 0.02f * leftLastMove[leftSel-1] * leftLastMove[leftSel-1] * leftLastMove[leftSel-1];
-						if (L_Up && leftY[leftSel-1] < 30) /* For some odd reason if we're too high we ignore most of our computing. */
+						if (player[player_index].moves.actions[MOVE_UP] && leftY[leftSel-1] < 30) /* For some odd reason if we're too high we ignore most of our computing. */
 						{
 							shotRec[emptyShot-1].ymov = 0.1f;
 							if (shotRec[emptyShot-1].xmov < 0)
@@ -2106,10 +2159,11 @@ void DE_RunTickProcessInput( void )
 
 	if (rightAvail > 0)
 	{
+		player_index = 1;
 		if (systemAngle[rightSystem[rightSel-1]-1])
 		{
 			/*rightAnglechange*/
-			if (R_Right== true)
+			if (player[player_index].moves.actions[MOVE_RIGHT]== true)
 			{
 				rightAngle[rightSel-1] += 0.01f;
 				if (rightAngle[rightSel-1] > M_PI / 2)
@@ -2118,7 +2172,7 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 			/*rightAnglechange*/
-			if (R_Left == true)
+			if (player[player_index].moves.actions[MOVE_LEFT] == true)
 			{
 				rightAngle[rightSel-1] -= 0.01f;
 				if (rightAngle[rightSel-1] < 0)
@@ -2127,7 +2181,7 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 		} else if (rightSystem[rightSel-1] == 8) { /*Helicopter*/
-			if (R_Left == true && rightX[rightSel-1] > 5)
+			if (player[player_index].moves.actions[MOVE_LEFT] == true && rightX[rightSel-1] > 5)
 			{
 				if (JE_stabilityCheck(rightX[rightSel-1] - 5, round(rightY[rightSel-1])))
 				{
@@ -2142,7 +2196,7 @@ void DE_RunTickProcessInput( void )
 					}
 				}
 			}
-			if (R_Right == true && rightX[rightSel-1] < 305)
+			if (player[player_index].moves.actions[MOVE_RIGHT] == true && rightX[rightSel-1] < 305)
 			{
 				if (JE_stabilityCheck(rightX[rightSel-1] + 5, round(rightY[rightSel-1])))
 				{
@@ -2160,7 +2214,7 @@ void DE_RunTickProcessInput( void )
 		}
 
 		/*Rightincreasepower*/
-		if (R_Up == true)
+		if (player[player_index].moves.actions[MOVE_UP] == true)
 		{
 			if (rightSystem[rightSel-1] == UNIT_HELI)
 			{ /*HELI*/
@@ -2178,7 +2232,7 @@ void DE_RunTickProcessInput( void )
 			}
 		}
 		/*Rightdecreasepower*/
-		if (R_Down == true)
+		if (player[player_index].moves.actions[MOVE_DOWN] == true)
 		{
 			if (rightSystem[rightSel-1] == UNIT_HELI && rightYInAir[rightSel-1])
 			{ /*HELI*/
@@ -2192,7 +2246,7 @@ void DE_RunTickProcessInput( void )
 			}
 		}
 		/*Rightupweapon*/
-		if (R_CycleWeaponUp == true)
+		if (player[player_index].moves.actions[MOVE_CYUP]== true)
 		{
 			rightShotType[rightSel-1]++;
 			if (rightShotType[rightSel-1] > SHOT_TYPES)
@@ -2209,7 +2263,7 @@ void DE_RunTickProcessInput( void )
 			}
 		}
 		/*Rightdownweapon*/
-		if (R_CycleWeaponDown == true)
+		if (player[player_index].moves.actions[MOVE_CYDN] == true)
 		{
 			rightShotType[rightSel-1]--;
 			if (rightShotType[rightSel-1] < 1)
@@ -2228,7 +2282,7 @@ void DE_RunTickProcessInput( void )
 		}
 
 		/*Rightchange*/
-		if (R_Change == true)
+		if (player[player_index].moves.actions[MOVE_CHANGE] == true)
 		{
 			rightSel++;
 			if (rightSel > MAX_INSTALLATIONS)
@@ -2242,7 +2296,7 @@ void DE_RunTickProcessInput( void )
 		{
 			rightshotDelay--;
 		}
-		if (R_Fire == true && rightshotDelay == 0)
+		if (player[player_index].moves.actions[MOVE_FIRE] == true && rightshotDelay == 0)
 		{
 			rightshotDelay = shotDelay[rightShotType[rightSel-1]-1];
 
