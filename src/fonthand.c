@@ -16,27 +16,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
 #include "fonthand.h"
-
 #include "newshape.h"
 #include "network.h"
 #include "nortsong.h"
+#include "opentyr.h"
 #include "params.h"
 #include "vga256d.h"
 #include "video.h"
 
-
-const JE_byte fontMap[136] = /* [33..168] */
+const int font_ascii[256] = 
 {
-	26,33,60,61,62,255,32,64,65,63,84,29,83,28,80,79,70,71,72,73,74,75,76,77,
-	78,31,30,255,255,255,27,255,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
-	20,21,22,23,24,25,68,82,69,255,255,255,34,35,36,37,38,39,40,41,42,43,44,45,46,
-	47,48,49,50,51,52,53,54,55,56,57,58,59,66,81,67,255,255,
-
-	86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,
-	107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,
-	125,126
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+	 -1,  26,  33,  60,  61,  62,  -1,  32,  64,  65,  63,  84,  29,  83,  28,  80, //  !"#$%&'()*+,-./
+	 79,  70,  71,  72,  73,  74,  75,  76,  77,  78,  31,  30,  -1,  -1,  -1,  27, // 0123456789:;<=>?
+	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14, // @ABCDEFGHIJKLMNO
+	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  68,  82,  69,  -1,  -1, // PQRSTUVWXYZ[\]^_
+	 -1,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48, // `abcdefghijklmno
+	 49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  66,  81,  67,  -1,  -1, // pqrstuvwxyz{|}~⌂
+	
+	 86,  87,  88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,  99, 100, 101, // ÇüéâäàåçêëèïîìÄÅ
+	102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, // ÉæÆôöòûùÿÖÜ¢£¥₧ƒ
+	118, 119, 120, 121, 122, 123, 124, 125, 126,  -1,  -1,  -1,  -1,  -1,  -1,  -1, // áíóúñÑªº¿
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
 };
 
 /* shape constants included in newshape.h */
@@ -58,31 +65,32 @@ void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font )
 {
 	int bright = 0;
 	
-	for (int a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		char b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 126))
+		switch (s[i])
 		{
-			if (fontMap[b-33] != 255)
-			{
-				blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, fontMap[b-33], false);
-				blit_shape_hv_unsafe(tempScreenSeg, x, y, font, fontMap[b-33], 0xf, defaultBrightness + bright);
-				
-				x += shapeX[font][fontMap[b-33]] + 1;
-			}
-		}
-		else if (b == 32)
-		{
+		case ' ':
 			x += 6;
-		}
-		else if (b == 126)
-		{
+			break;
+			
+		case '~':
 			bright = (bright == 0) ? 2 : 0;
+			break;
+			
+		default:
+			if (sprite_id != -1)
+			{
+				blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, sprite_id, false);
+				blit_shape_hv_unsafe(tempScreenSeg, x, y, font, sprite_id, 0xf, defaultBrightness + bright);
+				
+				x += shapeX[font][sprite_id] + 1;
+			}
+			break;
 		}
 	}
 }
-
 
 JE_word JE_fontCenter( const char *s, JE_byte font )
 {
@@ -91,25 +99,18 @@ JE_word JE_fontCenter( const char *s, JE_byte font )
 
 JE_word JE_textWidth( const char *s, JE_byte font )
 {
-	JE_byte a, b;
-	JE_word x = 0;
+	int x = 0;
 	
-	for (a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 126))
-		{
-			if (fontMap[b-33] != 255)
-			{
-				x += shapeX[font][fontMap[b-33]] + 1;
-			}
-		}
-		else if (b == 32)
-		{
+		if (s[i] == ' ')
 			x += 6;
-		}
+		else if (sprite_id != -1)
+			x += shapeX[font][sprite_id] + 1;
 	}
+	
 	return x;
 }
 
@@ -139,75 +140,74 @@ void JE_textShade( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_sh
 
 void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness )
 {
-	JE_byte a, b;
-	JE_byte bright = 0;
+	int bright = 0;
 	
-	for (a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255) && (shapeArray[TINY_FONT][fontMap[b-33]] != NULL))
+		switch (s[i])
 		{
-			if (brightness >= 0)
-				blit_shape_hv_unsafe(tempScreenSeg, x, y, TINY_FONT, fontMap[b - 33], colorbank, brightness + bright);
-			else
-				blit_shape_dark(tempScreenSeg, x, y, TINY_FONT, fontMap[b-33], true);
-			
-			x += shapeX[TINY_FONT][fontMap[b-33]] + 1;
-		}
-		else if (b == 32)
-		{
+		case ' ':
 			x += 6;
-		}
-		else if (b == 126)
-		{
+			break;
+			
+		case '~':
 			bright = (bright == 0) ? 4 : 0;
+			break;
+			
+		default:
+			if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+			{
+				if (brightness >= 0)
+					blit_shape_hv_unsafe(tempScreenSeg, x, y, TINY_FONT, sprite_id, colorbank, brightness + bright);
+				else
+					blit_shape_dark(tempScreenSeg, x, y, TINY_FONT, sprite_id, true);
+				
+				x += shapeX[TINY_FONT][sprite_id] + 1;
+			}
+			break;
 		}
 	}
+	
 	if (brightness >= 0)
-	{
 		tempScreenSeg = VGAScreen;
-	}
 }
 
 void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_byte brightness, JE_byte font )
 {
-	JE_byte a, b;
-	
-	for (a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
-		{
-			blit_shape_hv_blend(tempScreenSeg, x, y, font, fontMap[b-33], filter, brightness);
-			
-			x += shapeX[font][fontMap[b-33]] + 1;
-		}
-		else if (b == 32)
+		if (s[i] == ' ')
 		{
 			x += 6;
+		}
+		else if (sprite_id != -1)
+		{
+			blit_shape_hv_blend(tempScreenSeg, x, y, font, sprite_id, filter, brightness);
+			
+			x += shapeX[font][sprite_id] + 1;
 		}
 	}
 }
 
 void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font )
 {
-	JE_byte a, b;
-	
-	for (a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
-		{
-			blit_shape_dark(tempScreenSeg, x, y, font, fontMap[b-33], false);
-			
-			x += shapeX[font][fontMap[b-33]] + 1;
-		}
-		else if (b == 32)
+		if (s[i] == ' ')
 		{
 			x += 6;
+		}
+		else if (sprite_id != -1)
+		{
+			blit_shape_dark(tempScreenSeg, x, y, font, sprite_id, false);
+			
+			x += shapeX[font][sprite_id] + 1;
 		}
 	}
 }
@@ -216,25 +216,30 @@ void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_s
 {
 	int bright = 0;
 	
-	for (int a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		char b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
+		switch (s[i])
 		{
-			if (shadow)
-				blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, fontMap[b - 33], false);
-			blit_shape_hv(tempScreenSeg, x, y, font, fontMap[b - 33], filter, brightness + bright);
-			
-			x += shapeX[font][fontMap[b-33]] + 1;
-		}
-		else if (b == 126)
-		{
-			bright = (bright == 0) ? 4 : 0;
-		}
-		else if (b == 32)
-		{
+		case ' ':
 			x += 6;
+			break;
+			
+		case '~':
+			bright = (bright == 0) ? 4 : 0;
+			break;
+			
+		default:
+			if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+			{
+				if (shadow)
+					blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, sprite_id, false);
+				blit_shape_hv(tempScreenSeg, x, y, font, sprite_id, filter, brightness + bright);
+				
+				x += shapeX[font][sprite_id] + 1;
+			}
+			break;
 		}
 	}
 }
@@ -243,24 +248,29 @@ void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank
 {
 	int bright = 0;
 	
-	for (int a = 0; s[a] != 0; a++)
+	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		char b = s[a];
+		int sprite_id = font_ascii[(int)s[i]];
 		
-		if ((b > 32) && (b < 169) && (fontMap[b-33] != 255))
+		switch (s[i])
 		{
-			blit_shape_dark(tempScreenSeg, x + 1, y + 1, font, fontMap[b-33], false);
-			blit_shape_hv_unsafe(tempScreenSeg, x, y, font, fontMap[b-33], colorbank, brightness + bright);
-			
-			x += shapeX[font][fontMap[b-33]] + 1;
-		}
-		else if (b == 32)
-		{
+		case ' ':
 			x += 6;
-		}
-		else if (b == 126)
-		{
+			break;
+			
+		case '~':
 			bright = (bright == 0) ? 4 : 0;
+			break;
+			
+		default:
+			if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+			{
+				blit_shape_dark(tempScreenSeg, x + 1, y + 1, font, sprite_id, false);
+				blit_shape_hv_unsafe(tempScreenSeg, x, y, font, sprite_id, colorbank, brightness + bright);
+				
+				x += shapeX[font][sprite_id] + 1;
+			}
+			break;
 		}
 	}
 }

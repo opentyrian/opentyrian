@@ -1780,20 +1780,17 @@ void JE_loadCubes( void )
 					{
 						endPos = pos;
 						lastWidth = curWidth;
+						
 						do
 						{
-							temp = s[pos - 1];
-
-							// Is printable character?
-							if (temp > ' ' && temp < 169 && fontMap[temp-33] != 255 && shapeArray[TINY_FONT][fontMap[temp-33]] != NULL)
-							{
-								// Increase width by character's size
-								curWidth += shapeX[TINY_FONT][fontMap[temp-33]] + 1;
-							} else if (temp == ' ') {
-								// Add a fixed width for the space
+							int sprite_id = font_ascii[(int)s[pos - 1]];
+							
+							// is printable character?
+							if (s[pos - 1] == ' ')
 								curWidth += 6;
-							}
-
+							else if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+								curWidth += shapeX[TINY_FONT][sprite_id] + 1;
+							
 							pos++;
 							if (pos == strlen(s))
 							{
@@ -1805,8 +1802,9 @@ void JE_loadCubes( void )
 									lastWidth = curWidth;
 								}
 							}
-						} while (!(s[pos - 1] == ' ' || endString)); // Loops until end of word or string
-
+						}
+						while (!(s[pos - 1] == ' ' || endString)); // Loops until end of word or string
+						
 						// 
 						pastStringLen = (pos - startPos) > CUBE_WIDTH;
 						pastStringWidth = (curWidth > LINE_WIDTH);

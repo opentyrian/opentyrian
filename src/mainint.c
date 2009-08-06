@@ -83,7 +83,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 	JE_shortint glowcol[60]; /* [1..60] */
 	JE_shortint glowcolc[60]; /* [1..60] */
 	JE_word textloc[60]; /* [1..60] */
-	JE_byte b = 0, bank;
+	JE_byte bank;
 	
 	setjasondelay2(1);
 	
@@ -114,7 +114,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 			if (s[z] == ' ')
 				loc += 6;
 			else
-				loc += shapeX[TINY_FONT][fontMap[(int)s[z]-33]] + 1;
+				loc += shapeX[TINY_FONT][font_ascii[(int)s[z]]] + 1;
 		}
 		
 		for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
@@ -125,25 +125,26 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 				
 				NETWORK_KEEP_ALIVE();
 				
+				int sprite_id;
+				
 				for (z = loc - 28; z <= loc; z++)
 				{
 					if (z >= 0 && z < maxloc)
 					{
-						b = s[z];
-						if (b > 32 && b < 126)
+						sprite_id = font_ascii[(int)s[z]];
+						
+						if (sprite_id != -1)
 						{
-							blit_shape_hv(VGAScreen, textloc[z], y, TINY_FONT, fontMap[b - 33], bank, glowcol[z]);
+							blit_shape_hv(VGAScreen, textloc[z], y, TINY_FONT, sprite_id, bank, glowcol[z]);
 							
 							glowcol[z] += glowcolc[z];
 							if (glowcol[z] > 9)
-							{
 								glowcolc[z] = -1;
-							}
 						}
 					}
 				}
-				if (b > 32 && b < 126 && --z < maxloc)
-					blit_shape_dark(tempScreenSeg, textloc[z] + 1, y + 1, TINY_FONT, fontMap[b-33], true);
+				if (sprite_id != -1 && --z < maxloc)
+					blit_shape_dark(tempScreenSeg, textloc[z] + 1, y + 1, TINY_FONT, sprite_id, true);
 				
 				if (JE_anyButton())
 					frameCountMax = 0;
@@ -1993,11 +1994,6 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 		}
 		
 	}
-}
-
-void JE_func( JE_byte col )
-{
-	STUB();
 }
 
 void JE_sort( void )

@@ -21,14 +21,14 @@
 
 #include "opentyr.h"
 
-
 #define PART_SHADE 0
 #define FULL_SHADE 1
 #define DARKEN     2
 #define TRICK      3
 #define NO_SHADE 255
 
-extern const JE_byte fontMap[136];
+extern const int font_ascii[256];
+
 extern JE_integer defaultBrightness;
 extern JE_byte textGlowFont, textGlowBrightness;
 extern JE_boolean levelWarningDisplay;
