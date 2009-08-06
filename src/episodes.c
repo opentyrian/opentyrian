@@ -231,11 +231,11 @@ void JE_initEpisode( JE_byte newEpisode )
 
 void JE_scanForEpisodes( void )
 {
-	for (int temp = 0; temp < EPISODE_MAX; temp++)
+	for (int i = 0; i < EPISODE_MAX; ++i)
 	{
-		char buf[11];
-		sprintf(buf, "tyrian%d.lvl", temp + 1);
-		episodeAvail[temp] = dir_file_exists(data_dir(), buf);
+		char ep_file[20];
+		snprintf(ep_file, sizeof(ep_file), "tyrian%d.lvl", i + 1);
+		episodeAvail[i] = dir_file_exists(data_dir(), ep_file);
 	}
 }
 

@@ -125,7 +125,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 				
 				NETWORK_KEEP_ALIVE();
 				
-				int sprite_id;
+				int sprite_id = -1;
 				
 				for (z = loc - 28; z <= loc; z++)
 				{

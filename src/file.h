@@ -27,7 +27,7 @@ extern char *custom_data_dir;
 
 #ifdef TARGET_MACOSX
 const char *tyrian_game_folder();
-#endif /* TARGET_MACOSX */
+#endif // TARGET_MACOSX
 
 const char *data_dir( void );
 

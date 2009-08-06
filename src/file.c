@@ -24,6 +24,7 @@
 
 char *custom_data_dir = ".";
 
+// finds the Tyrian data directory
 const char *data_dir( void )
 {
 	const char *dirs[] =
@@ -53,7 +54,7 @@ const char *data_dir( void )
 		}
 	}
 	
-	if (dir == NULL)
+	if (dir == NULL) // data not found
 		dir = "";
 	
 	return dir;
