@@ -61,14 +61,9 @@
 #include "video.h"
 
 /*** Defines ***/
-#define WALL_MAX 20
-#define SHOT_MAX 40
-#define EXPLO_MAX 40
-#define KEY_OPTION_MAX 4
-
-#define SHOT_TYPES 17
-#define SYSTEM_TYPES 8
-
+#define MAX_WALL 20
+#define MAX_EXPLO 40
+#define MAX_KEY_OPTIONS 4
 #define MAX_INSTALLATIONS 20
 
 /*** Macros ***/
@@ -82,6 +77,9 @@
  * these macros should help simplify things greatly while still being readable.
  */
 
+/* Don't use ++ and -- operators with macros.  They may look innocent
+ * but given half the chance they will crash you and everyone
+ * you care about.  It's a good practice to NOT embed them. */
 #define CURUNIT(x)           (player[(x)].unitSelected-1)
 #define CURUNIT_unitX(x)     (player[(x)].unit[CURUNIT(x)].unitX)
 #define CURUNIT_unitY(x)     (player[(x)].unit[CURUNIT(x)].unitY)
@@ -102,25 +100,26 @@
  * I plan to eventually change them all and to be able to properly
  * enumerate from 0 up.
  */
-enum de_player_t { PLAYER_LEFT = 0, PLAYER_RIGHT = 1, PLAYER_MAX = 2 };
+enum de_player_t { PLAYER_LEFT = 0, PLAYER_RIGHT = 1, MAX_PLAYERS = 2 };
 enum de_mode_t { MODE_5CARDWAR = 1, MODE_TRADITIONAL = 2, MODE_HELIASSAULT = 3,
-                 MODE_HELIDEFENSE = 4, MODE_OUTGUNNED = 5 };
+                 MODE_HELIDEFENSE = 4, MODE_OUTGUNNED = 5, MAX_MODES = 5 };
 enum de_unit_t { UNIT_TANK = 1, UNIT_NUKE = 2, UNIT_DIRT = 3, UNIT_SATELLITE = 4,
-                 UNIT_MAGNET = 5, UNIT_LASER = 6, UNIT_JUMPER = 7, UNIT_HELI = 8 };
-enum de_weapon_t { WEAPON_TRACER = 1, WEAPON_SMALL = 2, WEAPON_LARGE = 3,
-                   WEAPON_MICRO = 4, WEAPON_SUPER = 5, WEAPON_DEMO = 6,
-                   WEAPON_SMALLNUKE = 7, WEAPON_LARGENUKE = 8,
-                   WEAPON_SMALLDIRT = 9, WEAPON_LARGEDIRT = 10,
-                   WEAPON_MAGNET = 11, WEAPON_MINILASER = 12,
-                   WEAPON_MEGALASER = 13, WEAPON_LASERTRACER = 14,
-                   WEAPON_MEGABLAST = 15, WEAPON_MINI = 16, WEAPON_BOMB = 17 };
+                 UNIT_MAGNET = 5, UNIT_LASER = 6, UNIT_JUMPER = 7, UNIT_HELI = 8, MAX_UNITS = 8 };
+enum de_shot_t { SHOT_TRACER = 1, SHOT_SMALL = 2, SHOT_LARGE = 3,
+                 SHOT_MICRO = 4, SHOT_SUPER = 5, SHOT_DEMO = 6,
+                 SHOT_SMALLNUKE = 7, SHOT_LARGENUKE = 8,
+                 SHOT_SMALLDIRT = 9, SHOT_LARGEDIRT = 10,
+                 SHOT_MAGNET = 11, SHOT_MINILASER = 12,
+                 SHOT_MEGALASER = 13, SHOT_LASERTRACER = 14,
+                 SHOT_MEGABLAST = 15, SHOT_MINI = 16, SHOT_BOMB = 17,
+                 SHOT_FIRST = 1, SHOT_LAST = 17, MAX_SHOTS = 17, SHOT_INVALID = 0 };
 enum de_trails_t { TRAILS_NONE = 0, TRAILS_NORMAL = 1, TRAILS_FULL = 2 };
 /* keys and moves should line up. */
-enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT = 1,  KEY_UP = 2,  KEY_DOWN = 3,  KEY_CHANGE = 4,  KEY_FIRE = 5,  KEY_CYUP = 6,  KEY_CYDN = 7,  KEY_MAX = 8};
-enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT = 1, MOVE_UP = 2, MOVE_DOWN = 3, MOVE_CHANGE = 4, MOVE_FIRE = 5, MOVE_CYUP = 6, MOVE_CYDN = 7, MOVE_MAX = 8};
+enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT = 1,  KEY_UP = 2,  KEY_DOWN = 3,  KEY_CHANGE = 4,  KEY_FIRE = 5,  KEY_CYUP = 6,  KEY_CYDN = 7,  MAX_KEY = 8};
+enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT = 1, MOVE_UP = 2, MOVE_DOWN = 3, MOVE_CHANGE = 4, MOVE_FIRE = 5, MOVE_CYUP = 6, MOVE_CYDN = 7, MAX_MOVE = 8};
 
 /* The tracerlaser is dummied out.  It works but (probably due to the low
- * SHOT_MAX) is not assigned to anything.  The bomb does not work.
+ * MAX_SHOTS) is not assigned to anything.  The bomb does not work.
  */
 
 
@@ -149,17 +148,13 @@ struct destruct_unit_s {
 
 JE_shortint leftLastMove[MAX_INSTALLATIONS], rightLastMove[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
 
-JE_byte leftShotType[MAX_INSTALLATIONS], leftSystem[MAX_INSTALLATIONS],
-        rightShotType[MAX_INSTALLATIONS], rightSystem[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
+JE_byte leftSystem[MAX_INSTALLATIONS];
+JE_byte rightSystem[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
 
 JE_word leftX[MAX_INSTALLATIONS], rightX[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
 
 JE_real leftAngle[MAX_INSTALLATIONS], leftPower[MAX_INSTALLATIONS], leftYMov[MAX_INSTALLATIONS], leftY[MAX_INSTALLATIONS],
         rightAngle[MAX_INSTALLATIONS], rightPower[MAX_INSTALLATIONS], rightYMov[MAX_INSTALLATIONS], rightY[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
-
-JE_boolean leftYInAir[MAX_INSTALLATIONS],
-           rightYInAir[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
-
 
 
 struct destruct_shot_s {
@@ -186,10 +181,10 @@ struct destruct_explo_s {
 	JE_byte explocolor;
 };
 struct destruct_moves_s {
-	bool actions[MOVE_MAX];
+	bool actions[MAX_MOVE];
 };
 struct destruct_keys_s {
-	SDLKey Config[KEY_MAX][KEY_OPTION_MAX];
+	SDLKey Config[MAX_KEY][MAX_KEY_OPTIONS];
 };
 struct destruct_ai_s {
 
@@ -227,12 +222,13 @@ void DE_ResetLevel( void );
 void DE_ResetActions( void );
 
 void DE_RunTick( void );
+void DE_RunTickCycleDeadUnits( void );
 void DE_RunTickGravity( void );
 void DE_RunTickAnimate( void );
 void DE_RunTickDrawWalls( void );
 void DE_RunTickExplosions( void );
 void DE_RunTickShots( void );
-void DE_RunTickAI(enum de_player_t);
+void DE_RunTickAI( enum de_player_t );
 void DE_RunTickDrawCrosshairs( void );
 void DE_RunTickDrawHUD( void );
 void DE_RunTickGetInput( void );
@@ -259,26 +255,26 @@ void JE_pauseScreen( void );
 
 /*** Weapon configurations ***/
 
-const JE_boolean demolish[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {false, false, false, false, false, true, true, true, false, false, false, false, true, false, true, false, true};
-//const JE_byte shotGr[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
-const JE_byte shotTrail[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_FULL, TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_NONE};
-const JE_byte shotFuse[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
-const JE_byte shotDelay[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {10, 30, 80, 20, 60, 100, 140, 200, 20, 60, 5, 15, 50, 5, 80, 16, 0};
-const JE_byte shotSound[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {8, 2, 1, 7, 7, 9, 22, 22, 5, 13, 10, 15, 15, 26, 14, 7, 7};
-const JE_byte exploSize[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {4, 20, 30, 14, 22, 16, 40, 60, 10, 30, 0, 5, 10, 3, 15, 7, 0};
-const JE_boolean shotBounce[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, true};
-const JE_byte exploDensity[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {  2,  5, 10, 15, 20, 15, 25, 30, 40, 80, 0, 30, 30,  4, 30, 5, 0};
-const JE_byte shotDirt[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {252, 252, 252, 252, 252, 252, 252, 252, 25, 25, 1, 252, 252, 252, 252, 252, 0};
-const JE_byte shotColor[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 10, 10, 10, 10, 16, 0};
+const JE_boolean demolish[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {false, false, false, false, false, true, true, true, false, false, false, false, true, false, true, false, true};
+//const JE_byte shotGr[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
+const JE_byte shotTrail[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_FULL, TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_NONE};
+const JE_byte shotFuse[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+const JE_byte shotDelay[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {10, 30, 80, 20, 60, 100, 140, 200, 20, 60, 5, 15, 50, 5, 80, 16, 0};
+const JE_byte shotSound[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {8, 2, 1, 7, 7, 9, 22, 22, 5, 13, 10, 15, 15, 26, 14, 7, 7};
+const JE_byte exploSize[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {4, 20, 30, 14, 22, 16, 40, 60, 10, 30, 0, 5, 10, 3, 15, 7, 0};
+const JE_boolean shotBounce[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, true};
+const JE_byte exploDensity[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {  2,  5, 10, 15, 20, 15, 25, 30, 40, 80, 0, 30, 30,  4, 30, 5, 0};
+const JE_byte shotDirt[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {252, 252, 252, 252, 252, 252, 252, 252, 25, 25, 1, 252, 252, 252, 252, 252, 0};
+const JE_byte shotColor[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 10, 10, 10, 10, 16, 0};
 
-const JE_byte defaultWeapon[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {2, 4, 9, 0, 11, 12, 4, 16};
-const JE_byte defaultCpuWeapon[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {2, 4, 6, 0, 11, 12, 4, 16};
-const JE_byte defaultCpuWeaponB[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {6, 7, 6, 0, 11, 13, 4, 16};
-const JE_boolean systemAngle[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {true, true, true, false, false, true, false, false};
-const JE_word baseDamage[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {200, 120, 400, 300, 80, 150, 600, 40};
-const JE_boolean systemAni[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {false, false, false, true, false, false, false, true};
+const JE_byte defaultWeapon[MAX_UNITS]     /*[1..MAX_UNITS]*/ = {SHOT_SMALL, SHOT_MICRO,     SHOT_SMALLDIRT, SHOT_INVALID, SHOT_MAGNET, SHOT_MINILASER, SHOT_MICRO, SHOT_MINI};
+const JE_byte defaultCpuWeapon[MAX_UNITS]  /*[1..MAX_UNITS]*/ = {SHOT_SMALL, SHOT_MICRO,     SHOT_DEMO,      SHOT_INVALID, SHOT_MAGNET, SHOT_MINILASER, SHOT_MICRO, SHOT_MINI};
+const JE_byte defaultCpuWeaponB[MAX_UNITS] /*[1..MAX_UNITS]*/ = {SHOT_DEMO,  SHOT_SMALLNUKE, SHOT_DEMO,      SHOT_INVALID, SHOT_MAGNET, SHOT_MEGALASER, SHOT_MICRO, SHOT_MINI};
+const JE_boolean systemAngle[MAX_UNITS] /*[1..MAX_UNITS]*/ = {true, true, true, false, false, true, false, false};
+const JE_word baseDamage[MAX_UNITS] /*[1..MAX_UNITS]*/ = {200, 120, 400, 300, 80, 150, 600, 40};
+const JE_boolean systemAni[MAX_UNITS] /*[1..MAX_UNITS]*/ = {false, false, false, true, false, false, false, true};
 
-const JE_byte weaponSystems[SYSTEM_TYPES][SHOT_TYPES] /*[1..SYSTEM_TYPES, 1..SHOT_TYPES]*/ =
+const JE_byte weaponSystems[MAX_UNITS][MAX_SHOTS] /*[1..MAX_UNITS, 1..MAX_SHOTS]*/ =
 {
 	{1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // normal
 	{0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // nuke
@@ -290,13 +286,13 @@ const JE_byte weaponSystems[SYSTEM_TYPES][SHOT_TYPES] /*[1..SYSTEM_TYPES, 1..SHO
 	{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}  // helicopter
 };
 
-const JE_byte leftGraphicBase[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {1, 6, 11, 58, 63, 68, 96, 153};
-const JE_byte rightGraphicBase[SYSTEM_TYPES] /*[1..SYSTEM_TYPES]*/ = {20, 25, 30, 77, 82, 87, 115, 172};
+const JE_byte leftGraphicBase[MAX_UNITS] /*[1..MAX_UNITS]*/ = {1, 6, 11, 58, 63, 68, 96, 153};
+const JE_byte rightGraphicBase[MAX_UNITS] /*[1..MAX_UNITS]*/ = {20, 25, 30, 77, 82, 87, 115, 172};
 
 const JE_byte lModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 0, 5, 0};
 const JE_byte rModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 5, 0, 1};
 
-const SDLKey defaultKeyConfig[PLAYER_MAX][KEY_MAX][KEY_OPTION_MAX] =
+const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 {
 	{	{SDLK_c},
 		{SDLK_v},
@@ -330,16 +326,16 @@ JE_byte destructMode;  /*Game Mode - See Tyrian.HTX*/
 JE_byte arenaType;
 JE_boolean haveWalls;
 
-struct destruct_player_s player[PLAYER_MAX];
+struct destruct_player_s player[MAX_PLAYERS];
 
 JE_boolean wallExist[20]; /*[1..20]*/
 JE_byte wallsX[20], wallsY[20]; /*[1..20]*/
 
 JE_byte dirtHeight[320]; /*[0..319]*/
 
-JE_boolean destructShotAvail[SHOT_MAX]; /*[1..shotmax]*/
+JE_boolean destructShotAvail[MAX_SHOTS]; /*[1..shotmax]*/
 
-struct destruct_shot_s shotRec[SHOT_MAX]; /*[1..shotmax]*/
+struct destruct_shot_s shotRec[MAX_SHOTS]; /*[1..shotmax]*/
 
 JE_boolean endOfGame, destructQuit;
 
@@ -347,9 +343,9 @@ JE_boolean endOfGame, destructQuit;
 JE_boolean destructFound;
 JE_real destructTempR;
 
-JE_boolean explosionAvail[EXPLO_MAX]; /*[1..explomax]*/
+JE_boolean explosionAvail[MAX_EXPLO]; /*[1..explomax]*/
 
-struct destruct_explo_s exploRec[EXPLO_MAX]; /*[1..explomax]*/
+struct destruct_explo_s exploRec[MAX_EXPLO]; /*[1..explomax]*/
 
 
 void JE_destructGame( void )
@@ -569,6 +565,9 @@ void JE_generateTerrain( void )
 	{
 		leftX[x] = (mt_rand() % 120) + 10;
 		leftY[x] = JE_placementPosition(leftX[x] - 1, 14);
+		/* Added 2 lines.  Feel left/right should be mirrored */
+		leftYMov[x] = 0;
+		player[PLAYER_LEFT].unit[x].isYInAir = false;
 		leftSystem[x] = basetypes[Lbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
 		if (leftSystem[x] == 4)
 		{
@@ -582,7 +581,9 @@ void JE_generateTerrain( void )
 		}
 		player[PLAYER_LEFT].unit[x].health = baseDamage[leftSystem[x]-1];
 		if (leftSystem[x] != 4)
+		{
 			player[PLAYER_LEFT].unitsRemaining++;
+		}
 	}
 
 	tempW = 0;
@@ -593,7 +594,7 @@ void JE_generateTerrain( void )
 		rightX[x] = 320 - ((mt_rand() % 120) + 22);
 		rightY[x] = JE_placementPosition(rightX[x] - 1, 14);
 		rightYMov[x] = 0;
-		rightYInAir[x] = false;
+		player[PLAYER_RIGHT].unit[x].isYInAir = false;
 		rightSystem[x] = basetypes[Rbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
 		if (rightSystem[x] == 4)
 		{
@@ -612,7 +613,7 @@ void JE_generateTerrain( void )
 		}
 	}
 
-	for (z = 0; z < WALL_MAX; z++)
+	for (z = 0; z < MAX_WALL; z++)
 	{
 		wallExist[z] = false;
 	}
@@ -793,7 +794,7 @@ void JE_makeExplosion( JE_word destructTempX, JE_word destructTempY, JE_byte sho
 	JE_word tempW = 0;
 	JE_byte temp;
 
-	for (temp = 0; temp < EXPLO_MAX; temp++)
+	for (temp = 0; temp < MAX_EXPLO; temp++)
 		if (explosionAvail[temp])
 			tempW = temp + 1;
 
@@ -1053,7 +1054,7 @@ void DE_ResetPlayers( void )
 	unsigned int i;
 
 
-	for (i = 0; i < PLAYER_MAX; ++i)
+	for (i = 0; i < MAX_PLAYERS; ++i)
 	{
 		player[i].is_cpu = false;
 		player[i].score = 0;
@@ -1069,7 +1070,7 @@ void DE_ResetUnits( void )
 	unsigned int p, u;
 
 
-	for (p = 0; p < PLAYER_MAX; ++p)
+	for (p = 0; p < MAX_PLAYERS; ++p)
 	{
 		for (u = 0; u < MAX_INSTALLATIONS; ++u)
 		{
@@ -1083,11 +1084,11 @@ void DE_ResetWeapons( void )
 	unsigned int i;
 
 
-	for (i = 0; i < SHOT_MAX; i++)
+	for (i = 0; i < MAX_SHOTS; i++)
 	{
 		destructShotAvail[i] = true;
 	}
-	for (i = 0; i < EXPLO_MAX; i++)
+	for (i = 0; i < MAX_EXPLO; i++)
 	{
 		explosionAvail[i] = true;
 	}
@@ -1102,7 +1103,7 @@ void DE_ResetLevel( void )
 
 	JE_generateTerrain();
 
-	for (i = 0; i < PLAYER_MAX; i++)
+	for (i = 0; i < MAX_PLAYERS; i++)
 	{
 		player[i].unitSelected = 1;
 		for( j = 0; j < MAX_INSTALLATIONS; j++)
@@ -1123,17 +1124,18 @@ void DE_ResetLevel( void )
 					leftPower[j] = 4;
 				}
 				if (haveWalls)
-					leftShotType[j] = defaultCpuWeaponB[leftSystem[j]-1];
+				{
+					player[i].unit[j].shotType = defaultCpuWeaponB[leftSystem[j]-1];
+				}
 				else
-					leftShotType[j] = defaultCpuWeapon[leftSystem[j]-1];
+				{
+					player[i].unit[j].shotType = defaultCpuWeapon[leftSystem[j]-1];
+				}
 			} else {
 				leftAngle[j] = 0;
 				leftPower[j] = 3;
-				leftShotType[j] = defaultWeapon[leftSystem[j]-1];
+				player[i].unit[j].shotType = defaultWeapon[leftSystem[j]-1];
 			}
-			rightAngle[j] = 0;
-			rightPower[j] = 3;
-			rightShotType[j] = defaultWeapon[rightSystem[j]-1];
 		}
 	}
 }
@@ -1142,7 +1144,7 @@ void DE_ResetActions( void )
 	unsigned int i;
 
 
-	for(i = 0; i < PLAYER_MAX; i++)
+	for(i = 0; i < MAX_PLAYERS; i++)
 	{	/* Zero it all.  A memset would do the trick */
 		memset(&(player[i].moves), 0, sizeof(player[i].moves));
 	}
@@ -1163,34 +1165,8 @@ void DE_RunTick( void )
 	JE_tempScreenChecking();
 
 	DE_ResetActions();
+	DE_RunTickCycleDeadUnits();
 
-	if (!died)
-	{
-
-
-		/* This code automatically switches the active unit if it is destroyed
-		 * and skips over the useless satellite */
-		while (leftShotType[CURUNIT(PLAYER_LEFT)] == 0 ||
-		       CURUNIT_health(PLAYER_LEFT) == 0)
-		{
-			player[PLAYER_LEFT].unitSelected++;
-			if (player[PLAYER_LEFT].unitSelected > MAX_INSTALLATIONS)
-			{
-				player[PLAYER_LEFT].unitSelected = 1;
-			}
-		}
-
-		/*RightSkipNoShooters*/
-		while (rightShotType[CURUNIT(PLAYER_RIGHT)] == 0 ||
-		       CURUNIT_health(PLAYER_RIGHT) == 0)
-		{
-			player[PLAYER_RIGHT].unitSelected++;
-			if (player[PLAYER_RIGHT].unitSelected > MAX_INSTALLATIONS)
-			{
-				player[PLAYER_RIGHT].unitSelected = 1;
-			}
-		}
-	}
 
 	DE_RunTickGravity();
 
@@ -1210,7 +1186,7 @@ void DE_RunTick( void )
 
 	/* These are used by the AI */
 	/* Todo: move when appropriate */
-	for(i = 0; i < PLAYER_MAX; i++)
+	for(i = 0; i < MAX_PLAYERS; i++)
 	{
 		if (player[i].is_cpu)
 		{
@@ -1282,6 +1258,27 @@ void DE_RunTick( void )
  * Handles something that we do once per tick, such as
  * track ammo and move asplosions.
  */
+void DE_RunTickCycleDeadUnits( void )
+{
+	unsigned int i;
+
+
+	/* This code automatically switches the active unit if it is destroyed
+	 * and skips over the useless satellite */
+	for (i = 0; i < MAX_PLAYERS; i++)
+	{
+		if (player[i].unitsRemaining == 0) { continue; }
+
+		while (CURUNIT_shotType(i) == SHOT_INVALID || CURUNIT_health(i) == 0)
+		{
+			player[i].unitSelected++;
+			if (player[i].unitSelected > MAX_INSTALLATIONS)
+			{
+				player[i].unitSelected = 1;
+			}
+		}
+	}
+}
 void DE_RunTickGravity( void )
 {
 	unsigned int z;
@@ -1292,12 +1289,12 @@ void DE_RunTickGravity( void )
 		{
 			if (leftSystem[z] != 4)
 			{
-				if (leftYInAir[z])
+				if (player[PLAYER_LEFT].unit[z].isYInAir == true)
 				{
 					if (leftY[z] + leftYMov[z] > 199)
 					{
 						leftYMov[z] = 0;
-						leftYInAir[z] = false;
+						player[PLAYER_LEFT].unit[z].isYInAir = false;
 					}
 					leftY[z] += leftYMov[z];
 					if (leftY[z] < 26)
@@ -1314,7 +1311,7 @@ void DE_RunTickGravity( void )
 					if (!JE_stabilityCheck(leftX[z], round(leftY[z])))
 					{
 						leftYMov[z] = 0;
-						leftYInAir[z] = false;
+						player[PLAYER_LEFT].unit[z].isYInAir = false;
 					}
 				} else if (leftY[z] < 199) {
 					if (JE_stabilityCheck(leftX[z], round(leftY[z])))
@@ -1345,12 +1342,12 @@ void DE_RunTickGravity( void )
 		{
 			if (rightSystem[z] != 4)
 			{
-				if (rightYInAir[z])
+				if (player[PLAYER_RIGHT].unit[z].isYInAir == true)
 				{
 					if (rightY[z] + rightYMov[z] > 199)
 					{
 						rightYMov[z] = 0;
-						rightYInAir[z] = false;
+						player[PLAYER_RIGHT].unit[z].isYInAir = false;
 					}
 					rightY[z] += rightYMov[z];
 					if (rightY[z] < 24)
@@ -1367,7 +1364,7 @@ void DE_RunTickGravity( void )
 					if (!JE_stabilityCheck(rightX[z], round(rightY[z])))
 					{
 						rightYMov[z] = 0;
-						rightYInAir[z] = false;
+						player[PLAYER_RIGHT].unit[z].isYInAir = false;
 					}
 				} else if (rightY[z] < 199)
 					if (JE_stabilityCheck(rightX[z], round(rightY[z])))
@@ -1404,7 +1401,7 @@ void DE_RunTickAnimate( void )
 {
 	unsigned int p, u;
 
-	for (p = 0; p < PLAYER_MAX; ++p)
+	for (p = 0; p < MAX_PLAYERS; ++p)
 	{
 		for (u = 0; u < MAX_INSTALLATIONS; ++u)
 		{
@@ -1425,7 +1422,7 @@ void DE_RunTickDrawWalls( void )
 {
 	unsigned int x;
 
-	for (x = 0; x < WALL_MAX; x++)
+	for (x = 0; x < MAX_WALL; x++)
 	{
 		if (wallExist[x])
 		{
@@ -1442,7 +1439,7 @@ void DE_RunTickExplosions( void )
 
 
 	/* Run through all open explosions.  They are not sorted in any way */
-	for (i = 0; i < EXPLO_MAX; i++)
+	for (i = 0; i < MAX_EXPLO; i++)
 	{
 		if (explosionAvail[i] == true) { continue; } /* Nothing to do */
 
@@ -1521,7 +1518,7 @@ void DE_RunTickShots( void )
 	unsigned int tempTrails;
 
 
-	for (i = 0; i < SHOT_MAX; i++) {
+	for (i = 0; i < MAX_SHOTS; i++) {
 		if (destructShotAvail[i] == true) { continue; } /* Nothing to do */
 
 		/* Move the shot.  Simple displacement */
@@ -1672,7 +1669,7 @@ void DE_RunTickShots( void )
 		}
 
 		/* Bounce off of or destroy walls */
-		for (j = 0; j < WALL_MAX; j++)
+		for (j = 0; j < MAX_WALL; j++)
 		{
 			if (wallExist[j] && tempPosX >= wallsX[j] && tempPosX <= wallsX[j] + 11 && tempPosY >= wallsY[j] && tempPosY <= wallsY[j] + 14)
 			{
@@ -1791,7 +1788,7 @@ void DE_RunTickAI(enum de_player_t player_index)
 
 	if (leftSystem[CURUNIT(player_index)] == UNIT_HELI)
 	{
-		if (!leftYInAir[CURUNIT(player_index)])
+		if (CURUNIT_isYInAir(player_index) == false)
 		{
 			player[player_index].aiMemory.c_Power = 1;
 		}
@@ -1855,8 +1852,8 @@ void DE_RunTickAI(enum de_player_t player_index)
 		player[player_index].aiMemory.c_Fire = 0;
 	}
 
-	if (mt_rand() % 100 > 98 || leftShotType[CURUNIT(player_index)] == 1)
-	{
+	if (mt_rand() % 100 > 98 || CURUNIT_shotType(player_index) == SHOT_TRACER)
+	{   /* Clearly the CPU doesn't like the tracer :) */
 		player[player_index].moves.actions[MOVE_CYDN] = true;
 	}
 	if (player[player_index].aiMemory.c_Angle > 0)
@@ -1887,7 +1884,7 @@ void DE_RunTickAI(enum de_player_t player_index)
 
 	/* This last hack was down in the processing section.
 	 * What exactly it was doing there I do not know */
-	if(leftSystem[CURUNIT(player_index)] == UNIT_LASER || leftYInAir[CURUNIT(player_index)]) {
+	if(leftSystem[CURUNIT(player_index)] == UNIT_LASER || CURUNIT_isYInAir(player_index) == true) {
 		player[player_index].aiMemory.c_Power = 0;
 	}
 }
@@ -1940,8 +1937,8 @@ void DE_RunTickDrawHUD( void )
 	JE_bar(18, 3, 140, 8, 241);
 	JE_rectangle(17, 2, 143, 9, 242);
 	JE_rectangle(16, 1, 144, 10, 240);
-	JE_drawShape2(  4, 0, 190 + leftShotType[CURUNIT(PLAYER_LEFT)], eShapes1);
-	JE_outText( 20, 3, weaponNames[leftShotType[CURUNIT(PLAYER_LEFT)]-1], 15, 2);
+	JE_drawShape2(  4, 0, 190 + CURUNIT_shotType(PLAYER_LEFT), eShapes1);
+	JE_outText( 20, 3, weaponNames[CURUNIT_shotType(PLAYER_LEFT)-1], 15, 2);
 	sprintf(tempstr, "dmg~%d~", CURUNIT_health(PLAYER_LEFT));
 	JE_outText( 75, 3, tempstr, 15, 0);
 	sprintf(tempstr, "pts~%d~", player[PLAYER_LEFT].score);
@@ -1953,8 +1950,8 @@ void DE_RunTickDrawHUD( void )
 	JE_bar(188, 3, 310, 8, 241);
 	JE_rectangle(187, 2, 312, 9, 242);
 	JE_rectangle(186, 1, 313, 10, 240);
-	JE_drawShape2(174, 0, 190 + rightShotType[CURUNIT(PLAYER_RIGHT)], eShapes1);
-	JE_outText(190, 3, weaponNames[rightShotType[CURUNIT(PLAYER_RIGHT)]-1], 15, 2);
+	JE_drawShape2(174, 0, 190 + CURUNIT_shotType(PLAYER_RIGHT), eShapes1);
+	JE_outText(190, 3, weaponNames[CURUNIT_shotType(PLAYER_RIGHT)-1], 15, 2);
 	sprintf(tempstr, "dmg~%d~", CURUNIT_health(PLAYER_RIGHT));
 	JE_outText(245, 3, tempstr, 15, 0);
 	sprintf(tempstr, "pts~%d~", player[PLAYER_RIGHT].score);
@@ -1971,11 +1968,11 @@ void DE_RunTickGetInput( void )
 	 * just loop through the indexes and set the actions as needed. */
 	service_SDL_events(true);
 
-	for(player_index = 0; player_index < PLAYER_MAX; player_index++)
+	for(player_index = 0; player_index < MAX_PLAYERS; player_index++)
 	{
-		for(key_index = 0; key_index < KEY_MAX; key_index++)
+		for(key_index = 0; key_index < MAX_KEY; key_index++)
 		{
-			for(slot_index = 0; slot_index < KEY_OPTION_MAX; slot_index++)
+			for(slot_index = 0; slot_index < MAX_KEY_OPTIONS; slot_index++)
 			{
 				key = player[player_index].keys.Config[key_index][slot_index];
 				if(key == SDLK_UNKNOWN) { break; }
@@ -2037,7 +2034,7 @@ void DE_RunTickProcessInput( void )
 					leftX[CURUNIT(player_index)]--;
 					if (JE_stabilityCheck(leftX[CURUNIT(player_index)], round(leftY[CURUNIT(player_index)])))
 					{
-						leftYInAir[CURUNIT(player_index)] = true;
+						CURUNIT_isYInAir(player_index) = true;
 					}
 				}
 			if (player[player_index].moves.actions[MOVE_RIGHT] == true && leftX[CURUNIT(player_index)] < 305)
@@ -2050,7 +2047,7 @@ void DE_RunTickProcessInput( void )
 					leftX[CURUNIT(player_index)]++;
 					if (JE_stabilityCheck(leftX[CURUNIT(player_index)], round(leftY[CURUNIT(player_index)])))
 					{
-						leftYInAir[CURUNIT(player_index)] = true;
+						CURUNIT_isYInAir(player_index) = true;
 					}
 				}
 		}
@@ -2060,9 +2057,9 @@ void DE_RunTickProcessInput( void )
 		{
 			if (leftSystem[CURUNIT(player_index)] == UNIT_HELI)
 			{
-				leftYInAir[CURUNIT(player_index)] = true;
+				CURUNIT_isYInAir(player_index) = true;
 				leftYMov[CURUNIT(player_index)] -= 0.1f;
-			} else if (leftSystem[CURUNIT(player_index)] != 7 || leftYInAir[CURUNIT(player_index)]) {
+			} else if (leftSystem[CURUNIT(player_index)] != 7 || CURUNIT_isYInAir(player_index) == true) {
 				leftPower[CURUNIT(player_index)] += 0.05f;
 				if (leftPower[CURUNIT(player_index)] > 5)
 				{
@@ -2070,13 +2067,13 @@ void DE_RunTickProcessInput( void )
 				}
 			} else {
 				leftYMov[CURUNIT(player_index)] = -3;
-				leftYInAir[CURUNIT(player_index)] = true;
+				CURUNIT_isYInAir(player_index) = true;
 			}
 		}
 		/*Leftdecreasepower*/
 		if (player[player_index].moves.actions[MOVE_DOWN] == true)
 		{
-			if (leftSystem[CURUNIT(player_index)] == UNIT_HELI && leftYInAir[CURUNIT(player_index)])
+			if (leftSystem[CURUNIT(player_index)] == UNIT_HELI && CURUNIT_isYInAir(player_index) == true)
 			{
 				leftYMov [CURUNIT(player_index)] += 0.1f;
 			} else {
@@ -2090,38 +2087,26 @@ void DE_RunTickProcessInput( void )
 		/*Leftupweapon*/
 		if (player[player_index].moves.actions[MOVE_CYUP] == true)
 		{
-			leftShotType[CURUNIT(player_index)]++;
-			if (leftShotType[CURUNIT(player_index)] > SHOT_TYPES)
+			do
 			{
-				leftShotType[CURUNIT(player_index)] = 1;
-			}
-
-			while (weaponSystems[leftSystem[CURUNIT(player_index)]-1][leftShotType[CURUNIT(player_index)]-1] == 0)
-			{
-				leftShotType[CURUNIT(player_index)]++;
-				if (leftShotType[CURUNIT(player_index)] > SHOT_TYPES)
+				CURUNIT_shotType(player_index)++;
+				if (CURUNIT_shotType(player_index) > SHOT_BOMB)
 				{
-					leftShotType[CURUNIT(player_index)] = 1;
+					CURUNIT_shotType(player_index) = SHOT_TRACER;
 				}
-			}
+			} while (weaponSystems[leftSystem[CURUNIT(player_index)]-1][CURUNIT_shotType(player_index)-1] == 0);
 		}
 		/*Leftdownweapon*/
 		if (player[player_index].moves.actions[MOVE_CYDN] == true)
 		{
-			leftShotType[CURUNIT(player_index)]--;
-			if (leftShotType[CURUNIT(player_index)] < 1)
+			do
 			{
-				leftShotType[CURUNIT(player_index)] = SHOT_TYPES;
-			}
-
-			while (weaponSystems[leftSystem[CURUNIT(player_index)]-1][leftShotType[CURUNIT(player_index)]-1] == 0)
-			{
-				leftShotType[CURUNIT(player_index)]--;
-				if (leftShotType[CURUNIT(player_index)] < 1)
+				CURUNIT_shotType(player_index)--;
+				if (CURUNIT_shotType(player_index) < SHOT_TRACER)
 				{
-					leftShotType[CURUNIT(player_index)] = SHOT_TYPES;
+					CURUNIT_shotType(player_index) = SHOT_BOMB;
 				}
-			}
+			} while (weaponSystems[leftSystem[CURUNIT(player_index)]-1][CURUNIT_shotType(player_index)-1] == 0);
 		}
 
 		/*Leftchange*/
@@ -2141,12 +2126,12 @@ void DE_RunTickProcessInput( void )
 		}
 		if (player[player_index].moves.actions[MOVE_FIRE] == true && (player[player_index].shotDelay == 0))
 		{
-			player[player_index].shotDelay = shotDelay[leftShotType[CURUNIT(player_index)]-1];
+			player[player_index].shotDelay = shotDelay[CURUNIT_shotType(player_index)-1];
 
-			if (shotDirt[leftShotType[CURUNIT(player_index)]-1] > 20)
+			if (shotDirt[CURUNIT_shotType(player_index)-1] > 20)
 			{
 				emptyShot = 0;
-				for (i = 0; i < SHOT_MAX; i++)
+				for (i = 0; i < MAX_SHOTS; i++)
 				{
 					if (destructShotAvail[i])
 					{
@@ -2155,9 +2140,9 @@ void DE_RunTickProcessInput( void )
 					}
 				}
 
-				if (emptyShot > 0 && (leftSystem[CURUNIT(player_index)] != UNIT_HELI || leftYInAir[CURUNIT(player_index)]))
+				if (emptyShot > 0 && (leftSystem[CURUNIT(player_index)] != UNIT_HELI || CURUNIT_isYInAir(player_index) == true))
 				{
-					soundQueue[0] = shotSound[leftShotType[CURUNIT(player_index)]-1];
+					soundQueue[0] = shotSound[CURUNIT_shotType(player_index)-1];
 
 					if (leftSystem[CURUNIT(player_index)] == UNIT_HELI)
 					{
@@ -2185,7 +2170,7 @@ void DE_RunTickProcessInput( void )
 						shotRec[emptyShot-1].xmov =  cos(leftAngle[CURUNIT(player_index)]) * leftPower[CURUNIT(player_index)];
 					}
 
-					shotRec[emptyShot-1].shottype = leftShotType[CURUNIT(player_index)];
+					shotRec[emptyShot-1].shottype = CURUNIT_shotType(player_index);
 
 					destructShotAvail[emptyShot-1] = false;
 
@@ -2195,10 +2180,10 @@ void DE_RunTickProcessInput( void )
 					shotRec[emptyShot-1].trail2c = 0;
 				}
 			} else {
-				switch (shotDirt[leftShotType[CURUNIT(player_index)]-1])
+				switch (shotDirt[CURUNIT_shotType(player_index)-1])
 				{
 				case 1: /* magnet */
-					for (i = 0; i < SHOT_MAX; i++)
+					for (i = 0; i < MAX_SHOTS; i++)
 					{
 						if (destructShotAvail[i] == false)
 						{
@@ -2210,7 +2195,7 @@ void DE_RunTickProcessInput( void )
 					}
 					for (i = 0; i < MAX_INSTALLATIONS; i++) /* magnets push coptors */
 					{
-						if (rightSystem[i] == UNIT_HELI && rightYInAir[i] && (rightX[i] + 11)< 318) /* changed to properly align border */
+						if (rightSystem[i] == UNIT_HELI && player[player_index].unit[i].isYInAir && (rightX[i] + 11)< 318) /* changed to properly align border */
 						{
 							rightX[i] += 2;
 						}
@@ -2257,7 +2242,7 @@ void DE_RunTickProcessInput( void )
 					rightX[CURUNIT(player_index)]--;
 					if (JE_stabilityCheck(rightX[CURUNIT(player_index)], round(rightY[CURUNIT(player_index)])))
 					{
-						rightYInAir[CURUNIT(player_index)] = true;
+						CURUNIT_isYInAir(player_index) = true;
 					}
 				}
 			}
@@ -2272,7 +2257,7 @@ void DE_RunTickProcessInput( void )
 					rightX[CURUNIT(player_index)]++;
 					if (JE_stabilityCheck(rightX[CURUNIT(player_index)], round(rightY[CURUNIT(player_index)])))
 					{
-						rightYInAir[CURUNIT(player_index)] = true;
+						CURUNIT_isYInAir(player_index) = true;
 					}
 				}
 			}
@@ -2283,9 +2268,9 @@ void DE_RunTickProcessInput( void )
 		{
 			if (rightSystem[CURUNIT(player_index)] == UNIT_HELI)
 			{ /*HELI*/
-				rightYInAir[CURUNIT(player_index)] = true;
+				CURUNIT_isYInAir(player_index) = true;
 				rightYMov[CURUNIT(player_index)] -= 0.1f;
-			} else if (rightSystem[CURUNIT(player_index)] != 7 || rightYInAir[CURUNIT(player_index)]) {
+			} else if (rightSystem[CURUNIT(player_index)] != 7 || CURUNIT_isYInAir(player_index) == true) {
 				rightPower[CURUNIT(player_index)] += 0.05f;
 				if (rightPower[CURUNIT(player_index)] > 5)
 				{
@@ -2293,13 +2278,13 @@ void DE_RunTickProcessInput( void )
 				}
 			} else {
 				rightYMov[CURUNIT(player_index)] = -3;
-				rightYInAir[CURUNIT(player_index)] = true;
+				CURUNIT_isYInAir(player_index) = true;
 			}
 		}
 		/*Rightdecreasepower*/
 		if (player[player_index].moves.actions[MOVE_DOWN] == true)
 		{
-			if (rightSystem[CURUNIT(player_index)] == UNIT_HELI && rightYInAir[CURUNIT(player_index)])
+			if (rightSystem[CURUNIT(player_index)] == UNIT_HELI && CURUNIT_isYInAir(player_index) == true)
 			{ /*HELI*/
 				rightYMov[CURUNIT(player_index)] += 0.1f;
 			} else {
@@ -2313,37 +2298,27 @@ void DE_RunTickProcessInput( void )
 		/*Rightupweapon*/
 		if (player[player_index].moves.actions[MOVE_CYUP]== true)
 		{
-			rightShotType[CURUNIT(player_index)]++;
-			if (rightShotType[CURUNIT(player_index)] > SHOT_TYPES)
+			do
 			{
-				rightShotType[CURUNIT(player_index)] = 1;
-			}
-			while (weaponSystems[rightSystem[CURUNIT(player_index)]-1][rightShotType[CURUNIT(player_index)]-1] == 0)
-			{
-				rightShotType[CURUNIT(player_index)]++;
-				if (rightShotType[CURUNIT(player_index)] > SHOT_TYPES)
+				CURUNIT_shotType(player_index)++;
+				if (CURUNIT_shotType(player_index) > SHOT_BOMB)
 				{
-					rightShotType[CURUNIT(player_index)] = 1;
+					CURUNIT_shotType(player_index) = SHOT_TRACER;
 				}
-			}
+			} while (weaponSystems[rightSystem[CURUNIT(player_index)]-1][CURUNIT_shotType(player_index)-1] == 0);
 		}
 		/*Rightdownweapon*/
 		if (player[player_index].moves.actions[MOVE_CYDN] == true)
 		{
-			rightShotType[CURUNIT(player_index)]--;
-			if (rightShotType[CURUNIT(player_index)] < 1)
+			do
 			{
-				rightShotType[CURUNIT(player_index)] = SHOT_TYPES;
-			}
-
-			while (weaponSystems[rightSystem[CURUNIT(player_index)]-1][rightShotType[CURUNIT(player_index)]-1] == 0)
-			{
-				rightShotType[CURUNIT(player_index)]--;
-				if (rightShotType[CURUNIT(player_index)] < 1)
+				CURUNIT_shotType(player_index)--;
+				if (CURUNIT_shotType(player_index) < SHOT_TRACER)
 				{
-					rightShotType[CURUNIT(player_index)] = SHOT_TYPES;
+					CURUNIT_shotType(player_index) = SHOT_BOMB;
 				}
-			}
+			} while (weaponSystems[rightSystem[CURUNIT(player_index)]-1][CURUNIT_shotType(player_index)-1] == 0);
+
 		}
 
 		/*Rightchange*/
@@ -2363,10 +2338,10 @@ void DE_RunTickProcessInput( void )
 		}
 		if (player[player_index].moves.actions[MOVE_FIRE] == true && player[player_index].shotDelay == 0)
 		{
-			player[player_index].shotDelay = shotDelay[rightShotType[CURUNIT(player_index)]-1];
+			player[player_index].shotDelay = shotDelay[CURUNIT_shotType(player_index)-1];
 
 			emptyShot = 0;
-			for (i = 0; i < SHOT_MAX; i++)
+			for (i = 0; i < MAX_SHOTS; i++)
 			{
 				if (destructShotAvail[i])
 				{
@@ -2374,11 +2349,11 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 
-			if (shotDirt[rightShotType[CURUNIT(player_index)]-1] > 20)
+			if (shotDirt[CURUNIT_shotType(player_index)-1] > 20)
 			{
-				if (emptyShot > 0 && (rightSystem[CURUNIT(player_index)] != 8 || rightYInAir[CURUNIT(player_index)]))
+				if (emptyShot > 0 && (rightSystem[CURUNIT(player_index)] != 8 || CURUNIT_isYInAir(player_index) == true))
 				{
-					soundQueue[1] = shotSound[rightShotType[CURUNIT(player_index)]-1];
+					soundQueue[1] = shotSound[CURUNIT_shotType(player_index)-1];
 
 					if (rightSystem[CURUNIT(player_index)] == 8)
 					{
@@ -2408,7 +2383,7 @@ void DE_RunTickProcessInput( void )
 					if (rightSystem[CURUNIT(player_index)] == 7)
 					{
 						shotRec[emptyShot-1].x = rightX[CURUNIT(player_index)] + 2;
-						if (rightYInAir[CURUNIT(player_index)])
+						if (CURUNIT_isYInAir(player_index) == true)
 						{
 							shotRec[emptyShot-1].ymov = 1;
 							shotRec[emptyShot-1].y = rightY[CURUNIT(player_index)] + 2;
@@ -2418,7 +2393,7 @@ void DE_RunTickProcessInput( void )
 						}
 					}
 
-					shotRec[emptyShot-1].shottype = rightShotType[CURUNIT(player_index)];
+					shotRec[emptyShot-1].shottype = CURUNIT_shotType(player_index);
 
 					destructShotAvail[emptyShot-1] = false;
 
@@ -2428,10 +2403,10 @@ void DE_RunTickProcessInput( void )
 					shotRec[emptyShot-1].trail2c = 0;
 				}
 			} else {
-				switch (shotDirt[rightShotType[CURUNIT(player_index)]-1])
+				switch (shotDirt[CURUNIT_shotType(player_index)-1])
 				{
 				case 1:
-					for (i = 0; i < SHOT_MAX; i++)
+					for (i = 0; i < MAX_SHOTS; i++)
 					{
 						if (!destructShotAvail[i])
 						{
@@ -2443,7 +2418,7 @@ void DE_RunTickProcessInput( void )
 					}
 					for (i = 0; i < MAX_INSTALLATIONS; i++)
 					{
-						if (leftSystem[i] == 8 && leftYInAir[i] && leftX[i] > 1)
+						if (leftSystem[i] == 8 && player[player_index].unit[i].isYInAir == true && leftX[i] > 1)
 						{
 							leftX[i] -= 2;
 						}
@@ -2497,7 +2472,6 @@ void DE_RunTickPlaySounds( void )
 			soundQueue[i] = S_NONE;
 		}
 	}
-
 }
 
 
