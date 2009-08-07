@@ -142,6 +142,7 @@ struct destruct_player_s {
 	bool is_cpu;
 	struct destruct_ai_s aiMemory;
 
+	struct destruct_unit_s unit[MAX_INSTALLATIONS];
 	struct destruct_moves_s moves;
 	struct destruct_keys_s  keys;
 
@@ -197,7 +198,7 @@ void JE_pauseScreen( void );
 /*** Weapon configurations ***/
 
 const JE_boolean demolish[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {false, false, false, false, false, true, true, true, false, false, false, false, true, false, true, false, true};
-const JE_byte shotGr[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
+//const JE_byte shotGr[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
 const JE_byte shotTrail[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_FULL, TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_NONE};
 const JE_byte shotFuse[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 const JE_byte shotDelay[SHOT_TYPES] /*[1..SHOT_TYPES]*/ = {10, 30, 80, 20, 60, 100, 140, 200, 20, 60, 5, 15, 50, 5, 80, 16, 0};
@@ -271,7 +272,7 @@ JE_boolean haveWalls;
 
 
 struct destruct_player_s player[PLAYER_MAX];
-struct destruct_unit_s unit[PLAYER_MAX][MAX_INSTALLATIONS];
+
 
 JE_byte leftAvail, rightAvail;
 JE_byte leftSel, rightSel;
@@ -538,7 +539,7 @@ void JE_generateTerrain( void )
 				tempW++;
 			}
 		}
-		unit[PLAYER_LEFT][x].health = baseDamage[leftSystem[x]-1];
+		player[PLAYER_LEFT].unit[x].health = baseDamage[leftSystem[x]-1];
 		if (leftSystem[x] != 4)
 			leftAvail++;
 	}
@@ -563,7 +564,7 @@ void JE_generateTerrain( void )
 				tempW++;
 			}
 		}
-		unit[PLAYER_RIGHT][x].health = baseDamage[rightSystem[x]-1];
+		player[PLAYER_RIGHT].unit[x].health = baseDamage[rightSystem[x]-1];
 		if (rightSystem[x] != 4)
 			rightAvail++;
 	}
@@ -1020,12 +1021,15 @@ void DE_ResetPlayers( void )
 }
 void DE_ResetUnits( void )
 {
-	for (unsigned int p = 0; p < COUNTOF(unit); ++p)
+	unsigned int p, u;
+
+
+	for (p = 0; p < PLAYER_MAX; ++p)
 	{
-		for (unsigned int u = 0; u < COUNTOF(unit[p]); ++u)
+		for (u = 0; u < MAX_INSTALLATIONS; ++u)
 		{
-			unit[p][u].ani_frame = 0;
-			unit[p][u].health = 0;
+			player[p].unit[u].ani_frame = 0;
+			player[p].unit[u].health = 0;
 		}
 	}
 }
@@ -1116,7 +1120,7 @@ void DE_RunTick( void )
 
 		/* This code automatically switches the active unit if it is destroyed
 		 * and skips over the useless satellite */
-		while (leftShotType[leftSel-1] == 0 || unit[0][leftSel-1].health == 0)
+		while (leftShotType[leftSel-1] == 0 || player[PLAYER_LEFT].unit[leftSel-1].health == 0)
 		{
 			leftSel++;
 			if (leftSel > MAX_INSTALLATIONS)
@@ -1124,7 +1128,7 @@ void DE_RunTick( void )
 		}
 
 		/*RightSkipNoShooters*/
-		while (rightShotType[rightSel-1] == 0 || unit[1][rightSel-1].health == 0)
+		while (rightShotType[rightSel-1] == 0 || player[PLAYER_RIGHT].unit[rightSel-1].health == 0)
 		{
 			rightSel++;
 			if (rightSel > MAX_INSTALLATIONS)
@@ -1228,7 +1232,7 @@ void DE_RunTickGravity( void )
 
 	for (z = 0; z < MAX_INSTALLATIONS; z++)
 	{
-		if (unit[PLAYER_LEFT][z].health > 0)
+		if (player[PLAYER_LEFT].unit[z].health > 0)
 		{
 			if (leftSystem[z] != 4)
 			{
@@ -1260,7 +1264,7 @@ void DE_RunTickGravity( void )
 					if (JE_stabilityCheck(leftX[z], round(leftY[z])))
 						leftY[z] += 1;
 				}
-				temp = leftGraphicBase[leftSystem[z]-1] + unit[0][z].ani_frame;
+				temp = leftGraphicBase[leftSystem[z]-1] + player[PLAYER_LEFT].unit[z].ani_frame;
 				if (leftSystem[z] == UNIT_HELI)
 				{
 					if (leftLastMove[z] < -2)
@@ -1275,13 +1279,13 @@ void DE_RunTickGravity( void )
 
 				JE_drawShape2(leftX[z], round(leftY[z]) - 13, temp, eShapes1);
 			} else {
-				JE_drawShape2(leftX[z], round(leftY[z]) - 13, leftGraphicBase[leftSystem[z]-1] + unit[0][z].ani_frame, eShapes1);
+				JE_drawShape2(leftX[z], round(leftY[z]) - 13, leftGraphicBase[leftSystem[z]-1] + player[PLAYER_LEFT].unit[z].ani_frame, eShapes1);
 			}
 		}
 	}
 	for (z = 0; z < MAX_INSTALLATIONS; z++)
 	{
-		if (unit[PLAYER_RIGHT][z].health > 0)
+		if (player[PLAYER_RIGHT].unit[z].health > 0)
 		{
 			if (rightSystem[z] != 4)
 			{
@@ -1320,7 +1324,7 @@ void DE_RunTickGravity( void )
 						}
 					}
 
-				temp = rightGraphicBase[rightSystem[z]-1] + unit[1][z].ani_frame;
+				temp = rightGraphicBase[rightSystem[z]-1] + player[PLAYER_RIGHT].unit[z].ani_frame;
 				if (rightSystem[z] == 8)
 				{
 					if (rightLastMove[z] < -2)
@@ -1335,7 +1339,7 @@ void DE_RunTickGravity( void )
 
 				JE_drawShape2(rightX[z], round(rightY[z]) - 13, temp, eShapes1);
 			} else {
-				JE_drawShape2(rightX[z], round(rightY[z]) - 13, rightGraphicBase[rightSystem[z]-1] + unit[1][z].ani_frame, eShapes1);
+				JE_drawShape2(rightX[z], round(rightY[z]) - 13, rightGraphicBase[rightSystem[z]-1] + player[PLAYER_RIGHT].unit[z].ani_frame, eShapes1);
 			}
 		}
 	}
@@ -1349,14 +1353,14 @@ void DE_RunTickAnimate( void )
 		for (u = 0; u < MAX_INSTALLATIONS; ++u)
 		{
 			// if unit does not animate continuously and is not currently animated
-			if (!systemAni[ (p == 0 ? leftSystem[u] : rightSystem[u]) -1] && unit[p][u].ani_frame == 0)
+			if (!systemAni[ (p == 0 ? leftSystem[u] : rightSystem[u]) -1] && player[p].unit[u].ani_frame == 0)
 			{
 				continue;
 			}
 
-			if (++unit[p][u].ani_frame > 3)
+			if (++(player[p].unit[u].ani_frame) > 3)
 			{
-				unit[p][u].ani_frame = 0;
+				player[p].unit[u].ani_frame = 0;
 			}
 		}
 	}
@@ -1395,6 +1399,9 @@ void DE_RunTickExplosions( void )
 			tempPosX = exploRec[i].x + round(sin(tempRadius) * ((float)mt_rand() / MT_RAND_MAX) * exploRec[i].explowidth);
 
 			/* Okay, now draw the flare (as long as it isn't out of bounds) */
+			/* Actually an X out of bounds (wrapping around) doesn't seem too
+			 * bad.  It's that way in the original too.  To fix this relatively
+			 * harmless bug, just confine tempPosX */
 			if (tempPosY < 200 && tempPosY > 15)
 			{
 				tempPixelIndex = tempPosX + tempPosY * destructTempScreen->pitch;
@@ -1413,10 +1420,10 @@ void DE_RunTickExplosions( void )
 				for (k = 0; k < MAX_INSTALLATIONS; k++)
 				{
 					/* See if we collided with any units */
-					if (unit[PLAYER_LEFT][k].health > 0 && tempPosX > leftX[k] && tempPosX < leftX[k] + 11 && tempPosY > leftY[k] - 11 && tempPosY < leftY[k])
+					if (player[PLAYER_LEFT].unit[k].health > 0 && tempPosX > leftX[k] && tempPosX < leftX[k] + 11 && tempPosY > leftY[k] - 11 && tempPosY < leftY[k])
 					{
-						unit[PLAYER_LEFT][k].health--;
-						if (unit[PLAYER_LEFT][k].health == 0)
+						player[PLAYER_LEFT].unit[k].health--;
+						if (player[PLAYER_LEFT].unit[k].health == 0)
 						{
 							JE_makeExplosion(leftX[k] + 5, round(leftY[k]) - 5, (leftSystem[k] == 8) * 2);
 							if (leftSystem[k] != 4)
@@ -1426,10 +1433,10 @@ void DE_RunTickExplosions( void )
 							}
 						}
 					}
-					if (unit[PLAYER_RIGHT][k].health > 0 && tempPosX > rightX[k] && tempPosX < rightX[k] + 11 && tempPosY > rightY[k] - 11 && tempPosY < rightY[k])
+					if (player[PLAYER_RIGHT].unit[k].health > 0 && tempPosX > rightX[k] && tempPosX < rightX[k] + 11 && tempPosY > rightY[k] - 11 && tempPosY < rightY[k])
 					{
-						unit[PLAYER_RIGHT][k].health--;
-						if (unit[PLAYER_RIGHT][k].health == 0)
+						player[PLAYER_RIGHT].unit[k].health--;
+						if (player[PLAYER_RIGHT].unit[k].health == 0)
 						{
 							JE_makeExplosion(rightX[k] + 5, round(rightY[k]) - 5, (rightSystem[k] == 8) * 2);
 							if (rightSystem[k] != 4)
@@ -1516,7 +1523,7 @@ void DE_RunTickShots( void )
 		/*Check player1's hits*/
 		for (j = 0; j < MAX_INSTALLATIONS; j++)
 		{
-			if (unit[PLAYER_LEFT][j].health > 0)
+			if (player[PLAYER_LEFT].unit[j].health > 0)
 			{
 				if (tempPosX > leftX[j] && tempPosX < leftX[j] + 11 && tempPosY > leftY[j] - 13 && tempPosY < leftY[j])
 				{
@@ -1528,7 +1535,7 @@ void DE_RunTickShots( void )
 		/*Now player2*/
 		for (j = 0; j < MAX_INSTALLATIONS; j++)
 		{
-			if (unit[PLAYER_RIGHT][j].health > 0)
+			if (player[PLAYER_RIGHT].unit[j].health > 0)
 			{
 				if (tempPosX > rightX[j] && tempPosX < rightX[j] + 11 && tempPosY > rightY[j] - 13 && tempPosY < rightY[j])
 				{
@@ -1719,7 +1726,7 @@ void DE_RunTickAI(enum de_player_t player_index)
 	// prefer helicopter
 	for (i = 0; i < MAX_INSTALLATIONS; i++)
 	{
-		if (leftSystem[i] == UNIT_HELI && unit[player_index][i].health > 0)
+		if (leftSystem[i] == UNIT_HELI && player[player_index].unit[i].health > 0)
 		{
 			leftSel = i + 1;
 			break;
@@ -1879,7 +1886,7 @@ void DE_RunTickDrawHUD( void )
 	JE_rectangle(16, 1, 144, 10, 240);
 	JE_drawShape2(  4, 0, 190 + leftShotType[leftSel-1], eShapes1);
 	JE_outText( 20, 3, weaponNames[leftShotType[leftSel-1]-1], 15, 2);
-	sprintf(tempstr, "dmg~%d~", unit[PLAYER_LEFT][leftSel-1].health);
+	sprintf(tempstr, "dmg~%d~", player[PLAYER_LEFT].unit[leftSel-1].health);
 	JE_outText( 75, 3, tempstr, 15, 0);
 	sprintf(tempstr, "pts~%d~", player[PLAYER_LEFT].score);
 	JE_outText(110, 3, tempstr, 15, 0);
@@ -1892,7 +1899,7 @@ void DE_RunTickDrawHUD( void )
 	JE_rectangle(186, 1, 313, 10, 240);
 	JE_drawShape2(174, 0, 190 + rightShotType[rightSel-1], eShapes1);
 	JE_outText(190, 3, weaponNames[rightShotType[rightSel-1]-1], 15, 2);
-	sprintf(tempstr, "dmg~%d~", unit[PLAYER_RIGHT][rightSel-1].health);
+	sprintf(tempstr, "dmg~%d~", player[PLAYER_RIGHT].unit[rightSel-1].health);
 	JE_outText(245, 3, tempstr, 15, 0);
 	sprintf(tempstr, "pts~%d~", player[PLAYER_RIGHT].score);
 	JE_outText(280, 3, tempstr, 15, 0);
@@ -1915,7 +1922,8 @@ void DE_RunTickGetInput( void )
 			for(slot_index = 0; slot_index < KEY_OPTION_MAX; slot_index++)
 			{
 				key = player[player_index].keys.Config[key_index][slot_index];
-				if(key != SDLK_UNKNOWN && keysactive[key] == true)
+				if(key == SDLK_UNKNOWN) { break; }
+				if(keysactive[key] == true)
 				{
 					/* The right key was clearly pressed */
 					player[player_index].moves.actions[key_index] = true;
@@ -1927,6 +1935,7 @@ void DE_RunTickGetInput( void )
 					{
 						keysactive[key] = false;
 					}
+					break;
 				}
 			}
 		}
@@ -2150,7 +2159,7 @@ void DE_RunTickProcessInput( void )
 							rightX[i] += 2;
 						}
 					}
-					unit[PLAYER_LEFT][leftSel-1].ani_frame = 1;
+					player[PLAYER_LEFT].unit[leftSel-1].ani_frame = 1;
 					break;
 				}
 			}
@@ -2384,7 +2393,7 @@ void DE_RunTickProcessInput( void )
 						}
 					}
 
-					unit[PLAYER_RIGHT][rightSel-1].ani_frame = 1;
+					player[PLAYER_RIGHT].unit[rightSel-1].ani_frame = 1;
 					break;
 				}
 			}
