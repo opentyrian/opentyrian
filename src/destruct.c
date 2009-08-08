@@ -61,6 +61,7 @@
 #include "video.h"
 
 /*** Defines ***/
+#define MAX_SHOTS 40
 #define MAX_WALL 20
 #define MAX_EXPLO 40
 #define MAX_KEY_OPTIONS 4
@@ -112,7 +113,7 @@ enum de_shot_t { SHOT_TRACER = 1, SHOT_SMALL = 2, SHOT_LARGE = 3,
                  SHOT_MAGNET = 11, SHOT_MINILASER = 12,
                  SHOT_MEGALASER = 13, SHOT_LASERTRACER = 14,
                  SHOT_MEGABLAST = 15, SHOT_MINI = 16, SHOT_BOMB = 17,
-                 SHOT_FIRST = 1, SHOT_LAST = 17, MAX_SHOTS = 17, SHOT_INVALID = 0 };
+                 SHOT_FIRST = 1, SHOT_LAST = 17, MAX_SHOT_TYPES = 17, SHOT_INVALID = 0 };
 enum de_trails_t { TRAILS_NONE = 0, TRAILS_NORMAL = 1, TRAILS_FULL = 2 };
 /* keys and moves should line up. */
 enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT = 1,  KEY_UP = 2,  KEY_DOWN = 3,  KEY_CHANGE = 4,  KEY_FIRE = 5,  KEY_CYUP = 6,  KEY_CYDN = 7,  MAX_KEY = 8};
@@ -145,14 +146,6 @@ struct destruct_unit_s {
 	unsigned int ani_frame;
 	unsigned int health;
 };
-
-JE_shortint leftLastMove[MAX_INSTALLATIONS], rightLastMove[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
-
-JE_real leftYMov[MAX_INSTALLATIONS],
-        rightYMov[MAX_INSTALLATIONS];
-
-
-
 struct destruct_shot_s {
 
 	double x;
@@ -251,26 +244,27 @@ void JE_pauseScreen( void );
 
 /*** Weapon configurations ***/
 
-const JE_boolean demolish[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {false, false, false, false, false, true, true, true, false, false, false, false, true, false, true, false, true};
-//const JE_byte shotGr[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
-const JE_byte shotTrail[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_FULL, TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_NONE};
-const JE_byte shotFuse[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
-const JE_byte shotDelay[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {10, 30, 80, 20, 60, 100, 140, 200, 20, 60, 5, 15, 50, 5, 80, 16, 0};
-const JE_byte shotSound[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {8, 2, 1, 7, 7, 9, 22, 22, 5, 13, 10, 15, 15, 26, 14, 7, 7};
-const JE_byte exploSize[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {4, 20, 30, 14, 22, 16, 40, 60, 10, 30, 0, 5, 10, 3, 15, 7, 0};
-const JE_boolean shotBounce[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, true};
-const JE_byte exploDensity[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {  2,  5, 10, 15, 20, 15, 25, 30, 40, 80, 0, 30, 30,  4, 30, 5, 0};
-const JE_byte shotDirt[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {252, 252, 252, 252, 252, 252, 252, 252, 25, 25, 1, 252, 252, 252, 252, 252, 0};
-const JE_byte shotColor[MAX_SHOTS] /*[1..MAX_SHOTS]*/ = {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 10, 10, 10, 10, 16, 0};
+/* Part of me wants to leave these as bytes to save space. */
+const bool     demolish[MAX_SHOT_TYPES] = {false, false, false, false, false, true, true, true, false, false, false, false, true, false, true, false, true};
+const int        shotGr[MAX_SHOT_TYPES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
+const int     shotTrail[MAX_SHOT_TYPES] = {TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_FULL, TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_NONE};
+const int      shotFuse[MAX_SHOT_TYPES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+const int     shotDelay[MAX_SHOT_TYPES] = {10, 30, 80, 20, 60, 100, 140, 200, 20, 60, 5, 15, 50, 5, 80, 16, 0};
+const int     shotSound[MAX_SHOT_TYPES] = {8, 2, 1, 7, 7, 9, 22, 22, 5, 13, 10, 15, 15, 26, 14, 7, 7};
+const int     exploSize[MAX_SHOT_TYPES] = {4, 20, 30, 14, 22, 16, 40, 60, 10, 30, 0, 5, 10, 3, 15, 7, 0};
+const bool   shotBounce[MAX_SHOT_TYPES] = {false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, true};
+const int  exploDensity[MAX_SHOT_TYPES] = {  2,  5, 10, 15, 20, 15, 25, 30, 40, 80, 0, 30, 30,  4, 30, 5, 0};
+const int      shotDirt[MAX_SHOT_TYPES] = {252, 252, 252, 252, 252, 252, 252, 252, 25, 25, 1, 252, 252, 252, 252, 252, 0};
+const int     shotColor[MAX_SHOT_TYPES] = {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 10, 10, 10, 10, 16, 0};
 
-const JE_byte defaultWeapon[MAX_UNITS]     /*[1..MAX_UNITS]*/ = {SHOT_SMALL, SHOT_MICRO,     SHOT_SMALLDIRT, SHOT_INVALID, SHOT_MAGNET, SHOT_MINILASER, SHOT_MICRO, SHOT_MINI};
-const JE_byte defaultCpuWeapon[MAX_UNITS]  /*[1..MAX_UNITS]*/ = {SHOT_SMALL, SHOT_MICRO,     SHOT_DEMO,      SHOT_INVALID, SHOT_MAGNET, SHOT_MINILASER, SHOT_MICRO, SHOT_MINI};
-const JE_byte defaultCpuWeaponB[MAX_UNITS] /*[1..MAX_UNITS]*/ = {SHOT_DEMO,  SHOT_SMALLNUKE, SHOT_DEMO,      SHOT_INVALID, SHOT_MAGNET, SHOT_MEGALASER, SHOT_MICRO, SHOT_MINI};
-const JE_boolean systemAngle[MAX_UNITS] /*[1..MAX_UNITS]*/ = {true, true, true, false, false, true, false, false};
-const JE_word baseDamage[MAX_UNITS] /*[1..MAX_UNITS]*/ = {200, 120, 400, 300, 80, 150, 600, 40};
-const JE_boolean systemAni[MAX_UNITS] /*[1..MAX_UNITS]*/ = {false, false, false, true, false, false, false, true};
+const int     defaultWeapon[MAX_UNITS] = {SHOT_SMALL, SHOT_MICRO,     SHOT_SMALLDIRT, SHOT_INVALID, SHOT_MAGNET, SHOT_MINILASER, SHOT_MICRO, SHOT_MINI};
+const int  defaultCpuWeapon[MAX_UNITS] = {SHOT_SMALL, SHOT_MICRO,     SHOT_DEMO,      SHOT_INVALID, SHOT_MAGNET, SHOT_MINILASER, SHOT_MICRO, SHOT_MINI};
+const int defaultCpuWeaponB[MAX_UNITS] = {SHOT_DEMO,  SHOT_SMALLNUKE, SHOT_DEMO,      SHOT_INVALID, SHOT_MAGNET, SHOT_MEGALASER, SHOT_MICRO, SHOT_MINI};
+const int       systemAngle[MAX_UNITS] = {true, true, true, false, false, true, false, false};
+const int        baseDamage[MAX_UNITS] = {200, 120, 400, 300, 80, 150, 600, 40};
+const int         systemAni[MAX_UNITS] = {false, false, false, true, false, false, false, true};
 
-const JE_byte weaponSystems[MAX_UNITS][MAX_SHOTS] /*[1..MAX_UNITS, 1..MAX_SHOTS]*/ =
+const bool weaponSystems[MAX_UNITS][MAX_SHOT_TYPES] =
 {
 	{1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // normal
 	{0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // nuke
@@ -562,7 +556,7 @@ void JE_generateTerrain( void )
 		player[PLAYER_LEFT].unit[x].unitX = (mt_rand() % 120) + 10;
 		player[PLAYER_LEFT].unit[x].unitY = JE_placementPosition(player[PLAYER_LEFT].unit[x].unitX - 1, 14);
 		/* Added 2 lines.  Feel left/right should be mirrored */
-		leftYMov[x] = 0;
+		player[PLAYER_LEFT].unit[x].unitYMov = 0;
 		player[PLAYER_LEFT].unit[x].isYInAir = false;
 		player[PLAYER_LEFT].unit[x].unitType = basetypes[Lbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
 		if (player[PLAYER_LEFT].unit[x].unitType == UNIT_SATELLITE)
@@ -589,7 +583,7 @@ void JE_generateTerrain( void )
 	{
 		player[PLAYER_RIGHT].unit[x].unitX = 320 - ((mt_rand() % 120) + 22);
 		player[PLAYER_RIGHT].unit[x].unitY = JE_placementPosition(player[PLAYER_RIGHT].unit[x].unitX - 1, 14);
-		rightYMov[x] = 0;
+		player[PLAYER_RIGHT].unit[x].unitYMov = 0;
 		player[PLAYER_RIGHT].unit[x].isYInAir = false;
 		player[PLAYER_RIGHT].unit[x].unitType = basetypes[Rbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
 		if (player[PLAYER_RIGHT].unit[x].unitType == UNIT_SATELLITE)
@@ -1129,12 +1123,10 @@ void DE_ResetLevel( void )
 		player[i].unitSelected = 1;
 		for( j = 0; j < MAX_INSTALLATIONS; j++)
 		{
-			leftLastMove[j] = 0;
-			rightLastMove[j] = 0;
-			leftYMov[j] = 0;
-			rightYMov[j] = 0;
+			player[i].unit[j].lastMove = 0;
+			player[i].unit[j].unitYMov = 0;
 
-			if (player[i].is_cpu)
+			if (player[i].is_cpu) /* Todo: Split this off into a 'resetai' function */
 			{
 				if (systemAngle[player[i].unit[j].unitType-1] || player[i].unit[j].unitType == UNIT_HELI)
 				{
@@ -1304,26 +1296,26 @@ void DE_RunTickGravity( void )
 			{
 				if (player[PLAYER_LEFT].unit[z].isYInAir == true)
 				{
-					if (player[PLAYER_LEFT].unit[z].unitY + leftYMov[z] > 199)
+					if (player[PLAYER_LEFT].unit[z].unitY + player[PLAYER_LEFT].unit[z].unitYMov > 199)
 					{
-						leftYMov[z] = 0;
+						player[PLAYER_LEFT].unit[z].unitYMov = 0;
 						player[PLAYER_LEFT].unit[z].isYInAir = false;
 					}
-					player[PLAYER_LEFT].unit[z].unitY += leftYMov[z];
+					player[PLAYER_LEFT].unit[z].unitY += player[PLAYER_LEFT].unit[z].unitYMov;
 					if (player[PLAYER_LEFT].unit[z].unitY < 26)
 					{
-						leftYMov[z] = 0;
+						player[PLAYER_LEFT].unit[z].unitYMov = 0;
 						player[PLAYER_LEFT].unit[z].unitY = 26;
 					}
 					if (player[PLAYER_LEFT].unit[z].unitType == UNIT_HELI)
 					{
-						leftYMov[z] += 0.0001f;
+						player[PLAYER_LEFT].unit[z].unitYMov += 0.0001f;
 					} else {
-						leftYMov[z] += 0.03f;
+						player[PLAYER_LEFT].unit[z].unitYMov += 0.03f;
 					}
 					if (!JE_stabilityCheck(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY)))
 					{
-						leftYMov[z] = 0;
+						player[PLAYER_LEFT].unit[z].unitYMov = 0;
 						player[PLAYER_LEFT].unit[z].isYInAir = false;
 					}
 				} else if (player[PLAYER_LEFT].unit[z].unitY < 199) {
@@ -1333,10 +1325,10 @@ void DE_RunTickGravity( void )
 				temp = leftGraphicBase[player[PLAYER_LEFT].unit[z].unitType-1] + player[PLAYER_LEFT].unit[z].ani_frame;
 				if (player[PLAYER_LEFT].unit[z].unitType == UNIT_HELI)
 				{
-					if (leftLastMove[z] < -2)
+					if (player[PLAYER_LEFT].unit[z].lastMove < -2)
 					{
 						temp += 5;
-					} else if (leftLastMove[z] > 2) {
+					} else if (player[PLAYER_LEFT].unit[z].lastMove > 2) {
 						temp += 10;
 					}
 				} else {
@@ -1357,26 +1349,26 @@ void DE_RunTickGravity( void )
 			{
 				if (player[PLAYER_RIGHT].unit[z].isYInAir == true)
 				{
-					if (player[PLAYER_RIGHT].unit[z].unitY + rightYMov[z] > 199)
+					if (player[PLAYER_RIGHT].unit[z].unitY + player[PLAYER_RIGHT].unit[z].unitYMov > 199)
 					{
-						rightYMov[z] = 0;
+						player[PLAYER_RIGHT].unit[z].unitYMov = 0;
 						player[PLAYER_RIGHT].unit[z].isYInAir = false;
 					}
-					player[PLAYER_RIGHT].unit[z].unitY += rightYMov[z];
+					player[PLAYER_RIGHT].unit[z].unitY += player[PLAYER_RIGHT].unit[z].unitYMov;
 					if (player[PLAYER_RIGHT].unit[z].unitY < 24)
 					{
-						rightYMov[z] = 0;
+						player[PLAYER_RIGHT].unit[z].unitYMov = 0;
 						player[PLAYER_RIGHT].unit[z].unitY = 24;
 					}
 					if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI) /*HELI*/
 					{
-						rightYMov[z] += 0.0001f;
+						player[PLAYER_RIGHT].unit[z].unitYMov += 0.0001f;
 					} else {
-						rightYMov[z] += 0.03f;
+						player[PLAYER_RIGHT].unit[z].unitYMov += 0.03f;
 					}
 					if (!JE_stabilityCheck(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY)))
 					{
-						rightYMov[z] = 0;
+						player[PLAYER_RIGHT].unit[z].unitYMov = 0;
 						player[PLAYER_RIGHT].unit[z].isYInAir = false;
 					}
 				} else if (player[PLAYER_RIGHT].unit[z].unitY < 199)
@@ -1384,7 +1376,7 @@ void DE_RunTickGravity( void )
 					{
 						if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI)
 						{
-							rightYMov[z] += 0.01f;
+							player[PLAYER_RIGHT].unit[z].unitYMov += 0.01f;
 						} else {
 							player[PLAYER_RIGHT].unit[z].unitY += 1;
 						}
@@ -1393,10 +1385,10 @@ void DE_RunTickGravity( void )
 				temp = rightGraphicBase[player[PLAYER_RIGHT].unit[z].unitType-1] + player[PLAYER_RIGHT].unit[z].ani_frame;
 				if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI)
 				{
-					if (rightLastMove[z] < -2)
+					if (player[PLAYER_RIGHT].unit[z].lastMove < -2)
 					{
 						temp += 5;
-					} else if (rightLastMove[z] > 2) {
+					} else if (player[PLAYER_RIGHT].unit[z].lastMove > 2) {
 						temp += 10;
 					}
 				} else {
@@ -1539,7 +1531,8 @@ void DE_RunTickShots( void )
 	unsigned int tempTrails;
 
 
-	for (i = 0; i < MAX_SHOTS; i++) {
+	for (i = 0; i < MAX_SHOTS; i++)
+	{
 		if (destructShotAvail[i] == true) { continue; } /* Nothing to do */
 
 		/* Move the shot.  Simple displacement */
@@ -1849,18 +1842,18 @@ void DE_RunTickAI( void )
 			{
 				player[player_index].aiMemory.c_Angle = (mt_rand() % 3) - 1;
 			}
-			if (CURUNIT_unitX(player_index) > 295 && leftLastMove[CURUNIT(player_index)] > 1)
+			if (CURUNIT_unitX(player_index) > 295 && CURUNIT_lastMove(player_index) > 1)
 			{
 				player[player_index].moves.actions[MOVE_LEFT] = true;
 				player[player_index].moves.actions[MOVE_RIGHT] = false;
 			}
-			if (CURUNIT_unitType(player_index) != UNIT_HELI || leftLastMove[CURUNIT(player_index)] > 3 || (CURUNIT_unitX(player_index) > 160 && leftLastMove[CURUNIT(player_index)] > -3))
+			if (CURUNIT_unitType(player_index) != UNIT_HELI || CURUNIT_lastMove(player_index) > 3 || (CURUNIT_unitX(player_index) > 160 && CURUNIT_lastMove(player_index) > -3))
 			{
-				if (mt_rand() % (int)round(CURUNIT_unitY(player_index)) < 150 && leftYMov[CURUNIT(player_index)] < 0.01f && (CURUNIT_unitX(player_index) < 160 || leftLastMove[CURUNIT(player_index)] < 2))
+				if (mt_rand() % (int)round(CURUNIT_unitY(player_index)) < 150 && CURUNIT_unitYMov(player_index) < 0.01f && (CURUNIT_unitX(player_index) < 160 || CURUNIT_lastMove(player_index) < 2))
 				{
 					player[player_index].moves.actions[MOVE_FIRE] = true;
 				}
-				player[player_index].aiMemory.c_noDown = (5 - abs(leftLastMove[CURUNIT(player_index)])) * (5 - abs(leftLastMove[CURUNIT(player_index)])) + 3;
+				player[player_index].aiMemory.c_noDown = (5 - abs(CURUNIT_lastMove(player_index))) * (5 - abs(CURUNIT_lastMove(player_index))) + 3;
 				player[player_index].aiMemory.c_Power = 1;
 			} else
 			{
@@ -1881,13 +1874,13 @@ void DE_RunTickAI( void )
 					{
 						player[player_index].moves.actions[MOVE_LEFT] = false;
 						player[player_index].moves.actions[MOVE_RIGHT] = false;
-						if (leftLastMove[CURUNIT(player_index)] < -1)
+						if (CURUNIT_lastMove(player_index) < -1)
 						{
-							leftLastMove[CURUNIT(player_index)]++;
+							CURUNIT_lastMove(player_index)++;
 						}
-						else if (leftLastMove[CURUNIT(player_index)] > 1)
+						else if (CURUNIT_lastMove(player_index) > 1)
 						{
-							leftLastMove[CURUNIT(player_index)]--;
+							CURUNIT_lastMove(player_index)--;
 						}
 					}
 				}
@@ -1929,7 +1922,7 @@ void DE_RunTickAI( void )
 			player[player_index].moves.actions[MOVE_FIRE] = true;
 		}
 
-		if (leftYMov[CURUNIT(player_index)] < -0.1f && CURUNIT_unitType(player_index) == UNIT_HELI)
+		if (CURUNIT_unitYMov(player_index) < -0.1f && CURUNIT_unitType(player_index) == UNIT_HELI)
 		{
 			player[player_index].moves.actions[MOVE_FIRE] = false;
 		}
@@ -1953,7 +1946,7 @@ void DE_RunTickDrawCrosshairs( void )
 	 */
 	if (CURUNIT_unitType(PLAYER_LEFT) == UNIT_HELI)
 	{
-		tempPosX = CURUNIT_unitX(PLAYER_LEFT) + round(0.1f * leftLastMove[CURUNIT(PLAYER_LEFT)] * leftLastMove[CURUNIT(PLAYER_LEFT)] * leftLastMove[CURUNIT(PLAYER_LEFT)]) + 5;
+		tempPosX = CURUNIT_unitX(PLAYER_LEFT) + round(0.1f * CURUNIT_lastMove(PLAYER_LEFT) * CURUNIT_lastMove(PLAYER_LEFT) * CURUNIT_lastMove(PLAYER_LEFT)) + 5;
 		tempPosY = round(CURUNIT_unitY(PLAYER_LEFT)) + 1;
 	} else {
 		tempPosX = round(CURUNIT_unitX(PLAYER_LEFT) + 6 + cos(CURUNIT_angle(PLAYER_LEFT)) * (CURUNIT_power(PLAYER_LEFT) * 8 + 7));
@@ -1967,7 +1960,7 @@ void DE_RunTickDrawCrosshairs( void )
 
 	if (CURUNIT_unitType(PLAYER_RIGHT) == UNIT_HELI)
 	{  /*Heli*/
-		tempPosX = CURUNIT_unitX(PLAYER_RIGHT) + round(0.1f * rightLastMove[CURUNIT(PLAYER_RIGHT)] * rightLastMove[CURUNIT(PLAYER_RIGHT)] * rightLastMove[CURUNIT(PLAYER_RIGHT)]) + 5;
+		tempPosX = CURUNIT_unitX(PLAYER_RIGHT) + round(0.1f * CURUNIT_lastMove(PLAYER_RIGHT) * CURUNIT_lastMove(PLAYER_RIGHT) * CURUNIT_lastMove(PLAYER_RIGHT)) + 5;
 		tempPosY = round(CURUNIT_unitY(PLAYER_RIGHT)) + 1;
 	} else {
 		tempPosX = round(CURUNIT_unitX(PLAYER_RIGHT) + 6 - cos(CURUNIT_angle(PLAYER_RIGHT)) * (CURUNIT_power(PLAYER_RIGHT) * 8 + 7));
@@ -2080,9 +2073,9 @@ void DE_RunTickProcessInput( void )
 			if (player[player_index].moves.actions[MOVE_LEFT] == true && CURUNIT_unitX(player_index) > 5)
 				if (JE_stabilityCheck(CURUNIT_unitX(player_index) - 5, round(CURUNIT_unitX(player_index))))
 				{
-					if (leftLastMove[CURUNIT(player_index)] > -5)
+					if (CURUNIT_lastMove(player_index) > -5)
 					{
-						leftLastMove[CURUNIT(player_index)]--;
+						CURUNIT_lastMove(player_index)--;
 					}
 					CURUNIT_unitX(player_index)--;
 					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
@@ -2093,9 +2086,9 @@ void DE_RunTickProcessInput( void )
 			if (player[player_index].moves.actions[MOVE_RIGHT] == true && CURUNIT_unitX(player_index) < 305)
 				if (JE_stabilityCheck(CURUNIT_unitX(player_index) + 5, round(CURUNIT_unitY(player_index))))
 				{
-					if (leftLastMove[CURUNIT(player_index)] < 5)
+					if (CURUNIT_lastMove(player_index) < 5)
 					{
-						leftLastMove[CURUNIT(player_index)]++;
+						CURUNIT_lastMove(player_index)++;
 					}
 					CURUNIT_unitX(player_index)++;
 					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
@@ -2111,7 +2104,7 @@ void DE_RunTickProcessInput( void )
 			if (CURUNIT_unitType(player_index) == UNIT_HELI)
 			{
 				CURUNIT_isYInAir(player_index) = true;
-				leftYMov[CURUNIT(player_index)] -= 0.1f;
+				CURUNIT_unitYMov(player_index) -= 0.1f;
 			} else if (CURUNIT_unitType(player_index) != UNIT_JUMPER
 			        || CURUNIT_isYInAir(player_index) == true) {
 				CURUNIT_power(player_index) += 0.05f;
@@ -2120,7 +2113,7 @@ void DE_RunTickProcessInput( void )
 					CURUNIT_power(player_index) = 5;
 				}
 			} else {
-				leftYMov[CURUNIT(player_index)] = -3;
+				CURUNIT_unitYMov(player_index) = -3;
 				CURUNIT_isYInAir(player_index) = true;
 			}
 		}
@@ -2129,7 +2122,7 @@ void DE_RunTickProcessInput( void )
 		{
 			if (CURUNIT_unitType(player_index) == UNIT_HELI && CURUNIT_isYInAir(player_index) == true)
 			{
-				leftYMov [CURUNIT(player_index)] += 0.1f;
+				CURUNIT_unitYMov(player_index) += 0.1f;
 			} else {
 				CURUNIT_power(player_index) -= 0.05f;
 				if (CURUNIT_power(player_index) < 1)
@@ -2201,10 +2194,10 @@ void DE_RunTickProcessInput( void )
 
 					if (CURUNIT_unitType(player_index) == UNIT_HELI)
 					{
-						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + leftLastMove[CURUNIT(player_index)] * 2 + 5;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + CURUNIT_lastMove(player_index) * 2 + 5;
 						shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) + 1;
-						shotRec[emptyShot-1].ymov = 0.5f + leftYMov[CURUNIT(player_index)] * 0.1f;
-						shotRec[emptyShot-1].xmov = 0.02f * leftLastMove[CURUNIT(player_index)] * leftLastMove[CURUNIT(player_index)] * leftLastMove[CURUNIT(player_index)];
+						shotRec[emptyShot-1].ymov = 0.5f + CURUNIT_unitYMov(player_index) * 0.1f;
+						shotRec[emptyShot-1].xmov = 0.02f * CURUNIT_lastMove(player_index) * CURUNIT_lastMove(player_index) * CURUNIT_lastMove(player_index);
 
 						if (player[player_index].moves.actions[MOVE_UP] && CURUNIT_unitY(player_index) < 30) /* For some odd reason if we're too high we ignore most of our computing. */
 						{
@@ -2293,9 +2286,9 @@ void DE_RunTickProcessInput( void )
 			{
 				if (JE_stabilityCheck(CURUNIT_unitX(player_index) - 5, round(CURUNIT_unitY(player_index))))
 				{
-					if (rightLastMove[CURUNIT(player_index)] > -5)
+					if (CURUNIT_lastMove(player_index) > -5)
 					{
-						rightLastMove[CURUNIT(player_index)]--;
+						CURUNIT_lastMove(player_index)--;
 					}
 					CURUNIT_unitX(player_index)--;
 					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
@@ -2308,9 +2301,9 @@ void DE_RunTickProcessInput( void )
 			{
 				if (JE_stabilityCheck(CURUNIT_unitX(player_index) + 5, round(CURUNIT_unitY(player_index))))
 				{
-					if (rightLastMove[CURUNIT(player_index)] < 5)
+					if (CURUNIT_lastMove(player_index) < 5)
 					{
-						rightLastMove[CURUNIT(player_index)]++;
+						CURUNIT_lastMove(player_index)++;
 					}
 					CURUNIT_unitX(player_index)++;
 					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
@@ -2327,7 +2320,7 @@ void DE_RunTickProcessInput( void )
 			if (CURUNIT_unitType(player_index) == UNIT_HELI)
 			{
 				CURUNIT_isYInAir(player_index) = true;
-				rightYMov[CURUNIT(player_index)] -= 0.1f;
+				CURUNIT_unitYMov(player_index) -= 0.1f;
 			} else if (CURUNIT_unitType(player_index) != UNIT_JUMPER
 			        || CURUNIT_isYInAir(player_index) == true) {
 				CURUNIT_power(player_index) += 0.05f;
@@ -2336,7 +2329,7 @@ void DE_RunTickProcessInput( void )
 					CURUNIT_power(player_index) = 5;
 				}
 			} else {
-				rightYMov[CURUNIT(player_index)] = -3;
+				CURUNIT_unitYMov(player_index) = -3;
 				CURUNIT_isYInAir(player_index) = true;
 			}
 		}
@@ -2345,7 +2338,7 @@ void DE_RunTickProcessInput( void )
 		{
 			if (CURUNIT_unitType(player_index) == UNIT_HELI && CURUNIT_isYInAir(player_index) == true)
 			{
-				rightYMov[CURUNIT(player_index)] += 0.1f;
+				CURUNIT_unitYMov(player_index) += 0.1f;
 			} else {
 				CURUNIT_power(player_index) -= 0.05f;
 				if (CURUNIT_power(player_index) < 1)
@@ -2417,10 +2410,10 @@ void DE_RunTickProcessInput( void )
 
 					if (CURUNIT_unitType(player_index) == UNIT_HELI)
 					{
-						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + rightLastMove[CURUNIT(player_index)] * 2 + 5;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + CURUNIT_lastMove(player_index) * 2 + 5;
 						shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) + 1;
-						shotRec[emptyShot-1].ymov = 0.5f;
-						shotRec[emptyShot-1].xmov = 0.02f * rightLastMove[CURUNIT(player_index)] * rightLastMove[CURUNIT(player_index)] * rightLastMove[CURUNIT(player_index)];
+						shotRec[emptyShot-1].ymov = 0.5f + CURUNIT_unitYMov(player_index) * 0.1f; /* This wasn't here before.  Oversight? */
+						shotRec[emptyShot-1].xmov = 0.02f * CURUNIT_lastMove(player_index) * CURUNIT_lastMove(player_index) * CURUNIT_lastMove(player_index);
 						if (player[player_index].moves.actions[MOVE_UP] == true
 						 && CURUNIT_unitY(player_index) < 30)
 						{
