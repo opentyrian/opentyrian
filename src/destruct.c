@@ -147,9 +147,9 @@ struct destruct_unit_s {
 };
 
 JE_shortint leftLastMove[MAX_INSTALLATIONS], rightLastMove[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
-JE_word leftX[MAX_INSTALLATIONS], rightX[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
-JE_real leftYMov[MAX_INSTALLATIONS], leftY[MAX_INSTALLATIONS],
-        rightYMov[MAX_INSTALLATIONS], rightY[MAX_INSTALLATIONS]; /*[1..maxinstallations]*/
+
+JE_real leftYMov[MAX_INSTALLATIONS],
+        rightYMov[MAX_INSTALLATIONS];
 
 
 
@@ -559,8 +559,8 @@ void JE_generateTerrain( void )
 
 	for (x = 0; x < basetypes[Lbaselookup[destructMode-1]-1][1-1]; x++)
 	{
-		leftX[x] = (mt_rand() % 120) + 10;
-		leftY[x] = JE_placementPosition(leftX[x] - 1, 14);
+		player[PLAYER_LEFT].unit[x].unitX = (mt_rand() % 120) + 10;
+		player[PLAYER_LEFT].unit[x].unitY = JE_placementPosition(player[PLAYER_LEFT].unit[x].unitX - 1, 14);
 		/* Added 2 lines.  Feel left/right should be mirrored */
 		leftYMov[x] = 0;
 		player[PLAYER_LEFT].unit[x].isYInAir = false;
@@ -571,7 +571,7 @@ void JE_generateTerrain( void )
 			{ /* Makes sure there's always at least one tank */
 				player[PLAYER_LEFT].unit[x].unitType = UNIT_TANK;
 			} else {
-				leftY[x] = 30 + (mt_rand() % 40);
+				player[PLAYER_LEFT].unit[x].unitY = 30 + (mt_rand() % 40);
 				tempW++;
 			}
 		}
@@ -587,8 +587,8 @@ void JE_generateTerrain( void )
 
 	for (x = 0; x < basetypes[Rbaselookup[destructMode-1]-1][1-1]; x++)
 	{
-		rightX[x] = 320 - ((mt_rand() % 120) + 22);
-		rightY[x] = JE_placementPosition(rightX[x] - 1, 14);
+		player[PLAYER_RIGHT].unit[x].unitX = 320 - ((mt_rand() % 120) + 22);
+		player[PLAYER_RIGHT].unit[x].unitY = JE_placementPosition(player[PLAYER_RIGHT].unit[x].unitX - 1, 14);
 		rightYMov[x] = 0;
 		player[PLAYER_RIGHT].unit[x].isYInAir = false;
 		player[PLAYER_RIGHT].unit[x].unitType = basetypes[Rbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
@@ -598,7 +598,7 @@ void JE_generateTerrain( void )
 			{
 				player[PLAYER_RIGHT].unit[x].unitType = UNIT_TANK;
 			} else {
-				rightY[x] = 30 + (mt_rand() % 40);
+				player[PLAYER_RIGHT].unit[x].unitY = 30 + (mt_rand() % 40);
 				tempW++;
 			}
 		}
@@ -629,11 +629,19 @@ void JE_generateTerrain( void )
 				destructFound = true;
 
 				for (z = 0; z < 4; z++)
-					if ((x > leftX[z] - 12) && (x < leftX[z] + 13))
+				{
+					if ((x > player[PLAYER_LEFT].unit[z].unitX - 12) && (x < player[PLAYER_LEFT].unit[z].unitX + 13))
+					{
 						destructFound = false;
+					}
+				}
 				for (z = 0; z < 4; z++)
-					if ((x > rightX[z] - 12) && (x < rightX[z] + 13))
+				{
+					if ((x > player[PLAYER_RIGHT].unit[z].unitX - 12) && (x < player[PLAYER_RIGHT].unit[z].unitX + 13))
+					{
 						destructFound = false;
+					}
+				}
 
 			} while (!destructFound);
 
@@ -1296,16 +1304,16 @@ void DE_RunTickGravity( void )
 			{
 				if (player[PLAYER_LEFT].unit[z].isYInAir == true)
 				{
-					if (leftY[z] + leftYMov[z] > 199)
+					if (player[PLAYER_LEFT].unit[z].unitY + leftYMov[z] > 199)
 					{
 						leftYMov[z] = 0;
 						player[PLAYER_LEFT].unit[z].isYInAir = false;
 					}
-					leftY[z] += leftYMov[z];
-					if (leftY[z] < 26)
+					player[PLAYER_LEFT].unit[z].unitY += leftYMov[z];
+					if (player[PLAYER_LEFT].unit[z].unitY < 26)
 					{
 						leftYMov[z] = 0;
-						leftY[z] = 26;
+						player[PLAYER_LEFT].unit[z].unitY = 26;
 					}
 					if (player[PLAYER_LEFT].unit[z].unitType == UNIT_HELI)
 					{
@@ -1313,14 +1321,14 @@ void DE_RunTickGravity( void )
 					} else {
 						leftYMov[z] += 0.03f;
 					}
-					if (!JE_stabilityCheck(leftX[z], round(leftY[z])))
+					if (!JE_stabilityCheck(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY)))
 					{
 						leftYMov[z] = 0;
 						player[PLAYER_LEFT].unit[z].isYInAir = false;
 					}
-				} else if (leftY[z] < 199) {
-					if (JE_stabilityCheck(leftX[z], round(leftY[z])))
-						leftY[z] += 1;
+				} else if (player[PLAYER_LEFT].unit[z].unitY < 199) {
+					if (JE_stabilityCheck(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY)))
+						player[PLAYER_LEFT].unit[z].unitY += 1;
 				}
 				temp = leftGraphicBase[player[PLAYER_LEFT].unit[z].unitType-1] + player[PLAYER_LEFT].unit[z].ani_frame;
 				if (player[PLAYER_LEFT].unit[z].unitType == UNIT_HELI)
@@ -1335,9 +1343,9 @@ void DE_RunTickGravity( void )
 					temp += floor(player[PLAYER_LEFT].unit[z].angle * 9.99f / M_PI);
 				}
 
-				JE_drawShape2(leftX[z], round(leftY[z]) - 13, temp, eShapes1);
+				JE_drawShape2(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY) - 13, temp, eShapes1);
 			} else {
-				JE_drawShape2(leftX[z], round(leftY[z]) - 13, leftGraphicBase[player[PLAYER_LEFT].unit[z].unitType-1] + player[PLAYER_LEFT].unit[z].ani_frame, eShapes1);
+				JE_drawShape2(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY) - 13, leftGraphicBase[player[PLAYER_LEFT].unit[z].unitType-1] + player[PLAYER_LEFT].unit[z].ani_frame, eShapes1);
 			}
 		}
 	}
@@ -1349,16 +1357,16 @@ void DE_RunTickGravity( void )
 			{
 				if (player[PLAYER_RIGHT].unit[z].isYInAir == true)
 				{
-					if (rightY[z] + rightYMov[z] > 199)
+					if (player[PLAYER_RIGHT].unit[z].unitY + rightYMov[z] > 199)
 					{
 						rightYMov[z] = 0;
 						player[PLAYER_RIGHT].unit[z].isYInAir = false;
 					}
-					rightY[z] += rightYMov[z];
-					if (rightY[z] < 24)
+					player[PLAYER_RIGHT].unit[z].unitY += rightYMov[z];
+					if (player[PLAYER_RIGHT].unit[z].unitY < 24)
 					{
 						rightYMov[z] = 0;
-						rightY[z] = 24;
+						player[PLAYER_RIGHT].unit[z].unitY = 24;
 					}
 					if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI) /*HELI*/
 					{
@@ -1366,19 +1374,19 @@ void DE_RunTickGravity( void )
 					} else {
 						rightYMov[z] += 0.03f;
 					}
-					if (!JE_stabilityCheck(rightX[z], round(rightY[z])))
+					if (!JE_stabilityCheck(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY)))
 					{
 						rightYMov[z] = 0;
 						player[PLAYER_RIGHT].unit[z].isYInAir = false;
 					}
-				} else if (rightY[z] < 199)
-					if (JE_stabilityCheck(rightX[z], round(rightY[z])))
+				} else if (player[PLAYER_RIGHT].unit[z].unitY < 199)
+					if (JE_stabilityCheck(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY)))
 					{
 						if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI)
 						{
 							rightYMov[z] += 0.01f;
 						} else {
-							rightY[z] += 1;
+							player[PLAYER_RIGHT].unit[z].unitY += 1;
 						}
 					}
 
@@ -1395,9 +1403,9 @@ void DE_RunTickGravity( void )
 					temp += floor(player[PLAYER_RIGHT].unit[z].angle * 9.99f / M_PI);
 				}
 
-				JE_drawShape2(rightX[z], round(rightY[z]) - 13, temp, eShapes1);
+				JE_drawShape2(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY) - 13, temp, eShapes1);
 			} else {
-				JE_drawShape2(rightX[z], round(rightY[z]) - 13, rightGraphicBase[player[PLAYER_RIGHT].unit[z].unitType-1] + player[PLAYER_RIGHT].unit[z].ani_frame, eShapes1);
+				JE_drawShape2(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY) - 13, rightGraphicBase[player[PLAYER_RIGHT].unit[z].unitType-1] + player[PLAYER_RIGHT].unit[z].ani_frame, eShapes1);
 			}
 		}
 	}
@@ -1478,12 +1486,16 @@ void DE_RunTickExplosions( void )
 				for (k = 0; k < MAX_INSTALLATIONS; k++)
 				{
 					/* See if we collided with any units */
-					if (player[PLAYER_LEFT].unit[k].health > 0 && tempPosX > leftX[k] && tempPosX < leftX[k] + 11 && tempPosY > leftY[k] - 11 && tempPosY < leftY[k])
+					if (player[PLAYER_LEFT].unit[k].health > 0
+					 && tempPosX > player[PLAYER_LEFT].unit[k].unitX
+					 && tempPosX < player[PLAYER_LEFT].unit[k].unitX + 11
+					 && tempPosY > player[PLAYER_LEFT].unit[k].unitY - 11
+					 && tempPosY < player[PLAYER_LEFT].unit[k].unitY)
 					{
 						player[PLAYER_LEFT].unit[k].health--;
 						if (player[PLAYER_LEFT].unit[k].health == 0)
 						{
-							JE_makeExplosion(leftX[k] + 5, round(leftY[k]) - 5, (player[PLAYER_LEFT].unit[k].unitType == UNIT_HELI) * 2);
+							JE_makeExplosion(player[PLAYER_LEFT].unit[k].unitX + 5, round(player[PLAYER_LEFT].unit[k].unitY) - 5, (player[PLAYER_LEFT].unit[k].unitType == UNIT_HELI) * 2);
 							if (player[PLAYER_LEFT].unit[k].unitType != UNIT_SATELLITE)
 							{
 								player[PLAYER_LEFT].unitsRemaining--;
@@ -1491,12 +1503,16 @@ void DE_RunTickExplosions( void )
 							}
 						}
 					}
-					if (player[PLAYER_RIGHT].unit[k].health > 0 && tempPosX > rightX[k] && tempPosX < rightX[k] + 11 && tempPosY > rightY[k] - 11 && tempPosY < rightY[k])
+					if (player[PLAYER_RIGHT].unit[k].health > 0
+					 && tempPosX > player[PLAYER_RIGHT].unit[k].unitX
+					 && tempPosX < player[PLAYER_RIGHT].unit[k].unitX + 11
+					 && tempPosY > player[PLAYER_RIGHT].unit[k].unitY - 11
+					 && tempPosY < player[PLAYER_RIGHT].unit[k].unitY)
 					{
 						player[PLAYER_RIGHT].unit[k].health--;
 						if (player[PLAYER_RIGHT].unit[k].health == 0)
 						{
-							JE_makeExplosion(rightX[k] + 5, round(rightY[k]) - 5, (player[PLAYER_RIGHT].unit[k].unitType == UNIT_HELI) * 2);
+							JE_makeExplosion(player[PLAYER_RIGHT].unit[k].unitX + 5, round(player[PLAYER_RIGHT].unit[k].unitY) - 5, (player[PLAYER_RIGHT].unit[k].unitType == UNIT_HELI) * 2);
 							if (player[PLAYER_RIGHT].unit[k].unitType != UNIT_SATELLITE)
 							{
 								player[PLAYER_RIGHT].unitsRemaining--;
@@ -1583,7 +1599,7 @@ void DE_RunTickShots( void )
 		{
 			if (player[PLAYER_LEFT].unit[j].health > 0)
 			{
-				if (tempPosX > leftX[j] && tempPosX < leftX[j] + 11 && tempPosY > leftY[j] - 13 && tempPosY < leftY[j])
+				if (tempPosX > player[PLAYER_LEFT].unit[j].unitX && tempPosX < player[PLAYER_LEFT].unit[j].unitX + 11 && tempPosY > player[PLAYER_LEFT].unit[j].unitY - 13 && tempPosY < player[PLAYER_LEFT].unit[j].unitY)
 				{
 					destructShotAvail[i] = true;
 					JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
@@ -1595,7 +1611,7 @@ void DE_RunTickShots( void )
 		{
 			if (player[PLAYER_RIGHT].unit[j].health > 0)
 			{
-				if (tempPosX > rightX[j] && tempPosX < rightX[j] + 11 && tempPosY > rightY[j] - 13 && tempPosY < rightY[j])
+				if (tempPosX > player[PLAYER_RIGHT].unit[j].unitX && tempPosX < player[PLAYER_RIGHT].unit[j].unitX + 11 && tempPosY > player[PLAYER_RIGHT].unit[j].unitY - 13 && tempPosY < player[PLAYER_RIGHT].unit[j].unitY)
 				{
 					destructShotAvail[i] = true;
 					JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
@@ -1817,15 +1833,15 @@ void DE_RunTickAI( void )
 			{
 				player[player_index].aiMemory.c_Power = 1;
 			}
-			if (mt_rand() % leftX[CURUNIT(player_index)] > 100)
+			if (mt_rand() % CURUNIT_unitX(player_index) > 100)
 			{
 				player[player_index].aiMemory.c_Power = 1;
 			}
-			if (mt_rand() % 240 > leftX[CURUNIT(player_index)])
+			if (mt_rand() % 240 > CURUNIT_unitX(player_index))
 			{
 				player[player_index].moves.actions[MOVE_RIGHT] = true;
 			}
-			else if ((mt_rand() % 20) + 300 < leftX[CURUNIT(player_index)])
+			else if ((mt_rand() % 20) + 300 < CURUNIT_unitX(player_index))
 			{
 				player[player_index].moves.actions[MOVE_LEFT] = true;
 			}
@@ -1833,14 +1849,14 @@ void DE_RunTickAI( void )
 			{
 				player[player_index].aiMemory.c_Angle = (mt_rand() % 3) - 1;
 			}
-			if (leftX[CURUNIT(player_index)] > 295 && leftLastMove[CURUNIT(player_index)] > 1)
+			if (CURUNIT_unitX(player_index) > 295 && leftLastMove[CURUNIT(player_index)] > 1)
 			{
 				player[player_index].moves.actions[MOVE_LEFT] = true;
 				player[player_index].moves.actions[MOVE_RIGHT] = false;
 			}
-			if (CURUNIT_unitType(player_index) != UNIT_HELI || leftLastMove[CURUNIT(player_index)] > 3 || (leftX[CURUNIT(player_index)] > 160 && leftLastMove[CURUNIT(player_index)] > -3))
+			if (CURUNIT_unitType(player_index) != UNIT_HELI || leftLastMove[CURUNIT(player_index)] > 3 || (CURUNIT_unitX(player_index) > 160 && leftLastMove[CURUNIT(player_index)] > -3))
 			{
-				if (mt_rand() % (int)round(leftY[CURUNIT(player_index)]) < 150 && leftYMov[CURUNIT(player_index)] < 0.01f && (leftX[CURUNIT(player_index)] < 160 || leftLastMove[CURUNIT(player_index)] < 2))
+				if (mt_rand() % (int)round(CURUNIT_unitY(player_index)) < 150 && leftYMov[CURUNIT(player_index)] < 0.01f && (CURUNIT_unitX(player_index) < 160 || leftLastMove[CURUNIT(player_index)] < 2))
 				{
 					player[player_index].moves.actions[MOVE_FIRE] = true;
 				}
@@ -1853,7 +1869,7 @@ void DE_RunTickAI( void )
 
 			for (i = 0; i < MAX_INSTALLATIONS; i++)
 			{
-				if (abs(rightX[i] - leftX[CURUNIT(player_index)]) < 8)
+				if (abs(player[player_target].unit[i].unitX - CURUNIT_unitX(player_index)) < 8)
 				{
 					/* I get it.  This makes helicoptors hover over
 					 * their enemies. */
@@ -1937,11 +1953,11 @@ void DE_RunTickDrawCrosshairs( void )
 	 */
 	if (CURUNIT_unitType(PLAYER_LEFT) == UNIT_HELI)
 	{
-		tempPosX = leftX[CURUNIT(PLAYER_LEFT)] + round(0.1f * leftLastMove[CURUNIT(PLAYER_LEFT)] * leftLastMove[CURUNIT(PLAYER_LEFT)] * leftLastMove[CURUNIT(PLAYER_LEFT)]) + 5;
-		tempPosY = round(leftY[CURUNIT(PLAYER_LEFT)]) + 1;
+		tempPosX = CURUNIT_unitX(PLAYER_LEFT) + round(0.1f * leftLastMove[CURUNIT(PLAYER_LEFT)] * leftLastMove[CURUNIT(PLAYER_LEFT)] * leftLastMove[CURUNIT(PLAYER_LEFT)]) + 5;
+		tempPosY = round(CURUNIT_unitY(PLAYER_LEFT)) + 1;
 	} else {
-		tempPosX = round(leftX[CURUNIT(PLAYER_LEFT)] + 6 + cos(CURUNIT_angle(PLAYER_LEFT)) * (CURUNIT_power(PLAYER_LEFT) * 8 + 7));
-		tempPosY = round(leftY[CURUNIT(PLAYER_LEFT)] - 7 - sin(CURUNIT_angle(PLAYER_LEFT)) * (CURUNIT_power(PLAYER_LEFT) * 8 + 7));
+		tempPosX = round(CURUNIT_unitX(PLAYER_LEFT) + 6 + cos(CURUNIT_angle(PLAYER_LEFT)) * (CURUNIT_power(PLAYER_LEFT) * 8 + 7));
+		tempPosY = round(CURUNIT_unitY(PLAYER_LEFT) - 7 - sin(CURUNIT_angle(PLAYER_LEFT)) * (CURUNIT_power(PLAYER_LEFT) * 8 + 7));
 	}
 	JE_pix(tempPosX,     tempPosY,     14);
 	JE_pix(tempPosX + 3, tempPosY,      3);
@@ -1951,11 +1967,11 @@ void DE_RunTickDrawCrosshairs( void )
 
 	if (CURUNIT_unitType(PLAYER_RIGHT) == UNIT_HELI)
 	{  /*Heli*/
-		tempPosX = rightX[CURUNIT(PLAYER_RIGHT)] + round(0.1f * rightLastMove[CURUNIT(PLAYER_RIGHT)] * rightLastMove[CURUNIT(PLAYER_RIGHT)] * rightLastMove[CURUNIT(PLAYER_RIGHT)]) + 5;
-		tempPosY = round(rightY[CURUNIT(PLAYER_RIGHT)]) + 1;
+		tempPosX = CURUNIT_unitX(PLAYER_RIGHT) + round(0.1f * rightLastMove[CURUNIT(PLAYER_RIGHT)] * rightLastMove[CURUNIT(PLAYER_RIGHT)] * rightLastMove[CURUNIT(PLAYER_RIGHT)]) + 5;
+		tempPosY = round(CURUNIT_unitY(PLAYER_RIGHT)) + 1;
 	} else {
-		tempPosX = round(rightX[CURUNIT(PLAYER_RIGHT)] + 6 - cos(CURUNIT_angle(PLAYER_RIGHT)) * (CURUNIT_power(PLAYER_RIGHT) * 8 + 7));
-		tempPosY = round(rightY[CURUNIT(PLAYER_RIGHT)] - 7 - sin(CURUNIT_angle(PLAYER_RIGHT)) * (CURUNIT_power(PLAYER_RIGHT) * 8 + 7));
+		tempPosX = round(CURUNIT_unitX(PLAYER_RIGHT) + 6 - cos(CURUNIT_angle(PLAYER_RIGHT)) * (CURUNIT_power(PLAYER_RIGHT) * 8 + 7));
+		tempPosY = round(CURUNIT_unitY(PLAYER_RIGHT) - 7 - sin(CURUNIT_angle(PLAYER_RIGHT)) * (CURUNIT_power(PLAYER_RIGHT) * 8 + 7));
 	}
 	JE_pix(tempPosX,     tempPosY,     14);
 	JE_pix(tempPosX + 3, tempPosY,      3);
@@ -2061,28 +2077,28 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 		} else if (CURUNIT_unitType(player_index) == UNIT_HELI) {
-			if (player[player_index].moves.actions[MOVE_LEFT] == true && leftX[CURUNIT(player_index)] > 5)
-				if (JE_stabilityCheck(leftX[CURUNIT(player_index)] - 5, round(leftY[CURUNIT(player_index)])))
+			if (player[player_index].moves.actions[MOVE_LEFT] == true && CURUNIT_unitX(player_index) > 5)
+				if (JE_stabilityCheck(CURUNIT_unitX(player_index) - 5, round(CURUNIT_unitX(player_index))))
 				{
 					if (leftLastMove[CURUNIT(player_index)] > -5)
 					{
 						leftLastMove[CURUNIT(player_index)]--;
 					}
-					leftX[CURUNIT(player_index)]--;
-					if (JE_stabilityCheck(leftX[CURUNIT(player_index)], round(leftY[CURUNIT(player_index)])))
+					CURUNIT_unitX(player_index)--;
+					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
 					{
 						CURUNIT_isYInAir(player_index) = true;
 					}
 				}
-			if (player[player_index].moves.actions[MOVE_RIGHT] == true && leftX[CURUNIT(player_index)] < 305)
-				if (JE_stabilityCheck(leftX[CURUNIT(player_index)] + 5, round(leftY[CURUNIT(player_index)])))
+			if (player[player_index].moves.actions[MOVE_RIGHT] == true && CURUNIT_unitX(player_index) < 305)
+				if (JE_stabilityCheck(CURUNIT_unitX(player_index) + 5, round(CURUNIT_unitY(player_index))))
 				{
 					if (leftLastMove[CURUNIT(player_index)] < 5)
 					{
 						leftLastMove[CURUNIT(player_index)]++;
 					}
-					leftX[CURUNIT(player_index)]++;
-					if (JE_stabilityCheck(leftX[CURUNIT(player_index)], round(leftY[CURUNIT(player_index)])))
+					CURUNIT_unitX(player_index)++;
+					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
 					{
 						CURUNIT_isYInAir(player_index) = true;
 					}
@@ -2185,16 +2201,12 @@ void DE_RunTickProcessInput( void )
 
 					if (CURUNIT_unitType(player_index) == UNIT_HELI)
 					{
-						shotRec[emptyShot-1].x = leftX[CURUNIT(player_index)] + leftLastMove[CURUNIT(player_index)] * 2 + 5;
-						shotRec[emptyShot-1].y = leftY[CURUNIT(player_index)] + 1;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + leftLastMove[CURUNIT(player_index)] * 2 + 5;
+						shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) + 1;
 						shotRec[emptyShot-1].ymov = 0.5f + leftYMov[CURUNIT(player_index)] * 0.1f;
-						/* This next line is responsible for the odd 'if I'm
-						 * moving up while firing at a very slight angle it
-						 * shifts to the other side' 'bug'.
-						 * It's present in the original BTW. */
 						shotRec[emptyShot-1].xmov = 0.02f * leftLastMove[CURUNIT(player_index)] * leftLastMove[CURUNIT(player_index)] * leftLastMove[CURUNIT(player_index)];
 
-						if (player[player_index].moves.actions[MOVE_UP] && leftY[CURUNIT(player_index)] < 30) /* For some odd reason if we're too high we ignore most of our computing. */
+						if (player[player_index].moves.actions[MOVE_UP] && CURUNIT_unitY(player_index) < 30) /* For some odd reason if we're too high we ignore most of our computing. */
 						{
 							shotRec[emptyShot-1].ymov = 0.1f;
 							if (shotRec[emptyShot-1].xmov < 0)
@@ -2205,11 +2217,11 @@ void DE_RunTickProcessInput( void )
 							{
 								shotRec[emptyShot-1].xmov -= 0.1f;
 							}
-							shotRec[emptyShot-1].y = leftY[CURUNIT(player_index)];
+							shotRec[emptyShot-1].y = CURUNIT_unitY(player_index);
 						}
 					} else {
-						shotRec[emptyShot-1].x = leftX[CURUNIT(player_index)] + 6 + cos(CURUNIT_angle(player_index)) * 10;
-						shotRec[emptyShot-1].y = leftY[CURUNIT(player_index)] - 7 - sin(CURUNIT_angle(player_index)) * 10;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + 6 + cos(CURUNIT_angle(player_index)) * 10;
+						shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) - 7 - sin(CURUNIT_angle(player_index)) * 10;
 						shotRec[emptyShot-1].ymov = -sin(CURUNIT_angle(player_index)) * CURUNIT_power(player_index);
 						shotRec[emptyShot-1].xmov =  cos(CURUNIT_angle(player_index)) * CURUNIT_power(player_index);
 					}
@@ -2231,7 +2243,7 @@ void DE_RunTickProcessInput( void )
 					{
 						if (destructShotAvail[i] == false)
 						{
-							if (shotRec[i].x > leftX[CURUNIT(player_index)])
+							if (shotRec[i].x > CURUNIT_unitX(player_index))
 							{
 								shotRec[i].xmov += CURUNIT_power(player_index) * 0.1f;
 							}
@@ -2240,9 +2252,10 @@ void DE_RunTickProcessInput( void )
 					for (i = 0; i < MAX_INSTALLATIONS; i++) /* magnets push coptors */
 					{
 						if (player[player_index].unit[i].unitType == UNIT_HELI
-						 && player[player_index].unit[i].isYInAir && (rightX[i] + 11) < 318) /* changed to properly align border */
+						 && player[player_index].unit[i].isYInAir == true
+						 && player[player_index].unit[i].unitX + 11 < 318) /* changed to properly align border */
 						{
-							rightX[i] += 2;
+							player[player_index].unit[i].unitX += 2;
 						}
 					}
 					CURUNIT_ani_frame(player_index) = 1;
@@ -2276,31 +2289,31 @@ void DE_RunTickProcessInput( void )
 				}
 			}
 		} else if (CURUNIT_unitType(player_index) == UNIT_HELI) { /*Helicopter*/
-			if (player[player_index].moves.actions[MOVE_LEFT] == true && rightX[CURUNIT(player_index)] > 5)
+			if (player[player_index].moves.actions[MOVE_LEFT] == true && CURUNIT_unitX(player_index) > 5)
 			{
-				if (JE_stabilityCheck(rightX[CURUNIT(player_index)] - 5, round(rightY[CURUNIT(player_index)])))
+				if (JE_stabilityCheck(CURUNIT_unitX(player_index) - 5, round(CURUNIT_unitY(player_index))))
 				{
 					if (rightLastMove[CURUNIT(player_index)] > -5)
 					{
 						rightLastMove[CURUNIT(player_index)]--;
 					}
-					rightX[CURUNIT(player_index)]--;
-					if (JE_stabilityCheck(rightX[CURUNIT(player_index)], round(rightY[CURUNIT(player_index)])))
+					CURUNIT_unitX(player_index)--;
+					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
 					{
 						CURUNIT_isYInAir(player_index) = true;
 					}
 				}
 			}
-			if (player[player_index].moves.actions[MOVE_RIGHT] == true && rightX[CURUNIT(player_index)] < 305)
+			if (player[player_index].moves.actions[MOVE_RIGHT] == true && CURUNIT_unitX(player_index) < 305)
 			{
-				if (JE_stabilityCheck(rightX[CURUNIT(player_index)] + 5, round(rightY[CURUNIT(player_index)])))
+				if (JE_stabilityCheck(CURUNIT_unitX(player_index) + 5, round(CURUNIT_unitY(player_index))))
 				{
 					if (rightLastMove[CURUNIT(player_index)] < 5)
 					{
 						rightLastMove[CURUNIT(player_index)]++;
 					}
-					rightX[CURUNIT(player_index)]++;
-					if (JE_stabilityCheck(rightX[CURUNIT(player_index)], round(rightY[CURUNIT(player_index)])))
+					CURUNIT_unitX(player_index)++;
+					if (JE_stabilityCheck(CURUNIT_unitX(player_index), round(CURUNIT_unitY(player_index))))
 					{
 						CURUNIT_isYInAir(player_index) = true;
 					}
@@ -2404,11 +2417,12 @@ void DE_RunTickProcessInput( void )
 
 					if (CURUNIT_unitType(player_index) == UNIT_HELI)
 					{
-						shotRec[emptyShot-1].x = rightX[CURUNIT(player_index)] + rightLastMove[CURUNIT(player_index)] * 2 + 5;
-						shotRec[emptyShot-1].y = rightY[CURUNIT(player_index)] + 1;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + rightLastMove[CURUNIT(player_index)] * 2 + 5;
+						shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) + 1;
 						shotRec[emptyShot-1].ymov = 0.5f;
 						shotRec[emptyShot-1].xmov = 0.02f * rightLastMove[CURUNIT(player_index)] * rightLastMove[CURUNIT(player_index)] * rightLastMove[CURUNIT(player_index)];
-						if ((keysactive[SDLK_KP8] || keysactive[SDLK_UP]) && rightY[CURUNIT(player_index)] < 30)
+						if (player[player_index].moves.actions[MOVE_UP] == true
+						 && CURUNIT_unitY(player_index) < 30)
 						{
 							shotRec[emptyShot-1].ymov = 0.1f;
 							if (shotRec[emptyShot-1].xmov < 0)
@@ -2418,25 +2432,25 @@ void DE_RunTickProcessInput( void )
 							else if (shotRec[emptyShot-1].xmov > 0) {
 								shotRec[emptyShot-1].xmov -= 0.1f;
 							}
-							shotRec[emptyShot-1].y = rightY[CURUNIT(player_index)];
+							shotRec[emptyShot-1].y = CURUNIT_unitY(player_index);
 						}
 					} else {
-						shotRec[emptyShot-1].x = rightX [CURUNIT(player_index)] + 6 - cos(CURUNIT_angle(player_index)) * 10;
-						shotRec[emptyShot-1].y = rightY [CURUNIT(player_index)] - 7 - sin(CURUNIT_angle(player_index)) * 10;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + 6 - cos(CURUNIT_angle(player_index)) * 10;
+						shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) - 7 - sin(CURUNIT_angle(player_index)) * 10;
 						shotRec[emptyShot-1].ymov = -sin(CURUNIT_angle(player_index)) * CURUNIT_power(player_index);
 						shotRec[emptyShot-1].xmov = -cos(CURUNIT_angle(player_index)) * CURUNIT_power(player_index);
 					}
 
 					if (CURUNIT_unitType(player_index) == UNIT_JUMPER)
 					{
-						shotRec[emptyShot-1].x = rightX[CURUNIT(player_index)] + 2;
+						shotRec[emptyShot-1].x = CURUNIT_unitX(player_index) + 2;
 						if (CURUNIT_isYInAir(player_index) == true)
 						{
 							shotRec[emptyShot-1].ymov = 1;
-							shotRec[emptyShot-1].y = rightY[CURUNIT(player_index)] + 2;
+							shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) + 2;
 						} else {
 							shotRec[emptyShot-1].ymov = -2;
-							shotRec[emptyShot-1].y = rightY[CURUNIT(player_index)] - 12;
+							shotRec[emptyShot-1].y = CURUNIT_unitY(player_index) - 12;
 						}
 					}
 
@@ -2457,7 +2471,7 @@ void DE_RunTickProcessInput( void )
 					{
 						if (!destructShotAvail[i])
 						{
-							if (shotRec[i].x < rightX[CURUNIT(player_index)])
+							if (shotRec[i].x < CURUNIT_unitX(player_index))
 							{
 								shotRec[i].xmov -= CURUNIT_power(player_index) * 0.1f;
 							}
@@ -2467,9 +2481,9 @@ void DE_RunTickProcessInput( void )
 					{
 						if (player[player_index].unit[i].unitType == UNIT_HELI
 						 && player[player_index].unit[i].isYInAir == true
-						 && leftX[i] > 1)
+						 && player[player_index].unit[i].unitX > 1)
 						{
-							leftX[i] -= 2;
+							player[player_index].unit[i].unitX -= 2;
 						}
 					}
 
