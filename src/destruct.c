@@ -104,6 +104,8 @@ enum de_shot_t { SHOT_TRACER = 1, SHOT_SMALL = 2, SHOT_LARGE = 3,
                  SHOT_MEGABLAST = 15, SHOT_MINI = 16, SHOT_BOMB = 17,
                  SHOT_FIRST = 1, SHOT_LAST = 17, MAX_SHOT_TYPES = 17, SHOT_INVALID = 0 };
 enum de_trails_t { TRAILS_NONE = 0, TRAILS_NORMAL = 1, TRAILS_FULL = 2 };
+enum de_pixel_t { PIXEL_BLACK = 0, PIXEL_DIRT = 25, PIXEL_EXPLODE = 252 };
+
 /* keys and moves should line up. */
 enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT = 1,  KEY_UP = 2,  KEY_DOWN = 3,  KEY_CHANGE = 4,  KEY_FIRE = 5,  KEY_CYUP = 6,  KEY_CYDN = 7,  MAX_KEY = 8};
 enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT = 1, MOVE_UP = 2, MOVE_DOWN = 3, MOVE_CHANGE = 4, MOVE_FIRE = 5, MOVE_CYUP = 6, MOVE_CYDN = 7, MAX_MOVE = 8};
@@ -183,6 +185,11 @@ struct destruct_player_s {
 	unsigned int shotDelay;
 	unsigned int score;
 };
+struct destruct_wall_s {
+
+	bool wallExist;
+	unsigned int wallX, wallY;
+};
 
 /*** Function decs ***/
 void JE_destructMain( void );
@@ -190,6 +197,11 @@ void JE_introScreen( void );
 void JE_modeSelect( void );
 
 void JE_generateTerrain( void );
+void DE_generateBaseTerrain( unsigned int, unsigned int *);
+void DE_drawBaseTerrain( unsigned int * );
+void DE_generateUnits( unsigned int * );
+void DE_generateWalls( unsigned int * );
+void DE_generateRings( Uint8 );
 void JE_aliasDirt( void );
 
 
@@ -217,7 +229,7 @@ void DE_RunTickPlaySounds( void );
 
 
 
-JE_byte JE_placementPosition( JE_word x, JE_byte width );
+unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
 JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y );
 
 void JE_tempScreenChecking( void );
@@ -265,6 +277,29 @@ const bool weaponSystems[MAX_UNITS][MAX_SHOT_TYPES] =
 	{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}  // helicopter
 };
 
+/* More constant configuration settings. */
+/* Music that destruct will play.  You can check out musmast.c to see what is what. */
+const JE_byte goodsel[14] /*[1..14]*/ = {1, 2, 6, 12, 13, 14, 17, 23, 24, 26, 28, 29, 32, 33};
+
+/* Unit creation.  Need to move this later: Doesn't belong here */
+const JE_byte basetypes[8][11] /*[1..8, 1..11]*/ = /*0 is amount of units*/
+{
+	{5, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_DIRT,   UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER, UNIT_HELI},   /*Normal*/
+	{8, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_TANK,   UNIT_TANK,      UNIT_TANK,   UNIT_TANK,   UNIT_TANK,   UNIT_TANK},   /*Traditional*/
+	{4, UNIT_HELI, UNIT_HELI, UNIT_HELI, UNIT_HELI,      UNIT_HELI,   UNIT_HELI,      UNIT_HELI,   UNIT_HELI,   UNIT_HELI,   UNIT_HELI},   /*Weak   Heli attack fleet*/
+	{8, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_NUKE,      UNIT_NUKE,   UNIT_NUKE,      UNIT_DIRT,   UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER},   /*Strong Heli defense fleet*/
+	{8, UNIT_HELI, UNIT_HELI, UNIT_HELI, UNIT_HELI,      UNIT_HELI,   UNIT_HELI,      UNIT_HELI,   UNIT_HELI,   UNIT_HELI,   UNIT_HELI},   /*Strong Heli attack fleet*/
+	{4, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_NUKE,   UNIT_NUKE,      UNIT_DIRT,   UNIT_MAGNET, UNIT_JUMPER, UNIT_JUMPER},   /*Weak   Heli defense fleet*/
+	{8, UNIT_TANK, UNIT_NUKE, UNIT_DIRT, UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_TANK,   UNIT_NUKE},   /*Overpowering fleet*/
+	{4, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_TANK,   UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_NUKE,   UNIT_JUMPER}    /*Weak fleet*/
+};
+const unsigned int baseLookup[MAX_PLAYERS][DESTRUCT_MODES] =
+{
+	{1, 2, 4, 5, 7},
+	{1, 2, 3, 6, 8}
+};
+
+
 const JE_byte leftGraphicBase[MAX_UNITS] /*[1..MAX_UNITS]*/ = {1, 6, 11, 58, 63, 68, 96, 153};
 const JE_byte rightGraphicBase[MAX_UNITS] /*[1..MAX_UNITS]*/ = {20, 25, 30, 77, 82, 87, 115, 172};
 
@@ -302,26 +337,22 @@ JE_boolean destructFirstTime;
 
 JE_byte destructMode;  /*Game Mode - See Tyrian.HTX*/
 
-JE_byte arenaType;
+
 JE_boolean haveWalls;
 
 struct destruct_player_s player[MAX_PLAYERS];
 
+
 JE_boolean wallExist[20]; /*[1..20]*/
 JE_byte wallsX[20], wallsY[20]; /*[1..20]*/
 
-JE_byte dirtHeight[320]; /*[0..319]*/
+
 
 JE_boolean destructShotAvail[MAX_SHOTS]; /*[1..shotmax]*/
 
 struct destruct_shot_s shotRec[MAX_SHOTS]; /*[1..shotmax]*/
 
 JE_boolean endOfGame, destructQuit;
-
-
-JE_boolean destructFound;
-JE_real destructTempR;
-
 JE_boolean explosionAvail[MAX_EXPLO]; /*[1..explomax]*/
 
 struct destruct_explo_s exploRec[MAX_EXPLO]; /*[1..explomax]*/
@@ -466,274 +497,330 @@ void JE_modeSelect( void )
 
 void JE_generateTerrain( void )
 {
-	const JE_byte goodsel[14] /*[1..14]*/ = {1, 2, 6, 12, 13, 14, 17, 23, 24, 26, 28, 29, 32, 33};
+	int arenaType;
+	bool makeHoles;
+	unsigned int dirtHeight[320]; /*[0..319]*/
 
-	const JE_byte basetypes[8][11] /*[1..8, 1..11]*/ = /*0 is amount of units*/
-	{
-		{5, 1, 1, 2, 3, 3, 4, 5, 6, 7, 8},   /*Normal*/
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /*Traditional*/
-		{4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},   /*Weak   Heli attack fleet*/
-		{8, 1, 1, 1, 2, 2, 2, 3, 5, 6, 7},   /*Strong Heli defense fleet*/
-		{8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},   /*Strong Heli attack fleet*/
-		{4, 1, 1, 1, 1, 2, 2, 3, 5, 7, 7},   /*Weak   Heli defense fleet*/
-		{8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2},   /*Overpowering fleet*/
-		{4, 1, 1, 2, 3, 1, 6, 7, 8, 2, 7}    /*Weak fleet*/
-	};
 
-	const JE_byte Lbaselookup[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 2, 4, 5, 7};
-	const JE_byte Rbaselookup[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 2, 3, 6, 8};
-
-	JE_byte newheight, oldheight;
-	JE_shortint heightchange;
-	JE_real sinewave, sinewave2, cosinewave, cosinewave2;
-	JE_word x, y, z;
-	JE_byte HC1;
-	JE_byte temp;
-	JE_word destructTempX, destructTempY, destructTempX2, destructTempY2;
-	JE_byte arenaType2;
-
+	//arenaType =
+	//arenaType2 = (mt_rand() % 4) + 1;
 	arenaType = (mt_rand() % 4) + 1;
-	arenaType2 = (mt_rand() % 4) + 1;
+	makeHoles = (mt_rand() % 4 == 0) ? true : false;
 
-	/*  Type                 Type2
-	    1 = normal           1 = Normal
-	    2 = fuzzy walls
-	    3 = ballzies
-	    4 = highwalls
+	/* The unique modifiers:
+	    Altered sine generation (smaller values)
+	    Fuzzy hills
+	    Rings of dirt
+
+	   The non-unique ones;:
+	    Rings of not dirt (holes)
+	    Walls
 	*/
 
 	play_song(goodsel[mt_rand() % 14] - 1);
-	heightchange = (mt_rand() % 3) - 1;
 
-	sinewave = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
-	sinewave2 = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
-	cosinewave = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
-	cosinewave2 = ((float)mt_rand() / MT_RAND_MAX) * M_PI / 50.0f + 0.01f;
-	HC1 = 20;
-
-	switch (arenaType)
-	{
-		case 1:
-			sinewave = M_PI - ((float)mt_rand() / MT_RAND_MAX) * 0.3f;
-			sinewave2 = M_PI - ((float)mt_rand() / MT_RAND_MAX) * 0.3f;
-			break;
-		case 2:
-			HC1 = 100;
-			break;
-	}
-
-	for (x = 1; x <= 318; x++)
-	{
-		newheight = round(
-			sin(sinewave * x) * HC1 + sin(sinewave2 * x) * 15.0f +
-			cos(cosinewave * x) * 10.0f + sin(cosinewave2 * x) * 15.0f
-		) + 130;
-
-		if (newheight < 40)
-			newheight = 40;
-		if (newheight > 195)
-			newheight = 195;
-
-		dirtHeight[x] = newheight;
-	}
-
-	tempW = 0;
-	player[PLAYER_LEFT].unitsRemaining = 0;
-
-	for (x = 0; x < basetypes[Lbaselookup[destructMode-1]-1][1-1]; x++)
-	{
-		player[PLAYER_LEFT].unit[x].unitX = (mt_rand() % 120) + 10;
-		player[PLAYER_LEFT].unit[x].unitY = JE_placementPosition(player[PLAYER_LEFT].unit[x].unitX - 1, 14);
-		/* Added 2 lines.  Feel left/right should be mirrored */
-		player[PLAYER_LEFT].unit[x].unitYMov = 0;
-		player[PLAYER_LEFT].unit[x].isYInAir = false;
-		player[PLAYER_LEFT].unit[x].unitType = basetypes[Lbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
-		if (player[PLAYER_LEFT].unit[x].unitType == UNIT_SATELLITE)
-		{
-			if (tempW == MAX_INSTALLATIONS - 1)
-			{ /* Makes sure there's always at least one tank */
-				player[PLAYER_LEFT].unit[x].unitType = UNIT_TANK;
-			} else {
-				player[PLAYER_LEFT].unit[x].unitY = 30 + (mt_rand() % 40);
-				tempW++;
-			}
-		}
-		player[PLAYER_LEFT].unit[x].health = baseDamage[player[PLAYER_LEFT].unit[x].unitType-1];
-		if (player[PLAYER_LEFT].unit[x].unitType != UNIT_SATELLITE)
-		{
-			player[PLAYER_LEFT].unitsRemaining++;
-		}
-	}
-
-	tempW = 0;
-	player[PLAYER_RIGHT].unitsRemaining = 0;
-
-	for (x = 0; x < basetypes[Rbaselookup[destructMode-1]-1][1-1]; x++)
-	{
-		player[PLAYER_RIGHT].unit[x].unitX = 320 - ((mt_rand() % 120) + 22);
-		player[PLAYER_RIGHT].unit[x].unitY = JE_placementPosition(player[PLAYER_RIGHT].unit[x].unitX - 1, 14);
-		player[PLAYER_RIGHT].unit[x].unitYMov = 0;
-		player[PLAYER_RIGHT].unit[x].isYInAir = false;
-		player[PLAYER_RIGHT].unit[x].unitType = basetypes[Rbaselookup[destructMode-1]-1][(mt_rand() % 10) + 2-1];
-		if (player[PLAYER_RIGHT].unit[x].unitType == UNIT_SATELLITE)
-		{
-			if (tempW == MAX_INSTALLATIONS - 1)
-			{
-				player[PLAYER_RIGHT].unit[x].unitType = UNIT_TANK;
-			} else {
-				player[PLAYER_RIGHT].unit[x].unitY = 30 + (mt_rand() % 40);
-				tempW++;
-			}
-		}
-		player[PLAYER_RIGHT].unit[x].health = baseDamage[player[PLAYER_RIGHT].unit[x].unitType-1];
-		if (player[PLAYER_RIGHT].unit[x].unitType != UNIT_SATELLITE)
-		{
-			player[PLAYER_RIGHT].unitsRemaining++;
-		}
-	}
-
-	for (z = 0; z < MAX_WALL; z++)
-	{
-		wallExist[z] = false;
-	}
-
-	if (haveWalls)
-	{
-		tempW = 20;
-		do {
-
-			temp = (mt_rand() % 5) + 1;
-			if (temp > tempW)
-				temp = tempW;
-
-			do {
-				x = (mt_rand() % 300) + 10;
-
-				destructFound = true;
-
-				for (z = 0; z < 4; z++)
-				{
-					if ((x > player[PLAYER_LEFT].unit[z].unitX - 12) && (x < player[PLAYER_LEFT].unit[z].unitX + 13))
-					{
-						destructFound = false;
-					}
-				}
-				for (z = 0; z < 4; z++)
-				{
-					if ((x > player[PLAYER_RIGHT].unit[z].unitX - 12) && (x < player[PLAYER_RIGHT].unit[z].unitX + 13))
-					{
-						destructFound = false;
-					}
-				}
-
-			} while (!destructFound);
-
-			for (z = 1; z <= temp; z++)
-			{
-				wallExist[tempW - z + 1-1] = true;
-				wallsX[tempW - z + 1-1] = x;
-
-				wallsY[tempW - z + 1-1] = JE_placementPosition(x, 12) - 14 * z;
-			}
-
-			tempW -= temp;
-
-		} while (tempW != 0);
-	}
-
-	for (x = 1; x <= 318; x++)
-		JE_rectangle(x, dirtHeight[x], x, 199, 25);
+	/* Todo: create world struct w walls and dirt. Pass it instead */
+	DE_generateBaseTerrain(arenaType, dirtHeight);
+	DE_generateUnits(dirtHeight);
+	DE_generateWalls(dirtHeight);
+	DE_drawBaseTerrain(dirtHeight);
 
 	if (arenaType == 3)
-	{ /*RINGIES!!!!*/
-		int rings = mt_rand() % 6 + 1;
-		for (x = 1; x <= rings; x++)
-		{
-			destructTempX = (mt_rand() % 320);
-			destructTempY = (mt_rand() % 160) + 20;
-			y = (mt_rand() % 40) + 10;  /*Size*/
-
-			for (z = 1; z <= y * y * 2; z++)
-			{
-				destructTempR = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
-				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
-					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 25;
-			}
-		}
+	{
+		DE_generateRings(PIXEL_DIRT);
 	}
-	if (arenaType2 == 2)
-	{ /*HOLES*/
-		int holes = (mt_rand() % 6) + 1;
-		for (x = 1; x <= holes; x++)
-		{
-			destructTempX = (mt_rand() % 320);
-			destructTempY = (mt_rand() % 160) + 20;
-			y = (mt_rand() % 40) + 10;  /*Size*/
-
-			for (z = 1; z < y * y * 2; z++)
-			{
-				destructTempR = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
-				destructTempY2 = destructTempY + round(cos(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
-				destructTempX2 = destructTempX + round(sin(destructTempR) * (((float)mt_rand() / MT_RAND_MAX) * 0.1f + 0.9f) * y);
-				if ((destructTempY2 > 12) && (destructTempY2 < 200) && (destructTempX2 > 0) && (destructTempX2 < 319))
-					((Uint8 *)VGAScreen->pixels)[destructTempX2 + destructTempY2 * VGAScreen->pitch] = 0;
-			}
-		}
+	if (makeHoles)
+	{
+		DE_generateRings(PIXEL_BLACK);
 	}
 
 	JE_aliasDirt();
-
 	JE_showVGA();
 
 	memcpy(destructTempScreen->pixels, VGAScreen->pixels, destructTempScreen->pitch * destructTempScreen->h);
 }
+void DE_generateBaseTerrain( unsigned int arenaType, unsigned int * gameWorld)
+{
+	unsigned int i;
+	unsigned int newheight, HeightMul;
+	double sinewave, sinewave2, cosinewave, cosinewave2;
+
+
+	/* The 'terrain' is actually the video buffer :).  If it's brown, flu... er,
+	 * brown pixels are what we check for collisions with. */
+
+	/* The ranges here are between .01 and roughly 0.07283...*/
+	sinewave    = (mt_rand_lt1()) * M_PI / 50.0 + 0.01;
+	sinewave2   = (mt_rand_lt1()) * M_PI / 50.0 + 0.01;
+	cosinewave  = (mt_rand_lt1()) * M_PI / 50.0 + 0.01;
+	cosinewave2 = (mt_rand_lt1()) * M_PI / 50.0 + 0.01;
+	HeightMul = 20;
+
+	/* This block just exists to mix things up. */
+	switch (arenaType)
+	{
+	case 1: /* This somehow makes the wavy hills.  Ask a math guy for an explanation. */
+		sinewave  = M_PI - mt_rand_lt1() * 0.3f;
+		sinewave2 = M_PI - mt_rand_lt1() * 0.3f;
+		break;
+	case 2: /* This just makes everything really tall */
+		HeightMul = 100;
+		break;
+	}
+
+	/* Now compute a height for each of our lines. */
+	for (i = 1; i <= 318; i++)
+	{
+		newheight = round(sin(sinewave   * i) * HeightMul + sin(sinewave2   * i) * 15.0 +
+		                  cos(cosinewave * i) * 10.0      + sin(cosinewave2 * i) * 15.0) + 130;
+
+		/* Bind it; we have mins and maxs */
+		if (newheight < 40)
+		{
+			newheight = 40;
+		}
+		else if (newheight > 195) {
+			newheight = 195;
+		}
+		gameWorld[i] = newheight;
+	}
+	/* The base world has been created. */
+}
+void DE_drawBaseTerrain( unsigned int * gameWorld)
+{
+	unsigned int i;
+
+
+	for (i = 1; i <= 318; i++)
+	{
+		JE_rectangle(i, gameWorld[i], i, 199, PIXEL_DIRT);
+	}
+}
+
+void DE_generateUnits( unsigned int * world )
+{
+	unsigned int i, j, numSatellites;
+
+
+	for (i = 0; i < MAX_PLAYERS; i++)
+	{
+
+		numSatellites = 0;
+		player[i].unitsRemaining = 0;
+
+		for (j = 0; j < basetypes[baseLookup[i][destructMode-1]-1][0]; j++)
+		{
+			/* Not everything is the same between players */
+			if(i == PLAYER_LEFT)
+			{
+				player[i].unit[j].unitX = (mt_rand() % 120) + 10;
+			}
+			else
+			{
+				player[i].unit[j].unitX = 320 - ((mt_rand() % 120) + 22);
+			}
+
+			player[i].unit[j].unitY = JE_placementPosition(player[i].unit[j].unitX - 1, 14, world);
+			player[i].unit[j].unitYMov = 0;
+			player[i].unit[j].isYInAir = false;
+			player[i].unit[j].unitType = basetypes[baseLookup[i][destructMode-1]-1][(mt_rand() % 10) + 1];
+
+			/* Sats are special cases since they are useless.  They don't count
+			 * as active units and we can't have a team of all sats */
+			if (player[i].unit[j].unitType == UNIT_SATELLITE)
+			{
+				if (numSatellites == basetypes[baseLookup[i][destructMode-1]-1][0])
+				{
+					player[i].unit[j].unitType = UNIT_TANK;
+					player[i].unitsRemaining++;
+				} else {
+					player[i].unit[j].unitY = 30 + (mt_rand() % 40);
+					numSatellites++;
+				}
+			}
+			else
+			{
+				player[i].unitsRemaining++;
+			}
+
+			/* Now just fill in the rest of the unit's values. */
+			player[i].unit[j].health = baseDamage[player[i].unit[j].unitType-1];
+			player[i].unit[j].ani_frame = 0;
+		}
+	}
+}
+void DE_generateWalls( unsigned int * world )
+{
+	unsigned int i, j, wallX;
+	unsigned int wallHeight, remainWalls;
+
+
+	if (haveWalls == false)
+	{
+		/* Just clear them out */
+		for (i = 0; i < MAX_WALL; i++)
+		{
+			wallExist[i] = false;
+		}
+		return;
+	}
+
+	remainWalls = MAX_WALL;
+
+	do {
+
+		/* Create a wall.  Decide how tall the wall will be */
+		wallHeight = (mt_rand() % 5) + 1;
+		if(wallHeight > remainWalls)
+		{
+			wallHeight = remainWalls;
+		}
+
+		/* Now find a good place to put the wall. */
+		while(1) {
+label_outercontinue:
+
+			wallX = (mt_rand() % 300) + 10;
+
+			/* Is this place already occupied? Apparently we only care enough
+			 * to leave four units unmasked (I can certainly recall having
+			 * units hidden behind walls) */
+			for (i = 0; i < MAX_PLAYERS; i++)
+			{
+				for (j = 0; j < 4; j++)
+				{
+					if ((wallX > player[i].unit[j].unitX - 12)
+					 && (wallX < player[i].unit[j].unitX + 13))
+					{
+						goto label_outercontinue; /* Breaking out of nested loops is perhaps one of goto's only legitimate uses. */
+					}
+				}
+			}
+			break;
+		}
+
+
+		/* We now have a valid X.  Create the wall. */
+		for (i = 1; i <= wallHeight; i++)
+		{
+			wallExist[remainWalls - i] = true;
+			wallsX[remainWalls - i] = wallX;
+			wallsY[remainWalls - i] = JE_placementPosition(wallX, 12, world) - 14 * i;
+		}
+
+		remainWalls -= wallHeight;
+
+	} while (remainWalls != 0);
+}
+void DE_generateRings( Uint8 pixel )
+{
+	unsigned int i, j, tempSize;
+	int tempPosX1, tempPosY1, tempPosX2, tempPosY2;
+	double tempRadian;
+
+
+	int rings = mt_rand() % 6 + 1;
+	for (i = 1; i <= rings; i++)
+	{
+		tempPosX1 = (mt_rand() % 320);
+		tempPosY1 = (mt_rand() % 160) + 20;
+		tempSize = (mt_rand() % 40) + 10;  /*Size*/
+
+		for (j = 1; j <= tempSize * tempSize * 2; j++)
+		{
+			tempRadian = mt_rand_lt1() * (M_PI * 2);
+			tempPosY2 = tempPosY1 + round(cos(tempRadian) * (mt_rand_lt1() * 0.1f + 0.9f) * tempSize);
+			tempPosX2 = tempPosX1 + round(sin(tempRadian) * (mt_rand_lt1() * 0.1f + 0.9f) * tempSize);
+			if ((tempPosY2 > 12) && (tempPosY2 < 200)
+			 && (tempPosX2 > 0) && (tempPosX2 < 319))
+			{
+				((Uint8 *)VGAScreen->pixels)[tempPosX2 + tempPosY2 * VGAScreen->pitch] = pixel;
+			}
+		}
+	}
+}
 
 void JE_aliasDirt( void )
 {
+	/* This complicated looking function goes through the whole screen
+	 * looking for brown pixels which just happen to be next to non-brown
+	 * pixels.  It's an aliaser, just like it says. */
+
+
+	unsigned int x, y, newColor;
+
+	/* This is a pointer to the screen.  If you don't like pointer arithmetic,
+	 * you won't like this function. */
 	Uint8 *s = VGAScreen->pixels;
 	s += 12 * VGAScreen->pitch;
 
-	for (int y = 12; y < VGAScreen->h; y++)
+	for (y = 12; y < VGAScreen->h; y++)
 	{
-		for (int x = 0; x < VGAScreen->pitch; x++)
+		for (x = 0; x < VGAScreen->pitch; x++)
 		{
-			if (*s == 0)
+			if (*s == PIXEL_BLACK)
 			{
-				int temp = 0;
-				if (*(s - VGAScreen->pitch) == 25)
-					temp += 1;
+				newColor = PIXEL_BLACK;
+				if (*(s - VGAScreen->pitch) == PIXEL_DIRT) /* look up */
+				{
+					newColor += 1;
+				}
 				if (y < VGAScreen2->h - 1)
-					if (*(s + VGAScreen->pitch) == 25)
-						temp += 3;
+				{
+					if (*(s + VGAScreen->pitch) == PIXEL_DIRT) /* look down */
+					{
+						newColor += 3;
+					}
+				}
 				if (x > 0)
-					if (*(s - 1) == 25)
-						temp += 2;
+				{
+					if (*(s - 1) == PIXEL_DIRT) /* look left */
+					{
+						newColor += 2;
+					}
+				}
 				if (x < VGAScreen2->pitch - 1)
-					if (*(s + 1) == 25)
-						temp += 2;
-				if (temp)
-					*s = temp + 16;
+				{
+					if (*(s + 1) == PIXEL_DIRT) /* look right */
+					{
+						newColor += 2;
+					}
+				}
+				if (newColor)
+				{
+					*s = newColor + 16; /* 16 must be the start of the brown pixels. */
+				}
 			}
+
 			s++;
 		}
 	}
 }
 
-JE_byte JE_placementPosition( JE_word x, JE_byte width )
+unsigned int JE_placementPosition( unsigned int passed_x, unsigned int width, unsigned int * world )
 {
-	JE_word y, z;
+	unsigned int i, new_y;
 
-	y = 0;
-	for (z = x; z <= x + width - 1; z++)
-		if (y < dirtHeight[z])
-			y = dirtHeight[z];
 
-	for (z = x; z <= x + width - 1; z++)
-		dirtHeight[z] = y;
+	/* This is the function responsible for carving out chunks of land.
+	 * There's a bug here, but it's a pretty major gameplay altering one:
+	 * areas can be carved out for units that are aerial or in mountains.
+	 * This can result in huge caverns.  Ergo, it's a feature :) */
+	new_y = 0;
+	for (i = passed_x; i <= passed_x + width - 1; i++)
+	{
+		if (new_y < world[i])
+		{
+			new_y = world[i];
+		}
+	}
 
-	return y;
+	for (i = passed_x; i <= passed_x + width - 1; i++)
+	{
+		world[i] = new_y;
+	}
+
+	return new_y;
 }
 
 JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y )
@@ -1429,7 +1516,7 @@ void DE_RunTickExplosions( void )
 	unsigned int i, j, k;
 	unsigned int tempPixelIndex;
 	int tempPosX, tempPosY;
-	double tempRadius;
+	double tempRadian;
 
 
 	/* Run through all open explosions.  They are not sorted in any way */
@@ -1441,9 +1528,9 @@ void DE_RunTickExplosions( void )
 		{
 			/* An explosion is comprised of multiple 'flares' that fan out.
 			   Calculate where this 'flare' will end up */
-			tempRadius = ((float)mt_rand() / MT_RAND_MAX) * (M_PI * 2);
-			tempPosY = exploRec[i].y + round(cos(tempRadius) * ((float)mt_rand() / MT_RAND_MAX) * exploRec[i].explowidth);
-			tempPosX = exploRec[i].x + round(sin(tempRadius) * ((float)mt_rand() / MT_RAND_MAX) * exploRec[i].explowidth);
+			tempRadian = mt_rand_lt1() * M_PI * 2;
+			tempPosY = exploRec[i].y + round(cos(tempRadian) * mt_rand_lt1() * exploRec[i].explowidth);
+			tempPosX = exploRec[i].x + round(sin(tempRadian) * mt_rand_lt1() * exploRec[i].explowidth);
 
 			/* Okay, now draw the flare (as long as it isn't out of bounds) */
 			/* Actually an X out of bounds (wrapping around) doesn't seem too
@@ -1552,7 +1639,7 @@ void DE_RunTickShots( void )
 				/* Don't allow a bouncing shot to bounce straight up and down */
 				if (shotRec[i].xmov == 0)
 				{
-					shotRec[i].xmov += ((float)mt_rand() / MT_RAND_MAX) - 0.5f;
+					shotRec[i].xmov += mt_rand_lt1() - 0.5f;
 				}
 			}
 		}
