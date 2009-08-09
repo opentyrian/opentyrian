@@ -136,6 +136,8 @@ struct destruct_unit_s {
 };
 struct destruct_shot_s {
 
+	bool isAvailable;
+
 	double x;
 	double y;
 	double xmov;
@@ -150,12 +152,13 @@ struct destruct_shot_s {
 };
 struct destruct_explo_s {
 
-	JE_word x;
-	JE_byte y;
-	JE_byte explowidth;
-	JE_byte explomax;
-	JE_byte explofill;
-	JE_byte explocolor;
+	bool isAvailable;
+
+	unsigned int x, y;
+	unsigned int explowidth;
+	unsigned int explomax;
+	unsigned int explofill;
+	unsigned int explocolor;
 };
 struct destruct_moves_s {
 	bool actions[MAX_MOVE];
@@ -233,17 +236,14 @@ void DE_RunTickProcessInput( void );
 bool DE_RunTickCheckEndgame( void );
 void DE_RunTickPlaySounds( void );
 
-
-
-
 unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
-JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y );
+bool JE_stabilityCheck( unsigned int, unsigned int );
 
 void JE_tempScreenChecking( void );
 
-void JE_makeExplosion( JE_word destructTempX, JE_word destructTempY, JE_byte shottype );
-void JE_eSound( JE_byte sound );
-void JE_superPixel( JE_word loc );
+void JE_makeExplosion( unsigned int, unsigned int, enum de_shot_t );
+void JE_eSound( unsigned int );
+void JE_superPixel( unsigned int, unsigned int );
 
 void JE_helpScreen( void );
 void JE_pauseScreen( void );
@@ -346,15 +346,10 @@ JE_byte destructMode;  /*Game Mode - See Tyrian.HTX*/
 
 struct destruct_player_s player[MAX_PLAYERS];
 struct destruct_world_s  world;
-struct destruct_shot_s shotRec[MAX_SHOTS]; /*[1..shotmax]*/
-struct destruct_explo_s exploRec[MAX_EXPLO]; /*[1..explomax]*/
-
-
-JE_boolean destructShotAvail[MAX_SHOTS]; /*[1..shotmax]*/
-
+struct destruct_shot_s   shotRec[MAX_SHOTS];
+struct destruct_explo_s  exploRec[MAX_EXPLO];
 
 JE_boolean endOfGame, destructQuit;
-JE_boolean explosionAvail[MAX_EXPLO]; /*[1..explomax]*/
 
 
 
@@ -536,7 +531,6 @@ void JE_generateTerrain( void )
 
 	play_song(goodsel[mt_rand() % 14] - 1);
 
-	/* Todo: create world struct w walls and dirt. Pass it instead */
 	DE_generateBaseTerrain(world.mapFlags, world.baseMap);
 	DE_generateUnits(world.baseMap);
 	DE_generateWalls(&world);
@@ -838,17 +832,27 @@ unsigned int JE_placementPosition( unsigned int passed_x, unsigned int width, un
 	return new_y;
 }
 
-JE_boolean JE_stabilityCheck( JE_integer x, JE_integer y )
+bool JE_stabilityCheck( unsigned int x, unsigned int y )
 {
-	JE_word z, tempW, tempW2;
+	unsigned int i, numDirtPixels;
+	Uint8 * s;
 
-	tempW2 = 0;
-	tempW = x + y * destructTempScreen->pitch - 2;
-	for (z = 1; z <= 12; z++)
-		if (((Uint8 *)destructTempScreen->pixels)[tempW + z] == 25)
-			tempW2++;
 
-	return (tempW2 < 10);
+	numDirtPixels = 0;
+	s = destructTempScreen->pixels + x + (y * destructTempScreen->pitch) - 1;
+
+	/* Check the 12 pixels on the bottom border of our object */
+	for (i = 0; i < 12; i++)
+	{
+		if (*s == PIXEL_DIRT)
+		{
+			numDirtPixels++;
+		}
+		s++;
+	}
+
+	/* If there are fewer than 10 brown pixels we don't consider it a solid base */
+	return (numDirtPixels < 10);
 }
 
 void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
@@ -875,6 +879,8 @@ void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
 					(*temps)--;
 				}
 			}
+
+			/* This is copying from our temp screen to VGAScreen */
 			*s = *temps;
 
 			s++;
@@ -883,223 +889,137 @@ void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
 	}
 }
 
-void JE_makeExplosion( JE_word destructTempX, JE_word destructTempY, JE_byte shottype )
+void JE_makeExplosion( unsigned int tempPosX, unsigned int tempPosY, enum de_shot_t shottype )
 {
- 	JE_word tempW = 0;
-	JE_byte temp;
+	unsigned int i, tempExploSize;
 
-	for (temp = 0; temp < MAX_EXPLO; temp++)
+
+	/* First find an open explosion. If we can't find one, return.*/
+	for (i = 0; i < MAX_EXPLO; i++)
 	{
-		if (explosionAvail[temp])
+		if (exploRec[i].isAvailable == true)
 		{
-			tempW = temp + 1;
 			break;
 		}
 	}
-
-	if (tempW > 0)
+	if(i == MAX_EXPLO) /* No empty slots */
 	{
-		explosionAvail[tempW-1] = false;
-		exploRec[tempW-1].x = destructTempX;
-		exploRec[tempW-1].y = destructTempY;
-		exploRec[tempW-1].explowidth = 2;
+		return;
+	}
 
-		/* Bug fix!  shottype == 0 when a unit is destroyed and actually pulls
-		 * data out of another table.*/
-		if(shottype != SHOT_INVALID)
+
+	exploRec[i].isAvailable = false;
+	exploRec[i].x = tempPosX;
+	exploRec[i].y = tempPosY;
+	exploRec[i].explowidth = 2;
+
+	/* Bug fix!  shottype == 0 when a unit is destroyed and actually pulls
+	 * data out of another table.*/
+	if(shottype != SHOT_INVALID)
+	{
+		tempExploSize = exploSize[shottype-1];
+		if (tempExploSize < 5)
 		{
-			temp = exploSize[shottype-1];
-			if (temp < 5)
-			{
-				JE_eSound(3);
-			}
-			else if (temp < 15)
-			{
-				JE_eSound(4);
-			}
-			else if (temp < 20)
-			{
-				JE_eSound(12);
-			}
-			else if (temp < 40)
-			{
-				JE_eSound(11);
-			}
-			else {
-				JE_eSound(12);
-				JE_eSound(11);
-			}
-
-			exploRec[tempW-1].explomax = exploSize[shottype-1];
-			exploRec[tempW-1].explofill = exploDensity[shottype-1];
-			exploRec[tempW-1].explocolor = shotDirt[shottype-1];
+			JE_eSound(3);
 		}
-		else
+		else if (tempExploSize < 15)
 		{
 			JE_eSound(4);
-			exploRec[tempW-1].explomax = (mt_rand() % 40) + 10;
-			exploRec[tempW-1].explofill = (mt_rand() % 60) + 20;
-			exploRec[tempW-1].explocolor = 252;
 		}
+		else if (tempExploSize < 20)
+		{
+			JE_eSound(12);
+		}
+		else if (tempExploSize < 40)
+		{
+			JE_eSound(11);
+		}
+		else {
+			JE_eSound(12);
+			JE_eSound(11);
+		}
+
+		exploRec[i].explomax   = tempExploSize;
+		exploRec[i].explofill  = exploDensity[shottype-1];
+		exploRec[i].explocolor = shotDirt[shottype-1];
+	}
+	else
+	{
+		JE_eSound(4);
+		exploRec[i].explomax   = (mt_rand() % 40) + 10;
+		exploRec[i].explofill  = (mt_rand() % 60) + 20;
+		exploRec[i].explocolor = 252;
 	}
 }
 
-void JE_eSound( JE_byte sound )
+void JE_eSound( unsigned int sound )
 {
 	static int exploSoundChannel = 0;
 
 	if (++exploSoundChannel > 5)
+	{
 		exploSoundChannel = 1;
+	}
 
 	soundQueue[exploSoundChannel] = sound;
 }
 
-void JE_superPixel( JE_word loc )
+void JE_superPixel( unsigned int tempPosX, unsigned int tempPosY )
 {
-	Uint8 *s = destructTempScreen->pixels;
-	int loc_max = destructTempScreen->pitch * destructTempScreen->h;
+	const unsigned int starPattern[5][5] = {
+		{   0,   0, 246,   0,   0 },
+		{   0, 247, 249, 247,   0 },
+		{ 246, 249, 252, 249, 246 },
+		{   0, 247, 249, 247,   0 },
+		{   0,   0, 246,   0,   0 }
+	};
+	const unsigned int starIntensity[5][5] = {
+		{   0,   0,   1,   0,   0 },
+		{   0,   1,   2,   1,   0 },
+		{   1,   2,   4,   2,   1 },
+		{   0,   1,   2,   1,   0 },
+		{   0,   0,   1,   0,   0 }
+	};
 
-	if (loc > 0 && loc < loc_max)
-	{
-		/* center */
-		if (s[loc] < 252)
-			s[loc] = 252;
-		else if (s[loc] < 255 - 4)
-			s[loc] += 4;
-		else
-			s[loc] = 255;
-	}
+	int x, y, maxX, maxY;
+	unsigned int rowLen;
+	Uint8 *s;
 
-	if (loc - 1 > 0 && loc - 1 < loc_max)
-	{
-		/* left 1 */
-		if (s[loc - 1] < 249)
-			s[loc - 1] = 249;
-		else if (s[loc - 1] < 255 - 2)
-			s[loc - 1] += 2;
-		else
-			s[loc - 1] = 255;
-	}
 
-	if (loc - 2 > 0 && loc - 2 < loc_max)
-	{
-		/* left 2 */
-		if (s[loc - 2] < 246)
-			s[loc - 2] = 246;
-		else if (s[loc - 2] < 255 - 1)
-			s[loc - 2] += 1;
-		else
-			s[loc - 2] = 255;
-	}
+	maxX = destructTempScreen->pitch;
+	maxY = destructTempScreen->h;
 
-	if (loc + 1 > 0 && loc + 1 < loc_max)
-	{
-		/* right 1 */
-		if (s[loc + 1] < 249)
-			s[loc + 1] = 249;
-		else if (s[loc + 1] < 255 - 2)
-			s[loc + 1] += 2;
-		else
-			s[loc + 1] = 255;
-	}
+	rowLen = destructTempScreen->pitch;
+	s = destructTempScreen->pixels + (rowLen * (tempPosY - 2)) + (tempPosX - 2);
 
-	if (loc + 2 > 0 && loc + 2 < loc_max)
+	for (y = 0; y < 5; y++, s += rowLen - 5)
 	{
-		/* right 2 */
-		if (s[loc + 2] < 246)
-			s[loc + 2] = 246;
-		else if (s[loc + 2] < 255 - 1)
-			s[loc + 2] += 1;
-		else
-			s[loc + 2] = 255;
-	}
+		if ((signed)tempPosY + y - 2 < 0     /* would be out of bounds */
+		||  (signed)tempPosY + y - 2 >= maxY) { continue; }
 
-	if (loc - destructTempScreen->pitch > 0 && loc - destructTempScreen->pitch < loc_max)
-	{
-		/* up 1 */
-		if (s[loc - destructTempScreen->pitch] < 249)
-			s[loc - destructTempScreen->pitch] = 249;
-		else if (s[loc - destructTempScreen->pitch] < 255 - 2)
-			s[loc - destructTempScreen->pitch] += 2;
-		else
-			s[loc - destructTempScreen->pitch] = 255;
-	}
+		for (x = 0; x < 5; x++, s++)
+		{
+			if ((signed)tempPosX + x - 2 < 0
+			 || (signed)tempPosX + x - 2 >= maxX) { continue; }
 
-	if (loc - destructTempScreen->pitch - 1 > 0 && loc - destructTempScreen->pitch - 1 < loc_max)
-	{
-		/* up 1, left 1 */
-		if (s[loc - destructTempScreen->pitch - 1] < 247)
-			s[loc - destructTempScreen->pitch - 1] = 247;
-		else if (s[loc - destructTempScreen->pitch - 1] < 255 - 1)
-			s[loc - destructTempScreen->pitch - 1] += 1;
-		else
-			s[loc - destructTempScreen->pitch - 1] = 255;
-	}
+			if (starPattern[y][x] == 0) { continue; } /* this is just to speed it up */
 
-	if (loc - destructTempScreen->pitch + 1 > 0 && loc - destructTempScreen->pitch + 1 < loc_max)
-	{
-		/* up 1, right 1 */
-		if (s[loc - destructTempScreen->pitch + 1] < 249)
-			s[loc - destructTempScreen->pitch + 1] = 249;
-		else if (s[loc - destructTempScreen->pitch + 1] < 255 - 2)
-			s[loc - destructTempScreen->pitch + 1] += 2;
-		else
-			s[loc - destructTempScreen->pitch + 1] = 255;
-	}
-
-	if (loc - destructTempScreen->pitch * 2 > 0 && loc - destructTempScreen->pitch * 2 < loc_max)
-	{
-		/* up 2 */
-		if (s[loc - destructTempScreen->pitch * 2] < 246)
-			s[loc - destructTempScreen->pitch * 2] = 246;
-		else if (s[loc - destructTempScreen->pitch * 2] < 255 - 1)
-			s[loc - destructTempScreen->pitch * 2] += 1;
-		else
-			s[loc - destructTempScreen->pitch * 2] = 255;
-	}
-
-	if (loc + destructTempScreen->pitch > 0 && loc + destructTempScreen->pitch < loc_max)
-	{
-		/* down 1 */
-		if (s[loc + destructTempScreen->pitch] < 249)
-			s[loc + destructTempScreen->pitch] = 249;
-		else if (s[loc + destructTempScreen->pitch] < 255 - 2)
-			s[loc + destructTempScreen->pitch] += 2;
-		else
-			s[loc + destructTempScreen->pitch] = 255;
-	}
-
-	if (loc + destructTempScreen->pitch - 1 > 0 && loc + destructTempScreen->pitch - 1 < loc_max)
-	{
-		/* down 1, left 1 */
-		if (s[loc + destructTempScreen->pitch - 1] < 247)
-			s[loc + destructTempScreen->pitch - 1] = 247;
-		else if (s[loc + destructTempScreen->pitch - 1] < 255 - 1)
-			s[loc + destructTempScreen->pitch - 1] += 1;
-		else
-			s[loc + destructTempScreen->pitch - 1] = 255;
-	}
-
-	if (loc + destructTempScreen->pitch + 1 > 0 && loc + destructTempScreen->pitch + 1 < loc_max)
-	{
-		/* down 1, right 1 */
-		if (s[loc + destructTempScreen->pitch + 1] < 247)
-			s[loc + destructTempScreen->pitch + 1] = 247;
-		else if (s[loc + destructTempScreen->pitch + 1] < 255 - 1)
-			s[loc + destructTempScreen->pitch + 1] += 1;
-		else
-			s[loc + destructTempScreen->pitch + 1] = 255;
-	}
-
-	if (loc + destructTempScreen->pitch * 2 > 0 && loc + destructTempScreen->pitch * 2 < loc_max)
-	{
-		/* down 2 */
-		if (s[loc + destructTempScreen->pitch * 2] < 246)
-			s[loc + destructTempScreen->pitch * 2] = 246;
-		else if (s[loc + destructTempScreen->pitch * 2] < 255 - 1)
-			s[loc + destructTempScreen->pitch * 2] += 1;
-		else
-			s[loc + destructTempScreen->pitch * 2] = 255;
+			/* at this point *s is our pixel.  Our constant arrays tell us what
+			 * to do with it. */
+			if (starPattern[y][x] == 0) { continue; } /* this is just to speed it up */
+			if (*s < starPattern[y][x])
+			{
+				*s = starPattern[y][x];
+			}
+			else if (*s + starIntensity[y][x] > 255)
+			{
+				*s = 255;
+			}
+			else
+			{
+				*s += starIntensity[y][x];
+			}
+		}
 	}
 }
 
@@ -1197,11 +1117,11 @@ void DE_ResetWeapons( void )
 
 	for (i = 0; i < MAX_SHOTS; i++)
 	{
-		destructShotAvail[i] = true;
+		shotRec[i].isAvailable = true;
 	}
 	for (i = 0; i < MAX_EXPLO; i++)
 	{
-		explosionAvail[i] = true;
+		exploRec[i].isAvailable = true;
 	}
 }
 void DE_ResetLevel( void )
@@ -1534,7 +1454,6 @@ void DE_RunTickDrawWalls( void )
 void DE_RunTickExplosions( void )
 {
 	unsigned int i, j, k;
-	unsigned int tempPixelIndex;
 	int tempPosX, tempPosY;
 	double tempRadian;
 
@@ -1542,7 +1461,7 @@ void DE_RunTickExplosions( void )
 	/* Run through all open explosions.  They are not sorted in any way */
 	for (i = 0; i < MAX_EXPLO; i++)
 	{
-		if (explosionAvail[i] == true) { continue; } /* Nothing to do */
+		if (exploRec[i].isAvailable == true) { continue; } /* Nothing to do */
 
 		for (j = 0; j < exploRec[i].explofill; j++)
 		{
@@ -1558,14 +1477,13 @@ void DE_RunTickExplosions( void )
 			 * harmless bug, just confine tempPosX */
 			if (tempPosY < 200 && tempPosY > 15)
 			{
-				tempPixelIndex = tempPosX + tempPosY * destructTempScreen->pitch;
 				if (exploRec[i].explocolor == 252) /* 'explocolor' is misleading.  Basically all damaging shots are 252 */
 				{
-					JE_superPixel(tempPixelIndex); /* Draw the flare */
+					JE_superPixel(tempPosX, tempPosY); /* Draw the flare */
 				}
 				else
 				{
-					((Uint8 *)destructTempScreen->pixels)[tempPixelIndex] = exploRec[i].explocolor;
+					((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch] = exploRec[i].explocolor;
 				}
 			}
 
@@ -1616,7 +1534,7 @@ void DE_RunTickExplosions( void )
 		exploRec[i].explowidth++;
 		if (exploRec[i].explowidth == exploRec[i].explomax)
 		{
-			explosionAvail[i] = true;
+			exploRec[i].isAvailable = true;
 		}
 	}
 }
@@ -1629,7 +1547,7 @@ void DE_RunTickShots( void )
 
 	for (i = 0; i < MAX_SHOTS; i++)
 	{
-		if (destructShotAvail[i] == true) { continue; } /* Nothing to do */
+		if (shotRec[i].isAvailable == true) { continue; } /* Nothing to do */
 
 		/* Move the shot.  Simple displacement */
 		shotRec[i].x += shotRec[i].xmov;
@@ -1667,7 +1585,7 @@ void DE_RunTickShots( void )
 		/* Shot has gone out of bounds. Eliminate it. */
 		if (shotRec[i].x > 318 || shotRec[i].x < 1)
 		{
-			destructShotAvail[i] = true;
+			shotRec[i].isAvailable = true;
 			continue;
 		}
 
@@ -1690,7 +1608,7 @@ void DE_RunTickShots( void )
 			{
 				if (tempPosX > player[PLAYER_LEFT].unit[j].unitX && tempPosX < player[PLAYER_LEFT].unit[j].unitX + 11 && tempPosY > player[PLAYER_LEFT].unit[j].unitY - 13 && tempPosY < player[PLAYER_LEFT].unit[j].unitY)
 				{
-					destructShotAvail[i] = true;
+					shotRec[i].isAvailable = true;
 					JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
 				}
 			}
@@ -1702,7 +1620,7 @@ void DE_RunTickShots( void )
 			{
 				if (tempPosX > player[PLAYER_RIGHT].unit[j].unitX && tempPosX < player[PLAYER_RIGHT].unit[j].unitX + 11 && tempPosY > player[PLAYER_RIGHT].unit[j].unitY - 13 && tempPosY < player[PLAYER_RIGHT].unit[j].unitY)
 				{
-					destructShotAvail[i] = true;
+					shotRec[i].isAvailable = true;
 					JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
 				}
 			}
@@ -1789,7 +1707,7 @@ void DE_RunTickShots( void )
 				{
 					/* Blow up the wall and remove the shot. */
 					world.mapWalls[j].wallExist = false;
-					destructShotAvail[i] = true;
+					shotRec[i].isAvailable = true;
 					JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
 					continue;
 				} else {
@@ -1821,7 +1739,7 @@ void DE_RunTickShots( void )
 		/* Our last collision check, at least for now.  We hit dirt (I think) */
 		if((((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch]) == 25)
 		{
-			destructShotAvail[i] = true;
+			shotRec[i].isAvailable = true;
 			JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
 			continue;
 		}
@@ -2280,7 +2198,7 @@ void DE_RunTickProcessInput( void )
 				emptyShot = 0;
 				for (i = 0; i < MAX_SHOTS; i++)
 				{
-					if (destructShotAvail[i])
+					if (shotRec[i].isAvailable)
 					{
 						emptyShot = i + 1;
 						break;
@@ -2321,7 +2239,7 @@ void DE_RunTickProcessInput( void )
 
 					shotRec[emptyShot-1].shottype = CURUNIT(player_index).shotType;
 
-					destructShotAvail[emptyShot-1] = false;
+					shotRec[emptyShot-1].isAvailable = false;
 
 					shotRec[emptyShot-1].shotdur = shotFuse[shotRec[emptyShot-1].shottype-1];
 
@@ -2334,7 +2252,7 @@ void DE_RunTickProcessInput( void )
 				case 1: /* magnet */
 					for (i = 0; i < MAX_SHOTS; i++)
 					{
-						if (destructShotAvail[i] == false)
+						if (shotRec[i].isAvailable == false)
 						{
 							if (shotRec[i].x > CURUNIT(player_index).unitX)
 							{
@@ -2495,7 +2413,7 @@ void DE_RunTickProcessInput( void )
 			emptyShot = 0;
 			for (i = 0; i < MAX_SHOTS; i++)
 			{
-				if (destructShotAvail[i])
+				if (shotRec[i].isAvailable)
 				{
 					emptyShot = i + 1;
 				}
@@ -2549,7 +2467,7 @@ void DE_RunTickProcessInput( void )
 
 					shotRec[emptyShot-1].shottype = CURUNIT(player_index).shotType;
 
-					destructShotAvail[emptyShot-1] = false;
+					shotRec[emptyShot-1].isAvailable = false;
 
 					shotRec[emptyShot-1].shotdur = shotFuse[shotRec[emptyShot-1].shottype-1];
 
@@ -2562,7 +2480,7 @@ void DE_RunTickProcessInput( void )
 				case 1:
 					for (i = 0; i < MAX_SHOTS; i++)
 					{
-						if (!destructShotAvail[i])
+						if (shotRec[i].isAvailable == false)
 						{
 							if (shotRec[i].x < CURUNIT(player_index).unitX)
 							{
