@@ -848,7 +848,8 @@ bool JE_stabilityCheck( unsigned int x, unsigned int y )
 
 
 	numDirtPixels = 0;
-	s = destructTempScreen->pixels + x + (y * destructTempScreen->pitch) - 1;
+	s = destructTempScreen->pixels;
+	s += x + (y * destructTempScreen->pitch) - 1;
 
 	/* Check the 12 pixels on the bottom border of our object */
 	for (i = 0; i < 12; i++)
@@ -999,7 +1000,8 @@ void JE_superPixel( unsigned int tempPosX, unsigned int tempPosY )
 	maxY = destructTempScreen->h;
 
 	rowLen = destructTempScreen->pitch;
-	s = destructTempScreen->pixels + (rowLen * (tempPosY - 2)) + (tempPosX - 2);
+	s = destructTempScreen->pixels;
+	s += (rowLen * (tempPosY - 2)) + (tempPosX - 2);
 
 	for (y = 0; y < 5; y++, s += rowLen - 5)
 	{
