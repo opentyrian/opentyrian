@@ -237,6 +237,8 @@ void DE_RunTickGetInput( void );
 void DE_ProcessInput( void );
 void DE_RaiseAngle( struct destruct_unit_s * );
 void DE_LowerAngle( struct destruct_unit_s * );
+void DE_RaisePower( struct destruct_unit_s * )
+void DE_LowerPower( struct destruct_unit_s * )
 bool DE_RunTickCheckEndgame( void );
 void DE_RunTickPlaySounds( void );
 
