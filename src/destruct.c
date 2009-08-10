@@ -216,7 +216,7 @@ void DE_generateWalls( struct destruct_world_s * );
 void DE_generateRings(SDL_Surface *, Uint8 );
 void JE_aliasDirt( SDL_Surface * );
 
-
+void DE_ResetUnits( void );
 void DE_ResetPlayers( void );
 void DE_ResetWeapons( void );
 void DE_ResetLevel( void );
@@ -379,9 +379,11 @@ void JE_destructMain( void )
 	JE_loadPic(11, false);
 	JE_introScreen();
 
+	DE_ResetUnits();
 	DE_ResetPlayers();
+
 	player[PLAYER_LEFT].is_cpu = true;
-	// player[PLAYER_RIGHT].is_cpu = true; This is fun :)
+	// player[PLAYER_RIGHT].is_cpu = true; // this is fun :)
 
 	do {
 		JE_modeSelect();
@@ -1091,6 +1093,19 @@ void JE_pauseScreen( void )
  *
  * The reset functions clear the state of whatefer they are assigned to.
  */
+void DE_ResetUnits( void )
+{
+	unsigned int p, u;
+
+
+	for (p = 0; p < MAX_PLAYERS; ++p)
+	{
+		for (u = 0; u < MAX_INSTALLATIONS; ++u)
+		{
+			player[p].unit[u].health = 0;
+		}
+	}
+}
 void DE_ResetPlayers( void )
 {
 	unsigned int i;
