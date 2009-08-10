@@ -75,9 +75,6 @@ char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] 
 char shipInfo[13][2][256];
 char menuInt[MAX_MENU + 1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
 
-
-JE_byte temp, temp2;
-
 void JE_helpBox( JE_word x, JE_word y, char *message, JE_byte boxwidth )
 {
 	JE_byte startpos, endpos, pos;

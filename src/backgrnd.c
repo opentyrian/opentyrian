@@ -32,7 +32,6 @@ JE_word backPos, backPos2, backPos3;
 JE_word backMove, backMove2, backMove3;
 
 /*Main Maps*/
-JE_word megaDataSeg, megaDataOfs, megaData2Seg, megaData2Ofs, megaData3Seg, megaData3Ofs;
 JE_word mapX, mapY, mapX2, mapX3, mapY2, mapY3;
 JE_byte **mapYPos, **mapY2Pos, **mapY3Pos;
 JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs, mapX3Ofs, tempMapXOfs;
@@ -43,8 +42,6 @@ JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 SDL_Surface *smoothiesScreen;
 JE_boolean  anySmoothies;
 JE_byte     SDAT[9]; /* [1..9] */
-
-JE_byte temp, temp2;
 
 void JE_darkenBackground( JE_word neat )  /* wild detail level */
 {

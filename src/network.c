@@ -51,7 +51,7 @@
 bool isNetworkGame = false;
 int network_delay = 1 + 1;  // minimum is 1 + 0
 
-char *network_opponent_host = 0;
+char *network_opponent_host = NULL;
 
 Uint16 network_player_port = NET_PORT,
        network_opponent_port = NET_PORT;
@@ -89,9 +89,6 @@ JE_boolean moveOk;
 /* Special Requests */
 JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 JE_boolean yourInGameMenuRequest, inGameMenuRequest;
-
-JE_boolean portConfigChange, portConfigDone;
-
 
 // prepare new packet for sending
 void network_prepare( Uint16 type )

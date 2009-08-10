@@ -4372,7 +4372,7 @@ void JE_mainGamePlayerFunctions( void )
 	}
 }
 
-char *JE_getName( JE_byte pnum )
+const char *JE_getName( JE_byte pnum )
 {
 	if (pnum == thisPlayerNum && network_player_name[0] != '\0')
 		return network_player_name;

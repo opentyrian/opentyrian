@@ -83,9 +83,7 @@ const JE_byte tyrian2_weapons[42] = {
 
 JE_word yLoc;
 JE_shortint yChg;
-
 int newPal, curPal, oldPal;
-
 JE_boolean quikSave;
 JE_byte oldMenu;
 JE_boolean backFromHelp;
@@ -94,7 +92,7 @@ JE_integer lastDirection;
 JE_boolean firstMenu9, paletteChanged;
 JE_MenuChoiceType menuChoices;
 JE_longint shipValue;
-JE_word curX, curY, curWindow, selectX, selectY, tempX, tempY, tempAvail, x, y, textYPos;
+JE_word curX, curY, curWindow, selectX, selectY, tempAvail, textYPos;
 JE_byte flashDelay;
 JE_integer col, colC;
 JE_byte curAvail, curSelectDat;
@@ -203,7 +201,7 @@ void JE_itemScreen( void )
 	cursor = 1;
 	curItem = 0;
 
-	for (x = 0; x < MAX_MENU; x++)
+	for (int x = 0; x < MAX_MENU; x++)
 	{
 		curSel[x] = 2;
 	}
@@ -242,7 +240,7 @@ void JE_itemScreen( void )
 	backFromHelp = false;
 	
 	/* JE: Sort items in merchant inventory */
-	for (x = 0; x < 9; x++)
+	for (int x = 0; x < 9; x++)
 	{
 		if (itemAvailMax[x] > 1)
 		{
@@ -357,7 +355,7 @@ void JE_itemScreen( void )
 				max = 13;
 			}
 
-			for (x = min; x <= max; x++)
+			for (int x = min; x <= max; x++)
 			{
 				/* Highlight if current selection */
 				temp2 = (x - min + 2 == curSel[curMenu]) ? 15 : 28;
@@ -370,7 +368,7 @@ void JE_itemScreen( void )
 				else
 					strcpy(tempStr, saveFiles[x-2].name);
 
-				tempY = 38 + (x - min)*11;
+				int tempY = 38 + (x - min)*11;
 
 				JE_textShade(163, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
 
@@ -410,7 +408,7 @@ void JE_itemScreen( void )
 		/* keyboard settings menu */
 		if (curMenu == 5)
 		{
-			for (x = 2; x <= 11; x++)
+			for (int x = 2; x <= 11; x++)
 			{
 				if (x == curSel[curMenu])
 				{
@@ -438,7 +436,7 @@ void JE_itemScreen( void )
 		/* Joystick settings menu */
 		if (curMenu == 12)
 		{
-			char *menu_item[] = 
+			const char *menu_item[] = 
 			{
 				"JOYSTICK",
 				"ANALOG AXES",
@@ -556,7 +554,7 @@ void JE_itemScreen( void )
 			/* Iterate through all submenu options */
 			for (tempW = 1; tempW < menuChoices[curMenu]; tempW++)
 			{
-				tempY = 40 + (tempW-1) * 26; /* Calculate y position */
+				int tempY = 40 + (tempW-1) * 26; /* Calculate y position */
 
 				/* Is this a item or None/DONE? */
 				if (tempW < menuChoices[4] - 1)
@@ -775,7 +773,7 @@ void JE_itemScreen( void )
 				}
 				else
 				{
-					for (x = 1; x <= cubeMax; x++)
+					for (int x = 1; x <= cubeMax; x++)
 					{
 						JE_drawCube(166, 38 + (x - 1) * 28, 13, 0);
 						if (x + 1 == curSel[curMenu])
@@ -794,7 +792,7 @@ void JE_itemScreen( void )
 						helpBoxShadeType = DARKEN;
 						JE_helpBox(192, 44 + (x - 1) * 28, cubeHdr[x - 1], 24);
 					}
-					x = cubeMax + 1;
+					int x = cubeMax + 1;
 					if (x + 1 == curSel[curMenu])
 					{
 						if (keyboardUsed)
@@ -940,7 +938,7 @@ void JE_itemScreen( void )
 					tempW = 38 + 12 - temp2;
 					temp3 = cubeMaxY[curSel[7] - 2];
 					
-					for (x = temp + 1; x <= temp + 10; x++)
+					for (int x = temp + 1; x <= temp + 10; x++)
 					{
 						if (x <= temp3)
 						{
@@ -1926,7 +1924,7 @@ void JE_drawMenuChoices( void )
 
 	for (x = 2; x <= menuChoices[curMenu]; x++)
 	{
-		tempY = 38 + (x-1) * 16;
+		int tempY = 38 + (x-1) * 16;
 
 		if (curMenu == 0)
 		{
@@ -2695,7 +2693,7 @@ void JE_menuFunction( JE_byte select )
 		else /* change key */
 		{
 			temp2 = 254;
-			tempY = 38 + (curSelect - 2) * 12;
+			int tempY = 38 + (curSelect - 2) * 12;
 			JE_textShade(236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
 			JE_showVGA();
 			
@@ -3101,7 +3099,7 @@ void JE_weaponSimUpdate( void )
 			temp = portPower[1 - 1];
 		else
 			temp = portPower[2 - 1];
-		for (x = 1; x <= temp; x++)
+		for (int x = 1; x <= temp; x++)
 		{
 			JE_bar(39 + x * 6, 151, 39 + x * 6 + 4, 151, 251);
 			JE_pix(39 + x * 6, 151, 252);

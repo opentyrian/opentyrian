@@ -22,7 +22,7 @@
 #include "SDL.h"
 #include <errno.h>
 
-char *custom_data_dir = ".";
+const char *custom_data_dir = ".";
 
 // finds the Tyrian data directory
 const char *data_dir( void )

@@ -37,6 +37,8 @@ extern JE_word tyrMusicVolume, fxVolume;
 extern JE_word fxPlayVol;
 extern JE_word tempVolume;
 
+extern JE_word speed;
+
 extern float jasondelay;
 
 void setdelay( JE_byte delay );

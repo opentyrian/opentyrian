@@ -28,7 +28,6 @@ typedef JE_word JE_shape16B[1]; /* [0.. 0] */
 
 extern JE_boolean mouseInstalled;
 extern JE_char k;
-extern JE_word speed; /* JE: holds timer speed for 70Hz */
 extern JE_byte scancode;
 
 extern palette_t vga_palette;

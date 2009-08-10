@@ -51,7 +51,7 @@ extern JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE];
 extern JE_byte maxShape[MAX_TABLE];
 extern JE_byte mouseGrabShape[24 * 28];
 
-void JE_newLoadShapes( JE_byte table, char *shapefile );
+void JE_newLoadShapes( JE_byte table, const char *shapefile );
 void JE_newLoadShapesB( JE_byte table, FILE *f );
 void JE_newCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize );
 void JE_newPurgeShapes( JE_byte table );

@@ -35,12 +35,7 @@
 JE_boolean mouseInstalled = true;
 JE_char k;
 
-/* JE: From Nortsong */
-JE_word speed; /* JE: holds timer speed for 70Hz */
-
 JE_byte scancode;
-
-bool fullscreen_enabled = false;
 
 palette_t vga_palette = {
 	{0, 0, 0}, {0, 0, 168}, {0, 168, 0}, {0, 168, 168}, {168, 0, 0}, {168, 0, 168}, {168, 84, 0}, {168, 168, 168}, {84, 84, 84}, {84, 84, 252}, {84, 252, 84}, {84, 252, 252}, {252, 84, 84}, {252, 84, 252}, {252, 252, 84}, {252, 252, 252},

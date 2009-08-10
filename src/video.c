@@ -25,7 +25,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-bool fullscreen_enabled;
+bool fullscreen_enabled = false;
 
 SDL_Surface *display_surface;
 

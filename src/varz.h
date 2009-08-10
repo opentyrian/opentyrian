@@ -361,7 +361,6 @@ extern JE_word neat;
 extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
-extern JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
 extern JE_word avail;
 extern JE_word tempCount;
 extern JE_integer tempI, tempI2, tempI3, tempI4, tempI5;

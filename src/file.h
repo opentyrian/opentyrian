@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-extern char *custom_data_dir;
+extern const char *custom_data_dir;
 
 #ifdef TARGET_MACOSX
 const char *tyrian_game_folder();

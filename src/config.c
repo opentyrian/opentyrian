@@ -172,7 +172,7 @@ JE_byte       shieldWait, shieldT;
 
 JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
 JE_byte          portConfig[10]; /* [1..10] */
-JE_boolean       portConfigDone;
+JE_boolean       portConfigChange, portConfigDone;
 JE_PortPowerType portPower, lastPortPower;
 
 JE_boolean resetVersion;
@@ -233,8 +233,6 @@ JE_SaveFilesType saveFiles; /*array[1..saveLevelnum] of savefiletype;*/
 JE_SaveGameTemp saveTemp;
 
 JE_word editorLevel;   /*Initial value 800*/
-
-JE_word x;
 
 const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 

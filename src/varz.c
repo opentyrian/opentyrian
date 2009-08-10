@@ -393,9 +393,6 @@ rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS]; /* [1..20] */
 superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
 unsigned int last_superpixel;
 
-/*MegaData*/
-JE_word megaDataOfs, megaData2Ofs, megaData3Ofs;
-
 /*Temporary Numbers*/
 JE_word avail;
 JE_word tempCount;

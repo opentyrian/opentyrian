@@ -79,7 +79,7 @@ void JE_newLoadShapesB( JE_byte table, FILE *f )
 	}
 }
 
-void JE_newLoadShapes( JE_byte table, char *shapefile )
+void JE_newLoadShapes( JE_byte table, const char *shapefile )
 {
 	JE_newPurgeShapes(table);
 	
