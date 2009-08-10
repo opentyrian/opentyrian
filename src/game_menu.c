@@ -1781,7 +1781,7 @@ void JE_loadCubes( void )
 						
 						do
 						{
-							int sprite_id = font_ascii[(int)s[pos - 1]];
+							int sprite_id = font_ascii[(unsigned char)s[pos - 1]];
 							
 							// is printable character?
 							if (s[pos - 1] == ' ')

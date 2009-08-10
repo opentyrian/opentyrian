@@ -114,7 +114,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 			if (s[z] == ' ')
 				loc += 6;
 			else
-				loc += shapeX[TINY_FONT][font_ascii[(int)s[z]]] + 1;
+				loc += shapeX[TINY_FONT][font_ascii[(unsigned char)s[z]]] + 1;
 		}
 		
 		for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
@@ -131,7 +131,7 @@ void JE_outCharGlow( JE_word x, JE_word y, char *s )
 				{
 					if (z >= 0 && z < maxloc)
 					{
-						sprite_id = font_ascii[(int)s[z]];
+						sprite_id = font_ascii[(unsigned char)s[z]];
 						
 						if (sprite_id != -1)
 						{
