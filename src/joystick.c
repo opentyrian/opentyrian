@@ -38,8 +38,8 @@ bool ignore_joystick = false;
 int joysticks = 0;
 struct joystick_struct *joystick = NULL;
 
-const static char joystick_cfg_version = 0;
-const static int joystick_analog_max = 32767;
+static const char joystick_cfg_version = 0;
+static const int joystick_analog_max = 32767;
 
 // eliminates axis movement below the threshold
 int joystick_axis_threshold( int j, int value )

@@ -17,16 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "animlib.h"
-#include "joystick.h"
-#include "network.h"
-#include "nortsong.h"
-#include "nortvars.h"
-#include "opentyr.h"
-#include "vga256d.h"
-
-
-JE_word currentpageofs;
-JE_word currentpageseg;
 
 void JE_loadPage( JE_word pagenumber )
 {

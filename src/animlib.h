@@ -21,10 +21,6 @@
 
 #include "opentyr.h"
 
-
-extern JE_word currentpageofs;
-extern JE_word currentpageseg;
-
 void JE_playRunSkipDump( JE_word bufferoffset );
 
 void JE_closeAnim( void );
