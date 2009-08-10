@@ -77,7 +77,7 @@
 #define CURUNIT(x) player[(x)].unit[(player[(x)].unitSelected-1)]
 
 /* Todo: create 'makeshot' function which will zero out trails + fix that bug.*/
-
+/* Todo: Create 'isValidUnit' function OR boolean.  Health acting as both makes code harder to understand and can result in indexing bugs */
 /*** Enums ***/
 /* There are an awful lot of index-1s scattered throughout the code.
  * I plan to eventually change them all and to be able to properly
@@ -1208,20 +1208,6 @@ void DE_RunTick( void )
 
 
 	DE_RunTickGravity();
-
-	/* This fixes the power of sats.  I'd really like to remove it and fix it properly */
-	for (z = 0; z < MAX_INSTALLATIONS; z++)
-	{
-		if (player[PLAYER_LEFT].unit[z].unitType == UNIT_LASER)
-		{
-			player[PLAYER_LEFT].unit[z].power = 6;
-		}
-		if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_LASER)
-		{
-			player[PLAYER_RIGHT].unit[z].power = 6;
-		}
-	}
-
 	DE_RunTickAnimate();
 	DE_RunTickDrawWalls();
 	DE_RunTickExplosions();
@@ -1302,7 +1288,7 @@ void DE_RunTickCycleDeadUnits( void )
 	{
 		if (player[i].unitsRemaining == 0) { continue; }
 
-		while (CURUNIT(i).shotType == SHOT_INVALID || CURUNIT(i).health == 0)
+		while (CURUNIT(i).health == 0 || CURUNIT(i).shotType == SHOT_INVALID)
 		{
 			player[i].unitSelected++;
 			if (player[i].unitSelected > MAX_INSTALLATIONS)
@@ -1433,20 +1419,22 @@ void DE_RunTickGravity( void )
 void DE_RunTickAnimate( void )
 {
 	unsigned int p, u;
+	struct destruct_unit_s * ptr;
+
 
 	for (p = 0; p < MAX_PLAYERS; ++p)
 	{
-		for (u = 0; u < MAX_INSTALLATIONS; ++u)
+		ptr = player[p].unit;
+		for (u = 0; u < MAX_INSTALLATIONS; ++u,  ++ptr)
 		{
-			// if unit does not animate continuously and is not currently animated
-			if (!systemAni[player[p].unit[u].unitType-1] && player[p].unit[u].ani_frame == 0)
-			{
-				continue;
-			}
+			/* Don't mess with any unit that is unallocated (health = 0)
+			 * or doesn't animate and is set to frame 0 */
+			if(ptr->health == 0) { continue; }
+			if(systemAni[ptr->unitType-1] == false && ptr->ani_frame == 0) { continue; }
 
-			if (++(player[p].unit[u].ani_frame) > 3)
+			if (++(ptr->ani_frame) > 3)
 			{
-				player[p].unit[u].ani_frame = 0;
+				ptr->ani_frame = 0;
 			}
 		}
 	}
@@ -1843,7 +1831,7 @@ void DE_RunTickAI( void )
 		// prefer helicopter
 		for (i = 0; i < MAX_INSTALLATIONS; i++)
 		{
-			if (player[player_index].unit[i].unitType == UNIT_HELI && player[player_index].unit[i].health > 0)
+			if (player[player_index].unit[i].health > 0 && player[player_index].unit[i].unitType == UNIT_HELI)
 			{
 				player[player_index].unitSelected = i + 1;
 				break;
@@ -2290,7 +2278,8 @@ void DE_ProcessInput( void )
 					}
 					for (i = 0; i < MAX_INSTALLATIONS; i++) /* magnets push coptors */
 					{
-						if (player[player_enemy].unit[i].unitType == UNIT_HELI
+						if (player[player_enemy].unit[i].health > 0
+						 && player[player_enemy].unit[i].unitType == UNIT_HELI
 						 && player[player_enemy].unit[i].isYInAir == true)
 						{
 							if ((player_enemy == PLAYER_LEFT  && player[player_enemy].unit[i].unitX + 11 < 318)
