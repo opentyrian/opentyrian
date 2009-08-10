@@ -30,7 +30,7 @@ const int font_ascii[256] =
 	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
 	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
 	 -1,  26,  33,  60,  61,  62,  -1,  32,  64,  65,  63,  84,  29,  83,  28,  80, //  !"#$%&'()*+,-./
-	 79,  70,  71,  72,  73,  74,  75,  76,  77,  78,  31,  30,  -1,  -1,  -1,  27, // 0123456789:;<=>?
+	 79,  70,  71,  72,  73,  74,  75,  76,  77,  78,  31,  30,  -1,  85,  -1,  27, // 0123456789:;<=>?
 	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14, // @ABCDEFGHIJKLMNO
 	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  68,  82,  69,  -1,  -1, // PQRSTUVWXYZ[\]^_
 	 -1,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48, // `abcdefghijklmno
@@ -67,7 +67,7 @@ void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font )
 	
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		switch (s[i])
 		{
@@ -103,7 +103,7 @@ JE_word JE_textWidth( const char *s, JE_byte font )
 	
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		if (s[i] == ' ')
 			x += 6;
@@ -144,7 +144,7 @@ void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shor
 	
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		switch (s[i])
 		{
@@ -178,7 +178,7 @@ void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_b
 {
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		if (s[i] == ' ')
 		{
@@ -197,7 +197,7 @@ void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font )
 {
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		if (s[i] == ' ')
 		{
@@ -218,7 +218,7 @@ void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_s
 	
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		switch (s[i])
 		{
@@ -250,7 +250,7 @@ void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank
 	
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(int)s[i]];
+		int sprite_id = font_ascii[(unsigned char)s[i]];
 		
 		switch (s[i])
 		{
