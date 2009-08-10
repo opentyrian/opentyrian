@@ -40,7 +40,6 @@ void init_video( void )
 	
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
 	{
-video_error:
 		fprintf(stderr, "error: failed to initialize SDL video: %s\n", SDL_GetError());
 		exit(1);
 	}

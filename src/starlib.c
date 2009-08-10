@@ -73,7 +73,6 @@ void JE_starlib_main( void )
 
 	/* ASM starts */
 	/* ***START THE LOOP*** */
-star_loop:
 	stars = star;
 	i = starlib_MAX_STARS;
 
@@ -145,8 +144,7 @@ next_star:
 	} else {
 		tempCol = pColor+((tempZ >> 4) & 31);
 	}
-
-draw_pixel:
+	
 	/* Draw the pixel! */
 	if (off >= 640 && off < (320*200)-640)
 	{
@@ -291,15 +289,8 @@ star_end:
 	nspVarInc += nspVarVarInc;
 }
 
-void JE_makeGray( void )
-{
-	/* YKS: Not used anywhere. */
-	STUB();
-}
-
 void JE_wackyCol( void )
 {
-	JE_byte a, b, c;
 	/* YKS: Does nothing */
 }
 

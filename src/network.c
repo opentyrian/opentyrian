@@ -77,7 +77,7 @@ UDPpacket *packet_state_in[NET_PACKET_QUEUE] = { NULL },
 Uint16 last_state_in_sync = 0, last_state_out_sync = 0;
 Uint32 last_state_in_tick = 0;
 
-bool connected = false, quit = false;
+static bool connected = false, quit = false;
 
 
 JE_integer thisPlayerNum = 0;  /* Player number on this PC (1 or 2) */

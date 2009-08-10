@@ -287,8 +287,6 @@ void JE_setupStars( void )
 
 void JE_saveGame( JE_byte slot, char *name )
 {
-	int i;
-	
 	saveFiles[slot-1].initialDifficulty = initialDifficulty;
 	saveFiles[slot-1].gameHasRepeated = gameHasRepeated;
 	saveFiles[slot-1].level = saveLevel;
@@ -524,10 +522,9 @@ void JE_setNewGameSpeed( void )
 
 void JE_encryptSaveTemp( void )
 {
-	JE_SaveGameTemp s2, s3;
-	char c;
+	JE_SaveGameTemp s3;
 	JE_word x;
-	JE_byte y, z;
+	JE_byte y;
 
 	memcpy(&s3, &saveTemp, sizeof(s3));
 
@@ -573,9 +570,8 @@ void JE_decryptSaveTemp( void )
 {
 	JE_boolean correct = true;
 	JE_SaveGameTemp s2;
-	/*JE_word x;*/
 	int x;
-	JE_byte y, z;
+	JE_byte y;
 
 	/* Decrypt save game file */
 	for (x = (SAVE_FILE_SIZE - 1); x >= 0; x--)

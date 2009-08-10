@@ -35,7 +35,7 @@ void JE_decryptShips( void )
 {
 	JE_boolean correct = true;
 	JE_ShipsType s2;
-	JE_byte y, z;
+	JE_byte y;
 	
 	for (int x = SAS - 1; x >= 0; x--)
 	{

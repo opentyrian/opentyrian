@@ -665,9 +665,8 @@ draw_enemy_end:
 
 void JE_main( void )
 {
-	int i, j, l;
-	JE_byte **bp;
-
+	int i;
+	
 	JE_byte *p; /* source/shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
@@ -2743,22 +2742,16 @@ void JE_loadMap( void )
 
 	JE_DanCShape shape;
 	JE_boolean shapeBlank;
-
-
-	FILE *f;
-	JE_char k2, k3;
+	
 	JE_word x, y;
-	JE_integer yy, z, a, b;
+	JE_integer yy;
 	JE_word mapSh[3][128]; /* [1..3, 0..127] */
 	JE_byte *ref[3][128]; /* [1..3, 0..127] */
 	char s[256];
-	JE_byte col, planets, shade;
-
-
-
+	
 	JE_byte mapBuf[15 * 600]; /* [1..15 * 600] */
 	JE_word bufLoc;
-
+	
 	char buffer[256];
 	int i;
 	Uint8 pic_buffer[320*200]; /* screen buffer, 8-bit specific */
@@ -3580,9 +3573,7 @@ void JE_titleScreen( JE_boolean animate )
 	JE_boolean redraw = true,
 	           fadeIn = false,
 	           first = true;
-	JE_char flash;
-	JE_word z;
-
+	
 	JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
 
 	if (haltGame)
@@ -4553,8 +4544,6 @@ JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
 
 void JE_eventSystem( void )
 {
-	JE_boolean tempb;
-	
 	switch (eventRec[eventLoc-1].eventtype)
 	{
 		case 1:

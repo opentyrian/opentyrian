@@ -1723,12 +1723,10 @@ void JE_loadCubes( void )
 	char s[256] = "", s2[256] = "", s3[256] = "";
 	JE_word x, y;
 	JE_byte startPos, endPos, pos;
-	JE_boolean nextLine;
 	JE_boolean endString;
 	JE_byte lastWidth, curWidth;
 	JE_boolean pastStringLen, pastStringWidth;
-	JE_byte temp;
-
+	
 	char buffer[256] = "";
 
 	memset(cubeText, 0, sizeof(cubeText));

@@ -185,7 +185,6 @@ void JE_helpSystem( JE_byte startTopic )
 {
 	JE_integer page, lastPage = 0;
 	JE_byte menu;
-	JE_char flash;
 
 	page = topicStart[startTopic-1];
 
@@ -938,7 +937,7 @@ void JE_highScoreScreen( void )
 	int min = 1;
 	int max = 3;
 
-	int x, y, z;
+	int x, z;
 	short int chg;
 	int quit;
 	char scoretemp[32];
@@ -2378,7 +2377,6 @@ void JE_handleChat( void )
 JE_boolean JE_getNumber( char *s, JE_byte *x )
 {
 	JE_boolean getNumber = false;
-	JE_integer code;
 	char buf[256];
 
 	while (strlen(s) > 0)
