@@ -1158,8 +1158,10 @@ void DE_ResetAI( void )
 		if (player[i].is_cpu == false) { continue; }
 		ptr = player[i].unit;
 
-		for( j = 0; j < MAX_INSTALLATIONS; j++)
+		for( j = 0; j < MAX_INSTALLATIONS; j++, ptr++)
 		{
+			if(ptr->health == 0) { continue; } /* This unit is not active. */
+
 			if (systemAngle[ptr->unitType-1] || ptr->unitType == UNIT_HELI)
 			{
 				ptr->angle = M_PI / 4.0;
@@ -1174,8 +1176,6 @@ void DE_ResetAI( void )
 			} else {
 				ptr->shotType = defaultCpuWeapon[ptr->unitType-1];
 			}
-
-			ptr++;
 		}
 	}
 }
