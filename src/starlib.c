@@ -29,9 +29,6 @@
 JE_boolean run;
 struct JE_StarType star[starlib_MAX_STARS];
 
-JE_integer tempW;
-JE_integer tempX, tempY;
-
 JE_byte setup;
 JE_word stepCounter;
 
@@ -47,8 +44,6 @@ JE_word changeTime;
 JE_boolean doChange;
 
 JE_boolean grayB;
-
-JE_integer x;
 
 JE_integer starlib_speed;
 JE_shortint speedChange;
@@ -109,8 +104,8 @@ next_star:
 	 * LastY 8
 	 */
 
-	tempX = (stars->spX / tempZ) + 160;
-	tempY = (stars->spY / tempZ) + 100;
+	int tempX = (stars->spX / tempZ) + 160,
+	    tempY = (stars->spY / tempZ) + 100;
 
 	tempZ -= starlib_speed;
 
@@ -307,7 +302,7 @@ void JE_starlib_init( void )
 		doChange = true;
 
 		/* RANDOMIZE; */
-		for (x = 0; x < starlib_MAX_STARS; x++)
+		for (int x = 0; x < starlib_MAX_STARS; x++)
 		{
 			star[x].spX = (mt_rand() % 64000) - 32000;
 			star[x].spY = (mt_rand() % 40000) - 20000;
@@ -352,6 +347,8 @@ void JE_changeSetup( JE_byte setupType )
 
 void JE_newStar( void )
 {
+	int tempX, tempY;
+	
 	if (setup == 0)
 	{
 		tempX = (mt_rand() % 64000) - 32000;

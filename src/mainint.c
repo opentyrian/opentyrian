@@ -2646,7 +2646,7 @@ void JE_mainKeyboardInput( void )
 			{
 				if (keysactive[x])
 				{
-					z = x == SDLK_0 ? 10 : x - SDLK_0;
+					int z = x == SDLK_0 ? 10 : x - SDLK_0;
 					pItems[P_SHIP] = 90 + z;                     /*Ships*/
 					z = (z - 1) * 15;
 					pItems[P_FRONT] = extraShips[z + 1];
@@ -2689,7 +2689,7 @@ void JE_mainKeyboardInput( void )
 			{
 				if (keysactive[x])
 				{
-					z = x == SDLK_0 ? 10 : x - SDLK_0;
+					int z = x == SDLK_0 ? 10 : x - SDLK_0;
 					pItemsPlayer2[P_SHIP] = 90 + z;
 					z = (z - 1) * 15;
 					pItemsPlayer2[P_FRONT] = extraShips[z + 1];
@@ -3496,13 +3496,13 @@ redo:
 				if (tempI2 > 20)
 					tempI2 = 20;
 
-				for (z = 1; z <= tempI2; z++)
+				for (int z = 1; z <= tempI2; z++)
 				{
 					tempW2 += tempI;
 					tempI++;
 				}
 
-				for (z = 1; z <= tempI2; z++)
+				for (int z = 1; z <= tempI2; z++)
 				{
 					tempW2 -= tempI;
 					tempI--;
@@ -4388,7 +4388,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 {
 	char tempStr[256];
 	
-	for (z = 0; z < 100; z++)
+	for (int z = 0; z < 100; z++)
 	{
 		if (enemyAvail[z] != 1)
 		{

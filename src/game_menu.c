@@ -3199,7 +3199,7 @@ void JE_weaponViewFrame( JE_byte testshotnum )
 	}
 	
 	/* Player Shot Images */
-	for (z = 0; z < MAX_PWEAPON; z++)
+	for (int z = 0; z < MAX_PWEAPON; z++)
 	{
 		if (shotAvail[z] != 0)
 		{

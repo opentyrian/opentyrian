@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-void JE_loadPCX( char *file );
+void JE_loadPCX( const char *file );
 
 #endif /* PCXLOAD_H */
 

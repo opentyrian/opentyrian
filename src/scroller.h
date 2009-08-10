@@ -23,7 +23,7 @@
 
 extern const struct about_text_type {
 	int effect;
-	char *text;
+	const char *text;
 } about_text[];
 
 void scroller_sine( const struct about_text_type text[] );

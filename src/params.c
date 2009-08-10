@@ -49,8 +49,8 @@ void JE_paramCheck( int argc, char *argv[] )
 
 	const struct
 	{
-		char short_opt;
-		char *long_opt;
+		const char short_opt;
+		const char *long_opt;
 	}
 	options[] =
 	{

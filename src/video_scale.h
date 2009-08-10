@@ -27,7 +27,7 @@ struct scaler_struct {
 	int scale;
 	void (*scaler16)(SDL_Surface *, SDL_Surface *, int);
 	void (*scaler32)(SDL_Surface *, SDL_Surface *, int);
-	char *name;
+	const char *name;
 };
 
 extern int scale, scaler;

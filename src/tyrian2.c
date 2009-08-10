@@ -676,7 +676,7 @@ void JE_main( void )
 	int lastEnemyOnScreen;
 
 	/* Setup Player Items/General Data */
-	for (z = 0; z < 12; z++)
+	for (int z = 0; z < 12; z++)
 	{
 		pItems[z] = 0;
 	}
@@ -1560,7 +1560,7 @@ level_loop:
 	}
 
 	/* Player Shot Images */
-	for (z = 0; z < MAX_PWEAPON; z++)
+	for (int z = 0; z < MAX_PWEAPON; z++)
 	{
 		if (shotAvail[z] != 0)
 		{
@@ -2009,7 +2009,7 @@ draw_player_shot_loop_end:
 	{    /*MAIN DRAWING IS STOPPED STARTING HERE*/
 
 		/* Draw Enemy Shots */
-		for (z = 0; z < ENEMY_SHOT_MAX; z++)
+		for (int z = 0; z < ENEMY_SHOT_MAX; z++)
 		{
 			if (enemyShotAvail[z] == 0)
 			{
@@ -3150,7 +3150,7 @@ new_game:
 
 									service_SDL_events(true);
 									
-									for (z = 0; z <= 199; z++)
+									for (int z = 0; z <= 199; z++)
 									{
 										if (!newkey)
 										{
@@ -3199,7 +3199,7 @@ new_game:
 									memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
 									service_SDL_events(true);
-									for (z = 0; z <= 199; z++)
+									for (int z = 0; z <= 199; z++)
 									{
 										if (!newkey)
 										{
@@ -3249,7 +3249,7 @@ new_game:
 
 									service_SDL_events(true);
 									
-									for (z = 0; z <= 318; z++)
+									for (int z = 0; z <= 318; z++)
 									{
 										if (!newkey)
 										{
@@ -3439,7 +3439,7 @@ new_game:
 	sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
 	shpFile = dir_fopen_die(data_dir(), tempStr, "rb");
 	
-	for (z = 0; z < 600; z++)
+	for (int z = 0; z < 600; z++)
 	{
 		shapeBlank = fgetc(shpFile);
 		
