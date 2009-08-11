@@ -57,7 +57,7 @@ void JE_setTimerInt( void );
 void JE_calcFXVol( void );
 void JE_changeVolume( JE_word *music, int music_delta, JE_word *sample, int sample_delta );
 
-void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile );
+void JE_loadSndFile( const char *effects_sndfile, const char *voices_sndfile );
 void JE_playSampleNum( JE_byte samplenum );
 
 #endif /* NORTSONG_H */

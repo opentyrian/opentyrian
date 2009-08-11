@@ -98,7 +98,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 	}
 }
 
-void JE_loadSndFile( char *effects_sndfile, char *voices_sndfile )
+void JE_loadSndFile( const char *effects_sndfile, const char *voices_sndfile )
 {
 	JE_byte y, z;
 	JE_word x;
