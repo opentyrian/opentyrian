@@ -67,7 +67,7 @@ JE_boolean useLastBank; /* See if I want to use the last 16 colors for DisplayTe
 bool pause_pressed = false, ingamemenu_pressed = false;
 
 /* Draws a message at the bottom text window on the playing screen */
-void JE_drawTextWindow( char *text )
+void JE_drawTextWindow( const char *text )
 {
 	if (textErase > 0) // erase current text
 		blit_shape(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
@@ -77,7 +77,7 @@ void JE_drawTextWindow( char *text )
 	JE_outText(20, 190, text, 0, 4);
 }
 
-void JE_outCharGlow( JE_word x, JE_word y, char *s )
+void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 {
 	JE_integer maxloc, loc, z;
 	JE_shortint glowcol[60]; /* [1..60] */
@@ -432,7 +432,7 @@ void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
 	efread(*shapes, sizeof(JE_byte), shapeSize, f);
 }
 
-void JE_loadMainShapeTables( char *shpfile )
+void JE_loadMainShapeTables( const char *shpfile )
 {
 	FILE *f = dir_fopen_die(data_dir(), shpfile, "rb");
 	
@@ -2374,33 +2374,27 @@ void JE_handleChat( void )
 	// STUB(); Annoying piece of crap =P
 }
 
-JE_boolean JE_getNumber( char *s, JE_byte *x )
+bool str_pop_number( char *str, unsigned char *val )
 {
-	JE_boolean getNumber = false;
+	bool success = false;
+	
 	char buf[256];
-
-	while (strlen(s) > 0)
+	assert(strlen(str) < sizeof(buf));
+	
+	// grab the value from str
+	char *end;
+	*val = strtol(str, &end, 10);
+	
+	if (end != str)
 	{
-		if (s[0] == ' ')
-		{
-			strcpy(buf, s+1);
-			strcpy(s, buf);
-		} else {
-			char *tmp;
-
-			*x = strtol(s, &tmp, 10);
-			if (s != tmp)
-			{
-				getNumber = true;
-			}
-			strcpy(buf, tmp);
-			strcpy(s, buf);
-			goto end_loop;
-		}
+		success = true;
+		
+		// shift the rest to the beginning
+		strcpy(buf, end);
+		strcpy(str, buf);
 	}
-
-end_loop:
-	return getNumber;
+	
+	return success;
 }
 
 void JE_operation( JE_byte slot )

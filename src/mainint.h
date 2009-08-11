@@ -38,7 +38,7 @@ extern bool pause_pressed, ingamemenu_pressed;
 
 /*void JE_textMenuWait ( JE_word waittime, JE_boolean dogamma );*/
 
-void JE_drawTextWindow( char *text );
+void JE_drawTextWindow( const char *text );
 void JE_initPlayerData( void );
 void JE_highScoreScreen( void );
 void JE_gammaCorrect_func( JE_byte *col, JE_real r );
@@ -68,14 +68,14 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum );
 JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems );
 
 void JE_drawPortConfigButtons( void );
-void JE_outCharGlow( JE_word x, JE_word y, char *s );
+void JE_outCharGlow( JE_word x, JE_word y, const char *s );
 JE_boolean JE_getPassword( void );
 
 void JE_playCredits( void );
 void JE_endLevelAni( void );
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness );
 void JE_handleChat( void );
-JE_boolean JE_getNumber( char *s, JE_byte *x );
+bool str_pop_number( char *str, unsigned char *val );
 void JE_loadScreen( void );
 void JE_operation( JE_byte slot );
 void JE_inGameDisplays( void );
@@ -84,7 +84,7 @@ void JE_pauseGame( void );
 
 void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize );
 
-void JE_loadMainShapeTables( char *shpfile );
+void JE_loadMainShapeTables( const char *shpfile );
 void free_main_shape_tables( void );
 
 void JE_playerMovement( JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, JE_byte *shapes9ptr, JE_integer *armorLevel, JE_integer *baseArmor, JE_shortint *shield, JE_shortint *shieldMax, JE_word *playerInvulnerable, JE_integer *PX, JE_integer *PY, JE_integer *lastPX, JE_integer *lastPY, JE_integer *lastPX2, JE_integer *lastPY2, JE_integer *PXChange, JE_integer *PYChange, JE_integer *lastTurn, JE_integer *lastTurn2, JE_integer *tempLastTurn2, JE_byte *stopWaitX, JE_byte *stopWaitY, JE_word *mouseX, JE_word *mouseY, JE_boolean *playerAlive, JE_byte *playerStillExploding, JE_PItemsType pItems );

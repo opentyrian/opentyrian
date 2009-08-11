@@ -2977,21 +2977,17 @@ new_game:
 
 								memset(&itemAvail, 0, sizeof(itemAvail));
 
-								for (temp = 0; temp < 9; temp++)
+								for (int i = 0; i < 9; ++i)
 								{
-									char buf[256];
-
 									JE_readCryptLn(lvlFile, s);
-
-									sprintf(buf, "%s ", (strlen(s) > 8 ? s+8 : ""));
-									/*strcat(strcpy(s, s + 8), " ");*/
-									temp2 = 0;
-									while (JE_getNumber(buf, &itemAvail[temp][temp2]))
-									{
-										temp2++;
-									}
-
-									itemAvailMax[temp] = temp2;
+									
+									char buf[256];
+									snprintf(buf, sizeof(buf), "%s", (strlen(s) > 8) ? s + 8 : "");
+									
+									int j = 0;
+									while (str_pop_number(buf, &itemAvail[i][j]))
+										++j;
+									itemAvailMax[i] = j;
 								}
 
 								JE_itemScreen();
