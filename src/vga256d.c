@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -69,11 +69,6 @@ void JE_pix2( JE_word x, JE_word y, JE_byte c )
 		Uint8 *vga = VGAScreen->pixels;
 		vga[y * VGAScreen->pitch + x] = c;
 	}
-}
-
-void JE_pixCool( JE_word x, JE_word y, JE_byte c )
-{
-	JE_pix3(x, y, c);
 }
 
 void JE_pix3( JE_word x, JE_word y, JE_byte c )

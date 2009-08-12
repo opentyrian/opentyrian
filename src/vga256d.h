@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -34,7 +34,6 @@ extern palette_t vga_palette;
 
 void JE_pix( JE_word x, JE_word y, JE_byte c );
 void JE_pix2( JE_word x, JE_word y, JE_byte c );
-void JE_pixCool( JE_word x, JE_word y, JE_byte c );
 void JE_pix3( JE_word x, JE_word y, JE_byte c );
 void JE_pixAbs( JE_word x, JE_byte c );
 void JE_getPix( JE_word x, JE_word y, JE_byte *c );
