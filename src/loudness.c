@@ -45,10 +45,11 @@ Uint8 channel_vol[SFX_CHANNELS];
 int sound_init_state = false;
 int freq = 11025 * OUTPUT_QUALITY;
 
+static SDL_AudioCVT audio_cvt; // used for format conversion
+
 void audio_cb( void *userdata, unsigned char *feedme, int howmuch );
 
 void load_song( unsigned int song_num );
-
 
 bool init_audio( void )
 {
@@ -57,20 +58,13 @@ bool init_audio( void )
 	
 	SDL_AudioSpec ask, got;
 	
-	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
-	{
-		fprintf(stderr, "error: failed to initialize audio system: %s\n", SDL_GetError());
-		audio_disabled = true;
-		return false;
-	}
-	
 	ask.freq = freq;
 	ask.format = (BYTES_PER_SAMPLE == 2) ? AUDIO_S16SYS : AUDIO_S8;
 	ask.channels = 1;
 	ask.samples = 512;
 	ask.callback = audio_cb;
 	
-	printf("\trequested  frequency: %d; buffer size: %d\n", ask.freq, ask.samples);
+	printf("\trequested %d Hz, %d channels, %d samples\n", ask.freq, ask.channels, ask.samples);
 	
 	if (SDL_OpenAudio(&ask, &got) == -1)
 	{
@@ -79,7 +73,9 @@ bool init_audio( void )
 		return false;
 	}
 	
-	printf("\tobtained   frequency: %d; buffer size: %d\n", got.freq, got.samples);
+	printf("\tobtained  %d Hz, %d channels, %d samples\n", got.freq, got.channels, got.samples);
+	
+	SDL_BuildAudioCVT(&audio_cvt, ask.format, ask.channels, ask.freq, got.format, got.channels, got.freq);
 	
 	opl_init();
 	
@@ -90,10 +86,15 @@ bool init_audio( void )
 
 void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 {
+	// prepare for conversion
+	howmuch /= audio_cvt.len_mult;
+	audio_cvt.buf = sdl_buffer;
+	audio_cvt.len = howmuch;
+	
 	static long ct = 0;
 	
 	SAMPLE_TYPE *feedme = (SAMPLE_TYPE *)sdl_buffer;
-	
+
 	if (!music_disabled && !music_stopped)
 	{
 		/* SYN: Simulate the fm synth chip */
@@ -162,11 +163,19 @@ void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
 			}
 		}
 	}
+	
+	// do conversion
+	SDL_ConvertAudio(&audio_cvt);
 }
 
 void deinit_audio( void )
 {
+	if (audio_disabled)
+		return;
+	
 	SDL_PauseAudio(1); // pause
+	
+	SDL_CloseAudio();
 	
 	for (unsigned int i = 0; i < SFX_CHANNELS; i++)
 	{
@@ -175,12 +184,7 @@ void deinit_audio( void )
 		channel_len[i] = 0;
 	}
 	
-	if (!audio_disabled)
-		opl_deinit();
-	
-	SDL_CloseAudio();
-	
-	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	opl_deinit();
 	
 	lds_free();
 }
