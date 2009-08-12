@@ -174,9 +174,9 @@ void JE_itemScreen( void )
 		12: joystick settings
 		13: super tyrian
 	*/
-
-	JE_loadCubes();
-
+	
+	load_cubes();
+	
 	VGAScreen = VGAScreenSeg;
 	tempScreenSeg = VGAScreen;
 
@@ -915,6 +915,7 @@ void JE_itemScreen( void )
 					colC = (-1 * colC);
 				}
 				
+				// data cube reading
 				if (curMenu == 8)
 				{
 					if (mouseX > 164 && mouseX < 299 && mouseY > 47 && mouseY < 153)
@@ -1716,142 +1717,117 @@ void JE_itemScreen( void )
 		JE_fadeBlack(10);
 }
 
-void JE_loadCubes( void )
+void load_cubes( void )
 {
-	char s[256] = "", s2[256] = "", s3[256] = "";
-	JE_word x, y;
-	JE_byte startPos, endPos, pos;
-	JE_boolean endString;
-	JE_byte lastWidth, curWidth;
-	JE_boolean pastStringLen, pastStringWidth;
-	
-	char buffer[256] = "";
-
 	memset(cubeText, 0, sizeof(cubeText));
+	
+	for (int cube_slot = 0; cube_slot < cubeMax; ++cube_slot)
+		load_cube(cube_slot, cubeList[cube_slot]);
+}
 
-	for (int cube = 0; cube < cubeMax; cube++)
+bool load_cube( int cube_slot, int cube_index )
+{
+	FILE *f = dir_fopen_die(data_dir(), cubeFile, "rb");
+	
+	char buf[256];
+	
+	// seek to the cube
+	while (cube_index > 0)
 	{
-		FILE *f = dir_fopen_die(data_dir(), cubeFile, "rb");
-
-		tempW = cubeList[cube];
-
-		do
-		{
-			do
-			{
-				JE_readCryptLn(f, s);
-			} while (s[0] != '*');
-			tempW--;
-		} while (tempW != 0);
-
-		faceNum[cube] = atoi(strnztcpy(buffer, s + 4, 2));
-
-		JE_readCryptLn(f, cubeHdr[cube]);
-		JE_readCryptLn(f, cubeHdr2[cube]);
-
-		curWidth = 0;
-		x = 5;
-		y = 1;
+		JE_readCryptLn(f, buf);
+		if (buf[0] == '*')
+			--cube_index;
 		
-		s3[0] = '\0';
-
-		do
+		if (feof(f))
 		{
-			JE_readCryptLn(f, s2);
-
-			// If we didn't finish this datacube yet
-			if (s2[0] != '*')
+			fclose(f);
+			
+			return false;
+		}
+	}
+	
+	str_pop_number(&buf[4], &faceNum[cube_slot]);
+	
+	JE_readCryptLn(f, cubeHdr[cube_slot]);
+	JE_readCryptLn(f, cubeHdr2[cube_slot]);
+	
+	int line = 0, line_pos = 0, line_width = 0;
+	
+	// for each line of decrypted text, split the line into words
+	// and add them individually to the lines of wrapped text
+	for (; ; )
+	{
+		JE_readCryptLn(f, buf);
+		
+		// end of data
+		if (feof(f) || buf[0] == '*')
+			break;
+		
+		// new paragraph
+		if (strlen(buf) == 0)
+		{
+			++line;
+			line_pos = 0;
+			line_width = 0;
+			
+			continue;
+		}
+		
+		int word_start = 0;
+		for (int i = 0; ; ++i)
+		{
+			bool end_of_line = (buf[i] == '\0'),
+			     end_of_word = end_of_line || (buf[i] == ' ');
+			
+			if (end_of_word)
 			{
-				sprintf(s, "%s %s", s3, s2);
-
-				pos = 1;
-				endPos = 0;
-				endString = false;
-
-				do
+				buf[i] = '\0';
+				
+				char *word = &buf[word_start];
+				word_start = i + 1;
+				
+				int word_length = strlen(word),
+					word_width = JE_textWidth(word, TINY_FONT);
+				
+				// word won't fit; no can do
+				if (word_length > CUBE_WIDTH || word_width > LINE_WIDTH)
+					break;
+				
+				bool prepend_space = true;
+				
+				line_pos += word_length + (prepend_space ? 1 : 0);
+				line_width += word_width + (prepend_space ? 6 : 0);
+				
+				// word won't fit on current line; use next
+				if (line_pos > CUBE_WIDTH || line_width > LINE_WIDTH)
 				{
-					startPos = endPos + 1;
-
-					do
-					{
-						endPos = pos;
-						lastWidth = curWidth;
-						
-						do
-						{
-							int sprite_id = font_ascii[(unsigned char)s[pos - 1]];
-							
-							// is printable character?
-							if (s[pos - 1] == ' ')
-								curWidth += 6;
-							else if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
-								curWidth += shapeX[TINY_FONT][sprite_id] + 1;
-							
-							pos++;
-							if (pos == strlen(s))
-							{
-								// Reached end of string, must load more
-								endString = true;
-								if (((pos - startPos) < CUBE_WIDTH) /*check for string length*/ && (curWidth <= LINE_WIDTH))
-								{
-									endPos = pos + 1;
-									lastWidth = curWidth;
-								}
-							}
-						}
-						while (!(s[pos - 1] == ' ' || endString)); // Loops until end of word or string
-						
-						// 
-						pastStringLen = (pos - startPos) > CUBE_WIDTH;
-						pastStringWidth = (curWidth > LINE_WIDTH);
-
-					// Loop until we need more string or we wrap over to the next line
-					} while (!(pastStringLen || pastStringWidth || endString));
-
-					if (!endString || pastStringLen || pastStringWidth)
-					{
-						/*Start new line*/
-						if (startPos - 1 < strlen(s))
-						{
-							strnztcpy(cubeText[cube][y-1], s + startPos - 1, endPos - startPos);
-						} else {
-							s[endPos] = '\0';
-						}
-						y++;
-						strnztcpy(s3, s + endPos, 255);
-						curWidth = curWidth - lastWidth;
-						if (s[endPos-1] == ' ')
-						{
-							curWidth -= 6;
-						}
-					} else {
-						strnztcpy(s3, s + startPos - 1, 255);
-						curWidth = 0;
-					}
-
-				} while (!endString);
-
-				if (strlen(s2) == 0)
+					++line;
+					line_pos = word_length;
+					line_width = word_width;
+					
+					prepend_space = false;
+				}
+				
+				// append word
+				if (line < COUNTOF(*cubeText))
 				{
-					if (strlen(s3) != 0)
-					{
-						strcpy(cubeText[cube][y-1], s3);
-					}
-					y++;
-					s3[0] = '\0';
+					if (prepend_space)
+						strcat(cubeText[cube_slot][line], " ");
+					strcat(cubeText[cube_slot][line], word);
+					
+					// track last line with text
+					cubeMaxY[cube_slot] = line + 1;
 				}
 			}
-		} while (s2[0] != '*');
-
-		strcpy(cubeText[cube][y-1], s3);
-		while (!strcmp(cubeText[cube][y-1], ""))
-		{
-			y--;
+			
+			if (end_of_line)
+				break;
 		}
-		cubeMaxY[cube] = y;
-
-		fclose(f);
 	}
+	
+	fclose(f);
+	
+	return true;
 }
 
 void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
