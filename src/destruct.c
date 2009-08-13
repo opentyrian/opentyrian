@@ -22,17 +22,23 @@
  * Most of the variables referring to the players are global as
  * they are often edited and that's how the original was written.
  *
- * Right now most (but not quite all) of the left/right vars have been
- * made arrays and placed in appropriate structs.  Functions are being
- * analyzed, split up, and simplified when possible.  Maintenance should
- * already be a lot easier.
+ * Right now almost all of the left/right code duplications are gone.  The
+ * parts that aren't look noticeably messy but must wait until teams are added.
+ * Most of the functions have been examined and tightened up, none of the enums
+ * start with '1', and the various large functions have been divided into
+ * smaller chunks.
  *
- * Things I wanted to do but can't: Remove references to VGAScreen.
- * VGAScreen is a global.  I thought I could draw everything to
- * destructTempScreen and blit it later; that's what happens most of the time.
- * Unfortunately functions like JE_rectangle will NOT allow you to specify
- * the screen you want to blit to.  So that'll have to wait until we switch
- * away from 256 colors.
+ * Things I have yet to do:
+ * Add in extra 'configuration' variables.  They will be constants in the
+ *  classic destruct but will be editable in the enhanced version.
+ * Add in LEFT/RIGHT teams instead of players.  Added bonus: 4 man fights.
+ * Rework the initial startup functions.
+ * Strictly define unit sizes.  Having random +12s in the code is confusing.
+ * Reorganize all these functions!
+ *
+ * Things I wanted to do but can't: Remove references to VGAScreen.  For
+ * a multitude of reasons this just isn't feasable.  It would have been nice
+ * to increase the playing field though...
  */
 
 /*** Headers ***/
@@ -63,43 +69,30 @@
 #define MAX_INSTALLATIONS 20
 
 /*** Macros ***/
-/* I believe in having a strict hierarchy of objects.  Units are owned
- * by players and players are owned by the world.  I feel it makes things
- * clearer, but it can result in a pretty nasty wall of text for what is
- * essentially a simple MOV.
- *
- * This macro helps a little.  Yuriks thinks we should use pointers, and
- * normally I'd agree except the code base is just about as far removed from
- * pointers and passing variables as possible.  We'l work it out eventually.
- */
-
 /* Don't use ++ and -- operators with macros.  They may look innocent
  * but given half the chance they will crash you and everyone
  * you care about.  It's a good practice to NOT embed them. */
-#define CURUNIT(x) player[(x)].unit[(player[(x)].unitSelected-1)]
+#define CURUNIT(x) player[(x)].unit[(player[(x)].unitSelected)]
 
-/* Todo: create 'makeshot' function which will zero out trails + fix that bug.*/
 /* Todo: Create 'isValidUnit' function OR boolean.  Health acting as both makes code harder to understand and can result in indexing bugs */
 /*** Enums ***/
-/* There are an awful lot of index-1s scattered throughout the code.
- * I plan to eventually change them all and to be able to properly
- * enumerate from 0 up.
- */
 enum de_player_t { PLAYER_LEFT = 0, PLAYER_RIGHT = 1, MAX_PLAYERS = 2 };
 enum de_team_t { TEAM_LEFT = 0, TEAM_RIGHT = 1, MAX_TEAMS = 2 };
-enum de_mode_t { MODE_5CARDWAR = 1, MODE_TRADITIONAL = 2, MODE_HELIASSAULT = 3,
-                 MODE_HELIDEFENSE = 4, MODE_OUTGUNNED = 5, MAX_MODES = 5 };
-enum de_unit_t { UNIT_TANK = 1, UNIT_NUKE, UNIT_DIRT, UNIT_SATELLITE,
+enum de_mode_t { MODE_5CARDWAR = 0, MODE_TRADITIONAL, MODE_HELIASSAULT,
+                 MODE_HELIDEFENSE, MODE_OUTGUNNED,
+                 MODE_FIRST = MODE_5CARDWAR, MODE_LAST = MODE_OUTGUNNED,
+                 MAX_MODES = 5 };
+enum de_unit_t { UNIT_TANK = 0, UNIT_NUKE, UNIT_DIRT, UNIT_SATELLITE,
                  UNIT_MAGNET, UNIT_LASER, UNIT_JUMPER, UNIT_HELI,
                  UNIT_FIRST = UNIT_TANK, UNIT_LAST = UNIT_HELI,
                  MAX_UNITS = 8 };
-enum de_shot_t { SHOT_TRACER = 1, SHOT_SMALL, SHOT_LARGE, SHOT_MICRO,
+enum de_shot_t { SHOT_TRACER = 0, SHOT_SMALL, SHOT_LARGE, SHOT_MICRO,
                  SHOT_SUPER, SHOT_DEMO, SHOT_SMALLNUKE, SHOT_LARGENUKE,
                  SHOT_SMALLDIRT, SHOT_LARGEDIRT, SHOT_MAGNET, SHOT_MINILASER,
                  SHOT_MEGALASER, SHOT_LASERTRACER, SHOT_MEGABLAST, SHOT_MINI,
                  SHOT_BOMB,
                  SHOT_FIRST = SHOT_TRACER, SHOT_LAST = SHOT_BOMB,
-                 MAX_SHOT_TYPES = 17, SHOT_INVALID = 0 };
+                 MAX_SHOT_TYPES = 17, SHOT_INVALID = -1 };
 enum de_expl_t { EXPL_NONE = 0, EXPL_MAGNET = 1, EXPL_DIRT = 25, EXPL_NORMAL = 252 };
 enum de_trails_t { TRAILS_NONE = 0, TRAILS_NORMAL = 1, TRAILS_FULL = 2 };
 enum de_pixel_t { PIXEL_BLACK = 0, PIXEL_DIRT = 25,
@@ -241,9 +234,14 @@ void DE_RaiseAngle( struct destruct_unit_s * );
 void DE_LowerAngle( struct destruct_unit_s * );
 void DE_RaisePower( struct destruct_unit_s * );
 void DE_LowerPower( struct destruct_unit_s * );
+void DE_CycleWeaponUp( struct destruct_unit_s * );
+void DE_CycleWeaponDown( struct destruct_unit_s * );
+void DE_RunMagnet( enum de_player_t, struct destruct_unit_s * );
 bool DE_RunTickCheckEndgame( void );
 void DE_RunTickPlaySounds( void );
-
+void DE_GravityFlyUnit( struct destruct_unit_s * );
+void DE_GravityLowerUnit( struct destruct_unit_s * );
+void DE_GravityDrawUnit( enum de_player_t, struct destruct_unit_s * );
 unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
 bool JE_stabilityCheck( unsigned int, unsigned int );
 
@@ -299,10 +297,10 @@ const bool weaponSystems[MAX_UNITS][MAX_SHOT_TYPES] =
 const JE_byte goodsel[14] /*[1..14]*/ = {1, 2, 6, 12, 13, 14, 17, 23, 24, 26, 28, 29, 32, 33};
 
 /* Unit creation.  Need to move this later: Doesn't belong here */
-const JE_byte basetypes[8][11] /*[1..8, 1..11]*/ = /*0 is amount of units*/
+const JE_byte basetypes[8][11] /*[1..8, 1..11]*/ = /* [0] is amount of units*/
 {
 	{5, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_DIRT,   UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER, UNIT_HELI},   /*Normal*/
-	{8, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_TANK,   UNIT_TANK,      UNIT_TANK,   UNIT_TANK,   UNIT_TANK,   UNIT_TANK},   /*Traditional*/
+	{1, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_TANK,   UNIT_TANK,      UNIT_TANK,   UNIT_TANK,   UNIT_TANK,   UNIT_TANK},   /*Traditional*/
 	{4, UNIT_HELI, UNIT_HELI, UNIT_HELI, UNIT_HELI,      UNIT_HELI,   UNIT_HELI,      UNIT_HELI,   UNIT_HELI,   UNIT_HELI,   UNIT_HELI},   /*Weak   Heli attack fleet*/
 	{8, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_NUKE,      UNIT_NUKE,   UNIT_NUKE,      UNIT_DIRT,   UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER},   /*Strong Heli defense fleet*/
 	{8, UNIT_HELI, UNIT_HELI, UNIT_HELI, UNIT_HELI,      UNIT_HELI,   UNIT_HELI,      UNIT_HELI,   UNIT_HELI,   UNIT_HELI,   UNIT_HELI},   /*Strong Heli attack fleet*/
@@ -312,16 +310,22 @@ const JE_byte basetypes[8][11] /*[1..8, 1..11]*/ = /*0 is amount of units*/
 };
 const unsigned int baseLookup[MAX_PLAYERS][DESTRUCT_MODES] =
 {
-	{1, 2, 4, 5, 7},
-	{1, 2, 3, 6, 8}
+	{0, 1, 3, 4, 6},
+	{0, 1, 2, 5, 7}
 };
 
 
-const JE_byte leftGraphicBase[MAX_UNITS] /*[1..MAX_UNITS]*/ = {1, 6, 11, 58, 63, 68, 96, 153};
-const JE_byte rightGraphicBase[MAX_UNITS] /*[1..MAX_UNITS]*/ = {20, 25, 30, 77, 82, 87, 115, 172};
+const JE_byte GraphicBase[MAX_PLAYERS][MAX_UNITS] =
+{
+	{  1,   6,  11,  58,  63,  68,  96, 153},
+	{ 20,  25,  30,  77,  82,  87, 115, 172}
+};
 
-const JE_byte lModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 0, 5, 0};
-const JE_byte rModeScore[DESTRUCT_MODES] /*[1..destructmodes]*/ = {1, 0, 5, 0, 1};
+const JE_byte ModeScore[MAX_PLAYERS][DESTRUCT_MODES] =
+{
+	{1, 0, 0, 5, 0},
+	{1, 0, 5, 0, 1}
+};
 
 const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 {
@@ -363,7 +367,6 @@ JE_boolean endOfGame, destructQuit;
 
 
 
-
 void JE_destructGame( void )
 {
 	/* This is the entry function.  Any one-time actions we need to
@@ -385,11 +388,10 @@ void JE_destructMain( void )
 	JE_loadPic(11, false);
 	JE_introScreen();
 
-	DE_ResetUnits();
 	DE_ResetPlayers();
 
 	player[PLAYER_LEFT].is_cpu = true;
-	// player[PLAYER_RIGHT].is_cpu = true; // this is fun :)
+	//player[PLAYER_RIGHT].is_cpu = true; // this is fun :)
 
 	do {
 		JE_modeSelect();
@@ -404,6 +406,7 @@ void JE_destructMain( void )
 				destructFirstTime = true;
 				JE_loadPic(11, false);
 
+				DE_ResetUnits();
 				DE_ResetLevel();
 				do
 				{
@@ -423,9 +426,9 @@ void JE_destructMain( void )
 void JE_introScreen( void )
 {
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
-	JE_outText(JE_fontCenter(specialName[8-1], TINY_FONT), 90, specialName[8-1], 12, 5);
-	JE_outText(JE_fontCenter(miscText[65-1], TINY_FONT), 180, miscText[65-1], 15, 2);
-	JE_outText(JE_fontCenter(miscText[66-1], TINY_FONT), 190, miscText[66-1], 15, 2);
+	JE_outText(JE_fontCenter(specialName[7], TINY_FONT), 90, specialName[7], 12, 5);
+	JE_outText(JE_fontCenter(miscText[64], TINY_FONT), 180, miscText[64], 15, 2);
+	JE_outText(JE_fontCenter(miscText[65], TINY_FONT), 190, miscText[65], 15, 2);
 	JE_showVGA();
 	JE_fadeColor(15);
 
@@ -455,10 +458,10 @@ void JE_modeSelect( void )
 	destructQuit = false;
 
 	do {
-		for (int x = 1; x <= DESTRUCT_MODES; x++)
+		for (int x = 0; x < DESTRUCT_MODES; x++)
 		{   /* This code prints the available game modes */
 			temp = (x == destructMode) * 4; /* This odd looking code just highlights the selected menu option */
-			JE_textShade(JE_fontCenter(destructModeName[x-1], TINY_FONT), 70 + x * 12, destructModeName[x-1], 12, temp, FULL_SHADE);
+			JE_textShade(JE_fontCenter(destructModeName[x], TINY_FONT), 82 + x * 12, destructModeName[x], 12, temp, FULL_SHADE);
 		}
 		JE_showVGA();
 
@@ -486,15 +489,21 @@ void JE_modeSelect( void )
 		}
 		if (keysactive[SDLK_UP])
 		{
-			destructMode--;
-			if (destructMode < 1)
-				destructMode = 5;
+			if(destructMode == MODE_FIRST)
+			{
+				destructMode = MODE_LAST;
+			} else {
+				destructMode--;
+			}
 		}
 		if (keysactive[SDLK_DOWN])
 		{
-			destructMode++;
-			if (destructMode > 5)
-				destructMode = 1;
+			if(destructMode == MODE_LAST)
+			{
+				destructMode = MODE_FIRST;
+			} else {
+				destructMode++;
+			}
 		}
 
 
@@ -630,7 +639,7 @@ void DE_generateUnits( unsigned int * baseWorld )
 		numSatellites = 0;
 		player[i].unitsRemaining = 0;
 
-		for (j = 0; j < basetypes[baseLookup[i][destructMode-1]-1][0]; j++)
+		for (j = 0; j < basetypes[baseLookup[i][destructMode]][0]; j++)
 		{
 			/* Not everything is the same between players */
 			if(i == PLAYER_LEFT)
@@ -643,19 +652,23 @@ void DE_generateUnits( unsigned int * baseWorld )
 			}
 
 			player[i].unit[j].unitY = JE_placementPosition(player[i].unit[j].unitX - 1, 14, baseWorld);
-			player[i].unit[j].unitYMov = 0;
-			player[i].unit[j].isYInAir = false;
-			player[i].unit[j].unitType = basetypes[baseLookup[i][destructMode-1]-1][(mt_rand() % 10) + 1];
+			player[i].unit[j].unitType = basetypes[baseLookup[i][destructMode]][(mt_rand() % 10) + 1];
 
 			/* Sats are special cases since they are useless.  They don't count
 			 * as active units and we can't have a team of all sats */
 			if (player[i].unit[j].unitType == UNIT_SATELLITE)
 			{
-				if (numSatellites == basetypes[baseLookup[i][destructMode-1]-1][0])
+				if (numSatellites == basetypes[baseLookup[i][destructMode]][0])
 				{
 					player[i].unit[j].unitType = UNIT_TANK;
 					player[i].unitsRemaining++;
 				} else {
+					/* Place the satellite. Note: Earlier we cleared
+					 * space with JE_placementPosition.  Now we are randomly
+					 * placing the sat's Y.  It can be generated in hills
+					 * and there is a clearing underneath it.  This CAN
+					 * be fixed but won't be for classic.
+					 */
 					player[i].unit[j].unitY = 30 + (mt_rand() % 40);
 					numSatellites++;
 				}
@@ -668,10 +681,11 @@ void DE_generateUnits( unsigned int * baseWorld )
 			/* Now just fill in the rest of the unit's values. */
 			player[i].unit[j].lastMove = 0;
 			player[i].unit[j].unitYMov = 0;
+			player[i].unit[j].isYInAir = false;
 			player[i].unit[j].angle = 0;
 			player[i].unit[j].power = (player[i].unit[j].unitType == UNIT_LASER) ? 6 : 3;
-			player[i].unit[j].shotType = defaultWeapon[player[i].unit[j].unitType-1];
-			player[i].unit[j].health = baseDamage[player[i].unit[j].unitType-1];
+			player[i].unit[j].shotType = defaultWeapon[player[i].unit[j].unitType];
+			player[i].unit[j].health = baseDamage[player[i].unit[j].unitType];
 			player[i].unit[j].ani_frame = 0;
 		}
 	}
@@ -943,11 +957,9 @@ void JE_makeExplosion( unsigned int tempPosX, unsigned int tempPosY, enum de_sho
 	exploRec[i].y = tempPosY;
 	exploRec[i].explowidth = 2;
 
-	/* Bug fix!  shottype == 0 when a unit is destroyed and actually pulls
-	 * data out of another table.*/
 	if(shottype != SHOT_INVALID)
 	{
-		tempExploSize = exploSize[shottype-1];
+		tempExploSize = exploSize[shottype];
 		if (tempExploSize < 5)
 		{
 			JE_eSound(3);
@@ -970,8 +982,8 @@ void JE_makeExplosion( unsigned int tempPosX, unsigned int tempPosY, enum de_sho
 		}
 
 		exploRec[i].explomax  = tempExploSize;
-		exploRec[i].explofill = exploDensity[shottype-1];
-		exploRec[i].exploType = shotDirt[shottype-1];
+		exploRec[i].explofill = exploDensity[shottype];
+		exploRec[i].exploType = shotDirt[shottype];
 	}
 	else
 	{
@@ -1063,14 +1075,14 @@ void JE_helpScreen( void )
 
 	for(x = 0; x < 2; x++)
 	{
-		JE_outText(100, 5 + x * 90, destructHelp[x * 12 + 1-1], 2, 4);
-		JE_outText(100, 15 + x * 90, destructHelp[x * 12 + 2-1], 2, 1);
+		JE_outText(100,  5 + x * 90, destructHelp[x * 12 + 0], 2, 4);
+		JE_outText(100, 15 + x * 90, destructHelp[x * 12 + 1], 2, 1);
 		for (y = 3; y <= 12; y++)
 		{
 			JE_outText(((y - 1) % 2) * 160 + 10, 15 + ((y - 1) / 2) * 12 + x * 90, destructHelp[x * 12 + y-1], 1, 3);
 		}
 	}
-	JE_outText(30, 190, destructHelp[25-1], 3, 4);
+	JE_outText(30, 190, destructHelp[24], 3, 4);
 	JE_showVGA();
 	JE_fadeColor(15);
 
@@ -1090,7 +1102,7 @@ void JE_pauseScreen( void )
 	set_volume(tyrMusicVolume / 2, fxVolume);
 
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
-	JE_outText(JE_fontCenter(miscText[23-1], TINY_FONT), 90, miscText[23-1], 12, 5);
+	JE_outText(JE_fontCenter(miscText[22], TINY_FONT), 90, miscText[22], 12, 5);
 	JE_showVGA();
 
 	do {
@@ -1132,7 +1144,7 @@ void DE_ResetPlayers( void )
 	for (i = 0; i < MAX_PLAYERS; ++i)
 	{
 		player[i].is_cpu = false;
-		player[i].unitSelected = 1;
+		player[i].unitSelected = 0;
 		player[i].shotDelay = 0;
 		player[i].score = 0;
 		player[i].aiMemory.c_Angle = 0;
@@ -1180,7 +1192,7 @@ void DE_ResetAI( void )
 		{
 			if(ptr->health == 0) { continue; } /* This unit is not active. */
 
-			if (systemAngle[ptr->unitType-1] || ptr->unitType == UNIT_HELI)
+			if (systemAngle[ptr->unitType] || ptr->unitType == UNIT_HELI)
 			{
 				ptr->angle = M_PI / 4.0;
 			} else {
@@ -1190,9 +1202,9 @@ void DE_ResetAI( void )
 
 			if (world.mapFlags & MAP_WALLS)
 			{
-				ptr->shotType = defaultCpuWeaponB[ptr->unitType-1];
+				ptr->shotType = defaultCpuWeaponB[ptr->unitType];
 			} else {
-				ptr->shotType = defaultCpuWeapon[ptr->unitType-1];
+				ptr->shotType = defaultCpuWeapon[ptr->unitType];
 			}
 		}
 	}
@@ -1307,129 +1319,129 @@ void DE_RunTickCycleDeadUnits( void )
 		while (CURUNIT(i).health == 0 || CURUNIT(i).shotType == SHOT_INVALID)
 		{
 			player[i].unitSelected++;
-			if (player[i].unitSelected > MAX_INSTALLATIONS)
+			if (player[i].unitSelected >= MAX_INSTALLATIONS)
 			{
-				player[i].unitSelected = 1;
+				player[i].unitSelected = 0;
 			}
 		}
 	}
 }
 void DE_RunTickGravity( void )
 {
-	unsigned int z;
+	unsigned int i, j;
+	struct destruct_unit_s * unit;
 
-	for (z = 0; z < MAX_INSTALLATIONS; z++)
+
+	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (player[PLAYER_LEFT].unit[z].health > 0)
-		{
-			if (player[PLAYER_LEFT].unit[z].unitType != UNIT_SATELLITE)
-			{
-				if (player[PLAYER_LEFT].unit[z].isYInAir == true)
-				{
-					if (player[PLAYER_LEFT].unit[z].unitY + player[PLAYER_LEFT].unit[z].unitYMov > 199)
-					{
-						player[PLAYER_LEFT].unit[z].unitYMov = 0;
-						player[PLAYER_LEFT].unit[z].isYInAir = false;
-					}
-					player[PLAYER_LEFT].unit[z].unitY += player[PLAYER_LEFT].unit[z].unitYMov;
-					if (player[PLAYER_LEFT].unit[z].unitY < 26)
-					{
-						player[PLAYER_LEFT].unit[z].unitYMov = 0;
-						player[PLAYER_LEFT].unit[z].unitY = 26;
-					}
-					if (player[PLAYER_LEFT].unit[z].unitType == UNIT_HELI)
-					{
-						player[PLAYER_LEFT].unit[z].unitYMov += 0.0001f;
-					} else {
-						player[PLAYER_LEFT].unit[z].unitYMov += 0.03f;
-					}
-					if (!JE_stabilityCheck(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY)))
-					{
-						player[PLAYER_LEFT].unit[z].unitYMov = 0;
-						player[PLAYER_LEFT].unit[z].isYInAir = false;
-					}
-				} else if (player[PLAYER_LEFT].unit[z].unitY < 199) {
-					if (JE_stabilityCheck(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY)))
-						player[PLAYER_LEFT].unit[z].unitY += 1;
-				}
-				temp = leftGraphicBase[player[PLAYER_LEFT].unit[z].unitType-1] + player[PLAYER_LEFT].unit[z].ani_frame;
-				if (player[PLAYER_LEFT].unit[z].unitType == UNIT_HELI)
-				{
-					if (player[PLAYER_LEFT].unit[z].lastMove < -2)
-					{
-						temp += 5;
-					} else if (player[PLAYER_LEFT].unit[z].lastMove > 2) {
-						temp += 10;
-					}
-				} else {
-					temp += floor(player[PLAYER_LEFT].unit[z].angle * 9.99f / M_PI);
-				}
 
-				JE_drawShape2(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY) - 13, temp, eShapes1);
-			} else {
-				JE_drawShape2(player[PLAYER_LEFT].unit[z].unitX, round(player[PLAYER_LEFT].unit[z].unitY) - 13, leftGraphicBase[player[PLAYER_LEFT].unit[z].unitType-1] + player[PLAYER_LEFT].unit[z].ani_frame, eShapes1);
+		unit = player[i].unit;
+		for (j = 0; j < MAX_INSTALLATIONS; j++, unit++)
+		{
+			if (unit->health <= 0) { continue; } /* invalid unit */
+
+			switch(unit->unitType)
+			{
+				case UNIT_SATELLITE: /* satellites don't fall down */
+					break;
+
+				case UNIT_HELI:
+				case UNIT_JUMPER:
+					if (unit->isYInAir == true) /* unit is falling down, at least in theory */
+					{
+						DE_GravityFlyUnit(unit);
+						break;
+					}
+					/* else fall through and treat as a normal unit */
+
+				default:
+					DE_GravityLowerUnit(unit);
+			}
+
+		/* Draw the unit. */
+		DE_GravityDrawUnit(i, unit);
+		}
+	}
+}
+void DE_GravityDrawUnit( enum de_player_t team, struct destruct_unit_s * unit )
+{
+	unsigned int anim_index;
+
+
+	anim_index = GraphicBase[team][unit->unitType] + unit->ani_frame;
+	if (unit->unitType == UNIT_HELI)
+	{
+		/* Adjust animation index if we are travelling right or left. */
+		if (unit->lastMove < -2)
+		{
+			anim_index += 5;
+		} else if (unit->lastMove > 2) {
+			anim_index += 10;
+		}
+	} else { /* This handles our cannons and the like */
+		anim_index += floor(unit->angle * 9.99 / M_PI);
+	}
+
+	JE_drawShape2(unit->unitX, round(unit->unitY) - 13, anim_index, eShapes1);
+}
+void DE_GravityLowerUnit( struct destruct_unit_s * unit )
+{
+	/* units fall at a constant speed.  The heli is an odd case though;
+	 * we simply give it a downward velocity, but due to a buggy implementation
+	 * th chopper didn't lower until you tried to fly it up.  Tyrian 2000 fixes
+	 * this by not making the chopper a special case.  I've decided to actually
+	 * mix both; the chopper is given a slight downward acceleration (simulating
+	 * a 'rocky' takeoff), and it is lowered like a regular unit, but not as
+	 * quickly.
+	 */
+	if(unit->unitY < 199) { /* checking takes time, don't check if it's at the bottom */
+		if (JE_stabilityCheck(unit->unitX, round(unit->unitY)))
+		{
+			switch(unit->unitType)
+			{
+				case UNIT_HELI:
+					unit->unitYMov = 4.5;
+					unit->unitY += 0.2;
+					break;
+
+				default:
+					unit->unitY += 1;
+			}
+
+			if (unit->unitY > 199) /* could be possible */
+			{
+				unit->unitY = 199;
 			}
 		}
 	}
-	for (z = 0; z < MAX_INSTALLATIONS; z++)
+}
+void DE_GravityFlyUnit( struct destruct_unit_s * unit )
+{
+	if (unit->unitY + unit->unitYMov > 199) /* would hit bottom of screen */
 	{
-		if (player[PLAYER_RIGHT].unit[z].health > 0)
-		{
-			if (player[PLAYER_RIGHT].unit[z].unitType != UNIT_SATELLITE)
-			{
-				if (player[PLAYER_RIGHT].unit[z].isYInAir == true)
-				{
-					if (player[PLAYER_RIGHT].unit[z].unitY + player[PLAYER_RIGHT].unit[z].unitYMov > 199)
-					{
-						player[PLAYER_RIGHT].unit[z].unitYMov = 0;
-						player[PLAYER_RIGHT].unit[z].isYInAir = false;
-					}
-					player[PLAYER_RIGHT].unit[z].unitY += player[PLAYER_RIGHT].unit[z].unitYMov;
-					if (player[PLAYER_RIGHT].unit[z].unitY < 24)
-					{
-						player[PLAYER_RIGHT].unit[z].unitYMov = 0;
-						player[PLAYER_RIGHT].unit[z].unitY = 24;
-					}
-					if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI) /*HELI*/
-					{
-						player[PLAYER_RIGHT].unit[z].unitYMov += 0.0001f;
-					} else {
-						player[PLAYER_RIGHT].unit[z].unitYMov += 0.03f;
-					}
-					if (!JE_stabilityCheck(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY)))
-					{
-						player[PLAYER_RIGHT].unit[z].unitYMov = 0;
-						player[PLAYER_RIGHT].unit[z].isYInAir = false;
-					}
-				} else if (player[PLAYER_RIGHT].unit[z].unitY < 199)
-					if (JE_stabilityCheck(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY)))
-					{
-						if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI)
-						{
-							player[PLAYER_RIGHT].unit[z].unitYMov += 0.01f;
-						} else {
-							player[PLAYER_RIGHT].unit[z].unitY += 1;
-						}
-					}
+		unit->unitY = 199;
+		unit->unitYMov = 0;
+		unit->isYInAir = false;
+		return;
+	}
 
-				temp = rightGraphicBase[player[PLAYER_RIGHT].unit[z].unitType-1] + player[PLAYER_RIGHT].unit[z].ani_frame;
-				if (player[PLAYER_RIGHT].unit[z].unitType == UNIT_HELI)
-				{
-					if (player[PLAYER_RIGHT].unit[z].lastMove < -2)
-					{
-						temp += 5;
-					} else if (player[PLAYER_RIGHT].unit[z].lastMove > 2) {
-						temp += 10;
-					}
-				} else {
-					temp += floor(player[PLAYER_RIGHT].unit[z].angle * 9.99f / M_PI);
-				}
-
-				JE_drawShape2(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY) - 13, temp, eShapes1);
-			} else {
-				JE_drawShape2(player[PLAYER_RIGHT].unit[z].unitX, round(player[PLAYER_RIGHT].unit[z].unitY) - 13, rightGraphicBase[player[PLAYER_RIGHT].unit[z].unitType-1] + player[PLAYER_RIGHT].unit[z].ani_frame, eShapes1);
-			}
-		}
+	/* move the unit and alter acceleration */
+	unit->unitY += unit->unitYMov;
+	if (unit->unitY < 24) /* This stops units from going above the screen */
+	{
+		unit->unitYMov = 0;
+		unit->unitY = 24;
+	}
+	if (unit->unitType == UNIT_HELI) /* helicopters fall more slowly */
+	{
+		unit->unitYMov += 0.0001;
+	} else {
+		unit->unitYMov += 0.03;
+	}
+	if (!JE_stabilityCheck(unit->unitX, round(unit->unitY)))
+	{
+		unit->unitYMov = 0;
+		unit->isYInAir = false;
 	}
 }
 void DE_RunTickAnimate( void )
@@ -1446,7 +1458,7 @@ void DE_RunTickAnimate( void )
 			/* Don't mess with any unit that is unallocated (health = 0)
 			 * or doesn't animate and is set to frame 0 */
 			if(ptr->health == 0) { continue; }
-			if(systemAni[ptr->unitType-1] == false && ptr->ani_frame == 0) { continue; }
+			if(systemAni[ptr->unitType] == false && ptr->ani_frame == 0) { continue; }
 
 			if (++(ptr->ani_frame) > 3)
 			{
@@ -1581,7 +1593,7 @@ void DE_RunTickShots( void )
 		shotRec[i].y += shotRec[i].ymov;
 
 		/* If the shot can bounce off the map, bounce it */
-		if (shotBounce[shotRec[i].shottype-1])
+		if (shotBounce[shotRec[i].shottype])
 		{
 			if (shotRec[i].y > 199 || shotRec[i].y < 14)
 			{
@@ -1643,11 +1655,11 @@ void DE_RunTickShots( void )
 			}
 		}
 
-		tempTrails = (shotColor[shotRec[i].shottype-1] << 4) - 3;
+		tempTrails = (shotColor[shotRec[i].shottype] << 4) - 3;
 		JE_pixCool(tempPosX, tempPosY, tempTrails);
 
 		/*Draw the shot trail (if applicable) */
-		switch (shotTrail[shotRec[i].shottype-1])
+		switch (shotTrail[shotRec[i].shottype])
 		{
 		case TRAILS_NONE:
 			break;
@@ -1666,7 +1678,7 @@ void DE_RunTickShots( void )
 			 && tempPosX >= world.mapWalls[j].wallX && tempPosX <= world.mapWalls[j].wallX + 11
 			 && tempPosY >= world.mapWalls[j].wallY && tempPosY <= world.mapWalls[j].wallY + 14)
 			{
-				if (demolish[shotRec[i].shottype-1])
+				if (demolish[shotRec[i].shottype])
 				{
 					/* Blow up the wall and remove the shot. */
 					world.mapWalls[j].wallExist = false;
@@ -1825,7 +1837,7 @@ void DE_RunTickAI( void )
 		{
 			if (player[player_index].unit[i].health > 0 && player[player_index].unit[i].unitType == UNIT_HELI)
 			{
-				player[player_index].unitSelected = i + 1;
+				player[player_index].unitSelected = i;
 				break;
 			}
 		}
@@ -1958,7 +1970,7 @@ void DE_RunTickDrawCrosshairs( void )
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
 		direction = (i == PLAYER_LEFT) ? -1 : 1;
-		curUnit = &(player[i].unit[player[i].unitSelected-1]);
+		curUnit = &(player[i].unit[player[i].unitSelected]);
 
 		if (curUnit->unitType == UNIT_HELI)
 		{
@@ -1986,7 +1998,7 @@ void DE_RunTickDrawHUD( void )
 
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		curUnit = &(player[i].unit[player[i].unitSelected-1]);
+		curUnit = &(player[i].unit[player[i].unitSelected]);
 		startX = ((i == PLAYER_LEFT) ? 0 : 320 - 150);
 
 		JE_bar       ( startX +  5, 3, startX +  14, 8, 241);
@@ -1996,9 +2008,9 @@ void DE_RunTickDrawHUD( void )
 		JE_rectangle ( startX + 17, 2, startX + 143, 9, 242);
 		JE_rectangle ( startX + 16, 1, startX + 144, 10, 240);
 
-		JE_drawShape2( startX +  4, 0, 190 + curUnit->shotType, eShapes1);
+		JE_drawShape2( startX +  4, 0, 191 + curUnit->shotType, eShapes1);
 
-		JE_outText   ( startX + 20, 3, weaponNames[curUnit->shotType-1], 15, 2);
+		JE_outText   ( startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
 		sprintf      (tempstr, "dmg~%d~", curUnit->health);
 		JE_outText   ( startX + 75, 3, tempstr, 15, 0);
 		sprintf      (tempstr, "pts~%d~", player[i].score);
@@ -2044,7 +2056,6 @@ void DE_RunTickGetInput( void )
 }
 void DE_ProcessInput( void )
 {
-	unsigned int i;
 	int direction;
 
 	unsigned int player_index, player_enemy;
@@ -2062,9 +2073,9 @@ void DE_ProcessInput( void )
 		}
 
 		direction = (player_index == PLAYER_LEFT) ? -1 : 1;
-		curUnit = &(player[player_index].unit[player[player_index].unitSelected-1]);
+		curUnit = &(player[player_index].unit[player[player_index].unitSelected]);
 
-		if (systemAngle[curUnit->unitType-1] == true) /* selected unit may change shot angle */
+		if (systemAngle[curUnit->unitType] == true) /* selected unit may change shot angle */
 		{
 			if (player[player_index].moves.actions[MOVE_LEFT] == true)
 			{
@@ -2107,6 +2118,7 @@ void DE_ProcessInput( void )
 		}
 
 		if (curUnit->unitType != UNIT_LASER)
+
 		{	/*increasepower*/
 			if (player[player_index].moves.actions[MOVE_UP] == true)
 			{
@@ -2121,11 +2133,7 @@ void DE_ProcessInput( void )
 					curUnit->isYInAir = true;
 				}
 				else {
-					curUnit->power += 0.05;
-					if (curUnit->power > 5)
-					{
-						curUnit->power = 5;
-					}
+					DE_RaisePower(curUnit);
 				}
 			}
 			/*decreasepower*/
@@ -2135,11 +2143,7 @@ void DE_ProcessInput( void )
 				{
 					curUnit->unitYMov += 0.1;
 				} else {
-					curUnit->power -= 0.05;
-					if (curUnit->power < 1)
-					{
-						curUnit->power = 1;
-					}
+					DE_LowerPower(curUnit);
 				}
 			}
 		}
@@ -2147,25 +2151,11 @@ void DE_ProcessInput( void )
 		/*up/down weapon.  These just cycle until a valid weapon is found */
 		if (player[player_index].moves.actions[MOVE_CYUP] == true)
 		{
-			do
-			{
-				curUnit->shotType++;
-				if (curUnit->shotType > SHOT_LAST)
-				{
-					curUnit->shotType = SHOT_FIRST;
-				}
-			} while (weaponSystems[curUnit->unitType-1][curUnit->shotType-1] == 0);
+			DE_CycleWeaponUp(curUnit);
 		}
 		if (player[player_index].moves.actions[MOVE_CYDN] == true)
 		{
-			do
-			{
-				curUnit->shotType--;
-				if (curUnit->shotType < SHOT_FIRST)
-				{
-					curUnit->shotType = SHOT_LAST;
-				}
-			} while (weaponSystems[curUnit->unitType-1][curUnit->shotType-1] == 0);
+			DE_CycleWeaponDown(curUnit);
 		}
 
 		/* Change.  Since change would change out curUnit pointer, let's just do it last.
@@ -2173,13 +2163,13 @@ void DE_ProcessInput( void )
 		if (player[player_index].moves.actions[MOVE_CHANGE] == true)
 		{
 			player[player_index].unitSelected++;
-			if (player[player_index].unitSelected > MAX_INSTALLATIONS)
+			if (player[player_index].unitSelected >= MAX_INSTALLATIONS)
 			{
-				player[player_index].unitSelected = 1;
+				player[player_index].unitSelected = 0;
 			}
 		}
 
-		/*Newshot, aka the big one.*/
+		/*Newshot*/
 		if (player[player_index].shotDelay > 0)
 		{
 			player[player_index].shotDelay--;
@@ -2187,46 +2177,52 @@ void DE_ProcessInput( void )
 		if (player[player_index].moves.actions[MOVE_FIRE] == true
 		&& (player[player_index].shotDelay == 0))
 		{
-			player[player_index].shotDelay = shotDelay[curUnit->shotType-1];
+			player[player_index].shotDelay = shotDelay[curUnit->shotType];
 
-			if (shotDirt[curUnit->shotType-1] > 20)
+			switch(shotDirt[curUnit->shotType])
 			{
-				DE_MakeShot (player_index, curUnit, direction);
-			} else {
-				switch (shotDirt[curUnit->shotType-1])
-				{
-				case 1: /* magnet */
-					for (i = 0; i < MAX_SHOTS; i++)
-					{
-						if (shotRec[i].isAvailable == false)
-						{
-							if ((player_index == PLAYER_LEFT  && shotRec[i].x > curUnit->unitX)
-							 || (player_index == PLAYER_RIGHT && shotRec[i].x < curUnit->unitX))
-							{
-								shotRec[i].xmov += curUnit->power * 0.1f * -direction;
-							}
-						}
-					}
-					for (i = 0; i < MAX_INSTALLATIONS; i++) /* magnets push coptors */
-					{
-						if (player[player_enemy].unit[i].health > 0
-						 && player[player_enemy].unit[i].unitType == UNIT_HELI
-						 && player[player_enemy].unit[i].isYInAir == true)
-						{
-							if ((player_enemy == PLAYER_LEFT  && player[player_enemy].unit[i].unitX + 11 < 318)
-							 || (player_enemy == PLAYER_RIGHT && player[player_enemy].unit[i].unitX > 1))
-							{
-								player[player_enemy].unit[i].unitX -= 2 * direction;
-							}
-						}
-					}
-					curUnit->ani_frame = 1;
+				case EXPL_NONE:
 					break;
-				}
+
+				case EXPL_MAGNET:
+					DE_RunMagnet(player_index, curUnit);
+					break;
+
+				case EXPL_DIRT:
+				case EXPL_NORMAL:
+					DE_MakeShot(player_index, curUnit, direction);
+					break;
+
+				default:
+					assert(false);
 			}
 		}
 	}
 }
+
+void DE_CycleWeaponUp( struct destruct_unit_s * unit )
+{
+	do
+	{
+		unit->shotType++;
+		if (unit->shotType > SHOT_LAST)
+		{
+			unit->shotType = SHOT_FIRST;
+		}
+	} while (weaponSystems[unit->unitType][unit->shotType] == 0);
+}
+void DE_CycleWeaponDown( struct destruct_unit_s * unit )
+{
+	do
+	{
+		unit->shotType--;
+		if (unit->shotType < SHOT_FIRST)
+		{
+			unit->shotType = SHOT_LAST;
+		}
+	} while (weaponSystems[unit->unitType][unit->shotType] == 0);
+}
+
 
 void DE_MakeShot( enum de_player_t curPlayer, const struct destruct_unit_s * curUnit, int direction )
 {
@@ -2251,7 +2247,7 @@ void DE_MakeShot( enum de_player_t curPlayer, const struct destruct_unit_s * cur
 	}
 
 	/* Play the firing sound */
-	soundQueue[curPlayer] = shotSound[curUnit->shotType-1];
+	soundQueue[curPlayer] = shotSound[curUnit->shotType];
 
 	/* Create our shot.  Some units have differing logic here */
 	switch (curUnit->unitType)
@@ -2328,14 +2324,50 @@ void DE_MakeShot( enum de_player_t curPlayer, const struct destruct_unit_s * cur
 	shotRec[shotIndex].isAvailable = false;
 
 	shotRec[shotIndex].shottype = curUnit->shotType;
-	shotRec[shotIndex].shotdur = shotFuse[shotRec[shotIndex].shottype-1];
+	shotRec[shotIndex].shotdur = shotFuse[shotRec[shotIndex].shottype];
 
 	shotRec[shotIndex].trailc[0] = 0;
 	shotRec[shotIndex].trailc[1] = 0;
 	shotRec[shotIndex].trailc[2] = 0;
 	shotRec[shotIndex].trailc[3] = 0;
 }
+void DE_RunMagnet( enum de_player_t curPlayer, struct destruct_unit_s * magnet )
+{
+	unsigned int i;
+	enum de_player_t curEnemy;
+	int direction;
 
+
+	curEnemy = (curPlayer == PLAYER_LEFT) ? PLAYER_RIGHT : PLAYER_LEFT;
+	direction = (curPlayer == PLAYER_LEFT) ? -1 : 1;
+
+	/* Push all shots that are in front of the magnet */
+	for (i = 0; i < MAX_SHOTS; i++)
+	{
+		if (shotRec[i].isAvailable == false)
+		{
+			if ((curPlayer == PLAYER_LEFT  && shotRec[i].x > magnet->unitX)
+			 || (curPlayer == PLAYER_RIGHT && shotRec[i].x < magnet->unitX))
+			{
+				shotRec[i].xmov += magnet->power * 0.1f * -direction;
+			}
+		}
+	}
+	for (i = 0; i < MAX_INSTALLATIONS; i++) /* magnets push coptors */
+	{
+		if (player[curEnemy].unit[i].health > 0
+		 && player[curEnemy].unit[i].unitType == UNIT_HELI
+		 && player[curEnemy].unit[i].isYInAir == true)
+		{
+			if ((curEnemy == PLAYER_RIGHT && player[curEnemy].unit[i].unitX + 11 < 318)
+			 || (curEnemy == PLAYER_LEFT  && player[curEnemy].unit[i].unitX > 1))
+			{
+				player[curEnemy].unit[i].unitX -= 2 * direction;
+			}
+		}
+	}
+	magnet->ani_frame = 1;
+}
 void DE_RaiseAngle( struct destruct_unit_s * unit )
 {
 	unit->angle += 0.01;
@@ -2354,18 +2386,18 @@ void DE_LowerAngle( struct destruct_unit_s * unit )
 }
 void DE_RaisePower( struct destruct_unit_s * unit )
 {
-	unit->angle += 0.01;
-	if (unit->angle > M_PI / 2 - 0.01)
+	unit->power += 0.05;
+	if (unit->power > 5)
 	{
-		unit->angle = M_PI / 2 - 0.01;
+	unit->power = 5;
 	}
 }
 void DE_LowerPower( struct destruct_unit_s * unit )
 {
-	unit->angle -= 0.01f;
-	if (unit->angle < 0)
+	unit->power -= 0.05;
+	if (unit->power < 1)
 	{
-		unit->angle = 0;
+		unit->power = 1;
 	}
 }
 
@@ -2374,14 +2406,14 @@ bool DE_RunTickCheckEndgame( void )
 {
 	if (player[PLAYER_LEFT].unitsRemaining == 0)
 	{
-		player[PLAYER_RIGHT].score += lModeScore[destructMode-1];
+		player[PLAYER_RIGHT].score += ModeScore[PLAYER_LEFT][destructMode];
 		died = true;
 		soundQueue[7] = V_CLEARED_PLATFORM;
 		endDelay = 80;
 	}
 	if (player[PLAYER_RIGHT].unitsRemaining == 0)
 	{
-		player[PLAYER_LEFT].score += rModeScore[destructMode-1];
+		player[PLAYER_LEFT].score += ModeScore[PLAYER_RIGHT][destructMode];
 		died = true;
 		soundQueue[7] = V_CLEARED_PLATFORM;
 		endDelay = 80;
