@@ -1745,7 +1745,7 @@ void load_cubes( void )
 
 bool load_cube( int cube_slot, int cube_index )
 {
-	FILE *f = dir_fopen_die(data_dir(), cubeFile, "rb");
+	FILE *f = dir_fopen_die(data_dir(), cube_file, "rb");
 	
 	char buf[256];
 	

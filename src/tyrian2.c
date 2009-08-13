@@ -2733,13 +2733,6 @@ explosion_draw_overflow:
 /* --- Load Level/Map Data --- */
 void JE_loadMap( void )
 {
-
-	FILE *lvlFile, *shpFile;
-/*	FILE *tempFile;*/ /*Extract map file from LVL file*/
-
-
-	JE_char char_mapFile, char_shapeFile;
-
 	JE_DanCShape shape;
 	JE_boolean shapeBlank;
 	
@@ -2805,16 +2798,16 @@ new_game:
 	{
 		do
 		{
-			lvlFile = dir_fopen_die(data_dir(), macroFile, "rb");
-
-			x = 0;
+			FILE *ep_f = dir_fopen_die(data_dir(), episode_file, "rb");
+			
 			jumpSection = false;
 			loadLevelOk = false;
 
 			/* Seek Section # Mainlevel */
+			int x = 0;
 			while (x < mainLevel)
 			{
-				JE_readCryptLn(lvlFile, s);
+				JE_readCryptLn(ep_f, s);
 				if (s[0] == '*')
 				{
 					x++;
@@ -2833,12 +2826,12 @@ new_game:
 					{
 						loadTitleScreen = true;
 					}
-					fclose(lvlFile);
+					fclose(ep_f);
 					goto new_game;
 				}
 
 				strcpy(s, " ");
-				JE_readCryptLn(lvlFile, s);
+				JE_readCryptLn(ep_f, s);
 
 				switch (s[0])
 				{
@@ -2979,7 +2972,7 @@ new_game:
 
 								for (int i = 0; i < 9; ++i)
 								{
-									JE_readCryptLn(lvlFile, s);
+									JE_readCryptLn(ep_f, s);
 									
 									char buf[256];
 									snprintf(buf, sizeof(buf), "%s", (strlen(s) > 8) ? s + 8 : "");
@@ -3033,13 +3026,13 @@ new_game:
 								for (x = 0; x < temp - 1; x++)
 								{
 									do
-										JE_readCryptLn(lvlFile, s);
+										JE_readCryptLn(ep_f, s);
 									while (s[0] != '#');
 								}
 
 								do
 								{
-									JE_readCryptLn(lvlFile, s);
+									JE_readCryptLn(ep_f, s);
 									strcpy(levelWarningText[levelWarningLines], s);
 									levelWarningLines++;
 								}
@@ -3325,15 +3318,16 @@ new_game:
 
 										do
 										{
-											JE_readCryptLn(lvlFile, s);
-
+											JE_readCryptLn(ep_f, s);
+											
 											if (s[0] != '#')
 											{
 												strcpy(levelWarningText[levelWarningLines], s);
 												levelWarningLines++;
 											}
-										} while (!(s[0] == '#'));
-
+										}
+										while (!(s[0] == '#'));
+										
 										JE_displayText();
 										newkey = false;
 									}
@@ -3351,7 +3345,7 @@ new_game:
 							case 'h':
 								if (initialDifficulty > 2)
 								{
-									JE_readCryptLn(lvlFile, s);
+									JE_readCryptLn(ep_f, s);
 								}
 								break;
 
@@ -3378,7 +3372,7 @@ new_game:
 			} while (!(loadLevelOk || jumpSection));
 
 
-			fclose(lvlFile);
+			fclose(ep_f);
 
 		} while (!loadLevelOk);
 	}
@@ -3388,32 +3382,32 @@ new_game:
 	else
 		fade_black(50);
 	
-	lvlFile = dir_fopen_die(data_dir(), levelFile, "rb");
-	fseek(lvlFile, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
+	FILE *level_f = dir_fopen_die(data_dir(), levelFile, "rb");
+	fseek(level_f, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
 	
-	char_mapFile = fgetc(lvlFile);
-	char_shapeFile = fgetc(lvlFile);
-	efread(&mapX,  sizeof(JE_word), 1, lvlFile);
-	efread(&mapX2, sizeof(JE_word), 1, lvlFile);
-	efread(&mapX3, sizeof(JE_word), 1, lvlFile);
+	fgetc(level_f); // char_mapFile
+	JE_char char_shapeFile = fgetc(level_f);
+	efread(&mapX,  sizeof(JE_word), 1, level_f);
+	efread(&mapX2, sizeof(JE_word), 1, level_f);
+	efread(&mapX3, sizeof(JE_word), 1, level_f);
 	
-	efread(&levelEnemyMax, sizeof(JE_word), 1, lvlFile);
+	efread(&levelEnemyMax, sizeof(JE_word), 1, level_f);
 	for (x = 0; x < levelEnemyMax; x++)
 	{
-		efread(&levelEnemy[x], sizeof(JE_word), 1, lvlFile);
+		efread(&levelEnemy[x], sizeof(JE_word), 1, level_f);
 	}
 	
-	efread(&maxEvent, sizeof(JE_word), 1, lvlFile);
+	efread(&maxEvent, sizeof(JE_word), 1, level_f);
 	for (x = 0; x < maxEvent; x++)
 	{
-		efread(&eventRec[x].eventtime, sizeof(JE_word), 1, lvlFile);
-		efread(&eventRec[x].eventtype, sizeof(JE_byte), 1, lvlFile);
-		efread(&eventRec[x].eventdat,  sizeof(JE_integer), 1, lvlFile);
-		efread(&eventRec[x].eventdat2, sizeof(JE_integer), 1, lvlFile);
-		efread(&eventRec[x].eventdat3, sizeof(JE_shortint), 1, lvlFile);
-		efread(&eventRec[x].eventdat5, sizeof(JE_shortint), 1, lvlFile);
-		efread(&eventRec[x].eventdat6, sizeof(JE_shortint), 1, lvlFile);
-		efread(&eventRec[x].eventdat4, sizeof(JE_byte), 1, lvlFile);
+		efread(&eventRec[x].eventtime, sizeof(JE_word), 1, level_f);
+		efread(&eventRec[x].eventtype, sizeof(JE_byte), 1, level_f);
+		efread(&eventRec[x].eventdat,  sizeof(JE_integer), 1, level_f);
+		efread(&eventRec[x].eventdat2, sizeof(JE_integer), 1, level_f);
+		efread(&eventRec[x].eventdat3, sizeof(JE_shortint), 1, level_f);
+		efread(&eventRec[x].eventdat5, sizeof(JE_shortint), 1, level_f);
+		efread(&eventRec[x].eventdat6, sizeof(JE_shortint), 1, level_f);
+		efread(&eventRec[x].eventdat4, sizeof(JE_byte), 1, level_f);
 	}
 	eventRec[x].eventtime = 65500;  /*Not needed but just in case*/
 	
@@ -3422,7 +3416,7 @@ new_game:
 	/*debuginfo('Loading Map');*/
 	
 	/* MAP SHAPE LOOKUP TABLE - Each map is directly after level */
-	efread(mapSh, sizeof(JE_word), sizeof(mapSh) / sizeof(JE_word), lvlFile);
+	efread(mapSh, sizeof(JE_word), sizeof(mapSh) / sizeof(JE_word), level_f);
 	for (temp = 0; temp < 3; temp++)
 	{
 		for (temp2 = 0; temp2 < 128; temp2++)
@@ -3433,7 +3427,7 @@ new_game:
 	
 	/* Read Shapes.DAT */
 	sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
-	shpFile = dir_fopen_die(data_dir(), tempStr, "rb");
+	FILE *shpFile = dir_fopen_die(data_dir(), tempStr, "rb");
 	
 	for (int z = 0; z < 600; z++)
 	{
@@ -3512,7 +3506,7 @@ new_game:
 	
 	fclose(shpFile);
 	
-	efread(mapBuf, sizeof(JE_byte), 14 * 300, lvlFile);
+	efread(mapBuf, sizeof(JE_byte), 14 * 300, level_f);
 	bufLoc = 0;              /* MAP NUMBER 1 */
 	for (y = 0; y < 300; y++)
 	{
@@ -3523,7 +3517,7 @@ new_game:
 		}
 	}
 	
-	efread(mapBuf, sizeof(JE_byte), 14 * 600, lvlFile);
+	efread(mapBuf, sizeof(JE_byte), 14 * 600, level_f);
 	bufLoc = 0;              /* MAP NUMBER 2 */
 	for (y = 0; y < 600; y++)
 	{
@@ -3534,7 +3528,7 @@ new_game:
 		}
 	}
 	
-	efread(mapBuf, sizeof(JE_byte), 15 * 600, lvlFile);
+	efread(mapBuf, sizeof(JE_byte), 15 * 600, level_f);
 	bufLoc = 0;              /* MAP NUMBER 3 */
 	for (y = 0; y < 600; y++)
 	{
@@ -3545,7 +3539,7 @@ new_game:
 		}
 	}
 	
-	fclose(lvlFile);
+	fclose(level_f);
 	
 	/* Note: The map data is automatically calculated with the correct mapsh
 	value and then the pointer is calculated using the formula (MAPSH-1)*168.
