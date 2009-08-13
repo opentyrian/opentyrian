@@ -36,6 +36,8 @@
 #include "vga256d.h"
 #include "video.h"
 
+#include "assert.h"
+
 #define CUBE_WIDTH 35
 #define LINE_WIDTH 150
 
@@ -48,38 +50,8 @@ const JE_byte pItemButtonMap[7] /* [1..7] */ = {12,1,2,10,6,4,5}; /*Financial St
 
 const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
 
-const JE_word generatorX[5] = { 61, 63, 66, 65, 62 };
-const JE_word generatorY[5] = { 83, 84, 85, 83, 96 };
-
-const JE_byte rearWeaponList[40] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3,
-	4, 0, 5, 6, 0, 0, 7, 0, 0, 2, 1,
-	0, 7, 0, 6, 0, 1, 1, 4, 1, 1, 1,
-	1, 1, 1, 1, 1, 1, 1
-};
-const JE_word rearWeaponX[7] = { 41, 27,  49,  43, 51, 39, 41 };
-const JE_word rearWeaponY[7] = { 92, 92, 113, 102, 97, 96, 76 };
-
-const JE_byte frontWeaponList[42] = {
-	 5, 10, 4, 9, 3, 6, 11, 2, 0, 0,
-	 0,  0, 8, 9, 0, 0,  1, 0, 5, 1,
-	 0,  0, 4, 0, 5, 0,  5, 0, 0, 0,
-	10,  1, 1, 1, 1, 1,  1, 1, 1, 1,
-	 4, 10
-};
-const JE_word frontWeaponX[12] = { 58, 65, 65, 53, 60, 50, 57, 50, 60, 51, 52, 57 };
-const JE_word frontWeaponY[12] = { 38, 53, 41, 36, 48, 35, 41, 35, 53, 41, 39, 31 };
-
 const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
 const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120, 150, 220, 200, 80,  50, 160,  10,  55,  55,  90,  90,  40 };
-
-const JE_byte tyrian2_weapons[42] = {
-	 1,  2,  3,  4,  5,  6,  7,  8, 9, 10,
-	11, 12, 22,  6, 14,  0, 15, 16, 1, 15,
-	10,  9,  3, 16,  1, 14,  1,  9, 9, 12,
-	 2,  1,  1,  1,  1,  1,  1,  1, 1,  1,
-	 3,  2
-};
 
 JE_word yLoc;
 JE_shortint yChg;
@@ -122,6 +94,8 @@ JE_real navX, navY, newNavX, newNavY;
 JE_integer tempNavX, tempNavY;
 JE_byte planetDots[5]; /* [1..5] */
 JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
+
+void draw_ship_illustration( void );
 
 JE_longint JE_cashLeft( void )
 {
@@ -696,54 +670,7 @@ void JE_itemScreen( void )
 			}
 			else
 			{
-				if (pItems[P_SHIP] > 90)
-					temp = 32;
-				else if (pItems[P_SHIP] > 0)
-					temp = ships[pItems[P_SHIP]].bigshipgraphic;
-				else
-					temp = ships[pItemsBack[12-1]].bigshipgraphic;
-				
-				switch (temp)
-				{
-					case 32:
-						tempW = 35;
-						tempW2 = 33;
-						break;
-					case 28:
-						tempW = 31;
-						tempW2 = 36;
-						break;
-					case 33:
-						tempW = 31;
-						tempW2 = 35;
-						break;
-				}
-				
-				blit_shape(VGAScreenSeg, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
-				
-				temp = pItems[P_GENERATOR];
-				
-				if (temp > 1)
-					temp--;
-				
-				blit_shape(VGAScreenSeg, generatorX[temp-1]+1, generatorY[temp-1]+1, WEAPON_SHAPES, temp + 15);  // ship illustration: generator
-				
-				if (pItems[P_FRONT] > 0)
-				{
-					temp = tyrian2_weapons[pItems[P_FRONT] - 1];
-					temp2 = frontWeaponList[pItems[P_FRONT] - 1] - 1;
-					blit_shape(VGAScreenSeg, frontWeaponX[temp2]+1, frontWeaponY[temp2], WEAPON_SHAPES, temp - 1);  // ship illustration: front weapon
-				}
-				if (pItems[P_REAR] > 0)
-				{
-					temp = tyrian2_weapons[pItems[P_REAR] - 1];
-					temp2 = rearWeaponList[pItems[P_REAR] - 1] - 1;
-					blit_shape(VGAScreenSeg, rearWeaponX[temp2], rearWeaponY[temp2], WEAPON_SHAPES, temp - 1);  // ship illustration: rear weapon
-				}
-				
-				JE_drawItem(6, pItems[P_LEFT_SIDEKICK], 3, 84);
-				JE_drawItem(7, pItems[P_RIGHT_SIDEKICK], 129, 84);
-				blit_shape_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[P_SHIELD]].mpwr - 10);  // ship illustration: shield
+				draw_ship_illustration();
 			}
 		}
 		
@@ -1715,6 +1642,100 @@ void JE_itemScreen( void )
 	
 	if (gameLoaded)
 		JE_fadeBlack(10);
+}
+
+void draw_ship_illustration( void )
+{
+	// full of evil hardcoding
+	
+	// ship
+	{
+		assert(pItems[P_SHIP] > 0);
+		
+		const int sprite_id = (pItems[P_SHIP] < COUNTOF(ships))  // shipedit ships get a default
+		                      ? ships[pItems[P_SHIP]].bigshipgraphic - 1
+		                      : 31;
+		
+		const int ship_x[6] = { 31, 0, 0, 0, 35, 31 },
+		          ship_y[6] = { 36, 0, 0, 0, 33, 35 };
+		
+		const int x = ship_x[sprite_id - 27],
+		          y = ship_y[sprite_id - 27];
+		
+		blit_shape(VGAScreenSeg, x, y, OPTION_SHAPES, sprite_id);
+	}
+	
+	// generator
+	{
+		assert(pItems[P_GENERATOR] > 0 && pItems[P_GENERATOR] < 7);
+		
+		const int sprite_id = (pItems[P_GENERATOR] == 1)  // generator 1 and generator 2 have the same sprite
+		                      ? pItems[P_GENERATOR] + 15
+		                      : pItems[P_GENERATOR] + 14;
+		
+		const int generator_x[5] = { 62, 64, 67, 66, 63 },
+		          generator_y[5] = { 84, 85, 86, 84, 97 };
+		const int x = generator_x[sprite_id - 16],
+		          y = generator_y[sprite_id - 16];
+	
+		blit_shape(VGAScreenSeg, x, y, WEAPON_SHAPES, sprite_id);
+	}
+	
+	const int weapon_sprites[43] =
+	{
+		-1,  0,  1,  2,  3,  4,  5,  6,  7,  8,
+		 9, 10, 11, 21,  5, 13, -1, 14, 15,  0,
+		14,  9,  8,  2, 15,  0, 13,  0,  8,  8,
+		11,  1,  0,  0,  0,  0,  0,  0,  0,  0,
+		 0,  2,  1
+	};
+	
+	// front weapon
+	if (pItems[P_FRONT] > 0)
+	{
+		const int front_weapon_xy_list[43] =
+		{
+			 -1,  4,  9,  3,  8,  2,  5, 10,  1, -1,
+			 -1, -1, -1,  7,  8, -1, -1,  0, -1,  4,
+			  0, -1, -1,  3, -1,  4, -1,  4, -1, -1,
+			 -1,  9,  0,  0,  0,  0,  0,  0,  0,  0,
+			  0,  3,  9
+		};
+		
+		const int front_weapon_x[12] = { 59, 66, 66, 54, 61, 51, 58, 51, 61, 52, 53, 58 };
+		const int front_weapon_y[12] = { 38, 53, 41, 36, 48, 35, 41, 35, 53, 41, 39, 31 };
+		const int x = front_weapon_x[front_weapon_xy_list[pItems[P_FRONT]]],
+		          y = front_weapon_y[front_weapon_xy_list[pItems[P_FRONT]]];
+		
+		blit_shape(VGAScreenSeg, x, y, WEAPON_SHAPES, weapon_sprites[pItems[P_FRONT]]);  // ship illustration: front weapon
+	}
+	
+	// rear weapon
+	if (pItems[P_REAR] > 0)
+	{
+		const int rear_weapon_xy_list[43] =
+		{
+			-1, -1, -1, -1, -1, -1, -1, -1, -1,  0,
+			 1,  2,  3, -1,  4,  5, -1, -1,  6, -1,
+			-1,  1,  0, -1,  6, -1,  5, -1,  0,  0,
+			 3,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+			 0, -1, -1
+		};
+		
+		const int rear_weapon_x[7] = { 41, 27,  49,  43, 51, 39, 41 };
+		const int rear_weapon_y[7] = { 92, 92, 113, 102, 97, 96, 76 };
+		const int x = rear_weapon_x[rear_weapon_xy_list[pItems[P_REAR]]],
+		          y = rear_weapon_y[rear_weapon_xy_list[pItems[P_REAR]]];
+		
+		blit_shape(VGAScreenSeg, x, y, WEAPON_SHAPES, weapon_sprites[pItems[P_REAR]]);
+	}
+	
+	// sidekicks
+	JE_drawItem(6, pItems[P_LEFT_SIDEKICK], 3, 84);
+	JE_drawItem(7, pItems[P_RIGHT_SIDEKICK], 129, 84);
+	
+	// shield
+	blit_shape_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[P_SHIELD]].mpwr - 10);
 }
 
 void load_cubes( void )
