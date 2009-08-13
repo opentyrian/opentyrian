@@ -2374,7 +2374,7 @@ void JE_handleChat( void )
 	// STUB(); Annoying piece of crap =P
 }
 
-bool str_pop_number( char *str, unsigned char *val )
+bool str_pop_int( char *str, int *val )
 {
 	bool success = false;
 	

@@ -38,9 +38,6 @@
 
 #include "assert.h"
 
-#define CUBE_WIDTH 35
-#define LINE_WIDTH 150
-
 int joystick_config = 0; // which joystick is being configured in menu
 
 const JE_MenuChoiceType menuChoicesDefault = { 7, 9, 8, 0, 0, 11, (SAVE_FILES_NUM / 2) + 2, 0, 0, 6, 4, 6, 7, 5 };
@@ -59,7 +56,6 @@ int newPal, curPal, oldPal;
 JE_boolean quikSave;
 JE_byte oldMenu;
 JE_boolean backFromHelp;
-JE_byte lastSelect;
 JE_integer lastDirection;
 JE_boolean firstMenu9, paletteChanged;
 JE_MenuChoiceType menuChoices;
@@ -77,16 +73,21 @@ JE_byte curItemType, curItem, cursor;
 JE_boolean buyActive, sellActive, sellViewActive, buyViewActive, /*flash,*/ purchase, cannotAfford, slotFull;
 JE_boolean leftPower, rightPower, rightPowerAfford;
 
-char cubeHdr[4][81];
-char cubeText[4][90][CUBE_WIDTH+1];
-char cubeHdr2[4][13]; /* [1..4] of string [12] */
-JE_byte faceNum[4];
-JE_word cubeMaxY[4];
-JE_byte currentCube;
-JE_boolean keyboardUsed;
-JE_word faceX, faceY;
+struct cube_struct
+{
+	char title[81];
+	char header[13];
+	int face_sprite;
+	char text[90][36];
+	int last_line;
+};
+static struct cube_struct cube[4];
+static const int cube_line_chars = sizeof(*cube->text) - 1;
+static const int cube_line_width = 150;
 
-JE_byte currentFaceNum;
+JE_byte currentCube;
+
+JE_boolean keyboardUsed;
 
 JE_byte planetAni, planetAniWait;
 JE_byte currentDotNum, currentDotWait;
@@ -682,7 +683,7 @@ void JE_itemScreen( void )
 		}
 		
 		/* 7 is data cubes menu, 8 is reading a data cube, "firstmenu9" refers to menu 8 because of reindexing */
-		if ( (curMenu == 7) || ( (curMenu == 8) && firstMenu9) )
+		if (curMenu == 7 || ( curMenu == 8 && (firstMenu9 || backFromHelp) ) )
 		{
 			firstMenu9 = false;
 			menuChoices[7] = cubeMax + 2;
@@ -717,7 +718,7 @@ void JE_itemScreen( void )
 						helpBoxColor = temp2 / 16;
 						helpBoxBrightness = (temp2 % 16) - 8;
 						helpBoxShadeType = DARKEN;
-						JE_helpBox(192, 44 + (x - 1) * 28, cubeHdr[x - 1], 24);
+						JE_helpBox(192, 44 + (x - 1) * 28, cube[x - 1].title, 24);
 					}
 					int x = cubeMax + 1;
 					if (x + 1 == curSel[curMenu])
@@ -732,24 +733,24 @@ void JE_itemScreen( void )
 					}
 					tempW = 44 + (x - 1) * 28;
 				}
+				
+				JE_textShade(172, tempW, miscText[6 - 1], temp2 / 16, (temp2 % 16) - 8, DARKEN);
 			}
 			
-			JE_textShade(172, tempW, miscText[6 - 1], temp2 / 16, (temp2 % 16) - 8, DARKEN);
-			
-			currentFaceNum = 0;
 			if (curSel[7] < menuChoices[7])
 			{
-				/* SYN: Be careful reindexing some things here, because faceNum 0 is blank, but
-				   faceNum 1 is at index 0 in several places! */
-				currentFaceNum = faceNum[curSel[7] - 2];
+				const int face_sprite = cube[curSel[7] - 2].face_sprite - 1;
 				
-				if (lastSelect != curSel[7] && currentFaceNum > 0)
+				if (face_sprite != -1)
 				{
-					faceX = 77 - (shapeX[FACE_SHAPES][currentFaceNum - 1] >> 1);
-					faceY = 92 - (shapeY[FACE_SHAPES][currentFaceNum - 1] >> 1);
+					const int face_x = 77 - (shapeX[FACE_SHAPES][face_sprite] / 2),
+					          face_y = 92 - (shapeY[FACE_SHAPES][face_sprite] / 2);
 					
+					blit_shape(VGAScreenSeg, face_x, face_y, FACE_SHAPES, face_sprite);  // datacube face
+					
+					// modify pallete for face
 					paletteChanged = true;
-					temp2 = facepal[currentFaceNum - 1];
+					temp2 = facepal[face_sprite];
 					newPal = 0;
 					
 					for (temp = 1; temp <= 255 - (3 * 16); temp++)
@@ -760,11 +761,6 @@ void JE_itemScreen( void )
 					}
 				}
 			}
-			
-			if (currentFaceNum > 0)
-				blit_shape(VGAScreenSeg, faceX, faceY, FACE_SHAPES, currentFaceNum - 1);  // datacube face
-			
-			lastSelect = curSel[7];
 		}
 		
 		/* 2 player input devices */
@@ -809,7 +805,7 @@ void JE_itemScreen( void )
 		
 		/* datacube title under face */
 		if ( ( (curMenu == 7) || (curMenu == 8) ) && (curSel[7] < menuChoices[7]) )
-			JE_textShade (75 - JE_textWidth(cubeHdr2[curSel[7] - 2], TINY_FONT) / 2, 173, cubeHdr2[curSel[7] - 2], 14, 3, DARKEN);
+			JE_textShade (75 - JE_textWidth(cube[curSel[7] - 2].header, TINY_FONT) / 2, 173, cube[curSel[7] - 2].header, 14, 3, DARKEN);
 		
 		/* SYN: Everything above was just drawing the screen. In the rest of it, we process
 		   any user input (and do a few other things) */
@@ -864,13 +860,13 @@ void JE_itemScreen( void )
 					temp = yLoc / 12;
 					temp2 = yLoc % 12;
 					tempW = 38 + 12 - temp2;
-					temp3 = cubeMaxY[curSel[7] - 2];
+					temp3 = cube[curSel[7] - 2].last_line;
 					
 					for (int x = temp + 1; x <= temp + 10; x++)
 					{
 						if (x <= temp3)
 						{
-							JE_outTextAndDarken(161, tempW, cubeText[curSel[7] - 2][x-1], 14, 3, TINY_FONT);
+							JE_outTextAndDarken(161, tempW, cube[curSel[7] - 2].text[x-1], 14, 3, TINY_FONT);
 							tempW += 12;
 						}
 					}
@@ -879,7 +875,7 @@ void JE_itemScreen( void )
 					JE_bar(160, 157, 310, 166, 228);
 					
 					buf = malloc(strlen(miscText[12 - 1]) + 8);
-					sprintf(buf, "%s %d%%", miscText[12 - 1], (yLoc * 100) / ((cubeMaxY[currentCube] - 9) * 12));
+					sprintf(buf, "%s %d%%", miscText[12 - 1], (yLoc * 100) / ((cube[currentCube].last_line - 9) * 12));
 					JE_outTextAndDarken(176, 160, buf, 14, 1, TINY_FONT);
 					
 					JE_dString(260, 160, miscText[13 - 1], SMALL_FONT_SHAPES);
@@ -1072,7 +1068,7 @@ void JE_itemScreen( void )
 					{
 						yChg = 0;
 					}
-					if (yChg  > 0 && (yLoc / 12) > cubeMaxY[currentCube] - 10)
+					if (yChg  > 0 && (yLoc / 12) > cube[currentCube].last_line - 10)
 					{
 						yChg = 0;
 					}
@@ -1325,7 +1321,6 @@ void JE_itemScreen( void )
 						break;
 					case 7:
 					case 8:
-						lastSelect = 0;
 						break;
 					}
 					
@@ -1396,7 +1391,7 @@ void JE_itemScreen( void )
 				
 			case SDLK_END:
 				if (curMenu == 8) // data cube
-					yLoc = (cubeMaxY[currentCube] - 9) * 12;
+					yLoc = (cube[currentCube].last_line - 9) * 12;
 				break;
 				
 			case SDLK_LEFT:
@@ -1740,10 +1735,12 @@ void draw_ship_illustration( void )
 
 void load_cubes( void )
 {
-	memset(cubeText, 0, sizeof(cubeText));
-	
 	for (int cube_slot = 0; cube_slot < cubeMax; ++cube_slot)
+	{
+		memset(cube[cube_slot].text, 0, sizeof(cube->text));
+		
 		load_cube(cube_slot, cubeList[cube_slot]);
+	}
 }
 
 bool load_cube( int cube_slot, int cube_index )
@@ -1767,12 +1764,12 @@ bool load_cube( int cube_slot, int cube_index )
 		}
 	}
 	
-	str_pop_number(&buf[4], &faceNum[cube_slot]);
+	str_pop_int(&buf[4], &cube[cube_slot].face_sprite);
 	
-	JE_readCryptLn(f, cubeHdr[cube_slot]);
-	JE_readCryptLn(f, cubeHdr2[cube_slot]);
+	JE_readCryptLn(f, cube[cube_slot].title);
+	JE_readCryptLn(f, cube[cube_slot].header);
 	
-	int line = 0, line_pos = 0, line_width = 0;
+	int line = 0, line_chars = 0, line_width = 0;
 	
 	// for each line of decrypted text, split the line into words
 	// and add them individually to the lines of wrapped text
@@ -1788,7 +1785,7 @@ bool load_cube( int cube_slot, int cube_index )
 		if (strlen(buf) == 0)
 		{
 			++line;
-			line_pos = 0;
+			line_chars = 0;
 			line_width = 0;
 			
 			continue;
@@ -1807,37 +1804,37 @@ bool load_cube( int cube_slot, int cube_index )
 				char *word = &buf[word_start];
 				word_start = i + 1;
 				
-				int word_length = strlen(word),
+				int word_chars = strlen(word),
 					word_width = JE_textWidth(word, TINY_FONT);
 				
 				// word won't fit; no can do
-				if (word_length > CUBE_WIDTH || word_width > LINE_WIDTH)
+				if (word_chars > cube_line_chars || word_width > cube_line_width)
 					break;
 				
 				bool prepend_space = true;
 				
-				line_pos += word_length + (prepend_space ? 1 : 0);
+				line_chars += word_chars + (prepend_space ? 1 : 0);
 				line_width += word_width + (prepend_space ? 6 : 0);
 				
 				// word won't fit on current line; use next
-				if (line_pos > CUBE_WIDTH || line_width > LINE_WIDTH)
+				if (line_chars > cube_line_chars || line_width > cube_line_width)
 				{
 					++line;
-					line_pos = word_length;
+					line_chars = word_chars;
 					line_width = word_width;
 					
 					prepend_space = false;
 				}
 				
 				// append word
-				if (line < COUNTOF(*cubeText))
+				if (line < COUNTOF(cube->text))
 				{
 					if (prepend_space)
-						strcat(cubeText[cube_slot][line], " ");
-					strcat(cubeText[cube_slot][line], word);
+						strcat(cube[cube_slot].text[line], " ");
+					strcat(cube[cube_slot].text[line], word);
 					
 					// track last line with text
-					cubeMaxY[cube_slot] = line + 1;
+					cube[cube_slot].last_line = line + 1;
 				}
 			}
 			
@@ -1899,7 +1896,7 @@ void JE_drawMenuHeader( void )
 	switch (curMenu)
 	{
 		case 8:
-			strcpy(tempStr, cubeHdr2[curSel[7]-2]);
+			strcpy(tempStr, cube[curSel[7]-2].header);
 			break;
 		case 7:
 			strcpy(tempStr, menuInt[1][1]);
@@ -2563,7 +2560,6 @@ void JE_menuFunction( JE_byte select )
 		{
 		case 2:
 			curMenu = 7;
-			lastSelect = 0;
 			curSel[7] = 2;
 			break;
 		case 3:

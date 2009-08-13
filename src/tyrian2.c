@@ -2984,9 +2984,9 @@ new_game:
 									char buf[256];
 									snprintf(buf, sizeof(buf), "%s", (strlen(s) > 8) ? s + 8 : "");
 									
-									int j = 0;
-									while (str_pop_number(buf, &itemAvail[i][j]))
-										++j;
+									int j = 0, temp;
+									while (str_pop_int(buf, &temp))
+										itemAvail[i][j++] = temp;
 									itemAvailMax[i] = j;
 								}
 

@@ -75,7 +75,7 @@ void JE_playCredits( void );
 void JE_endLevelAni( void );
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness );
 void JE_handleChat( void );
-bool str_pop_number( char *str, unsigned char *val );
+bool str_pop_int( char *str, int *val );
 void JE_loadScreen( void );
 void JE_operation( JE_byte slot );
 void JE_inGameDisplays( void );
