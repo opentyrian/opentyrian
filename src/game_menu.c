@@ -739,7 +739,7 @@ void JE_itemScreen( void )
 			
 			if (curSel[7] < menuChoices[7])
 			{
-				const int face_sprite = cube[curSel[7] - 2].face_sprite - 1;
+				const int face_sprite = cube[curSel[7] - 2].face_sprite;
 				
 				if (face_sprite != -1)
 				{
@@ -1765,6 +1765,7 @@ bool load_cube( int cube_slot, int cube_index )
 	}
 	
 	str_pop_int(&buf[4], &cube[cube_slot].face_sprite);
+	--cube[cube_slot].face_sprite;
 	
 	JE_readCryptLn(f, cube[cube_slot].title);
 	JE_readCryptLn(f, cube[cube_slot].header);
