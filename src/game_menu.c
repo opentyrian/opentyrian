@@ -1787,7 +1787,10 @@ bool load_cube( int cube_slot, int cube_index )
 		// new paragraph
 		if (strlen(buf) == 0)
 		{
-			++line;
+			if (line_chars == 0)
+				line += 4;  // subsequent new paragaphs indicate 4-line break
+			else
+				++line;
 			line_chars = 0;
 			line_width = 0;
 			
