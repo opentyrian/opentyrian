@@ -131,8 +131,6 @@ void JE_itemScreen( void )
 {
 	bool quit = false;
 	
-	char *buf;
-
 	/* SYN: Okay, here's the menu numbers. All are reindexed by -1 from the original code.
 		0: full game menu
 		1: upgrade ship main
@@ -874,11 +872,15 @@ void JE_itemScreen( void )
 					JE_bar(160, 39, 310, 48, 228);
 					JE_bar(160, 157, 310, 166, 228);
 					
-					buf = malloc(strlen(miscText[12 - 1]) + 8);
-					sprintf(buf, "%s %d%%", miscText[12 - 1], (yLoc * 100) / ((cube[currentCube].last_line - 9) * 12));
+					int percent_read = (cube[currentCube].last_line <= 9)
+					                   ? 100
+					                   : (yLoc * 100) / ((cube[currentCube].last_line - 9) * 12);
+					
+					char buf[20];
+					snprintf(buf, sizeof(buf), "%s %d%%", miscText[11], percent_read);
 					JE_outTextAndDarken(176, 160, buf, 14, 1, TINY_FONT);
 					
-					JE_dString(260, 160, miscText[13 - 1], SMALL_FONT_SHAPES);
+					JE_dString(260, 160, miscText[12], SMALL_FONT_SHAPES);
 					
 					if (temp2 == 0)
 						yChg = 0;
