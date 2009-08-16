@@ -68,13 +68,6 @@
 #define MAX_KEY_OPTIONS 4
 #define MAX_INSTALLATIONS 20
 
-/*** Macros ***/
-/* Don't use ++ and -- operators with macros.  They may look innocent
- * but given half the chance they will crash you and everyone
- * you care about.  It's a good practice to NOT embed them. */
-#define CURUNIT(x) player[(x)].unit[(player[(x)].unitSelected)]
-
-/* Todo: Create 'isValidUnit' function OR boolean.  Health acting as both makes code harder to understand and can result in indexing bugs */
 /*** Enums ***/
 enum de_player_t { PLAYER_LEFT = 0, PLAYER_RIGHT = 1, MAX_PLAYERS = 2 };
 enum de_team_t { TEAM_LEFT = 0, TEAM_RIGHT = 1, MAX_TEAMS = 2 };
@@ -244,6 +237,7 @@ void DE_GravityLowerUnit( struct destruct_unit_s * );
 void DE_GravityDrawUnit( enum de_player_t, struct destruct_unit_s * );
 unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
 bool JE_stabilityCheck( unsigned int, unsigned int );
+inline bool DE_isValidUnit( struct destruct_unit_s *);
 
 void JE_tempScreenChecking( void );
 void DE_DrawTrails( struct destruct_shot_s *, unsigned int, unsigned int, unsigned int );
@@ -562,7 +556,7 @@ void JE_generateTerrain( void )
 	{
 		DE_generateRings(world.VGAScreen, PIXEL_DIRT);
 	}
-	if (world.mapFlags &MAP_HOLES)
+	if (world.mapFlags & MAP_HOLES)
 	{
 		DE_generateRings(world.VGAScreen, PIXEL_BLACK);
 	}
@@ -1190,7 +1184,7 @@ void DE_ResetAI( void )
 
 		for( j = 0; j < MAX_INSTALLATIONS; j++, ptr++)
 		{
-			if(ptr->health == 0) { continue; } /* This unit is not active. */
+			if(DE_isValidUnit(ptr) == false) { continue; }
 
 			if (systemAngle[ptr->unitType] || ptr->unitType == UNIT_HELI)
 			{
@@ -1308,6 +1302,7 @@ void DE_RunTick( void )
 void DE_RunTickCycleDeadUnits( void )
 {
 	unsigned int i;
+	struct destruct_unit_s * unit;
 
 
 	/* This code automatically switches the active unit if it is destroyed
@@ -1316,12 +1311,16 @@ void DE_RunTickCycleDeadUnits( void )
 	{
 		if (player[i].unitsRemaining == 0) { continue; }
 
-		while (CURUNIT(i).health == 0 || CURUNIT(i).shotType == SHOT_INVALID)
+		unit = &(player[i].unit[player[i].unitSelected]);
+		while(DE_isValidUnit(unit) == false
+		   || unit->shotType == SHOT_INVALID)
 		{
 			player[i].unitSelected++;
+			unit++;
 			if (player[i].unitSelected >= MAX_INSTALLATIONS)
 			{
 				player[i].unitSelected = 0;
+				unit = player[i].unit;
 			}
 		}
 	}
@@ -1338,7 +1337,7 @@ void DE_RunTickGravity( void )
 		unit = player[i].unit;
 		for (j = 0; j < MAX_INSTALLATIONS; j++, unit++)
 		{
-			if (unit->health <= 0) { continue; } /* invalid unit */
+			if (DE_isValidUnit(unit) == false) { continue; } /* invalid unit */
 
 			switch(unit->unitType)
 			{
@@ -1455,9 +1454,9 @@ void DE_RunTickAnimate( void )
 		ptr = player[p].unit;
 		for (u = 0; u < MAX_INSTALLATIONS; ++u,  ++ptr)
 		{
-			/* Don't mess with any unit that is unallocated (health = 0)
+			/* Don't mess with any unit that is unallocated
 			 * or doesn't animate and is set to frame 0 */
-			if(ptr->health == 0) { continue; }
+			if(DE_isValidUnit(ptr) == false) { continue; }
 			if(systemAni[ptr->unitType] == false && ptr->ani_frame == 0) { continue; }
 
 			if (++(ptr->ani_frame) > 3)
@@ -1549,7 +1548,7 @@ void DE_TestExplosionCollision( unsigned int PosX, unsigned int PosY)
 		unit = player[i].unit;
 		for (j = 0; j < MAX_INSTALLATIONS; j++, unit++)
 		{
-			if (unit->health > 0
+			if (DE_isValidUnit(unit) == true
 			 && PosX > unit->unitX && PosX < unit->unitX + 11
 		 	 && PosY < unit->unitY && PosY > unit->unitY - 11)
 			{
@@ -1644,7 +1643,7 @@ void DE_RunTickShots( void )
 			unit = player[j].unit;
 			for(k = 0; k < MAX_INSTALLATIONS; k++, unit++)
 			{
-				if(unit->health <= 0) { continue; }
+				if(DE_isValidUnit(unit) == false) { continue; }
 
 				if (tempPosX > unit->unitX && tempPosX < unit->unitX + 11
 				 && tempPosY < unit->unitY && tempPosY > unit->unitY - 13)
@@ -1751,13 +1750,15 @@ void DE_DrawTrails( struct destruct_shot_s * shot, unsigned int count, unsigned 
 }
 void DE_RunTickAI( void )
 {
-	unsigned int i;
-	unsigned int player_index, player_target;
+	unsigned int i, j;
+	struct destruct_player_s * ptrPlayer, * ptrTarget;
+	struct destruct_unit_s * ptrUnit, * ptrCurUnit;
 
 
-	for (player_index = 0; player_index < MAX_PLAYERS; player_index++)
+	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (player[player_index].is_cpu == false)
+		ptrPlayer = &(player[i]);
+		if (ptrPlayer->is_cpu == false)
 		{
 			continue;
 		}
@@ -1766,193 +1767,198 @@ void DE_RunTickAI( void )
 		/* I've been thinking, purely hypothetically, about what it would take
 		 * to have multiple computer opponents.  The answer?  A lot of crap
 		 * and a 'target' variable in the player struct. */
-
-		player_target = player_index + 1;
-		if (player_target >= MAX_PLAYERS)
+		j = i + 1;
+		if (j >= MAX_PLAYERS)
 		{
-			player_target = 0;
+			j = 0;
 		}
 
+		ptrTarget  = &(player[j]);
+		ptrCurUnit = &(ptrPlayer->unit[ptrPlayer->unitSelected]);
+
+
 		/* This is the start of the original AI.  Heh.  AI. */
-		if (player[player_index].aiMemory.c_noDown > 0)
+		if (ptrPlayer->aiMemory.c_noDown > 0)
 		{
-			player[player_index].aiMemory.c_noDown--;
+			ptrPlayer->aiMemory.c_noDown--;
 		}
 
 		/* Until all structs are properly divvied up this must only apply to player1 */
 		if (mt_rand() % 100 > 80)
 		{
-			player[player_index].aiMemory.c_Angle += (mt_rand() % 3) - 1;
-			if (player[player_index].aiMemory.c_Angle > 1)
+			ptrPlayer->aiMemory.c_Angle += (mt_rand() % 3) - 1;
+			if (ptrPlayer->aiMemory.c_Angle > 1)
 			{
-				player[player_index].aiMemory.c_Angle = 1;
+				ptrPlayer->aiMemory.c_Angle = 1;
 			}
-			if (player[player_index].aiMemory.c_Angle < -1)
+			if (ptrPlayer->aiMemory.c_Angle < -1)
 			{
-				player[player_index].aiMemory.c_Angle = -1;
+				ptrPlayer->aiMemory.c_Angle = -1;
 			}
 		}
 		if (mt_rand() % 100 > 90)
 		{
-			if (player[player_index].aiMemory.c_Angle > 0 && CURUNIT(player_index).angle > (M_PI / 2.0f) - (M_PI / 9.0f))
+			if (ptrPlayer->aiMemory.c_Angle > 0 && ptrCurUnit->angle > (M_PI / 2.0f) - (M_PI / 9.0f))
 			{
-				player[player_index].aiMemory.c_Angle = 0;
+				ptrPlayer->aiMemory.c_Angle = 0;
 			}
-			if (player[player_index].aiMemory.c_Angle < 0 && CURUNIT(player_index).angle < M_PI / 8.0f)
+			if (ptrPlayer->aiMemory.c_Angle < 0 && ptrCurUnit->angle < M_PI / 8.0f)
 			{
-				player[player_index].aiMemory.c_Angle = 0;
+				ptrPlayer->aiMemory.c_Angle = 0;
 			}
 		}
 
 		if (mt_rand() % 100 > 93)
 		{
-			player[player_index].aiMemory.c_Power += (mt_rand() % 3) - 1;
-			if (player[player_index].aiMemory.c_Power > 1)
+			ptrPlayer->aiMemory.c_Power += (mt_rand() % 3) - 1;
+			if (ptrPlayer->aiMemory.c_Power > 1)
 			{
-				player[player_index].aiMemory.c_Power = 1;
+				ptrPlayer->aiMemory.c_Power = 1;
 			}
-			if (player[player_index].aiMemory.c_Power < -1)
+			if (ptrPlayer->aiMemory.c_Power < -1)
 			{
-				player[player_index].aiMemory.c_Power = -1;
+				ptrPlayer->aiMemory.c_Power = -1;
 			}
 		}
 		if (mt_rand() % 100 > 90)
 		{
-			if (player[player_index].aiMemory.c_Power > 0 && CURUNIT(player_index).power > 4)
+			if (ptrPlayer->aiMemory.c_Power > 0 && ptrCurUnit->power > 4)
 			{
-				player[player_index].aiMemory.c_Power = 0;
+				ptrPlayer->aiMemory.c_Power = 0;
 			}
-			if (player[player_index].aiMemory.c_Power < 0 && CURUNIT(player_index).power < 3)
+			if (ptrPlayer->aiMemory.c_Power < 0 && ptrCurUnit->power < 3)
 			{
-				player[player_index].aiMemory.c_Power = 0;
+				ptrPlayer->aiMemory.c_Power = 0;
 			}
-			if (CURUNIT(player_index).power < 2)
+			if (ptrCurUnit->power < 2)
 			{
-				player[player_index].aiMemory.c_Power = 1;
+				ptrPlayer->aiMemory.c_Power = 1;
 			}
 		}
 
 		// prefer helicopter
-		for (i = 0; i < MAX_INSTALLATIONS; i++)
+		ptrUnit = ptrPlayer->unit;
+		for (j = 0; j < MAX_INSTALLATIONS; j++, ptrUnit++)
 		{
-			if (player[player_index].unit[i].health > 0 && player[player_index].unit[i].unitType == UNIT_HELI)
+			if (DE_isValidUnit(ptrUnit) && ptrUnit->unitType == UNIT_HELI)
 			{
-				player[player_index].unitSelected = i;
+				ptrPlayer->unitSelected = j;
 				break;
 			}
 		}
 
-		if (CURUNIT(player_index).unitType == UNIT_HELI)
+		if (ptrCurUnit->unitType == UNIT_HELI)
 		{
-			if (CURUNIT(player_index).isYInAir == false)
+			if (ptrCurUnit->isYInAir == false)
 			{
-				player[player_index].aiMemory.c_Power = 1;
+				ptrPlayer->aiMemory.c_Power = 1;
 			}
-			if (mt_rand() % CURUNIT(player_index).unitX > 100)
+			if (mt_rand() % ptrCurUnit->unitX > 100)
 			{
-				player[player_index].aiMemory.c_Power = 1;
+				ptrPlayer->aiMemory.c_Power = 1;
 			}
-			if (mt_rand() % 240 > CURUNIT(player_index).unitX)
+			if (mt_rand() % 240 > ptrCurUnit->unitX)
 			{
-				player[player_index].moves.actions[MOVE_RIGHT] = true;
+				ptrPlayer->moves.actions[MOVE_RIGHT] = true;
 			}
-			else if ((mt_rand() % 20) + 300 < CURUNIT(player_index).unitX)
+			else if ((mt_rand() % 20) + 300 < ptrCurUnit->unitX)
 			{
-				player[player_index].moves.actions[MOVE_LEFT] = true;
+				ptrPlayer->moves.actions[MOVE_LEFT] = true;
 			}
 			else if (mt_rand() % 30 == 1)
 			{
-				player[player_index].aiMemory.c_Angle = (mt_rand() % 3) - 1;
+				ptrPlayer->aiMemory.c_Angle = (mt_rand() % 3) - 1;
 			}
-			if (CURUNIT(player_index).unitX > 295 && CURUNIT(player_index).lastMove > 1)
+			if (ptrCurUnit->unitX > 295 && ptrCurUnit->lastMove > 1)
 			{
-				player[player_index].moves.actions[MOVE_LEFT] = true;
-				player[player_index].moves.actions[MOVE_RIGHT] = false;
+				ptrPlayer->moves.actions[MOVE_LEFT] = true;
+				ptrPlayer->moves.actions[MOVE_RIGHT] = false;
 			}
-			if (CURUNIT(player_index).unitType != UNIT_HELI || CURUNIT(player_index).lastMove > 3 || (CURUNIT(player_index).unitX > 160 && CURUNIT(player_index).lastMove > -3))
+			if (ptrCurUnit->unitType != UNIT_HELI || ptrCurUnit->lastMove > 3 || (ptrCurUnit->unitX > 160 && ptrCurUnit->lastMove > -3))
 			{
-				if (mt_rand() % (int)round(CURUNIT(player_index).unitY) < 150 && CURUNIT(player_index).unitYMov < 0.01f && (CURUNIT(player_index).unitX < 160 || CURUNIT(player_index).lastMove < 2))
+				if (mt_rand() % (int)round(ptrCurUnit->unitY) < 150 && ptrCurUnit->unitYMov < 0.01f && (ptrCurUnit->unitX < 160 || ptrCurUnit->lastMove < 2))
 				{
-					player[player_index].moves.actions[MOVE_FIRE] = true;
+					ptrPlayer->moves.actions[MOVE_FIRE] = true;
 				}
-				player[player_index].aiMemory.c_noDown = (5 - abs(CURUNIT(player_index).lastMove)) * (5 - abs(CURUNIT(player_index).lastMove)) + 3;
-				player[player_index].aiMemory.c_Power = 1;
+				ptrPlayer->aiMemory.c_noDown = (5 - abs(ptrCurUnit->lastMove)) * (5 - abs(ptrCurUnit->lastMove)) + 3;
+				ptrPlayer->aiMemory.c_Power = 1;
 			} else
 			{
-				player[player_index].moves.actions[MOVE_FIRE] = false;
+				ptrPlayer->moves.actions[MOVE_FIRE] = false;
 			}
 
-			for (i = 0; i < MAX_INSTALLATIONS; i++)
+			ptrUnit = ptrTarget->unit;
+			for (j = 0; j < MAX_INSTALLATIONS; j++, ptrUnit++)
 			{
-				if (abs(player[player_target].unit[i].unitX - CURUNIT(player_index).unitX) < 8)
+				if (abs(ptrUnit->unitX - ptrCurUnit->unitX) < 8)
 				{
 					/* I get it.  This makes helicoptors hover over
 					 * their enemies. */
-					if (player[player_target].unit[i].unitType == UNIT_SATELLITE)
+					if (ptrUnit->unitType == UNIT_SATELLITE)
 					{
-						player[player_index].moves.actions[MOVE_FIRE] = false;
+						ptrPlayer->moves.actions[MOVE_FIRE] = false;
 					}
 					else
 					{
-						player[player_index].moves.actions[MOVE_LEFT] = false;
-						player[player_index].moves.actions[MOVE_RIGHT] = false;
-						if (CURUNIT(player_index).lastMove < -1)
+						ptrPlayer->moves.actions[MOVE_LEFT] = false;
+						ptrPlayer->moves.actions[MOVE_RIGHT] = false;
+						if (ptrCurUnit->lastMove < -1)
 						{
-							CURUNIT(player_index).lastMove++;
+							ptrCurUnit->lastMove++;
 						}
-						else if (CURUNIT(player_index).lastMove > 1)
+						else if (ptrCurUnit->lastMove > 1)
 						{
-							CURUNIT(player_index).lastMove--;
+							ptrCurUnit->lastMove--;
 						}
 					}
 				}
 			}
 		} else {
-			player[player_index].moves.actions[MOVE_FIRE] = 1;
+			ptrPlayer->moves.actions[MOVE_FIRE] = 1;
 		}
 
 		if (mt_rand() % 200 > 198)
 		{
-			player[player_index].moves.actions[MOVE_CHANGE] = true;
-			player[player_index].aiMemory.c_Angle = 0;
-			player[player_index].aiMemory.c_Power = 0;
-			player[player_index].aiMemory.c_Fire = 0;
+			ptrPlayer->moves.actions[MOVE_CHANGE] = true;
+			ptrPlayer->aiMemory.c_Angle = 0;
+			ptrPlayer->aiMemory.c_Power = 0;
+			ptrPlayer->aiMemory.c_Fire = 0;
 		}
 
-		if (mt_rand() % 100 > 98 || CURUNIT(player_index).shotType == SHOT_TRACER)
+		if (mt_rand() % 100 > 98 || ptrCurUnit->shotType == SHOT_TRACER)
 		{   /* Clearly the CPU doesn't like the tracer :) */
-			player[player_index].moves.actions[MOVE_CYDN] = true;
+			ptrPlayer->moves.actions[MOVE_CYDN] = true;
 		}
-		if (player[player_index].aiMemory.c_Angle > 0)
+		if (ptrPlayer->aiMemory.c_Angle > 0)
 		{
-			player[player_index].moves.actions[MOVE_LEFT] = true;
+			ptrPlayer->moves.actions[MOVE_LEFT] = true;
 		}
-		if (player[player_index].aiMemory.c_Angle < 0)
+		if (ptrPlayer->aiMemory.c_Angle < 0)
 		{
-			player[player_index].moves.actions[MOVE_RIGHT] = true;
+			ptrPlayer->moves.actions[MOVE_RIGHT] = true;
 		}
-		if (player[player_index].aiMemory.c_Power > 0)
+		if (ptrPlayer->aiMemory.c_Power > 0)
 		{
-			player[player_index].moves.actions[MOVE_UP] = true;
+			ptrPlayer->moves.actions[MOVE_UP] = true;
 		}
-		if (player[player_index].aiMemory.c_Power < 0 && player[player_index].aiMemory.c_noDown == 0)
+		if (ptrPlayer->aiMemory.c_Power < 0 && ptrPlayer->aiMemory.c_noDown == 0)
 		{
-			player[player_index].moves.actions[MOVE_DOWN] = true;
+			ptrPlayer->moves.actions[MOVE_DOWN] = true;
 		}
-		if (player[player_index].aiMemory.c_Fire > 0)
+		if (ptrPlayer->aiMemory.c_Fire > 0)
 		{
-			player[player_index].moves.actions[MOVE_FIRE] = true;
+			ptrPlayer->moves.actions[MOVE_FIRE] = true;
 		}
 
-		if (CURUNIT(player_index).unitYMov < -0.1f && CURUNIT(player_index).unitType == UNIT_HELI)
+		if (ptrCurUnit->unitYMov < -0.1f && ptrCurUnit->unitType == UNIT_HELI)
 		{
-			player[player_index].moves.actions[MOVE_FIRE] = false;
+			ptrPlayer->moves.actions[MOVE_FIRE] = false;
 		}
 
 		/* This last hack was down in the processing section.
 		 * What exactly it was doing there I do not know */
-		if(CURUNIT(player_index).unitType == UNIT_LASER || CURUNIT(player_index).isYInAir == true) {
-			player[player_index].aiMemory.c_Power = 0;
+		if(ptrCurUnit->unitType == UNIT_LASER || ptrCurUnit->isYInAir == true) {
+			ptrPlayer->aiMemory.c_Power = 0;
 		}
 	}
 }
@@ -1981,11 +1987,24 @@ void DE_RunTickDrawCrosshairs( void )
 			tempPosY = round(curUnit->unitY - 7 - sin(curUnit->angle) * (curUnit->power * 8 + 7));
 		}
 
-		JE_pix(tempPosX,     tempPosY,     14);
-		JE_pix(tempPosX + 3, tempPosY,      3);
-		JE_pix(tempPosX - 3, tempPosY,      3);
-		JE_pix(tempPosX,     tempPosY + 2,  3);
-		JE_pix(tempPosX,     tempPosY - 2,  3);
+		/* Draw it.  Clip away from the HUD though. */
+		if(tempPosY > 9)
+		{
+			if(tempPosY > 11)
+			{
+				if(tempPosY > 13)
+				{
+					/* Top pixel */
+					JE_pix(tempPosX,     tempPosY - 2,  3);
+				}
+				/* Middle three pixels */
+				JE_pix(tempPosX + 3, tempPosY,      3);
+				JE_pix(tempPosX,     tempPosY,     14);
+				JE_pix(tempPosX - 3, tempPosY,      3);
+			}
+			/* Bottom pixel */
+			JE_pix(tempPosX,     tempPosY + 2,  3);
+		}
 	}
 }
 void DE_RunTickDrawHUD( void )
@@ -2336,6 +2355,7 @@ void DE_RunMagnet( enum de_player_t curPlayer, struct destruct_unit_s * magnet )
 	unsigned int i;
 	enum de_player_t curEnemy;
 	int direction;
+	struct destruct_unit_s * enemyUnit;
 
 
 	curEnemy = (curPlayer == PLAYER_LEFT) ? PLAYER_RIGHT : PLAYER_LEFT;
@@ -2353,16 +2373,18 @@ void DE_RunMagnet( enum de_player_t curPlayer, struct destruct_unit_s * magnet )
 			}
 		}
 	}
-	for (i = 0; i < MAX_INSTALLATIONS; i++) /* magnets push coptors */
+
+	enemyUnit = player[curEnemy].unit;
+	for (i = 0; i < MAX_INSTALLATIONS; i++, enemyUnit++) /* magnets push coptors */
 	{
-		if (player[curEnemy].unit[i].health > 0
-		 && player[curEnemy].unit[i].unitType == UNIT_HELI
-		 && player[curEnemy].unit[i].isYInAir == true)
+		if (DE_isValidUnit(enemyUnit)
+		 && enemyUnit->unitType == UNIT_HELI
+		 && enemyUnit->isYInAir == true)
 		{
 			if ((curEnemy == PLAYER_RIGHT && player[curEnemy].unit[i].unitX + 11 < 318)
 			 || (curEnemy == PLAYER_LEFT  && player[curEnemy].unit[i].unitX > 1))
 			{
-				player[curEnemy].unit[i].unitX -= 2 * direction;
+				enemyUnit->unitX -= 2 * direction;
 			}
 		}
 	}
@@ -2399,6 +2421,17 @@ void DE_LowerPower( struct destruct_unit_s * unit )
 	{
 		unit->power = 1;
 	}
+}
+
+/* DE_isValidUnit
+ *
+ * Returns true if the unit's health is above 0 and false
+ * otherwise.  This mainly exists because the 'health' var
+ * serves two roles and that can get confusing.
+ */
+inline bool DE_isValidUnit( struct destruct_unit_s * unit )
+{
+	return(unit->health > 0);
 }
 
 
