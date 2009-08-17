@@ -38,7 +38,7 @@
  *
  * Things I wanted to do but can't: Remove references to VGAScreen.  For
  * a multitude of reasons this just isn't feasable.  It would have been nice
- * to increase the playing field though...
+ * to increase the playing field though...bool
  */
 
 /*** Headers ***/
@@ -69,12 +69,13 @@
 #define MAX_INSTALLATIONS 20
 
 /*** Enums ***/
+enum de_state_t { STATE_INIT, STATE_RELOAD, STATE_CONTINUE };
 enum de_player_t { PLAYER_LEFT = 0, PLAYER_RIGHT = 1, MAX_PLAYERS = 2 };
 enum de_team_t { TEAM_LEFT = 0, TEAM_RIGHT = 1, MAX_TEAMS = 2 };
 enum de_mode_t { MODE_5CARDWAR = 0, MODE_TRADITIONAL, MODE_HELIASSAULT,
                  MODE_HELIDEFENSE, MODE_OUTGUNNED,
                  MODE_FIRST = MODE_5CARDWAR, MODE_LAST = MODE_OUTGUNNED,
-                 MAX_MODES = 5 };
+                 MAX_MODES = 5, MODE_NONE = -1 };
 enum de_unit_t { UNIT_TANK = 0, UNIT_NUKE, UNIT_DIRT, UNIT_SATELLITE,
                  UNIT_MAGNET, UNIT_LASER, UNIT_JUMPER, UNIT_HELI,
                  UNIT_FIRST = UNIT_TANK, UNIT_LAST = UNIT_HELI,
@@ -134,7 +135,7 @@ struct destruct_shot_s {
 	double ymov;
 	bool gravity;
 	unsigned int shottype;
-	int shotdur; /* This looks to be unused */
+	//int shotdur; /* This looks to be unused */
 	unsigned int trailx[4], traily[4], trailc[4];
 };
 struct destruct_explo_s {
@@ -186,43 +187,49 @@ struct destruct_world_s {
 	struct destruct_wall_s mapWalls[MAX_WALLS];
 
 	/* Map configuration */
+	enum de_mode_t destructMode;
 	unsigned int mapFlags;
 };
 
 /*** Function decs ***/
+//Prep functions
 void JE_destructMain( void );
 void JE_introScreen( void );
-void JE_modeSelect( void );
+enum de_mode_t JE_modeSelect( void );
+void JE_helpScreen( void );
+void JE_pauseScreen( void );
 
+//level generating functions
 void JE_generateTerrain( void );
 void DE_generateBaseTerrain( unsigned int, unsigned int *);
 void DE_drawBaseTerrain( unsigned int * );
 void DE_generateUnits( unsigned int * );
 void DE_generateWalls( struct destruct_world_s * );
 void DE_generateRings(SDL_Surface *, Uint8 );
-void JE_aliasDirt( SDL_Surface * );
-
-void DE_ResetUnits( void );
-void DE_ResetPlayers( void );
-void DE_ResetWeapons( void );
 void DE_ResetLevel( void );
-void DE_ResetActions( void );
-void DE_ResetAI( void );
+unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
 
-void DE_RunTick( void );
-void DE_RunTickCycleDeadUnits( void );
-void DE_RunTickGravity( void );
-void DE_RunTickAnimate( void );
-void DE_RunTickDrawWalls( void );
-void DE_RunTickExplosions( void );
-void DE_TestExplosionCollision( unsigned int, unsigned int);
-void DE_DestroyUnit( enum de_player_t, struct destruct_unit_s * );
-void DE_RunTickShots( void );
-void DE_RunTickAI( void );
+//drawing functions
+void JE_aliasDirt( SDL_Surface * );
 void DE_RunTickDrawCrosshairs( void );
 void DE_RunTickDrawHUD( void );
+void DE_GravityDrawUnit( enum de_player_t, struct destruct_unit_s * );
+void DE_RunTickAnimate( void );
+void DE_RunTickDrawWalls( void );
+void DE_DrawTrails( struct destruct_shot_s *, unsigned int, unsigned int, unsigned int );
+void JE_tempScreenChecking( void );
+void JE_superPixel( unsigned int, unsigned int );
+void JE_pixCool( unsigned int, unsigned int, Uint8 );
+
+//player functions
 void DE_RunTickGetInput( void );
 void DE_ProcessInput( void );
+void DE_ResetPlayers( void );
+void DE_ResetAI( void );
+void DE_ResetActions( void );
+void DE_RunTickAI( void );
+
+//unit functions
 void DE_RaiseAngle( struct destruct_unit_s * );
 void DE_LowerAngle( struct destruct_unit_s * );
 void DE_RaisePower( struct destruct_unit_s * );
@@ -230,35 +237,40 @@ void DE_LowerPower( struct destruct_unit_s * );
 void DE_CycleWeaponUp( struct destruct_unit_s * );
 void DE_CycleWeaponDown( struct destruct_unit_s * );
 void DE_RunMagnet( enum de_player_t, struct destruct_unit_s * );
-bool DE_RunTickCheckEndgame( void );
-void DE_RunTickPlaySounds( void );
 void DE_GravityFlyUnit( struct destruct_unit_s * );
 void DE_GravityLowerUnit( struct destruct_unit_s * );
-void DE_GravityDrawUnit( enum de_player_t, struct destruct_unit_s * );
-unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
-bool JE_stabilityCheck( unsigned int, unsigned int );
+void DE_DestroyUnit( enum de_player_t, struct destruct_unit_s * );
+void DE_ResetUnits( void );
 static inline bool DE_isValidUnit( struct destruct_unit_s *);
 
-void JE_tempScreenChecking( void );
-void DE_DrawTrails( struct destruct_shot_s *, unsigned int, unsigned int, unsigned int );
+//weapon functions
+void DE_ResetWeapons( void );
+void DE_RunTickShots( void );
+void DE_RunTickExplosions( void );
+void DE_TestExplosionCollision( unsigned int, unsigned int);
 void JE_makeExplosion( unsigned int, unsigned int, enum de_shot_t );
 void DE_MakeShot( enum de_player_t, const struct destruct_unit_s *, int );
 
-void JE_eSound( unsigned int );
-void JE_superPixel( unsigned int, unsigned int );
+//gameplay functions
+enum de_state_t DE_RunTick( void );
+void DE_RunTickCycleDeadUnits( void );
+void DE_RunTickGravity( void );
+bool DE_RunTickCheckEndgame( void );
+bool JE_stabilityCheck( unsigned int, unsigned int );
 
-void JE_helpScreen( void );
-void JE_pauseScreen( void );
-void JE_pixCool( unsigned int, unsigned int, Uint8 );
+//sound
+void DE_RunTickPlaySounds( void );
+void JE_eSound( unsigned int );
+
 
 
 /*** Weapon configurations ***/
 
 /* Part of me wants to leave these as bytes to save space. */
 const bool     demolish[MAX_SHOT_TYPES] = {false, false, false, false, false, true, true, true, false, false, false, false, true, false, true, false, true};
-const int        shotGr[MAX_SHOT_TYPES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
+//const int        shotGr[MAX_SHOT_TYPES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101};
 const int     shotTrail[MAX_SHOT_TYPES] = {TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_FULL, TRAILS_NONE, TRAILS_NONE, TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_FULL, TRAILS_NORMAL, TRAILS_NONE};
-const int      shotFuse[MAX_SHOT_TYPES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+//const int      shotFuse[MAX_SHOT_TYPES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 const int     shotDelay[MAX_SHOT_TYPES] = {10, 30, 80, 20, 60, 100, 140, 200, 20, 60, 5, 15, 50, 5, 80, 16, 0};
 const int     shotSound[MAX_SHOT_TYPES] = {S_SELECT, S_WEAPON_2, S_WEAPON_1, S_WEAPON_7, S_WEAPON_7, S_EXPLOSION_9, S_EXPLOSION_22, S_EXPLOSION_22, S_WEAPON_5, S_WEAPON_13, S_WEAPON_10, S_WEAPON_15, S_WEAPON_15, S_WEAPON_26, S_WEAPON_14, S_WEAPON_7, S_WEAPON_7};
 const int     exploSize[MAX_SHOT_TYPES] = {4, 20, 30, 14, 22, 16, 40, 60, 10, 30, 0, 5, 10, 3, 15, 7, 0};
@@ -346,31 +358,24 @@ const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 
 /*** Globals ***/
 SDL_Surface *destructTempScreen;
-JE_byte endDelay;
-JE_boolean died = false;
 JE_boolean destructFirstTime;
-
-JE_byte destructMode;  /*Game Mode - See Tyrian.HTX*/
 
 struct destruct_player_s player[MAX_PLAYERS];
 struct destruct_world_s  world;
 struct destruct_shot_s   shotRec[MAX_SHOTS];
 struct destruct_explo_s  exploRec[MAX_EXPLO];
 
-JE_boolean endOfGame, destructQuit;
-
-
 
 void JE_destructGame( void )
 {
 	/* This is the entry function.  Any one-time actions we need to
 	 * perform can go in here. */
-	destructFirstTime = true;
 	JE_clr256();
 	JE_showVGA();
-	endOfGame = false;
+
 	destructTempScreen = game_screen;
 	world.VGAScreen = VGAScreen;
+
 	JE_loadCompShapes(&eShapes1, &eShapes1Size, '~');
 	JE_fadeBlack(1);
 
@@ -379,6 +384,9 @@ void JE_destructGame( void )
 
 void JE_destructMain( void )
 {
+	enum de_state_t curState;
+
+
 	JE_loadPic(11, false);
 	JE_introScreen();
 
@@ -387,34 +395,30 @@ void JE_destructMain( void )
 	player[PLAYER_LEFT].is_cpu = true;
 	//player[PLAYER_RIGHT].is_cpu = true; // this is fun :)
 
-	do {
-		JE_modeSelect();
+	while(1)
+	{
+		world.destructMode = JE_modeSelect();
 
-		if (!destructQuit)
-		{
-			do
-			{
-				destructQuit = false;
-				endOfGame = false;
-
-				destructFirstTime = true;
-				JE_loadPic(11, false);
-
-				DE_ResetUnits();
-				DE_ResetLevel();
-				do
-				{
-					DE_RunTick();
-				} while (!destructQuit && !(died && endDelay == 0));
-
-				destructQuit = false;
-				died = false;
-				JE_fadeBlack(25);
-			}
-			while (!endOfGame);
+		if(world.destructMode == MODE_NONE) {
+			break; /* User is quitting */
 		}
+
+		do
+		{
+
+			destructFirstTime = true;
+			JE_loadPic(11, false);
+
+			DE_ResetUnits();
+			DE_ResetLevel();
+			do {
+				curState = DE_RunTick();
+			} while(curState == STATE_CONTINUE);
+
+			JE_fadeBlack(25);
+		}
+		while (curState == STATE_RELOAD);
 	}
-	while (!destructQuit);
 }
 
 void JE_introScreen( void )
@@ -441,71 +445,77 @@ void JE_introScreen( void )
 /* JE_modeSelect
  *
  * This function prints the DESTRUCT mode selection menu.
- * Its main purpose is to set the variable 'destructMode'.
+ * The return value is the selected mode, or -1 (MODE_NONE)
+ * if the user quits.
  */
-void JE_modeSelect( void )
+enum de_mode_t JE_modeSelect( void )
 {
+	enum de_mode_t mode;
+	unsigned int i;
+
+
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
-	destructMode = MODE_5CARDWAR;
+	mode = MODE_5CARDWAR;
 
-	destructFirstTime = true;
-	destructQuit = false;
+	/* Draw the menu once and fade us in. */
+	for (i = 0; i < DESTRUCT_MODES; i++)
+	{   /* What a large function call. */
+		JE_textShade(JE_fontCenter(destructModeName[i], TINY_FONT), 82 + i * 12, destructModeName[i], 12, (i == mode) * 4, FULL_SHADE);
+	}
+	JE_showVGA();
+	JE_fadeColor(15);
 
-	do {
-		for (int x = 0; x < DESTRUCT_MODES; x++)
-		{   /* This code prints the available game modes */
-			temp = (x == destructMode) * 4; /* This odd looking code just highlights the selected menu option */
-			JE_textShade(JE_fontCenter(destructModeName[x], TINY_FONT), 82 + x * 12, destructModeName[x], 12, temp, FULL_SHADE);
+	/* Get input in a loop. */
+	while(1)
+	{
+		/* Re-draw the menu every iteration */
+		for (i = 0; i < DESTRUCT_MODES; i++)
+		{
+			JE_textShade(JE_fontCenter(destructModeName[i], TINY_FONT), 82 + i * 12, destructModeName[i], 12, (i == mode) * 4, FULL_SHADE);
 		}
 		JE_showVGA();
 
-		if (destructFirstTime)
-		{   /* This code fades us in... */
-			JE_fadeColor(15);
-			destructFirstTime = false;
-		}
-
-		/* This code just grabs keys and edits destructmode as needed */
+		/* Grab keys */
 		newkey = false;
-		while (!newkey)
-		{
+		do {
 			service_SDL_events(false);
 			SDL_Delay(16);
-		}
+		} while(!newkey);
+
+		/* See what was pressed */
 		if (keysactive[SDLK_ESCAPE])
 		{
-			destructQuit = true;
+			mode = MODE_NONE; /* User is quitting, return failure */
 			break;
 		}
 		if (keysactive[SDLK_RETURN])
 		{
-			break;
+			break; /* User has selected, return choice */
 		}
 		if (keysactive[SDLK_UP])
 		{
-			if(destructMode == MODE_FIRST)
+			if(mode == MODE_FIRST)
 			{
-				destructMode = MODE_LAST;
+				mode = MODE_LAST;
 			} else {
-				destructMode--;
+				mode--;
 			}
 		}
 		if (keysactive[SDLK_DOWN])
 		{
-			if(destructMode == MODE_LAST)
+			if(mode == MODE_LAST)
 			{
-				destructMode = MODE_FIRST;
+				mode = MODE_FIRST;
 			} else {
-				destructMode++;
+				mode++;
 			}
 		}
-
-
-	} while (!destructQuit && !keysactive[SDLK_RETURN]);
+	}
 
 	JE_fadeBlack(15);
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
 	JE_showVGA();
+	return(mode);
 }
 
 void JE_generateTerrain( void )
@@ -633,7 +643,7 @@ void DE_generateUnits( unsigned int * baseWorld )
 		numSatellites = 0;
 		player[i].unitsRemaining = 0;
 
-		for (j = 0; j < basetypes[baseLookup[i][destructMode]][0]; j++)
+		for (j = 0; j < basetypes[baseLookup[i][world.destructMode]][0]; j++)
 		{
 			/* Not everything is the same between players */
 			if(i == PLAYER_LEFT)
@@ -646,13 +656,13 @@ void DE_generateUnits( unsigned int * baseWorld )
 			}
 
 			player[i].unit[j].unitY = JE_placementPosition(player[i].unit[j].unitX - 1, 14, baseWorld);
-			player[i].unit[j].unitType = basetypes[baseLookup[i][destructMode]][(mt_rand() % 10) + 1];
+			player[i].unit[j].unitType = basetypes[baseLookup[i][world.destructMode]][(mt_rand() % 10) + 1];
 
 			/* Sats are special cases since they are useless.  They don't count
 			 * as active units and we can't have a team of all sats */
 			if (player[i].unit[j].unitType == UNIT_SATELLITE)
 			{
-				if (numSatellites == basetypes[baseLookup[i][destructMode]][0])
+				if (numSatellites == basetypes[baseLookup[i][world.destructMode]][0])
 				{
 					player[i].unit[j].unitType = UNIT_TANK;
 					player[i].unitsRemaining++;
@@ -1043,7 +1053,6 @@ void JE_superPixel( unsigned int tempPosX, unsigned int tempPosY )
 
 			/* at this point *s is our pixel.  Our constant arrays tell us what
 			 * to do with it. */
-			if (starPattern[y][x] == 0) { continue; } /* this is just to speed it up */
 			if (*s < starPattern[y][x])
 			{
 				*s = starPattern[y][x];
@@ -1062,18 +1071,21 @@ void JE_superPixel( unsigned int tempPosX, unsigned int tempPosY )
 
 void JE_helpScreen( void )
 {
+	unsigned int i, j;
+
+
 	//JE_getVGA();  didn't do anything anyway?
 	JE_fadeBlack(15);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	JE_clr256();
 
-	for(x = 0; x < 2; x++)
+	for(i = 0; i < 2; i++)
 	{
-		JE_outText(100,  5 + x * 90, destructHelp[x * 12 + 0], 2, 4);
-		JE_outText(100, 15 + x * 90, destructHelp[x * 12 + 1], 2, 1);
-		for (y = 3; y <= 12; y++)
+		JE_outText(100,  5 + i * 90, destructHelp[i * 12 + 0], 2, 4);
+		JE_outText(100, 15 + i * 90, destructHelp[i * 12 + 1], 2, 1);
+		for (j = 3; j <= 12; j++)
 		{
-			JE_outText(((y - 1) % 2) * 160 + 10, 15 + ((y - 1) / 2) * 12 + x * 90, destructHelp[x * 12 + y-1], 1, 3);
+			JE_outText(((j - 1) % 2) * 160 + 10, 15 + ((j - 1) / 2) * 12 + i * 90, destructHelp[i * 12 + j-1], 1, 3);
 		}
 	}
 	JE_outText(30, 190, destructHelp[24], 3, 4);
@@ -1091,27 +1103,27 @@ void JE_helpScreen( void )
 	JE_fadeColor(15);
 }
 
+
 void JE_pauseScreen( void )
 {
 	set_volume(tyrMusicVolume / 2, fxVolume);
 
+	/* Save our current screen/game world.  We don't want to screw it up while paused. */
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	JE_outText(JE_fontCenter(miscText[22], TINY_FONT), 90, miscText[22], 12, 5);
 	JE_showVGA();
 
-	do {
+	do { /* just wait until the user hits a key */
 		service_SDL_events(true);
 		SDL_Delay(16);
 	} while (!newkey);
 
+	/* Restore current screen & volume*/
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
 	JE_showVGA();
 
 	set_volume(tyrMusicVolume, fxVolume);
 }
-
-
-/*** Functions that break Destruct down into more manageable pieces ***/
 
 /* DE_ResetX
  *
@@ -1217,9 +1229,14 @@ void DE_ResetActions( void )
  *
  * Runs one tick.  One tick involves handling physics, drawing crap,
  * moving projectiles and explosions, and getting input.
+ * Returns true while the game is running or false if the game is
+ * to be terminated.
  */
-void DE_RunTick( void )
+enum de_state_t DE_RunTick( void )
 {
+	static unsigned int endDelay;
+
+
 	setjasondelay(1);
 
 	memset(soundQueue, 0, sizeof(soundQueue));
@@ -1243,15 +1260,22 @@ void DE_RunTick( void )
 	{
 		JE_fadeColor(25);
 		destructFirstTime = false;
+		endDelay = 0;
 	}
 
 	DE_RunTickGetInput();
 	DE_ProcessInput();
 
-
-	if (!died)
+	if (endDelay > 0)
 	{
-		died = DE_RunTickCheckEndgame();
+		if(--endDelay == 0)
+		{
+			return(STATE_RELOAD);
+		}
+	}
+	else if ( DE_RunTickCheckEndgame() == true)
+	{
+		endDelay = 80;
 	}
 
 	DE_RunTickPlaySounds();
@@ -1279,19 +1303,17 @@ void DE_RunTick( void )
 
 	if (keysactive[SDLK_ESCAPE])
 	{
-		destructQuit = true;
-		endOfGame = true;
 		keysactive[SDLK_ESCAPE] = false;
+		return(STATE_INIT); /* STATE_INIT drops us to the mode select */
 	}
 
 	if (keysactive[SDLK_BACKSPACE])
 	{
-		destructQuit = true;
 		keysactive[SDLK_BACKSPACE] = false;
+		return(STATE_RELOAD); /* STATE_RELOAD creates a new map */
 	}
 
-	if (endDelay > 0)
-		endDelay--;
+	return(STATE_CONTINUE);
 }
 
 /* DE_RunTickX
@@ -1399,7 +1421,7 @@ void DE_GravityLowerUnit( struct destruct_unit_s * unit )
 			switch(unit->unitType)
 			{
 				case UNIT_HELI:
-					unit->unitYMov = 4.5;
+					unit->unitYMov = 1.5;
 					unit->unitY += 0.2;
 					break;
 
@@ -2343,7 +2365,7 @@ void DE_MakeShot( enum de_player_t curPlayer, const struct destruct_unit_s * cur
 	shotRec[shotIndex].isAvailable = false;
 
 	shotRec[shotIndex].shottype = curUnit->shotType;
-	shotRec[shotIndex].shotdur = shotFuse[shotRec[shotIndex].shottype];
+	//shotRec[shotIndex].shotdur = shotFuse[shotRec[shotIndex].shottype];
 
 	shotRec[shotIndex].trailc[0] = 0;
 	shotRec[shotIndex].trailc[1] = 0;
@@ -2439,19 +2461,17 @@ bool DE_RunTickCheckEndgame( void )
 {
 	if (player[PLAYER_LEFT].unitsRemaining == 0)
 	{
-		player[PLAYER_RIGHT].score += ModeScore[PLAYER_LEFT][destructMode];
-		died = true;
+		player[PLAYER_RIGHT].score += ModeScore[PLAYER_LEFT][world.destructMode];
 		soundQueue[7] = V_CLEARED_PLATFORM;
-		endDelay = 80;
+		return(true);
 	}
 	if (player[PLAYER_RIGHT].unitsRemaining == 0)
 	{
-		player[PLAYER_LEFT].score += ModeScore[PLAYER_RIGHT][destructMode];
-		died = true;
+		player[PLAYER_LEFT].score += ModeScore[PLAYER_RIGHT][world.destructMode];
 		soundQueue[7] = V_CLEARED_PLATFORM;
-		endDelay = 80;
+		return(true);
 	}
-	return(player[PLAYER_LEFT].unitsRemaining == 0 || player[PLAYER_RIGHT].unitsRemaining == 0);
+	return(false);
 }
 void DE_RunTickPlaySounds( void )
 {

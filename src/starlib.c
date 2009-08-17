@@ -25,7 +25,7 @@
 
 #include <ctype.h>
 
-
+int tempX, tempY;
 JE_boolean run;
 struct JE_StarType star[starlib_MAX_STARS];
 
@@ -66,117 +66,85 @@ void JE_starlib_main( void )
 
 	starlib_speed += speedChange;
 
-	/* ASM starts */
-	/* ***START THE LOOP*** */
-	stars = star;
-	i = starlib_MAX_STARS;
 
-	/* ***START OF EACH PIXEL*** */
-next_star:
-	off = (stars->lastX)+(stars->lastY)*320;
-
-	/* ***CLEAR PIXEL*** */
-	surf = VGAScreen->pixels;
-
-	if (off >= 640 && off < (320*200)-640)
+	for(stars = star, i = starlib_MAX_STARS; i > 0; stars++, i--)
 	{
-		surf[off] = 0; /* Shade Level 0 */
+		/* Make a pointer to the screen... */
+		surf = VGAScreen->pixels;
 
-		surf[off-1] = 0; /* Shade Level 1, 2 */
-		surf[off+1] = 0;
-		surf[off-2] = 0;
-		surf[off+2] = 0;
+		/* Calculate the offset to where we wish to draw */
+		off = (stars->lastX)+(stars->lastY)*320;
 
-		surf[off-320] = 0;
-		surf[off+320] = 0;
-		surf[off-640] = 0;
-		surf[off+640] = 0;
+
+		/* We don't want trails in our star field.  Erase the old graphic */
+		if (off >= 640 && off < (320*200)-640)
+		{
+			surf[off] = 0; /* Shade Level 0 */
+
+			surf[off-1] = 0; /* Shade Level 1, 2 */
+			surf[off+1] = 0;
+			surf[off-2] = 0;
+			surf[off+2] = 0;
+
+			surf[off-320] = 0;
+			surf[off+320] = 0;
+			surf[off-640] = 0;
+			surf[off+640] = 0;
+		}
+
+		/* Move star */
+		tempZ = stars->spZ;
+		tempX = (stars->spX / tempZ) + 160;
+		tempY = (stars->spY / tempZ) + 100;
+		tempZ -=  starlib_speed;
+
+
+		/* If star is out of range, make a new one */
+		if (tempZ <=  0 ||
+		    tempY ==  0 || tempY > 198 ||
+		    tempX > 318 || tempX <   1)
+		{
+			stars->spZ = 500;
+
+			JE_newStar();
+
+			stars->spX = tempX;
+			stars->spY = tempY;
+		}
+		else /* Otherwise, update & draw it */
+		{
+			stars->lastX = tempX;
+			stars->lastY = tempY;
+			stars->spZ = tempZ;
+
+			off = tempX+tempY*320;
+
+			if (grayB)
+			{
+				tempCol = tempZ >> 1;
+			} else {
+				tempCol = pColor+((tempZ >> 4) & 31);
+			}
+
+			/* Draw the pixel! */
+			if (off >= 640 && off < (320*200)-640)
+			{
+				surf[off] = tempCol;
+
+				tempCol += 72;
+				surf[off-1] = tempCol;
+				surf[off+1] = tempCol;
+				surf[off-320] = tempCol;
+				surf[off+320] = tempCol;
+
+				tempCol += 72;
+				surf[off-2] = tempCol;
+				surf[off+2] = tempCol;
+				surf[off-640] = tempCol;
+				surf[off+640] = tempCol;
+			}
+		}
 	}
-
-	tempZ = stars->spZ;
-
-	/* Here's the StarType offsets:
-	 *
-	 * SPX   0
-	 * SPY   2
-	 * SPZ   4
-	 * LastX 6
-	 * LastY 8
-	 */
-
-	int tempX = (stars->spX / tempZ) + 160,
-	    tempY = (stars->spY / tempZ) + 100;
-
-	tempZ -= starlib_speed;
-
-	if (tempZ <= 0)
-	{
-		goto new_star;
-	}
-
-	if (tempY == 0 || tempY > 198)
-	{
-		goto new_star;
-	}
-
-	if (tempX > 318 || tempX < 1)
-	{
-		goto new_star;
-	}
-
-	/* Update current star */
-	stars->lastX = tempX;
-	stars->lastY = tempY;
-	stars->spZ = tempZ;
-
-	/* Now, WriteSuperPixel */
-	/* Let's find the location */
-	off = tempX+tempY*320;
-
-	if (grayB)
-	{
-		tempCol = tempZ >> 1;
-	} else {
-		tempCol = pColor+((tempZ >> 4) & 31);
-	}
-	
-	/* Draw the pixel! */
-	if (off >= 640 && off < (320*200)-640)
-	{
-		surf[off] = tempCol;
-
-		tempCol += 72;
-		surf[off-1] = tempCol;
-		surf[off+1] = tempCol;
-		surf[off-320] = tempCol;
-		surf[off+320] = tempCol;
-
-		tempCol += 72;
-		surf[off-2] = tempCol;
-		surf[off+2] = tempCol;
-		surf[off-640] = tempCol;
-		surf[off+640] = tempCol;
-	}
-
-	goto star_end;
-
-new_star:
-	stars->spZ = 500;
-
-	JE_newStar();
-
-	stars->spX = tempX;
-	stars->spY = tempY;
-
-star_end:
-	stars++;
-	i--;
-	if (i > 0)
-	{
-		goto next_star;
-	}
-
-	/* ASM ends */
 
 	if (newkey)
 	{
@@ -347,8 +315,6 @@ void JE_changeSetup( JE_byte setupType )
 
 void JE_newStar( void )
 {
-	int tempX, tempY;
-	
 	if (setup == 0)
 	{
 		tempX = (mt_rand() % 64000) - 32000;
