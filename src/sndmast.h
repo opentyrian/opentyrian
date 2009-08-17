@@ -65,7 +65,7 @@ enum
 	V_DANGER,
 	V_SPIKES,
 	V_DATA_CUBE,
-	V_ACCELERATE,
+	V_ACCELERATE
 };
 
 extern const char soundTitle[SAMPLE_COUNT][9];

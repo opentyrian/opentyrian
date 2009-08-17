@@ -237,7 +237,7 @@ void DE_GravityLowerUnit( struct destruct_unit_s * );
 void DE_GravityDrawUnit( enum de_player_t, struct destruct_unit_s * );
 unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
 bool JE_stabilityCheck( unsigned int, unsigned int );
-inline bool DE_isValidUnit( struct destruct_unit_s *);
+static inline bool DE_isValidUnit( struct destruct_unit_s *);
 
 void JE_tempScreenChecking( void );
 void DE_DrawTrails( struct destruct_shot_s *, unsigned int, unsigned int, unsigned int );
@@ -2429,7 +2429,7 @@ void DE_LowerPower( struct destruct_unit_s * unit )
  * otherwise.  This mainly exists because the 'health' var
  * serves two roles and that can get confusing.
  */
-inline bool DE_isValidUnit( struct destruct_unit_s * unit )
+static inline bool DE_isValidUnit( struct destruct_unit_s * unit )
 {
 	return(unit->health > 0);
 }
