@@ -38,7 +38,7 @@
  *
  * Things I wanted to do but can't: Remove references to VGAScreen.  For
  * a multitude of reasons this just isn't feasable.  It would have been nice
- * to increase the playing field though...bool
+ * to increase the playing field though...
  */
 
 /*** Headers ***/
@@ -87,16 +87,15 @@ enum de_shot_t { SHOT_TRACER = 0, SHOT_SMALL, SHOT_LARGE, SHOT_MICRO,
                  SHOT_BOMB,
                  SHOT_FIRST = SHOT_TRACER, SHOT_LAST = SHOT_BOMB,
                  MAX_SHOT_TYPES = 17, SHOT_INVALID = -1 };
-enum de_expl_t { EXPL_NONE = 0, EXPL_MAGNET = 1, EXPL_DIRT = 25, EXPL_NORMAL = 252 };
-enum de_trails_t { TRAILS_NONE = 0, TRAILS_NORMAL = 1, TRAILS_FULL = 2 };
-enum de_pixel_t { PIXEL_BLACK = 0, PIXEL_DIRT = 25,
-                  PIXEL_RED_MIN = 241, PIXEL_EXPLODE = 252 };
+enum de_expl_t { EXPL_NONE, EXPL_MAGNET, EXPL_DIRT, EXPL_NORMAL }; /* this needs a better name */
+enum de_trails_t { TRAILS_NONE, TRAILS_NORMAL, TRAILS_FULL };
+enum de_pixel_t { PIXEL_BLACK = 0, PIXEL_DIRT = 25 };
 enum de_mapflags_t { MAP_NORMAL = 0x00, MAP_WALLS = 0x01, MAP_RINGS = 0x02,
 					 MAP_HOLES = 0x04, MAP_FUZZY = 0x08, MAP_TALL = 0x10 };
 
 /* keys and moves should line up. */
-enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT = 1,  KEY_UP = 2,  KEY_DOWN = 3,  KEY_CHANGE = 4,  KEY_FIRE = 5,  KEY_CYUP = 6,  KEY_CYDN = 7,  MAX_KEY = 8};
-enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT = 1, MOVE_UP = 2, MOVE_DOWN = 3, MOVE_CHANGE = 4, MOVE_FIRE = 5, MOVE_CYUP = 6, MOVE_CYDN = 7, MAX_MOVE = 8};
+enum de_keys_t {  KEY_LEFT = 0,  KEY_RIGHT,  KEY_UP,  KEY_DOWN,  KEY_CHANGE,  KEY_FIRE,  KEY_CYUP,  KEY_CYDN,  MAX_KEY = 8};
+enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT, MOVE_UP, MOVE_DOWN, MOVE_CHANGE, MOVE_FIRE, MOVE_CYUP, MOVE_CYDN, MAX_MOVE = 8};
 
 /* The tracerlaser is dummied out.  It works but (probably due to the low
  * MAX_SHOTS) is not assigned to anything.  The bomb does not work.
@@ -915,10 +914,11 @@ void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
 	{
 		for (int x = 0; x < VGAScreen->pitch; x++)
 		{
-			/* This block is what fades out explosions. */
-			if (*temps >= PIXEL_RED_MIN)
+			/* This block is what fades out explosions. The palette from 241
+			 * to 255 fades from a very dark red to a very bright yellow. */
+			if (*temps >= 241)
 			{
-				if (*temps == PIXEL_RED_MIN)
+				if (*temps == 241)
 				{
 					*temps = PIXEL_BLACK;
 				}
@@ -1537,7 +1537,7 @@ void DE_RunTickExplosions( void )
 			switch(exploRec[i].exploType)
 			{
 				case EXPL_DIRT:
-					((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch] = EXPL_DIRT;
+					((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch] = PIXEL_DIRT;
 					break;
 
 				case EXPL_NORMAL:
@@ -1732,8 +1732,8 @@ void DE_RunTickShots( void )
 			}
 		}
 
-		/* Our last collision check, at least for now.  We hit dirt (I think) */
-		if((((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch]) == 25)
+		/* Our last collision check, at least for now.  We hit dirt. */
+		if((((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch]) == PIXEL_DIRT)
 		{
 			shotRec[i].isAvailable = true;
 			JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);
