@@ -5419,7 +5419,7 @@ void JE_whoa( void )
 
 
 	/* Clear the top and bottom borders.  We don't blit them otherwise. */
-	memset(VGAScreen->pixels + 63040, 0, 2240);
+	memset((Uint8 *)VGAScreen->pixels + 63040, 0, 2240);
 	memset(VGAScreen->pixels, 0, 1280);
 
 
@@ -5447,7 +5447,7 @@ void JE_whoa( void )
 		}
 
 		/* Now copy that mess to the buffer. */
-		memcpy(VGAScreen->pixels + 1280, TempScreen1 + 1280, 64000 - 2240);
+		memcpy((Uint8 *)VGAScreen->pixels + 1280, TempScreen1 + 1280, 64000 - 2240);
 
 		JE_showVGA();
 
