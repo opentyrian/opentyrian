@@ -3221,8 +3221,8 @@ redo:
 
 						if (input_grabbed)
 						{
-							mouseXC = mouse_x - 159;
-							mouseYC = mouse_y - 100;
+							mouseXC += mouse_x - 159;
+							mouseYC += mouse_y - 100;
 						}
 
 						if ((!isNetworkGame || playerNum_ == thisPlayerNum)
