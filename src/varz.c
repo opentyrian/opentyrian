@@ -339,8 +339,6 @@ JE_integer baseSpeedOld, baseSpeedOld2, baseSpeed, baseSpeedB, baseSpeed2, baseS
            baseSpeedKeyH, baseSpeedKeyV;
 JE_boolean keyMoveWait;
 
-JE_boolean makeMouseDelay;
-
 JE_word playerInvulnerable1, playerInvulnerable2;
 
 JE_integer lastPXShotMove, lastPYShotMove;

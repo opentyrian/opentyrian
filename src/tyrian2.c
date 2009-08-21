@@ -1073,8 +1073,6 @@ start_level_first:
 
 	portConfigChange = false;
 
-	makeMouseDelay = false;
-
 	/*Destruction Ratio*/
 	totalEnemy = 0;
 	enemyKilled = 0;

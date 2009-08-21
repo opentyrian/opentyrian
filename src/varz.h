@@ -336,7 +336,6 @@ extern JE_byte sAni;
 extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;
 extern JE_integer baseSpeedOld, baseSpeedOld2, baseSpeed, baseSpeedB, baseSpeed2, baseSpeed2B, baseSpeedKeyH, baseSpeedKeyV;
 extern JE_boolean keyMoveWait;
-extern JE_boolean makeMouseDelay;
 extern JE_word playerInvulnerable1, playerInvulnerable2;
 extern JE_integer lastPXShotMove, lastPYShotMove;
 extern JE_integer PXB, PYB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB, lastTurnB, lastTurn2B, tempLastTurn2B;

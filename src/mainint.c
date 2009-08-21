@@ -3292,46 +3292,37 @@ redo:
 						*mouseY_ = *PY_ - (*mouseY_ - *PY_);
 						mouseYC = -mouseYC;
 					}
-
+					
 					accelXC += *PX_ - *mouseX_;
 					accelYC += *PY_ - *mouseY_;
-
+					
 					if (mouseXC > 30)
 						mouseXC = 30;
-					else
-						if (mouseXC < -30)
-							mouseXC = -30;
+					else if (mouseXC < -30)
+						mouseXC = -30;
 					if (mouseYC > 30)
 						mouseYC = 30;
-					else
-						if (mouseYC < -30)
-							mouseYC = -30;
-
+					else if (mouseYC < -30)
+						mouseYC = -30;
+					
 					if (mouseXC > 0)
-						*PX_ += (mouseXC + 3 ) / 4;
-					else
-						if (mouseXC < 0)
-							*PX_ += (mouseXC - 3 ) / 4;
+						*PX_ += (mouseXC + 3) / 4;
+					else if (mouseXC < 0)
+						*PX_ += (mouseXC - 3) / 4;
 					if (mouseYC > 0)
-						*PY_ += (mouseYC + 3 ) / 4;
-					else
-						if (mouseYC < 0)
-							*PY_ += (mouseYC - 3 ) / 4;
-
-					if (makeMouseDelay)
-					{
-						if (mouseXC > 3)
-							accelXC++;
-						else
-							if (mouseXC < -2)
-								accelXC--;
-						if (mouseYC > 2)
-							accelYC++;
-						else
-							if (mouseYC < -2)
-								accelYC--;
-					}
-
+						*PY_ += (mouseYC + 3) / 4;
+					else if (mouseYC < 0)
+						*PY_ += (mouseYC - 3) / 4;
+					
+					if (mouseXC > 3)
+						accelXC++;
+					else if (mouseXC < -2)
+						accelXC--;
+					if (mouseYC > 2)
+						accelYC++;
+					else if (mouseYC < -2)
+						accelYC--;
+					
 				}   /*endLevel*/
 
 				if (isNetworkGame && playerNum_ == thisPlayerNum)
@@ -4303,7 +4294,6 @@ void JE_mainGamePlayerFunctions( void )
 	/*Reset Street-Fighter commands*/
 	memset(SFExecuted, 0, sizeof(SFExecuted));
 
-	makeMouseDelay = true;
 	portConfigChange = false;
 
 	if (twoPlayerMode)
