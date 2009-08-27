@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -21,21 +21,7 @@
 
 #include "opentyr.h"
 
-void JE_playRunSkipDump( JE_word bufferoffset );
-
-void JE_closeAnim( void );
-
-void JE_loadAnim( JE_char *filename );
-
 void JE_playAnim( JE_char *animfile, JE_byte startingframe, JE_boolean keyhalt, JE_byte speed );
-
-void JE_renderFrame( JE_word framenumber );
-
-JE_word JE_findPage ( JE_word framenumber );
-
-void JE_drawFrame( JE_word framenumber );
-
-void JE_loadPage( JE_word pagenumber );
 
 #endif /* ANIMLIB_H */
 
