@@ -2837,7 +2837,7 @@ new_game:
 						switch (s[1])
 						{
 							case 'A':
-								JE_playAnim("tyrend.anm", 1, true, 7);
+								JE_playAnim("tyrend.anm", 0, true, 7);
 								break;
 
 							case 'G':
