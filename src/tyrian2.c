@@ -3147,7 +3147,7 @@ new_game:
 
 											setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
 
-											for (y = 0; y < 199; y++)
+											for (y = 0; y <= 199; y++)
 											{
 												if (y <= z)
 												{
@@ -3831,6 +3831,7 @@ void JE_titleScreen( JE_boolean animate )
 						JE_playSampleNum(V_DANGER);
 						JE_showVGA();
 
+						wait_noinput(true, true, true);
 						wait_input(true, true, true);
 
 						JE_initEpisode(1);
@@ -5400,6 +5401,7 @@ void JE_eventSystem( void )
 void JE_whoa( void )
 {
 	unsigned int i, j, color, offset, timer;
+	unsigned int screenSize, topBorder, bottomBorder;
 	Uint8 * TempScreen1, * TempScreen2, * TempScreenSwap;
 
 
@@ -5409,16 +5411,30 @@ void JE_whoa( void )
 	 * This could probably be a lot more efficient (there's probably a
 	 * way to get vgascreen as one of the temp buffers), but it's only called
 	 * once so don't worry about it. */
-	TempScreen1 = game_screen->pixels;
-	TempScreen2 = VGAScreen2->pixels;
 
-	memset(TempScreen1, 0, 64000);
-	memcpy(TempScreen2, VGAScreen->pixels, 64000);
+	TempScreen1  = game_screen->pixels;
+	TempScreen2  = VGAScreen2->pixels;
+
+	screenSize   = VGAScreen->h * VGAScreen->pitch;
+	topBorder    = VGAScreen->pitch * 4; /* Seems an arbitrary number of lines */
+	bottomBorder = VGAScreen->pitch * 7;
+
+	/* Okay, one disadvantage to using other screens as temp buffers: they
+	 * need to be the right size.  I doubt they'l ever be anything but 320x200,
+	 * but just in case, these asserts will clue in whoever stumbles across
+	 * the problem.  You can fix it with the stack or malloc. */
+	assert( VGAScreen2->h *  VGAScreen2->pitch >= screenSize
+	    && game_screen->h * game_screen->pitch >= screenSize);
 
 
-	/* Clear the top and bottom borders.  We don't blit them otherwise. */
-	memset((Uint8 *)VGAScreen->pixels + 63040, 0, 2240);
-	memset(VGAScreen->pixels, 0, 1280);
+	/* Clear the top and bottom borders.  We don't want to process
+	 * them and we don't want to draw them. */
+	memset((Uint8 *)VGAScreen->pixels, 0, topBorder);
+	memset((Uint8 *)VGAScreen->pixels + screenSize - bottomBorder, 0, bottomBorder);
+
+	/* Copy our test subject to one of the temporary buffers.  Blank the other */
+	memset(TempScreen1, 0, screenSize);
+	memcpy(TempScreen2, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
 
 
 	service_SDL_events(true);
@@ -5429,23 +5445,22 @@ void JE_whoa( void )
 		setjasondelay(1);
 
 		/* This gets us our 'whoa' effect with pixel bleeding magic.
-		 * I'm willing to bet no one knows exactly how it works; the guy
-		 * who originally wrote it in asm was probably goofing around.
-		 * And on acid.  So it looked good enough to use. */
-		for (i = 64000 - 1280, j = 640; i > 0; i--, j++)
+		 * I'm willing to bet the guy who originally wrote the asm was goofing
+		 * around on acid and thought this looked good enough to use. */
+		for (i = screenSize - bottomBorder, j = topBorder / 2; i > 0; i--, j++)
 		{
 			offset = j + i/8192 - 4;
-			color = (TempScreen2[offset    ] * 12 +
-			         TempScreen1[offset-320]      +
-			         TempScreen1[offset-  1]      +
-			         TempScreen1[offset+  1]      +
-			         TempScreen1[offset+320]) / 16;
+			color = (TempScreen2[offset                 ] * 12 +
+			         TempScreen1[offset-VGAScreen->pitch]      +
+			         TempScreen1[offset-1               ]      +
+			         TempScreen1[offset+1               ]      +
+			         TempScreen1[offset+VGAScreen->pitch]) / 16;
 
 			TempScreen1[j] = color;
 		}
 
 		/* Now copy that mess to the buffer. */
-		memcpy((Uint8 *)VGAScreen->pixels + 1280, TempScreen1 + 1280, 64000 - 2240);
+		memcpy((Uint8 *)VGAScreen->pixels + topBorder, TempScreen1 + topBorder, screenSize - bottomBorder);
 
 		JE_showVGA();
 
