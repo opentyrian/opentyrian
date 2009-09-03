@@ -21,18 +21,14 @@
 
 #include "opentyr.h"
 
-#define MAX_PAL 23
-
 typedef SDL_Color palette_t[256];
-typedef palette_t JE_PalType[MAX_PAL]; /* [1..maxpal] */
 
-extern JE_PalType palettes;
-extern JE_word palNum;
+extern palette_t palettes[];
 
 extern palette_t palette;
 extern Uint32 rgb_palette[256], yuv_palette[256];
 
-extern palette_t black, colors, colors2;
+extern palette_t black, colors;
 
 void JE_loadPals( void );
 

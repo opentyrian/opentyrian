@@ -25,30 +25,30 @@
 
 #include <assert.h>
 
-JE_PalType palettes;
-JE_word palNum;
+palette_t palettes[23];
+int palette_count;
 
 palette_t palette;
 Uint32 rgb_palette[256], yuv_palette[256];
 
 palette_t black = {{0,0,0}}; /* Rest is filled with 0's too */
-palette_t colors, colors2;
+palette_t colors;
 
 void JE_loadPals( void )
 {
-	palNum = 0;
-	
 	FILE *f = dir_fopen_die(data_dir(), "palette.dat", "rb");
 	
-	while (palNum < MAX_PAL && !feof(f))
+	palette_count = ftell_eof(f) / (256 * 3);
+	assert(palette_count == 23); // game assumes 23 palettes
+	
+	for (int p = 0; p < palette_count; ++p)
 	{
-		for (int i = 0; i < 256; i++)
+		for (int i = 0; i < 256; ++i)
 		{
-			palettes[palNum][i].r = getc(f) << 2;
-			palettes[palNum][i].g = getc(f) << 2;
-			palettes[palNum][i].b = getc(f) << 2;
+			palettes[p][i].r = getc(f) << 2;
+			palettes[p][i].g = getc(f) << 2;
+			palettes[p][i].b = getc(f) << 2;
 		}
-		palNum++;
 	}
 	
 	fclose(f);
