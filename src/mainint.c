@@ -41,7 +41,6 @@
 #include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
-#include "shpmast.h"
 #include "sndmast.h"
 #include "varz.h"
 #include "vga256d.h"
@@ -49,6 +48,8 @@
 
 #include <assert.h>
 #include <ctype.h>
+
+#define SHP_NUM 12
 
 bool button[4];
 
