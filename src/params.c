@@ -31,11 +31,11 @@
 #include <inttypes.h>
 #include <string.h>
 
-JE_boolean richMode, constantPlay, constantDie, joyMax, forceAveraging, stupidWindows;
+JE_boolean richMode, constantPlay, constantDie;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
-	"LOOT", "RECORD", "NOJOY", "CONSTANT", "DEATH", "NOSOUND", "JOYMAX", "WEAKJOY", "NOXMAS", "YESXMAS"
+	"LOOT", "RECORD", "NOJOY", "CONSTANT", "DEATH", "NOSOUND", "NOXMAS", "YESXMAS"
 };
 
 void JE_paramCheck( int argc, char *argv[] )
@@ -45,7 +45,6 @@ void JE_paramCheck( int argc, char *argv[] )
 
 	richMode        = false;
 	constantPlay    = false;
-	forceAveraging  = false;
 
 	const struct
 	{
@@ -101,14 +100,14 @@ void JE_paramCheck( int argc, char *argv[] )
 				case 'h':
 					printf("Usage: tyrian [options]\n\n"
 					       "Options:\n"
-					       "  --help                                   Show help about options\n\n"
-					       "  --no-sound                               Disable audio\n"
-					       "  --no-joystick                            Disable joystick/gamepad input\n"
-					       "  --no-xmas                                Disable Christmas mode\n\n"
-					       "  --data <directory>                       Set Tyrian data directory\n\n"
-					       "  --net <host>[:<port>] <number> <name>    Start a networked game\n"
-					       "  --net-port <port>                        Local port to bind\n"
-					       "  --net-delay <frames>                     Set lag-compensation delay\n");
+					       "  -h, --help                                   Show help about options\n\n"
+					       "  -s, --no-sound                               Disable audio\n"
+					       "  -j, --no-joystick                            Disable joystick/gamepad input\n"
+					       "  -x, --no-xmas                                Disable Christmas mode\n\n"
+					       "  -t, --data <directory>                       Set Tyrian data directory\n\n"
+					       "  -n, --net <host>[:<port>] <number> <name>    Start a networked game\n"
+					       "  -p, --net-port <port>                        Local port to bind\n"
+					       "  -d, --net-delay <frames>                     Set lag-compensation delay\n");
 					exit(0);
 					break;
 					
@@ -272,15 +271,9 @@ void JE_paramCheck( int argc, char *argv[] )
 							audio_disabled = true;
 							break;
 						case 6:
-							joyMax = true;
-							break;
-						case 7:
-							forceAveraging = true;
-							break;
-						case 8:
 							xmas = false;
 							break;
-						case 9:
+						case 7:
 							xmas = true;
 							break;
 						default:
