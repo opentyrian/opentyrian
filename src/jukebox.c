@@ -29,7 +29,7 @@
 #include "nortsong.h"
 #include "palette.h"
 #include "starlib.h"
-#include "vga256d.h"
+#include "vga_palette.h"
 #include "video.h"
 
 void jukebox( void )

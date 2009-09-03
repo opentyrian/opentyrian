@@ -19,14 +19,10 @@
 #ifndef VGA256D_H
 #define VGA256D_H
 
+#include "nortvars.h"
 #include "opentyr.h"
 
-#include "nortvars.h"
-#include "palette.h"
-
 extern JE_boolean mouseInstalled;
-
-extern palette_t vga_palette;
 
 void JE_pix( JE_word x, JE_word y, JE_byte c );
 void JE_pix2( JE_word x, JE_word y, JE_byte c );
