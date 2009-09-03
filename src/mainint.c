@@ -2400,7 +2400,6 @@ bool str_pop_int( char *str, int *val )
 void JE_operation( JE_byte slot )
 {
 	JE_byte flash;
-	JE_boolean quit;
 	char stemp[21];
 	char tempStr[51];
 	
@@ -2411,12 +2410,10 @@ void JE_operation( JE_byte slot )
 			gameJustLoaded = true;
 			JE_loadGame(slot);
 			gameLoaded = true;
-			quit = true;
 		}
 	}
 	else if (slot % 11 != 0)
 	{
-		quit = false;
 		strcpy(stemp, "              ");
 		memcpy(stemp, saveFiles[slot-1].name, strlen(saveFiles[slot-1].name));
 		temp = strlen(stemp);
@@ -2428,7 +2425,8 @@ void JE_operation( JE_byte slot )
 		
 		JE_barShade(65, 55, 255, 155);
 		
-		do
+		bool quit = false;
+		while (!quit)
 		{
 			service_SDL_events(true);
 			
@@ -2541,7 +2539,6 @@ void JE_operation( JE_byte slot )
 				
 			}
 		}
-		while (!quit);
 	}
 	
 	wait_noinput(false, true, false);

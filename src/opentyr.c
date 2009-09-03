@@ -221,7 +221,7 @@ void opentyrian_menu( void )
 				case SDLK_ESCAPE:
 					quit = true;
 					JE_playSampleNum(S_SPRING);
-					return;
+					break;
 				default:
 					break;
 			}
