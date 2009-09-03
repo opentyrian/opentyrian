@@ -3818,7 +3818,7 @@ void JE_titleScreen( JE_boolean animate )
 							JE_outText(10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
 						else
 							JE_outText(10, 20, "Difficulty level has been set to Suicide.", 15, 4);
-						JE_outText(10, 30, "It is imperitive that you discover the special codes.", 15, 4);
+						JE_outText(10, 30, "It is imperative that you discover the special codes.", 15, 4);
 						if (initialDifficulty == 8)
 							JE_outText(10, 40, "(Next time, for an easier challenge hold down SCROLL LOCK.)", 15, 4);
 						JE_outText(10, 60, "Prepare to play...", 15, 4);

@@ -2500,10 +2500,10 @@ void DE_RunTickPlaySounds( void )
 
 void JE_pixCool( unsigned int x, unsigned int y, Uint8 c )
 {
-	JE_pix2(x, y, c);
-	JE_pix2(x - 1, y, c - 2);
-	JE_pix2(x + 1, y, c - 2);
-	JE_pix2(x, y - 1, c - 2);
-	JE_pix2(x, y + 1, c - 2);
+	JE_pix(x, y, c);
+	JE_pix(x - 1, y, c - 2);
+	JE_pix(x + 1, y, c - 2);
+	JE_pix(x, y - 1, c - 2);
+	JE_pix(x, y + 1, c - 2);
 }
 // kate: tab-width 4; vim: set noet:

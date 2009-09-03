@@ -36,11 +36,6 @@ JE_boolean mouseInstalled = true;
 
 void JE_pix( JE_word x, JE_word y, JE_byte c )
 {
-	JE_pix2(x, y, c);
-}
-
-void JE_pix2( JE_word x, JE_word y, JE_byte c )
-{
 	/* Bad things happen if we don't clip */
 	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
 	{
@@ -52,11 +47,11 @@ void JE_pix2( JE_word x, JE_word y, JE_byte c )
 void JE_pix3( JE_word x, JE_word y, JE_byte c )
 {
 	/* Originally impemented as several direct accesses */
-	JE_pix2(x, y, c);
-	JE_pix2(x - 1, y, c);
-	JE_pix2(x + 1, y, c);
-	JE_pix2(x, y - 1, c);
-	JE_pix2(x, y + 1, c);
+	JE_pix(x, y, c);
+	JE_pix(x - 1, y, c);
+	JE_pix(x + 1, y, c);
+	JE_pix(x, y - 1, c);
+	JE_pix(x, y + 1, c);
 }
 
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
