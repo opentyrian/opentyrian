@@ -33,9 +33,6 @@
 #include <string.h>
 
 JE_boolean mouseInstalled = true;
-JE_char k;
-
-JE_byte scancode;
 
 palette_t vga_palette = {
 	{0, 0, 0}, {0, 0, 168}, {0, 168, 0}, {0, 168, 168}, {168, 0, 0}, {168, 0, 168}, {168, 84, 0}, {168, 168, 168}, {84, 84, 84}, {84, 84, 252}, {84, 252, 84}, {84, 252, 252}, {252, 84, 84}, {252, 84, 252}, {252, 252, 84}, {252, 252, 252},
@@ -79,37 +76,6 @@ void JE_pix3( JE_word x, JE_word y, JE_byte c )
 	JE_pix2(x + 1, y, c);
 	JE_pix2(x, y - 1, c);
 	JE_pix2(x, y + 1, c);
-}
-
-void JE_pixAbs( JE_word x, JE_byte c )
-{
-	if (x < VGAScreen->pitch * VGAScreen->h)
-	{
-		Uint8 *vga = VGAScreen->pixels;
-		vga[x] = c;
-	}
-}
-
-void JE_getPix( JE_word x, JE_word y, JE_byte *c )
-{
-	/* Bad things happen if we don't clip */
-	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
-	{
-		Uint8 *vga = VGAScreen->pixels;
-		*c = vga[y * VGAScreen->pitch + x];
-	}
-}
-
-JE_byte JE_getPixel( JE_word x, JE_word y )
-{
-	/* Bad things happen if we don't clip */
-	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
-	{
-		Uint8 *vga = VGAScreen->pixels;
-		return vga[y * VGAScreen->pitch + x];
-	}
-
-	return 0;
 }
 
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
@@ -202,11 +168,6 @@ void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2
 	}
 }
 
-void JE_barShade2( JE_word a, JE_word b, JE_word c, JE_word d )
-{
-	JE_barShade(a + 3, b + 2, c - 3, d - 2);
-}
-
 void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
 	if (a < VGAScreen->pitch && b < VGAScreen->h &&
@@ -237,43 +198,6 @@ void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y
 		}
 	} else {
 		printf("!!! WARNING: Brighter Rectangle clipped: %d %d %d %d\n", a,b,c,d);
-	}
-}
-
-void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c ) /* z == radius */
-{
-	JE_real a = 0, rx, ry, rz, b;
-	Uint8 *vga;
-
-	while (a < 6.29)
-	{
-		a += (160-z)/16000.0; /* Magic numbers everywhere! */
-
-		rx = x; ry = y; rz = z;
-
-		b = x + floor(sin(a)*z+(y+floor(cos(a)*z))*320);
-
-		vga = VGAScreen->pixels;
-		vga[(int)b] = c;
-	}
-}
-
-void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e )
-{
-	JE_real g, h, x, y;
-	JE_integer z, v;
-	Uint8 *vga;
-
-	v = round(sqrt(abs((a*a)-(c*c))+abs((b*b)-(d*d)) / 4));
-	g = (c-a)/(double)v; h = (d-b)/(double)v;
-	x = a; y = b;
-
-	vga = VGAScreen->pixels;
-
-	for (z = 0; z <= v; z++)
-	{
-		vga[(int)(round(x) + round(y)) * VGAScreen->pitch] = e;
-		x += g; y += h;
 	}
 }
 

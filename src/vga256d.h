@@ -24,28 +24,18 @@
 #include "nortvars.h"
 #include "palette.h"
 
-typedef JE_word JE_shape16B[1]; /* [0.. 0] */
-
 extern JE_boolean mouseInstalled;
-extern JE_char k;
-extern JE_byte scancode;
 
 extern palette_t vga_palette;
 
 void JE_pix( JE_word x, JE_word y, JE_byte c );
 void JE_pix2( JE_word x, JE_word y, JE_byte c );
 void JE_pix3( JE_word x, JE_word y, JE_byte c );
-void JE_pixAbs( JE_word x, JE_byte c );
-void JE_getPix( JE_word x, JE_word y, JE_byte *c );
-JE_byte JE_getPixel( JE_word x, JE_word y );
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e );
 void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e );
 void JE_c_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e );
 void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d );
-void JE_barShade2( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d );
-void JE_circle( JE_word x, JE_byte y, JE_word z, JE_byte c );
-void JE_line( JE_word a, JE_byte b, JE_longint c, JE_byte d, JE_byte e );
 
 #endif /* VGA256D_H */
 
