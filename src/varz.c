@@ -349,7 +349,7 @@ JE_byte stopWaitXB, stopWaitYB;
 JE_word mouseXB, mouseYB;
 
 JE_integer PX, PY, lastPX2, lastPY2, PXChange, PYChange,
-           lastTurn, lastTurn2, tempLastTurn2;
+           lastTurn, lastTurn2;
 JE_byte stopWaitX, stopWaitY;
 
 JE_integer PYHist[3], PYHistB[3]; /* [1..3] */
