@@ -30,15 +30,6 @@ extern void *extraShapes;
 extern JE_word extraShapeSize;
 
 void JE_decryptShips( void );
-
-void JE_encryptShips( void );
-
-void JE_compressShapeFile( void );
-void JE_buildRec( void );
-void JE_startNewShape( void );
-void JE_add( JE_byte nextbyte );
-void JE_endShape( void );
-
 void JE_loadExtraShapes( void );
 
 #endif /* EDITSHIP_H */

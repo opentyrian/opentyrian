@@ -19,12 +19,10 @@
 #ifndef LOUDNESS_H
 #define LOUDNESS_H
 
+#include "fmopl.h"
 #include "opentyr.h"
 
-#include "fmopl.h"
-
 #include "SDL.h"
-
 
 #define SFX_CHANNELS 8
 

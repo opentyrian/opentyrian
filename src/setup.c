@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "setup.h"
 
 #include "joystick.h"
 #include "keyboard.h"
 #include "network.h"
 #include "nortvars.h"
+#include "opentyr.h"
+#include "mainint.h"
+#include "setup.h"
 #include "vga256d.h"
 #include "video.h"
 
@@ -38,6 +39,9 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		
 		push_joysticks_as_keyboard();
 		service_SDL_events(true);
+		
+		if (doGamma)
+			JE_gammaCheck();
 		
 		inputDetected = newkey | mousedown;
 		

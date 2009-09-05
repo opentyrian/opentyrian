@@ -19,12 +19,10 @@
 #ifndef FM_SYNTH_H
 #define FM_SYNTH_H
 
+#include "fmopl.h"
 #include "opentyr.h"
 
-#include "fmopl.h"
-
-extern const unsigned short note_table[12];	/* standard adlib note table */
-extern const unsigned char op_table[9];	/* the 9 operators as expected by the OPL2 */
+extern const unsigned char op_table[9]; /* the 9 operators as expected by the OPL2 */
 
 void opl_update( OPLSAMPLE *buf, int samples );
 void opl_init( void );

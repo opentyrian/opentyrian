@@ -343,12 +343,12 @@ JE_word playerInvulnerable1, playerInvulnerable2;
 
 JE_integer lastPXShotMove, lastPYShotMove;
 
-JE_integer PXB, PYB, lastPXB, lastPYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
-           lastTurnB, lastTurn2B, tempLastTurn2B;
+JE_integer PXB, PYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
+           lastTurnB, lastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
 JE_word mouseXB, mouseYB;
 
-JE_integer PX, PY, lastPX, lastPY, lastPX2, lastPY2, PXChange, PYChange,
+JE_integer PX, PY, lastPX2, lastPY2, PXChange, PYChange,
            lastTurn, lastTurn2, tempLastTurn2;
 JE_byte stopWaitX, stopWaitY;
 
@@ -896,7 +896,7 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 	}
 }
 
-void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_shortint *shield, JE_byte specialType )
+void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialType )
 {
 	nextSpecialWait = 0;
 	switch (special[specialType].stype)
@@ -1145,7 +1145,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		shotMultiPos[11-1] = 0;
 		if (tempB)
 		{
-			JE_specialComplete(playerNum, armor, shield, temp);
+			JE_specialComplete(playerNum, armor, temp);
 		}
 		SFExecuted[playerNum-1] = 0;
 
@@ -1170,7 +1170,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 		else if (shotRepeat[9-1] == 0 && !fireButtonHeld && !(flareDuration > 0) && specialWait == 0)
 		{
 			fireButtonHeld = true;
-			JE_specialComplete(playerNum, armor, shield, pItems[P_SPECIAL]);
+			JE_specialComplete(playerNum, armor, pItems[P_SPECIAL]);
 		}
 
 	}  /*Main End*/
@@ -1427,8 +1427,7 @@ void JE_wipeShieldArmorBars( void )
 	}
 }
 
-JE_byte JE_playerDamage( JE_word tempX, JE_word tempY,
-                         JE_byte temp,
+JE_byte JE_playerDamage( JE_byte temp,
                          JE_integer *PX, JE_integer *PY,
                          JE_boolean *playerAlive,
                          JE_byte *playerStillExploding,

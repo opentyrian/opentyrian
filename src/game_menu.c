@@ -2239,8 +2239,6 @@ void JE_initWeaponView( void )
 	PY    = 110;
 	PXChange = 0;
 	PYChange = 0;
-	lastPX = 72;
-	lastPY = 110;
 	lastPX2 = 72;
 	lastPY2 = 110;
 	power = 500;
@@ -3061,7 +3059,7 @@ void JE_weaponSimUpdate( void )
 {
 	char buf[32];
 	
-	JE_weaponViewFrame(0);
+	JE_weaponViewFrame();
 	
 	if ( (curSel[1] == 3 && curSel[4] < menuChoices[4]) || (curSel[1] == 4 && curSel[4] < menuChoices[4] - 1) )
 	{
@@ -3119,7 +3117,7 @@ void JE_weaponSimUpdate( void )
 	JE_drawItem(1, pItems[12 - 1], PX - 5, PY - 7);
 }
 
-void JE_weaponViewFrame( JE_byte testshotnum )
+void JE_weaponViewFrame( void )
 {
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	int i;

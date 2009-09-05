@@ -84,8 +84,10 @@ bool init_audio( void )
 	return true;
 }
 
-void audio_cb(void *userdata, unsigned char *sdl_buffer, int howmuch)
+void audio_cb( void *user_data, unsigned char *sdl_buffer, int howmuch )
 {
+	(void)user_data;
+	
 	// prepare for conversion
 	howmuch /= audio_cvt.len_mult;
 	audio_cvt.buf = sdl_buffer;

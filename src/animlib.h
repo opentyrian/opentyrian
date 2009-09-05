@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-void JE_playAnim( JE_char *animfile, JE_byte startingframe, JE_boolean keyhalt, JE_byte speed );
+void JE_playAnim( JE_char *animfile, JE_byte startingframe, JE_byte speed );
 
 #endif /* ANIMLIB_H */
 

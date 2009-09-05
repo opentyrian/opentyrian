@@ -184,7 +184,7 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 	for (unsigned int i = 0; i < remaining / 2; i++)
 		efread(&patterns[i], 2, 1, f);
 	
-	lds_rewind(-1);
+	lds_rewind();
 	
 	return true;
 }
@@ -201,7 +201,7 @@ void lds_free( void )
 	patterns = NULL;
 }
 
-void lds_rewind(int subsong)
+void lds_rewind( void )
 {
 	int i;
 

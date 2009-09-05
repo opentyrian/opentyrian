@@ -74,36 +74,6 @@ void JE_decryptShips( void )
 	memcpy(extraShips, s2, sizeof(extraShips));
 }
 
-void JE_encryptShips( void )
-{
-	STUB();
-}
-
-void JE_compressShapeFile( void )
-{
-	STUB();
-}
-
-void JE_buildRec( void )
-{
-	STUB();
-}
-
-void JE_startNewShape( void )
-{
-	STUB();
-}
-
-void JE_add( JE_byte nextbyte )
-{
-	STUB();
-}
-
-void JE_endShape( void )
-{
-	STUB();
-}
-
 void JE_loadExtraShapes( void )
 {
 	FILE *f = dir_fopen(get_user_directory(), "newsh$.shp", "rb");

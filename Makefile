@@ -14,7 +14,8 @@ OBJS := animlib.o backgrnd.o config.o destruct.o editship.o episodes.o file.o fm
 
 STRIP := strip
 
-CFLAGS += --std=c99 -pedantic -Wall -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -I$(CURDIR)/src/
+CFLAGS += --std=c99 -pedantic -Wall -I$(CURDIR)/src/
+CFLAGS += -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wunused-parameter
 LDFLAGS += -lm
 
 ifeq ($(PLATFORM), UNIX)

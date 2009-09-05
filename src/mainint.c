@@ -752,7 +752,7 @@ void JE_loadScreen( void )
 	} while (!quit);
 }
 
-JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems )
+JE_longint JE_totalScore( JE_longint score, JE_PItemsType pItems )
 {
 	long temp = score;
 	
@@ -2992,10 +2992,9 @@ void JE_playerMovement( JE_byte inputDevice,
                         JE_shortint *shield_, JE_shortint *shieldMax_,
                         JE_word *playerInvulnerable_,
                         JE_integer *PX_, JE_integer *PY_,
-                        JE_integer *lastPX_, JE_integer *lastPY_,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
                         JE_integer *PXChange_, JE_integer *PYChange_,
-                        JE_integer *lastTurn_, JE_integer *lastTurn2_, JE_integer *tempLastTurn2_,
+                        JE_integer *lastTurn_, JE_integer *lastTurn2_,
                         JE_byte *stopWaitX_, JE_byte *stopWaitY_,
                         JE_word *mouseX_, JE_word *mouseY_,
                         JE_boolean *playerAlive_,
@@ -4301,16 +4300,16 @@ void JE_mainGamePlayerFunctions( void )
 		                  &armorLevel, &baseArmor,
 		                  &shield, &shieldMax,
 		                  &playerInvulnerable1,
-		                  &PX, &PY, &lastPX, &lastPY, &lastPX2, &lastPY2, &PXChange, &PYChange,
-		                  &lastTurn, &lastTurn2, &tempLastTurn2, &stopWaitX, &stopWaitY,
+		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
 		                  &playerAlive, &playerStillExploding, pItems);
 		JE_playerMovement(!galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
 		                  &armorLevel2, &baseArmor2,
 		                  &shield2, &shieldMax2,
 		                  &playerInvulnerable2,
-		                  &PXB, &PYB, &lastPXB, &lastPYB, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
-		                  &lastTurnB, &lastTurn2B, &tempLastTurn2B, &stopWaitXB, &stopWaitYB,
+		                  &PXB, &PYB, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
+		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB,
 		                  &playerAliveB, &playerStillExploding2, pItemsPlayer2);
 	} else {
@@ -4318,8 +4317,8 @@ void JE_mainGamePlayerFunctions( void )
 		                  &armorLevel, &baseArmor,
 		                  &shield, &shieldMax,
 		                  &playerInvulnerable1,
-		                  &PX, &PY, &lastPX, &lastPY, &lastPX2, &lastPY2, &PXChange, &PYChange,
-		                  &lastTurn, &lastTurn2, &tempLastTurn2, &stopWaitX, &stopWaitY,
+		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
 		                  &playerAlive, &playerStillExploding, pItems);
 	}
@@ -4679,7 +4678,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 					if (tempI3 > damageRate)
 						tempI3 = damageRate;
 					
-					JE_playerDamage(tempW, tempW, tempI3, PX_, PY_, playerAlive_, playerStillExploding_, armorLevel_, shield_);
+					JE_playerDamage(tempI3, PX_, PY_, playerAlive_, playerStillExploding_, armorLevel_, shield_);
 					
 					if (enemy[z].armorleft > 0)
 					{

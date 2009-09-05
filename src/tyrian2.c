@@ -2077,7 +2077,7 @@ draw_player_shot_loop_end:
 							case 1:
 								if (playerInvulnerable1 == 0)
 								{
-									if ((temp = JE_playerDamage(tempX, tempY, temp, &PX, &PY, &playerAlive, &playerStillExploding, &armorLevel, &shield)) > 0)
+									if ((temp = JE_playerDamage(temp, &PX, &PY, &playerAlive, &playerStillExploding, &armorLevel, &shield)) > 0)
 									{
 										lastTurn2 += (enemyShot[z].sxm * temp) / 2;
 										lastTurn  += (enemyShot[z].sym * temp) / 2;
@@ -2087,7 +2087,7 @@ draw_player_shot_loop_end:
 							case 2:
 								if (playerInvulnerable2 == 0)
 								{
-									if ((temp = JE_playerDamage(tempX, tempY, temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &armorLevel2, &shield2)) > 0)
+									if ((temp = JE_playerDamage(temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &armorLevel2, &shield2)) > 0)
 									{
 										lastTurn2B += (enemyShot[z].sxm * temp) / 2;
 										lastTurnB  += (enemyShot[z].sym * temp) / 2;
@@ -2837,7 +2837,7 @@ new_game:
 						switch (s[1])
 						{
 							case 'A':
-								JE_playAnim("tyrend.anm", 0, true, 7);
+								JE_playAnim("tyrend.anm", 0, 7);
 								break;
 
 							case 'G':

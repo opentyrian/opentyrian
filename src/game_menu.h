@@ -51,7 +51,7 @@ void JE_drawScore( void );
 void JE_menuFunction( JE_byte select );
 void JE_funkyScreen( void );
 void JE_weaponSimUpdate( void );
-void JE_weaponViewFrame( JE_byte testshotnum );
+void JE_weaponViewFrame( void );
 
 #endif // GAME_MENU_H
 
