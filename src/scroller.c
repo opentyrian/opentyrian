@@ -138,7 +138,7 @@ void scroller_sine( const struct about_text_type text[] )
 		}
 	}
 	
-	JE_fadeBlack(10);
+	fade_black(10);
 	
 	wait_noinput(true, true, true);
 	
@@ -300,14 +300,14 @@ void scroller_sine( const struct about_text_type text[] )
 		if (fade_in)
 		{
 			fade_in = false;
-			JE_fadeColor(10);
+			fade_palette(colors, 10, 0, 255);
 			JE_setPalette(254, 255, 255, 255);
 		}
 		
 		wait_delay();
 	}
 	
-	JE_fadeBlack(10);
+	fade_black(10);
 }
 
 // kate: tab-width 4; vim: set noet:

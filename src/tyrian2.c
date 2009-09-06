@@ -857,7 +857,7 @@ start_level_first:
 
 	JE_showVGA();
 	JE_gammaCorrect(&colors, gammaCorrection);
-	JE_fadeColor(50);
+	fade_palette(colors, 50, 0, 255);
 
 	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
 
@@ -3042,7 +3042,7 @@ new_game:
 								if (!constantPlay)
 									JE_displayText();
 
-								JE_fadeBlack(15);
+								fade_black(15);
 
 								JE_nextEpisode();
 
@@ -3087,7 +3087,7 @@ new_game:
 										JE_dString(JE_fontCenter(buffer, SMALL_FONT_SHAPES), 160, buffer, SMALL_FONT_SHAPES);
 										JE_showVGA();
 
-										JE_fadeColor(50);
+										fade_palette(colors, 50, 0, 255);
 
 										if (!constantPlay)
 											wait_input(true, true, true);
@@ -3099,7 +3099,7 @@ new_game:
 										JE_readTextSync();
 
 									if (superTyrian)
-										JE_fadeBlack(10);
+										fade_black(10);
 								}
 								break;
 
@@ -3112,7 +3112,7 @@ new_game:
 										memcpy(colors, palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
 										JE_clr256();
 										JE_showVGA();
-										JE_fadeColor(1);
+										fade_palette(colors, 1, 0, 255);
 									} else {
 										if (tempX == 0)
 										{
@@ -3121,7 +3121,7 @@ new_game:
 											JE_loadPic(tempX, false);
 										}
 										JE_showVGA();
-										JE_fadeColor(10);
+										fade_palette(colors, 10, 0, 255);
 									}
 								}
 								break;
@@ -3274,7 +3274,7 @@ new_game:
 							case 'C':
 								if (!isNetworkGame)
 								{
-									JE_fadeBlack(10);
+									fade_black(10);
 								}
 								JE_clr256();
 								JE_showVGA();
@@ -3285,14 +3285,14 @@ new_game:
 							case 'B':
 								if (!isNetworkGame)
 								{
-									JE_fadeBlack(10);
+									fade_black(10);
 								}
 								break;
 							case 'F':
 								if (!isNetworkGame)
 								{
-									JE_fadeWhite(100);
-									JE_fadeBlack(30);
+									fade_white(100);
+									fade_black(30);
 								}
 								JE_clr256();
 								JE_showVGA();
@@ -3585,14 +3585,14 @@ void JE_titleScreen( JE_boolean animate )
 		memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 		JE_dString(JE_fontCenter("Waiting for other player.", SMALL_FONT_SHAPES), 140, "Waiting for other player.", SMALL_FONT_SHAPES);
 		JE_showVGA();
-		JE_fadeColor(10);
+		fade_palette(colors, 10, 0, 255);
 
 		network_connect();
 
 		twoPlayerMode = true;
 		if (thisPlayerNum == 1)
 		{
-			JE_fadeBlack(10);
+			fade_black(10);
 
 			if (select_episode() && select_difficulty())
 			{
@@ -3637,7 +3637,7 @@ void JE_titleScreen( JE_boolean animate )
 			JE_initEpisode(SDLNet_Read16(&packet_in[0]->data[4]));
 			difficultyLevel = SDLNet_Read16(&packet_in[0]->data[6]);
 			initialDifficulty = difficultyLevel - 1;
-			JE_fadeBlack(10);
+			fade_black(10);
 
 			network_update();
 		}
@@ -3673,7 +3673,7 @@ void JE_titleScreen( JE_boolean animate )
 				{
 					if (fadeIn)
 					{
-						JE_fadeBlack(10);
+						fade_black(10);
 						fadeIn = false;
 					}
 
@@ -3849,11 +3849,11 @@ void JE_titleScreen( JE_boolean animate )
 					{
 						pItems[P_SHIP] = SAShip[i];
 
-						JE_fadeBlack(10);
+						fade_black(10);
 						if (select_episode() && select_difficulty())
 						{
 							/* Start special mode! */
-							JE_fadeBlack(10);
+							fade_black(10);
 							JE_loadPic(1, false);
 							JE_clr256();
 							JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
@@ -3863,7 +3863,7 @@ void JE_titleScreen( JE_boolean animate )
 								JE_drawShape2x2(148, 70, tempW, shapes9);
 
 							JE_showVGA();
-							JE_fadeColor(50);
+							fade_palette(colors, 50, 0, 255);
 
 							wait_input(true, true, true);
 
@@ -3905,7 +3905,7 @@ void JE_titleScreen( JE_boolean animate )
 						switch (menu)
 						{
 							case 0: /* New game */
-								JE_fadeBlack(10);
+								fade_black(10);
 								if (select_gameplay())
 								{
 									if (select_episode() && select_difficulty())
@@ -3994,7 +3994,7 @@ void JE_titleScreen( JE_boolean animate )
 		while (!(quit || gameLoaded || jumpSection || play_demo || loadDestruct));
 
 	trentWinsGame:
-		JE_fadeBlack(15);
+		fade_black(15);
 		if (quit)
 			JE_tyrianHalt(0);
 
@@ -4004,28 +4004,27 @@ void JE_titleScreen( JE_boolean animate )
 void intro_logos( void )
 {
 	SDL_FillRect(VGAScreen, NULL, 0);
-
-	SDL_Color white = { 255, 255, 255 };
-	fade_solid(&white, 50, 0, 255);
-
+	
+	fade_white(50);
+	
 	JE_loadPic(10, false);
 	JE_showVGA();
-
+	
 	fade_palette(colors, 50, 0, 255);
-
+	
 	setjasondelay(200);
 	wait_delayorinput(true, true, true);
-
+	
 	fade_black(10);
-
+	
 	JE_loadPic(12, false);
 	JE_showVGA();
-
+	
 	fade_palette(colors, 10, 0, 255);
-
+	
 	setjasondelay(200);
 	wait_delayorinput(true, true, true);
-
+	
 	fade_black(10);
 }
 

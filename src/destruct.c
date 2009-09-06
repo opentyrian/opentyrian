@@ -376,7 +376,7 @@ void JE_destructGame( void )
 	world.VGAScreen = VGAScreen;
 
 	JE_loadCompShapes(&eShapes1, &eShapes1Size, '~');
-	JE_fadeBlack(1);
+	fade_black(1);
 
 	JE_destructMain();
 }
@@ -414,7 +414,7 @@ void JE_destructMain( void )
 				curState = DE_RunTick();
 			} while(curState == STATE_CONTINUE);
 
-			JE_fadeBlack(25);
+			fade_black(25);
 		}
 		while (curState == STATE_RELOAD);
 	}
@@ -427,7 +427,7 @@ void JE_introScreen( void )
 	JE_outText(JE_fontCenter(miscText[64], TINY_FONT), 180, miscText[64], 15, 2);
 	JE_outText(JE_fontCenter(miscText[65], TINY_FONT), 190, miscText[65], 15, 2);
 	JE_showVGA();
-	JE_fadeColor(15);
+	fade_palette(colors, 15, 0, 255);
 
 	newkey = false;
 	while (!newkey)
@@ -436,7 +436,7 @@ void JE_introScreen( void )
 		SDL_Delay(16);
 	}
 
-	JE_fadeBlack(15);
+	fade_black(15);
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
 	JE_showVGA();
 }
@@ -462,7 +462,7 @@ enum de_mode_t JE_modeSelect( void )
 		JE_textShade(JE_fontCenter(destructModeName[i], TINY_FONT), 82 + i * 12, destructModeName[i], 12, (i == mode) * 4, FULL_SHADE);
 	}
 	JE_showVGA();
-	JE_fadeColor(15);
+	fade_palette(colors, 15, 0, 255);
 
 	/* Get input in a loop. */
 	while(1)
@@ -511,7 +511,7 @@ enum de_mode_t JE_modeSelect( void )
 		}
 	}
 
-	JE_fadeBlack(15);
+	fade_black(15);
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
 	JE_showVGA();
 	return(mode);
@@ -1075,7 +1075,7 @@ void JE_helpScreen( void )
 
 
 	//JE_getVGA();  didn't do anything anyway?
-	JE_fadeBlack(15);
+	fade_black(15);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
 	JE_clr256();
 
@@ -1090,17 +1090,17 @@ void JE_helpScreen( void )
 	}
 	JE_outText(30, 190, destructHelp[24], 3, 4);
 	JE_showVGA();
-	JE_fadeColor(15);
+	fade_palette(colors, 15, 0, 255);
 
 	do {
 		service_SDL_events(true);
 		SDL_Delay(16);
 	} while (!newkey);
 
-	JE_fadeBlack(15);
+	fade_black(15);
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
 	JE_showVGA();
-	JE_fadeColor(15);
+	fade_palette(colors, 15, 0, 255);
 }
 
 
@@ -1258,7 +1258,7 @@ enum de_state_t DE_RunTick( void )
 
 	if (destructFirstTime)
 	{
-		JE_fadeColor(25);
+		fade_palette(colors, 25, 0, 255);
 		destructFirstTime = false;
 		endDelay = 0;
 	}

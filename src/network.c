@@ -658,7 +658,7 @@ void network_tyrian_halt( int err, bool attempt_sync )
 	if (err >= COUNTOF(err_msg))
 		err = 0;
 	
-	JE_fadeBlack(10);
+	fade_black(10);
 	
 	tempScreenSeg = VGAScreen = VGAScreenSeg;
 	
@@ -666,7 +666,7 @@ void network_tyrian_halt( int err, bool attempt_sync )
 	JE_dString(JE_fontCenter(err_msg[err], SMALL_FONT_SHAPES), 140, err_msg[err], SMALL_FONT_SHAPES);
 	
 	JE_showVGA();
-	JE_fadeColor(10);
+	fade_palette(colors, 10, 0, 255);
 	
 	if (attempt_sync)
 	{
@@ -685,7 +685,7 @@ void network_tyrian_halt( int err, bool attempt_sync )
 			SDL_Delay(16);
 	}
 	
-	JE_fadeBlack(10);
+	fade_black(10);
 	
 	SDLNet_Quit();
 	

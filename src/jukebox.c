@@ -130,7 +130,7 @@ void jukebox( void )
 				palette_fade_steps = 15;
 
 				SDL_Color black = { 0, 0, 0 };
-				init_step_fade_solid(diff, &black, 0, 255);
+				init_step_fade_solid(diff, black, 0, 255);
 				break;
 
 			case SDLK_SPACE:

@@ -83,7 +83,7 @@ void opentyrian_menu( void )
 	int temp_scaler = scaler;
 	char buffer[100];
 	
-	JE_fadeBlack(10);
+	fade_black(10);
 	JE_loadPic(13, false);
 
 	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, false);
@@ -118,7 +118,7 @@ void opentyrian_menu( void )
 		if (fade_in)
 		{
 			fade_in = false;
-			JE_fadeColor(20);
+			fade_palette(colors, 20, 0, 255);
 			wait_noinput(true, false, false);
 		}
 
@@ -205,7 +205,7 @@ void opentyrian_menu( void )
 						case 3: /* Jukebox */
 							JE_playSampleNum(S_SELECT);
 							
-							JE_fadeBlack(10);
+							fade_black(10);
 							jukebox();
 							
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);

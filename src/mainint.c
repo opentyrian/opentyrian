@@ -189,13 +189,13 @@ void JE_helpSystem( JE_byte startTopic )
 
 	page = topicStart[startTopic-1];
 
-	JE_fadeBlack(10);
+	fade_black(10);
 	JE_loadPic(2, false);
 	
 	play_song(SONG_MAPVIEW);
 	
 	JE_showVGA();
-	JE_fadeColor(10);
+	fade_palette(colors, 10, 0, 255);
 
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
@@ -561,10 +561,10 @@ void JE_loadScreen( void )
 
 	tempstr = NULL;
 
-	JE_fadeBlack(10);
+	fade_black(10);
 	JE_loadPic(2, false);
 	JE_showVGA();
-	JE_fadeColor(10);
+	fade_palette(colors, 10, 0, 255);
 
 	screen = 1;
 	sel = 1;
@@ -857,7 +857,7 @@ void JE_nextEpisode( void )
 	JE_dString(JE_fontCenter(miscText[5-1], SMALL_FONT_SHAPES), 185, miscText[5-1], SMALL_FONT_SHAPES);
 	
 	JE_showVGA();
-	JE_fadeColor(15);
+	fade_palette(colors, 15, 0, 255);
 	
 	JE_wipeKey();
 	if (!constantPlay)
@@ -870,7 +870,7 @@ void JE_nextEpisode( void )
 		} while (!JE_anyButton());
 	}
 	
-	JE_fadeBlack(15);
+	fade_black(15);
 }
 
 void JE_initPlayerData( void )
@@ -943,10 +943,10 @@ void JE_highScoreScreen( void )
 	int quit;
 	char scoretemp[32];
 
-	JE_fadeBlack(10);
+	fade_black(10);
 	JE_loadPic(2, false);
 	JE_showVGA();
-	JE_fadeColor(10);
+	fade_palette(colors, 10, 0, 255);
 	tempScreenSeg = VGAScreen;
 	
 	quit = false;
@@ -1621,7 +1621,7 @@ void JE_highScoreCheck( void )
 							JE_showVGA();
 							if (fadein)
 							{
-								JE_fadeColor (15);
+								fade_palette(colors, 15, 0, 255);
 								fadein = false;
 							}
 							JE_mouseReplace();
@@ -1713,7 +1713,7 @@ void JE_highScoreCheck( void )
 					saveFiles[slot].highScoreDiff = difficultyLevel;
 				}
 				
-				JE_fadeBlack(15);
+				fade_black(15);
 				JE_loadPic(2, false);
 				
 				JE_dString(JE_fontCenter(miscText[50], FONT_SHAPES), 10, miscText[50], FONT_SHAPES);
@@ -1731,7 +1731,7 @@ void JE_highScoreCheck( void )
 				
 				JE_showVGA();
 				
-				JE_fadeColor(15);
+				fade_palette(colors, 15, 0, 255);
 				
 				sprintf(buffer, "~#%d:~  %d", (slot - first_slot + 1), saveFiles[slot].highScore1);
 				
@@ -1750,7 +1750,7 @@ void JE_highScoreCheck( void )
 				if (frameCountMax != 0)
 					wait_input(true, true, true);
 				
-				JE_fadeBlack(15);
+				fade_black(15);
 			}
 			
 		}
@@ -2064,7 +2064,7 @@ void JE_playCredits( void )
 	memcpy(colors, palettes[6-1], sizeof(colors));
 	JE_clr256();
 	JE_showVGA();
-	JE_fadeColor(2);
+	fade_palette(colors, 2, 0, 255);
 	
 	tempScreenSeg = VGAScreenSeg;
 	
@@ -2193,7 +2193,7 @@ void JE_playCredits( void )
 		}
 	}
 	
-	JE_fadeBlack(10);
+	fade_black(10);
 	
 	JE_newPurgeShapes(EXTRA_SHAPES);
 }
@@ -2359,7 +2359,7 @@ void JE_endLevelAni( void )
 	
 	wait_noinput(false, false, true); // TODO: should up the joystick repeat temporarily instead
 	
-	JE_fadeBlack(15);
+	fade_black(15);
 	JE_clr256();
 }
 

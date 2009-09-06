@@ -25,6 +25,8 @@
 
 #include <assert.h>
 
+Uint32 rgb_to_yuv( int r, int g, int b );
+
 palette_t palettes[23];
 int palette_count;
 
@@ -58,13 +60,11 @@ void JE_updateColorsFast( palette_t colorBuffer )
 {
 	for (int i = 0; i < 256; i++)
 	{
-		palette[i].r = colorBuffer[i].r;
-		palette[i].g = colorBuffer[i].g;
-		palette[i].b = colorBuffer[i].b;
+		palette[i] = colorBuffer[i];
 		
 #ifndef TARGET_GP2X
-			rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
-			yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
+		yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
 #endif // TARGET_GP2X
 	}
 	
@@ -83,13 +83,13 @@ void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int fi
 	}
 }
 
-void init_step_fade_solid( int diff[256][3], SDL_Color *color, unsigned int first_color, unsigned int last_color )
+void init_step_fade_solid( int diff[256][3], SDL_Color color, unsigned int first_color, unsigned int last_color )
 {
 	for (unsigned int i = first_color; i <= last_color; i++)
 	{
-		diff[i][0] = (int)color->r - palette[i].r;
-		diff[i][1] = (int)color->g - palette[i].g;
-		diff[i][2] = (int)color->b - palette[i].b;
+		diff[i][0] = (int)color.r - palette[i].r;
+		diff[i][1] = (int)color.g - palette[i].g;
+		diff[i][2] = (int)color.b - palette[i].b;
 	}
 }
 
@@ -139,7 +139,7 @@ void fade_palette( palette_t colors, int steps, unsigned int first_color, unsign
 	}
 }
 
-void fade_solid( SDL_Color *color, int steps, unsigned int first_color, unsigned int last_color )
+void fade_solid( SDL_Color color, int steps, unsigned int first_color, unsigned int last_color )
 {
 	assert(steps > 0);
 	
@@ -159,7 +159,13 @@ void fade_solid( SDL_Color *color, int steps, unsigned int first_color, unsigned
 void fade_black( int steps )
 {
 	SDL_Color black = { 0, 0, 0 };
-	fade_solid(&black, steps, 0, 255);
+	fade_solid(black, steps, 0, 255);
+}
+
+void fade_white( int steps )
+{
+	SDL_Color black = { 255, 255, 255 };
+	fade_solid(black, steps, 0, 255);
 }
 
 void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps )
@@ -187,24 +193,6 @@ void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, 
 		
 		wait_delay();
 	}
-}
-
-void JE_fadeBlack( JE_byte steps )
-{
-	JE_fadeColors(colors, black, 0, 255, steps);
-}
-
-void JE_fadeColor( JE_byte steps )
-{
-	JE_fadeColors(black, colors, 0, 255, steps);
-}
-
-void JE_fadeWhite( JE_byte steps )
-{
-	memset(black, 255, sizeof(black));
-	JE_fadeColors(colors, black, 0, 255, steps);
-	memcpy(colors, black, sizeof(colors));
-	memset(black, 0, sizeof(black));
 }
 
 void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )

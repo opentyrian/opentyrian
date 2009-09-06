@@ -752,11 +752,7 @@ void JE_itemScreen( void )
 					newPal = 0;
 					
 					for (temp = 1; temp <= 255 - (3 * 16); temp++)
-					{
-						colors[temp].r = palettes[temp2][temp].r;
-						colors[temp].g = palettes[temp2][temp].g;
-						colors[temp].b = palettes[temp2][temp].b;
-					}
+						colors[temp] = palettes[temp2][temp];
 				}
 			}
 		}
@@ -891,7 +887,7 @@ void JE_itemScreen( void )
 					
 					if (backFromHelp)
 					{
-						JE_fadeColor(10);
+						fade_palette(colors, 10, 0, 255);
 						backFromHelp = false;
 					}
 					JE_mouseReplace();
@@ -945,7 +941,7 @@ void JE_itemScreen( void )
 
 						if (backFromHelp)
 						{
-							JE_fadeColor(10);
+							fade_palette(colors, 10, 0, 255);
 							backFromHelp = false;
 						}
 
@@ -979,7 +975,7 @@ void JE_itemScreen( void )
 
 						if (backFromHelp)
 						{
-							JE_fadeColor(10);
+							fade_palette(colors, 10, 0, 255);
 							backFromHelp = false;
 						}
 						
@@ -1309,7 +1305,7 @@ void JE_itemScreen( void )
 				if (!isNetworkGame)
 				{
 					JE_helpSystem(2);
-					JE_fadeBlack(10);
+					fade_black(10);
 					
 					play_song(songBuy);
 					
@@ -1638,7 +1634,7 @@ void JE_itemScreen( void )
 	}
 	
 	if (gameLoaded)
-		JE_fadeBlack(10);
+		fade_black(10);
 }
 
 void draw_ship_illustration( void )

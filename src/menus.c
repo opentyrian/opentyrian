@@ -51,7 +51,7 @@ bool select_gameplay( void )
 		
 		if (fade_in)
 		{
-			JE_fadeColor(10);
+			fade_palette(colors, 10, 0, 255);
 			fade_in = false;
 		}
 		
@@ -88,7 +88,7 @@ bool select_gameplay( void )
 					break;
 				}
 				JE_playSampleNum(S_SELECT);
-				JE_fadeBlack(10);
+				fade_black(10);
 				
 				onePlayerAction = (gameplay == 2);
 				twoPlayerMode = (gameplay == 3);
@@ -97,7 +97,7 @@ bool select_gameplay( void )
 			case SDLK_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
-				JE_fadeBlack(10); */
+				fade_black(10); */
 				
 				return false;
 				
@@ -129,7 +129,7 @@ bool select_episode( void )
 		
 		if (fade_in)
 		{
-			JE_fadeColor(10);
+			fade_palette(colors, 10, 0, 255);
 			fade_in = false;
 		}
 		
@@ -164,7 +164,7 @@ bool select_episode( void )
 					break;
 				}
 				JE_playSampleNum(S_SELECT);
-				JE_fadeBlack(10);
+				fade_black(10);
 				
 				JE_initEpisode(episode);
 				pItems[P_EPISODE] = episodeNum;
@@ -173,7 +173,7 @@ bool select_episode( void )
 			case SDLK_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
-				JE_fadeBlack(10); */
+				fade_black(10); */
 				
 				return false;
 				
@@ -205,7 +205,7 @@ bool select_difficulty( void )
 		
 		if (fade_in)
 		{
-			JE_fadeColor(10);
+			fade_palette(colors, 10, 0, 255);
 			fade_in = false;
 		}
 		
@@ -247,7 +247,7 @@ bool select_difficulty( void )
 			case SDLK_RETURN:
 				JE_playSampleNum(S_SELECT);
 				/* fading handled elsewhere
-				JE_fadeBlack(10); */
+				fade_black(10); */
 				
 				if (difficultyLevel == 6)
 				{
@@ -260,7 +260,7 @@ bool select_difficulty( void )
 			case SDLK_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
-				JE_fadeBlack(10); */
+				fade_black(10); */
 				
 				return false;
 				
