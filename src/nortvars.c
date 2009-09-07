@@ -26,115 +26,16 @@
 
 #include <ctype.h>
 
-/* File constants for Saving ShapeFile */
-const JE_byte NV_shapeactive   = 0x01;
-const JE_byte NV_shapeinactive = 0x00;
-
 JE_boolean inputDetected;
 JE_word lastMouseX, lastMouseY;
 
-/*Mouse Data*/
-/*Mouse_Installed is in VGA256d*/
 JE_byte mouseCursor;
-JE_boolean mouse_threeButton;
+JE_boolean mouse_threeButton = true;
 JE_word mouseX, mouseY, mouseButton;
-
-JE_word z, y;
 
 JE_word JE_btow(JE_byte a, JE_byte b)
 {
 	return (JE_word) (((short) b) * 256 + a);
-}
-
-void JE_loadShapeFile( JE_ShapeType *shapes, JE_char s )
-{
-	JE_boolean active;
-
-	char buffer[12];
-	sprintf(buffer, "shapes%c.dat", tolower(s));
-
-	FILE *f = dir_fopen_die(data_dir(), buffer, "rb");
-
-	for (int x = 0; x < 304; x++)
-	{
-		active = getc(f);
-
-		if (active)
-		{
-			efread((*shapes)[x], sizeof(JE_byte), sizeof(*(*shapes)[x]), f);
-		} else {
-			memset((*shapes)[x], 0, sizeof(*(*shapes)[x]));
-		}
-	}
-
-	fclose(f);
-
-	/*fprintf(stderr, "Shapes%c completed.\n", s);*/
-}
-
-void JE_loadNewShapeFile( JE_NewShapeType *shapes, JE_char s )
-{
-	JE_word x, y, z;
-	JE_boolean active;
-	JE_ShapeTypeOne tempshape;
-	JE_byte black, color;
-
-	char buffer[12];
-	sprintf(buffer, "shapes%c.dat", tolower(s));
-
-	FILE *f = dir_fopen_die(data_dir(), buffer, "rb");
-
-	for (z = 0; z < 304; z++)
-	{
-		active = getc(f);
-
-		if (active)
-		{
-			efread(tempshape, sizeof(JE_byte), sizeof(tempshape), f);
-
-			for (y = 0; y <= 13; y++)
-			{
-
-				black = 0;
-				color = 0;
-				for (x = 0; x <= 11; x++)
-				{
-					if (tempshape[x + y * 12] == 0)
-					{
-						black++;
-					} else {
-						color++;
-					}
-				}
-
-				if (black == 12)
-				{  /* Compression Value 0 - All black */
-					(*shapes)[z][y * 13] = 0;
-				} else {
-					if (color == 12)
-					{  /* Compression Value 1 - All color */
-						(*shapes)[z][y * 13] = 1;
-						for (x = 0; x <= 11; x++)
-						{
-							(*shapes)[z][x + 1 + y * 13] = tempshape[x + y * 12];
-						}
-					} else {
-						(*shapes)[z][y * 13] = 2;
-						for (x = 0; x <= 11; x++)
-						{
-							(*shapes)[z][x + 1 + y * 13] = tempshape[x + y * 12];
-						}
-					}
-				}
-			}
-		} else {
-			memset((*shapes)[z], 0, sizeof((*shapes)[z]));
-		}
-	}
-
-	fclose(f);
-
-	/*fprintf(stderr, "Shapes%c completed.\n", s);*/
 }
 
 void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
@@ -332,31 +233,12 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 	}
 }
 
-void JE_barDraw( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
-{
-	xsize--;
-	ysize--;
-	for (z = 1; z <= amt / res; z++)
-	{
-		JE_bar(x, y,         x + xsize, y + ysize, col + 12);
-		JE_bar(x, y,         x + xsize, y,         col + 13);
-		JE_bar(x, y + ysize, x + xsize, y + ysize, col + 11);
-		x += xsize + 2;
-	}
-	
-	amt %= res;
-	if (amt > 0)
-	{
-		JE_bar(x, y, x + xsize, y + ysize, col + ((12 / res) * amt));
-	}
-}
-
 void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
 {
 	xsize--;
 	ysize--;
 
-	for (z = 1; z <= amt / res; z++)
+	for (int z = 1; z <= amt / res; z++)
 	{
 		JE_barShade(x+2, y+2, x+xsize+2, y+ysize+2);
 		JE_bar(x, y, x+xsize, y+ysize, col+12);
@@ -378,7 +260,7 @@ void JE_barDrawDirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 {
 	xsize--;
 	ysize--;
-	for (z = 1; z <= amt / res; z++)
+	for (int z = 1; z <= amt / res; z++)
 	{
 		JE_c_bar(x, y, x + xsize, y + ysize, col + 12);
 		x += xsize + 2;
