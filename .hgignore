@@ -1,0 +1,13 @@
+syntax: glob
+
+*~
+
+obj/*
+src/*.gch
+
+tyrian
+tyrian.exe
+tyrian.gpe
+
+data/*
+
