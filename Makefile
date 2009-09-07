@@ -41,19 +41,15 @@ endif
 CFLAGS += $(SDL_CFLAGS)
 LDFLAGS += $(SDL_LDFLAGS)
 
+HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
+ifneq ($(HG_REV), )
+	CFLAGS += -DHG_REV="\"$(HG_REV)\""
+endif
+
 DEBUG := 1
 
 DEBUG_FLAGS_0 := -g -O2 -DNDEBUG -fno-strict-aliasing
 DEBUG_FLAGS_1 := -g3 -O0 -Werror
-
-SVN_REV := $(shell svnversion src -n)
-ifneq ($(SVN_REV), )
-	ifeq ($(SVN_REV), exported)
-		SVN_REV := unknown
-	endif
-	
-	CFLAGS += -DSVN_REV=\"$(SVN_REV)\"
-endif
 
 ####################################################
 

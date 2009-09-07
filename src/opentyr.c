@@ -22,6 +22,7 @@
 #include "file.h"
 #include "fonthand.h"
 #include "helptext.h"
+#include "hg_revision.h"
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
@@ -56,7 +57,7 @@
 const JE_byte shapereorderlist[7] = {1, 2, 5, 0, 3, 4, 6};
 
 const char *opentyrian_str = "OpenTyrian",
-           *opentyrian_version = "Classic revision " SVN_REV;
+           *opentyrian_version = "Classic (" HG_REV ")";
 const char *opentyrian_menu_items[] =
 {
 	"About OpenTyrian",

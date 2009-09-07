@@ -26,10 +26,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef SVN_REV
-#define SVN_REV "unknown"
-#endif
-
 #define STUB() printf("TODO: %s:%d %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 /* Gets number of elements in an array.
