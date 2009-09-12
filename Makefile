@@ -1,61 +1,92 @@
-# BUILD SETTINGS ###################################
+# BUILD SETTINGS ###########################################
 
-# Valid values: WINDOWS, UNIX, GP2X
 PLATFORM := UNIX
 
-# If building for the GP2X
-GP2X_CHAINPREFIX := /opt/open2x/gcc-4.1.1-glibc-2.3.6
-GP2X_CHAIN := $(GP2X_CHAINPREFIX)/bin/arm-open2x-linux-
+# CROSS-COMPILE SETTINGS ###################################
 
-# END SETTINGS #####################################
+UNIX_PREFIX := /usr
+UNIX_EPREFIX := /usr
+UNIX_HOST := 
 
-TARGET := tyrian
-OBJS := animlib.o backgrnd.o config.o destruct.o editship.o episodes.o file.o fm_synth.o fmopl.o fonthand.o game_menu.o helptext.o joystick.o jukebox.o keyboard.o lds_play.o loudness.o lvllib.o lvlmast.o mainint.o menus.o mtrand.o musmast.o network.o newshape.o nortsong.o nortvars.o opentyr.o palette.o params.o pcxload.o pcxmast.o picload.o scroller.o setup.o sndmast.o starlib.o sizebuf.o tyrian2.o varz.o vga256d.o vga_palette.o video.o video_scale.o xmas.o
+WIN32_PREFIX := /usr/i486-mingw32
+WIN32_EPREFIX := $(UNIX_EPREFIX)
+WIN32_HOST := i486-mingw32
+WIN32_EXT := .exe
 
+GP2X_PREFIX := /opt/open2x/gcc-4.1.1-glibc-2.3.6
+GP2X_EPREFIX := $(GP2X_PREFIX)
+GP2X_HOST := arm-open2x-linux
+GP2X_EXT := .gpe
+GP2X_CFLAGS := -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math
+
+# END SETTINGS #############################################
+
+TARGET := tyrian$($(PLATFORM)_EXT)
+
+SRCS := $(wildcard src/*.c)
+OBJS := $(SRCS:src/%.c=obj/%.o)
+
+# TOOLCHAIN ################################################
+
+CC := gcc
 STRIP := strip
 
-CFLAGS += --std=c99 -pedantic -Wall -I$(CURDIR)/src/
-CFLAGS += -Wstrict-prototypes -Wold-style-definition -Wmissing-declarations -Wunused-parameter
-LDFLAGS += -lm
+PREFIX := $($(PLATFORM)_PREFIX)
+EPREFIX := $($(PLATFORM)_EPREFIX)
+HOST := $($(PLATFORM)_HOST)
 
-ifeq ($(PLATFORM), UNIX)
-	CFLAGS += -DTARGET_UNIX
-	
-	SDL_CFLAGS := $(shell sdl-config --cflags)
-	SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_net
-endif
-ifeq ($(PLATFORM), WINDOWS)
-	SDL_CFLAGS := -I/mingw/include/SDL -D_GNU_SOURCE=1 -Dmain=SDL_main
-	SDL_LDFLAGS := -L/mingw/lib -lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows
-endif
-ifeq ($(PLATFORM), GP2X)
-	CC := $(GP2X_CHAIN)gcc
-	STRIP := $(GP2X_CHAIN)strip
-	
-	CFLAGS += -DTARGET_GP2X -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math
-	
-	SDL_CFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --cflags` -I$(GP2X_CHAINPREFIX)/include
-	SDL_LDFLAGS := `$(GP2X_CHAINPREFIX)/bin/sdl-config --libs` -L$(GP2X_CHAINPREFIX)/lib
+BINDIR := $(EPREFIX)/bin
+LIBDIR := $(PREFIX)/lib
+INCLUDEDIR := $(PREFIX)/include
+
+ifneq ($(HOST), )
+	CC := $(HOST)-$(CC)
+	STRIP := $(HOST)-$(STRIP)
 endif
 
-CFLAGS += $(SDL_CFLAGS)
-LDFLAGS += $(SDL_LDFLAGS)
+CC := $(BINDIR)/$(CC)
+STRIP := $(BINDIR)/$(STRIP)
+
+# FLAGS ####################################################
+
+NDEBUG_FLAGS := -g0 -O2 -DNDEBUG
+DEBUG_FLAGS := -g3 -O0 -Werror
+
+CFLAGS += --std=c99 -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
+CFLAGS += -I./src -I$(INCLUDEDIR)
+LDFLAGS += -L$(LIBDIR) -lm
+
+ifneq ($(PREFIX), )
+	SLD_CONFIG_PREFIX := $(PREFIX)/bin
+else
+	SLD_CONFIG_PREFIX := $(BINDIR)
+endif
+
+SDL_CFLAGS := $(shell $(SLD_CONFIG_PREFIX)/sdl-config --cflags)
+SDL_LDFLAGS := $(shell $(SLD_CONFIG_PREFIX)/sdl-config --libs) -lSDL_net
+
+CFLAGS += $($(PLATFORM)_CFLAGS) -DTARGET_$(PLATFORM) $(SDL_CFLAGS)
+LDFLAGS += $($(PLATFORM)_LDFLAGS) $(SDL_LDFLAGS)
 
 HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
 ifneq ($(HG_REV), )
 	CFLAGS += -DHG_REV="\"$(HG_REV)\""
 endif
 
-DEBUG := 1
+# RULES ####################################################
 
-DEBUG_FLAGS_0 := -g -O2 -DNDEBUG -fno-strict-aliasing
-DEBUG_FLAGS_1 := -g3 -O0 -Werror
-
-####################################################
-
+.PHONY : all
 all : $(TARGET)
 
-OBJS := $(foreach obj, $(OBJS), obj/$(obj))
+.PHONY : release
+release : DEBUG_FLAGS := $(NDEBUG_FLAGS)
+release : all
+	$(STRIP) $(TARGET)
+
+.PHONY : clean
+clean :
+	rm -rf obj/*
+	rm -f $(TARGET)
 
 $(TARGET) : $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
@@ -66,14 +97,5 @@ endif
 
 obj/%.d : obj/%.o
 obj/%.o : src/%.c
-	$(CC) -o $@ -MMD -c $(DEBUG_FLAGS_$(DEBUG)) $(CFLAGS) $<
-
-.PHONY : release clean
-
-release : DEBUG := 0
-release : all
-	$(STRIP) $(TARGET)
-
-clean :
-	rm -f obj/*.o obj/*.d
-	rm -f $(TARGET)
+	@mkdir -p "$(dir $@)"
+	$(CC) -o $@ -MMD -c $(DEBUG_FLAGS) $(CFLAGS) $< 
