@@ -57,13 +57,13 @@ CFLAGS += -I./src -I$(INCLUDEDIR)
 LDFLAGS += -L$(LIBDIR) -lm
 
 ifneq ($(PREFIX), )
-	SLD_CONFIG_PREFIX := $(PREFIX)/bin
+	SDL_CONFIG_PREFIX := $(PREFIX)/bin
 else
-	SLD_CONFIG_PREFIX := $(BINDIR)
+	SDL_CONFIG_PREFIX := $(BINDIR)
 endif
 
-SDL_CFLAGS := $(shell $(SLD_CONFIG_PREFIX)/sdl-config --cflags)
-SDL_LDFLAGS := $(shell $(SLD_CONFIG_PREFIX)/sdl-config --libs) -lSDL_net
+SDL_CFLAGS := $(shell $(SDL_CONFIG_PREFIX)/sdl-config --cflags)
+SDL_LDFLAGS := $(shell $(SDL_CONFIG_PREFIX)/sdl-config --libs) -lSDL_net
 
 CFLAGS += $($(PLATFORM)_CFLAGS) -DTARGET_$(PLATFORM) $(SDL_CFLAGS)
 LDFLAGS += $($(PLATFORM)_LDFLAGS) $(SDL_LDFLAGS)
