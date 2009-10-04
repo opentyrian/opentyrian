@@ -44,7 +44,7 @@ bool xmas_prompt( void )
 		"No"
 	};
 	
-	JE_updateColorsFast(palettes[0]);
+	set_palette(palettes[0], 0, 255);
 	
 	JE_outTextAdjust(JE_fontCenter(xmas_text[0], SMALL_FONT_SHAPES), 85, xmas_text[0], 4, -2, SMALL_FONT_SHAPES, true);
 	JE_outTextAdjust(JE_fontCenter(xmas_text[1], SMALL_FONT_SHAPES), 100, xmas_text[1], 2, -2, SMALL_FONT_SHAPES, false);

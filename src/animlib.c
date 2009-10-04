@@ -298,7 +298,7 @@ int JE_loadAnim( const char *filename )
 		efread(&colors[i].r,      1, 1, InFile);
 		efread(&colors[i].unused, 1, 1, InFile);
 	}
-	JE_updateColorsFast(colors);
+	set_palette(colors, 0, 255);
 
 	/* Whew!  That was hard.  Let's go grab some beers! */
 	return(0);

@@ -1016,7 +1016,7 @@ JE_boolean JE_gammaCheck( void )
 		gammaCorrection = (gammaCorrection + 1) % 4;
 		memcpy(colors, palettes[pcxpal[3-1]], sizeof(colors));
 		JE_gammaCorrect(&colors, gammaCorrection);
-		JE_updateColorsFast(colors);
+		set_palette(colors, 0, 255);
 	}
 	return temp;
 }

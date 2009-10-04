@@ -81,7 +81,7 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 	memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
 	
 	if (storepal)
-		JE_updateColorsFast(colors);
+		set_palette(colors, 0, 255);
 }
 
 // kate: tab-width 4; vim: set noet:

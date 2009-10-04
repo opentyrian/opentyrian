@@ -168,7 +168,7 @@ void JE_itemScreen( void )
 	
 	JE_showVGA();
 
-	JE_updateColorsFast(colors);
+	set_palette(colors, 0, 255);
 
 	col = 1;
 	gameLoaded = false;
@@ -795,7 +795,7 @@ void JE_itemScreen( void )
 		{
 			curPal = newPal;
 			memcpy(colors, palettes[newPal - 1], sizeof(colors));
-			JE_updateColorsFast(palettes[newPal - 1]);
+			set_palette(palettes[newPal - 1], 0, 255);
 			newPal = 0;
 		}
 		
@@ -927,7 +927,7 @@ void JE_itemScreen( void )
 						if (newPal > 0)
 						{
 							curPal = newPal;
-							JE_updateColorsFast(palettes[newPal - 1]);
+							set_palette(palettes[newPal - 1], 0, 255);
 							newPal = 0;
 						}
 
@@ -935,7 +935,7 @@ void JE_itemScreen( void )
 
 						if (paletteChanged)
 						{
-							JE_updateColorsFast(colors);
+							set_palette(colors, 0, 255);
 							paletteChanged = false;
 						}
 
@@ -959,7 +959,7 @@ void JE_itemScreen( void )
 						if (newPal > 0)
 						{
 							curPal = newPal;
-							JE_updateColorsFast(palettes[newPal - 1]);
+							set_palette(palettes[newPal - 1], 0, 255);
 							newPal = 0;
 						}
 
@@ -967,7 +967,7 @@ void JE_itemScreen( void )
 
 						if (paletteChanged)
 						{
-							JE_updateColorsFast(colors);
+							set_palette(colors, 0, 255);
 							paletteChanged = false;
 						}
 

@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-Uint32 rgb_to_yuv( int r, int g, int b );
+static Uint32 rgb_to_yuv( int r, int g, int b );
 
 palette_t palettes[23];
 int palette_count;
@@ -54,11 +54,11 @@ void JE_loadPals( void )
 	fclose(f);
 }
 
-void JE_updateColorsFast( palette_t colorBuffer )
+void set_palette( palette_t colors, unsigned int first_color, unsigned int last_color )
 {
-	for (int i = 0; i < 256; i++)
+	for (int i = first_color; i <= last_color; ++i)
 	{
-		palette[i] = colorBuffer[i];
+		palette[i] = colors[i];
 		
 #ifndef TARGET_GP2X
 		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
@@ -67,24 +67,27 @@ void JE_updateColorsFast( palette_t colorBuffer )
 	}
 	
 #ifdef TARGET_GP2X
-	SDL_SetColors(display_surface, palette, 0, 256);
+	SDL_SetColors(display_surface, palette, first_color, last_color - first_color + 1);
 #endif /* TARGET_GP2X */
 }
-
 
 void set_colors( SDL_Color color, unsigned int first_color, unsigned int last_color )
 {
-	for (int i = first_color; i <= last_color; ++i )
+	for (int i = first_color; i <= last_color; ++i)
 	{
 		palette[i] = color;
+		
+#ifndef TARGET_GP2X
 		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
 		yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+#endif // TARGET_GP2X
 	}
 	
 #ifdef TARGET_GP2X
-	SDL_SetColors(display_surface, palette, 0, 256);
+	SDL_SetColors(display_surface, palette, first_color, last_color - first_color + 1);
 #endif /* TARGET_GP2X */
 }
+
 void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int first_color, unsigned int last_color )
 {
 	for (unsigned int i = first_color; i <= last_color; i++)
@@ -181,7 +184,7 @@ void fade_white( int steps )
 	fade_solid(white, steps, 0, 255);
 }
 
-Uint32 rgb_to_yuv( int r, int g, int b )
+static Uint32 rgb_to_yuv( int r, int g, int b )
 {
 	int y = (r + g + b) >> 2,
 	    u = 128 + ((r - b) >> 2),

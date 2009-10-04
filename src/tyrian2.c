@@ -3154,7 +3154,7 @@ new_game:
 								JE_clr256();
 								JE_showVGA();
 								memcpy(colors, palettes[7], sizeof(colors));
-								JE_updateColorsFast(colors);
+								set_palette(colors, 0, 255);
 								break;
 
 							case 'B':
