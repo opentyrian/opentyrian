@@ -300,7 +300,9 @@ void scroller_sine( const struct about_text_type text[] )
 		{
 			fade_in = false;
 			fade_palette(colors, 10, 0, 255);
-			JE_setPalette(254, 255, 255, 255);
+			
+			SDL_Color white = { 255, 255, 255 };
+			set_palette(white, 254, 254);
 		}
 		
 		wait_delay();

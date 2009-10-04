@@ -46,11 +46,6 @@ void fade_solid( SDL_Color color, int steps, unsigned int first_color, unsigned 
 void fade_black( int steps );
 void fade_white( int steps );
 
-// TODO replace with fade_palette()
-void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps );
-
-void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue );
-
 #endif /* PALETTE_H */
 
 // kate: tab-width 4; vim: set noet:

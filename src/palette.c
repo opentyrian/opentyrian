@@ -81,6 +81,10 @@ void set_palette( SDL_Color color, unsigned int first_color, unsigned int last_c
 		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
 		yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
 	}
+	
+#ifdef TARGET_GP2X
+	SDL_SetColors(display_surface, palette, 0, 256);
+#endif /* TARGET_GP2X */
 }
 void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int first_color, unsigned int last_color )
 {
@@ -176,46 +180,6 @@ void fade_white( int steps )
 {
 	SDL_Color white = { 255, 255, 255 };
 	fade_solid(white, steps, 0, 255);
-}
-
-void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps )
-{
-	int s, i;
-
-	for (s = 0; s <= noSteps; s++)
-	{
-		setdelay(1);
-		
-		for (i = startCol; i <= startCol + noColors; i++)
-		{
-			palette[i].r = fromColors[i].r + (((toColors[i].r - fromColors[i].r) * s) / noSteps);
-			palette[i].g = fromColors[i].g + (((toColors[i].g - fromColors[i].g) * s) / noSteps);
-			palette[i].b = fromColors[i].b + (((toColors[i].b - fromColors[i].b) * s) / noSteps);
-			rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
-			yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
-		}
-		
-#ifndef TARGET_GP2X
-		JE_showVGA();
-#else /* TARGET_GP2X */
-		SDL_SetColors(display_surface, palette, 0, 256);
-#endif /* TARGET_GP2X */
-		
-		wait_delay();
-	}
-}
-
-void JE_setPalette( JE_byte col, JE_byte red, JE_byte green, JE_byte blue )
-{
-	palette[col].r = red;
-	palette[col].g = green;
-	palette[col].b = blue;
-	rgb_palette[col] = SDL_MapRGB(display_surface->format, palette[col].r, palette[col].g, palette[col].b);
-	yuv_palette[col] = rgb_to_yuv(palette[col].r, palette[col].g, palette[col].b);
-	
-#ifdef TARGET_GP2X
-	SDL_SetColors(display_surface, palette, 0, 256);
-#endif /* TARGET_GP2X */
 }
 
 Uint32 rgb_to_yuv( int r, int g, int b )

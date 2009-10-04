@@ -2153,7 +2153,8 @@ void JE_endLevelAni( void )
 	frameCountMax = 4;
 	textGlowFont = SMALL_FONT_SHAPES;
 	
-	JE_setPalette(254, 255, 255, 255);
+	SDL_Color white = { 255, 255, 255 };
+	set_palette(white, 254, 254);
 	
 	if (!levelTimer || levelTimerCountdown > 0 || !(episodeNum == 4))
 		JE_playSampleNum(V_LEVEL_END);
