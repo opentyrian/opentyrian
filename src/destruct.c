@@ -1403,7 +1403,7 @@ void DE_GravityDrawUnit( enum de_player_t team, struct destruct_unit_s * unit )
 		anim_index += floor(unit->angle * 9.99 / M_PI);
 	}
 
-	JE_drawShape2(VGAScreen, unit->unitX, round(unit->unitY) - 13, anim_index, eShapes1);
+	blit_sprite2(VGAScreen, unit->unitX, round(unit->unitY) - 13, anim_index, eShapes1);
 }
 void DE_GravityLowerUnit( struct destruct_unit_s * unit )
 {
@@ -1497,7 +1497,7 @@ void DE_RunTickDrawWalls( void )
 	{
 		if (world.mapWalls[i].wallExist)
 		{
-			JE_drawShape2(VGAScreen, world.mapWalls[i].wallX, world.mapWalls[i].wallY, 42, eShapes1);
+			blit_sprite2(VGAScreen, world.mapWalls[i].wallX, world.mapWalls[i].wallY, 42, eShapes1);
 		}
 	}
 }
@@ -2049,7 +2049,7 @@ void DE_RunTickDrawHUD( void )
 		JE_rectangle ( startX + 17, 2, startX + 143, 9, 242);
 		JE_rectangle ( startX + 16, 1, startX + 144, 10, 240);
 
-		JE_drawShape2(VGAScreen, startX +  4, 0, 191 + curUnit->shotType, eShapes1);
+		blit_sprite2(VGAScreen, startX +  4, 0, 191 + curUnit->shotType, eShapes1);
 
 		JE_outText   ( startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
 		sprintf      (tempstr, "dmg~%d~", curUnit->health);

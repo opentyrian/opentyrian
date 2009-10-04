@@ -1686,14 +1686,14 @@ level_loop:
 					if (tempW > 500)
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							JE_drawShape2Shadow(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
-						JE_drawShape2(VGAScreen, tempShotX+1, tempShotY, tempW - 500, shapesW2);
+							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, tempW - 500, shapesW2);
 					}
 					else
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							JE_drawShape2Shadow(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
-						JE_drawShape2(VGAScreen, tempShotX+1, tempShotY, tempW, shapesC1);
+							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, tempW, shapesC1);
 					}
 				}
 
@@ -3080,7 +3080,7 @@ new_game:
 										}
 
 										if (SANextShip[superArcadeMode] < SA_NORTSHIPZ)
-											JE_drawShape2x2(VGAScreen, 148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
+											blit_sprite2x2(VGAScreen, 148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
 										else if (SANextShip[superArcadeMode] == SA_NORTSHIPZ)
 											trentWin = true;
 
@@ -3861,7 +3861,7 @@ void JE_titleScreen( JE_boolean animate )
 							JE_dString(JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
 							tempW = ships[pItems[P_SHIP]].shipgraphic;
 							if (tempW != 1)
-								JE_drawShape2x2(VGAScreen, 148, 70, tempW, shapes9);
+								blit_sprite2x2(VGAScreen, 148, 70, tempW, shapes9);
 
 							JE_showVGA();
 							fade_palette(colors, 50, 0, 255);

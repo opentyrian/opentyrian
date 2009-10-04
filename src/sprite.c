@@ -586,7 +586,7 @@ void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 	fclose(f);
 }
 
-void JE_drawShape2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
@@ -656,7 +656,7 @@ void JE_superDrawShape2( SDL_Surface *surface,  int x, int y, unsigned int index
 	}
 }
 
-void JE_drawShape2Shadow( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2_darken( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
@@ -691,15 +691,15 @@ void JE_drawShape2Shadow( SDL_Surface *surface, int x, int y, unsigned int index
 	}
 }
 
-void JE_drawShape2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_drawShape2(surface, x,      y,      index,      shapes);
-	JE_drawShape2(surface, x + 12, y,      index + 1,  shapes);
-	JE_drawShape2(surface, x,      y + 14, index + 19, shapes);
-	JE_drawShape2(surface, x + 12, y + 14, index + 20, shapes);
+	blit_sprite2(surface, x,      y,      index,      shapes);
+	blit_sprite2(surface, x + 12, y,      index + 1,  shapes);
+	blit_sprite2(surface, x,      y + 14, index + 19, shapes);
+	blit_sprite2(surface, x + 12, y + 14, index + 20, shapes);
 }
 
-void JE_superDrawShape2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2x2_blend( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	JE_superDrawShape2(surface, x,      y,      index,      shapes);
 	JE_superDrawShape2(surface, x + 12, y,      index + 1,  shapes);
@@ -707,12 +707,12 @@ void JE_superDrawShape2x2( SDL_Surface *surface, int x, int y, unsigned int inde
 	JE_superDrawShape2(surface, x + 12, y + 14, index + 20, shapes);
 }
 
-void JE_drawShape2x2Shadow( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_drawShape2Shadow(surface, x,      y,      index,      shapes);
-	JE_drawShape2Shadow(surface, x + 12, y,      index + 1,  shapes);
-	JE_drawShape2Shadow(surface, x,      y + 14, index + 19, shapes);
-	JE_drawShape2Shadow(surface, x + 12, y + 14, index + 20, shapes);
+	blit_sprite2_darken(surface, x,      y,      index,      shapes);
+	blit_sprite2_darken(surface, x + 12, y,      index + 1,  shapes);
+	blit_sprite2_darken(surface, x,      y + 14, index + 19, shapes);
+	blit_sprite2_darken(surface, x + 12, y + 14, index + 20, shapes);
 }
 
 
