@@ -741,8 +741,8 @@ void JE_itemScreen( void )
 				
 				if (face_sprite != -1)
 				{
-					const int face_x = 77 - (shapeX[FACE_SHAPES][face_sprite] / 2),
-					          face_y = 92 - (shapeY[FACE_SHAPES][face_sprite] / 2);
+					const int face_x = 77 - (sprite(FACE_SHAPES, face_sprite)->width / 2),
+					          face_y = 92 - (sprite(FACE_SHAPES, face_sprite)->height / 2);
 					
 					blit_shape(VGAScreenSeg, face_x, face_y, FACE_SHAPES, face_sprite);  // datacube face
 					
@@ -1998,16 +1998,19 @@ void JE_updateNavScreen( void )
 	
 	if (curSel[3] < menuChoices[3])
 	{
-		newNavX = (planetX[mapOrigin-1] - shapeX[PLANET_SHAPES][PGR[mapOrigin-1]-1] / 2
-		          + planetX[mapPlanet[curSel[3]-2] - 1]
-		          - shapeX[PLANET_SHAPES][PGR[mapPlanet[curSel[3]-2] - 1]-1] / 2) / 2.0;
-		newNavY = (planetY[mapOrigin-1] - shapeY[PLANET_SHAPES][PGR[mapOrigin-1]-1] / 2
-		          + planetY[mapPlanet[curSel[3]-2] - 1]
-		          - shapeY[PLANET_SHAPES][PGR[mapPlanet[curSel[3]-2] - 1]-1] / 2) / 2.0;
+		const unsigned int origin_x_offset = sprite(PLANET_SHAPES, PGR[mapOrigin-1]-1)->width / 2,
+		                   origin_y_offset = sprite(PLANET_SHAPES, PGR[mapOrigin-1]-1)->height / 2,
+		                   dest_x_offset = sprite(PLANET_SHAPES, PGR[mapPlanet[curSel[3]-2] - 1]-1)->width / 2,
+		                   dest_y_offset = sprite(PLANET_SHAPES, PGR[mapPlanet[curSel[3]-2] - 1]-1)->height / 2;
+		
+		newNavX = (planetX[mapOrigin-1] - origin_x_offset
+		          + planetX[mapPlanet[curSel[3]-2] - 1] - dest_x_offset) / 2.0f;
+		newNavY = (planetY[mapOrigin-1] - origin_y_offset
+		          + planetY[mapPlanet[curSel[3]-2] - 1] - dest_y_offset) / 2.0f;
 	}
 	
-	navX = navX + (newNavX - navX) / 2.0;
-	navY = navY + (newNavY - navY) / 2.0;
+	navX = navX + (newNavX - navX) / 2.0f;
+	navY = navY + (newNavY - navY) / 2.0f;
 	
 	if (abs(newNavX - navX) < 1)
 		navX = newNavX;
@@ -2170,13 +2173,11 @@ void JE_drawDots( void )
 
 void JE_drawPlanet( JE_byte planetNum )
 {
-	JE_integer tempX, tempY, tempZ;
+	JE_integer tempZ = PGR[planetNum]-1,
+	           tempX = planetX[planetNum] + 66 - tempNavX - sprite(PLANET_SHAPES, tempZ)->width / 2,
+	           tempY = planetY[planetNum] + 85 - tempNavY - sprite(PLANET_SHAPES, tempZ)->height / 2;
 
-	tempZ = PGR[planetNum]-1;
-	tempX = planetX[planetNum] + 66 - tempNavX - shapeX[PLANET_SHAPES][tempZ] / 2;
-	tempY = planetY[planetNum] + 85 - tempNavY - shapeY[PLANET_SHAPES][tempZ] / 2;
-
-	if (tempX > -7 && tempX + shapeX[PLANET_SHAPES][tempZ] < 170 && tempY > 0 && tempY < 160)
+	if (tempX > -7 && tempX + sprite(PLANET_SHAPES, tempZ)->width < 170 && tempY > 0 && tempY < 160)
 	{
 		if (PAni[planetNum])
 			tempZ += planetAni;

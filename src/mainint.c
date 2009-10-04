@@ -115,7 +115,7 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 			if (s[z] == ' ')
 				loc += 6;
 			else
-				loc += shapeX[TINY_FONT][font_ascii[(unsigned char)s[z]]] + 1;
+				loc += sprite(TINY_FONT, font_ascii[(unsigned char)s[z]])->width + 1;
 		}
 		
 		for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
@@ -487,10 +487,8 @@ void JE_loadMainShapeTables( const char *shpfile )
 
 void free_main_shape_tables( void )
 {
-	for (int i = 0; i < MAX_TABLE; i++)
-	{
-		JE_newPurgeShapes(i);
-	}
+	for (int i = 0; i < COUNTOF(sprite_table); ++i)
+		free_sprites(i);
 	
 	free(shapesC1);
 	shapesC1 = NULL;
@@ -2073,14 +2071,14 @@ void JE_playCredits( void )
 		setjasondelay(1);
 		JE_clr256();
 		
-		blit_shape_hv(VGAScreenSeg, 319 - shapeX[EXTRA_SHAPES][currentpic-1], 100 - (shapeY[EXTRA_SHAPES][currentpic-1] / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
+		blit_shape_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic-1)->width, 100 - (sprite(EXTRA_SHAPES, currentpic-1)->height / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
 		
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
 		{
 			fadechg = 1;
 			currentpic++;
-			if (currentpic > maxShape[EXTRA_SHAPES])
+			if (currentpic > sprite_table[EXTRA_SHAPES].count)
 				currentpic = 1;
 		}
 		if (fade == 15)
@@ -2169,7 +2167,7 @@ void JE_playCredits( void )
 		JE_bar(0,  0, 319, 10, 0);
 		JE_bar(0, 190, 319, 199, 0);
 		
-		if (currentpic == maxShape[EXTRA_SHAPES])
+		if (currentpic == sprite_table[EXTRA_SHAPES].count)
 			JE_outTextAdjust(5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
 		
 		NETWORK_KEEP_ALIVE();
@@ -2195,7 +2193,7 @@ void JE_playCredits( void )
 	
 	fade_black(10);
 	
-	JE_newPurgeShapes(EXTRA_SHAPES);
+	free_sprites(EXTRA_SHAPES);
 }
 
 void JE_endLevelAni( void )

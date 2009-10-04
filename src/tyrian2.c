@@ -1671,9 +1671,9 @@ level_loop:
 				if (tempSpecial)
 				{
 					blit_shape_blend(VGAScreen, tempShotX+1, tempShotY, OPTION_SHAPES, tempW - 60001);
-
-					tempX2 = shapeX[OPTION_SHAPES][tempW - 60001] / 2;
-					tempY2 = shapeY[OPTION_SHAPES][tempW - 60001] / 2;
+					
+					tempX2 = sprite(OPTION_SHAPES, tempW - 60001)->width / 2;
+					tempY2 = sprite(OPTION_SHAPES, tempW - 60001)->height / 2;
 				}
 				else
 				{

@@ -22,7 +22,7 @@
 #include "opentyr.h"
 
 #include "SDL.h"
-
+#include <assert.h>
 
 #define OLD_BLACK         0
 #define NEW_BLACK         253
@@ -40,21 +40,42 @@
 #define MAXIMUM_SHAPE     151
 #define MAX_TABLE         8
 
-typedef JE_byte *JE_ShapeArrayType[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable, 1..maximumshape] */
+typedef struct
+{
+	Uint16 width, height;
+	Uint16 size;
+	Uint8 *data;
+}
+Sprite;
+
+typedef struct
+{
+	unsigned int count;
+	Sprite sprite[MAXIMUM_SHAPE];
+}
+Sprite_array;
+
+Sprite_array sprite_table[MAX_TABLE];
+
+static inline Sprite *sprite( unsigned int table, unsigned int index )
+{
+	assert(table < MAX_TABLE);
+	assert(index < MAXIMUM_SHAPE);
+	return &sprite_table[table].sprite[index];
+}
+
+static inline bool sprite_exists( unsigned int table, unsigned int index )
+{
+	return (sprite(table, index)->data != NULL);
+}
 
 extern SDL_Surface *tempScreenSeg;
-extern JE_ShapeArrayType shapeArray;
-extern JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],
-               shapeY[MAX_TABLE][MAXIMUM_SHAPE];
-extern JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];
-extern JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE];
-extern JE_byte maxShape[MAX_TABLE];
+
 extern JE_byte mouseGrabShape[24 * 28];
 
-void JE_newLoadShapes( JE_byte table, const char *shapefile );
-void JE_newLoadShapesB( JE_byte table, FILE *f );
-void JE_newCompressBlock( JE_byte **shape, JE_word xsize, JE_word ysize, JE_word *shapesize );
-void JE_newPurgeShapes( JE_byte table );
+void JE_newLoadShapes( unsigned table, const char *shapefile );
+void JE_newLoadShapesB( unsigned int table, FILE *f );
+void free_sprites( unsigned int table );
 
 void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeNum
 void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeTrick

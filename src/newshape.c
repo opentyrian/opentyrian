@@ -31,57 +31,16 @@
 
 #include <assert.h>
 
+Sprite_array sprite_table[MAX_TABLE];
+
 SDL_Surface *tempScreenSeg = NULL;
-
-JE_ShapeArrayType shapeArray = { { NULL } };
-
-JE_word shapeX[MAX_TABLE][MAXIMUM_SHAPE],        /* [1..maxtable,1..maximumshape] */
-        shapeY[MAX_TABLE][MAXIMUM_SHAPE];        /* [1..maxtable,1..maximumshape] */
-JE_word shapeSize[MAX_TABLE][MAXIMUM_SHAPE];     /* [1..maxtable,1..maximumshape] */
-JE_boolean shapeExist[MAX_TABLE][MAXIMUM_SHAPE]; /* [1..maxtable,1..maximumshape] */
-
-JE_byte maxShape[MAX_TABLE] = { 0 };             /* [1..maxtable] */
 
 JE_byte mouseGrabShape[24 * 28];                 /* [1..24*28] */
 
-/*
-  Colors:
-  253 : Black
-  254 : Jump to next line
 
-   Skip X Pixels
-   Draw X pixels of color Y
-*/
-
-
-void JE_newLoadShapesB( JE_byte table, FILE *f )
+void JE_newLoadShapes( unsigned int table, const char *shapefile )
 {
-	JE_word temp;
-	
-	efread(&temp, sizeof(JE_word), 1, f);
-	
-	maxShape[table] = temp;
-	
-	for (int i = 0; i < maxShape[table]; i++)
-	{
-		shapeExist[table][i] = getc(f);
-		
-		if (shapeExist[table][i])
-		{
-			efread(&shapeX   [table][i], sizeof(JE_word), 1, f);
-			efread(&shapeY   [table][i], sizeof(JE_word), 1, f);
-			efread(&shapeSize[table][i], sizeof(JE_word), 1, f);
-			
-			shapeArray[table][i] = malloc(shapeX[table][i] * shapeY[table][i]);
-			
-			efread(shapeArray[table][i], sizeof(JE_byte), shapeSize[table][i], f);
-		}
-	}
-}
-
-void JE_newLoadShapes( JE_byte table, const char *shapefile )
-{
-	JE_newPurgeShapes(table);
+	free_sprites(table);
 	
 	FILE *f = dir_fopen_die(data_dir(), shapefile, "rb");
 	
@@ -90,39 +49,68 @@ void JE_newLoadShapes( JE_byte table, const char *shapefile )
 	fclose(f);
 }
 
-void JE_newPurgeShapes( JE_byte table )
+void JE_newLoadShapesB( unsigned int table, FILE *f )
 {
-	for (int i = 0; i < maxShape[table]; i++)
-	{
-		if (shapeExist[table][i])
-		{
-			free(shapeArray[table][i]);
-			
-			shapeExist[table][i] = false;
-		}
-	}
+	Uint16 temp;
+	efread(&temp, sizeof(Uint16), 1, f);
 	
-	maxShape[table] = 0;
+	sprite_table[table].count = temp;
+	
+	for (unsigned int i = 0; i < sprite_table[table].count; ++i)
+	{
+		Sprite * const cur_sprite = sprite(table, i);
+		
+		if (!getc(f)) // sprite is empty
+			continue;
+		
+		efread(&cur_sprite->width,  sizeof(Uint16), 1, f);
+		efread(&cur_sprite->height, sizeof(Uint16), 1, f);
+		efread(&cur_sprite->size,   sizeof(Uint16), 1, f);
+		
+		cur_sprite->data = malloc(cur_sprite->size);
+		
+		efread(cur_sprite->data, sizeof(Uint8), cur_sprite->size, f);
+	}
 }
 
+void free_sprites( unsigned int table )
+{
+	for (unsigned int i = 0; i < sprite_table[table].count; ++i)
+	{
+		Sprite * const cur_sprite = sprite(table, i);
+		
+		cur_sprite->width  = 0;
+		cur_sprite->height = 0;
+		cur_sprite->size   = 0;
+		
+		free(cur_sprite->data);
+		cur_sprite->data = NULL;
+	}
+	
+	sprite_table[table].count = 0;
+}
 
+// does not clip on left or right edges of surface
 void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
 {
-	if (index >= maxShape[table] || !shapeExist[table][index])
+	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
 		assert(false);
 		return;
 	}
 	
-	Uint8 *data = shapeArray[table][index];
-	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	Uint8 *data = cur_sprite->data;
+	const unsigned int width = cur_sprite->width,
+	                   height = cur_sprite->height;
 	
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
 	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
 	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
 	{
 		switch (*data)
 		{
@@ -159,23 +147,27 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 	}
 }
 
+// does not clip on left or right edges of surface
 void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
 {
-	if (index >= maxShape[table] || !shapeExist[table][index])
+	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
 		assert(false);
 		return;
 	}
 	
-	Uint8 *data = shapeArray[table][index];
-	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	Uint8 *data = cur_sprite->data;
+	const unsigned int width = cur_sprite->width,
+	                   height = cur_sprite->height;
 	
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
 	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
 	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
 	{
 		switch (*data)
 		{
@@ -212,18 +204,22 @@ void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, u
 	}
 }
 
+// does not clip on left or right edges of surface
 // unsafe because it doesn't check that value won't overflow into hue
 // we can replace it when we know that we don't rely on that 'feature'
 void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
-	if (index >= maxShape[table] || !shapeExist[table][index])
+	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
 		assert(false);
 		return;
 	}
 	
-	Uint8 *data = shapeArray[table][index];
-	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	Uint8 *data = cur_sprite->data;
+	const unsigned int width = cur_sprite->width,
+	                   height = cur_sprite->height;
 	
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
@@ -232,7 +228,7 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 	
 	hue <<= 4;
 	
-	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
 	{
 		switch (*data)
 		{
@@ -269,16 +265,20 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 	}
 }
 
+// does not clip on left or right edges of surface
 void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
-	if (index >= maxShape[table] || !shapeExist[table][index])
+	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
 		assert(false);
 		return;
 	}
 	
-	Uint8 *data = shapeArray[table][index];
-	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	Uint8 *data = cur_sprite->data;
+	const unsigned int width = cur_sprite->width,
+	                   height = cur_sprite->height;
 	
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
@@ -287,7 +287,7 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 	
 	hue <<= 4;
 	
-	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
 	{
 		switch (*data)
 		{
@@ -330,16 +330,20 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 	}
 }
 
+// does not clip on left or right edges of surface
 void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
-	if (index >= maxShape[table] || !shapeExist[table][index])
+	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
 		assert(false);
 		return;
 	}
 	
-	Uint8 *data = shapeArray[table][index];
-	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	Uint8 *data = cur_sprite->data;
+	const unsigned int width = cur_sprite->width,
+	                   height = cur_sprite->height;
 	
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
@@ -348,7 +352,7 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 	
 	hue <<= 4;
 	
-	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
 	{
 		switch (*data)
 		{
@@ -391,23 +395,27 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 	}
 }
 
+// does not clip on left or right edges of surface
 void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black )
 {
-	if (index >= maxShape[table] || !shapeExist[table][index])
+	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
 		assert(false);
 		return;
 	}
 	
-	Uint8 *data = shapeArray[table][index];
-	unsigned int width = shapeX[table][index], height = shapeY[table][index];
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	Uint8 *data = cur_sprite->data;
+	const unsigned int width = cur_sprite->width,
+	                   height = cur_sprite->height;
 	
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
 	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
 	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	for (int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
 	{
 		switch (*data)
 		{

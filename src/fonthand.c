@@ -85,7 +85,7 @@ void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font )
 				blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, sprite_id, false);
 				blit_shape_hv_unsafe(tempScreenSeg, x, y, font, sprite_id, 0xf, defaultBrightness + bright);
 				
-				x += shapeX[font][sprite_id] + 1;
+				x += sprite(font, sprite_id)->width + 1;
 			}
 			break;
 		}
@@ -108,7 +108,7 @@ JE_word JE_textWidth( const char *s, JE_byte font )
 		if (s[i] == ' ')
 			x += 6;
 		else if (sprite_id != -1)
-			x += shapeX[font][sprite_id] + 1;
+			x += sprite(font, sprite_id)->width + 1;
 	}
 	
 	return x;
@@ -157,14 +157,14 @@ void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shor
 			break;
 			
 		default:
-			if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+			if (sprite_id != -1 && sprite_exists(TINY_FONT, sprite_id))
 			{
 				if (brightness >= 0)
 					blit_shape_hv_unsafe(tempScreenSeg, x, y, TINY_FONT, sprite_id, colorbank, brightness + bright);
 				else
 					blit_shape_dark(tempScreenSeg, x, y, TINY_FONT, sprite_id, true);
 				
-				x += shapeX[TINY_FONT][sprite_id] + 1;
+				x += sprite(TINY_FONT, sprite_id)->width + 1;
 			}
 			break;
 		}
@@ -188,7 +188,7 @@ void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_b
 		{
 			blit_shape_hv_blend(tempScreenSeg, x, y, font, sprite_id, filter, brightness);
 			
-			x += shapeX[font][sprite_id] + 1;
+			x += sprite(font, sprite_id)->width + 1;
 		}
 	}
 }
@@ -207,7 +207,7 @@ void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font )
 		{
 			blit_shape_dark(tempScreenSeg, x, y, font, sprite_id, false);
 			
-			x += shapeX[font][sprite_id] + 1;
+			x += sprite(font, sprite_id)->width + 1;
 		}
 	}
 }
@@ -231,13 +231,13 @@ void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_s
 			break;
 			
 		default:
-			if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+			if (sprite_id != -1 && sprite_exists(TINY_FONT, sprite_id))
 			{
 				if (shadow)
 					blit_shape_dark(tempScreenSeg, x + 2, y + 2, font, sprite_id, false);
 				blit_shape_hv(tempScreenSeg, x, y, font, sprite_id, filter, brightness + bright);
 				
-				x += shapeX[font][sprite_id] + 1;
+				x += sprite(font, sprite_id)->width + 1;
 			}
 			break;
 		}
@@ -263,12 +263,12 @@ void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank
 			break;
 			
 		default:
-			if (sprite_id != -1 && shapeArray[TINY_FONT][sprite_id] != NULL)
+			if (sprite_id != -1 && sprite_exists(TINY_FONT, sprite_id))
 			{
 				blit_shape_dark(tempScreenSeg, x + 1, y + 1, font, sprite_id, false);
 				blit_shape_hv_unsafe(tempScreenSeg, x, y, font, sprite_id, colorbank, brightness + bright);
 				
-				x += shapeX[font][sprite_id] + 1;
+				x += sprite(font, sprite_id)->width + 1;
 			}
 			break;
 		}
