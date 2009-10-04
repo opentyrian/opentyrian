@@ -36,8 +36,6 @@ extern JE_word mouseX, mouseY, mouseButton;
 void JE_compressShapeFileC( JE_char s );
 void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s );
 
-JE_word JE_btow(JE_byte a, JE_byte b);
-
 JE_boolean JE_buttonPressed( void );
 
 JE_boolean JE_anyButton( void );

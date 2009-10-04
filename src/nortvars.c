@@ -33,11 +33,6 @@ JE_byte mouseCursor;
 JE_boolean mouse_threeButton = true;
 JE_word mouseX, mouseY, mouseButton;
 
-JE_word JE_btow(JE_byte a, JE_byte b)
-{
-	return (JE_word) (((short) b) * 256 + a);
-}
-
 void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 {
 	char buffer[11];
