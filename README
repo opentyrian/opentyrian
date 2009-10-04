@@ -1,5 +1,5 @@
 OpenTyrian Classic
-========================================
+================================================================================
 
 OpenTyrian is an open-source port of the DOS game Tyrian.
 
@@ -10,11 +10,13 @@ to fight MicroSol and save the galaxy.
 Tyrian features a story mode, one- and two-player arcade modes, and networked
 multiplayer.
 
-== Additional Necessary Files ==========
-Tyrian 2.1 data files which have been released for free
-http://camanis.net/tyrian/tyrian21.zip
+== Additional Necessary Files ==================================================
 
-== Keyboard Controls ===================
+Tyrian 2.1 data files which have been released as freeware:
+  http://camanis.net/tyrian/tyrian21.zip
+
+== Keyboard Controls ===========================================================
+
 ctrl-backspace -- kill OpenTyrian
 alt-enter      -- fullscreen
 ctrl-f10       -- ungrab mouse
@@ -24,20 +26,21 @@ space          -- fire weapons
 enter          -- toggle rear weapon mode
 ctrl/alt       -- fire left/right sidekick
 
-== Network Multiplayer =================
+== Network Multiplayer =========================================================
+
 Currently OpenTyrian does not have an arena; as such, networked games must be
 initiated manually via the command line simultaniously by both players.
 
-syntax: tyrian --net host playernumber playername
+syntax: tyrian --net <host> <playernumber> <playername>
 
-where host is the IP address of your opponent, playernumber is either 1 or 2
-depending on which ship you intend to pilot, and playername is your alias
+where <host> is the IP address of your opponent, <playernumber> is either 1 or 2
+depending on which ship you intend to pilot, and <playername> is your alias
 
-== Missing Features ====================
-ShipEdit is planned to be included in the future.  It has not yet been
-implemented because the developers keep procrastinating.
+OpenTyrian uses UDP port 1333 for multiplayer, but in most cases players will
+not need to open any ports because OpenTyrian makes use of UDP hole punching.
 
-== Links ===============================
+== Links =======================================================================
+
 project: http://opentyrian.googlecode.com/
 forums:  http://tyrian2k.proboards23.com/index.cgi?board=opentyriangeneral
 
