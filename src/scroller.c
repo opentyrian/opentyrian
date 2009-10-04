@@ -290,7 +290,7 @@ void scroller_sine( const struct about_text_type text[] )
 				}
 				beer[i].y += beer[i].vy;
 				
-				JE_drawShape2x2(beer[i].x, beer[i].y, BEER_SHAPE, eShapes5);
+				JE_drawShape2x2(VGAScreen, beer[i].x, beer[i].y, BEER_SHAPE, eShapes5);
 			}
 		}
 		

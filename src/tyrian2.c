@@ -3080,7 +3080,7 @@ new_game:
 										}
 
 										if (SANextShip[superArcadeMode] < SA_NORTSHIPZ)
-											JE_drawShape2x2(148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
+											JE_drawShape2x2(VGAScreen, 148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
 										else if (SANextShip[superArcadeMode] == SA_NORTSHIPZ)
 											trentWin = true;
 
@@ -3861,7 +3861,7 @@ void JE_titleScreen( JE_boolean animate )
 							JE_dString(JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
 							tempW = ships[pItems[P_SHIP]].shipgraphic;
 							if (tempW != 1)
-								JE_drawShape2x2(148, 70, tempW, shapes9);
+								JE_drawShape2x2(VGAScreen, 148, 70, tempW, shapes9);
 
 							JE_showVGA();
 							fade_palette(colors, 50, 0, 255);

@@ -594,11 +594,11 @@ void JE_loadScreen( void )
 
 		if (screen == 2)
 		{
-			JE_drawShape2x2(90, 180, 279, shapes6);
+			JE_drawShape2x2(VGAScreen, 90, 180, 279, shapes6);
 		}
 		if (screen == 1)
 		{
-			JE_drawShape2x2(220, 180, 281, shapes6);
+			JE_drawShape2x2(VGAScreen, 220, 180, 281, shapes6);
 		}
 
 		helpBoxColor = 15;
@@ -925,12 +925,12 @@ void JE_highScoreScreen( void )
 
 			if (x > 1)
 			{
-				JE_drawShape2x2( 90, 180, 279, shapes6);
+				JE_drawShape2x2(VGAScreen,  90, 180, 279, shapes6);
 			}
 
 			if ( ( (x < 2) && episodeAvail[2-1] ) || ( (x < 3) && episodeAvail[3-1] ) )
 			{
-				JE_drawShape2x2( 220, 180, 281, shapes6);
+				JE_drawShape2x2(VGAScreen,  220, 180, 281, shapes6);
 			}
 
 			helpBoxColor = 15;
@@ -2068,7 +2068,7 @@ void JE_playCredits( void )
 			tempW += 2;
 		if (shipxc > 20)
 			tempW += 2;
-		JE_drawShape2x2(shipx / 40, 184 - (x % 200), tempW, shapes9);
+		JE_drawShape2x2(VGAScreen, shipx / 40, 184 - (x % 200), tempW, shapes9);
 		
 		for (newpos = curpos - 9; newpos <= curpos; newpos++)
 		{
@@ -2481,7 +2481,7 @@ void JE_inGameDisplays( void )
 	/*Special Weapon?*/
 	if (pItems[P_SPECIAL] > 0)
 	{
-		JE_drawShape2x2(25, 1, special[pItems[P_SPECIAL]].itemgraphic, eShapes6);
+		JE_drawShape2x2(VGAScreen, 25, 1, special[pItems[P_SPECIAL]].itemgraphic, eShapes6);
 	}
 
 	/*Lives Left*/
@@ -3410,17 +3410,17 @@ redo:
 					{
 						if (shipGr_ == 0)
 						{
-							JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 13, shapes9ptr_);
-							JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 51, shapes9ptr_);
+							JE_drawShape2x2(VGAScreen, *PX_ - 17, tempW2 - 7, 13, shapes9ptr_);
+							JE_drawShape2x2(VGAScreen, *PX_ + 7 , tempW2 - 7, 51, shapes9ptr_);
 						}
 						else if (shipGr_ == 1)
 						{
-							JE_drawShape2x2(*PX_ - 17, tempW2 - 7, 220, shapes9ptr_);
-							JE_drawShape2x2(*PX_ + 7 , tempW2 - 7, 222, shapes9ptr_);
+							JE_drawShape2x2(VGAScreen, *PX_ - 17, tempW2 - 7, 220, shapes9ptr_);
+							JE_drawShape2x2(VGAScreen, *PX_ + 7 , tempW2 - 7, 222, shapes9ptr_);
 						}
 						else
 						{
-							JE_drawShape2x2(*PX_ - 5, tempW2 - 7, shipGr_, shapes9ptr_);
+							JE_drawShape2x2(VGAScreen, *PX_ - 5, tempW2 - 7, shipGr_, shapes9ptr_);
 						}
 					}
 				}
@@ -3616,12 +3616,12 @@ redo:
 			{
 				if (background2)
 				{
-					JE_drawShape2x2Shadow(*PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
-					JE_drawShape2x2Shadow(*PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
+					JE_drawShape2x2Shadow(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
+					JE_drawShape2x2Shadow(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
 					if (superWild)
 					{
-						JE_drawShape2x2Shadow(*PX_ - 16 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
-						JE_drawShape2x2Shadow(*PX_ + 6 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
+						JE_drawShape2x2Shadow(VGAScreen, *PX_ - 16 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
+						JE_drawShape2x2Shadow(VGAScreen, *PX_ + 6 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
 					}
 				}
 			} else
@@ -3629,16 +3629,16 @@ redo:
 				{
 					if (background2)
 					{
-						JE_drawShape2x2Shadow(*PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 220, shapes9ptr_);
-						JE_drawShape2x2Shadow(*PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 222, shapes9ptr_);
+						JE_drawShape2x2Shadow(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 220, shapes9ptr_);
+						JE_drawShape2x2Shadow(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 222, shapes9ptr_);
 					}
 				} else {
 					if (background2)
 					{
-						JE_drawShape2x2Shadow(*PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
+						JE_drawShape2x2Shadow(VGAScreen, *PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
 						if (superWild)
 						{
-							JE_drawShape2x2Shadow(*PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
+							JE_drawShape2x2Shadow(VGAScreen, *PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
 						}
 					}
 				}
@@ -3649,26 +3649,26 @@ redo:
 
 				if (shipGr_ == 0)
 				{
-					JE_superDrawShape2x2(*PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
-					JE_superDrawShape2x2(*PX_ + 7 , *PY_ - 7, tempI + 51, shapes9ptr_);
+					JE_superDrawShape2x2(VGAScreen, *PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
+					JE_superDrawShape2x2(VGAScreen, *PX_ + 7 , *PY_ - 7, tempI + 51, shapes9ptr_);
 				} else
 					if (shipGr_ == 1)
 					{
-						JE_superDrawShape2x2(*PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
-						JE_superDrawShape2x2(*PX_ + 7 , *PY_ - 7, 222, shapes9ptr_);
+						JE_superDrawShape2x2(VGAScreen, *PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
+						JE_superDrawShape2x2(VGAScreen, *PX_ + 7 , *PY_ - 7, 222, shapes9ptr_);
 					} else
-						JE_superDrawShape2x2(*PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
+						JE_superDrawShape2x2(VGAScreen, *PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
 
 			} else {
 				if (shipGr_ == 0)
 				{
-					JE_drawShape2x2(*PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
-					JE_drawShape2x2(*PX_ + 7, *PY_ - 7, tempI + 51, shapes9ptr_);
+					JE_drawShape2x2(VGAScreen, *PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
+					JE_drawShape2x2(VGAScreen, *PX_ + 7, *PY_ - 7, tempI + 51, shapes9ptr_);
 				} else
 					if (shipGr_ == 1)
 					{
-						JE_drawShape2x2(*PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
-						JE_drawShape2x2(*PX_ + 7, *PY_ - 7, 222, shapes9ptr_);
+						JE_drawShape2x2(VGAScreen, *PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
+						JE_drawShape2x2(VGAScreen, *PX_ + 7, *PY_ - 7, 222, shapes9ptr_);
 						switch (tempI)
 						{
 							case 5:
@@ -3705,7 +3705,7 @@ redo:
 							}
 						}
 					} else
-						JE_drawShape2x2(*PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
+						JE_drawShape2x2(VGAScreen, *PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
 			}
 		}  /*endLevel*/
 
@@ -4151,7 +4151,7 @@ redo:
 				}
 
 				if (leftOptionIsSpecial == 1 || leftOptionIsSpecial == 2)
-					JE_drawShape2x2(option1X - 6, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
+					JE_drawShape2x2(VGAScreen, option1X - 6, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
 					                eShapes6);
 				else
 					JE_drawShape2(VGAScreen, option1X, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
@@ -4172,7 +4172,7 @@ redo:
 				}
 
 				if (rightOptionIsSpecial == 1 || rightOptionIsSpecial == 2)
-					JE_drawShape2x2(option2X - 6, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
+					JE_drawShape2x2(VGAScreen, option2X - 6, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
 					                eShapes6);
 				else
 					JE_drawShape2(VGAScreen, option2X, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,

@@ -92,9 +92,9 @@ void JE_drawShape2( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shap
 void JE_superDrawShape2( SDL_Surface *,  int x, int y, unsigned int index, Uint8 *shapes );
 void JE_drawShape2Shadow( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
 
-void JE_drawShape2x2( int x, int y, int s, JE_byte *shape );
-void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape );
-void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape );
+void JE_drawShape2x2( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
+void JE_superDrawShape2x2( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
+void JE_drawShape2x2Shadow( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
 
 #endif // SPRITE_H
 

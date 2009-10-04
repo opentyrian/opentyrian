@@ -104,8 +104,8 @@ void JE_mouseStart( void )
 
 		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 
-		/*JE_drawShape2x2shadow(lastmousex+2,lastmousey+2,tempW,shapes6);*/
-		JE_drawShape2x2(lastMouseX, lastMouseY, tempW, shapes6);
+		/*JE_drawShape2x2Shadow(VGAScreen, lastmousex+2,lastmousey+2,tempW,shapes6);*/
+		JE_drawShape2x2(VGAScreen, lastMouseX, lastMouseY, tempW, shapes6);
 	 }
 }
 

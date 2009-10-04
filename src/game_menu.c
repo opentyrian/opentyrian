@@ -1882,14 +1882,14 @@ void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 			{
 				shipGrPtr = shapes9;
 				shipGr = JE_SGr(itemNum - 90, &shipGrPtr);
-				JE_drawShape2x2(x, y, shipGr, shipGrPtr);
+				JE_drawShape2x2(VGAScreen, x, y, shipGr, shipGrPtr);
 			} else {
-				JE_drawShape2x2(x, y, ships[itemNum].shipgraphic, shapes9);
+				JE_drawShape2x2(VGAScreen, x, y, ships[itemNum].shipgraphic, shapes9);
 			}
 		} else {
 			if (tempW > 0)
 			{
-				JE_drawShape2x2(x, y, tempW, shapes6);
+				JE_drawShape2x2(VGAScreen, x, y, tempW, shapes6);
 			}
 		}
 	}

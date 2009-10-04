@@ -691,28 +691,28 @@ void JE_drawShape2Shadow( SDL_Surface *surface, int x, int y, unsigned int index
 	}
 }
 
-void JE_drawShape2x2( int x, int y, int s, JE_byte *shape )
+void JE_drawShape2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_drawShape2(VGAScreen, x,    y,    s,    shape);
-	JE_drawShape2(VGAScreen, x+12, y,    s+1,  shape);
-	JE_drawShape2(VGAScreen, x,    y+14, s+19, shape);
-	JE_drawShape2(VGAScreen, x+12, y+14, s+20, shape);
+	JE_drawShape2(surface, x,      y,      index,      shapes);
+	JE_drawShape2(surface, x + 12, y,      index + 1,  shapes);
+	JE_drawShape2(surface, x,      y + 14, index + 19, shapes);
+	JE_drawShape2(surface, x + 12, y + 14, index + 20, shapes);
 }
 
-void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape )
+void JE_superDrawShape2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_superDrawShape2(VGAScreen, x,    y,    s,    shape);
-	JE_superDrawShape2(VGAScreen, x+12, y,    s+1,  shape);
-	JE_superDrawShape2(VGAScreen, x,    y+14, s+19, shape);
-	JE_superDrawShape2(VGAScreen, x+12, y+14, s+20, shape);
+	JE_superDrawShape2(surface, x,      y,      index,      shapes);
+	JE_superDrawShape2(surface, x + 12, y,      index + 1,  shapes);
+	JE_superDrawShape2(surface, x,      y + 14, index + 19, shapes);
+	JE_superDrawShape2(surface, x + 12, y + 14, index + 20, shapes);
 }
 
-void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape )
+void JE_drawShape2x2Shadow( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_drawShape2Shadow(VGAScreen, x,    y,    s,    shape);
-	JE_drawShape2Shadow(VGAScreen, x+12, y,    s+1,  shape);
-	JE_drawShape2Shadow(VGAScreen, x,    y+14, s+19, shape);
-	JE_drawShape2Shadow(VGAScreen, x+12, y+14, s+20, shape);
+	JE_drawShape2Shadow(surface, x,      y,      index,      shapes);
+	JE_drawShape2Shadow(surface, x + 12, y,      index + 1,  shapes);
+	JE_drawShape2Shadow(surface, x,      y + 14, index + 19, shapes);
+	JE_drawShape2Shadow(surface, x + 12, y + 14, index + 20, shapes);
 }
 
 
