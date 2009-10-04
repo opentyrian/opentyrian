@@ -76,21 +76,27 @@ void blit_sprite_hv( SDL_Surface *, int x, int y, unsigned int table, unsigned i
 void blit_sprite_hv_blend( SDL_Surface *, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeModify
 void blit_sprite_dark( SDL_Surface *, int x, int y, unsigned int table, unsigned int index, bool black ); // JE_newDrawCShapeDarken, JE_newDrawCShapeShadow
 
+typedef struct
+{
+	unsigned int size;
+	Uint8 *data;
+}
+Sprite2_array;
 
-extern JE_byte *eShapes1, *eShapes2, *eShapes3, *eShapes4, *eShapes5, *eShapes6;
-extern JE_byte *shapesC1, *shapes6, *shapes9, *shapesW2;
-extern JE_word eShapes1Size, eShapes2Size, eShapes3Size, eShapes4Size, eShapes5Size, eShapes6Size, shapesC1Size, shapes6Size, shapes9Size, shapesW2Size;
+extern Sprite2_array eShapes1, eShapes2, eShapes3, eShapes4, eShapes5, eShapes6;
+extern Sprite2_array shapesC1, shapes6, shapes9, shapesW2;
 
-void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s );
-void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize );
+void JE_loadCompShapes( Sprite2_array *, JE_char s );
+void JE_loadCompShapesB( Sprite2_array *, FILE *f );
+void free_sprite2s( Sprite2_array * );
 
-void blit_sprite2( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
-void blit_sprite2_blend( SDL_Surface *,  int x, int y, unsigned int index, Uint8 *shapes );
-void blit_sprite2_darken( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
+void blit_sprite2( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2_blend( SDL_Surface *,  int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2_darken( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 
-void blit_sprite2x2( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
-void blit_sprite2x2_blend( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
-void blit_sprite2x2_darken( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
+void blit_sprite2x2( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2x2_blend( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2x2_darken( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 
 void JE_loadMainShapeTables( const char *shpfile );
 void free_main_shape_tables( void );

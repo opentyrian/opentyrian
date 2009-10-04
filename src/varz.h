@@ -19,9 +19,9 @@
 #ifndef VARZ_H
 #define VARZ_H
 
-#include "opentyr.h"
-
 #include "episodes.h"
+#include "opentyr.h"
+#include "sprite.h"
 
 #include <stdbool.h>
 
@@ -68,7 +68,7 @@ struct JE_SingleEnemyType
 	JE_byte     aniactive;
 	JE_byte     animax;
 	JE_byte     aniwhenfire;
-	void       *shapeseg;
+	Sprite2_array *sprite2s;
 	JE_shortint exrev, eyrev;
 	JE_integer  exccadd, eyccadd;
 	JE_byte     exccwmax, eyccwmax;
@@ -378,10 +378,10 @@ extern JE_word specialWeaponWpn;
 extern JE_boolean linkToPlayer;
 extern JE_integer baseArmor, baseArmor2;
 extern JE_word shipGr, shipGr2;
-extern JE_byte *shipGrPtr, *shipGr2ptr;
+extern Sprite2_array *shipGrPtr, *shipGr2ptr;
 
 void JE_getShipInfo( void );
-JE_word JE_SGr( JE_word ship, JE_byte **ptr );
+JE_word JE_SGr( JE_word ship, Sprite2_array **ptr );
 
 void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );

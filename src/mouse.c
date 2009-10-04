@@ -105,7 +105,7 @@ void JE_mouseStart( void )
 		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 
 		/*blit_sprite2x2_darken(VGAScreen, lastmousex+2,lastmousey+2,tempW,shapes6);*/
-		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, tempW, shapes6);
+		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, shapes6, tempW);
 	 }
 }
 

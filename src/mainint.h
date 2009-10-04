@@ -19,10 +19,10 @@
 #ifndef MAININT_H
 #define MAININT_H
 
-#include "opentyr.h"
-
 #include "config.h"
+#include "opentyr.h"
 #include "palette.h"
+#include "sprite.h"
 
 extern bool button[4]; // fire, left fire, right fire, mode swap
 
@@ -82,7 +82,7 @@ void JE_inGameDisplays( void );
 void JE_mainKeyboardInput( void );
 void JE_pauseGame( void );
 
-void JE_playerMovement( JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, JE_byte *shapes9ptr, JE_integer *armorLevel, JE_integer *baseArmor, JE_shortint *shield, JE_shortint *shieldMax, JE_word *playerInvulnerable, JE_integer *PX, JE_integer *PY, JE_integer *lastPX2, JE_integer *lastPY2, JE_integer *PXChange, JE_integer *PYChange, JE_integer *lastTurn, JE_integer *lastTurn2, JE_byte *stopWaitX, JE_byte *stopWaitY, JE_word *mouseX, JE_word *mouseY, JE_boolean *playerAlive, JE_byte *playerStillExploding, JE_PItemsType pItems );
+void JE_playerMovement( JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, Sprite2_array *shapes9ptr_, JE_integer *armorLevel, JE_integer *baseArmor, JE_shortint *shield, JE_shortint *shieldMax, JE_word *playerInvulnerable, JE_integer *PX, JE_integer *PY, JE_integer *lastPX2, JE_integer *lastPY2, JE_integer *PXChange, JE_integer *PYChange, JE_integer *lastTurn, JE_integer *lastTurn2, JE_byte *stopWaitX, JE_byte *stopWaitY, JE_word *mouseX, JE_word *mouseY, JE_boolean *playerAlive, JE_byte *playerStillExploding, JE_PItemsType pItems );
 void JE_mainGamePlayerFunctions( void );
 const char *JE_getName( JE_byte pnum );
 

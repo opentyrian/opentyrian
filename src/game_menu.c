@@ -591,7 +591,7 @@ void JE_itemScreen( void )
 				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
-					blit_sprite2(VGAScreen, 298, tempY+2, 247, shapes6);
+					blit_sprite2(VGAScreen, 298, tempY+2, shapes6, 247);
 				}
 
 				/* Draw DONE */
@@ -1880,17 +1880,18 @@ void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 		{
 			if (itemNum > 90)
 			{
-				shipGrPtr = shapes9;
+				shipGrPtr = &shapes9;
 				shipGr = JE_SGr(itemNum - 90, &shipGrPtr);
-				blit_sprite2x2(VGAScreen, x, y, shipGr, shipGrPtr);
-			} else {
-				blit_sprite2x2(VGAScreen, x, y, ships[itemNum].shipgraphic, shapes9);
+				blit_sprite2x2(VGAScreen, x, y, *shipGrPtr, shipGr);
 			}
-		} else {
-			if (tempW > 0)
+			else
 			{
-				blit_sprite2x2(VGAScreen, x, y, tempW, shapes6);
+				blit_sprite2x2(VGAScreen, x, y, shapes9, ships[itemNum].shipgraphic);
 			}
+		}
+		else if (tempW > 0)
+		{
+			blit_sprite2x2(VGAScreen, x, y, shapes6, tempW);
 		}
 	}
 }
@@ -3261,9 +3262,9 @@ void JE_weaponViewFrame( void )
 					if (tempW > 1000)
 						tempW = tempW % 1000;
 					if (tempW > 500)
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, tempW - 500, shapesW2);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, tempW - 500);
 					else
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, tempW, shapesC1);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, tempW);
 				}
 			}
 			

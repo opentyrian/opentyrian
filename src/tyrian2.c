@@ -158,6 +158,7 @@ void JE_starShowVGA( void )
 	skipStarShowVGA = false;
 }
 
+// TODO for Mindless: split this into separate blitting function
 void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
 {
 	Uint8 *p; /* shape pointer */
@@ -170,7 +171,7 @@ void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, sign
 	s_limit = (Uint8 *)surface->pixels;
 	s_limit += surface->h * surface->pitch;
 
-	p = enemy[i].shapeseg;
+	p = enemy[i].sprite2s->data;
 	p += SDL_SwapLE16(((Uint16 *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + sprite_offset]);
 
 	while (*p != 0x0f)
@@ -668,9 +669,7 @@ void JE_main( void )
 {
 	int i;
 
-	JE_byte *p; /* source/shape pointer */
 	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
 
 	char buffer[256];
 
@@ -709,26 +708,10 @@ start_level:
 
 	JE_clearKeyboard();
 
-	if (eShapes1 != NULL)
-	{
-		free(eShapes1);
-		eShapes1 = NULL;
-	}
-	if (eShapes2 != NULL)
-	{
-		free(eShapes2);
-		eShapes2 = NULL;
-	}
-	if (eShapes3 != NULL)
-	{
-		free(eShapes3);
-		eShapes3 = NULL;
-	}
-	if (eShapes4 != NULL)
-	{
-		free(eShapes4);
-		eShapes4 = NULL;
-	}
+	free_sprite2s(&eShapes1);
+	free_sprite2s(&eShapes2);
+	free_sprite2s(&eShapes3);
+	free_sprite2s(&eShapes4);
 
 	/* Normal speed */
 	if (fastPlay != 0)
@@ -793,7 +776,7 @@ start_level_first:
 
 	set_volume(tyrMusicVolume, fxVolume);
 
-	JE_loadCompShapes(&shapes6, &shapes6Size, '1');  /* Items */
+	JE_loadCompShapes(&shapes6, '1');  /* Items */
 
 	endLevel = false;
 	reallyEndLevel = false;
@@ -860,7 +843,7 @@ start_level_first:
 	JE_gammaCorrect(&colors, gammaCorrection);
 	fade_palette(colors, 50, 0, 255);
 
-	JE_loadCompShapes(&shapes6, &shapes6Size, '6'); /* Explosions */
+	JE_loadCompShapes(&shapes6, '6'); /* Explosions */
 
 	/* MAPX will already be set correctly */
 	mapY = 300 - 8;
@@ -1686,14 +1669,14 @@ level_loop:
 					if (tempW > 500)
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, tempW - 500, shapesW2);
+							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, shapesW2, tempW - 500);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, tempW - 500);
 					}
 					else
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, tempW, shapesC1);
+							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, shapesC1, tempW);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, tempW);
 					}
 				}
 
@@ -2053,8 +2036,9 @@ draw_player_shot_loop_end:
 				if (enemyShot[z].duration-- == 0 || enemyShot[z].sy > 190 || enemyShot[z].sy <= -14 || enemyShot[z].sx > 275 || enemyShot[z].sx <= 0)
 				{
 					enemyShotAvail[z] = 1;
-				} else {
-
+				}
+				else
+				{
 					if (((temp3 = 1)
 					     && playerAlive != 0
 					     && enemyShot[z].sx - PX > sAniXNeg && enemyShot[z].sx - PX < sAniX
@@ -2096,57 +2080,22 @@ draw_player_shot_loop_end:
 								}
 								break;
 						}
-					} else {
-						s = (Uint8 *)VGAScreen->pixels;
-						s += enemyShot[z].sy * VGAScreen->pitch + enemyShot[z].sx;
-
-						s_limit = (Uint8 *)VGAScreen->pixels;
-						s_limit += VGAScreen->h * VGAScreen->pitch;
-
+					}
+					else
+					{
 						if (enemyShot[z].animax != 0)
 						{
 							if (++enemyShot[z].animate >= enemyShot[z].animax)
-							{
 								enemyShot[z].animate = 0;
-							}
 						}
 
 						if (enemyShot[z].sgr >= 500)
-						{
-							p = shapesW2;
-							p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 500 - 1]);
-						} else {
-							p = shapesC1;
-							p += SDL_SwapLE16(((JE_word *)p)[enemyShot[z].sgr + enemyShot[z].animate - 1]);
-						}
-
-						while (*p != 0x0f)
-						{
-							s += *p & 0x0f;
-							i = (*p & 0xf0) >> 4;
-							if (i)
-							{
-								while (i--)
-								{
-									p++;
-									if (s >= s_limit)
-										goto enemy_shot_draw_overflow;
-									if ((void *)s >= VGAScreen->pixels)
-										*s = *p;
-									s++;
-								}
-							} else {
-								s -= 12;
-								s += VGAScreen->pitch;
-							}
-							p++;
-						}
+							blit_sprite2(VGAScreen, enemyShot[z].sx, enemyShot[z].sy, shapesW2, enemyShot[z].sgr + enemyShot[z].animate - 500);
+						else
+							blit_sprite2(VGAScreen, enemyShot[z].sx, enemyShot[z].sy, shapesC1, enemyShot[z].sgr + enemyShot[z].animate);
 					}
-
 				}
 
-enemy_shot_draw_overflow:
-				;
 			}
 		}
 	}
@@ -2229,74 +2178,26 @@ enemy_shot_draw_overflow:
 			{
 				explosions[j].sprite++;
 				explosions[j].y += explodeMove;
-			} else if (explosions[j].follow_player == true) {
+			}
+			else if (explosions[j].follow_player == true)
+			{
 				explosions[j].x += explosionFollowAmountX;
 				explosions[j].y += explosionFollowAmountY;
 			}
 			explosions[j].y += explosions[j].delta_y;
 			explosions[j].x += explosions[j].delta_x;
-
-			s = (Uint8 *)VGAScreen->pixels;
-			s += explosions[j].y * VGAScreen->pitch + explosions[j].x;
-
-			s_limit = (Uint8 *)VGAScreen->pixels;
-			s_limit += VGAScreen->h * VGAScreen->pitch;
-
-			if (s + VGAScreen->pitch * 14 > s_limit)
+			
+			if (explosions[j].y > 200 - 14)
 			{
 				explosions[j].ttl = 0;
-			} else {
-				p = shapes6;
-				p += SDL_SwapLE16(((JE_word *)p)[explosions[j].sprite]);
-
+			}
+			else
+			{
 				if (explosionTransparent)
-				{
-					while (*p != 0x0f)
-					{
-						s += *p & 0x0f;
-						i = (*p & 0xf0) >> 4;
-						if (i)
-						{
-							while (i--)
-							{
-								p++;
-								if (s >= s_limit)
-									goto explosion_draw_overflow;
-								if ((void *)s >= VGAScreen->pixels)
-									*s = (((*p & 0x0f) + (*s & 0x0f)) >> 1) | (*p & 0xf0);
-								s++;
-							}
-						} else {
-							s -= 12;
-							s += VGAScreen->pitch;
-						}
-						p++;
-					}
-				} else {
-					while (*p != 0x0f)
-					{
-						s += *p & 0x0f;
-						i = (*p & 0xf0) >> 4;
-						if (i)
-						{
-							while (i--)
-							{
-								p++;
-								if (s >= s_limit)
-									goto explosion_draw_overflow;
-								if ((void *)s >= VGAScreen->pixels)
-									*s = *p;
-								s++;
-							}
-						} else {
-							s -= 12;
-							s += VGAScreen->pitch;
-						}
-						p++;
-					}
-				}
-explosion_draw_overflow:
-
+					blit_sprite2_blend(VGAScreen, explosions[j].x, explosions[j].y, shapes6, explosions[j].sprite + 1);
+				else
+					blit_sprite2(VGAScreen, explosions[j].x, explosions[j].y, shapes6, explosions[j].sprite + 1);
+				
 				explosions[j].ttl--;
 			}
 		}
@@ -3080,7 +2981,7 @@ new_game:
 										}
 
 										if (SANextShip[superArcadeMode] < SA_NORTSHIPZ)
-											blit_sprite2x2(VGAScreen, 148, 70, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic, shapes9);
+											blit_sprite2x2(VGAScreen, 148, 70, shapes9, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic);
 										else if (SANextShip[superArcadeMode] == SA_NORTSHIPZ)
 											trentWin = true;
 
@@ -3861,7 +3762,7 @@ void JE_titleScreen( JE_boolean animate )
 							JE_dString(JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
 							tempW = ships[pItems[P_SHIP]].shipgraphic;
 							if (tempW != 1)
-								blit_sprite2x2(VGAScreen, 148, 70, tempW, shapes9);
+								blit_sprite2x2(VGAScreen, 148, 70, shapes9, tempW);
 
 							JE_showVGA();
 							fade_palette(colors, 50, 0, 255);
@@ -4155,22 +4056,22 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 			switch (a)
 			{
 				case 0:
-					enemy->shapeseg = eShapes1;
+					enemy->sprite2s = &eShapes1;
 					break;
 				case 1:
-					enemy->shapeseg = eShapes2;
+					enemy->sprite2s = &eShapes2;
 					break;
 				case 2:
-					enemy->shapeseg = eShapes3;
+					enemy->sprite2s = &eShapes3;
 					break;
 				case 3:
-					enemy->shapeseg = eShapes4;
+					enemy->sprite2s = &eShapes4;
 					break;
 				case 4:
-					enemy->shapeseg = eShapes5;
+					enemy->sprite2s = &eShapes5;
 					break;
 				case 5:
-					enemy->shapeseg = eShapes6;
+					enemy->sprite2s = &eShapes6;
 					break;
 			}
 		}
@@ -4589,11 +4490,12 @@ void JE_eventSystem( void )
 			{
 				if (eventRec[eventLoc-1].eventdat > 0)
 				{
-					JE_loadCompShapes(&eShapes1, &eShapes1Size, shapeFile[eventRec[eventLoc-1].eventdat -1]);      /* Enemy Bank 1 */
+					JE_loadCompShapes(&eShapes1, shapeFile[eventRec[eventLoc-1].eventdat -1]);      /* Enemy Bank 1 */
 					enemyShapeTables[1-1] = eventRec[eventLoc-1].eventdat;
-				} else if (eShapes1 != NULL) {
-					free(eShapes1);
-					eShapes1 = NULL;
+				}
+				else
+				{
+					free_sprite2s(&eShapes1);
 					enemyShapeTables[1-1] = 0;
 				}
 			}
@@ -4601,11 +4503,12 @@ void JE_eventSystem( void )
 			{
 				if (eventRec[eventLoc-1].eventdat2 > 0)
 				{
-					JE_loadCompShapes(&eShapes2, &eShapes2Size, shapeFile[eventRec[eventLoc-1].eventdat2-1]);      /* Enemy Bank 2 */
+					JE_loadCompShapes(&eShapes2, shapeFile[eventRec[eventLoc-1].eventdat2-1]);      /* Enemy Bank 2 */
 					enemyShapeTables[2-1] = eventRec[eventLoc-1].eventdat2;
-				} else if (eShapes2 != NULL) {
-					free(eShapes2);
-					eShapes2 = NULL;
+				}
+				else
+				{
+					free_sprite2s(&eShapes2);
 					enemyShapeTables[2-1] = 0;
 				}
 			}
@@ -4613,11 +4516,12 @@ void JE_eventSystem( void )
 			{
 				if (eventRec[eventLoc-1].eventdat3 > 0)
 				{
-					JE_loadCompShapes(&eShapes3, &eShapes3Size, shapeFile[eventRec[eventLoc-1].eventdat3-1]);      /* Enemy Bank 3 */
+					JE_loadCompShapes(&eShapes3, shapeFile[eventRec[eventLoc-1].eventdat3-1]);      /* Enemy Bank 3 */
 					enemyShapeTables[3-1] = eventRec[eventLoc-1].eventdat3;
-				} else if (eShapes3 != NULL) {
-					free(eShapes3);
-					eShapes3 = NULL;
+				}
+				else
+				{
+					free_sprite2s(&eShapes3);
 					enemyShapeTables[3-1] = 0;
 				}
 			}
@@ -4625,12 +4529,13 @@ void JE_eventSystem( void )
 			{
 				if (eventRec[eventLoc-1].eventdat4 > 0)
 				{
-					JE_loadCompShapes(&eShapes4, &eShapes4Size, shapeFile[eventRec[eventLoc-1].eventdat4-1]);      /* Enemy Bank 4 */
+					JE_loadCompShapes(&eShapes4, shapeFile[eventRec[eventLoc-1].eventdat4-1]);      /* Enemy Bank 4 */
 					enemyShapeTables[4-1] = eventRec[eventLoc-1].eventdat4;
 					enemyShapeTables[5-1] = 21;
-				} else if (eShapes4 != NULL) {
-					free(eShapes4);
-					eShapes4 = NULL;
+				}
+				else
+				{
+					free_sprite2s(&eShapes4);
 					enemyShapeTables[4-1] = 0;
 				}
 			}

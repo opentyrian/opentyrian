@@ -25,27 +25,8 @@
 
 Sprite_array sprite_table[SPRITE_TABLES_MAX];
 
-JE_byte *eShapes1 = NULL,
-        *eShapes2 = NULL,
-        *eShapes3 = NULL,
-        *eShapes4 = NULL,
-        *eShapes5 = NULL,
-        *eShapes6 = NULL;
-JE_byte *shapesC1 = NULL,
-        *shapes6  = NULL,
-        *shapes9  = NULL,
-        *shapesW2 = NULL;
-
-JE_word eShapes1Size,
-        eShapes2Size,
-        eShapes3Size,
-        eShapes4Size,
-        eShapes5Size,
-        eShapes6Size,
-        shapesC1Size,
-        shapes6Size,
-        shapes9Size,
-        shapesW2Size;
+Sprite2_array eShapes1, eShapes2, eShapes3, eShapes4, eShapes5, eShapes6;
+Sprite2_array shapesC1, shapes6, shapes9, shapesW2;
 
 void load_sprites_file( unsigned int table, const char *filename )
 {
@@ -482,44 +463,43 @@ void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, u
 }
 
 
-void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
+void JE_loadCompShapes( Sprite2_array *sprite2s, JE_char s )
 {
-	char buffer[11];
-	sprintf(buffer, "newsh%c.shp", tolower(s));
-
-	if (*shapes != NULL)
-	{
-		free(*shapes);
-	}
-
+	char buffer[20];
+	snprintf(buffer, sizeof(buffer), "newsh%c.shp", tolower(s));
+	
 	FILE *f = dir_fopen_die(data_dir(), buffer, "rb");
-
-	fseek(f, 0, SEEK_END);
-	*shapeSize = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
-	*shapes = malloc(*shapeSize);
-
-	efread(*shapes, sizeof(JE_byte), *shapeSize, f);
-
+	
+	sprite2s->size = ftell_eof(f);
+	
+	JE_loadCompShapesB(sprite2s, f);
+	
 	fclose(f);
 }
 
-void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
+void JE_loadCompShapesB( Sprite2_array *sprite2s, FILE *f )
 {
-	*shapes = malloc(shapeSize);
-	efread(*shapes, sizeof(JE_byte), shapeSize, f);
+	free_sprite2s(sprite2s);
+	
+	sprite2s->data = malloc(sizeof(Uint8) * sprite2s->size);
+	efread(sprite2s->data, sizeof(Uint8), sprite2s->size, f);
+}
+
+void free_sprite2s( Sprite2_array *sprite2s )
+{
+	free(sprite2s->data);
+	sprite2s->data = NULL;
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
 	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	Uint8 *data = shapes + SDL_SwapLE16(((Uint16 *)shapes)[index - 1]);
+	Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{
@@ -548,14 +528,14 @@ void blit_sprite2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
 	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	Uint8 *data = shapes + SDL_SwapLE16(((Uint16 *)shapes)[index - 1]);
+	Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{
@@ -584,14 +564,14 @@ void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, unsigned int index
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2_darken( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
 	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	Uint8 *data = shapes + SDL_SwapLE16(((Uint16 *)shapes)[index - 1]);
+	Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{
@@ -620,30 +600,30 @@ void blit_sprite2_darken( SDL_Surface *surface, int x, int y, unsigned int index
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2x2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
-	blit_sprite2(surface, x,      y,      index,      shapes);
-	blit_sprite2(surface, x + 12, y,      index + 1,  shapes);
-	blit_sprite2(surface, x,      y + 14, index + 19, shapes);
-	blit_sprite2(surface, x + 12, y + 14, index + 20, shapes);
+	blit_sprite2(surface, x,      y,      sprite2s, index);
+	blit_sprite2(surface, x + 12, y,      sprite2s, index + 1);
+	blit_sprite2(surface, x,      y + 14, sprite2s, index + 19);
+	blit_sprite2(surface, x + 12, y + 14, sprite2s, index + 20);
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2x2_blend( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2x2_blend( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
-	blit_sprite2_blend(surface, x,      y,      index,      shapes);
-	blit_sprite2_blend(surface, x + 12, y,      index + 1,  shapes);
-	blit_sprite2_blend(surface, x,      y + 14, index + 19, shapes);
-	blit_sprite2_blend(surface, x + 12, y + 14, index + 20, shapes);
+	blit_sprite2_blend(surface, x,      y,      sprite2s, index);
+	blit_sprite2_blend(surface, x + 12, y,      sprite2s, index + 1);
+	blit_sprite2_blend(surface, x,      y + 14, sprite2s, index + 19);
+	blit_sprite2_blend(surface, x + 12, y + 14, sprite2s, index + 20);
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
+void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
-	blit_sprite2_darken(surface, x,      y,      index,      shapes);
-	blit_sprite2_darken(surface, x + 12, y,      index + 1,  shapes);
-	blit_sprite2_darken(surface, x,      y + 14, index + 19, shapes);
-	blit_sprite2_darken(surface, x + 12, y + 14, index + 20, shapes);
+	blit_sprite2_darken(surface, x,      y,      sprite2s, index);
+	blit_sprite2_darken(surface, x + 12, y,      sprite2s, index + 1);
+	blit_sprite2_darken(surface, x,      y + 14, sprite2s, index + 19);
+	blit_sprite2_darken(surface, x + 12, y + 14, sprite2s, index + 20);
 }
 
 
@@ -675,28 +655,28 @@ void JE_loadMainShapeTables( const char *shpfile )
 	}
 	
 	// player shot sprites
-	shapesC1Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapesC1, f, shapesC1Size);
+	shapesC1.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&shapesC1, f);
 	i++;
 	
 	// player ship sprites
-	shapes9Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapes9 , f, shapes9Size);
+	shapes9.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&shapes9 , f);
 	i++;
 	
 	// power-up sprites
-	eShapes6Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&eShapes6, f, eShapes6Size);
+	eShapes6.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&eShapes6, f);
 	i++;
 	
 	// coins, datacubes, etc sprites
-	eShapes5Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&eShapes5, f, eShapes5Size);
+	eShapes5.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&eShapes5, f);
 	i++;
 	
 	// more player shot sprites
-	shapesW2Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
+	shapesW2.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&shapesW2, f);
 	
 	fclose(f);
 }
@@ -706,20 +686,11 @@ void free_main_shape_tables( void )
 	for (int i = 0; i < COUNTOF(sprite_table); ++i)
 		free_sprites(i);
 	
-	free(shapesC1);
-	shapesC1 = NULL;
-	
-	free(shapes9);
-	shapes9 = NULL;
-	
-	free(eShapes6);
-	eShapes6 = NULL;
-	
-	free(eShapes5);
-	eShapes5 = NULL;
-	
-	free(shapesW2);
-	shapesW2 = NULL;
+	free_sprite2s(&shapesC1);
+	free_sprite2s(&shapes9);
+	free_sprite2s(&eShapes6);
+	free_sprite2s(&eShapes5);
+	free_sprite2s(&shapesW2);
 }
 
 // kate: tab-width 4; vim: set noet:

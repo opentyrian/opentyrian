@@ -594,11 +594,11 @@ void JE_loadScreen( void )
 
 		if (screen == 2)
 		{
-			blit_sprite2x2(VGAScreen, 90, 180, 279, shapes6);
+			blit_sprite2x2(VGAScreen, 90, 180, shapes6, 279);
 		}
 		if (screen == 1)
 		{
-			blit_sprite2x2(VGAScreen, 220, 180, 281, shapes6);
+			blit_sprite2x2(VGAScreen, 220, 180, shapes6, 281);
 		}
 
 		helpBoxColor = 15;
@@ -925,12 +925,12 @@ void JE_highScoreScreen( void )
 
 			if (x > 1)
 			{
-				blit_sprite2x2(VGAScreen,  90, 180, 279, shapes6);
+				blit_sprite2x2(VGAScreen,  90, 180, shapes6, 279);
 			}
 
 			if ( ( (x < 2) && episodeAvail[2-1] ) || ( (x < 3) && episodeAvail[3-1] ) )
 			{
-				blit_sprite2x2(VGAScreen,  220, 180, 281, shapes6);
+				blit_sprite2x2(VGAScreen,  220, 180, shapes6, 281);
 			}
 
 			helpBoxColor = 15;
@@ -2068,7 +2068,7 @@ void JE_playCredits( void )
 			tempW += 2;
 		if (shipxc > 20)
 			tempW += 2;
-		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (x % 200), tempW, shapes9);
+		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (x % 200), shapes9, tempW);
 		
 		for (newpos = curpos - 9; newpos <= curpos; newpos++)
 		{
@@ -2481,7 +2481,7 @@ void JE_inGameDisplays( void )
 	/*Special Weapon?*/
 	if (pItems[P_SPECIAL] > 0)
 	{
-		blit_sprite2x2(VGAScreen, 25, 1, special[pItems[P_SPECIAL]].itemgraphic, eShapes6);
+		blit_sprite2x2(VGAScreen, 25, 1, eShapes6, special[pItems[P_SPECIAL]].itemgraphic);
 	}
 
 	/*Lives Left*/
@@ -2495,14 +2495,14 @@ void JE_inGameDisplays( void )
 			
 			if (portPower[temp] > 5)
 			{
-				blit_sprite2(VGAScreen, tempW, temp5, 285, shapes9);
+				blit_sprite2(VGAScreen, tempW, temp5, shapes9, 285);
 				tempW = (temp == 0) ? 45 : 250;
 				sprintf(tempstr, "%d", portPower[temp] - 1);
 				JE_textShade(tempW, temp5 + 3, tempstr, 15, 1, FULL_SHADE);
 			} else if (portPower[temp] > 1) {
 				for (temp2 = 1; temp2 < portPower[temp]; temp2++)
 				{
-					blit_sprite2(VGAScreen, tempW, temp5, 285, shapes9);
+					blit_sprite2(VGAScreen, tempW, temp5, shapes9, 285);
 					tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
 				}
 			}
@@ -2529,7 +2529,7 @@ void JE_inGameDisplays( void )
 			
 			for (temp2 = 0; temp2 < superBomb[temp]; temp2++)
 			{
-				blit_sprite2(VGAScreen, tempW, 160, 304, shapes9);
+				blit_sprite2(VGAScreen, tempW, 160, shapes9, 304);
 				tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
 			}
 		}
@@ -2905,7 +2905,7 @@ void JE_pauseGame( void )
 void JE_playerMovement( JE_byte inputDevice,
                         JE_byte playerNum_,
                         JE_word shipGr_,
-                        JE_byte *shapes9ptr_,
+                        Sprite2_array *shapes9ptr_,
                         JE_integer *armorLevel_, JE_integer *baseArmor_,
                         JE_shortint *shield_, JE_shortint *shieldMax_,
                         JE_word *playerInvulnerable_,
@@ -3410,17 +3410,17 @@ redo:
 					{
 						if (shipGr_ == 0)
 						{
-							blit_sprite2x2(VGAScreen, *PX_ - 17, tempW2 - 7, 13, shapes9ptr_);
-							blit_sprite2x2(VGAScreen, *PX_ + 7 , tempW2 - 7, 51, shapes9ptr_);
+							blit_sprite2x2(VGAScreen, *PX_ - 17, tempW2 - 7, *shapes9ptr_, 13);
+							blit_sprite2x2(VGAScreen, *PX_ + 7 , tempW2 - 7, *shapes9ptr_, 51);
 						}
 						else if (shipGr_ == 1)
 						{
-							blit_sprite2x2(VGAScreen, *PX_ - 17, tempW2 - 7, 220, shapes9ptr_);
-							blit_sprite2x2(VGAScreen, *PX_ + 7 , tempW2 - 7, 222, shapes9ptr_);
+							blit_sprite2x2(VGAScreen, *PX_ - 17, tempW2 - 7, *shapes9ptr_, 220);
+							blit_sprite2x2(VGAScreen, *PX_ + 7 , tempW2 - 7, *shapes9ptr_, 222);
 						}
 						else
 						{
-							blit_sprite2x2(VGAScreen, *PX_ - 5, tempW2 - 7, shipGr_, shapes9ptr_);
+							blit_sprite2x2(VGAScreen, *PX_ - 5, tempW2 - 7, *shapes9ptr_, shipGr_);
 						}
 					}
 				}
@@ -3616,12 +3616,12 @@ redo:
 			{
 				if (background2)
 				{
-					blit_sprite2x2_darken(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
-					blit_sprite2x2_darken(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
+					blit_sprite2x2_darken(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI + 13);
+					blit_sprite2x2_darken(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI + 51);
 					if (superWild)
 					{
-						blit_sprite2x2_darken(VGAScreen, *PX_ - 16 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 13, shapes9ptr_);
-						blit_sprite2x2_darken(VGAScreen, *PX_ + 6 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI + 51, shapes9ptr_);
+						blit_sprite2x2_darken(VGAScreen, *PX_ - 16 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI + 13);
+						blit_sprite2x2_darken(VGAScreen, *PX_ + 6 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI + 51);
 					}
 				}
 			} else
@@ -3629,16 +3629,16 @@ redo:
 				{
 					if (background2)
 					{
-						blit_sprite2x2_darken(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 220, shapes9ptr_);
-						blit_sprite2x2_darken(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, 222, shapes9ptr_);
+						blit_sprite2x2_darken(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, 220);
+						blit_sprite2x2_darken(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, 222);
 					}
 				} else {
 					if (background2)
 					{
-						blit_sprite2x2_darken(VGAScreen, *PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
+						blit_sprite2x2_darken(VGAScreen, *PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI);
 						if (superWild)
 						{
-							blit_sprite2x2_darken(VGAScreen, *PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, tempI, shapes9ptr_);
+							blit_sprite2x2_darken(VGAScreen, *PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI);
 						}
 					}
 				}
@@ -3649,35 +3649,35 @@ redo:
 
 				if (shipGr_ == 0)
 				{
-					blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
-					blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, tempI + 51, shapes9ptr_);
+					blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, tempI + 13);
+					blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, *shapes9ptr_, tempI + 51);
 				} else
 					if (shipGr_ == 1)
 					{
-						blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
-						blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, 222, shapes9ptr_);
+						blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, 220);
+						blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, *shapes9ptr_, 222);
 					} else
-						blit_sprite2x2_blend(VGAScreen, *PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
+						blit_sprite2x2_blend(VGAScreen, *PX_ - 5, *PY_ - 7, *shapes9ptr_, tempI);
 
 			} else {
 				if (shipGr_ == 0)
 				{
-					blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, tempI + 13, shapes9ptr_);
-					blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, tempI + 51, shapes9ptr_);
+					blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, tempI + 13);
+					blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, *shapes9ptr_, tempI + 51);
 				} else
 					if (shipGr_ == 1)
 					{
-						blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, 220, shapes9ptr_);
-						blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, 222, shapes9ptr_);
+						blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, 220);
+						blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, *shapes9ptr_, 222);
 						switch (tempI)
 						{
 							case 5:
-								blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, 40, shapes9ptr_);
+								blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, *shapes9ptr_, 40);
 								tempW = *PX_ - 7;
 								tempI2 = -2;
 								break;
 							case 3:
-								blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, 39, shapes9ptr_);
+								blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, *shapes9ptr_, 39);
 								tempW = *PX_ - 7;
 								tempI2 = -1;
 								break;
@@ -3685,12 +3685,12 @@ redo:
 								tempI2 = 0;
 								break;
 							case -1:
-								blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, 58, shapes9ptr_);
+								blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, *shapes9ptr_, 58);
 								tempW = *PX_ + 9;
 								tempI2 = 1;
 								break;
 							case -3:
-								blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, 59, shapes9ptr_);
+								blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, *shapes9ptr_, 59);
 								tempW = *PX_ + 9;
 								tempI2 = 2;
 								break;
@@ -3705,7 +3705,7 @@ redo:
 							}
 						}
 					} else
-						blit_sprite2x2(VGAScreen, *PX_ - 5, *PY_ - 7, tempI, shapes9ptr_);
+						blit_sprite2x2(VGAScreen, *PX_ - 5, *PY_ - 7, *shapes9ptr_, tempI);
 			}
 		}  /*endLevel*/
 
@@ -3813,7 +3813,7 @@ redo:
 					{
 
 						if (!twoPlayerLinked)
-							blit_sprite2(VGAScreen, *PX_ + (shipGr_ == 0) + 1, *PY_ - 13, 77 + chargeLevel + chargeGr * 19, eShapes6);
+							blit_sprite2(VGAScreen, *PX_ + (shipGr_ == 0) + 1, *PY_ - 13, eShapes6, 77 + chargeLevel + chargeGr * 19);
 
 						if (chargeGrWait > 0)
 						{
@@ -4151,11 +4151,9 @@ redo:
 				}
 
 				if (leftOptionIsSpecial == 1 || leftOptionIsSpecial == 2)
-					blit_sprite2x2(VGAScreen, option1X - 6, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
-					                eShapes6);
+					blit_sprite2x2(VGAScreen, option1X - 6, option1Y, eShapes6, options[option1Item].gr[optionAni1-1] + optionCharge1);
 				else
-					blit_sprite2(VGAScreen, option1X, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
-					              shapes9);
+					blit_sprite2(VGAScreen, option1X, option1Y, shapes9, options[option1Item].gr[optionAni1-1] + optionCharge1);
 			}
 
 			if (options[option2Item].option > 0)
@@ -4172,11 +4170,9 @@ redo:
 				}
 
 				if (rightOptionIsSpecial == 1 || rightOptionIsSpecial == 2)
-					blit_sprite2x2(VGAScreen, option2X - 6, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
-					                eShapes6);
+					blit_sprite2x2(VGAScreen, option2X - 6, option2Y, eShapes6, options[option2Item].gr[optionAni2-1] + optionCharge2);
 				else
-					blit_sprite2(VGAScreen, option2X, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
-					              shapes9);
+					blit_sprite2(VGAScreen, option2X, option2Y, shapes9, options[option2Item].gr[optionAni2-1] + optionCharge2);
 			}
 
 			optionCharge1Wait--;

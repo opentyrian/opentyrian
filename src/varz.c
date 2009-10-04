@@ -402,14 +402,14 @@ JE_boolean  linkToPlayer;
 
 JE_integer baseArmor, baseArmor2;
 JE_word shipGr, shipGr2;
-JE_byte *shipGrPtr, *shipGr2ptr;
+Sprite2_array *shipGrPtr, *shipGr2ptr;
 
 void JE_getShipInfo( void )
 {
 	JE_boolean extraShip, extraShip2;
 
-	shipGrPtr = shapes9;
-	shipGr2ptr = shapes9;
+	shipGrPtr = &shapes9;
+	shipGr2ptr = &shapes9;
 
 	powerAdd  = powerSys[pItems[P_GENERATOR]].power;
 
@@ -458,7 +458,7 @@ void JE_getShipInfo( void )
 	}
 }
 
-JE_word JE_SGr( JE_word ship, JE_byte **ptr )
+JE_word JE_SGr( JE_word ship, Sprite2_array **ptr )
 {
 	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
 
@@ -610,11 +610,10 @@ void JE_tyrianHalt( JE_byte code )
 	megaData2 = NULL;
 	free(megaData3);
 	megaData3 = NULL;
-
+	
 	free_main_shape_tables();
-
-	free(shapes6);
-	shapes6 = NULL;
+	
+	free_sprite2s(&shapes6);
 
 	for (int i = 0; i < SAMPLE_COUNT; i++)
 	{
@@ -1069,9 +1068,9 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 	if (pItems[P_SPECIAL] > 0)
 	{
 		if (shotRepeat[9-1] == 0 && specialWait == 0 && flareDuration < 2 && zinglonDuration < 2)
-			blit_sprite2(VGAScreen, 47, 4, 94, shapes9);
+			blit_sprite2(VGAScreen, 47, 4, shapes9, 94);
 		else
-			blit_sprite2(VGAScreen, 47, 4, 93, shapes9);
+			blit_sprite2(VGAScreen, 47, 4, shapes9, 93);
 	}
 
 	if (shotRepeat[9-1] > 0)
