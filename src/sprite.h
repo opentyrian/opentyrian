@@ -24,10 +24,6 @@
 #include "SDL.h"
 #include <assert.h>
 
-#define OLD_BLACK         0
-#define NEW_BLACK         253
-
-/* Font faces */
 #define FONT_SHAPES       0
 #define SMALL_FONT_SHAPES 1
 #define TINY_FONT         2
