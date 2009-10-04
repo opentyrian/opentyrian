@@ -112,16 +112,18 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 	
 	const Sprite * const cur_sprite = sprite(table, index);
 	
-	Uint8 *data = cur_sprite->data;
-	const unsigned int width = cur_sprite->width,
-	                   height = cur_sprite->height;
+	const Uint8 *data = cur_sprite->data;
+	const Uint8 * const data_ul = data + cur_sprite->size;
+	
+	const unsigned int width = cur_sprite->width;
+	unsigned int x_offset = 0;
 	
 	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (; data < data_ul; ++data)
 	{
 		switch (*data)
 		{
@@ -132,6 +134,8 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 			break;
 			
 		case 254:  // next pixel row
+			pixels += width - x_offset;
+			x_offset = width;
 			break;
 			
 		case 253:  // 1 transparent pixel
@@ -149,11 +153,10 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 			x_offset++;
 			break;
 		}
-		if (*data == 254 || x_offset >= width)
+		if (x_offset >= width)
 		{
 			pixels += surface->pitch - x_offset;
 			x_offset = 0;
-			y_offset++;
 		}
 	}
 }
@@ -169,16 +172,18 @@ void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, u
 	
 	const Sprite * const cur_sprite = sprite(table, index);
 	
-	Uint8 *data = cur_sprite->data;
-	const unsigned int width = cur_sprite->width,
-	                   height = cur_sprite->height;
+	const Uint8 *data = cur_sprite->data;
+	const Uint8 * const data_ul = data + cur_sprite->size;
+	
+	const unsigned int width = cur_sprite->width;
+	unsigned int x_offset = 0;
 	
 	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (; data < data_ul; ++data)
 	{
 		switch (*data)
 		{
@@ -189,6 +194,8 @@ void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, u
 			break;
 			
 		case 254:  // next pixel row
+			pixels += width - x_offset;
+			x_offset = width;
 			break;
 			
 		case 253:  // 1 transparent pixel
@@ -206,11 +213,10 @@ void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, u
 			x_offset++;
 			break;
 		}
-		if (*data == 254 || x_offset >= width)
+		if (x_offset >= width)
 		{
 			pixels += surface->pitch - x_offset;
 			x_offset = 0;
-			y_offset++;
 		}
 	}
 }
@@ -226,20 +232,22 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 		return;
 	}
 	
-	const Sprite * const cur_sprite = sprite(table, index);
-	
-	Uint8 *data = cur_sprite->data;
-	const unsigned int width = cur_sprite->width,
-	                   height = cur_sprite->height;
-	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
-	
 	hue <<= 4;
 	
-	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	const Uint8 *data = cur_sprite->data;
+	const Uint8 * const data_ul = data + cur_sprite->size;
+	
+	const unsigned int width = cur_sprite->width;
+	unsigned int x_offset = 0;
+	
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	for (; data < data_ul; ++data)
 	{
 		switch (*data)
 		{
@@ -250,6 +258,8 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 			break;
 			
 		case 254:  // next pixel row
+			pixels += width - x_offset;
+			x_offset = width;
 			break;
 			
 		case 253:  // 1 transparent pixel
@@ -267,11 +277,10 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 			x_offset++;
 			break;
 		}
-		if (*data == 254 || x_offset >= width)
+		if (x_offset >= width)
 		{
 			pixels += surface->pitch - x_offset;
 			x_offset = 0;
-			y_offset++;
 		}
 	}
 }
@@ -285,20 +294,22 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 		return;
 	}
 	
-	const Sprite * const cur_sprite = sprite(table, index);
-	
-	Uint8 *data = cur_sprite->data;
-	const unsigned int width = cur_sprite->width,
-	                   height = cur_sprite->height;
-	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
-	
 	hue <<= 4;
 	
-	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	const Uint8 *data = cur_sprite->data;
+	const Uint8 * const data_ul = data + cur_sprite->size;
+	
+	const unsigned int width = cur_sprite->width;
+	unsigned int x_offset = 0;
+	
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	for (; data < data_ul; ++data)
 	{
 		switch (*data)
 		{
@@ -309,6 +320,8 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 			break;
 			
 		case 254:  // next pixel row
+			pixels += width - x_offset;
+			x_offset = width;
 			break;
 			
 		case 253:  // 1 transparent pixel
@@ -332,11 +345,10 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 			x_offset++;
 			break;
 		}
-		if (*data == 254 || x_offset >= width)
+		if (x_offset >= width)
 		{
 			pixels += surface->pitch - x_offset;
 			x_offset = 0;
-			y_offset++;
 		}
 	}
 }
@@ -350,20 +362,22 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 		return;
 	}
 	
-	const Sprite * const cur_sprite = sprite(table, index);
-	
-	Uint8 *data = cur_sprite->data;
-	const unsigned int width = cur_sprite->width,
-	                   height = cur_sprite->height;
-	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
-	
 	hue <<= 4;
 	
-	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	const Sprite * const cur_sprite = sprite(table, index);
+	
+	const Uint8 *data = cur_sprite->data;
+	const Uint8 * const data_ul = data + cur_sprite->size;
+	
+	const unsigned int width = cur_sprite->width;
+	unsigned int x_offset = 0;
+	
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	for (; data < data_ul; ++data)
 	{
 		switch (*data)
 		{
@@ -374,6 +388,8 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 			break;
 			
 		case 254:  // next pixel row
+			pixels += width - x_offset;
+			x_offset = width;
 			break;
 			
 		case 253:  // 1 transparent pixel
@@ -397,11 +413,10 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 			x_offset++;
 			break;
 		}
-		if (*data == 254 || x_offset >= width)
+		if (x_offset >= width)
 		{
 			pixels += surface->pitch - x_offset;
 			x_offset = 0;
-			y_offset++;
 		}
 	}
 }
@@ -417,16 +432,18 @@ void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, un
 	
 	const Sprite * const cur_sprite = sprite(table, index);
 	
-	Uint8 *data = cur_sprite->data;
-	const unsigned int width = cur_sprite->width,
-	                   height = cur_sprite->height;
+	const Uint8 *data = cur_sprite->data;
+	const Uint8 * const data_ul = data + cur_sprite->size;
+	
+	const unsigned int width = cur_sprite->width;
+	unsigned int x_offset = 0;
 	
 	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
 	
-	for (unsigned int x_offset = 0, y_offset = 0; y_offset < height; data++)
+	for (; data < data_ul; ++data)
 	{
 		switch (*data)
 		{
@@ -437,6 +454,8 @@ void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, un
 			break;
 			
 		case 254:  // next pixel row
+			pixels += width - x_offset;
+			x_offset = width;
 			break;
 			
 		case 253:  // 1 transparent pixel
@@ -454,11 +473,10 @@ void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, un
 			x_offset++;
 			break;
 		}
-		if (*data == 254 || x_offset >= width)
+		if (x_offset >= width)
 		{
 			pixels += surface->pitch - x_offset;
 			x_offset = 0;
-			y_offset++;
 		}
 	}
 }
