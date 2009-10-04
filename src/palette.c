@@ -72,7 +72,7 @@ void JE_updateColorsFast( palette_t colorBuffer )
 }
 
 
-void set_palette( SDL_Color color, unsigned int first_color, unsigned int last_color )
+void set_colors( SDL_Color color, unsigned int first_color, unsigned int last_color )
 {
 	for (int i = first_color; i <= last_color; ++i )
 	{
