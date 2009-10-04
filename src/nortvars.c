@@ -27,11 +27,6 @@
 #include <ctype.h>
 
 JE_boolean inputDetected;
-JE_word lastMouseX, lastMouseY;
-
-JE_byte mouseCursor;
-JE_boolean mouse_threeButton = true;
-JE_word mouseX, mouseY, mouseButton;
 
 JE_boolean JE_anyButton( void )
 {

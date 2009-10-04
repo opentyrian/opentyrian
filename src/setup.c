@@ -23,8 +23,8 @@
 #include "nortvars.h"
 #include "opentyr.h"
 #include "mainint.h"
+#include "mouse.h"
 #include "setup.h"
-#include "vga256d.h"
 #include "video.h"
 
 #include "SDL.h"

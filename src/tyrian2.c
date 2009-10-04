@@ -30,6 +30,7 @@
 #include "lvllib.h"
 #include "menus.h"
 #include "mainint.h"
+#include "mouse.h"
 #include "mtrand.h"
 #include "network.h"
 #include "nortsong.h"

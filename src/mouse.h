@@ -23,6 +23,14 @@
 
 #include "SDL.h"
 
+extern JE_boolean mouseInstalled;
+extern JE_boolean mouse_threeButton;
+
+extern JE_word lastMouseX, lastMouseY;
+extern JE_byte mouseCursor;
+extern JE_word mouseX, mouseY, mouseButton;
+extern JE_word mouseXB, mouseYB;
+
 extern JE_byte mouseGrabShape[24 * 28];
 
 void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );

@@ -21,8 +21,6 @@
 
 #include "opentyr.h"
 
-extern JE_boolean mouseInstalled;
-
 void JE_pix( JE_word x, JE_word y, JE_byte c );
 void JE_pix3( JE_word x, JE_word y, JE_byte c );
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e );

@@ -22,7 +22,13 @@
 #include "video.h"
 #include "vga256d.h"
 
-// TODO: move mouse-related code here
+JE_boolean mouseInstalled = true;
+JE_boolean mouse_threeButton = true;
+
+JE_word lastMouseX, lastMouseY;
+JE_byte mouseCursor;
+JE_word mouseX, mouseY, mouseButton;
+JE_word mouseXB, mouseYB;
 
 JE_byte mouseGrabShape[24 * 28];                 /* [1..24*28] */
 

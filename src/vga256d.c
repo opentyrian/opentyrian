@@ -30,8 +30,6 @@
 #include <stdio.h>
 #include <string.h>
 
-JE_boolean mouseInstalled = true;
-
 void JE_pix( JE_word x, JE_word y, JE_byte c )
 {
 	/* Bad things happen if we don't clip */

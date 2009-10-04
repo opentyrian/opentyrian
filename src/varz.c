@@ -324,7 +324,6 @@ JE_integer lastPXShotMove, lastPYShotMove;
 JE_integer PXB, PYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
            lastTurnB, lastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
-JE_word mouseXB, mouseYB;
 
 JE_integer PX, PY, lastPX2, lastPY2, PXChange, PYChange,
            lastTurn, lastTurn2;

@@ -337,7 +337,6 @@ extern JE_word playerInvulnerable1, playerInvulnerable2;
 extern JE_integer lastPXShotMove, lastPYShotMove;
 extern JE_integer PXB, PYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB, lastTurnB, lastTurn2B;
 extern JE_byte stopWaitXB, stopWaitYB;
-extern JE_word mouseXB, mouseYB;
 extern JE_integer PX, PY, lastPX2, lastPY2, PXChange, PYChange, lastTurn, lastTurn2;
 extern JE_byte stopWaitX, stopWaitY;
 extern JE_integer PYHist[3], PYHistB[3];
