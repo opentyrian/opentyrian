@@ -16,18 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "network.h"
-
 #include "episodes.h"
 #include "fonthand.h"
 #include "helptext.h"
 #include "joystick.h"
 #include "keyboard.h"
 #include "mainint.h"
-#include "newshape.h"
+#include "network.h"
 #include "nortvars.h"
+#include "opentyr.h"
 #include "picload.h"
+#include "sprite.h"
 #include "varz.h"
 #include "video.h"
 

@@ -16,35 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef VIDEO_H
-#define VIDEO_H
+#ifndef NEWSHAPE_H
+#define NEWSHAPE_H
 
 #include "opentyr.h"
 
 #include "SDL.h"
 
-#define vga_width 320
-#ifdef TARGET_GP2X
-#	define vga_height 240
-#else
-#	define vga_height 200
-#endif // TARGET_GP2X
+extern JE_byte mouseGrabShape[24 * 28];
 
-extern bool fullscreen_enabled;
+void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
+void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 
-extern SDL_Surface *display_surface;
-extern SDL_Surface *VGAScreen, *VGAScreenSeg;
-extern SDL_Surface *game_screen;
-extern SDL_Surface *VGAScreen2;
+void JE_mouseStart( void );
+void JE_mouseReplace( void );
 
-extern SDL_Surface *tempScreenSeg; // TODO: get rid of it!
-
-void init_video( void );
-void reinit_video( void );
-void deinit_video( void );
-void JE_clr256( void );
-void JE_showVGA( void );
-
-#endif /* VIDEO_H */
+#endif /* NEWSHAPE_H */
 
 // kate: tab-width 4; vim: set noet:

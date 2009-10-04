@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef NEWSHAPE_H
-#define NEWSHAPE_H
+#ifndef SPRITE_H
+#define SPRITE_H
 
 #include "opentyr.h"
 
@@ -69,10 +69,6 @@ static inline bool sprite_exists( unsigned int table, unsigned int index )
 	return (sprite(table, index)->data != NULL);
 }
 
-extern SDL_Surface *tempScreenSeg;
-
-extern JE_byte mouseGrabShape[24 * 28];
-
 void JE_newLoadShapes( unsigned table, const char *shapefile );
 void JE_newLoadShapesB( unsigned int table, FILE *f );
 void free_sprites( unsigned int table );
@@ -84,12 +80,6 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeModify
 void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black ); // JE_newDrawCShapeDarken, JE_newDrawCShapeShadow
 
-void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
-void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
-
-void JE_mouseStart( void );
-void JE_mouseReplace( void );
-
-#endif /* NEWSHAPE_H */
+#endif // SPRITE_H
 
 // kate: tab-width 4; vim: set noet:

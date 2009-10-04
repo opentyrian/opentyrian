@@ -16,18 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "jukebox.h"
-
 #include "fonthand.h"
 #include "joystick.h"
+#include "jukebox.h"
 #include "keyboard.h"
 #include "lds_play.h"
 #include "loudness.h"
 #include "mtrand.h"
-#include "newshape.h"
 #include "nortsong.h"
+#include "opentyr.h"
 #include "palette.h"
+#include "sprite.h"
 #include "starlib.h"
 #include "vga_palette.h"
 #include "video.h"

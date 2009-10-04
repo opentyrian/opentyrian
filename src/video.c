@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
 #include "keyboard.h"
+#include "opentyr.h"
 #include "palette.h"
 #include "video.h"
 #include "video_scale.h"
@@ -32,6 +32,8 @@ SDL_Surface *display_surface;
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *game_screen;
 SDL_Surface *VGAScreen2;
+
+SDL_Surface *tempScreenSeg = NULL;
 
 void init_video( void )
 {

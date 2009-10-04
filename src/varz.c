@@ -16,9 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "varz.h"
-
 #include "config.h"
 #include "editship.h"
 #include "episodes.h"
@@ -26,13 +23,15 @@
 #include "lds_play.h"
 #include "loudness.h"
 #include "mainint.h"
+#include "mouse.h"
 #include "mtrand.h"
 #include "network.h"
-#include "newshape.h"
 #include "nortsong.h"
+#include "opentyr.h"
+#include "sprite.h"
+#include "varz.h"
 #include "vga256d.h"
 #include "video.h"
-
 
 JE_integer tempDat, tempDat2, tempDat3;
 JE_boolean tempb2;

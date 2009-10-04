@@ -24,19 +24,20 @@
 #include "keyboard.h"
 #include "loudness.h"
 #include "mainint.h"
+#include "mouse.h"
 #include "musmast.h"
 #include "network.h"
 #include "nortsong.h"
-#include "newshape.h"
 #include "params.h"
 #include "pcxmast.h"
 #include "picload.h"
+#include "sprite.h"
 #include "tyrian2.h"
 #include "varz.h"
 #include "vga256d.h"
 #include "video.h"
 
-#include "assert.h"
+#include <assert.h>
 
 int joystick_config = 0; // which joystick is being configured in menu
 

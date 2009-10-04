@@ -16,18 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "menus.h"
-
 #include "config.h"
 #include "episodes.h"
 #include "fonthand.h"
 #include "keyboard.h"
-#include "newshape.h"
+#include "menus.h"
 #include "nortsong.h"
+#include "opentyr.h"
 #include "palette.h"
 #include "picload.h"
 #include "setup.h"
+#include "sprite.h"
 #include "video.h"
 
 char episode_name[6][31], difficulty_name[7][21], gameplay_name[5][26];

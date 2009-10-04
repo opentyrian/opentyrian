@@ -17,26 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "file.h"
-#include "joystick.h"
-#include "keyboard.h"
-#include "network.h"
-#include "newshape.h"
-#include "nortsong.h"
-#include "nortvars.h"
 #include "opentyr.h"
-#include "params.h"
-#include "varz.h"
-#include "vga256d.h"
-#include "video.h"
+#include "sprite.h"
 
 #include <assert.h>
 
 Sprite_array sprite_table[MAX_TABLE];
-
-SDL_Surface *tempScreenSeg = NULL;
-
-JE_byte mouseGrabShape[24 * 28];                 /* [1..24*28] */
-
 
 void JE_newLoadShapes( unsigned int table, const char *shapefile )
 {
@@ -449,98 +435,6 @@ void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, un
 			x_offset = 0;
 			y_offset++;
 		}
-	}
-}
-
-
-void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
-{
-	JE_word xloop = 0, yloop = 0;
-	JE_byte *p = shape; /* shape pointer */
-	Uint8 *s;   /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
-
-	s_limit = (Uint8 *)tempScreenSeg->pixels;
-	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
-
-	for (yloop = 0; yloop < 28; yloop++)
-	{
-		for (xloop = 0; xloop < 24; xloop++)
-		{
-			if (s >= s_limit) return;
-			*s = *p;
-			s++; p++;
-		}
-		s -= 24;
-		s += VGAScreen->pitch;
-	}
-}
-
-void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
-{
-	JE_word xloop = 0, yloop = 0;
-	JE_byte *p = shape; /* shape pointer */
-	Uint8 *s;   /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
-
-	s_limit = (Uint8 *)tempScreenSeg->pixels;
-	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
-
-	for (yloop = 0; yloop < 28; yloop++)
-	{
-		for (xloop = 0; xloop < 24; xloop++)
-		{
-			if (s >= s_limit) return;
-			*p = *s;
-			s++; p++;
-		}
-		s -= 24;
-		s += VGAScreen->pitch;
-	}
-}
-
-void JE_mouseStart( void )
-{
-	const JE_word mouseCursorGr[3] /* [1..3] */ = {273, 275, 277};
-
-	JE_word tempW;
-
-	if (mouseInstalled)
-	{
-		tempW = mouseCursorGr[mouseCursor];
-
-		service_SDL_events(false);
-		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
-		lastMouseX = mouse_x;
-		lastMouseY = mouse_y;
-
-		if (lastMouseX > 320 - 13)
-		{
-			lastMouseX = 320 - 13;
-		}
-		if (lastMouseY > 200 - 16)
-		{
-			lastMouseY = 200 - 16;
-		}
-
-		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
-
-		/*JE_drawShape2x2shadow(lastmousex+2,lastmousey+2,tempW,shapes6);*/
-		JE_drawShape2x2(lastMouseX, lastMouseY, tempW, shapes6);
-	 }
-}
-
-void JE_mouseReplace( void )
-{
-	if (mouseInstalled)
-	{
-		JE_drawShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 	}
 }
 

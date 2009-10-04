@@ -16,22 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "opentyr.h"
-#include "scroller.h"
-
 #include "fonthand.h"
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
 #include "loudness.h"
 #include "mtrand.h"
-#include "newshape.h"
 #include "nortsong.h"
+#include "opentyr.h"
 #include "palette.h"
+#include "scroller.h"
+#include "sprite.h"
 #include "varz.h"
 #include "vga256d.h"
 #include "video.h"
-
 
 const struct about_text_type about_text[] =
 {

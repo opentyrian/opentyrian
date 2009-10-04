@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "fonthand.h"
-#include "newshape.h"
 #include "network.h"
 #include "nortsong.h"
 #include "opentyr.h"
 #include "params.h"
+#include "sprite.h"
 #include "vga256d.h"
 #include "video.h"
 

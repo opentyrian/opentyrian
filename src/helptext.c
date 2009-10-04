@@ -22,7 +22,6 @@
 #include "fonthand.h"
 #include "helptext.h"
 #include "menus.h"
-#include "newshape.h"
 #include "opentyr.h"
 
 #include <string.h>
