@@ -600,6 +600,42 @@ void blit_sprite2_darken( SDL_Surface *surface, int x, int y, Sprite2_array spri
 }
 
 // does not clip on left or right edges of surface
+void blit_sprite2_filter( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index, Uint8 filter )
+{
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+	
+	for (; *data != 0x0f; ++data)
+	{
+		pixels += *data & 0x0f;                   // second nibble: transparent pixel count
+		unsigned int count = (*data & 0xf0) >> 4; // first nibble: opaque pixel count
+		
+		if (count == 0) // move to next pixel row
+		{
+			pixels += VGAScreen->pitch - 12;
+		}
+		else
+		{
+			while (count--)
+			{
+				++data;
+				
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll)
+					*pixels = filter | (*data & 0x0f);
+				
+				++pixels;
+			}
+		}
+	}
+}
+
+// does not clip on left or right edges of surface
 void blit_sprite2x2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	blit_sprite2(surface, x,      y,      sprite2s, index);

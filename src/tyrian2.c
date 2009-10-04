@@ -53,7 +53,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
+inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
 
 void intro_logos( void );
 
@@ -159,45 +159,16 @@ void JE_starShowVGA( void )
 	skipStarShowVGA = false;
 }
 
-// TODO for Mindless: split this into separate blitting function
-void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
+inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
 {
-	Uint8 *p; /* shape pointer */
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	s = (Uint8 *)surface->pixels;
-	s += (enemy[i].ey + y_offset) * surface->pitch + (enemy[i].ex + x_offset) + tempMapXOfs;
-
-	s_limit = (Uint8 *)surface->pixels;
-	s_limit += surface->h * surface->pitch;
-
-	p = enemy[i].sprite2s->data;
-	p += SDL_SwapLE16(((Uint16 *)p)[enemy[i].egr[enemy[i].enemycycle - 1] + sprite_offset]);
-
-	while (*p != 0x0f)
-	{
-		s += *p & 0x0f;
-		int count = (*p & 0xf0) >> 4;
-		if (count)
-		{
-			while (count--)
-			{
-				p++;
-				if (s >= s_limit)
-					return;
-				if ((void *)s >= surface->pixels)
-					*s = (enemy[i].filter == 0) ? *p : (*p & 0x0f) | enemy[i].filter;
-				s++;
-			}
-		}
-		else
-		{
-			s -= 12;
-			s += surface->pitch;
-		}
-		p++;
-	}
+	const int x = enemy[i].ex + x_offset + tempMapXOfs,
+	          y = enemy[i].ey + y_offset;
+	const unsigned int index = enemy[i].egr[enemy[i].enemycycle - 1] + sprite_offset;
+	
+	if (enemy[i].filter != 0)
+		blit_sprite2_filter(surface, x, y, *enemy[i].sprite2s, index, enemy[i].filter);
+	else
+		blit_sprite2(surface, x, y, *enemy[i].sprite2s, index);
 }
 
 void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just drawing
@@ -257,19 +228,19 @@ void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just
 				{
 					if (enemy[i].ey > -13)
 					{
-						blit_enemy(VGAScreen, i, -6, -7, -1);
-						blit_enemy(VGAScreen, i,  6, -7,  0);
+						blit_enemy(VGAScreen, i, -6, -7, 0);
+						blit_enemy(VGAScreen, i,  6, -7, 1);
 					}
 					if (enemy[i].ey > -26 && enemy[i].ey < 182)
 					{
-						blit_enemy(VGAScreen, i, -6,  7, 18);
-						blit_enemy(VGAScreen, i,  6,  7, 19);
+						blit_enemy(VGAScreen, i, -6,  7, 19);
+						blit_enemy(VGAScreen, i,  6,  7, 20);
 					}
 				}
 				else
 				{
 					if (enemy[i].ey > -13)
-						blit_enemy(VGAScreen, i, 0, 0, -1);
+						blit_enemy(VGAScreen, i, 0, 0, 0);
 				}
 
 				enemy[i].filter = 0;
@@ -380,7 +351,7 @@ enemy_still_exists:
 				enemy[i].iced--;
 				if (enemy[i].enemyground != 0)
 				{
-					enemy[i].filter = 9;
+					enemy[i].filter = 0x09;
 				}
 				goto draw_enemy_end;
 			}
@@ -449,7 +420,7 @@ enemy_still_exists:
 								{
 									if (j == 3)
 									{
-										enemy[i].filter = 112;
+										enemy[i].filter = 0x70;
 									}
 									else
 									{
