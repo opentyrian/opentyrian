@@ -559,9 +559,9 @@ void JE_drawOptions( void )
 		JE_c_bar(284, option2Draw, 284 + 28, option2Draw + 15, 0);
 
 	if (options[option1Item].icongr > 0)
-		blit_shape(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick
+		blit_sprite(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick
 	if (options[option2Item].icongr > 0)
-		blit_shape(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick
+		blit_sprite(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick
 
 	if (option1Draw > 0)
 		JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);

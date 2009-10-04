@@ -102,7 +102,7 @@ void free_sprites( unsigned int table )
 }
 
 // does not clip on left or right edges of surface
-void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
+void blit_sprite( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -162,7 +162,7 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 }
 
 // does not clip on left or right edges of surface
-void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
+void blit_sprite_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -224,7 +224,7 @@ void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, u
 // does not clip on left or right edges of surface
 // unsafe because it doesn't check that value won't overflow into hue
 // we can replace it when we know that we don't rely on that 'feature'
-void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
+void blit_sprite_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -286,7 +286,7 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 }
 
 // does not clip on left or right edges of surface
-void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
+void blit_sprite_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -354,7 +354,7 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 }
 
 // does not clip on left or right edges of surface
-void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
+void blit_sprite_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -422,7 +422,7 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 }
 
 // does not clip on left or right edges of surface
-void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black )
+void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{

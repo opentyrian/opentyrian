@@ -1221,7 +1221,7 @@ level_loop:
 
 		/*-----------------------Message Bar------------------------*/
 		if (textErase > 0 && --textErase == 0)
-			blit_shape(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game message area
+			blit_sprite(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game message area
 
 		/*------------------------Shield Gen-------------------------*/
 		if (galagaMode)
@@ -1671,7 +1671,7 @@ level_loop:
 
 				if (tempSpecial)
 				{
-					blit_shape_blend(VGAScreen, tempShotX+1, tempShotY, OPTION_SHAPES, tempW - 60001);
+					blit_sprite_blend(VGAScreen, tempShotX+1, tempShotY, OPTION_SHAPES, tempW - 60001);
 					
 					tempX2 = sprite(OPTION_SHAPES, tempW - 60001)->width / 2;
 					tempY2 = sprite(OPTION_SHAPES, tempW - 60001)->height / 2;
@@ -3686,7 +3686,7 @@ void JE_titleScreen( JE_boolean animate )
 
 					temp = moveTyrianLogoUp ? 62 : 4;
 
-					blit_shape(VGAScreenSeg, 11, temp, PLANET_SHAPES, 146); // tyrian logo
+					blit_sprite(VGAScreenSeg, 11, temp, PLANET_SHAPES, 146); // tyrian logo
 
 					JE_showVGA();
 
@@ -3700,7 +3700,7 @@ void JE_titleScreen( JE_boolean animate )
 
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
-							blit_shape(VGAScreenSeg, 11, temp, PLANET_SHAPES, 146); // tyrian logo
+							blit_sprite(VGAScreenSeg, 11, temp, PLANET_SHAPES, 146); // tyrian logo
 
 							JE_showVGA();
 

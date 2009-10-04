@@ -311,8 +311,8 @@ void JE_itemScreen( void )
 		{
 			for (int i = 1; i <= cubeMax; i++)
 			{
-				blit_shape_dark(VGAScreenSeg, 190 + i * 18 + 2, 37 + 1, OPTION_SHAPES, 34, false);
-				blit_shape(VGAScreenSeg, 190 + i * 18, 37, OPTION_SHAPES, 34);  // data cube
+				blit_sprite_dark(VGAScreenSeg, 190 + i * 18 + 2, 37 + 1, OPTION_SHAPES, 34, false);
+				blit_sprite(VGAScreenSeg, 190 + i * 18, 37, OPTION_SHAPES, 34);  // data cube
 			}
 		}
 
@@ -689,7 +689,7 @@ void JE_itemScreen( void )
 			menuChoices[7] = cubeMax + 2;
 			JE_bar(1, 1, 145, 170, 0);
 			
-			blit_shape(VGAScreenSeg, 1, 1, OPTION_SHAPES, 20); /* Portrait area background */
+			blit_sprite(VGAScreenSeg, 1, 1, OPTION_SHAPES, 20); /* Portrait area background */
 			
 			if (curMenu == 7)
 			{
@@ -746,7 +746,7 @@ void JE_itemScreen( void )
 					const int face_x = 77 - (sprite(FACE_SHAPES, face_sprite)->width / 2),
 					          face_y = 92 - (sprite(FACE_SHAPES, face_sprite)->height / 2);
 					
-					blit_shape(VGAScreenSeg, face_x, face_y, FACE_SHAPES, face_sprite);  // datacube face
+					blit_sprite(VGAScreenSeg, face_x, face_y, FACE_SHAPES, face_sprite);  // datacube face
 					
 					// modify pallete for face
 					paletteChanged = true;
@@ -913,7 +913,7 @@ void JE_itemScreen( void )
 					if (curMenu == 7 && curSel[7] < menuChoices[7])
 					{
 						/* Draw flashy cube */
-						blit_shape_hv_blend(VGAScreenSeg, 166, 38 + (curSel[7] - 2) * 28, OPTION_SHAPES, 25, 13, col);
+						blit_sprite_hv_blend(VGAScreenSeg, 166, 38 + (curSel[7] - 2) * 28, OPTION_SHAPES, 25, 13, col);
 					}
 					
 					/* IF (curmenu = 5) AND (cursel [2] IN [3, 4, 6, 7, 8]) */
@@ -1657,7 +1657,7 @@ void draw_ship_illustration( void )
 		const int x = ship_x[sprite_id - 27],
 		          y = ship_y[sprite_id - 27];
 		
-		blit_shape(VGAScreenSeg, x, y, OPTION_SHAPES, sprite_id);
+		blit_sprite(VGAScreenSeg, x, y, OPTION_SHAPES, sprite_id);
 	}
 	
 	// generator
@@ -1673,7 +1673,7 @@ void draw_ship_illustration( void )
 		const int x = generator_x[sprite_id - 16],
 		          y = generator_y[sprite_id - 16];
 	
-		blit_shape(VGAScreenSeg, x, y, WEAPON_SHAPES, sprite_id);
+		blit_sprite(VGAScreenSeg, x, y, WEAPON_SHAPES, sprite_id);
 	}
 	
 	const int weapon_sprites[43] =
@@ -1702,7 +1702,7 @@ void draw_ship_illustration( void )
 		const int x = front_weapon_x[front_weapon_xy_list[pItems[P_FRONT]]],
 		          y = front_weapon_y[front_weapon_xy_list[pItems[P_FRONT]]];
 		
-		blit_shape(VGAScreenSeg, x, y, WEAPON_SHAPES, weapon_sprites[pItems[P_FRONT]]);  // ship illustration: front weapon
+		blit_sprite(VGAScreenSeg, x, y, WEAPON_SHAPES, weapon_sprites[pItems[P_FRONT]]);  // ship illustration: front weapon
 	}
 	
 	// rear weapon
@@ -1722,7 +1722,7 @@ void draw_ship_illustration( void )
 		const int x = rear_weapon_x[rear_weapon_xy_list[pItems[P_REAR]]],
 		          y = rear_weapon_y[rear_weapon_xy_list[pItems[P_REAR]]];
 		
-		blit_shape(VGAScreenSeg, x, y, WEAPON_SHAPES, weapon_sprites[pItems[P_REAR]]);
+		blit_sprite(VGAScreenSeg, x, y, WEAPON_SHAPES, weapon_sprites[pItems[P_REAR]]);
 	}
 	
 	// sidekicks
@@ -1730,7 +1730,7 @@ void draw_ship_illustration( void )
 	JE_drawItem(7, pItems[P_RIGHT_SIDEKICK], 129, 84);
 	
 	// shield
-	blit_shape_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[P_SHIELD]].mpwr - 10);
+	blit_sprite_hv(VGAScreenSeg, 28, 23, OPTION_SHAPES, 26, 15, shields[pItems[P_SHIELD]].mpwr - 10);
 }
 
 void load_cubes( void )
@@ -1996,7 +1996,7 @@ void JE_updateNavScreen( void )
 	if (mapOrigin > 11)
 		JE_drawPlanet(mapOrigin - 1);
 	
-	blit_shape(VGAScreenSeg, 0, 0, OPTION_SHAPES, 28);  // navigation screen interface
+	blit_sprite(VGAScreenSeg, 0, 0, OPTION_SHAPES, 28);  // navigation screen interface
 	
 	if (curSel[3] < menuChoices[3])
 	{
@@ -2168,7 +2168,7 @@ void JE_drawDots( void )
 			tempX = planetDotX[x][y] - tempNavX + 66 - 2;
 			tempY = planetDotY[x][y] - tempNavY + 85 - 2;
 			if (tempX > 0 && tempX < 140 && tempY > 0 && tempY < 168)
-				blit_shape(VGAScreenSeg, tempX, tempY, OPTION_SHAPES, (x == curSel[3]-2 && y < currentDotNum) ? 30 : 29);  // navigation dots
+				blit_sprite(VGAScreenSeg, tempX, tempY, OPTION_SHAPES, (x == curSel[3]-2 && y < currentDotNum) ? 30 : 29);  // navigation dots
 		}
 	}
 }
@@ -2184,8 +2184,8 @@ void JE_drawPlanet( JE_byte planetNum )
 		if (PAni[planetNum])
 			tempZ += planetAni;
 		
-		blit_shape_dark(VGAScreenSeg, tempX + 3, tempY + 3, PLANET_SHAPES, tempZ, false);
-		blit_shape(VGAScreenSeg, tempX, tempY, PLANET_SHAPES, tempZ);  // planets
+		blit_sprite_dark(VGAScreenSeg, tempX + 3, tempY + 3, PLANET_SHAPES, tempZ, false);
+		blit_sprite(VGAScreenSeg, tempX, tempY, PLANET_SHAPES, tempZ);  // planets
 	}
 }
 
@@ -2320,7 +2320,7 @@ void JE_doFunkyScreen( void )
 	VGAScreen = VGAScreen2;
 	JE_clr256();
 	
-	blit_shape(VGAScreen2, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
+	blit_sprite(VGAScreen2, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
 	
 	tempScreenSeg = VGAScreen2;
 	JE_funkyScreen();
@@ -2383,7 +2383,7 @@ JE_boolean JE_quitRequest( void )
 			service_SDL_events(true);
 			setjasondelay(4);
 			
-			blit_shape(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
+			blit_sprite(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
 			JE_textShade(70, 60, miscText[28], 0, 5, FULL_SHADE);
 			JE_helpBox(70, 90, miscText[30], 30);
 			
@@ -3069,7 +3069,7 @@ void JE_weaponSimUpdate( void )
 		}
 		else
 		{
-			blit_shape(VGAScreenSeg, 24, 149, OPTION_SHAPES, 13);  // downgrade disabled
+			blit_sprite(VGAScreenSeg, 24, 149, OPTION_SHAPES, 13);  // downgrade disabled
 		}
 		
 		if (rightPower)
@@ -3078,7 +3078,7 @@ void JE_weaponSimUpdate( void )
 			{
 				sprintf(buf, "%d", upgradeCost);
 				JE_outText(108, 137, buf, 7, 4);
-				blit_shape(VGAScreenSeg, 119, 149, OPTION_SHAPES, 14);  // upgrade disabled
+				blit_sprite(VGAScreenSeg, 119, 149, OPTION_SHAPES, 14);  // upgrade disabled
 			}
 			else
 			{
@@ -3088,7 +3088,7 @@ void JE_weaponSimUpdate( void )
 		}
 		else
 		{
-			blit_shape(VGAScreenSeg, 119, 149, OPTION_SHAPES, 14);  // upgrade disabled
+			blit_sprite(VGAScreenSeg, 119, 149, OPTION_SHAPES, 14);  // upgrade disabled
 		}
 		
 		if (curSel[1] == 3)
@@ -3110,7 +3110,7 @@ void JE_weaponSimUpdate( void )
 	{
 		leftPower = false;
 		rightPower = false;
-		blit_shape(VGAScreenSeg, 20, 146, OPTION_SHAPES, 17);  // hide power level interface
+		blit_sprite(VGAScreenSeg, 20, 146, OPTION_SHAPES, 17);  // hide power level interface
 	}
 	
 	JE_drawItem(1, pItems[12 - 1], PX - 5, PY - 7);
@@ -3272,7 +3272,7 @@ draw_player_shot_loop_end:
 		}
 	}
 	
-	blit_shape(VGAScreenSeg, 0, 0, OPTION_SHAPES, 12); // upgrade interface
+	blit_sprite(VGAScreenSeg, 0, 0, OPTION_SHAPES, 12); // upgrade interface
 	
 	
 	/*========================Power Bar=========================*/

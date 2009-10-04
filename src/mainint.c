@@ -70,7 +70,7 @@ bool pause_pressed = false, ingamemenu_pressed = false;
 void JE_drawTextWindow( const char *text )
 {
 	if (textErase > 0) // erase current text
-		blit_shape(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
+		blit_sprite(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
 	
 	textErase = 100;
 	tempScreenSeg = VGAScreenSeg; /*sega000*/
@@ -135,7 +135,7 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 						
 						if (sprite_id != -1)
 						{
-							blit_shape_hv(VGAScreen, textloc[z], y, TINY_FONT, sprite_id, bank, glowcol[z]);
+							blit_sprite_hv(VGAScreen, textloc[z], y, TINY_FONT, sprite_id, bank, glowcol[z]);
 							
 							glowcol[z] += glowcolc[z];
 							if (glowcol[z] > 9)
@@ -144,7 +144,7 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 					}
 				}
 				if (sprite_id != -1 && --z < maxloc)
-					blit_shape_dark(tempScreenSeg, textloc[z] + 1, y + 1, TINY_FONT, sprite_id, true);
+					blit_sprite_dark(tempScreenSeg, textloc[z] + 1, y + 1, TINY_FONT, sprite_id, true);
 				
 				if (JE_anyButton())
 					frameCountMax = 0;
@@ -171,13 +171,13 @@ void JE_drawPortConfigButtons( void ) // rear weapon pattern indicator
 	
 	if (portConfig[1] == 1)
 	{
-		blit_shape(VGAScreenSeg, 285, 44, OPTION_SHAPES, 18);  // lit
-		blit_shape(VGAScreenSeg, 302, 44, OPTION_SHAPES, 19);  // unlit
+		blit_sprite(VGAScreenSeg, 285, 44, OPTION_SHAPES, 18);  // lit
+		blit_sprite(VGAScreenSeg, 302, 44, OPTION_SHAPES, 19);  // unlit
 	}
 	else
 	{
-		blit_shape(VGAScreenSeg, 285, 44, OPTION_SHAPES, 19);  // unlit
-		blit_shape(VGAScreenSeg, 302, 44, OPTION_SHAPES, 18);  // lit
+		blit_sprite(VGAScreenSeg, 285, 44, OPTION_SHAPES, 19);  // unlit
+		blit_sprite(VGAScreenSeg, 302, 44, OPTION_SHAPES, 18);  // lit
 	}
 }
 
@@ -1356,19 +1356,19 @@ void JE_inGameHelp( void )
 		JE_HBox(20,  4, 36, 50);
 		
 		// weapon help
-		blit_shape(VGAScreenSeg, 2, 21, OPTION_SHAPES, 43);
+		blit_sprite(VGAScreenSeg, 2, 21, OPTION_SHAPES, 43);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(55, 20, 37, 40);
 		
 		// sidekick help
-		blit_shape(VGAScreenSeg, 5, 36, OPTION_SHAPES, 41);
+		blit_sprite(VGAScreenSeg, 5, 36, OPTION_SHAPES, 41);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 43, 34, 44);
 		
 		// sheild/armor help
-		blit_shape(VGAScreenSeg, 2, 79, OPTION_SHAPES, 42);
+		blit_sprite(VGAScreenSeg, 2, 79, OPTION_SHAPES, 42);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(54, 84, 35, 40);
@@ -1383,13 +1383,13 @@ void JE_inGameHelp( void )
 	else
 	{
 		// power bar help
-		blit_shape(VGAScreenSeg, 15, 5, OPTION_SHAPES, 40);
+		blit_sprite(VGAScreenSeg, 15, 5, OPTION_SHAPES, 40);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 10, 31, 45);
 		
 		// weapon help
-		blit_shape(VGAScreenSeg, 5, 37, OPTION_SHAPES, 39);
+		blit_sprite(VGAScreenSeg, 5, 37, OPTION_SHAPES, 39);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 40, 32, 44);
@@ -1398,20 +1398,20 @@ void JE_inGameHelp( void )
 		JE_HBox(40, 60, 33, 44);
 		
 		// sidekick help
-		blit_shape(VGAScreenSeg, 5, 98, OPTION_SHAPES, 41);
+		blit_sprite(VGAScreenSeg, 5, 98, OPTION_SHAPES, 41);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 103, 34, 44);
 		
 		// shield/armor help
-		blit_shape(VGAScreenSeg, 2, 138, OPTION_SHAPES, 42);
+		blit_sprite(VGAScreenSeg, 2, 138, OPTION_SHAPES, 42);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(54, 143, 35, 40);
 	}
 	
 	// "press a key"
-	blit_shape(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
+	blit_sprite(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
 	JE_outText(120 - JE_textWidth(miscText[5-1], TINY_FONT) / 2 + 20, 190, miscText[5-1], 0, 4);
 	
 	JE_showVGA();
@@ -1504,7 +1504,7 @@ void JE_highScoreCheck( void )
 					
 					JE_dString(JE_fontCenter(miscText[temp3-1], SMALL_FONT_SHAPES), 30, miscText[temp3-1], SMALL_FONT_SHAPES);
 					
-					blit_shape(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
+					blit_sprite(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
 					
 					if (twoPlayerMode)
 					{
@@ -1991,7 +1991,7 @@ void JE_playCredits( void )
 		setjasondelay(1);
 		JE_clr256();
 		
-		blit_shape_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic-1)->width, 100 - (sprite(EXTRA_SHAPES, currentpic-1)->height / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
+		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic-1)->width, 100 - (sprite(EXTRA_SHAPES, currentpic-1)->height / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
 		
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
@@ -2222,7 +2222,7 @@ void JE_endLevelAni( void )
 				{
 					setjasondelay(frameCountMax);
 					
-					blit_shape_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
+					blit_sprite_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
 					
 					if (JE_anyButton())
 						frameCountMax = 0;
@@ -2235,7 +2235,7 @@ void JE_endLevelAni( void )
 				{
 					setjasondelay(frameCountMax);
 					
-					blit_shape_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
+					blit_sprite_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
 					
 					if (JE_anyButton())
 						frameCountMax = 0;
@@ -2283,9 +2283,9 @@ void JE_endLevelAni( void )
 
 void JE_drawCube( JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
-	blit_shape_dark(tempScreenSeg, x + 4, y + 4, OPTION_SHAPES, 25, false);
-	blit_shape_dark(tempScreenSeg, x + 3, y + 3, OPTION_SHAPES, 25, false);
-	blit_shape_hv(tempScreenSeg, x, y, OPTION_SHAPES, 25, filter, brightness);
+	blit_sprite_dark(tempScreenSeg, x + 4, y + 4, OPTION_SHAPES, 25, false);
+	blit_sprite_dark(tempScreenSeg, x + 3, y + 3, OPTION_SHAPES, 25, false);
+	blit_sprite_hv(tempScreenSeg, x, y, OPTION_SHAPES, 25, filter, brightness);
 }
 
 void JE_handleChat( void )
@@ -2349,7 +2349,7 @@ void JE_operation( JE_byte slot )
 		{
 			service_SDL_events(true);
 			
-			blit_shape(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
+			blit_sprite(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
 			
 			JE_textShade(60, 55, miscText[1-1], 11, 4, DARKEN);
 			JE_textShade(70, 70, levelName, 11, 4, DARKEN);
