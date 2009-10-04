@@ -37,8 +37,8 @@
 #define WEAPON_SHAPES     6
 #define EXTRA_SHAPES      7 /*Used for Ending pics*/
 
-#define MAXIMUM_SHAPE     151
-#define MAX_TABLE         8
+#define SPRITE_TABLES_MAX        8
+#define SPRITES_PER_TABLE_MAX  151
 
 typedef struct
 {
@@ -51,16 +51,16 @@ Sprite;
 typedef struct
 {
 	unsigned int count;
-	Sprite sprite[MAXIMUM_SHAPE];
+	Sprite sprite[SPRITES_PER_TABLE_MAX];
 }
 Sprite_array;
 
-Sprite_array sprite_table[MAX_TABLE];
+Sprite_array sprite_table[SPRITE_TABLES_MAX];
 
 static inline Sprite *sprite( unsigned int table, unsigned int index )
 {
-	assert(table < MAX_TABLE);
-	assert(index < MAXIMUM_SHAPE);
+	assert(table < COUNTOF(sprite_table));
+	assert(index < COUNTOF(sprite_table->sprite));
 	return &sprite_table[table].sprite[index];
 }
 
@@ -69,8 +69,8 @@ static inline bool sprite_exists( unsigned int table, unsigned int index )
 	return (sprite(table, index)->data != NULL);
 }
 
-void JE_newLoadShapes( unsigned table, const char *shapefile );
-void JE_newLoadShapesB( unsigned int table, FILE *f );
+void load_sprites_file( unsigned table, const char *filename );
+void load_sprites( unsigned int table, FILE *f );
 void free_sprites( unsigned int table );
 
 void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeNum

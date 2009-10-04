@@ -456,7 +456,7 @@ void JE_loadMainShapeTables( const char *shpfile )
 	for (i = 0; i < 7; i++)
 	{
 		fseek(f, shpPos[i], SEEK_SET);
-		JE_newLoadShapesB(i, f);
+		load_sprites(i, f);
 	}
 	
 	// player shot sprites
@@ -2046,7 +2046,7 @@ void JE_playCredits( void )
 	JE_integer shipx = 0, shipxwait = 0;
 	JE_shortint shipxc = 0, shipxca = 0;
 	
-	JE_newLoadShapes(EXTRA_SHAPES, "estsc.shp");
+	load_sprites_file(EXTRA_SHAPES, "estsc.shp");
 	
 	setjasondelay2(1000);
 	

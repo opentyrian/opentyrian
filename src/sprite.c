@@ -22,21 +22,23 @@
 
 #include <assert.h>
 
-Sprite_array sprite_table[MAX_TABLE];
+Sprite_array sprite_table[SPRITE_TABLES_MAX];
 
-void JE_newLoadShapes( unsigned int table, const char *shapefile )
+void load_sprites_file( unsigned int table, const char *filename )
 {
 	free_sprites(table);
 	
-	FILE *f = dir_fopen_die(data_dir(), shapefile, "rb");
+	FILE *f = dir_fopen_die(data_dir(), filename, "rb");
 	
-	JE_newLoadShapesB(table, f);
+	load_sprites(table, f);
 	
 	fclose(f);
 }
 
-void JE_newLoadShapesB( unsigned int table, FILE *f )
+void load_sprites( unsigned int table, FILE *f )
 {
+	free_sprites(table);
+	
 	Uint16 temp;
 	efread(&temp, sizeof(Uint16), 1, f);
 	
