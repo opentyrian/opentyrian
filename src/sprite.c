@@ -648,7 +648,7 @@ void JE_superDrawShape2( SDL_Surface *surface,  int x, int y, unsigned int index
 				if (pixels >= pixels_ul)
 					return;
 				if (pixels >= pixels_ll)
-					*pixels = (((*data & 0x0f) + (*pixels & 0x0f)) >> 1) | (*data & 0xf0);
+					*pixels = (((*data & 0x0f) + (*pixels & 0x0f)) / 2) | (*data & 0xf0);
 				
 				++pixels;
 			}
@@ -683,7 +683,7 @@ void blit_sprite2_darken( SDL_Surface *surface, int x, int y, unsigned int index
 				if (pixels >= pixels_ul)
 					return;
 				if (pixels >= pixels_ll)
-					*pixels = ((*pixels & 0x0f) >> 1) + (*pixels & 0xf0);
+					*pixels = ((*pixels & 0x0f) / 2) + (*pixels & 0xf0);
 				
 				++pixels;
 			}
