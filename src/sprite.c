@@ -125,29 +125,29 @@ void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigne
 	{
 		switch (*data)
 		{
-			case 255:  // transparent pixels
-				data++;  // next byte tells how many
-				pixels += *data;
-				x_offset += *data;
-				break;
-				
-			case 254:  // next pixel row
-				break;
-				
-			case 253:  // 1 transparent pixel
-				pixels++;
-				x_offset++;
-				break;
-				
-			default:  // set a pixel
-				if (pixels >= pixels_ul)
-					return;
-				if (pixels >= pixels_ll)
-					*pixels = *data;
-				
-				pixels++;
-				x_offset++;
-				break;
+		case 255:  // transparent pixels
+			data++;  // next byte tells how many
+			pixels += *data;
+			x_offset += *data;
+			break;
+			
+		case 254:  // next pixel row
+			break;
+			
+		case 253:  // 1 transparent pixel
+			pixels++;
+			x_offset++;
+			break;
+			
+		default:  // set a pixel
+			if (pixels >= pixels_ul)
+				return;
+			if (pixels >= pixels_ll)
+				*pixels = *data;
+			
+			pixels++;
+			x_offset++;
+			break;
 		}
 		if (*data == 254 || x_offset >= width)
 		{
@@ -182,29 +182,29 @@ void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, u
 	{
 		switch (*data)
 		{
-			case 255:  // transparent pixels
-				data++;  // next byte tells how many
-				pixels += *data;
-				x_offset += *data;
-				break;
-				
-			case 254:  // next pixel row
-				break;
-				
-			case 253:  // 1 transparent pixel
-				pixels++;
-				x_offset++;
-				break;
-				
-			default:  // set a pixel
-				if (pixels >= pixels_ul)
-					return;
-				if (pixels >= pixels_ll)
-					*pixels = (*data & 0xf0) | (((*pixels & 0x0f) + (*data & 0x0f)) / 2);
-				
-				pixels++;
-				x_offset++;
-				break;
+		case 255:  // transparent pixels
+			data++;  // next byte tells how many
+			pixels += *data;
+			x_offset += *data;
+			break;
+			
+		case 254:  // next pixel row
+			break;
+			
+		case 253:  // 1 transparent pixel
+			pixels++;
+			x_offset++;
+			break;
+			
+		default:  // set a pixel
+			if (pixels >= pixels_ul)
+				return;
+			if (pixels >= pixels_ll)
+				*pixels = (*data & 0xf0) | (((*pixels & 0x0f) + (*data & 0x0f)) / 2);
+			
+			pixels++;
+			x_offset++;
+			break;
 		}
 		if (*data == 254 || x_offset >= width)
 		{
@@ -243,29 +243,29 @@ void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tabl
 	{
 		switch (*data)
 		{
-			case 255:  // transparent pixels
-				data++;  // next byte tells how many
-				pixels += *data;
-				x_offset += *data;
-				break;
-				
-			case 254:  // next pixel row
-				break;
-				
-			case 253:  // 1 transparent pixel
-				pixels++;
-				x_offset++;
-				break;
-				
-			default:  // set a pixel
-				if (pixels >= pixels_ul)
-					return;
-				if (pixels >= pixels_ll)
-					*pixels = hue | ((*data & 0x0f) + value);
-				
-				pixels++;
-				x_offset++;
-				break;
+		case 255:  // transparent pixels
+			data++;  // next byte tells how many
+			pixels += *data;
+			x_offset += *data;
+			break;
+			
+		case 254:  // next pixel row
+			break;
+			
+		case 253:  // 1 transparent pixel
+			pixels++;
+			x_offset++;
+			break;
+			
+		default:  // set a pixel
+			if (pixels >= pixels_ul)
+				return;
+			if (pixels >= pixels_ll)
+				*pixels = hue | ((*data & 0x0f) + value);
+			
+			pixels++;
+			x_offset++;
+			break;
 		}
 		if (*data == 254 || x_offset >= width)
 		{
@@ -302,35 +302,35 @@ void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsi
 	{
 		switch (*data)
 		{
-			case 255:  // transparent pixels
-				data++;  // next byte tells how many
-				pixels += *data;
-				x_offset += *data;
-				break;
+		case 255:  // transparent pixels
+			data++;  // next byte tells how many
+			pixels += *data;
+			x_offset += *data;
+			break;
+			
+		case 254:  // next pixel row
+			break;
+			
+		case 253:  // 1 transparent pixel
+			pixels++;
+			x_offset++;
+			break;
+			
+		default:  // set a pixel
+			if (pixels >= pixels_ul)
+				return;
+			if (pixels >= pixels_ll)
+			{
+				Uint8 temp_value = (*data & 0x0f) + value;
+				if (temp_value > 0xf)
+					temp_value = (temp_value >= 0x1f) ? 0x0 : 0xf;
 				
-			case 254:  // next pixel row
-				break;
-				
-			case 253:  // 1 transparent pixel
-				pixels++;
-				x_offset++;
-				break;
-				
-			default:  // set a pixel
-				if (pixels >= pixels_ul)
-					return;
-				if (pixels >= pixels_ll)
-				{
-					Uint8 temp_value = (*data & 0x0f) + value;
-					if (temp_value > 0xf)
-						temp_value = (temp_value >= 0x1f) ? 0x0 : 0xf;
-					
-					*pixels = hue | temp_value;
-				}
-				
-				pixels++;
-				x_offset++;
-				break;
+				*pixels = hue | temp_value;
+			}
+			
+			pixels++;
+			x_offset++;
+			break;
 		}
 		if (*data == 254 || x_offset >= width)
 		{
@@ -367,35 +367,35 @@ void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table
 	{
 		switch (*data)
 		{
-			case 255:  // transparent pixels
-				data++;  // next byte tells how many
-				pixels += *data;
-				x_offset += *data;
-				break;
+		case 255:  // transparent pixels
+			data++;  // next byte tells how many
+			pixels += *data;
+			x_offset += *data;
+			break;
+			
+		case 254:  // next pixel row
+			break;
+			
+		case 253:  // 1 transparent pixel
+			pixels++;
+			x_offset++;
+			break;
+			
+		default:  // set a pixel
+			if (pixels >= pixels_ul)
+				return;
+			if (pixels >= pixels_ll)
+			{
+				Uint8 temp_value = (*data & 0x0f) + value;
+				if (temp_value > 0xf)
+					temp_value = (temp_value >= 0x1f) ? 0x0 : 0xf;
 				
-			case 254:  // next pixel row
-				break;
-				
-			case 253:  // 1 transparent pixel
-				pixels++;
-				x_offset++;
-				break;
-				
-			default:  // set a pixel
-				if (pixels >= pixels_ul)
-					return;
-				if (pixels >= pixels_ll)
-				{
-					Uint8 temp_value = (*data & 0x0f) + value;
-					if (temp_value > 0xf)
-						temp_value = (temp_value >= 0x1f) ? 0x0 : 0xf;
-					
-					*pixels = hue | (((*pixels & 0x0f) + temp_value) / 2);
-				}
-				
-				pixels++;
-				x_offset++;
-				break;
+				*pixels = hue | (((*pixels & 0x0f) + temp_value) / 2);
+			}
+			
+			pixels++;
+			x_offset++;
+			break;
 		}
 		if (*data == 254 || x_offset >= width)
 		{
@@ -430,29 +430,29 @@ void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, un
 	{
 		switch (*data)
 		{
-			case 255:  // transparent pixels
-				data++;  // next byte tells how many
-				pixels += *data;
-				x_offset += *data;
-				break;
-				
-			case 254:  // next pixel row
-				break;
-				
-			case 253:  // 1 transparent pixel
-				pixels++;
-				x_offset++;
-				break;
-				
-			default:  // set a pixel
-				if (pixels >= pixels_ul)
-					return;
-				if (pixels >= pixels_ll)
-					*pixels = black ? 0x00 : ((*pixels & 0xf0) | ((*pixels & 0x0f) / 2));
-				
-				pixels++;
-				x_offset++;
-				break;
+		case 255:  // transparent pixels
+			data++;  // next byte tells how many
+			pixels += *data;
+			x_offset += *data;
+			break;
+			
+		case 254:  // next pixel row
+			break;
+			
+		case 253:  // 1 transparent pixel
+			pixels++;
+			x_offset++;
+			break;
+			
+		default:  // set a pixel
+			if (pixels >= pixels_ul)
+				return;
+			if (pixels >= pixels_ll)
+				*pixels = black ? 0x00 : ((*pixels & 0xf0) | ((*pixels & 0x0f) / 2));
+			
+			pixels++;
+			x_offset++;
+			break;
 		}
 		if (*data == 254 || x_offset >= width)
 		{
