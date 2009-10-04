@@ -190,7 +190,7 @@ typedef struct {
 	JE_byte shotTrail;
 	JE_word shotGr, shotAni, shotAniMax;
 	Uint8 shotDmg;
-	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax, fill[1];
+	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax;
 } PlayerShotDataType;
 
 typedef struct {
