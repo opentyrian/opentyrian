@@ -591,7 +591,7 @@ void JE_itemScreen( void )
 				if (temp == pItemsBack[pItemButtonMap[curSel[1]-2]-1] && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					JE_bar(160, tempY+7, 300, tempY+11, 227);
-					JE_drawShape2(298, tempY+2, 247, shapes6);
+					JE_drawShape2(VGAScreen, 298, tempY+2, 247, shapes6);
 				}
 
 				/* Draw DONE */
@@ -3261,9 +3261,9 @@ void JE_weaponViewFrame( void )
 					if (tempW > 1000)
 						tempW = tempW % 1000;
 					if (tempW > 500)
-						JE_drawShape2(tempShotX+1, tempShotY, tempW - 500, shapesW2);
+						JE_drawShape2(VGAScreen, tempShotX+1, tempShotY, tempW - 500, shapesW2);
 					else
-						JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
+						JE_drawShape2(VGAScreen, tempShotX+1, tempShotY, tempW, shapesC1);
 				}
 			}
 			

@@ -1069,9 +1069,9 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield
 	if (pItems[P_SPECIAL] > 0)
 	{
 		if (shotRepeat[9-1] == 0 && specialWait == 0 && flareDuration < 2 && zinglonDuration < 2)
-			JE_drawShape2(47, 4, 94, shapes9);
+			JE_drawShape2(VGAScreen, 47, 4, 94, shapes9);
 		else
-			JE_drawShape2(47, 4, 93, shapes9);
+			JE_drawShape2(VGAScreen, 47, 4, 93, shapes9);
 	}
 
 	if (shotRepeat[9-1] > 0)

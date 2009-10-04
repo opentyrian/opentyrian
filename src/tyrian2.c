@@ -1686,14 +1686,14 @@ level_loop:
 					if (tempW > 500)
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
-						JE_drawShape2(tempShotX+1, tempShotY, tempW - 500, shapesW2);
+							JE_drawShape2Shadow(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW - 500, shapesW2);
+						JE_drawShape2(VGAScreen, tempShotX+1, tempShotY, tempW - 500, shapesW2);
 					}
 					else
 					{
 						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							JE_drawShape2Shadow(tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
-						JE_drawShape2(tempShotX+1, tempShotY, tempW, shapesC1);
+							JE_drawShape2Shadow(VGAScreen, tempShotX+1, tempShotY + shadowyDist, tempW, shapesC1);
+						JE_drawShape2(VGAScreen, tempShotX+1, tempShotY, tempW, shapesC1);
 					}
 				}
 

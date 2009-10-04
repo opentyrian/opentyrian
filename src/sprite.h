@@ -69,12 +69,12 @@ void load_sprites_file( unsigned table, const char *filename );
 void load_sprites( unsigned int table, FILE *f );
 void free_sprites( unsigned int table );
 
-void blit_shape( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeNum
-void blit_shape_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeTrick
-void blit_shape_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeBright
-void blit_shape_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeAdjust
-void blit_shape_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeModify
-void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black ); // JE_newDrawCShapeDarken, JE_newDrawCShapeShadow
+void blit_shape( SDL_Surface *, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeNum
+void blit_shape_blend( SDL_Surface *, int x, int y, unsigned int table, unsigned int index ); // JE_newDrawCShapeTrick
+void blit_shape_hv_unsafe( SDL_Surface *, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeBright
+void blit_shape_hv( SDL_Surface *, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeAdjust
+void blit_shape_hv_blend( SDL_Surface *, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value ); // JE_newDrawCShapeModify
+void blit_shape_dark( SDL_Surface *, int x, int y, unsigned int table, unsigned int index, bool black ); // JE_newDrawCShapeDarken, JE_newDrawCShapeShadow
 
 
 extern JE_byte *eShapes1, *eShapes2, *eShapes3, *eShapes4, *eShapes5, *eShapes6;
@@ -88,9 +88,9 @@ void free_main_shape_tables( void );
 
 void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s );
 
-void JE_drawShape2( int x, int y, int s, JE_byte *shape );
-void JE_superDrawShape2( int x, int y, int s, JE_byte *shape );
-void JE_drawShape2Shadow( int x, int y, int s, JE_byte *shape );
+void JE_drawShape2( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
+void JE_superDrawShape2( SDL_Surface *,  int x, int y, unsigned int index, Uint8 *shapes );
+void JE_drawShape2Shadow( SDL_Surface *, int x, int y, unsigned int index, Uint8 *shapes );
 
 void JE_drawShape2x2( int x, int y, int s, JE_byte *shape );
 void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape );

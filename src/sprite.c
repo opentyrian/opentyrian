@@ -586,148 +586,133 @@ void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
 	fclose(f);
 }
 
-void JE_drawShape2( int x, int y, int s_, JE_byte *shape )
+void JE_drawShape2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_byte *p; /* shape pointer */
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	int i;
-
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
-
-	s_limit = (Uint8 *)VGAScreen->pixels;
-	s_limit += VGAScreen->h * VGAScreen->pitch;
-
-	p = shape;
-	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
-
-	while (*p != 0x0f)
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	Uint8 *data = shapes + SDL_SwapLE16(((Uint16 *)shapes)[index - 1]);
+	
+	for (; *data != 0x0f; ++data)
 	{
-		s += *p & 0x0f;
-		i = (*p & 0xf0) >> 4;
-		if (i)
+		pixels += *data & 0x0f;                   // second nibble: transparent pixel count
+		unsigned int count = (*data & 0xf0) >> 4; // first nibble: opaque pixel count
+		
+		if (count == 0) // move to next pixel row
 		{
-			while (i--)
-			{
-				p++;
-				if (s >= s_limit)
-					return;
-				if ((void *)s >= VGAScreen->pixels)
-					*s = *p;
-				s++;
-			}
-		} else {
-			s -= 12;
-			s += VGAScreen->pitch;
+			pixels += VGAScreen->pitch - 12;
 		}
-		p++;
+		else
+		{
+			while (count--)
+			{
+				++data;
+				
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll)
+					*pixels = *data;
+				
+				++pixels;
+			}
+		}
 	}
 }
 
-void JE_superDrawShape2( int x, int y, int s_, JE_byte *shape )
+void JE_superDrawShape2( SDL_Surface *surface,  int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_byte *p; /* shape pointer */
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	int i;
-
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
-
-	s_limit = (Uint8 *)VGAScreen->pixels;
-	s_limit += VGAScreen->h * VGAScreen->pitch;
-
-	p = shape;
-	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
-
-	while (*p != 0x0f)
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	Uint8 *data = shapes + SDL_SwapLE16(((Uint16 *)shapes)[index - 1]);
+	
+	for (; *data != 0x0f; ++data)
 	{
-		s += *p & 0x0f;
-		i = (*p & 0xf0) >> 4;
-		if (i)
+		pixels += *data & 0x0f;                   // second nibble: transparent pixel count
+		unsigned int count = (*data & 0xf0) >> 4; // first nibble: opaque pixel count
+		
+		if (count == 0) // move to next pixel row
 		{
-			while (i--)
-			{
-				p++;
-				if (s >= s_limit)
-					return;
-				if ((void *)s >= VGAScreen->pixels)
-					*s = (((*p & 0x0f) + (*s & 0x0f)) >> 1) | (*p & 0xf0);
-				s++;
-			}
-		} else {
-			s -= 12;
-			s += VGAScreen->pitch;
+			pixels += VGAScreen->pitch - 12;
 		}
-		p++;
+		else
+		{
+			while (count--)
+			{
+				++data;
+				
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll)
+					*pixels = (((*data & 0x0f) + (*pixels & 0x0f)) >> 1) | (*data & 0xf0);
+				
+				++pixels;
+			}
+		}
 	}
 }
 
-void JE_drawShape2Shadow( int x, int y, int s_, JE_byte *shape )
+void JE_drawShape2Shadow( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_byte *p; /* shape pointer */
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	Uint8 *s_limit; /* buffer boundary */
-
-	int i;
-
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
-
-	s_limit = (Uint8 *)VGAScreen->pixels;
-	s_limit += VGAScreen->h * VGAScreen->pitch;
-
-	p = shape;
-	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
-
-	while (*p != 0x0f)
+	assert(surface->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	
+	Uint8 *data = shapes + SDL_SwapLE16(((Uint16 *)shapes)[index - 1]);
+	
+	for (; *data != 0x0f; ++data)
 	{
-		s += *p & 0x0f;
-		i = (*p & 0xf0) >> 4;
-		if (i)
+		pixels += *data & 0x0f;                   // second nibble: transparent pixel count
+		unsigned int count = (*data & 0xf0) >> 4; // first nibble: opaque pixel count
+		
+		if (count == 0) // move to next pixel row
 		{
-			while (i--)
-			{
-				p++;
-				if (s >= s_limit)
-					return;
-				if ((void *)s >= VGAScreen->pixels)
-					*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
-				s++;
-			}
-		} else {
-			s -= 12;
-			s += VGAScreen->pitch;
+			pixels += VGAScreen->pitch - 12;
 		}
-		p++;
+		else
+		{
+			while (count--)
+			{
+				++data;
+				
+				if (pixels >= pixels_ul)
+					return;
+				if (pixels >= pixels_ll)
+					*pixels = ((*pixels & 0x0f) >> 1) + (*pixels & 0xf0);
+				
+				++pixels;
+			}
+		}
 	}
 }
 
 void JE_drawShape2x2( int x, int y, int s, JE_byte *shape )
 {
-	JE_drawShape2(x,    y,    s,    shape);
-	JE_drawShape2(x+12, y,    s+1,  shape);
-	JE_drawShape2(x,    y+14, s+19, shape);
-	JE_drawShape2(x+12, y+14, s+20, shape);
+	JE_drawShape2(VGAScreen, x,    y,    s,    shape);
+	JE_drawShape2(VGAScreen, x+12, y,    s+1,  shape);
+	JE_drawShape2(VGAScreen, x,    y+14, s+19, shape);
+	JE_drawShape2(VGAScreen, x+12, y+14, s+20, shape);
 }
 
 void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape )
 {
-	JE_superDrawShape2(x,    y,    s,    shape);
-	JE_superDrawShape2(x+12, y,    s+1,  shape);
-	JE_superDrawShape2(x,    y+14, s+19, shape);
-	JE_superDrawShape2(x+12, y+14, s+20, shape);
+	JE_superDrawShape2(VGAScreen, x,    y,    s,    shape);
+	JE_superDrawShape2(VGAScreen, x+12, y,    s+1,  shape);
+	JE_superDrawShape2(VGAScreen, x,    y+14, s+19, shape);
+	JE_superDrawShape2(VGAScreen, x+12, y+14, s+20, shape);
 }
 
 void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape )
 {
-	JE_drawShape2Shadow(x,    y,    s,    shape);
-	JE_drawShape2Shadow(x+12, y,    s+1,  shape);
-	JE_drawShape2Shadow(x,    y+14, s+19, shape);
-	JE_drawShape2Shadow(x+12, y+14, s+20, shape);
+	JE_drawShape2Shadow(VGAScreen, x,    y,    s,    shape);
+	JE_drawShape2Shadow(VGAScreen, x+12, y,    s+1,  shape);
+	JE_drawShape2Shadow(VGAScreen, x,    y+14, s+19, shape);
+	JE_drawShape2Shadow(VGAScreen, x+12, y+14, s+20, shape);
 }
 
 

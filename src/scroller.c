@@ -154,7 +154,7 @@ void scroller_sine( const struct about_text_type text[] )
 			for (int i = 0; i < MAX_COINS/2; i++)
 			{
 				struct coin_type *coin = &coins[i];
-				JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
+				JE_drawShape2(VGAScreen, coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
 			}
 		}
 
@@ -211,7 +211,7 @@ void scroller_sine( const struct about_text_type text[] )
 			for (int i = MAX_COINS/2; i < MAX_COINS; i++)
 			{
 				struct coin_type *coin = &coins[i];
-				JE_drawShape2(coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
+				JE_drawShape2(VGAScreen, coin->x, coin->y, coin_defs[coin->type].shape_num + coin->cur_frame, eShapes5);
 			}
 		}
 

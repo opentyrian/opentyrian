@@ -2495,14 +2495,14 @@ void JE_inGameDisplays( void )
 			
 			if (portPower[temp] > 5)
 			{
-				JE_drawShape2(tempW, temp5, 285, shapes9);
+				JE_drawShape2(VGAScreen, tempW, temp5, 285, shapes9);
 				tempW = (temp == 0) ? 45 : 250;
 				sprintf(tempstr, "%d", portPower[temp] - 1);
 				JE_textShade(tempW, temp5 + 3, tempstr, 15, 1, FULL_SHADE);
 			} else if (portPower[temp] > 1) {
 				for (temp2 = 1; temp2 < portPower[temp]; temp2++)
 				{
-					JE_drawShape2(tempW, temp5, 285, shapes9);
+					JE_drawShape2(VGAScreen, tempW, temp5, 285, shapes9);
 					tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
 				}
 			}
@@ -2529,7 +2529,7 @@ void JE_inGameDisplays( void )
 			
 			for (temp2 = 0; temp2 < superBomb[temp]; temp2++)
 			{
-				JE_drawShape2(tempW, 160, 304, shapes9);
+				JE_drawShape2(VGAScreen, tempW, 160, 304, shapes9);
 				tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
 			}
 		}
@@ -3672,12 +3672,12 @@ redo:
 						switch (tempI)
 						{
 							case 5:
-								JE_drawShape2(*PX_ - 17, *PY_ + 7, 40, shapes9ptr_);
+								JE_drawShape2(VGAScreen, *PX_ - 17, *PY_ + 7, 40, shapes9ptr_);
 								tempW = *PX_ - 7;
 								tempI2 = -2;
 								break;
 							case 3:
-								JE_drawShape2(*PX_ - 17, *PY_ + 7, 39, shapes9ptr_);
+								JE_drawShape2(VGAScreen, *PX_ - 17, *PY_ + 7, 39, shapes9ptr_);
 								tempW = *PX_ - 7;
 								tempI2 = -1;
 								break;
@@ -3685,12 +3685,12 @@ redo:
 								tempI2 = 0;
 								break;
 							case -1:
-								JE_drawShape2(*PX_ + 19, *PY_ + 7, 58, shapes9ptr_);
+								JE_drawShape2(VGAScreen, *PX_ + 19, *PY_ + 7, 58, shapes9ptr_);
 								tempW = *PX_ + 9;
 								tempI2 = 1;
 								break;
 							case -3:
-								JE_drawShape2(*PX_ + 19, *PY_ + 7, 59, shapes9ptr_);
+								JE_drawShape2(VGAScreen, *PX_ + 19, *PY_ + 7, 59, shapes9ptr_);
 								tempW = *PX_ + 9;
 								tempI2 = 2;
 								break;
@@ -3813,7 +3813,7 @@ redo:
 					{
 
 						if (!twoPlayerLinked)
-							JE_drawShape2(*PX_ + (shipGr_ == 0) + 1, *PY_ - 13, 77 + chargeLevel + chargeGr * 19, eShapes6);
+							JE_drawShape2(VGAScreen, *PX_ + (shipGr_ == 0) + 1, *PY_ - 13, 77 + chargeLevel + chargeGr * 19, eShapes6);
 
 						if (chargeGrWait > 0)
 						{
@@ -4154,7 +4154,7 @@ redo:
 					JE_drawShape2x2(option1X - 6, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
 					                eShapes6);
 				else
-					JE_drawShape2(option1X, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
+					JE_drawShape2(VGAScreen, option1X, option1Y, options[option1Item].gr[optionAni1-1] + optionCharge1,
 					              shapes9);
 			}
 
@@ -4175,7 +4175,7 @@ redo:
 					JE_drawShape2x2(option2X - 6, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
 					                eShapes6);
 				else
-					JE_drawShape2(option2X, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
+					JE_drawShape2(VGAScreen, option2X, option2Y, options[option2Item].gr[optionAni2-1] + optionCharge2,
 					              shapes9);
 			}
 
