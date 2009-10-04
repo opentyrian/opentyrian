@@ -32,7 +32,6 @@ int palette_count;
 palette_t palette;
 Uint32 rgb_palette[256], yuv_palette[256];
 
-palette_t black = {{0,0,0}}; /* Rest is filled with 0's too */
 palette_t colors;
 
 void JE_loadPals( void )
