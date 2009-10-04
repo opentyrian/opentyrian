@@ -511,6 +511,7 @@ void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
 	efread(*shapes, sizeof(JE_byte), shapeSize, f);
 }
 
+// does not clip on left or right edges of surface
 void blit_sprite2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	assert(surface->format->BitsPerPixel == 8);
@@ -546,7 +547,8 @@ void blit_sprite2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8
 	}
 }
 
-void JE_superDrawShape2( SDL_Surface *surface,  int x, int y, unsigned int index, Uint8 *shapes )
+// does not clip on left or right edges of surface
+void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, unsigned int index, Uint8 *shapes )
 {
 	assert(surface->format->BitsPerPixel == 8);
 	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
@@ -581,6 +583,7 @@ void JE_superDrawShape2( SDL_Surface *surface,  int x, int y, unsigned int index
 	}
 }
 
+// does not clip on left or right edges of surface
 void blit_sprite2_darken( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	assert(surface->format->BitsPerPixel == 8);
@@ -616,6 +619,7 @@ void blit_sprite2_darken( SDL_Surface *surface, int x, int y, unsigned int index
 	}
 }
 
+// does not clip on left or right edges of surface
 void blit_sprite2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	blit_sprite2(surface, x,      y,      index,      shapes);
@@ -624,14 +628,16 @@ void blit_sprite2x2( SDL_Surface *surface, int x, int y, unsigned int index, Uin
 	blit_sprite2(surface, x + 12, y + 14, index + 20, shapes);
 }
 
+// does not clip on left or right edges of surface
 void blit_sprite2x2_blend( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
-	JE_superDrawShape2(surface, x,      y,      index,      shapes);
-	JE_superDrawShape2(surface, x + 12, y,      index + 1,  shapes);
-	JE_superDrawShape2(surface, x,      y + 14, index + 19, shapes);
-	JE_superDrawShape2(surface, x + 12, y + 14, index + 20, shapes);
+	blit_sprite2_blend(surface, x,      y,      index,      shapes);
+	blit_sprite2_blend(surface, x + 12, y,      index + 1,  shapes);
+	blit_sprite2_blend(surface, x,      y + 14, index + 19, shapes);
+	blit_sprite2_blend(surface, x + 12, y + 14, index + 20, shapes);
 }
 
+// does not clip on left or right edges of surface
 void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, unsigned int index, Uint8 *shapes )
 {
 	blit_sprite2_darken(surface, x,      y,      index,      shapes);
