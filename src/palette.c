@@ -72,6 +72,16 @@ void JE_updateColorsFast( palette_t colorBuffer )
 #endif /* TARGET_GP2X */
 }
 
+
+void set_palette( SDL_Color color, unsigned int first_color, unsigned int last_color )
+{
+	for (int i = first_color; i <= last_color; ++i )
+	{
+		palette[i] = color;
+		rgb_palette[i] = SDL_MapRGB(display_surface->format, palette[i].r, palette[i].g, palette[i].b);
+		yuv_palette[i] = rgb_to_yuv(palette[i].r, palette[i].g, palette[i].b);
+	}
+}
 void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int first_color, unsigned int last_color )
 {
 	for (unsigned int i = first_color; i <= last_color; i++)
@@ -121,6 +131,7 @@ void step_fade_palette( int diff[256][3], int steps, unsigned int first_color, u
 #endif // TARGET_GP2X
 }
 
+
 void fade_palette( palette_t colors, int steps, unsigned int first_color, unsigned int last_color )
 {
 	assert(steps > 0);
@@ -163,8 +174,8 @@ void fade_black( int steps )
 
 void fade_white( int steps )
 {
-	SDL_Color black = { 255, 255, 255 };
-	fade_solid(black, steps, 0, 255);
+	SDL_Color white = { 255, 255, 255 };
+	fade_solid(white, steps, 0, 255);
 }
 
 void JE_fadeColors( palette_t fromColors, palette_t toColors, JE_byte startCol, JE_byte noColors, JE_byte noSteps )

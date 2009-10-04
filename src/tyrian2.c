@@ -683,7 +683,8 @@ void JE_main( void )
 	shieldSet = 5;
 
 	/* Setup Graphics */
-	JE_updateColorsFast(black);
+	SDL_Color black = { 0, 0, 0 };
+	set_palette(black, 0, 255);
 
 	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
 

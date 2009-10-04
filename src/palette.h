@@ -28,12 +28,13 @@ extern palette_t palettes[];
 extern palette_t palette;
 extern Uint32 rgb_palette[256], yuv_palette[256];
 
-// TODO eliminate black
-extern palette_t black, colors;
+extern palette_t colors;
 
 void JE_loadPals( void );
 
 void JE_updateColorsFast( palette_t ColorBuffer );
+
+void set_palette( SDL_Color color, unsigned int first_color, unsigned int last_color );
 
 void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int first_color, unsigned int last_color );
 void init_step_fade_solid( int diff[256][3], SDL_Color color, unsigned int first_color, unsigned int last_color );
