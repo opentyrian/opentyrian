@@ -28,6 +28,7 @@
 #include "musmast.h"
 #include "network.h"
 #include "nortsong.h"
+#include "nortvars.h"
 #include "params.h"
 #include "pcxmast.h"
 #include "picload.h"

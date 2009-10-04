@@ -27,6 +27,7 @@
 #include "mtrand.h"
 #include "network.h"
 #include "nortsong.h"
+#include "nortvars.h"
 #include "opentyr.h"
 #include "sprite.h"
 #include "varz.h"
@@ -309,28 +310,6 @@ JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
 JE_boolean playerAlive, playerAliveB;
 JE_byte playerStillExploding, playerStillExploding2;
-
-JE_byte *eShapes1 = NULL,
-        *eShapes2 = NULL,
-        *eShapes3 = NULL,
-        *eShapes4 = NULL,
-        *eShapes5 = NULL,
-        *eShapes6 = NULL;
-JE_byte *shapesC1 = NULL,
-        *shapes6  = NULL,
-        *shapes9  = NULL,
-        *shapesW2 = NULL;
-
-JE_word eShapes1Size,
-        eShapes2Size,
-        eShapes3Size,
-        eShapes4Size,
-        eShapes5Size,
-        eShapes6Size,
-        shapesC1Size,
-        shapes6Size,
-        shapes9Size,
-        shapesW2Size;
 
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */

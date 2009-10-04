@@ -19,7 +19,6 @@
 #ifndef VGA256D_H
 #define VGA256D_H
 
-#include "nortvars.h"
 #include "opentyr.h"
 
 extern JE_boolean mouseInstalled;

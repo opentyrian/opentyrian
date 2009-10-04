@@ -23,7 +23,6 @@
 #include "loudness.h"
 #include "mtrand.h"
 #include "nortsong.h"
-#include "nortvars.h"
 #include "opentyr.h"
 #include "varz.h"
 #include "vga256d.h"

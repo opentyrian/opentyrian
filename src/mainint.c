@@ -50,8 +50,6 @@
 #include <assert.h>
 #include <ctype.h>
 
-#define SHP_NUM 12
-
 bool button[4];
 
 #define MAX_PAGE 8
@@ -426,85 +424,6 @@ void JE_helpSystem( JE_byte startTopic )
 			lastkey_sym = SDLK_ESCAPE;
 		}
 	} while (lastkey_sym != SDLK_ESCAPE);
-}
-
-void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
-{
-	*shapes = malloc(shapeSize);
-	efread(*shapes, sizeof(JE_byte), shapeSize, f);
-}
-
-void JE_loadMainShapeTables( const char *shpfile )
-{
-	FILE *f = dir_fopen_die(data_dir(), shpfile, "rb");
-	
-	JE_word shpNumb;
-	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
-	
-	efread(&shpNumb, sizeof(JE_word), 1, f);
-	assert(shpNumb + 1 <= COUNTOF(shpPos));
-	
-	for (int i = 0; i < shpNumb; i++)
-	{
-		efread(&shpPos[i], sizeof(JE_longint), 1, f);
-	}
-	fseek(f, 0, SEEK_END);
-	shpPos[shpNumb] = ftell(f);
-	
-	int i;
-	// fonts, interface, option sprites
-	for (i = 0; i < 7; i++)
-	{
-		fseek(f, shpPos[i], SEEK_SET);
-		load_sprites(i, f);
-	}
-	
-	// player shot sprites
-	shapesC1Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapesC1, f, shapesC1Size);
-	i++;
-	
-	// player ship sprites
-	shapes9Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapes9 , f, shapes9Size);
-	i++;
-	
-	// power-up sprites
-	eShapes6Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&eShapes6, f, eShapes6Size);
-	i++;
-	
-	// coins, datacubes, etc sprites
-	eShapes5Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&eShapes5, f, eShapes5Size);
-	i++;
-	
-	// more player shot sprites
-	shapesW2Size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
-	
-	fclose(f);
-}
-
-void free_main_shape_tables( void )
-{
-	for (int i = 0; i < COUNTOF(sprite_table); ++i)
-		free_sprites(i);
-	
-	free(shapesC1);
-	shapesC1 = NULL;
-	
-	free(shapes9);
-	shapes9 = NULL;
-	
-	free(eShapes6);
-	eShapes6 = NULL;
-	
-	free(eShapes5);
-	eShapes5 = NULL;
-	
-	free(shapesW2);
-	shapesW2 = NULL;
 }
 
 long weapon_upgrade_cost( long base_cost, unsigned int power )

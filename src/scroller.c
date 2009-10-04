@@ -23,6 +23,7 @@
 #include "loudness.h"
 #include "mtrand.h"
 #include "nortsong.h"
+#include "nortvars.h"
 #include "opentyr.h"
 #include "palette.h"
 #include "scroller.h"

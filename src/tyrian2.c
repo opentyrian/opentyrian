@@ -33,6 +33,7 @@
 #include "mtrand.h"
 #include "network.h"
 #include "nortsong.h"
+#include "nortvars.h"
 #include "opentyr.h"
 #include "params.h"
 #include "pcxload.h"

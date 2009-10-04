@@ -21,20 +21,11 @@
 
 #include "opentyr.h"
 
-typedef JE_byte JE_ShapeTypeOne[168]; /* [0..168-1] */
-typedef JE_ShapeTypeOne JE_ShapeType[304]; /* [1..304] */
-
-typedef JE_byte JE_NewShapeTypeOne[182]; /* [0..168+14-1] */
-typedef JE_NewShapeTypeOne JE_NewShapeType[304]; /* [1..304] */
-
 extern JE_boolean inputDetected;
 extern JE_word lastMouseX, lastMouseY;
 extern JE_byte mouseCursor;
 extern JE_boolean mouse_threeButton;
 extern JE_word mouseX, mouseY, mouseButton;
-
-void JE_compressShapeFileC( JE_char s );
-void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s );
 
 JE_boolean JE_buttonPressed( void );
 
@@ -44,14 +35,6 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col );
 void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
 void JE_barDrawDirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
 void JE_wipeKey( void );
-
-void JE_drawShape2( int x, int y, int s, JE_byte *shape );
-void JE_superDrawShape2( int x, int y, int s, JE_byte *shape );
-void JE_drawShape2Shadow( int x, int y, int s, JE_byte *shape );
-
-void JE_drawShape2x2( int x, int y, int s, JE_byte *shape );
-void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape );
-void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape );
 
 #endif /* NORTVARS_H */
 

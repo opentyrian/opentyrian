@@ -18,7 +18,6 @@
  */
 #include "file.h"
 #include "nortsong.h"
-#include "nortvars.h"
 #include "opentyr.h"
 #include "palette.h"
 #include "video.h"

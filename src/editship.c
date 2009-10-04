@@ -19,7 +19,6 @@
 #include "config.h"
 #include "editship.h"
 #include "file.h"
-#include "nortvars.h"
 #include "opentyr.h"
 
 #define SAS (sizeof(JE_ShipsType) - 4)

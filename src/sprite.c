@@ -19,10 +19,33 @@
 #include "file.h"
 #include "opentyr.h"
 #include "sprite.h"
+#include "video.h"
 
 #include <assert.h>
 
 Sprite_array sprite_table[SPRITE_TABLES_MAX];
+
+JE_byte *eShapes1 = NULL,
+        *eShapes2 = NULL,
+        *eShapes3 = NULL,
+        *eShapes4 = NULL,
+        *eShapes5 = NULL,
+        *eShapes6 = NULL;
+JE_byte *shapesC1 = NULL,
+        *shapes6  = NULL,
+        *shapes9  = NULL,
+        *shapesW2 = NULL;
+
+JE_word eShapes1Size,
+        eShapes2Size,
+        eShapes3Size,
+        eShapes4Size,
+        eShapes5Size,
+        eShapes6Size,
+        shapesC1Size,
+        shapes6Size,
+        shapes9Size,
+        shapesW2Size;
 
 void load_sprites_file( unsigned int table, const char *filename )
 {
@@ -439,5 +462,255 @@ void blit_shape_dark( SDL_Surface *surface, int x, int y, unsigned int table, un
 		}
 	}
 }
+
+
+void JE_loadCompShapesB( JE_byte **shapes, FILE *f, JE_word shapeSize )
+{
+	*shapes = malloc(shapeSize);
+	efread(*shapes, sizeof(JE_byte), shapeSize, f);
+}
+
+void JE_loadMainShapeTables( const char *shpfile )
+{
+	const int SHP_NUM = 12;
+	
+	FILE *f = dir_fopen_die(data_dir(), shpfile, "rb");
+	
+	JE_word shpNumb;
+	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
+	
+	efread(&shpNumb, sizeof(JE_word), 1, f);
+	assert(shpNumb + 1 <= COUNTOF(shpPos));
+	
+	for (int i = 0; i < shpNumb; i++)
+	{
+		efread(&shpPos[i], sizeof(JE_longint), 1, f);
+	}
+	fseek(f, 0, SEEK_END);
+	shpPos[shpNumb] = ftell(f);
+	
+	int i;
+	// fonts, interface, option sprites
+	for (i = 0; i < 7; i++)
+	{
+		fseek(f, shpPos[i], SEEK_SET);
+		load_sprites(i, f);
+	}
+	
+	// player shot sprites
+	shapesC1Size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&shapesC1, f, shapesC1Size);
+	i++;
+	
+	// player ship sprites
+	shapes9Size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&shapes9 , f, shapes9Size);
+	i++;
+	
+	// power-up sprites
+	eShapes6Size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&eShapes6, f, eShapes6Size);
+	i++;
+	
+	// coins, datacubes, etc sprites
+	eShapes5Size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&eShapes5, f, eShapes5Size);
+	i++;
+	
+	// more player shot sprites
+	shapesW2Size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&shapesW2, f, shapesW2Size);
+	
+	fclose(f);
+}
+
+void free_main_shape_tables( void )
+{
+	for (int i = 0; i < COUNTOF(sprite_table); ++i)
+		free_sprites(i);
+	
+	free(shapesC1);
+	shapesC1 = NULL;
+	
+	free(shapes9);
+	shapes9 = NULL;
+	
+	free(eShapes6);
+	eShapes6 = NULL;
+	
+	free(eShapes5);
+	eShapes5 = NULL;
+	
+	free(shapesW2);
+	shapesW2 = NULL;
+}
+
+void JE_loadCompShapes( JE_byte **shapes, JE_word *shapeSize, JE_char s )
+{
+	char buffer[11];
+	sprintf(buffer, "newsh%c.shp", tolower(s));
+
+	if (*shapes != NULL)
+	{
+		free(*shapes);
+	}
+
+	FILE *f = dir_fopen_die(data_dir(), buffer, "rb");
+
+	fseek(f, 0, SEEK_END);
+	*shapeSize = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	*shapes = malloc(*shapeSize);
+
+	efread(*shapes, sizeof(JE_byte), *shapeSize, f);
+
+	fclose(f);
+}
+
+void JE_drawShape2( int x, int y, int s_, JE_byte *shape )
+{
+	JE_byte *p; /* shape pointer */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
+
+	int i;
+
+	s = (Uint8 *)VGAScreen->pixels;
+	s += y * VGAScreen->pitch + x;
+
+	s_limit = (Uint8 *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->pitch;
+
+	p = shape;
+	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
+
+	while (*p != 0x0f)
+	{
+		s += *p & 0x0f;
+		i = (*p & 0xf0) >> 4;
+		if (i)
+		{
+			while (i--)
+			{
+				p++;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= VGAScreen->pixels)
+					*s = *p;
+				s++;
+			}
+		} else {
+			s -= 12;
+			s += VGAScreen->pitch;
+		}
+		p++;
+	}
+}
+
+void JE_superDrawShape2( int x, int y, int s_, JE_byte *shape )
+{
+	JE_byte *p; /* shape pointer */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
+
+	int i;
+
+	s = (Uint8 *)VGAScreen->pixels;
+	s += y * VGAScreen->pitch + x;
+
+	s_limit = (Uint8 *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->pitch;
+
+	p = shape;
+	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
+
+	while (*p != 0x0f)
+	{
+		s += *p & 0x0f;
+		i = (*p & 0xf0) >> 4;
+		if (i)
+		{
+			while (i--)
+			{
+				p++;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= VGAScreen->pixels)
+					*s = (((*p & 0x0f) + (*s & 0x0f)) >> 1) | (*p & 0xf0);
+				s++;
+			}
+		} else {
+			s -= 12;
+			s += VGAScreen->pitch;
+		}
+		p++;
+	}
+}
+
+void JE_drawShape2Shadow( int x, int y, int s_, JE_byte *shape )
+{
+	JE_byte *p; /* shape pointer */
+	Uint8 *s; /* screen pointer, 8-bit specific */
+	Uint8 *s_limit; /* buffer boundary */
+
+	int i;
+
+	s = (Uint8 *)VGAScreen->pixels;
+	s += y * VGAScreen->pitch + x;
+
+	s_limit = (Uint8 *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->pitch;
+
+	p = shape;
+	p += SDL_SwapLE16(((JE_word *)p)[s_ - 1]);
+
+	while (*p != 0x0f)
+	{
+		s += *p & 0x0f;
+		i = (*p & 0xf0) >> 4;
+		if (i)
+		{
+			while (i--)
+			{
+				p++;
+				if (s >= s_limit)
+					return;
+				if ((void *)s >= VGAScreen->pixels)
+					*s = ((*s & 0x0f) >> 1) + (*s & 0xf0);
+				s++;
+			}
+		} else {
+			s -= 12;
+			s += VGAScreen->pitch;
+		}
+		p++;
+	}
+}
+
+void JE_drawShape2x2( int x, int y, int s, JE_byte *shape )
+{
+	JE_drawShape2(x,    y,    s,    shape);
+	JE_drawShape2(x+12, y,    s+1,  shape);
+	JE_drawShape2(x,    y+14, s+19, shape);
+	JE_drawShape2(x+12, y+14, s+20, shape);
+}
+
+void JE_superDrawShape2x2( int x, int y, int s, JE_byte *shape )
+{
+	JE_superDrawShape2(x,    y,    s,    shape);
+	JE_superDrawShape2(x+12, y,    s+1,  shape);
+	JE_superDrawShape2(x,    y+14, s+19, shape);
+	JE_superDrawShape2(x+12, y+14, s+20, shape);
+}
+
+void JE_drawShape2x2Shadow( int x, int y, int s, JE_byte *shape )
+{
+	JE_drawShape2Shadow(x,    y,    s,    shape);
+	JE_drawShape2Shadow(x+12, y,    s+1,  shape);
+	JE_drawShape2Shadow(x,    y+14, s+19, shape);
+	JE_drawShape2Shadow(x+12, y+14, s+20, shape);
+}
+
 
 // kate: tab-width 4; vim: set noet:
