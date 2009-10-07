@@ -1,19 +1,24 @@
 OpenTyrian Classic Development Team
-========================================
+================================================================================
 
 Carl W. Reinke <mindless2112\100gmail\056com>  (Mindless)
 Yuri K. Schlesner <yuriks.br@gmail.com>  (yuriks)
 Casey A. McCann <syntaxglitch@gmail.com>  (syntaxglitch)
 
+== Contributors ================================================================
 
-Contributors
-========================================
+awoodland              patch that fixed 64-bit support
+simx                   added Mac OS X support
+filmor                 updated Mac OS X support
+Tony Vroon             patch that made Makefile more packager-friendly
+jeff250                patch that fixed a buffer overflow
+a.h.vandijk            patch that fixed a buffer overflow,
+                       patch that fixed an input handling bug
+ECA                    Destruct rewrite
+spudd86.2              patch that fixed an audio bug
+Jan "heftig" Steffens  clean-up patches
 
-simx    Mac OS X port
-filmor  Mac OS X port
-
-
-== Further Thanks ======================
+== Further Thanks ==============================================================
 
 Jason Emery
  * Tyrian source code
