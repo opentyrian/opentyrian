@@ -37,7 +37,8 @@ bool xmas_time( void )
 
 bool xmas_prompt( void )
 {
-	const char *xmas_text[] = {
+	const char *xmas_text[] =
+	{
 		"Christmas has been detected.",
 		"Activate Christmas?",
 		"Yes",
@@ -46,7 +47,7 @@ bool xmas_prompt( void )
 	
 	set_palette(palettes[0], 0, 255);
 	
-	JE_outTextAdjust(JE_fontCenter(xmas_text[0], SMALL_FONT_SHAPES), 85, xmas_text[0], 4, -2, SMALL_FONT_SHAPES, true);
+	JE_outTextAdjust(JE_fontCenter(xmas_text[0], SMALL_FONT_SHAPES), 85, xmas_text[0], 4, -2, SMALL_FONT_SHAPES, false);
 	JE_outTextAdjust(JE_fontCenter(xmas_text[1], SMALL_FONT_SHAPES), 100, xmas_text[1], 2, -2, SMALL_FONT_SHAPES, false);
 	
 	int selection = 0;
@@ -54,8 +55,8 @@ bool xmas_prompt( void )
 	bool decided = false;
 	while (!decided)
 	{
-		JE_outTextAdjust(JE_fontCenter(xmas_text[2], SMALL_FONT_SHAPES) - 20, 120, xmas_text[2], 15, (selection == 0) ? -2 : -4, SMALL_FONT_SHAPES, true);
-		JE_outTextAdjust(JE_fontCenter(xmas_text[3], SMALL_FONT_SHAPES) + 20, 120, xmas_text[3], 15, (selection == 1) ? -2 : -4, SMALL_FONT_SHAPES, true);
+		JE_outTextAdjust(JE_fontCenter(xmas_text[2], SMALL_FONT_SHAPES) - 20, 120, xmas_text[2], 15, (selection == 0) ? -2 : -4, SMALL_FONT_SHAPES, false);
+		JE_outTextAdjust(JE_fontCenter(xmas_text[3], SMALL_FONT_SHAPES) + 20, 120, xmas_text[3], 15, (selection == 1) ? -2 : -4, SMALL_FONT_SHAPES, false);
 		
 		JE_showVGA();
 		
