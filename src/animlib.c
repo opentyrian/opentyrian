@@ -323,7 +323,6 @@ void JE_closeAnim( void )
  */
 int JE_playRunSkipDump( Uint8 *incomingBuffer, unsigned int IncomingBufferLength )
 {
-	unsigned int opcode, value, count;
 	sizebuf_t Buffer_IN, Buffer_OUT;
 	sizebuf_t * pBuffer_IN = &Buffer_IN, * pBuffer_OUT = &Buffer_OUT;
 
@@ -336,7 +335,6 @@ int JE_playRunSkipDump( Uint8 *incomingBuffer, unsigned int IncomingBufferLength
 
 	SZ_Init(pBuffer_IN,  incomingBuffer,    IncomingBufferLength);
 	SZ_Init(pBuffer_OUT, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
-	opcode = value = count = 0;
 
 
 	/* 320x200 is the only supported format.
@@ -348,7 +346,7 @@ int JE_playRunSkipDump( Uint8 *incomingBuffer, unsigned int IncomingBufferLength
 	while (1)
 	{
 		/* Get one byte.  This byte may have flags that tell us more */
-		opcode = MSG_ReadByte(pBuffer_IN);
+		unsigned int opcode = MSG_ReadByte(pBuffer_IN);
 
 		/* Before we continue, check the error states/
 		 * We should *probably* check these after every read and write, but
@@ -374,7 +372,7 @@ int JE_playRunSkipDump( Uint8 *incomingBuffer, unsigned int IncomingBufferLength
 			}
 			else if (!(opcode & ANI_LONG_COPY_OR_RLE)) /* If it's not those two, it's a skip */
 			{
-				count = opcode;
+				unsigned int count = opcode;
 				SZ_Seek(pBuffer_OUT, count, SEEK_CUR);
 			}
 			else /* Now things get a bit more interesting... */
@@ -383,17 +381,17 @@ int JE_playRunSkipDump( Uint8 *incomingBuffer, unsigned int IncomingBufferLength
 
 				if (opcode & ANI_LONG_RLE) /* RLE */
 				{
-					count = opcode & ~ANI_LONG_RLE; /* Clear flag */
+					unsigned int count = opcode & ~ANI_LONG_RLE; /* Clear flag */
 
 					/* Extract another byte */
-					value = MSG_ReadByte(pBuffer_IN);
+					unsigned int value = MSG_ReadByte(pBuffer_IN);
 
 					/* The actual run */
 					SZ_Memset(pBuffer_OUT, value, count);
 				}
 				else
 				{ /* Long copy */
-					count = opcode;
+					unsigned int count = opcode;
 
 					/* Copy */
 					SZ_Memcpy2(pBuffer_OUT, pBuffer_IN, count);
@@ -404,21 +402,21 @@ int JE_playRunSkipDump( Uint8 *incomingBuffer, unsigned int IncomingBufferLength
 		{
 			if (opcode & ANI_SHORT_SKIP) /* Short skip, move pointer only */
 			{
-				count = opcode & ~ANI_SHORT_SKIP; /* clear flag to get count */
+				unsigned int count = opcode & ~ANI_SHORT_SKIP; /* clear flag to get count */
 				SZ_Seek(pBuffer_OUT, count, SEEK_CUR);
 			}
 			else if (opcode == ANI_SHORT_RLE) /* Short RLE, memset the destination */
 			{
 				/* Extract a few more bytes */
-				count = MSG_ReadByte(pBuffer_IN);
-				value = MSG_ReadByte(pBuffer_IN);
+				unsigned int count = MSG_ReadByte(pBuffer_IN);
+				unsigned int value = MSG_ReadByte(pBuffer_IN);
 
 				/* Run */
 				SZ_Memset(pBuffer_OUT, value, count);
 			}
 			else /* Short copy, memcpy from src to dest. */
 			{
-				count = opcode;
+				unsigned int count = opcode;
 
 				/* Dump */
 				SZ_Memcpy2(pBuffer_OUT, pBuffer_IN, count);

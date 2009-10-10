@@ -62,7 +62,7 @@ bool skip_intro_logos = false;
 boss_bar_t boss_bar[2];
 
 /* Level Event Data */
-JE_boolean quit, first, loadLevelOk;
+JE_boolean quit, loadLevelOk;
 
 struct JE_EventRecType eventRec[EVENT_MAXIMUM]; /* [1..eventMaximum] */
 JE_word levelEnemyMax;
@@ -2662,8 +2662,6 @@ new_game:
 
 	gameLoaded = false;
 
-	first = true;
-
 	if (loadDestruct)
 		return;
 
@@ -3834,8 +3832,6 @@ void JE_titleScreen( JE_boolean animate )
 								break;
 							case 1: /* Load game */
 								JE_loadScreen();
-								if (!gameLoaded)
-									redraw = true;
 								fadeIn = true;
 								break;
 							case 2: /* High scores */
@@ -3844,12 +3840,10 @@ void JE_titleScreen( JE_boolean animate )
 								break;
 							case 3: /* Instructions */
 								JE_helpSystem(1);
-								redraw = true;
 								fadeIn = true;
 								break;
 							case 4: /* Ordering info, now OpenTyrian menu */
 								opentyrian_menu();
-								redraw = true;
 								fadeIn = true;
 								break;
 							case 5: /* Demo */

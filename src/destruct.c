@@ -2099,19 +2099,13 @@ void DE_ProcessInput( void )
 {
 	int direction;
 
-	unsigned int player_index, player_enemy;
+	unsigned int player_index;
 	struct destruct_unit_s * curUnit;
 
 
 	for (player_index = 0; player_index < MAX_PLAYERS; player_index++)
 	{
 		if (player[player_index].unitsRemaining <= 0) { continue; }
-
-		player_enemy = player_index + 1;
-		if(player_enemy > PLAYER_RIGHT)
-		{
-			player_enemy = PLAYER_LEFT;
-		}
 
 		direction = (player_index == PLAYER_LEFT) ? -1 : 1;
 		curUnit = &(player[player_index].unit[player[player_index].unitSelected]);

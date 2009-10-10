@@ -157,8 +157,6 @@ void JE_itemScreen( void )
 
 	memcpy(menuChoices, menuChoicesDefault, sizeof(menuChoices));
 
-	first = true;
-	
 	play_song(songBuy);
 
 	JE_loadPic(1, false);
