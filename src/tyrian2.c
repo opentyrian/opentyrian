@@ -21,6 +21,7 @@
 #include "destruct.h"
 #include "episodes.h"
 #include "file.h"
+#include "font.h"
 #include "fonthand.h"
 #include "game_menu.h"
 #include "joystick.h"
@@ -3550,7 +3551,7 @@ void JE_titleScreen( JE_boolean animate )
 
 					JE_loadPic(4, false);
 
-					JE_textShade(2, 192, opentyrian_version, 15, 0, PART_SHADE);
+					draw_font_hv_shadow(VGAScreen, 2, 192, opentyrian_version, small_font, left_aligned, 15, 0, false, 1);
 
 					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 

@@ -38,11 +38,11 @@ typedef enum
 }
 FontAlignment;
 
-void font_draw_hv_shadow( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value, bool black, int shadow_dist );
-void font_draw_hv_full_shadow( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value, bool black, int shadow_dist );
+void draw_font_hv_shadow( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value, bool black, int shadow_dist );
+void draw_font_hv_full_shadow( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value, bool black, int shadow_dist );
 
-void font_draw_hv( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value );
-void font_draw_hv_blend( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value );
-void font_draw_dark( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, bool black );
+void draw_font_hv( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value );
+void draw_font_hv_blend( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, Uint8 hue, Sint8 value );
+void draw_font_dark( SDL_Surface *, int x, int y, const char *text, Font, FontAlignment, bool black );
 
 #endif // FONT_H
