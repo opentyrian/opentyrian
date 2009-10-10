@@ -35,6 +35,13 @@
 
 #include <assert.h>
 
+/*                              HERE BE DRAGONS!
+ * 
+ * When I wrote this code I thought it was wonderful... that thought was very
+ * wrong.  It works, but good luck understanding how... I don't anymore.
+ * 
+ * Hopefully it'll be rewritten some day.
+ */
 
 #define NET_VERSION       2            // increment whenever networking changes might create incompatability
 #define NET_PORT          1333         // UDP
