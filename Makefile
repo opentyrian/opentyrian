@@ -70,7 +70,7 @@ LDFLAGS += $($(PLATFORM)_LDFLAGS) $(SDL_LDFLAGS)
 
 HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
 ifneq ($(HG_REV), )
-	CFLAGS += -DHG_REV="\"$(HG_REV)\""
+	CFLAGS += -DHG_REV='"$(HG_REV)"'
 endif
 
 # RULES ####################################################
