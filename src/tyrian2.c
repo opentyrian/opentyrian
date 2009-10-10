@@ -3432,8 +3432,7 @@ void JE_titleScreen( JE_boolean animate )
 	JE_word waitForDemo;
 	JE_byte menu = 0;
 	JE_boolean redraw = true,
-	           fadeIn = false,
-	           first = true;
+	           fadeIn = false;
 
 	JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
 
@@ -3445,7 +3444,6 @@ void JE_titleScreen( JE_boolean animate )
 	play_demo = false;
 	stopped_demo = false;
 
-	first  = true;
 	redraw = true;
 	fadeIn = false;
 
@@ -3626,8 +3624,6 @@ void JE_titleScreen( JE_boolean animate )
 
 			JE_showVGA();
 
-			first = false;
-
 			if (trentWin)
 			{
 				quit = true;
@@ -3784,9 +3780,6 @@ void JE_titleScreen( JE_boolean animate )
 									if (select_episode() && select_difficulty())
 									{
 										gameLoaded = true;
-									} else {
-										redraw = true;
-										fadeIn = true;
 									}
 
 									initialDifficulty = difficultyLevel;
