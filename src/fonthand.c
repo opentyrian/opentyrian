@@ -194,25 +194,6 @@ void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_b
 	}
 }
 
-void JE_outTextShade( JE_word x, JE_word y, const char *s, JE_byte font )
-{
-	for (int i = 0; s[i] != '\0'; ++i)
-	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
-		
-		if (s[i] == ' ')
-		{
-			x += 6;
-		}
-		else if (sprite_id != -1)
-		{
-			blit_sprite_dark(tempScreenSeg, x, y, font, sprite_id, false);
-			
-			x += sprite(font, sprite_id)->width + 1;
-		}
-	}
-}
-
 void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow )
 {
 	int bright = 0;
