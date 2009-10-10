@@ -20,8 +20,30 @@
 #include "fonthand.h"
 #include "sprite.h"
 
-#include <stdbool.h>
+// like JE_dString()                    if (black == false && shadow_dist == 2 && hue == 15)
+// like JE_textShade() with PART_SHADE  if (black == true && shadow_dist == 1)
+// like JE_outTextAndDarken()           if (black == false && shadow_dist == 1)
+// like JE_outTextAdjust() with shadow  if (black == false && shadow_dist == 2)
+void font_draw_hv_shadow( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value, bool black, int shadow_dist )
+{
+	font_draw_dark(surface, x + shadow_dist, y + shadow_dist, text, font, alignment, black);
+	
+	font_draw_hv(surface, x, y, text, font, alignment, hue, value);
+}
 
+// like JE_textShade() with FULL_SHADE  if (black == true && shadow_dist == 1)
+void font_draw_hv_full_shadow( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value, bool black, int shadow_dist )
+{
+	font_draw_dark(surface, x,               y - shadow_dist, text, font, alignment, black);
+	font_draw_dark(surface, x + shadow_dist, y,               text, font, alignment, black);
+	font_draw_dark(surface, x,               y + shadow_dist, text, font, alignment, black);
+	font_draw_dark(surface, x - shadow_dist, y,               text, font, alignment, black);
+	
+	font_draw_hv(surface, x, y, text, font, alignment, hue, value);
+}
+
+// like JE_outText() with (brightness >= 0)
+// like JE_outTextAdjust() without shadow
 void font_draw_hv( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value )
 {
 	switch (alignment)
@@ -60,6 +82,86 @@ void font_draw_hv( SDL_Surface *surface, int x, int y, const char *text, Font fo
 			if (sprite_id != -1 && sprite_exists(font, sprite_id))
 			{
 				blit_sprite_hv(surface, x, y, font, sprite_id, hue, value);
+				
+				x += sprite(font, sprite_id)->width + 1;
+			}
+			break;
+		}
+	}
+}
+
+// like JE_outTextModify()
+void font_draw_hv_blend( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value )
+{
+	switch (alignment)
+	{
+	case left_aligned:
+		break;
+	case centered:
+		x -= JE_textWidth(text, font) / 2;
+		break;
+	case right_aligned:
+		x -= JE_textWidth(text, font);
+		break;
+	}
+	
+	for (; *text != '\0'; ++text)
+	{
+		int sprite_id = font_ascii[(unsigned char)*text];
+		
+		switch (*text)
+		{
+		case ' ':
+			x += 6;
+			break;
+			
+		case '~':
+			break;
+			
+		default:
+			if (sprite_id != -1 && sprite_exists(font, sprite_id))
+			{
+				blit_sprite_hv_blend(surface, x, y, font, sprite_id, hue, value);
+				
+				x += sprite(font, sprite_id)->width + 1;
+			}
+			break;
+		}
+	}
+}
+
+// like JE_outText() with (brightness < 0)  if (black == true)
+void font_draw_dark( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, bool black )
+{
+	switch (alignment)
+	{
+	case left_aligned:
+		break;
+	case centered:
+		x -= JE_textWidth(text, font) / 2;
+		break;
+	case right_aligned:
+		x -= JE_textWidth(text, font);
+		break;
+	}
+	
+	for (; *text != '\0'; ++text)
+	{
+		int sprite_id = font_ascii[(unsigned char)*text];
+		
+		switch (*text)
+		{
+		case ' ':
+			x += 6;
+			break;
+			
+		case '~':
+			break;
+			
+		default:
+			if (sprite_id != -1 && sprite_exists(font, sprite_id))
+			{
+				blit_sprite_dark(surface, x, y, font, sprite_id, black);
 				
 				x += sprite(font, sprite_id)->width + 1;
 			}
