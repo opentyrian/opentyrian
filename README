@@ -31,10 +31,10 @@ ctrl/alt       -- fire left/right sidekick
 Currently OpenTyrian does not have an arena; as such, networked games must be
 initiated manually via the command line simultaniously by both players.
 
-syntax: tyrian --net <host> <playernumber> <playername>
+syntax: tyrian --net HOSTNAME --net-player-name NAME --net-player-number NUMBER
 
-where <host> is the IP address of your opponent, <playernumber> is either 1 or 2
-depending on which ship you intend to pilot, and <playername> is your alias
+where HOSTNAME is the IP address of your opponent, NUMBER is either 1 or 2
+depending on which ship you intend to pilot, and NAME is your alias
 
 OpenTyrian uses UDP port 1333 for multiplayer, but in most cases players will
 not need to open any ports because OpenTyrian makes use of UDP hole punching.
