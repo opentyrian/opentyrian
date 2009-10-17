@@ -33,7 +33,10 @@
 
 void jukebox( void )
 {
-	bool hide_text = false, quit = false;
+	bool trigger_quit = false,  // true when user wants to quit
+	     quitting = false;
+	
+	bool hide_text = false;
 
 	bool fade_looped_songs = true, fading_song = false;
 	bool stopped = false;
@@ -49,8 +52,8 @@ void jukebox( void )
 	JE_starlib_init();
 
 	int fade_volume = tyrMusicVolume;
-
-	while (!quit || palette_fade_steps > 0)
+	
+	for (; ; )
 	{
 		if (!stopped && !audio_disabled)
 		{
@@ -106,17 +109,17 @@ void jukebox( void )
 			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 180, tempStr, 1, 0);
 		}
 
-		JE_showVGA();
-
 		if (palette_fade_steps > 0)
 			step_fade_palette(diff, palette_fade_steps--, 0, 255);
+		
+		JE_showVGA();
 
 		wait_delay();
 
 		// quit on mouse click
 		Uint16 x, y;
 		if (JE_mousePosition(&x, &y) > 0)
-			quit = true;
+			trigger_quit = true;
 
 		if (newkey)
 		{
@@ -124,12 +127,7 @@ void jukebox( void )
 			{
 			case SDLK_ESCAPE: // quit jukebox
 			case SDLK_q:
-				quit = true;
-
-				palette_fade_steps = 15;
-
-				SDL_Color black = { 0, 0, 0 };
-				init_step_fade_solid(diff, black, 0, 255);
+				trigger_quit = true;
 				break;
 
 			case SDLK_SPACE:
@@ -183,6 +181,21 @@ void jukebox( void )
 				break;
 			}
 		}
+		
+		// user wants to quit, start fade-out
+		if (trigger_quit && !quitting)
+		{
+			palette_fade_steps = 15;
+			
+			SDL_Color black = { 0, 0, 0 };
+			init_step_fade_solid(diff, black, 0, 255);
+			
+			quitting = true;
+		}
+		
+		// if fade-out finished, we can finally quit
+		if (quitting && palette_fade_steps == 0)
+			break;
 	}
 
 	set_volume(tyrMusicVolume, fxVolume);
