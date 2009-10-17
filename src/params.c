@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "arg_parse.h"
 #include "file.h"
 #include "joystick.h"
 #include "loudness.h"
@@ -46,240 +47,224 @@ void JE_paramCheck( int argc, char *argv[] )
 	richMode        = false;
 	constantPlay    = false;
 
-	const struct
+	const Options options[] =
 	{
-		const char short_opt;
-		const char *long_opt;
-	}
-	options[] =
-	{
-		{ 'h', "help" },
+		{ 'h', 'h', "help",              false },
 		
-		{ 's', "no-sound" },
-		{ 'j', "no-joystick" },
-		{ 'x', "no-xmas" },
+		{ 's', 's', "no-sound",          false },
+		{ 'j', 'j', "no-joystick",       false },
+		{ 'x', 'x', "no-xmas",           false },
 		
-		{ 't', "data" },
+		{ 't', 't', "data",              true },
 		
-		{ 'n', "net" },
-		{ 'p', "net-port" },
-		{ 'd', "net-delay" },
+		{ 'n', 'n', "net",               true },
+		{ 256, 0,   "net-player-name",   true }, // TODO: no short codes because there should
+		{ 257, 0,   "net-player-number", true }, //       be a menu for entering these in the future
+		{ 'p', 'p', "net-port",          true },
+		{ 'd', 'd', "net-delay",         true },
 		
-		{ 'X', "xmas" },
-		{ 'c', "constant" },
-		{ 'k', "death" },
-		{ 'r', "record" },
-		{ 'l', "loot" },
+		{ 'X', 'X', "xmas",              false },
+		{ 'c', 'c', "constant",          false },
+		{ 'k', 'k', "death",             false },
+		{ 'r', 'r', "record",            false },
+		{ 'l', 'l', "loot",              false },
+		
+		{ 0, 0, NULL, false}
 	};
+	Option option = { 0, NULL, 0 };
 	
-	for (int i = 1; i < argc; i++)
+	for (; ; )
 	{
-		char match = '\0';
+		option = parse_args(argc, (const char **)argv, options);
 		
-		if (argv[i][0] == '-')
+		if (option.value == NOT_OPTION)
+			break;
+		
+		switch (option.value)
 		{
-			if (strncmp(argv[i], "--", 2) == 0)
+		case INVALID_OPTION:
+		case AMBIGUOUS_OPTION:
+		case OPTION_MISSING_ARG:
+			fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
+			exit(EXIT_FAILURE);
+			break;
+			
+		case 'h':
+			printf("Usage: %s [OPTION...]\n\n"
+			       "Options:\n"
+			       "  -h, --help                   Show help about options\n\n"
+			       "  -s, --no-sound               Disable audio\n"
+			       "  -j, --no-joystick            Disable joystick/gamepad input\n"
+			       "  -x, --no-xmas                Disable Christmas mode\n\n"
+			       "  -t, --data=DIR               Set Tyrian data directory\n\n"
+			       "  -n, --net=HOST[:PORT]        Start a networked game\n"
+			       "  --net-player-name=NAME       Sets local player name in a networked game\n"
+			       "  --net-player-number=NUMBER   Sets local player number in a networked game\n"
+			       "                               (1 or 2)\n"
+			       "  -p, --net-port=PORT          Local port to bind (default is 1333)\n"
+			       "  -d, --net-delay=FRAMES       Set lag-compensation delay (default is 1)\n", argv[0]);
+			exit(0);
+			break;
+			
+		case 's':
+			// Disables sound/music usage
+			audio_disabled = true;
+			break;
+			
+		case 'j':
+			// Disables joystick detection
+			ignore_joystick = true;
+			break;
+			
+		case 'x':
+			xmas = false;
+			break;
+			
+		// set custom Tyrian data directory
+		case 't':
+			custom_data_dir = option.arg;
+			break;
+			
+		case 'n':
+			isNetworkGame = true;
+			
+			intptr_t temp = (intptr_t)strchr(option.arg, ':');
+			if (temp)
 			{
-				for (int j = 0; j < COUNTOF(options); j++)
+				temp -= (intptr_t)option.arg;
+				
+				int temp_port = atoi(&option.arg[temp + 1]);
+				if (temp_port > 0 && temp_port < 49152)
+					network_opponent_port = temp_port;
+				else
 				{
-					if (strcmp(&argv[i][2], options[j].long_opt) == 0)
-					{
-						match = options[j].short_opt;
-						break;
-					}
+					fprintf(stderr, "%s: error: invalid network port number\n", argv[0]);
+					exit(EXIT_FAILURE);
 				}
+				
+				network_opponent_host = malloc(temp + 1);
+				strnztcpy(network_opponent_host, option.arg, temp);
 			}
 			else
 			{
-				// TODO: could have support for multiple options following a -
-				match = argv[i][1];
+				network_opponent_host = malloc(strlen(option.arg) + 1);
+				strcpy(network_opponent_host, option.arg);
 			}
+			break;
 			
-			switch (match)
+		case 256: // --net-player-name
+			network_player_name = malloc(strlen(option.arg) + 1);
+			strcpy(network_player_name, option.arg);
+			break;
+			
+		case 257: // --net-player-number
+		{
+			int temp = atoi(option.arg);
+			if (temp >= 1 && temp <= 2)
+				thisPlayerNum = temp;
+			else
 			{
-				case 'h':
-					printf("Usage: tyrian [options]\n\n"
-					       "Options:\n"
-					       "  -h, --help                                   Show help about options\n\n"
-					       "  -s, --no-sound                               Disable audio\n"
-					       "  -j, --no-joystick                            Disable joystick/gamepad input\n"
-					       "  -x, --no-xmas                                Disable Christmas mode\n\n"
-					       "  -t, --data <directory>                       Set Tyrian data directory\n\n"
-					       "  -n, --net <host>[:<port>] <number> <name>    Start a networked game\n"
-					       "  -p, --net-port <port>                        Local port to bind\n"
-					       "  -d, --net-delay <frames>                     Set lag-compensation delay\n");
-					exit(0);
-					break;
-					
-				case 's':
-					// Disables sound/music usage
-					audio_disabled = true;
-					break;
-					
-				case 'j':
-					// Disables joystick detection
-					ignore_joystick = true;
-					break;
-					
-				case 'x':
-					xmas = false;
-					break;
-					
-				// set custom Tyrian data directory
-				case 't':
-					if (argc > i + 1)
-					{
-						custom_data_dir = argv[++i];
-					}
-					else
-					{
-						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
-						exit(-1);
-					}
-					break;
-					
-				case 'n':
-					if (argc > i + 3)
-					{
-						isNetworkGame = true;
-						
-						{
-							intptr_t temp = (intptr_t)strchr(argv[++i], ':');
-							if (temp)
-							{
-								temp -= (intptr_t)argv[i];
-								
-								int temp_port = atoi(&argv[i][temp + 1]);
-								if (temp_port > 0 && temp_port < 49152)
-									network_opponent_port = temp_port;
-								
-								network_opponent_host = malloc(temp + 1);
-								strnztcpy(network_opponent_host, argv[i], temp);
-							}
-							else
-							{
-								network_opponent_host = malloc(strlen(argv[i]) + 1);
-								strcpy(network_opponent_host, argv[i]);
-							}
-						}
-						
-						int temp = atoi(argv[++i]);
-						if (temp >= 1 && temp <= 2)
-							thisPlayerNum = temp;
-						
-						network_player_name = malloc(strlen(argv[++i]) + 1);
-						strcpy(network_player_name, argv[i]);
-					}
-					else
-					{
-						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
-						exit(-1);
-					}
-					break;
-					
-				case 'p':
-					if (argc > i + 1)
-					{
-						int temp = atoi(argv[++i]);
-						if (temp > 0 && temp < 49152)
-							network_player_port = temp;
-					}
-					else
-					{
-						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
-						exit(-1);
-					}
-					break;
-					
-				case 'd':
-					if (argc > i + 1)
-					{
-						errno = 0;
-						int temp = strtol(argv[++i], (char **)NULL, 10);
-						if (errno == 0)
-							network_delay = 1 + temp;
-					}
-					else
-					{
-						printf("Argument missing for '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
-						exit(-1);
-					}
-					break;
-				
-				case 'X':
-					xmas = true;
-					break;
-					
-				case 'c':
-					/* Constant play for testing purposes (C key activates invincibility)
-					   This might be useful for publishers to see everything - especially
-					   those who can't play it */
-					constantPlay = true;
-					break;
-					
-				case 'k':
-					constantDie = true;
-					break;
-					
-				case 'r':
-					record_demo = true;
-					break;
-					
-				case 'l':
-					// Gives you mucho bucks
+				fprintf(stderr, "%s: error: invalid network player number\n", argv[0]);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		}
+		case 'p':
+		{
+			int temp = atoi(option.arg);
+			if (temp > 0 && temp < 49152)
+				network_player_port = temp;
+			else
+			{
+				fprintf(stderr, "%s: error: invalid network port number\n", argv[0]);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		}
+		case 'd':
+		{
+			int temp;
+			if (sscanf(option.arg, "%d", &temp) == 1)
+				network_delay = 1 + temp;
+			else
+			{
+				fprintf(stderr, "%s: error: invalid network delay value\n", argv[0]);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		}
+		case 'X':
+			xmas = true;
+			break;
+			
+		case 'c':
+			/* Constant play for testing purposes (C key activates invincibility)
+			   This might be useful for publishers to see everything - especially
+			   those who can't play it */
+			constantPlay = true;
+			break;
+			
+		case 'k':
+			constantDie = true;
+			break;
+			
+		case 'r':
+			record_demo = true;
+			break;
+			
+		case 'l':
+			// Gives you mucho bucks
+			richMode = true;
+			break;
+			
+		default:
+			assert(false);
+			break;
+		}
+	}
+	
+	// legacy parameter support
+	for (int i = option.argn; i < argc; ++i)
+	{
+		tempStr = argv[i];
+		for (y = 0; y < strlen(tempStr); y++)
+		{
+			tempStr[y] = toupper(tempStr[y]);
+		}
+		
+		for (y = 0; y < COUNTOF(pars); y++)
+		{
+			if (strcmp(tempStr, pars[y]) == 0)
+			{
+				switch (y)
+				{
+				case 0:
 					richMode = true;
 					break;
-					
-				default:
-					printf("Unknown option '%s'.\nUse --help to get a list of available command line options.\n", argv[i]);
-					exit(-1);
+				case 1:
+					record_demo = true;
 					break;
-			}
-		}
-		else
-		{
-			// legacy parameter support
-			
-			tempStr = argv[i];
-			for (y = 0; y < strlen(tempStr); y++)
-			{
-				tempStr[y] = toupper(tempStr[y]);
-			}
-			
-			for (y = 0; y < COUNTOF(pars); y++)
-			{
-				if (strcmp(tempStr, pars[y]) == 0)
-				{
-					switch (y)
-					{
-						case 0:
-							richMode = true;
-							break;
-						case 1:
-							record_demo = true;
-							break;
-						case 2:
-							ignore_joystick = true;
-							break;
-						case 3:
-							constantPlay = true;
-							break;
-						case 4:
-							constantDie = true;
-							break;
-						case 5:
-							audio_disabled = true;
-							break;
-						case 6:
-							xmas = false;
-							break;
-						case 7:
-							xmas = true;
-							break;
-						default:
-							assert(false);
-							break;
-					}
+				case 2:
+					ignore_joystick = true;
+					break;
+				case 3:
+					constantPlay = true;
+					break;
+				case 4:
+					constantDie = true;
+					break;
+				case 5:
+					audio_disabled = true;
+					break;
+				case 6:
+					xmas = false;
+					break;
+				case 7:
+					xmas = true;
+					break;
+				default:
+					assert(false);
+					break;
 				}
 			}
 		}
