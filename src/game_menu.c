@@ -453,19 +453,15 @@ void JE_itemScreen( void )
 					bool comma = false;
 					for (int k = 0; k < COUNTOF(*joystick->assignment); k++)
 					{
-						if (joystick[joystick_config].assignment[i - 4][k].num == -1)
+						if (joystick[joystick_config].assignment[i - 4][k].type == NONE)
 							continue;
 						
 						if (comma)
 							strcat(value, ", ");
-						comma = true;
+						else
+							comma = true;
 						
-						char temp[7];
-						snprintf(temp, sizeof(temp), "%s%s %0d",
-						         joystick[joystick_config].assignment[i - 4][k].is_axis ? "AX" : "BTN",
-						         joystick[joystick_config].assignment[i - 4][k].is_axis ? joystick[joystick_config].assignment[i - 4][k].axis_negative ? "-" : "+" : "",
-						         joystick[joystick_config].assignment[i - 4][k].num + 1);
-						strcat(value, temp);
+						strcat(value, joystick_assignment_name(&joystick[joystick_config].assignment[i - 4][k]));
 					}
 				}
 				
@@ -2916,24 +2912,27 @@ void JE_menuFunction( JE_byte select )
 			Joystick_assignment temp;
 			if (detect_joystick_assignment(joystick_config, &temp))
 			{
+				// if the detected assignment was already set, unset it
 				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
 				{
 					if (joystick_assignment_cmp(&temp, &joystick[joystick_config].assignment[select - 6][i]))
 					{
-						joystick[joystick_config].assignment[select - 6][i].num = -1;
+						joystick[joystick_config].assignment[select - 6][i].type = NONE;
 						goto joystick_assign_done;
 					}
 				}
 				
+				// if there is an empty assignment, set it
 				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
 				{
-					if (joystick[joystick_config].assignment[select - 6][i].num == -1)
+					if (joystick[joystick_config].assignment[select - 6][i].type == NONE)
 					{
 						joystick[joystick_config].assignment[select - 6][i] = temp;
 						goto joystick_assign_done;
 					}
 				}
 				
+				// if no assignments are empty, shift them all forward and set the last one
 				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
 				{
 					if (i == COUNTOF(*joystick->assignment) - 1)

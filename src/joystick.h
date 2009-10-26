@@ -21,11 +21,25 @@
 
 #include "opentyr.h"
 
+typedef enum
+{
+	NONE,
+	AXIS,
+	BUTTON,
+	HAT
+}
+Joystick_assignment_types;
+
 typedef struct
 {
-	bool is_axis; // else button
-	bool axis_negative; // else positive
+	Joystick_assignment_types type;
 	int num;
+	
+	// if hat
+	bool x_axis; // else y_axis
+	
+	// if hat or axis
+	bool negative_axis; // else positive
 }
 Joystick_assignment;
 
@@ -73,8 +87,10 @@ bool load_joystick_assignments( int j );
 bool save_joystick_assignments( int j );
 FILE *seek_joystick_assignments( int j, bool read_only );
 
+const char *joystick_assignment_name( const Joystick_assignment * );
+
 bool detect_joystick_assignment( int j, Joystick_assignment *assignment );
-bool joystick_assignment_cmp( const Joystick_assignment *a, const Joystick_assignment *b );
+bool joystick_assignment_cmp( const Joystick_assignment *, const Joystick_assignment * );
 
 #endif /* JOYSTICK_H */
 

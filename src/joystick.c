@@ -38,7 +38,7 @@ bool ignore_joystick = false;
 int joysticks = 0;
 Joystick *joystick = NULL;
 
-static const char joystick_cfg_version = 0;
+static const char joystick_cfg_version = 1;
 static const int joystick_analog_max = 32767;
 
 // eliminates axis movement below the threshold
@@ -94,26 +94,49 @@ bool joystick_analog_angle( int j, float *angle )
 	return false;
 }
 
+/* gives back value 0..joystick_analog_max indicating that one of the assigned
+ * buttons has been pressed or that one of the assigned axes/hats has been moved
+ * in the assigned direction
+ */
 int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2] )
 {
 	int result = 0;
 	
 	for (int i = 0; i < 2; i++)
 	{
-		if (assignment[i].num == -1)
-			continue;
-		
 		int temp;
 		
-		if (assignment[i].is_axis)
+		switch (assignment[i].type)
 		{
+		case NONE:
+			continue;
+			
+		case AXIS:
 			temp = SDL_JoystickGetAxis(joystick_handle, assignment[i].num);
-			if (assignment[i].axis_negative)
+			
+			if (assignment[i].negative_axis)
 				temp = -temp;
-		}
-		else // assignment is button
-		{
+			break;
+		
+		case BUTTON:
 			temp = SDL_JoystickGetButton(joystick_handle, assignment[i].num) == 1 ? joystick_analog_max : 0;
+			break;
+		
+		case HAT:
+			temp = SDL_JoystickGetHat(joystick_handle, assignment[i].num);
+			
+			if (assignment[i].x_axis)
+				temp &= SDL_HAT_LEFT | SDL_HAT_RIGHT;
+			else
+				temp &= SDL_HAT_UP | SDL_HAT_DOWN;
+			
+			if (assignment[i].negative_axis)
+				temp &= SDL_HAT_LEFT | SDL_HAT_UP;
+			else
+				temp &= SDL_HAT_RIGHT | SDL_HAT_DOWN;
+			
+			temp = temp ? joystick_analog_max : 0;
+			break;
 		}
 		
 		if (temp > result)
@@ -253,7 +276,10 @@ void init_joysticks( void )
 		if (joystick[j].handle != NULL)
 		{
 			printf("joystick detected: %s ", SDL_JoystickName(j));
-			printf("(%d axes, %d buttons)\n", SDL_JoystickNumAxes(joystick[j].handle), SDL_JoystickNumButtons(joystick[j].handle));
+			printf("(%d axes, %d buttons, %d hats)\n", 
+			       SDL_JoystickNumAxes(joystick[j].handle),
+			       SDL_JoystickNumButtons(joystick[j].handle),
+			       SDL_JoystickNumHats(joystick[j].handle));
 			
 			if (!load_joystick_assignments(j))
 				reset_joystick_assignments(j);
@@ -286,16 +312,28 @@ void reset_joystick_assignments( int j )
 {
 	assert(j < joysticks);
 	
-	// defaults: first 2 axes, first 6 buttons
+	// defaults: first 2 axes, first hat, first 6 buttons
 	for (int a = 0; a < COUNTOF(joystick[j].assignment); a++)
 	{
-		joystick[j].assignment[a][0].is_axis = a < 4;
-		joystick[j].assignment[a][0].axis_negative = a == 0 || a == 3;
-		joystick[j].assignment[a][0].num = a < 4 ? (a + 1) % 2 : a - 4;
+		// clear assignments
+		for (int i = 0; i < COUNTOF(joystick[j].assignment[a]); i++)
+			joystick[j].assignment[a][i].type = NONE;
 		
-		for (int i = 1; i < COUNTOF(joystick[j].assignment[a]); i++)
+		if (a < 4)
 		{
-			joystick[j].assignment[a][i].num = -1;
+			joystick[j].assignment[a][0].type = AXIS;
+			joystick[j].assignment[a][0].num = (a + 1) % 2;
+			joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+			
+			joystick[j].assignment[a][1].type = HAT;
+			joystick[j].assignment[a][1].num = 0;
+			joystick[j].assignment[a][0].x_axis = (a == 1 || a == 3);
+			joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+		}
+		else
+		{
+			joystick[j].assignment[a][0].type = BUTTON;
+			joystick[j].assignment[a][0].num = a - 4;
 		}
 	}
 	
@@ -319,9 +357,10 @@ bool load_joystick_assignments( int j )
 	{
 		for (int i = 0; i < COUNTOF(*joystick[j].assignment); i++)
 		{
-			joystick[j].assignment[a][i].is_axis = fgetc(f);
-			joystick[j].assignment[a][i].axis_negative = fgetc(f);
+			joystick[j].assignment[a][i].type = fgetc(f);
 			joystick[j].assignment[a][i].num = (signed char)fgetc(f);
+			joystick[j].assignment[a][i].x_axis = fgetc(f);
+			joystick[j].assignment[a][i].negative_axis = fgetc(f);
 		}
 	}
 	
@@ -345,9 +384,10 @@ bool save_joystick_assignments( int j )
 	{
 		for (int i = 0; i < COUNTOF(*joystick[j].assignment); i++)
 		{
-			fputc(joystick[j].assignment[a][i].is_axis, f);
-			fputc(joystick[j].assignment[a][i].axis_negative, f);
+			fputc(joystick[j].assignment[a][i].type, f);
 			fputc(joystick[j].assignment[a][i].num, f);
+			fputc(joystick[j].assignment[a][i].x_axis, f);
+			fputc(joystick[j].assignment[a][i].negative_axis, f);
 		}
 	}
 	
@@ -357,6 +397,7 @@ bool save_joystick_assignments( int j )
 }
 
 // seeks to a particular joystick's entry in the config file
+// TODO: rewrite this to use a text config instead
 FILE *seek_joystick_assignments( int j, bool read_only )
 {
 	assert(j < joysticks);
@@ -368,7 +409,7 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 	for (int i = 0; joystick_name[i] != '\0'; i++)
 		joystick_xor ^= joystick_name[i];
 	
-	const int entry_size = 3 + 3 + COUNTOF(joystick->assignment) * COUNTOF(*joystick->assignment) * 3;
+	const int entry_size = 3 + 3 + COUNTOF(joystick->assignment) * COUNTOF(*joystick->assignment) * 4;
 	
 	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.cfg", read_only ? "rb" : "rb+");
 	
@@ -430,24 +471,64 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 	return f;
 }
 
+/* gives the short (6 or less characters) identifier for a joystick assignment
+ * 
+ * two of these per direction/action is all that can fit on the joystick config screen,
+ * assuming two digits for the axis/button/hat number
+ */
+const char *joystick_assignment_name( const Joystick_assignment *assignment )
+{
+	static char name[7];
+	
+	switch (assignment->type)
+	{
+	case NONE:
+		strcpy(name, "");
+		break;
+		
+	case AXIS:
+		snprintf(name, sizeof(name), "AX %d%c",
+		         assignment->num + 1,
+		         assignment->negative_axis ? '-' : '+');
+		break;
+		
+	case BUTTON:
+		snprintf(name, sizeof(name), "BTN %d",
+		         assignment->num + 1);
+		break;
+		
+	case HAT:
+		snprintf(name, sizeof(name), "H %d%c%c",
+		         assignment->num + 1,
+		         assignment->x_axis ? 'X' : 'Y',
+		         assignment->negative_axis ? '-' : '+');
+		break;
+	}
+	
+	return name;
+}
+
 // captures joystick input for configuring assignments
 // returns false if non-joystick input was detected
-// TODO: input from joystick other than the one being configured should not be ignored
+// TODO: input from joystick other than the one being configured probably should not be ignored
 bool detect_joystick_assignment( int j, Joystick_assignment *assignment )
 {
+	// get initial joystick state to compare against to see if anything was pressed
+	
 	const int axes = SDL_JoystickNumAxes(joystick[j].handle);
 	Sint16 *axis = malloc(axes * sizeof(*axis));
 	for (int i = 0; i < axes; i++)
-	{
 		axis[i] = SDL_JoystickGetAxis(joystick[j].handle, i);
-	}
 	
 	const int buttons = SDL_JoystickNumButtons(joystick[j].handle);
 	Uint8 *button = malloc(buttons * sizeof(*button));
 	for (int i = 0; i < buttons; i++)
-	{
 		button[i] = SDL_JoystickGetButton(joystick[j].handle, i);
-	}
+	
+	const int hats = SDL_JoystickNumHats(joystick[j].handle);
+	Uint8 *hat = malloc(hats * sizeof(*hat));
+	for (int i = 0; i < hats; i++)
+		hat[i] = SDL_JoystickGetHat(joystick[j].handle, i);
 	
 	bool detected = false;
 	
@@ -457,33 +538,60 @@ bool detect_joystick_assignment( int j, Joystick_assignment *assignment )
 		
 		SDL_JoystickUpdate();
 		
-		for (int i = 0; i < axes; i++)
+		for (int i = 0; i < axes; ++i)
 		{
 			Sint16 temp = SDL_JoystickGetAxis(joystick[j].handle, i);
+			
 			if (abs(temp - axis[i]) > joystick_analog_max * 2 / 3)
 			{
-				assignment->is_axis = true;
-				assignment->axis_negative = temp < axis[i];
+				assignment->type = AXIS;
+				assignment->num = i;
+				assignment->negative_axis = temp < axis[i];
+				detected = true;
+				break;
+			}
+		}
+		
+		for (int i = 0; i < buttons; ++i)
+		{
+			Uint8 new_button = SDL_JoystickGetButton(joystick[j].handle, i),
+			      changed = button[i] ^ new_button;
+			
+			if (!changed)
+				continue;
+			
+			if (new_button == 0) // button was released
+			{
+				button[i] = new_button;
+			}
+			else                 // button was pressed
+			{
+				assignment->type = BUTTON;
 				assignment->num = i;
 				detected = true;
 				break;
 			}
 		}
 		
-		for (int i = 0; i < buttons; i++)
+		for (int i = 0; i < hats; ++i)
 		{
-			Uint8 temp = SDL_JoystickGetButton(joystick[j].handle, i);
-			if (temp == 1 && button[i] == 0)
+			Uint8 new_hat = SDL_JoystickGetHat(joystick[j].handle, i),
+			      changed = hat[i] ^ new_hat;
+			
+			if (!changed)
+				continue;
+			
+			if ((new_hat & changed) == SDL_HAT_CENTERED) // hat was centered
 			{
-				assignment->is_axis = false;
-				assignment->axis_negative = false;
-				assignment->num = i;
-				detected = true;
-				break;
+				hat[i] = new_hat;
 			}
-			else if (temp == 0 && button[i] == 1)
+			else
 			{
-				button[i] = 0;
+				assignment->type = HAT;
+				assignment->num = i;
+				assignment->x_axis = changed & (SDL_HAT_LEFT | SDL_HAT_RIGHT);
+				assignment->negative_axis = changed & (SDL_HAT_LEFT | SDL_HAT_UP);
+				detected = true;
 			}
 		}
 		
@@ -496,16 +604,33 @@ bool detect_joystick_assignment( int j, Joystick_assignment *assignment )
 	
 	free(axis);
 	free(button);
+	free(hat);
 	
 	return detected;
 }
 
-// compares assignments for equality
+// compares relevant parts of joystick assignments for equality
 bool joystick_assignment_cmp( const Joystick_assignment *a, const Joystick_assignment *b )
 {
-	return a->is_axis == b->is_axis
-	       && (a->is_axis == false || a->axis_negative == b->axis_negative)
-	       && a->num == b->num;
+	if (a->type == b->type)
+	{
+		switch (a->type)
+		{
+		case NONE:
+			return true;
+		case AXIS:
+			return (a->num == b->num) &&
+			       (a->negative_axis == b->negative_axis);
+		case BUTTON:
+			return (a->num == b->num);
+		case HAT:
+			return (a->num == b->num) &&
+			       (a->x_axis == b->x_axis) &&
+			       (a->negative_axis == b->negative_axis);
+		}
+	}
+	
+	return false;
 }
 
 // kate: tab-width 4; vim: set noet:
