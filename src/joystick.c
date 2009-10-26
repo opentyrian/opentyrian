@@ -346,7 +346,7 @@ bool load_joystick_assignments( int j )
 {
 	FILE *f = seek_joystick_assignments(j, true);
 	
-	if (f == NULL)
+	if (f == NULL || feof(f))
 		return false;
 	
 	joystick[j].analog = fgetc(f);
