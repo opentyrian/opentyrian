@@ -21,18 +21,19 @@
 
 #include "opentyr.h"
 
-struct joystick_assignment_struct
+typedef struct
 {
 	bool is_axis; // else button
 	bool axis_negative; // else positive
 	int num;
-};
+}
+Joystick_assignment;
 
-struct joystick_struct
+typedef struct
 {
 	SDL_Joystick *handle;
 	
-	struct joystick_assignment_struct assignment[10][2]; // 0-3: directions, 4-9: actions
+	Joystick_assignment assignment[10][2]; // 0-3: directions, 4-9: actions
 	
 	bool analog;
 	int sensitivity, threshold;
@@ -46,13 +47,14 @@ struct joystick_struct
 	
 	Uint32 joystick_delay;
 	bool input_pressed;
-};
+}
+Joystick;
 
 extern int joystick_repeat_delay;
 extern bool joydown;
 extern bool ignore_joystick;
 extern int joysticks;
-extern struct joystick_struct *joystick;
+extern Joystick *joystick;
 
 int joystick_axis_reduce( int j, int value );
 bool joystick_analog_angle( int j, float *angle );
@@ -71,8 +73,8 @@ bool load_joystick_assignments( int j );
 bool save_joystick_assignments( int j );
 FILE *seek_joystick_assignments( int j, bool read_only );
 
-bool detect_joystick_assignment( int j, struct joystick_assignment_struct *assignment );
-bool joystick_assignment_cmp( struct joystick_assignment_struct *a, struct joystick_assignment_struct *b );
+bool detect_joystick_assignment( int j, Joystick_assignment *assignment );
+bool joystick_assignment_cmp( const Joystick_assignment *a, const Joystick_assignment *b );
 
 #endif /* JOYSTICK_H */
 

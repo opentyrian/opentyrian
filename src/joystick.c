@@ -29,14 +29,14 @@
 #include <assert.h>
 
 int joystick_axis_threshold( int j, int value );
-int check_assigned( SDL_Joystick *joystick_handle, const struct joystick_assignment_struct assignment[2] );
+int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2] );
 
 int joystick_repeat_delay = 300; // milliseconds, repeat delay for buttons
 bool joydown = false;            // any joystick buttons down, updated by poll_joysticks()
 bool ignore_joystick = false;
 
 int joysticks = 0;
-struct joystick_struct *joystick = NULL;
+Joystick *joystick = NULL;
 
 static const char joystick_cfg_version = 0;
 static const int joystick_analog_max = 32767;
@@ -94,7 +94,7 @@ bool joystick_analog_angle( int j, float *angle )
 	return false;
 }
 
-int check_assigned( SDL_Joystick *joystick_handle, const struct joystick_assignment_struct assignment[2] )
+int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2] )
 {
 	int result = 0;
 	
@@ -433,7 +433,7 @@ FILE *seek_joystick_assignments( int j, bool read_only )
 // captures joystick input for configuring assignments
 // returns false if non-joystick input was detected
 // TODO: input from joystick other than the one being configured should not be ignored
-bool detect_joystick_assignment( int j, struct joystick_assignment_struct *assignment )
+bool detect_joystick_assignment( int j, Joystick_assignment *assignment )
 {
 	const int axes = SDL_JoystickNumAxes(joystick[j].handle);
 	Sint16 *axis = malloc(axes * sizeof(*axis));
@@ -501,7 +501,7 @@ bool detect_joystick_assignment( int j, struct joystick_assignment_struct *assig
 }
 
 // compares assignments for equality
-bool joystick_assignment_cmp( struct joystick_assignment_struct *a, struct joystick_assignment_struct *b )
+bool joystick_assignment_cmp( const Joystick_assignment *a, const Joystick_assignment *b )
 {
 	return a->is_axis == b->is_axis
 	       && (a->is_axis == false || a->axis_negative == b->axis_negative)

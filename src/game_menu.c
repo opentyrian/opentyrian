@@ -2913,7 +2913,7 @@ void JE_menuFunction( JE_byte select )
 			
 			JE_rectangle(235, 21 + select * 8, 310, 30 + select * 8, 248);
 			
-			struct joystick_assignment_struct temp;
+			Joystick_assignment temp;
 			if (detect_joystick_assignment(joystick_config, &temp))
 			{
 				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
