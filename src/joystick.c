@@ -58,7 +58,7 @@ int joystick_axis_threshold( int j, int value )
 	return negative ? -value : value;
 }
 
-// converts joystick axis to sane Tyrian-usable value
+// converts joystick axis to sane Tyrian-usable value (based on sensitivity)
 int joystick_axis_reduce( int j, int value )
 {
 	assert(j < joysticks);
@@ -146,6 +146,7 @@ int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment ass
 	return result;
 }
 
+// updates joystick state
 void poll_joystick( int j )
 {
 	assert(j < joysticks);
@@ -155,10 +156,13 @@ void poll_joystick( int j )
 	
 	SDL_JoystickUpdate();
 	
+	// indicates that a direction/action was pressed since last poll
 	joystick[j].input_pressed = false;
 	
+	// indicates that an direction/action has been held long enough to fake a repeat press
 	bool repeat = joystick[j].joystick_delay < SDL_GetTicks();
 	
+	// update direction state
 	for (int d = 0; d < COUNTOF(joystick[j].direction); d++)
 	{
 		bool old = joystick[j].direction[d];
@@ -167,14 +171,14 @@ void poll_joystick( int j )
 		joystick[j].direction[d] = joystick[j].analog_direction[d] > (joystick_analog_max / 2);
 		joydown |= joystick[j].direction[d];
 		
-		joystick[j].direction_pressed[d] = joystick[j].direction[d];
-		joystick[j].direction_pressed[d] &= (!old || repeat);
+		joystick[j].direction_pressed[d] = joystick[j].direction[d] && (!old || repeat);
 		joystick[j].input_pressed |= joystick[j].direction_pressed[d];
 	}
 	
 	joystick[j].x = -joystick[j].analog_direction[3] + joystick[j].analog_direction[1];
 	joystick[j].y = -joystick[j].analog_direction[0] + joystick[j].analog_direction[2];
 	
+	// update action state
 	for (int d = 0; d < COUNTOF(joystick[j].action); d++)
 	{
 		bool old = joystick[j].action[d];
@@ -182,27 +186,25 @@ void poll_joystick( int j )
 		joystick[j].action[d] = check_assigned(joystick[j].handle, joystick[j].assignment[d + COUNTOF(joystick[j].direction)]);
 		joydown |= joystick[j].action[d];
 		
-		joystick[j].action_pressed[d] = joystick[j].action[d];
-		joystick[j].action_pressed[d] &= (!old || repeat);
+		joystick[j].action_pressed[d] = joystick[j].action[d] && (!old || repeat);
 		joystick[j].input_pressed |= joystick[j].action_pressed[d];
 	}
 	
 	joystick[j].confirm = joystick[j].action[0] || joystick[j].action[4];
 	joystick[j].cancel = joystick[j].action[1] || joystick[j].action[5];
 	
-	if (joystick[j].input_pressed) {
+	// if new input, reset press-repeat delay
+	if (joystick[j].input_pressed)
 		joystick[j].joystick_delay = SDL_GetTicks() + joystick_repeat_delay;
-	}
 }
 
+// updates all joystick states
 void poll_joysticks( void )
 {
 	joydown = false;
 	
 	for (int j = 0; j < joysticks; j++)
-	{
 		poll_joystick(j);
-	}
 }
 
 // sends SDL KEYDOWN and KEYUP events for a key
@@ -224,7 +226,7 @@ void push_key( SDLKey key )
 	SDL_PushEvent(&e);
 }
 
-// helps us be lazy by pretending the joystick is a keyboard
+// helps us be lazy by pretending joysticks are a keyboard (useful for menus)
 void push_joysticks_as_keyboard( void )
 {
 	const SDLKey confirm = SDLK_RETURN, cancel = SDLK_ESCAPE;
