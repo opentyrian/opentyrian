@@ -321,19 +321,28 @@ void reset_joystick_assignments( int j )
 		
 		if (a < 4)
 		{
-			joystick[j].assignment[a][0].type = AXIS;
-			joystick[j].assignment[a][0].num = (a + 1) % 2;
-			joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+			if (SDL_JoystickNumAxes(joystick[j].handle) >= 2)
+			{
+				joystick[j].assignment[a][0].type = AXIS;
+				joystick[j].assignment[a][0].num = (a + 1) % 2;
+				joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+			}
 			
-			joystick[j].assignment[a][1].type = HAT;
-			joystick[j].assignment[a][1].num = 0;
-			joystick[j].assignment[a][0].x_axis = (a == 1 || a == 3);
-			joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+			if (SDL_JoystickNumHats(joystick[j].handle) >= 1)
+			{
+				joystick[j].assignment[a][1].type = HAT;
+				joystick[j].assignment[a][1].num = 0;
+				joystick[j].assignment[a][0].x_axis = (a == 1 || a == 3);
+				joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+			}
 		}
 		else
 		{
-			joystick[j].assignment[a][0].type = BUTTON;
-			joystick[j].assignment[a][0].num = a - 4;
+			if (a - 4 < SDL_JoystickNumButtons(joystick[j].handle))
+			{
+				joystick[j].assignment[a][0].type = BUTTON;
+				joystick[j].assignment[a][0].num = a - 4;
+			}
 		}
 	}
 	
