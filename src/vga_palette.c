@@ -2,7 +2,7 @@
 
 // only used for the jukebox
 
-palette_t vga_palette =
+Palette vga_palette =
 {
 	{  0,   0,   0}, {  0,   0, 168}, {  0, 168,   0}, {  0, 168, 168},
 	{168,   0,   0}, {168,   0, 168}, {168,  84,   0}, {168, 168, 168},

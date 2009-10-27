@@ -993,7 +993,7 @@ void JE_gammaCorrect_func( JE_byte *col, JE_real r )
 	*col = temp;
 }
 
-void JE_gammaCorrect( palette_t *colorBuffer, JE_byte gamma )
+void JE_gammaCorrect( Palette *colorBuffer, JE_byte gamma )
 {
 	int x;
 	JE_real r = 1 + (JE_real)gamma / 10;

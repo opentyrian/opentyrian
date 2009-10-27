@@ -26,13 +26,13 @@
 
 static Uint32 rgb_to_yuv( int r, int g, int b );
 
-palette_t palettes[23];
+Palette palettes[23];
 int palette_count;
 
-palette_t palette;
+static Palette palette;
 Uint32 rgb_palette[256], yuv_palette[256];
 
-palette_t colors;
+Palette colors;
 
 void JE_loadPals( void )
 {
@@ -54,7 +54,7 @@ void JE_loadPals( void )
 	fclose(f);
 }
 
-void set_palette( palette_t colors, unsigned int first_color, unsigned int last_color )
+void set_palette( Palette colors, unsigned int first_color, unsigned int last_color )
 {
 	for (int i = first_color; i <= last_color; ++i)
 	{
@@ -88,7 +88,7 @@ void set_colors( SDL_Color color, unsigned int first_color, unsigned int last_co
 #endif /* TARGET_GP2X */
 }
 
-void init_step_fade_palette( int diff[256][3], palette_t colors, unsigned int first_color, unsigned int last_color )
+void init_step_fade_palette( int diff[256][3], Palette colors, unsigned int first_color, unsigned int last_color )
 {
 	for (unsigned int i = first_color; i <= last_color; i++)
 	{
@@ -138,7 +138,7 @@ void step_fade_palette( int diff[256][3], int steps, unsigned int first_color, u
 }
 
 
-void fade_palette( palette_t colors, int steps, unsigned int first_color, unsigned int last_color )
+void fade_palette( Palette colors, int steps, unsigned int first_color, unsigned int last_color )
 {
 	assert(steps > 0);
 	
