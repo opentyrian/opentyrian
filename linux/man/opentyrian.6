@@ -1,0 +1,86 @@
+.TH opentyrian 6 "October 2009" "" "OpenTyrian Manual"
+.SH NAME
+opentyrian \- an open-source port of the DOS game Tyrian
+.SH SYNOPSIS
+.B opentyrian
+.RI [ OPTIONS ]
+.SH DESCRIPTION
+Tyrian is an arcade-style vertical scrolling shooter.  The story is set
+in 20,031 where you play as Trent Hawkins, a skilled fighter-pilot employed
+to fight MicroSol and save the galaxy.
+
+Tyrian features a story mode, one- and two-player arcade modes, and networked
+multiplayer.
+.SH "OPTIONS"
+.PP
+A summary of options is included below.
+.TP
+.BR \-h "\fR,\fP " "\-\^\-help"
+Display help and exit.
+.TP
+.BR \-s "\fR,\fP " "\-\^\-no\-sound"
+Disable audio.
+.TP
+.BR \-j "\fR,\fP " "\-\^\-no\-joystick"
+Disable joystick/gamepad input.
+.TP
+.BI \-t "\fR,\fP " "\-\^\-data " "directory"
+Set alternative Tyrian data directory.
+.TP
+.BI \-n "\fR,\fP " "\-\^\-net " "host\fR[:\fPport\fR]\fP"
+Start a networked game; 
+.I
+host 
+is the IP address of your opponent. Use this option together with
+.B
+\-\^\-net\-player\-name
+and
+.B
+\-\^\-net\-player\-number
+to join game.
+
+OpenTyrian uses UDP port 
+.B
+1333
+for multiplayer, but in most cases players will not need to open any ports
+because OpenTyrian makes use of UDP hole punching.
+
+.TP
+.BI "\-\^\-net\-player\-name " "name"
+Set
+.I
+name
+as your alias for multiplayer game.
+.TP
+.BI "\-\^\-net\-player\-number " "number"
+Select ship;
+.I
+number
+is either 1 or 2 depending on which ship you intend to pilot.
+
+.TP
+.BI \-p "\fR,\fP " "\-\^\-net\-port " "port"
+Set local port to bind.
+.TP
+.BI \-d "\fR,\fP " "\-\^\-net\-delay " "frames"
+Set lag-compression delay.
+.TP
+.BR \-x "\fR,\fP " "\-\^\-no\-xmas"
+Disable Christmas mode.
+
+.SH COPYRIGHT
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions. See the file COPYING for details.
+
+Data files bundled with this package come from Tyrian 2.1 data files
+which have been released as freeware.
+
+Daniel Cook released graphic files under very liberal
+license ("use and abuse them as desired").
+
+.SH AUTHOR
+.PP
+This manual page was written by Patryk Obara <patryk.obara@gmail.com>
+basing on AshTR's README file.
+

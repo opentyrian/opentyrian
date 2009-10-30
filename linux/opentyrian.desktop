@@ -1,11 +1,10 @@
 [Desktop Entry]
+Type=Application
 Name=OpenTyrian
 Comment=An arcade-style shoot 'em up
-
-Icon=tyrian.xpm
-
-Type=Application
-Categories=Application;Game;ArcadeGame;
-
+Icon=opentyrian
+Categories=Game;ArcadeGame;
+TryExec=tyrian
 Exec=tyrian
 Terminal=false
+
