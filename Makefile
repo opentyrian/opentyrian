@@ -21,7 +21,7 @@ GP2X_CFLAGS := -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math
 
 # END SETTINGS #############################################
 
-TARGET := tyrian$($(PLATFORM)_EXT)
+TARGET := opentyrian$($(PLATFORM)_EXT)
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
