@@ -5,9 +5,9 @@ syntax: glob
 obj/*
 src/*.gch
 
-tyrian
-tyrian.exe
-tyrian.gpe
+opentyrian
+opentyrian.exe
+opentyrian.gpe
 
 data/*
 
