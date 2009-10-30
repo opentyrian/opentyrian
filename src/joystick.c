@@ -104,7 +104,7 @@ int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment ass
 	
 	for (int i = 0; i < 2; i++)
 	{
-		int temp;
+		int temp = 0;
 		
 		switch (assignment[i].type)
 		{
