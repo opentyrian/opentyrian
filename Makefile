@@ -9,7 +9,7 @@ UNIX_EPREFIX := /usr
 UNIX_HOST := 
 
 WIN32_PREFIX := /usr/i486-mingw32
-WIN32_EPREFIX := $(UNIX_EPREFIX)
+WIN32_EPREFIX := /usr
 WIN32_HOST := i486-mingw32
 WIN32_EXT := .exe
 
@@ -54,7 +54,7 @@ DEBUG_FLAGS := -g3 -O0 -Werror
 
 CFLAGS += --std=c99 -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
 CFLAGS += -I./src -I$(INCLUDEDIR)
-LDFLAGS += -L$(LIBDIR) -lm
+LDFLAGS += -L$(LIBDIR)
 
 ifneq ($(PREFIX), )
 	SDL_CONFIG_PREFIX := $(PREFIX)/bin
@@ -75,15 +75,14 @@ endif
 
 # RULES ####################################################
 
-.PHONY : all
+.PHONY : all release clean
+
 all : $(TARGET)
 
-.PHONY : release
 release : DEBUG_FLAGS := $(NDEBUG_FLAGS)
 release : all
 	$(STRIP) $(TARGET)
 
-.PHONY : clean
 clean :
 	rm -rf obj/*
 	rm -f $(TARGET)
@@ -95,7 +94,6 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(OBJS:.o=.d)
 endif
 
-obj/%.d : obj/%.o
 obj/%.o : src/%.c
 	@mkdir -p "$(dir $@)"
 	$(CC) -o $@ -MMD -c $(DEBUG_FLAGS) $(CFLAGS) $< 
