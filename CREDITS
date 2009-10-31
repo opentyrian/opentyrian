@@ -13,7 +13,8 @@ filmor                 updated Mac OS X support
 Tony Vroon             patch that made Makefile more packager-friendly
 jeff250                patch that fixed a buffer overflow
 a.h.vandijk            patch that fixed a buffer overflow,
-                       patch that fixed an input handling bug
+                       patch that fixed an input handling bug,
+                       patch that fixed some handling of unprintable characters
 ECA                    Destruct rewrite
 spudd86.2              patch that fixed an audio bug
 Jan "heftig" Steffens  clean-up patches
