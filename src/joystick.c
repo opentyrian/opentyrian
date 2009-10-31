@@ -380,7 +380,7 @@ cJSON *load_config( void )
 
 void save_config( cJSON *root )
 {
-	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "w+b");
+	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "w+");
 	if (f == NULL)
 		return;
 	
@@ -388,7 +388,7 @@ void save_config( cJSON *root )
 	
 	if (buffer != NULL)
 	{
-		fwrite(buffer, 1, strlen(buffer), f);
+		fputs(buffer, f);
 		free(buffer);
 	}
 	
