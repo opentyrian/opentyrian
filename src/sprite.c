@@ -463,10 +463,10 @@ void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, u
 }
 
 
-void JE_loadCompShapes( Sprite2_array *sprite2s, JE_char s )
+void JE_loadCompShapes( Sprite2_array *sprite2s, char s )
 {
 	char buffer[20];
-	snprintf(buffer, sizeof(buffer), "newsh%c.shp", tolower(s));
+	snprintf(buffer, sizeof(buffer), "newsh%c.shp", tolower((unsigned char)s));
 	
 	FILE *f = dir_fopen_die(data_dir(), buffer, "rb");
 	

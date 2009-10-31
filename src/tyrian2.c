@@ -2608,8 +2608,7 @@ draw_player_shot_loop_end:
 void JE_loadMap( void )
 {
 	JE_DanCShape shape;
-	JE_boolean shapeBlank;
-
+	
 	JE_word x, y;
 	JE_integer yy;
 	JE_word mapSh[3][128]; /* [1..3, 0..127] */
@@ -3298,84 +3297,78 @@ new_game:
 	}
 
 	/* Read Shapes.DAT */
-	sprintf(tempStr, "shapes%c.dat", tolower(char_shapeFile));
+	sprintf(tempStr, "shapes%c.dat", tolower((unsigned char)char_shapeFile));
 	FILE *shpFile = dir_fopen_die(data_dir(), tempStr, "rb");
-
+	
 	for (int z = 0; z < 600; z++)
 	{
-		shapeBlank = fgetc(shpFile);
-
+		JE_boolean shapeBlank = fgetc(shpFile);
+		
 		if (shapeBlank)
-		{
 			memset(shape, 0, sizeof(shape));
-		} else {
+		else
 			efread(shape, sizeof(JE_byte), sizeof(shape), shpFile);
-		}
-
+		
 		/* Match 1 */
-		for (x = 0; x <= 71; x++)
+		for (int x = 0; x <= 71; ++x)
 		{
 			if (mapSh[0][x] == z+1)
 			{
 				memcpy(megaData1->shapes[x].sh, shape, sizeof(JE_DanCShape));
-
+				
 				ref[0][x] = (JE_byte *)megaData1->shapes[x].sh;
 			}
 		}
-
+		
 		/* Match 2 */
-		for (x = 0; x <= 71; x++)
+		for (int x = 0; x <= 71; ++x)
 		{
 			if (mapSh[1][x] == z+1)
 			{
 				if (x != 71 && !shapeBlank)
 				{
 					memcpy(megaData2->shapes[x].sh, shape, sizeof(JE_DanCShape));
-
+					
 					y = 1;
 					for (yy = 0; yy < (24 * 28) >> 1; yy++)
-					{
 						if (shape[yy] == 0)
-						{
 							y = 0;
-						}
-					}
-
+					
 					megaData2->shapes[x].fill = y;
 					ref[1][x] = (JE_byte *)megaData2->shapes[x].sh;
-				} else {
+				}
+				else
+				{
 					ref[1][x] = NULL;
 				}
 			}
 		}
-
+		
 		/*Match 3*/
-		for (x = 0; x <= 71; x++)
+		for (int x = 0; x <= 71; ++x)
 		{
 			if (mapSh[2][x] == z+1)
 			{
 				if (x < 70 && !shapeBlank)
 				{
 					memcpy(megaData3->shapes[x].sh, shape, sizeof(JE_DanCShape));
-
+					
 					y = 1;
 					for (yy = 0; yy < (24 * 28) >> 1; yy++)
-					{
 						if (shape[yy] == 0)
-						{
 							y = 0;
-						}
-					}
-
+					
 					megaData3->shapes[x].fill = y;
 					ref[2][x] = (JE_byte *)megaData3->shapes[x].sh;
-				} else {
+				}
+				else
+				{
 					ref[2][x] = NULL;
 				}
 			}
 		}
 	}
-
+	
 	fclose(shpFile);
 
 	efread(mapBuf, sizeof(JE_byte), 14 * 300, level_f);

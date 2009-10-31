@@ -32,7 +32,7 @@
 #include <inttypes.h>
 #include <string.h>
 
-JE_boolean richMode, constantPlay, constantDie;
+JE_boolean richMode = false, constantPlay = false, constantDie = false;
 
 /* YKS: Note: LOOT cheat had non letters removed. */
 const char pars[][9] = {
@@ -41,12 +41,6 @@ const char pars[][9] = {
 
 void JE_paramCheck( int argc, char *argv[] )
 {
-	char *tempStr;
-	JE_word y;
-
-	richMode        = false;
-	constantPlay    = false;
-
 	const Options options[] =
 	{
 		{ 'h', 'h', "help",              false },
@@ -226,17 +220,14 @@ void JE_paramCheck( int argc, char *argv[] )
 	// legacy parameter support
 	for (int i = option.argn; i < argc; ++i)
 	{
-		tempStr = argv[i];
-		for (y = 0; y < strlen(tempStr); y++)
-		{
-			tempStr[y] = toupper(tempStr[y]);
-		}
+		for (int j = 0; j < strlen(argv[i]); ++j)
+			argv[i][j] = toupper((unsigned char)argv[i][j]);
 		
-		for (y = 0; y < COUNTOF(pars); y++)
+		for (int j = 0; j < COUNTOF(pars); ++j)
 		{
-			if (strcmp(tempStr, pars[y]) == 0)
+			if (strcmp(argv[i], pars[j]) == 0)
 			{
-				switch (y)
+				switch (j)
 				{
 				case 0:
 					richMode = true;
@@ -262,6 +253,7 @@ void JE_paramCheck( int argc, char *argv[] )
 				case 7:
 					xmas = true;
 					break;
+					
 				default:
 					assert(false);
 					break;

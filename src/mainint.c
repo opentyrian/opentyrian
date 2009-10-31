@@ -4272,7 +4272,7 @@ const char *JE_getName( JE_byte pnum )
 	else if (network_opponent_name[0] != '\0')
 		return network_opponent_name;
 	
-	return miscText[49 + pnum - 1-1];
+	return miscText[47 + pnum];
 }
 
 void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
