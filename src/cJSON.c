@@ -222,7 +222,13 @@ static const char *parse_object(cJSON *item,const char *value);
 static char *print_object(cJSON *item,int depth);
 
 // Utility to jump whitespace and cr/lf
-static const char *skip(const char *in) {while (*in != '\0' && *in <= 32) in++; return in;}
+static const char *skip(const char *in)
+{
+	if (in != NULL)
+		while (*in != '\0' && *in <= 32)
+			in++;
+	return in;
+}
 
 // Parse an object - create a new root, and populate.
 cJSON *cJSON_Parse(const char *value)
@@ -300,25 +306,47 @@ static const char *parse_array(cJSON *item,const char *value)
 // Render an array to text
 static char *print_array(cJSON *item,int depth)
 {
-	char *out,*ptr,*ret;int len=5;
-	cJSON *child=item->child;
+	char *out, *ptr;
+	size_t len = 3;
 	
-	out=(char*)cJSON_malloc(len);*out='[';
-	ptr=out+1;*ptr=0;
+	ptr = out = (char*)cJSON_malloc(len);
+	
+	strcpy(ptr, "[");
+	ptr += 1;
+	
+	cJSON *child = item->child;
+	
 	while (child)
 	{
-		ret=print_value(child,depth+1);
-		if (!ret) {cJSON_free(out);return 0;}	// Check for failure!
-		len+=strlen(ret)+3;
-		out=(char*)cJSON_realloc(out,len);
-		ptr=out+strlen(out);
-		ptr+=sprintf(ptr,ret);
-		if (child->next) {*ptr++=',';*ptr++=' ';*ptr=0;}
-		child=child->next;
+		char *ret = print_value(child, depth + 1);
+		if (!ret)
+		{
+			cJSON_free(out);
+			return NULL;
+		}
+		size_t ret_len = strlen(ret);
+		
+		len += ret_len + 2;
+		ptr = out = (char*)cJSON_realloc(out, len);
+		ptr += strlen(out);
+		
+		strcpy(ptr, ret); // essentially strcat(out, ret);
+		ptr += ret_len;
+		
 		cJSON_free(ret);
+		
+		if (child->next)
+		{
+			strcpy(ptr, ", ");  // essentially strcat(out, ", ");
+			ptr += 2;
+		}
+		
+		child = child->next;
 	}
-	*ptr++=']';*ptr++=0;
-	return out;	
+	
+	strcpy(ptr, "]");  // essentially strcat(out, "]");
+	
+	return out;
 }
 
 // Build an object from the text.
