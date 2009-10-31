@@ -31,6 +31,11 @@ SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs) -lSDL_net
 ALL_CFLAGS = --std=c99 -I./src -DTARGET_$(PLATFORM) $(SDL_CFLAGS) $(CFLAGS)
 LDLIBS += $(SDL_LDLIBS)
 
+HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
+ifneq ($(HG_REV), )
+        ALL_CFLAGS += '-DHG_REV="$(HG_REV)"'
+endif
+
 # RULES ####################################################
 
 .PHONY : all release clean
