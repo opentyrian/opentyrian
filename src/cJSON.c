@@ -23,17 +23,14 @@
 // cJSON
 // JSON parser in C.
 
+#include "mingw_fixes.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <float.h>
 #include "cJSON.h"
-
-#if defined(WINDOWS) || defined(__WIN32__) || defined(WIN32) || defined(_WIN32)
-#define strcasecmp stricmp
-#define strdup _strdup
-#endif
 
 static void *(*cJSON_malloc)(size_t sz) = malloc;
 static void *(*cJSON_realloc)(void *ptr, size_t sz) = realloc;

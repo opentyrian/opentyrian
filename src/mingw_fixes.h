@@ -19,14 +19,14 @@
 #ifndef MINGW_FIXES_H
 #define MINGW_FIXES_H
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
+#ifdef __MINGW32__
 
-#include <string.h>
+#undef __STRICT_ANSI__
 
-#ifndef strchrnul
+#define strcasecmp _stricmp
 char *strchrnul( const char *s, int c );
-#endif
+#define strdup _strdup
+
+#endif // __MINGW32__
 
 #endif // MINGW_FIXES_H
