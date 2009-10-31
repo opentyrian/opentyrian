@@ -438,31 +438,27 @@ void JE_itemScreen( void )
 				temp = (i == curSel[curMenu] - 2) ? 252 : 250;
 				
 				char value[30] = "";
-				if (joysticks == 0 && i < 14)
+				if (joysticks == 0 && i < 14) // no joysticks, everything disabled
 				{
 					sprintf(value, "-");
-				} else if (i == 0) {
+				}
+				else if (i == 0) // joystick number
+				{
 					sprintf(value, "%d", joystick_config + 1);
-				} else if (i == 1) {
+				}
+				else if (i == 1) // joystick is analog
+				{
 					sprintf(value, "%s", joystick[joystick_config].analog ? "TRUE" : "FALSE");
-				} else if (i < 4) {
+				}
+				else if (i < 4)  // joystick analog settings
+				{
 					if (!joystick[joystick_config].analog)
 						temp -= 3;
 					sprintf(value, "%d", i == 2 ? joystick[joystick_config].sensitivity : joystick[joystick_config].threshold);
-				} else if (i < 14) {
-					bool comma = false;
-					for (int k = 0; k < COUNTOF(*joystick->assignment); k++)
-					{
-						if (joystick[joystick_config].assignment[i - 4][k].type == NONE)
-							continue;
-						
-						if (comma)
-							strcat(value, ", ");
-						else
-							comma = true;
-						
-						strcat(value, joystick_assignment_name(&joystick[joystick_config].assignment[i - 4][k]));
-					}
+				}
+				else if (i < 14) // assignments
+				{
+					joystick_assignments_to_string(value, sizeof(value), joystick[joystick_config].assignment[i - 4]);
 				}
 				
 				JE_textShade(236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);

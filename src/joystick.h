@@ -85,9 +85,8 @@ void deinit_joysticks( void );
 void reset_joystick_assignments( int j );
 bool load_joystick_assignments( int j );
 bool save_joystick_assignments( int j );
-FILE *seek_joystick_assignments( int j, bool read_only );
 
-const char *joystick_assignment_name( const Joystick_assignment * );
+void joystick_assignments_to_string( char *buffer, size_t buffer_len, const Joystick_assignment *assignments );
 
 bool detect_joystick_assignment( int j, Joystick_assignment *assignment );
 bool joystick_assignment_cmp( const Joystick_assignment *, const Joystick_assignment * );
