@@ -359,14 +359,15 @@ void reset_joystick_assignments( int j )
 
 cJSON *load_config( void )
 {
-	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "r");
+	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "rb");
 	if (f == NULL)
 		return NULL;
 	
 	size_t buffer_len = ftell_eof(f);
-	char *buffer = malloc(buffer_len);
+	char *buffer = malloc(buffer_len + 1);
 	
-	efread(buffer, 1, buffer_len, f);
+	fread(buffer, 1, buffer_len, f);
+	buffer[buffer_len] = '\0';
 	
 	fclose(f);
 	
@@ -379,7 +380,7 @@ cJSON *load_config( void )
 
 void save_config( cJSON *root )
 {
-	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "w+");
+	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "w+b");
 	if (f == NULL)
 		return;
 	
@@ -387,7 +388,7 @@ void save_config( cJSON *root )
 	
 	if (buffer != NULL)
 	{
-		fputs(buffer, f);
+		fwrite(buffer, 1, strlen(buffer), f);
 		free(buffer);
 	}
 	
