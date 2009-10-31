@@ -307,7 +307,7 @@ static const char *parse_array(cJSON *item,const char *value)
 static char *print_array(cJSON *item,int depth)
 {
 	char *out, *ptr;
-	size_t len = 3;
+	size_t len = 3;  // minimum needed to print empty array
 	
 	ptr = out = (char*)cJSON_malloc(len);
 	
@@ -330,21 +330,21 @@ static char *print_array(cJSON *item,int depth)
 		ptr = out = (char*)cJSON_realloc(out, len);
 		ptr += strlen(out);
 		
-		strcpy(ptr, ret); // essentially strcat(out, ret);
+		strcpy(ptr, ret);  // strcat(out, ret);
 		ptr += ret_len;
 		
 		cJSON_free(ret);
 		
 		if (child->next)
 		{
-			strcpy(ptr, ", ");  // essentially strcat(out, ", ");
+			strcpy(ptr, ", ");  // strcat(out, ", ");
 			ptr += 2;
 		}
 		
 		child = child->next;
 	}
 	
-	strcpy(ptr, "]");  // essentially strcat(out, "]");
+	strcpy(ptr, "]");  // strcat(out, "]");
 	
 	return out;
 }
@@ -387,32 +387,79 @@ static const char *parse_object(cJSON *item,const char *value)
 // Render an object to text.
 static char *print_object(cJSON *item,int depth)
 {
-	char *out,*ptr,*ret,*str;int len=7,i;
-	cJSON *child=item->child;
+	char *out, *ptr;
+	size_t len = 4 + depth;  // minimum needed to print empty object
 	
-	depth++;len+=depth;out=(char*)cJSON_malloc(len);*out='{';
-	ptr=out+1;*ptr++='\n';*ptr=0;
+	++depth;
+	
+	ptr = out = (char*)cJSON_malloc(len);
+	
+	strcpy(ptr, "{\n");
+	ptr += 2;
+	
+	cJSON *child = item->child;
+	
 	while (child)
 	{
-		str=print_string_ptr(child->string);
-		if (!str) {cJSON_free(out);return 0;}
-		ret=print_value(child,depth);
-		if (!ret) {cJSON_free(str);cJSON_free(out);return 0;}	// Check for failure!
-		len+=strlen(ret)+strlen(str)+4+depth;
-		out=(char*)cJSON_realloc(out,len);
-		ptr=out+strlen(out);
-		for (i=0;i<depth;i++) *ptr++='\t';
-		ptr+=sprintf(ptr,str);
-		*ptr++=':';*ptr++='\t';
-		ptr+=sprintf(ptr,ret);
-		if (child->next) *ptr++=',';
-		*ptr++='\n';*ptr=0;
-		child=child->next;
-		cJSON_free(str);cJSON_free(ret);
+		char *str = print_string_ptr(child->string);
+		if (!str)
+		{
+			cJSON_free(out);
+			return NULL;
+		}
+		size_t str_len = strlen(str);
+		
+		char *ret = print_value(child, depth);
+		if (!ret)
+		{
+			cJSON_free(str);
+			cJSON_free(out);
+			return NULL;
+		}
+		size_t ret_len = strlen(ret);
+		
+		len += depth + str_len + ret_len + 4;
+		out = (char*)cJSON_realloc(out, len);
+		ptr = out + strlen(out);
+		
+		for (int i = 0; i < depth; ++i)
+			*(ptr++) = '\t';
+		
+		strcpy(ptr, str);  // strcat(out, str);
+		ptr += str_len;
+		
+		cJSON_free(str);
+		
+		strcpy(ptr, ":\t");  // strcat(out, ":\t");
+		ptr += 2;
+		
+		strcpy(ptr, ret);  // strcat(out, ret);
+		ptr += ret_len;
+		
+		cJSON_free(ret);
+		
+		if (child->next)
+		{
+			strcpy(ptr, ",\n");  // strcat(out, ",\n");
+			ptr += 2;
+		}
+		else
+		{
+			strcpy(ptr, "\n");  // strcat(out, "\n");
+			ptr += 1;
+		}
+		
+		child = child->next;
 	}
-	for (i=0;i<depth-1;i++) *ptr++='\t';
-	*ptr++='}';*ptr++=0;
-	return out;	
+	
+	--depth;
+	
+	for (int i = 0; i < depth; ++i)
+		*(ptr++) = '\t';
+	
+	strcpy(ptr, "}");  // strcat(out, "}");
+	
+	return out;
 }
 
 // Get Array size/item / object item.
