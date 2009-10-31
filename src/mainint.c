@@ -111,10 +111,13 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 		for (z = 0; z < maxloc; z++)
 		{
 			textloc[z] = loc;
+
+			int sprite_id = font_ascii[(unsigned char)s[z]];
+
 			if (s[z] == ' ')
 				loc += 6;
-			else
-				loc += sprite(TINY_FONT, font_ascii[(unsigned char)s[z]])->width + 1;
+			else if (sprite_id != -1)
+				loc += sprite(TINY_FONT, sprite_id)->width + 1;
 		}
 		
 		for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
