@@ -2,76 +2,34 @@
 
 PLATFORM := UNIX
 
-# CROSS-COMPILE SETTINGS ###################################
+TARGET := opentyrian
 
-UNIX_PREFIX := /usr
-UNIX_EPREFIX := /usr
-UNIX_HOST := 
+############################################################
 
-WIN32_PREFIX := /usr/i486-mingw32
-WIN32_EPREFIX := /usr
-WIN32_HOST := i486-mingw32
-WIN32_EXT := .exe
+STRIP := strip
+SDL_CONFIG := sdl-config
 
-GP2X_PREFIX := /opt/open2x/gcc-4.1.1-glibc-2.3.6
-GP2X_EPREFIX := $(GP2X_PREFIX)
-GP2X_HOST := arm-open2x-linux
-GP2X_EXT := .gpe
-GP2X_CFLAGS := -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math
-
-# END SETTINGS #############################################
-
-TARGET := opentyrian$($(PLATFORM)_EXT)
+ifneq ($(PLATFORM), UNIX)
+    include crosscompile.mk
+endif
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
 
-# TOOLCHAIN ################################################
-
-CC := gcc
-STRIP := strip
-
-PREFIX := $($(PLATFORM)_PREFIX)
-EPREFIX := $($(PLATFORM)_EPREFIX)
-HOST := $($(PLATFORM)_HOST)
-
-BINDIR := $(EPREFIX)/bin
-LIBDIR := $(PREFIX)/lib
-INCLUDEDIR := $(PREFIX)/include
-
-ifneq ($(HOST), )
-	CC := $(HOST)-$(CC)
-	STRIP := $(HOST)-$(STRIP)
-endif
-
-CC := $(BINDIR)/$(CC)
-STRIP := $(BINDIR)/$(STRIP)
-
 # FLAGS ####################################################
 
-NDEBUG_FLAGS := -g0 -O2 -DNDEBUG
-DEBUG_FLAGS := -g3 -O0 -Werror
-
-CFLAGS += --std=c99 -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
-CFLAGS += -I./src -I$(INCLUDEDIR)
-LDFLAGS += -L$(LIBDIR)
-
-ifneq ($(PREFIX), )
-	SDL_CONFIG_PREFIX := $(PREFIX)/bin
+ifneq ($(MAKECMDGOALS), release)
+    CFLAGS += -g3 -O0 -Werror
 else
-	SDL_CONFIG_PREFIX := $(BINDIR)
+    CFLAGS += -g0 -O2 -DNDEBUG
 endif
+CFLAGS += -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
 
-SDL_CFLAGS := $(shell $(SDL_CONFIG_PREFIX)/sdl-config --cflags)
-SDL_LDFLAGS := $(shell $(SDL_CONFIG_PREFIX)/sdl-config --libs) -lSDL_net
+SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
+SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs) -lSDL_net
 
-CFLAGS += $($(PLATFORM)_CFLAGS) -DTARGET_$(PLATFORM) $(SDL_CFLAGS)
-LDFLAGS += $($(PLATFORM)_LDFLAGS) $(SDL_LDFLAGS)
-
-HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
-ifneq ($(HG_REV), )
-	CFLAGS += -DHG_REV='"$(HG_REV)"'
-endif
+ALL_CFLAGS = --std=c99 -I./src -DTARGET_$(PLATFORM) $(SDL_CFLAGS) $(CFLAGS)
+LDLIBS += $(SDL_LDLIBS)
 
 # RULES ####################################################
 
@@ -79,7 +37,6 @@ endif
 
 all : $(TARGET)
 
-release : DEBUG_FLAGS := $(NDEBUG_FLAGS)
 release : all
 	$(STRIP) $(TARGET)
 
@@ -87,13 +44,13 @@ clean :
 	rm -rf obj/*
 	rm -f $(TARGET)
 
-$(TARGET) : $(OBJS)
-	$(CC) -o $@ $^ $(LDFLAGS)
-
 ifneq ($(MAKECMDGOALS), clean)
--include $(OBJS:.o=.d)
+    -include $(OBJS:.o=.d)
 endif
+
+$(TARGET) : $(OBJS)
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 obj/%.o : src/%.c
 	@mkdir -p "$(dir $@)"
-	$(CC) -o $@ -MMD -c $(DEBUG_FLAGS) $(CFLAGS) $< 
+	$(CC) -o $@ -c -MMD $(ALL_CFLAGS) $< 
