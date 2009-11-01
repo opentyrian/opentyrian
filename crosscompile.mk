@@ -37,5 +37,6 @@ SDL_CONFIG := $(PREFIX)/bin/$(SDL_CONFIG)
 
 # FLAGS ####################################################
 
-CCFLAGS += -I$(INCLUDEDIR) $($(PLATFORM)_CCFLAGS)
-LDFLAGS += -L$(LIBDIR) $($(PLATFORM)_LDFLAGS)
+ALL_CFLAGS += -I$(INCLUDEDIR) $($(PLATFORM)_CFLAGS)
+ALL_LDFLAGS += -L$(LIBDIR) $($(PLATFORM)_LDFLAGS)
+

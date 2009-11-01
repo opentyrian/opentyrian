@@ -23,18 +23,19 @@ ifneq ($(MAKECMDGOALS), release)
 else
     EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
 endif
-EXTRA_CFLAGS += -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
+EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
+
+HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
+ifneq ($(HG_REV), )
+    EXTRA_CFLAGS += '-DHG_REV="$(HG_REV)"'
+endif
 
 SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
 SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs) -lSDL_net
 
-ALL_CFLAGS = --std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
+ALL_CFLAGS += --std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
+ALL_LDFLAGS += $(LDFLAGS)
 LDLIBS += $(SDL_LDLIBS)
-
-HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
-ifneq ($(HG_REV), )
-        ALL_CFLAGS += '-DHG_REV="$(HG_REV)"'
-endif
 
 # RULES ####################################################
 
@@ -54,8 +55,9 @@ ifneq ($(MAKECMDGOALS), clean)
 endif
 
 $(TARGET) : $(OBJS)
-	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	$(CC) -o $@ $(ALL_LDFLAGS) $^ $(LDLIBS)
 
 obj/%.o : src/%.c
 	@mkdir -p "$(dir $@)"
-	$(CC) -o $@ -c -MMD $(ALL_CFLAGS) $< 
+	$(CC) -c -o $@ $(ALL_CFLAGS) $<
+
