@@ -19,16 +19,16 @@ OBJS := $(SRCS:src/%.c=obj/%.o)
 # FLAGS ####################################################
 
 ifneq ($(MAKECMDGOALS), release)
-    CFLAGS += -g3 -O0 -Werror
+    EXTRA_CFLAGS += -g3 -O0 -Werror
 else
-    CFLAGS += -g0 -O2 -DNDEBUG
+    EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
 endif
-CFLAGS += -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
+EXTRA_CFLAGS += -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
 
 SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
 SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs) -lSDL_net
 
-ALL_CFLAGS = --std=c99 -I./src -DTARGET_$(PLATFORM) $(SDL_CFLAGS) $(CFLAGS)
+ALL_CFLAGS = --std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
 LDLIBS += $(SDL_LDLIBS)
 
 HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
