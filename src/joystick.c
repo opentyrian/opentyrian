@@ -85,7 +85,7 @@ bool joystick_analog_angle( int j, float *angle )
 	
 	if (x != 0)
 	{
-		*angle += atan(-y / x);
+		*angle += atanf(-y / x);
 		*angle += (x < 0) ? -M_PI_2 : M_PI_2;
 		return true;
 	}

@@ -1968,8 +1968,8 @@ void JE_updateNavScreen( void )
 	   yellowish planet below Tyrian isn't visible for as many frames as in the
 	   original. */
 	
-	tempNavX = round(navX);
-	tempNavY = round(navY);
+	tempNavX = roundf(navX);
+	tempNavY = roundf(navY);
 	JE_bar(19, 16, 135, 169, 2);
 	JE_drawNavLines(true);
 	JE_drawNavLines(false);
@@ -2256,7 +2256,7 @@ void JE_computeDots( void )
 
 		if (tempX != 0)
 		{
-			planetDots[x] = round(sqrt(sqrt((distX * distX) + (distY * distY)))) - 1;
+			planetDots[x] = roundf(sqrtf(sqrtf((distX * distX) + (distY * distY)))) - 1;
 		} else {
 			planetDots[x] = 0;
 		}
@@ -2517,7 +2517,7 @@ void JE_scaleInPicture( void )
 		if (JE_anyButton())
 			i = 160;
 		
-		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i - 1, 100 + round(i * 0.625f) - 1);
+		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
 		JE_showVGA();
 		
 		SDL_Delay(1);

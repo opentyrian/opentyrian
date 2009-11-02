@@ -1494,8 +1494,8 @@ void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(270, 60, round(shield * 0.8f), 144);
-		JE_dBar3(270, 194, round(shield2 * 0.8f), 144);
+		JE_dBar3(270, 60, roundf(shield * 0.8f), 144);
+		JE_dBar3(270, 194, roundf(shield2 * 0.8f), 144);
 	} else {
 		JE_dBar3(270, 194, shield, 144);
 		if (shield != shieldMax)
@@ -1518,8 +1518,8 @@ void JE_drawArmor( void )
 
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(307, 60, round(armorLevel * 0.8), 224);
-		JE_dBar3(307, 194, round(armorLevel2 * 0.8), 224);
+		JE_dBar3(307, 60, roundf(armorLevel * 0.8f), 224);
+		JE_dBar3(307, 194, roundf(armorLevel2 * 0.8f), 224);
 	} else {
 		JE_dBar3(307, 194, armorLevel, 224);
 	}
@@ -1545,9 +1545,9 @@ void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte col
 {
 	for (temp = 0; temp < num; temp++)
 	{
-		JE_real tempr = mt_rand_lt1() * (M_PI * 2);
-		signed int tempy = round(cos(tempr) * mt_rand_1() * explowidth);
-		signed int tempx = round(sin(tempr) * mt_rand_1() * explowidth);
+		JE_real tempr = mt_rand_lt1() * (2 * M_PI);
+		signed int tempy = roundf(cosf(tempr) * mt_rand_1() * explowidth);
+		signed int tempx = roundf(sinf(tempr) * mt_rand_1() * explowidth);
 
 		if (++last_superpixel >= MAX_SUPERPIXELS)
 			last_superpixel = 0;

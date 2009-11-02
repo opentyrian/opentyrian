@@ -23,8 +23,8 @@
 
 void mt_srand( unsigned long s );
 unsigned long mt_rand( void );
-double mt_rand_1(void);
-double mt_rand_lt1(void);
+float mt_rand_1( void );
+float mt_rand_lt1( void );
 
 #endif /* MTRAND_H */
 

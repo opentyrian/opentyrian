@@ -545,8 +545,8 @@ enemy_still_exists:
 											tempI3 = abs(tempI);
 										else
 											tempI3 = abs(tempI2);
-										enemyShot[b].sxm = round(((float)tempI / tempI3) * temp4);
-										enemyShot[b].sym = round(((float)tempI2 / tempI3) * temp4);
+										enemyShot[b].sxm = roundf(((float)tempI / tempI3) * temp4);
+										enemyShot[b].sym = roundf(((float)tempI2 / tempI3) * temp4);
 									}
 								}
 								break;
@@ -609,8 +609,8 @@ enemy_still_exists:
 									tempI3 = abs(tempI4);
 								else
 									tempI3 = abs(tempI5);
-								enemy[b-1].exc = round(((float)tempI4 / tempI3) * enemy[b-1].launchtype);
-								enemy[b-1].eyc = round(((float)tempI5 / tempI3) * enemy[b-1].launchtype);
+								enemy[b-1].exc = roundf(((float)tempI4 / tempI3) * enemy[b-1].launchtype);
+								enemy[b-1].eyc = roundf(((float)tempI5 / tempI3) * enemy[b-1].launchtype);
 							}
 						}
 
@@ -2313,7 +2313,7 @@ draw_player_shot_loop_end:
 
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
-		sprintf(tempStr, "%2.3f", 1000.0f / round(debugHist / debugHistCount));
+		sprintf(tempStr, "%2.3f", 1000.0f / roundf(debugHist / debugHistCount));
 		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + PX, curLoc, tempStr, lastTurn2, lastTurn, PX, PY);
 		JE_outText(45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
@@ -4750,7 +4750,7 @@ void JE_eventSystem( void )
 					enemy[temp].armorleft = eventRec[eventLoc-1].eventdat;
 					if (galagaMode)
 					{
-						enemy[temp].armorleft = round(eventRec[eventLoc-1].eventdat * (difficultyLevel / 2));
+						enemy[temp].armorleft = roundf(eventRec[eventLoc-1].eventdat * (difficultyLevel / 2));
 					}
 				}
 			}

@@ -988,7 +988,7 @@ void JE_highScoreScreen( void )
 
 void JE_gammaCorrect_func( JE_byte *col, JE_real r )
 {
-	int temp = round(*col * r);
+	int temp = roundf(*col * r);
 	if (temp > 255)
 	{
 		temp = 255;
@@ -1693,25 +1693,25 @@ void JE_changeDifficulty( void )
 	switch (initialDifficulty)
 	{
 		case 1:
-			temp = round(temp * 0.4);
+			temp = roundf(temp * 0.4f);
 			break;
 		case 2:
-			temp = round(temp * 0.8);
+			temp = roundf(temp * 0.8f);
 			break;
 		case 3:
-			temp = round(temp * 1.3);
+			temp = roundf(temp * 1.3f);
 			break;
 		case 4:
-			temp = round(temp * 1.6);
+			temp = roundf(temp * 1.6f);
 			break;
 		case 5:
 		case 6:
-			temp = round(temp * 2);
+			temp = roundf(temp * 2);
 			break;
 		case 7:
 		case 8:
 		case 9:
-			temp = round(temp * 3);
+			temp = roundf(temp * 3);
 			break;
 	}
 
@@ -2193,7 +2193,7 @@ void JE_endLevelAni( void )
 		JE_outTextGlow(30, 50, tempStr);
 	}
 	
-	temp = (totalEnemy == 0) ? 0 : round(enemyKilled * 100 / totalEnemy);
+	temp = (totalEnemy == 0) ? 0 : roundf(enemyKilled * 100 / totalEnemy);
 	sprintf(tempStr, "%s %d%%", miscText[63-1], temp);
 	JE_outTextGlow(40, 90, tempStr);
 	
@@ -3346,20 +3346,20 @@ redo:
 							
 							tempR2 = linkGunDirec - tempR;
 							
-							if (fabs(linkGunDirec - tempR) < 0.3)
+							if (fabsf(linkGunDirec - tempR) < 0.3f)
 								linkGunDirec = tempR;
-							else if (linkGunDirec < tempR && linkGunDirec - tempR > -3.24)
-								linkGunDirec += 0.2;
+							else if (linkGunDirec < tempR && linkGunDirec - tempR > -3.24f)
+								linkGunDirec += 0.2f;
 							else if (linkGunDirec - tempR < M_PI)
-								linkGunDirec -= 0.2;
+								linkGunDirec -= 0.2f;
 							else
-								linkGunDirec += 0.2;
+								linkGunDirec += 0.2f;
 						}
 						
-						if (linkGunDirec >= 2 * M_PI)
-							linkGunDirec -= 2 * M_PI;
+						if (linkGunDirec >= (2 * M_PI))
+							linkGunDirec -= (2 * M_PI);
 						else if (linkGunDirec < 0)
-							linkGunDirec += 2 * M_PI;
+							linkGunDirec += (2 * M_PI);
 					}
 					else if (!galagaMode)
 					{
@@ -3514,13 +3514,13 @@ redo:
 				*lastTurn_ = 4;
 
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + round(sin(linkGunDirec + 0.2) * 26), *PY_ + round(cos(linkGunDirec + 0.2) * 26),
+				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26),
 				                  *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + round(sin(linkGunDirec - 0.2) * 26), *PY_ + round(cos(linkGunDirec - 0.2) * 26),
+				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26),
 				                  *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + round(sin(linkGunDirec) * 26), *PY_ + round(cos(linkGunDirec) * 26),
+				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26),
 				                  *mouseX_, *mouseY_, 147, playerNum_);
 
 				if (shotRepeat[2-1] > 0)
@@ -3529,36 +3529,36 @@ redo:
 					if (button[1-1])
 					{
 						shotMultiPos[2-1] = 0;
-						JE_initPlayerShot(0, 2, *PX_ + 1 + round(sin(linkGunDirec) * 20), *PY_ + round(cos(linkGunDirec) * 20),
+						JE_initPlayerShot(0, 2, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20),
 						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[P_REAR]-1], playerNum_);
-						playerShotData[b].shotXM = -round(sin(linkGunDirec) * playerShotData[b].shotYM);
-						playerShotData[b].shotYM = -round(cos(linkGunDirec) * playerShotData[b].shotYM);
+						playerShotData[b].shotXM = -roundf(sinf(linkGunDirec) * playerShotData[b].shotYM);
+						playerShotData[b].shotYM = -roundf(cosf(linkGunDirec) * playerShotData[b].shotYM);
 
 						switch (pItems_[P_REAR])
 						{
 							case 27:
 							case 32:
 							case 10:
-								temp = round(linkGunDirec * 2.54647908948);  /*16 directions*/
+								temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
 								playerShotData[b].shotGr = linkMultiGr[temp];
 								break;
 							case 28:
 							case 33:
 							case 11:
-								temp = round(linkGunDirec * 2.54647908948);  /*16 directions*/
+								temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
 								playerShotData[b].shotGr = linkSonicGr[temp];
 								break;
 							case 30:
 							case 35:
 							case 14:
-								if (linkGunDirec > M_PI_2 && linkGunDirec < M_PI + M_PI / 2)
+								if (linkGunDirec > M_PI_2 && linkGunDirec < M_PI + M_PI_2)
 								{
 									playerShotData[b].shotYC = 1;
 								}
 								break;
 							case 38:
 							case 22:
-								temp = round(linkGunDirec * 2.54647908948);  /*16 directions*/
+								temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
 								playerShotData[b].shotGr = linkMult2Gr[temp];
 								break;
 						}
@@ -3904,11 +3904,11 @@ redo:
 							break;
 						case 4:
 							if (rightOptionIsSpecial == 4)
-								optionSatelliteRotate += 0.2;
+								optionSatelliteRotate += 0.2f;
 							else
-								optionSatelliteRotate += 0.15;
-							option1X = *PX_ + round(sin(optionSatelliteRotate) * 20);
-							option1Y = *PY_ + round(cos(optionSatelliteRotate) * 20);
+								optionSatelliteRotate += 0.15f;
+							option1X = *PX_ + roundf(sinf(optionSatelliteRotate) * 20);
+							option1Y = *PY_ + roundf(cosf(optionSatelliteRotate) * 20);
 							break;
 					}
 
@@ -3917,9 +3917,9 @@ redo:
 					{
 						case 4:
 							if (leftOptionIsSpecial != 4)
-								optionSatelliteRotate += 0.15;
-							option2X = *PX_ - round(sin(optionSatelliteRotate) * 20);
-							option2Y = *PY_ - round(cos(optionSatelliteRotate) * 20);
+								optionSatelliteRotate += 0.15f;
+							option2X = *PX_ - roundf(sinf(optionSatelliteRotate) * 20);
+							option2Y = *PY_ - roundf(cosf(optionSatelliteRotate) * 20);
 							break;
 						case 1:
 						case 3:
@@ -4246,7 +4246,7 @@ void JE_mainGamePlayerFunctions( void )
 		tempX = PX;
 	}
 
-	tempW = floor((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
+	tempW = floorf((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
 	mapX3Ofs   = tempW;
 	mapX3Pos   = mapX3Ofs % 24;
 	mapX3bpPos = 1 - (mapX3Ofs / 24);

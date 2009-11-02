@@ -41,7 +41,6 @@
 */
 
 #include "mtrand.h"
-#include <stdio.h>
 
 /* Period parameters */
 #define N 624
@@ -53,10 +52,10 @@
 static unsigned long x[N];      /* the array for the state vector  */
 static unsigned long *p0, *p1, *pm;
 
-void mt_srand(unsigned long s)
+void mt_srand( unsigned long s )
 {
 	int i;
-
+	
 	x[0] = s & 0xffffffffUL;
 	for (i = 1; i < N; ++i) {
 		x[i] = (1812433253UL * (x[i - 1] ^ (x[i - 1] >> 30)) + i)
@@ -68,7 +67,7 @@ void mt_srand(unsigned long s)
 }
 
 /* generates a random number on the interval [0,0xffffffff] */
-unsigned long mt_rand(void)
+unsigned long mt_rand( void )
 {
 	unsigned long y;
 
@@ -94,14 +93,16 @@ unsigned long mt_rand(void)
 }
 
 /* generates a random number on the interval [0,1]. */
-double mt_rand_1(void)
+float mt_rand_1( void )
 {
-	return((double)mt_rand() / (double)MT_RAND_MAX);
+	return ((float)mt_rand() / (float)MT_RAND_MAX);
 }
+
 /* generates a random number on the interval [0,1). */
-double mt_rand_lt1(void)
+float mt_rand_lt1( void )
 {
-	/* MT_RAND_MAX must be a DOUBLE before adding one to it! */
-	return((double)mt_rand() / ((double)MT_RAND_MAX + 1.0));
+	/* MT_RAND_MAX must be a float before adding one to it! */
+	return ((float)mt_rand() / ((float)MT_RAND_MAX + 1.0f));
 }
+
 // kate: tab-width 4; vim: set noet:

@@ -205,7 +205,7 @@ void JE_starlib_main( void )
 				JE_resetValues();
 				break;
 			case 'S':
-				nspVarVarInc = mt_rand_1() * 0.01 - 0.005;
+				nspVarVarInc = mt_rand_1() * 0.01f - 0.005f;
 				break;
 			case 'X':
 			case 27:
@@ -246,7 +246,7 @@ void JE_starlib_main( void )
 
 	if ((mt_rand() % 1000) == 1)
 	{
-		nspVarVarInc = mt_rand_1() * 0.01 - 0.005;
+		nspVarVarInc = mt_rand_1() * 0.01f - 0.005f;
 	}
 
 	nspVarInc += nspVarVarInc;
@@ -283,8 +283,8 @@ void JE_resetValues( void )
 {
 	nsp2 = 1;
 	nspVar2Inc = 1;
-	nspVarInc = 0.1;
-	nspVarVarInc = 0.0001;
+	nspVarInc = 0.1f;
+	nspVarVarInc = 0.0001f;
 	nsp = 0;
 	pColor = 32;
 	starlib_speed = 2;
@@ -305,11 +305,11 @@ void JE_changeSetup( JE_byte setupType )
 
 	if (setup == 1)
 	{
-		nspVarInc = 0.1;
+		nspVarInc = 0.1f;
 	}
-	if (nspVarInc > 2.2)
+	if (nspVarInc > 2.2f)
 	{
-		nspVarInc = 0.1;
+		nspVarInc = 0.1f;
 	}
 }
 
@@ -324,40 +324,40 @@ void JE_newStar( void )
 		switch (setup)
 		{
 			case 1:
-				tempX = (int)(sin(nsp / 30) * 20000);
+				tempX = (int)(sinf(nsp / 30) * 20000);
 				tempY = (mt_rand() % 40000) - 20000;
 				break;
 			case 2:
-				tempX = (int)(cos(nsp) * 20000);
-				tempY = (int)(sin(nsp) * 20000);
+				tempX = (int)(cosf(nsp) * 20000);
+				tempY = (int)(sinf(nsp) * 20000);
 				break;
 			case 3:
-				tempX = (int)(cos(nsp * 15) * 100) * ((int)(nsp / 6) % 200);
-				tempY = (int)(sin(nsp * 15) * 100) * ((int)(nsp / 6) % 200);
+				tempX = (int)(cosf(nsp * 15) * 100) * ((int)(nsp / 6) % 200);
+				tempY = (int)(sinf(nsp * 15) * 100) * ((int)(nsp / 6) % 200);
 				break;
 			case 4:
-				tempX = (int)(sin(nsp / 60) * 20000);
-				tempY = (int)(cos(nsp) * (int)(sin(nsp / 200) * 300) * 100);
+				tempX = (int)(sinf(nsp / 60) * 20000);
+				tempY = (int)(cosf(nsp) * (int)(sinf(nsp / 200) * 300) * 100);
 				break;
 			case 5:
-				tempX = (int)(sin(nsp / 2) * 20000);
-				tempY = (int)(cos(nsp) * (int)(sin(nsp / 200) * 300) * 100);
+				tempX = (int)(sinf(nsp / 2) * 20000);
+				tempY = (int)(cosf(nsp) * (int)(sinf(nsp / 200) * 300) * 100);
 				break;
 			case 6:
-				tempX = (int)(sin(nsp) * 40000);
-				tempY = (int)(cos(nsp) * 20000);
+				tempX = (int)(sinf(nsp) * 40000);
+				tempY = (int)(cosf(nsp) * 20000);
 				break;
 			case 8:
-				tempX = (int)(sin(nsp / 2) * 40000);
-				tempY = (int)(cos(nsp) * 20000);
+				tempX = (int)(sinf(nsp / 2) * 40000);
+				tempY = (int)(cosf(nsp) * 20000);
 				break;
 			case 7:
 				tempX = mt_rand() % 65535;
 				if ((mt_rand() % 2) == 0)
 				{
-					tempY = (int)(cos(nsp / 80) * 10000) + 15000;
+					tempY = (int)(cosf(nsp / 80) * 10000) + 15000;
 				} else {
-					tempY = 50000 - (int)(cos(nsp / 80) * 13000);
+					tempY = 50000 - (int)(cosf(nsp / 80) * 13000);
 				}
 				break;
 			case 9:
@@ -366,8 +366,8 @@ void JE_newStar( void )
 				{
 					nspVar2Inc = -nspVar2Inc;
 				}
-				tempX = (int)(cos(sin(nsp2 / 10.) + (nsp / 500)) * 32000);
-				tempY = (int)(sin(cos(nsp2 / 10.) + (nsp / 500)) * 30000);
+				tempX = (int)(cosf(sinf(nsp2 / 10.0f) + (nsp / 500)) * 32000);
+				tempY = (int)(sinf(cosf(nsp2 / 10.0f) + (nsp / 500)) * 30000);
 				break;
 			case 10:
 				nsp2 += nspVar2Inc;
@@ -375,8 +375,8 @@ void JE_newStar( void )
 				{
 					nspVar2Inc = -nspVar2Inc;
 				}
-				tempX = (int)(cos(sin(nsp2 / 5.) + (nsp / 100)) * 32000);
-				tempY = (int)(sin(cos(nsp2 / 5.) + (nsp / 100)) * 30000);
+				tempX = (int)(cosf(sinf(nsp2 / 5.0f) + (nsp / 100)) * 32000);
+				tempY = (int)(sinf(cosf(nsp2 / 5.0f) + (nsp / 100)) * 30000);
 				break;;
 			case 11:
 				nsp2 += nspVar2Inc;
@@ -384,8 +384,8 @@ void JE_newStar( void )
 				{
 					nspVar2Inc = -nspVar2Inc;
 				}
-				tempX = (int)(cos(sin(nsp2 / 1000.) + (nsp / 2)) * 32000);
-				tempY = (int)(sin(cos(nsp2 / 1000.) + (nsp / 2)) * 30000);
+				tempX = (int)(cosf(sinf(nsp2 / 1000.0f) + (nsp / 2)) * 32000);
+				tempY = (int)(sinf(cosf(nsp2 / 1000.0f) + (nsp / 2)) * 30000);
 				break;
 			case 12:
 				if (nsp != 0)
@@ -395,8 +395,8 @@ void JE_newStar( void )
 					{
 						nspVar2Inc = -nspVar2Inc;
 					}
-					tempX = (int)(cos(sin(nsp2 / 2.) / (sqrt(abs(nsp)) / 10. + 1) + (nsp2 / 100.)) * 32000);
-					tempY = (int)(sin(cos(nsp2 / 2.) / (sqrt(abs(nsp)) / 10. + 1) + (nsp2 / 100.)) * 30000);
+					tempX = (int)(cosf(sinf(nsp2 / 2.0f) / (sqrtf(fabsf(nsp)) / 10.0f + 1) + (nsp2 / 100.0f)) * 32000);
+					tempY = (int)(sinf(cosf(nsp2 / 2.0f) / (sqrtf(fabsf(nsp)) / 10.0f + 1) + (nsp2 / 100.0f)) * 30000);
 				}
 				break;
 			case 13:
@@ -407,14 +407,14 @@ void JE_newStar( void )
 					{
 						nspVar2Inc = -nspVar2Inc;
 					}
-					tempX = (int)(cos(sin(nsp2 / 10.) / 2 + (nsp / 20)) * 32000);
-					tempY = (int)(sin(sin(nsp2 / 11.) / 2 + (nsp / 20)) * 30000);
+					tempX = (int)(cosf(sinf(nsp2 / 10.0f) / 2 + (nsp / 20)) * 32000);
+					tempY = (int)(sinf(sinf(nsp2 / 11.0f) / 2 + (nsp / 20)) * 30000);
 				}
 				break;
 			case 14:
 				nsp2 += nspVar2Inc;
-				tempX = (int)((sin(nsp) + cos(nsp2 / 1000.) * 3) * 12000);
-				tempY = (int)(cos(nsp) * 10000) + nsp2;
+				tempX = (int)((sinf(nsp) + cosf(nsp2 / 1000.0f) * 3) * 12000);
+				tempY = (int)(cosf(nsp) * 10000) + nsp2;
 				break;
 		}
 	}

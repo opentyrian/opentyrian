@@ -184,7 +184,7 @@ void scroller_sine( const struct about_text_type text[] )
 					{
 						if (line_y + j >= 10 && line_y + j <= vga_height - 10)
 						{
-							int foo = sin((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
+							int foo = sinf((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
 							memmove(&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j) + foo],
 									&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j)],
 									VGAScreenSeg->pitch);

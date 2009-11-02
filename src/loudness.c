@@ -257,8 +257,8 @@ void fade_song( void )
 
 void set_volume( unsigned int music, unsigned int sample )
 {
-	music_volume = music * (1.5 / 255.0);
-	sample_volume = sample * (1.0 / 255.0);
+	music_volume = music * (1.5f / 255.0f);
+	sample_volume = sample * (1.0f / 255.0f);
 }
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol)

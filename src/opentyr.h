@@ -20,7 +20,7 @@
 #define OPENTYR_H
 
 #include "SDL.h"
-#include <math.h> /* For the ROUND() macro */
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,10 +33,13 @@
 #define COUNTOF(x) (sizeof(x) / sizeof *(x))
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI    3.14159265358979323846  // pi
 #endif
 #ifndef M_PI_2
-#define M_PI_2 1.57079632679489661923
+#define M_PI_2  1.57079632679489661923  // pi/2
+#endif
+#ifndef M_PI_4
+#define M_PI_4  0.78539816339744830962  // pi/4
 #endif
 
 typedef Sint32 JE_longint;
@@ -46,7 +49,7 @@ typedef Uint16 JE_word;
 typedef Uint8  JE_byte;
 typedef bool   JE_boolean;
 typedef char   JE_char;
-typedef double JE_real;
+typedef float  JE_real;
 
 extern const char *opentyrian_str, *opentyrian_version;
 
