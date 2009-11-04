@@ -31,9 +31,8 @@ extern JE_byte **mapYPos, **mapY2Pos, **mapY3Pos;
 extern JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs, mapX3Ofs, tempMapXOfs;
 extern intptr_t mapXbpPos, mapX2bpPos, mapX3bpPos;
 extern JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
-extern SDL_Surface *smoothiesScreen;
-extern JE_boolean anySmoothies;
-extern JE_byte SDAT[9];
+extern JE_boolean anySmoothies;  // if yes, I want one :D
+extern JE_byte smoothie_data[9];
 
 void JE_darkenBackground( JE_word neat );
 
@@ -48,7 +47,6 @@ void draw_background_3( SDL_Surface *surface );
 void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
 
 void JE_checkSmoothies( void );
-void JE_initSmoothies( void );
 void lava_filter( SDL_Surface *dst, SDL_Surface *src );
 void water_filter( SDL_Surface *dst, SDL_Surface *src );
 void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src );

@@ -39,9 +39,8 @@ intptr_t mapXbpPos, mapX2bpPos, mapX3bpPos;
 JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 
 
-SDL_Surface *smoothiesScreen;
 JE_boolean  anySmoothies;
-JE_byte     SDAT[9]; /* [1..9] */
+JE_byte     smoothie_data[9]; /* [1..9] */
 
 void JE_darkenBackground( JE_word neat )  /* wild detail level */
 {
@@ -315,17 +314,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 
 void JE_checkSmoothies( void )
 {
-	anySmoothies = false;
-	if ((processorType > 2 && (smoothies[1-1] || smoothies[2-1])) || (processorType > 1 && (smoothies[3-1] || smoothies[4-1] || smoothies[5-1])))
-	{
-		anySmoothies = true;
-		JE_initSmoothies();
-	}
-}
-
-void JE_initSmoothies( void )
-{
-	smoothiesScreen = VGAScreen2;
+	anySmoothies = (processorType > 2 && (smoothies[1-1] || smoothies[2-1])) || (processorType > 1 && (smoothies[3-1] || smoothies[4-1] || smoothies[5-1]));
 }
 
 void lava_filter( SDL_Surface *dst, SDL_Surface *src )
@@ -380,7 +369,7 @@ void water_filter( SDL_Surface *dst, SDL_Surface *src )
 {
 	assert(src->format->BitsPerPixel == 8 && dst->format->BitsPerPixel == 8);
 	
-	Uint8 hue = SDAT[2-1] << 4;
+	Uint8 hue = smoothie_data[1] << 4;
 	
 	/* we don't need to check for over-reading the pixel surfaces since we only
 	 * read from the top 185+1 scanlines, and there should be 320 */

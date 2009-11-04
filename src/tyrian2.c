@@ -1329,7 +1329,7 @@ level_loop:
 	/* SMOOTHIES! */
 	JE_checkSmoothies();
 	if (anySmoothies)
-		VGAScreen = smoothiesScreen;
+		VGAScreen = VGAScreen2;  // this makes things complicated, but we do it anyway :(
 
 	/* --- BACKGROUNDS --- */
 	/* --- BACKGROUND 1 --- */
@@ -1426,7 +1426,7 @@ level_loop:
 		}
 	}
 
-	if (smoothies[1-1] && processorType > 2 && SDAT[1-1] == 0)
+	if (smoothies[0] && processorType > 2 && smoothie_data[0] == 0)
 	{
 		lava_filter(game_screen, VGAScreen);
 		VGAScreen = game_screen;
@@ -1451,7 +1451,7 @@ level_loop:
 			stopBackgroundNum = 9;
 	}
 	
-	if (smoothies[1-1] && processorType > 2 && SDAT[1-1] > 0)
+	if (smoothies[0] && processorType > 2 && smoothie_data[0] > 0)
 	{
 		lava_filter(game_screen, VGAScreen);
 		VGAScreen = game_screen;
@@ -5103,7 +5103,7 @@ void JE_eventSystem( void )
 				temp = eventRec[eventLoc-1].eventdat;
 				if (temp == 5)
 					temp = 3;
-				SDAT[temp-1] = eventRec[eventLoc-1].eventdat3;
+				smoothie_data[temp-1] = eventRec[eventLoc-1].eventdat3;
 			}
 			break;
 
