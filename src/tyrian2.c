@@ -1429,8 +1429,11 @@ level_loop:
 		VGAScreen = game_screen;
 	}
 	if (smoothies[2-1] && processorType > 2)
-		JE_smoothies2(); // water
-
+	{
+		water_filter(game_screen, VGAScreen);
+		VGAScreen = game_screen;
+	}
+	
 	/*-----------------------Ground Enemy------------------------*/
 	lastEnemyOnScreen = enemyOnScreen;
 

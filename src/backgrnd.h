@@ -50,7 +50,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
 void JE_checkSmoothies( void );
 void JE_initSmoothies( void );
 void lava_filter( SDL_Surface *dst, SDL_Surface *src );
-void JE_smoothies2( void );
+void water_filter( SDL_Surface *dst, SDL_Surface *src );
 void JE_smoothies3( void );
 void JE_smoothies4( void );
 /*smoothies #5 is used for 3*/
