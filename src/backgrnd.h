@@ -49,7 +49,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
 
 void JE_checkSmoothies( void );
 void JE_initSmoothies( void );
-void JE_smoothies1( void );
+void lava_filter( SDL_Surface *dst, SDL_Surface *src );
 void JE_smoothies2( void );
 void JE_smoothies3( void );
 void JE_smoothies4( void );

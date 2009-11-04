@@ -326,31 +326,50 @@ void JE_initSmoothies( void )
 	smoothiesScreen = VGAScreen2;
 }
 
-void JE_smoothies1( void ) /*Lava Effect*/
+void lava_filter( SDL_Surface *dst, SDL_Surface *src )
 {
-	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
-	int i, j, temp;
+	/* we don't need to check for overflowing the pixel surfaces since we only
+	 * read from the top 185+1 scanlines, and there should be 320 */
 	
-	s += game_screen->pitch * 185 - 1;
-	src += game_screen->pitch * 185 - 1;
+	const int dst_pitch = dst->pitch;
+	Uint8 *dst_pixel = (Uint8 *)dst->pixels + (185 * dst_pitch);
+	const Uint8 * const dst_pixel_ll = (Uint8 *)dst->pixels;  // lower limit
 	
-	for (i = 185 * game_screen->pitch; i; i -= 8)
+	const int src_pitch = src->pitch;
+	Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
+	const Uint8 * const src_pixel_ll = (Uint8 *)src->pixels;  // lower limit
+	
+	int w = 320 * 185 - 1;
+	
+	for (int y = 185 - 1; y >= 0; --y)
 	{
-		temp = (((i - 1) >> 9) & 15) - 8;
-		temp = (temp < 0 ? -temp : temp) - 1;
+		dst_pixel -= (dst_pitch - 320);  // in case pitch is not 320
+		src_pixel -= (src_pitch - 320);  // in case pitch is not 320
 		
-		for (j = 8; j; j--)
+		for (int x = 320 - 1; x >= 0; x -= 8)
 		{
-			Uint8 temp_s = (*(src + temp) & 0x0f) * 2;
-			temp_s += *(s + temp + game_screen->pitch) & 0x0f;
-			temp_s += (i + temp < game_screen->pitch) ? 0 : *(s + temp - game_screen->pitch) & 0x0f;
-			*s = (temp_s >> 2) | 0x70;
-			s--;
-			src--;
+			int waver = abs(((w >> 9) & 0x0f) - 8) - 1;
+			w -= 8;
+			
+			for (int xi = 8 - 1; xi >= 0; --xi)
+			{
+				--dst_pixel;
+				--src_pixel;
+				
+				// value is average value of source pixel (2x), destination pixel above, and destination pixel below
+				// hue is red
+				Uint8 value = 0;
+				
+				if (src_pixel + waver >= src_pixel_ll)
+					value += (*(src_pixel + waver) & 0x0f) * 2;
+				value += *(dst_pixel + waver + dst_pitch) & 0x0f;
+				if (dst_pixel + waver - dst_pitch >= dst_pixel_ll)
+					value += *(dst_pixel + waver - dst_pitch) & 0x0f;
+				
+				*dst_pixel = (value / 4) | 0x70;
+			}
 		}
 	}
-	VGAScreen = game_screen;
 }
 
 void JE_smoothies2( void ) /*Water effect*/

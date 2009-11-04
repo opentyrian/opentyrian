@@ -1424,7 +1424,10 @@ level_loop:
 	}
 
 	if (smoothies[1-1] && processorType > 2 && SDAT[1-1] == 0)
-		JE_smoothies1(); // lava
+	{
+		lava_filter(game_screen, VGAScreen);
+		VGAScreen = game_screen;
+	}
 	if (smoothies[2-1] && processorType > 2)
 		JE_smoothies2(); // water
 
@@ -1441,10 +1444,13 @@ level_loop:
 		if (stopBackgroundNum == 1)
 			stopBackgroundNum = 9;
 	}
-
+	
 	if (smoothies[1-1] && processorType > 2 && SDAT[1-1] > 0)
-		JE_smoothies1(); // lava
-
+	{
+		lava_filter(game_screen, VGAScreen);
+		VGAScreen = game_screen;
+	}
+	
 	if (superWild)
 	{
 		neat += 3;
