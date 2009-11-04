@@ -336,7 +336,7 @@ void lava_filter( SDL_Surface *dst, SDL_Surface *src )
 	const Uint8 * const dst_pixel_ll = (Uint8 *)dst->pixels;  // lower limit
 	
 	const int src_pitch = src->pitch;
-	Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
+	const Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
 	const Uint8 * const src_pixel_ll = (Uint8 *)src->pixels;  // lower limit
 	
 	int w = 320 * 185 - 1;
@@ -382,7 +382,7 @@ void water_filter( SDL_Surface *dst, SDL_Surface *src )
 	const int dst_pitch = dst->pitch;
 	Uint8 *dst_pixel = (Uint8 *)dst->pixels + (185 * dst_pitch);
 	
-	Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
+	const Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
 	
 	int w = 320 * 185 - 1;
 	
@@ -421,7 +421,7 @@ void water_filter( SDL_Surface *dst, SDL_Surface *src )
 void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src )
 {
 	Uint8 *dst_pixel = dst->pixels;
-	Uint8 *src_pixel = src->pixels;
+	const Uint8 *src_pixel = src->pixels;
 	
 	for (int y = 0; y < 184; ++y)
 	{
@@ -445,7 +445,7 @@ void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src )
 void blur_filter( SDL_Surface *dst, SDL_Surface *src )
 {
 	Uint8 *dst_pixel = dst->pixels;
-	Uint8 *src_pixel = src->pixels;
+	const Uint8 *src_pixel = src->pixels;
 	
 	for (int y = 0; y < 184; ++y)
 	{
