@@ -418,34 +418,52 @@ void water_filter( SDL_Surface *dst, SDL_Surface *src )
 	}
 }
 
-void JE_smoothies3( void ) /* iced motion blur */
+void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src )
 {
-	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
-	int i;
+	Uint8 *dst_pixel = dst->pixels;
+	Uint8 *src_pixel = src->pixels;
 	
-	for (i = 184 * game_screen->pitch; i; i--)
+	for (int y = 0; y < 184; ++y)
 	{
-		*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | 0x80;
-		s++;
-		src++;
+		for (int x = 0; x < 320; ++x)
+		{
+			// value is average value of source pixel and destination pixel
+			// hue is icy blue
+			
+			const Uint8 value = (*src_pixel & 0x0f) + (*dst_pixel & 0x0f);
+			*dst_pixel = (value / 2) | 0x80;
+			
+			++dst_pixel;
+			++src_pixel;
+		}
+		
+		dst_pixel += (dst->pitch - 320);  // in case pitch is not 320
+		src_pixel += (src->pitch - 320);  // in case pitch is not 320
 	}
-	VGAScreen = game_screen;
 }
 
-void JE_smoothies4( void ) /* motion blur */
+void blur_filter( SDL_Surface *dst, SDL_Surface *src )
 {
-	Uint8 *s = game_screen->pixels; /* screen pointer, 8-bit specific */
-	Uint8 *src = VGAScreen->pixels; /* screen pointer, 8-bit specific */
-	int i;
+	Uint8 *dst_pixel = dst->pixels;
+	Uint8 *src_pixel = src->pixels;
 	
-	for (i = 184 * game_screen->pitch; i; i--)
+	for (int y = 0; y < 184; ++y)
 	{
-		*s = ((((*src & 0x0f) + (*s & 0x0f)) >> 1) & 0x0f) | (*src & 0xf0);
-		s++;
-		src++;
+		for (int x = 0; x < 320; ++x)
+		{
+			// value is average value of source pixel and destination pixel
+			// hue is source pixel hue
+			
+			const Uint8 value = (*src_pixel & 0x0f) + (*dst_pixel & 0x0f);
+			*dst_pixel = (value / 2) | (*src_pixel & 0xf0);
+			
+			++dst_pixel;
+			++src_pixel;
+		}
+		
+		dst_pixel += (dst->pitch - 320);  // in case pitch is not 320
+		src_pixel += (src->pitch - 320);  // in case pitch is not 320
 	}
-	VGAScreen = game_screen;
 }
 
 // kate: tab-width 4; vim: set noet:

@@ -51,8 +51,8 @@ void JE_checkSmoothies( void );
 void JE_initSmoothies( void );
 void lava_filter( SDL_Surface *dst, SDL_Surface *src );
 void water_filter( SDL_Surface *dst, SDL_Surface *src );
-void JE_smoothies3( void );
-void JE_smoothies4( void );
+void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src );
+void blur_filter( SDL_Surface *dst, SDL_Surface *src );
 /*smoothies #5 is used for 3*/
 /*smoothies #9 is a vertical flip*/
 

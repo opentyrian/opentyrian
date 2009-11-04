@@ -1400,10 +1400,13 @@ level_loop:
 			}
 		}
 	}
-
+	
 	if (processorType > 1 && smoothies[5-1])
-		JE_smoothies3(); // iced motion blur
-
+	{
+		iced_blur_filter(game_screen, VGAScreen);
+		VGAScreen = game_screen;
+	}
+	
 	/*-----------------------BACKGROUNDS------------------------*/
 	/*-----------------------BACKGROUND 2------------------------*/
 	if (background2over == 3)
@@ -1491,12 +1494,18 @@ level_loop:
 			soundQueue[3] = S_WEAPON_7;
 		JE_newEnemy(0);
 	}
-
+	
 	if (processorType > 1 && smoothies[3-1])
-		JE_smoothies3(); // iced motion blur
+	{
+		iced_blur_filter(game_screen, VGAScreen);
+		VGAScreen = game_screen;
+	}
 	if (processorType > 1 && smoothies[4-1])
-		JE_smoothies4(); // motion blur
-
+	{
+		blur_filter(game_screen, VGAScreen);
+		VGAScreen = game_screen;
+	}
+	
 	/* Draw Sky Enemy */
 	if (!skyEnemyOverAll)
 	{
