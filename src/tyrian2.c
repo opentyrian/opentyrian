@@ -3590,52 +3590,36 @@ void JE_titleScreen( JE_boolean animate )
 						}
 						moveTyrianLogoUp = false;
 					}
-
+					
+					strcpy(menuText[4], opentyrian_str);  // OpenTyrian override
+					
 					/* Draw Menu Text on Screen */
-					for (temp = 0; temp < menunum; temp++)
+					for (int i = 0; i < menunum; ++i)
 					{
-						tempX = 104+(temp)*13;
-						if (temp == 4) /* OpenTyrian override */
-						{
-							tempY = JE_fontCenter(opentyrian_str, SMALL_FONT_SHAPES);
-
-							JE_outTextAdjust(tempY-1, tempX-1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY+1, tempX+1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY+1, tempX-1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY-1, tempX+1, opentyrian_str, 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY, tempX, opentyrian_str, 15, -3, SMALL_FONT_SHAPES, false);
-						}
-						else
-						{
-							tempY = JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES);
-
-							JE_outTextAdjust(tempY-1, tempX-1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY+1, tempX+1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY+1, tempX-1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY-1, tempX+1, menuText[temp], 15, -10, SMALL_FONT_SHAPES, false);
-							JE_outTextAdjust(tempY, tempX, menuText[temp], 15, -3, SMALL_FONT_SHAPES, false);
-						}
+						int x = VGAScreen->w / 2, y = 104 + i * 13;
+						
+						draw_font_hv(VGAScreen, x - 1, y - 1, menuText[i], normal_font, centered, 15, -10);
+						draw_font_hv(VGAScreen, x + 1, y + 1, menuText[i], normal_font, centered, 15, -10);
+						draw_font_hv(VGAScreen, x + 1, y - 1, menuText[i], normal_font, centered, 15, -10);
+						draw_font_hv(VGAScreen, x - 1, y + 1, menuText[i], normal_font, centered, 15, -10);
+						draw_font_hv(VGAScreen, x,     y,     menuText[i], normal_font, centered, 15, -3);
 					}
+					
 					JE_showVGA();
-
+					
 					fade_palette(colors, 20, 255 - 16 + 1, 255); // fade in menu items
-
+					
 					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 				}
 			}
-
+			
 			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-
-			for (temp = 0; temp < menunum; temp++)
-			{
-				if (temp == 4) /* OpenTyrian override */
-					JE_outTextAdjust(JE_fontCenter(opentyrian_str, SMALL_FONT_SHAPES), 104+temp*13, opentyrian_str, 15, -3+((temp == menu) * 2), SMALL_FONT_SHAPES, false);
-				else
-					JE_outTextAdjust(JE_fontCenter(menuText[temp], SMALL_FONT_SHAPES), 104+temp*13, menuText[temp], 15, -3+((temp == menu) * 2), SMALL_FONT_SHAPES, false);
-			}
-
+			
+			// highlight selected menu item
+			draw_font_hv(VGAScreen, VGAScreen->w / 2, 104 + menu * 13, menuText[menu], normal_font, centered, 15, -1);
+			
 			JE_showVGA();
-
+			
 			if (trentWin)
 			{
 				quit = true;
