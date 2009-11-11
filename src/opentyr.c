@@ -20,7 +20,7 @@
 #include "editship.h"
 #include "episodes.h"
 #include "file.h"
-#include "fonthand.h"
+#include "font.h"
 #include "helptext.h"
 #include "hg_revision.h"
 #include "joystick.h"
@@ -78,17 +78,16 @@ void opentyrian_menu( void )
 	bool quit = false, fade_in = true;
 	
 	int temp_scaler = scaler;
-	char buffer[100];
 	
 	fade_black(10);
 	JE_loadPic(13, false);
-
-	JE_outTextAdjust(JE_fontCenter(opentyrian_str, FONT_SHAPES), 5, opentyrian_str, 15, -3, FONT_SHAPES, false);
-
+	
+	draw_font_hv(VGAScreen, VGAScreen->w / 2, 5, opentyrian_str, large_font, centered, 15, -3);
+	
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
-
+	
 	JE_showVGA();
-
+	
 	play_song(36); // A Field for Mag
 	
 	do
@@ -98,6 +97,7 @@ void opentyrian_menu( void )
 		for (int i = 0; i <= maxSel; i++)
 		{
 			const char *text = opentyrian_menu_items[i];
+			char buffer[100];
 			
 			if (i == 2) /* Scaler */
 			{
@@ -105,9 +105,7 @@ void opentyrian_menu( void )
 				text = buffer;
 			}
 			
-			JE_outTextAdjust(JE_fontCenter(text, SMALL_FONT_SHAPES),
-			                 (i != maxSel) ? (i * 16 + 32) : 118, text,
-			                 15, (i != sel ? -4 : -2), SMALL_FONT_SHAPES, true);
+			draw_font_hv_shadow(VGAScreen, VGAScreen->w / 2, (i != maxSel) ? i * 16 + 32 : 118, text, normal_font, centered, 15, (i != sel) ? -4 : -2, false, 2);
 		}
 		
 		JE_showVGA();
