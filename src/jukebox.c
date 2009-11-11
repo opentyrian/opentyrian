@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "fonthand.h"
+#include "font.h"
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
@@ -92,21 +92,18 @@ void jukebox( void )
 
 		if (!hide_text)
 		{
-			char tempStr[60];
-
-			tempScreenSeg = VGAScreenSeg;
-
+			char buffer[60];
+			
 			if (fx)
-				sprintf(tempStr, "%d %s", fx_num + 1, soundTitle[fx_num]);
+				snprintf(buffer, sizeof(buffer), "%d %s", fx_num + 1, soundTitle[fx_num]);
 			else
-				sprintf(tempStr, "%d %s", song_playing + 1, musicTitle[song_playing]);
-			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 190, tempStr, 1, 4);
-
-			strcpy(tempStr, "Press ESC to quit the jukebox.");
-			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 170, tempStr, 1, 0);
-
-			strcpy(tempStr, "Arrow keys change the song being played.");
-			JE_outText(JE_fontCenter(tempStr, TINY_FONT), 180, tempStr, 1, 0);
+				snprintf(buffer, sizeof(buffer), "%d %s", song_playing + 1, musicTitle[song_playing]);
+			
+			const int x = VGAScreen->w / 2;
+			
+			draw_font_hv(VGAScreen, x, 170, "Press ESC to quit the jukebox.",           small_font, centered, 1, 0);
+			draw_font_hv(VGAScreen, x, 180, "Arrow keys change the song being played.", small_font, centered, 1, 0);
+			draw_font_hv(VGAScreen, x, 190, buffer,                                     small_font, centered, 1, 4);
 		}
 
 		if (palette_fade_steps > 0)
