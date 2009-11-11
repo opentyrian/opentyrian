@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "fonthand.h"
+#include "font.h"
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
@@ -167,16 +167,17 @@ void scroller_sine( const struct about_text_type text[] )
 					break;
 				}
 				
-				int line_x = JE_fontCenter(text[i + current_line].text, SMALL_FONT_SHAPES);
+				int line_x = VGAScreen->w / 2;
 				int line_y = i * LINE_HEIGHT - y;
 				
+				// smooths edges on sine-wave text
 				if (text[i + current_line].effect & 0x20)
 				{
-					JE_outTextAdjust(line_x + 1, line_y, text[i + current_line].text, text[i + current_line].effect & 0x0f, -10, SMALL_FONT_SHAPES, false);
-					JE_outTextAdjust(line_x - 1, line_y, text[i + current_line].text, text[i + current_line].effect & 0x0f, -10, SMALL_FONT_SHAPES, false);
+					draw_font_hv(VGAScreen, line_x + 1, line_y, text[i + current_line].text, normal_font, centered, text[i + current_line].effect & 0x0f, -10);
+					draw_font_hv(VGAScreen, line_x - 1, line_y, text[i + current_line].text, normal_font, centered, text[i + current_line].effect & 0x0f, -10);
 				}
 				
-				JE_outTextAdjust(line_x, line_y, text[i + current_line].text, text[i + current_line].effect & 0x0f, -4, SMALL_FONT_SHAPES, false);
+				draw_font_hv(VGAScreen, line_x, line_y, text[i + current_line].text, normal_font, centered, text[i + current_line].effect & 0x0f, -4);
 				
 				if (text[i + current_line].effect & 0x10)
 				{
@@ -184,26 +185,24 @@ void scroller_sine( const struct about_text_type text[] )
 					{
 						if (line_y + j >= 10 && line_y + j <= vga_height - 10)
 						{
-							int foo = sinf((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
-							memmove(&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j) + foo],
-									&((Uint8 *)VGAScreenSeg->pixels)[VGAScreenSeg->pitch * (line_y + j)],
-									VGAScreenSeg->pitch);
+							int waver = sinf((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
+							memmove(&((Uint8 *)VGAScreen->pixels)[VGAScreen->pitch * (line_y + j) + waver],
+									&((Uint8 *)VGAScreen->pixels)[VGAScreen->pitch * (line_y + j)],
+									VGAScreen->pitch);
 						}
 					}
 				}
 			}
 		}
 
-		y++;
-		y %= LINE_HEIGHT;
-		if (y == 0)
+		if (++y == LINE_HEIGHT)
 		{
+			y = 0;
+			
 			if (current_line < 0 || text[current_line].text != NULL)
-			{
-				current_line++;
-			} else {
+				++current_line;
+			else
 				current_line = -visible_lines;
-			}
 		}
 
 		if (!ale)
