@@ -482,6 +482,9 @@ void JE_loadScreen( void )
 
 	tempstr = NULL;
 
+	free_sprite2s(&shapes6);
+	JE_loadCompShapes(&shapes6, '1');  /* Items */
+
 	fade_black(10);
 	JE_loadPic(2, false);
 	JE_showVGA();
@@ -863,7 +866,10 @@ void JE_highScoreScreen( void )
 	short int chg;
 	int quit;
 	char scoretemp[32];
-
+	
+	free_sprite2s(&shapes6);
+	JE_loadCompShapes(&shapes6, '1');  /* Items */
+	
 	fade_black(10);
 	JE_loadPic(2, false);
 	JE_showVGA();

@@ -18,7 +18,6 @@
  */
 #include "animlib.h"
 #include "backgrnd.h"
-#include "destruct.h"
 #include "episodes.h"
 #include "file.h"
 #include "font.h"
@@ -55,10 +54,6 @@
 #include <inttypes.h>
 
 inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
-
-void intro_logos( void );
-
-bool skip_intro_logos = false;
 
 boss_bar_t boss_bar[2];
 
@@ -648,17 +643,6 @@ void JE_main( void )
 
 	int lastEnemyOnScreen;
 
-	/* Setup Player Items/General Data */
-	for (int z = 0; z < 12; z++)
-	{
-		pItems[z] = 0;
-	}
-	shieldSet = 5;
-
-	/* Setup Graphics */
-	SDL_Color black = { 0, 0, 0 };
-	set_colors(black, 0, 255);
-
 	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
 
 	/* ----------- GAME ROUTINES ------------------------------------- */
@@ -745,12 +729,13 @@ start_level:
 		}
 	}
 	doNotSaveBackup = false;
-
+	
+	if (play_demo)
+		return;
+	
 start_level_first:
 
 	set_volume(tyrMusicVolume, fxVolume);
-
-	JE_loadCompShapes(&shapes6, '1');  /* Items */
 
 	endLevel = false;
 	reallyEndLevel = false;
@@ -761,7 +746,10 @@ start_level_first:
 
 	doNotSaveBackup = false;
 	JE_loadMap();
-
+	
+	if (mainLevel == 0)  // if quit itemscreen
+		return;          // back to titlescreen
+	
 	fade_song();
 
 	playerAlive = true;
@@ -774,14 +762,6 @@ start_level_first:
 	if (difficultyLevel < 1)
 	{
 		difficultyLevel = 1;
-	}
-
-	if (loadDestruct)
-	{
-		JE_destructGame();
-		loadDestruct = false;
-		loadTitleScreen = true;
-		goto start_level_first;
 	}
 
 	PX = 100;
@@ -2433,7 +2413,6 @@ draw_player_shot_loop_end:
 			reallyEndLevel = true;
 
 			stopped_demo = true;
-			skip_intro_logos = true;
 		}
 	}
 	else // input handling for pausing, menu, cheats
@@ -2646,20 +2625,6 @@ void JE_loadMap( void )
 	/*Defaults*/
 	songBuy = DEFAULT_SONG_BUY;  /*Item Screen default song*/
 
-	if (loadTitleScreen || play_demo)
-	{
-		if (!skip_intro_logos && !isNetworkGame)
-			intro_logos();
-
-		JE_initPlayerData();
-		JE_sortHighScores();
-
-		moveTyrianLogoUp = true;
-		JE_titleScreen(true);
-
-		loadTitleScreen = false;
-	}
-
 	/* Load LEVELS.DAT - Section = MAINLEVEL */
 	saveLevel = mainLevel;
 
@@ -2669,19 +2634,7 @@ new_game:
 	extraGame   = false;
 	haltGame = false;
 
-	if (loadTitleScreen)
-	{
-		JE_initPlayerData();
-		JE_sortHighScores();
-
-		JE_titleScreen(true);
-		loadTitleScreen = false;
-	}
-
 	gameLoaded = false;
-
-	if (loadDestruct)
-		return;
 
 	if (!play_demo)
 	{
@@ -2708,15 +2661,14 @@ new_game:
 
 			do
 			{
-
 				if (gameLoaded)
 				{
-					if (mainLevel == 0)
-					{
-						loadTitleScreen = true;
-					}
 					fclose(ep_f);
-					goto new_game;
+					
+					if (mainLevel == 0)  // if quit itemscreen
+						return;          // back to title screen
+					else
+						goto new_game;
 				}
 
 				strcpy(s, " ");
@@ -2946,11 +2898,7 @@ new_game:
 									{
 										// if completed Zinglon's Revenge, show SuperTyrian and Destruct codes
 										// if completed SuperTyrian, show Nort-Ship Z code
-
 										superArcadeMode = (initialDifficulty == 8) ? 8 : 1;
-
-										jumpSection = true;
-										loadTitleScreen = true;
 									}
 
 									if (superArcadeMode < SA_ENGAGE)
@@ -2990,7 +2938,13 @@ new_game:
 										JE_readTextSync();
 
 									if (superTyrian)
+									{
 										fade_black(10);
+										
+										// back to titlescreen
+										mainLevel = 0;
+										return;
+									}
 								}
 								break;
 
@@ -3433,9 +3387,9 @@ new_game:
 	/* End of find loop for LEVEL??.DAT */
 }
 
-void JE_titleScreen( JE_boolean animate )
+bool JE_titleScreen( JE_boolean animate )
 {
-	JE_boolean quit = 0;
+	bool quit = false;
 
 	const int menunum = 7;
 
@@ -3447,9 +3401,6 @@ void JE_titleScreen( JE_boolean animate )
 	           fadeIn = false;
 
 	JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
-
-	if (haltGame)
-		JE_tyrianHalt(0);
 
 	tempScreenSeg = VGAScreen;
 
@@ -3853,10 +3804,9 @@ void JE_titleScreen( JE_boolean animate )
 
 	trentWinsGame:
 		fade_black(15);
-		if (quit)
-			JE_tyrianHalt(0);
-
 	}
+	
+	return quit;
 }
 
 void intro_logos( void )

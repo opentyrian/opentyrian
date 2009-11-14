@@ -150,6 +150,9 @@ void JE_itemScreen( void )
 		13: super tyrian
 	*/
 	
+	free_sprite2s(&shapes6);
+	JE_loadCompShapes(&shapes6, '1');  /* Items */
+	
 	load_cubes();
 	
 	VGAScreen = VGAScreenSeg;

@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "config.h"
+#include "destruct.h"
 #include "editship.h"
 #include "episodes.h"
 #include "file.h"
@@ -314,11 +315,31 @@ int main( int argc, char *argv[] )
 		}
 	}
 	
-	JE_main();
+#ifdef NDEBUG
+	if (!isNetworkGame)
+		intro_logos();
+#endif
 	
-	// typically we don't get here, see JE_tyrianHalt()
-	deinit_video();
-	deinit_joysticks();
+	for (; ; )
+	{
+		JE_initPlayerData();
+		JE_sortHighScores();
+		
+		if (JE_titleScreen(true))
+			break;
+		
+		if (loadDestruct)
+		{
+			JE_destructGame();
+			loadDestruct = false;
+		}
+		else
+		{
+			JE_main();
+		}
+	}
+	
+	JE_tyrianHalt(0);
 	
 	return 0;
 }

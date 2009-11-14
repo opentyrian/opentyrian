@@ -24,6 +24,8 @@
 #include "varz.h"
 #include "helptext.h"
 
+void intro_logos( void );
+
 typedef struct
 {
 	Uint8 link_num;
@@ -55,7 +57,7 @@ void JE_starShowVGA( void );
 
 void JE_main( void );
 void JE_loadMap( void );
-void JE_titleScreen( JE_boolean animate );
+bool JE_titleScreen( JE_boolean animate );
 void JE_readTextSync( void );
 void JE_displayText( void );
 

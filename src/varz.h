@@ -294,7 +294,6 @@ extern JE_boolean drawGameSaved;
 extern JE_boolean loadDestruct;
 extern JE_word mapOrigin, mapPNum;
 extern JE_byte mapPlanet[5], mapSection[5];
-extern JE_boolean loadTitleScreen;
 extern JE_boolean moveTyrianLogoUp;
 extern JE_boolean skipStarShowVGA;
 extern JE_EnemyType enemy;

@@ -164,7 +164,8 @@ JE_longint score, score2;
 
 JE_integer    power, lastPower, powerAdd;
 JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
-JE_shortint   shield, shieldMax, shieldSet;
+JE_shortint   shield, shieldMax;
+const JE_shortint shieldSet = 5;
 JE_shortint   shield2, shieldMax2;
 JE_integer    armorLevel, armorLevel2;
 JE_byte       shieldWait, shieldT;

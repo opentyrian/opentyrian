@@ -264,7 +264,6 @@ JE_word mapOrigin, mapPNum;
 JE_byte mapPlanet[5], mapSection[5]; /* [1..5] */
 
 /* Interface Constants */
-JE_boolean loadTitleScreen = true;
 JE_boolean moveTyrianLogoUp;
 JE_boolean skipStarShowVGA;
 
