@@ -35,7 +35,6 @@
 #include "video.h"
 
 JE_integer tempDat, tempDat2, tempDat3;
-JE_boolean tempb2;
 
 const JE_byte SANextShip[SA + 2] /* [0..SA + 1] */ = { 3, 9, 6, 2, 5, 1, 4, 3, 7 }; // 0 -> 3 -> 2 -> 6 -> 4 -> 5 -> 1 -> 9 -> 7
 const JE_word SASpecialWeapon[SA] /* [1..SA] */  = { 7, 8, 9, 10, 11, 12, 13 };
@@ -202,9 +201,6 @@ JE_word curLoc; /*Current Pixel location of background 1*/
 
 JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
 
-/* Error Checking */
-JE_word tempSS;
-
 
 /* Destruction Ratio */
 JE_word totalEnemy;
@@ -253,8 +249,6 @@ JE_boolean editShip1, editShip2;
 
 JE_boolean globalFlags[10]; /* [1..10] */
 JE_byte levelSong;
-
-JE_boolean drawGameSaved;
 
 /* DESTRUCT game */
 JE_boolean loadDestruct;
@@ -369,10 +363,8 @@ unsigned int last_superpixel;
 
 /*Temporary Numbers*/
 JE_word avail;
-JE_word tempCount;
 JE_integer tempI, tempI2, tempI3, tempI4, tempI5;
 JE_longint tempL;
-JE_real tempR, tempR2;
 /*JE_integer tempX, tempY;*/
 
 JE_boolean tempB;

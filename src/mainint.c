@@ -2461,7 +2461,6 @@ void JE_operation( JE_byte slot )
 					case SDLK_RETURN:
 						quit = true;
 						JE_saveGame(slot, stemp);
-						drawGameSaved = true;
 						JE_playSampleNum(S_SELECT);
 						break;
 				}
@@ -3345,12 +3344,12 @@ redo:
 						}
 						else
 						{
+							JE_real tempR;
+							
 							if (abs(*PX_ - *mouseX_) > abs(*PY_ - *mouseY_))
 								tempR = (*PX_ - *mouseX_ > 0) ? M_PI_2 : (M_PI + M_PI_2);
 							else
 								tempR = (*PY_ - *mouseY_ > 0) ? 0 : M_PI;
-							
-							tempR2 = linkGunDirec - tempR;
 							
 							if (fabsf(linkGunDirec - tempR) < 0.3f)
 								linkGunDirec = tempR;

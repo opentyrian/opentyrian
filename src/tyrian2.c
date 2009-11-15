@@ -431,7 +431,7 @@ enemy_still_exists:
 							break;
 						default:
 						/*Rot*/
-							for (tempCount = weapons[temp3].multi; tempCount > 0; tempCount--)
+							for (int tempCount = weapons[temp3].multi; tempCount > 0; tempCount--)
 							{
 								for (b = 0; b < ENEMY_SHOT_MAX; b++)
 								{
