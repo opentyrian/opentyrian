@@ -298,10 +298,6 @@ int main( int argc, char *argv[] )
 	if (record_demo)
 		printf("demo recording enabled (input limited to keyboard)\n");
 
-	megaData1 = malloc(sizeof(*megaData1));
-	megaData2 = malloc(sizeof(*megaData2));
-	megaData3 = malloc(sizeof(*megaData3));
-
 	JE_loadExtraShapes();  /*Editship*/
 
 	JE_loadHelpText();

@@ -800,9 +800,9 @@ start_level_first:
 	mapY = 300 - 8;
 	mapY2 = 600 - 8;
 	mapY3 = 600 - 8;
-	mapYPos = &megaData1->mainmap[mapY][0] - 1;
-	mapY2Pos = &megaData2->mainmap[mapY2][0] - 1;
-	mapY3Pos = &megaData3->mainmap[mapY3][0] - 1;
+	mapYPos = &megaData1.mainmap[mapY][0] - 1;
+	mapY2Pos = &megaData2.mainmap[mapY2][0] - 1;
+	mapY3Pos = &megaData3.mainmap[mapY3][0] - 1;
 	mapXPos = 0;
 	mapXOfs = 0;
 	mapX2Pos = 0;
@@ -1083,13 +1083,11 @@ start_level_first:
 	galagaLife = 10000;
 
 	JE_drawOptionLevel();
-
-	BKwrap1 = &megaData1->mainmap[1][0];
-	BKwrap1to = &megaData1->mainmap[1][0];
-	BKwrap2 = &megaData2->mainmap[1][0];
-	BKwrap2to = &megaData2->mainmap[1][0];
-	BKwrap3 = &megaData3->mainmap[1][0];
-	BKwrap3to = &megaData3->mainmap[1][0];
+	
+	// keeps map from scrolling past the top
+	BKwrap1 = BKwrap1to = &megaData1.mainmap[1][0];
+	BKwrap2 = BKwrap2to = &megaData2.mainmap[1][0];
+	BKwrap3 = BKwrap3to = &megaData3.mainmap[1][0];
 
 level_loop:
 
@@ -3288,9 +3286,9 @@ new_game:
 		{
 			if (mapSh[0][x] == z+1)
 			{
-				memcpy(megaData1->shapes[x].sh, shape, sizeof(JE_DanCShape));
+				memcpy(megaData1.shapes[x].sh, shape, sizeof(JE_DanCShape));
 				
-				ref[0][x] = (JE_byte *)megaData1->shapes[x].sh;
+				ref[0][x] = (JE_byte *)megaData1.shapes[x].sh;
 			}
 		}
 		
@@ -3301,15 +3299,15 @@ new_game:
 			{
 				if (x != 71 && !shapeBlank)
 				{
-					memcpy(megaData2->shapes[x].sh, shape, sizeof(JE_DanCShape));
+					memcpy(megaData2.shapes[x].sh, shape, sizeof(JE_DanCShape));
 					
 					y = 1;
 					for (yy = 0; yy < (24 * 28) >> 1; yy++)
 						if (shape[yy] == 0)
 							y = 0;
 					
-					megaData2->shapes[x].fill = y;
-					ref[1][x] = (JE_byte *)megaData2->shapes[x].sh;
+					megaData2.shapes[x].fill = y;
+					ref[1][x] = (JE_byte *)megaData2.shapes[x].sh;
 				}
 				else
 				{
@@ -3325,15 +3323,15 @@ new_game:
 			{
 				if (x < 70 && !shapeBlank)
 				{
-					memcpy(megaData3->shapes[x].sh, shape, sizeof(JE_DanCShape));
+					memcpy(megaData3.shapes[x].sh, shape, sizeof(JE_DanCShape));
 					
 					y = 1;
 					for (yy = 0; yy < (24 * 28) >> 1; yy++)
 						if (shape[yy] == 0)
 							y = 0;
 					
-					megaData3->shapes[x].fill = y;
-					ref[2][x] = (JE_byte *)megaData3->shapes[x].sh;
+					megaData3.shapes[x].fill = y;
+					ref[2][x] = (JE_byte *)megaData3.shapes[x].sh;
 				}
 				else
 				{
@@ -3351,7 +3349,7 @@ new_game:
 	{
 		for (x = 0; x < 14; x++)
 		{
-			megaData1->mainmap[y][x] = ref[0][mapBuf[bufLoc]];
+			megaData1.mainmap[y][x] = ref[0][mapBuf[bufLoc]];
 			bufLoc++;
 		}
 	}
@@ -3362,7 +3360,7 @@ new_game:
 	{
 		for (x = 0; x < 14; x++)
 		{
-			megaData2->mainmap[y][x] = ref[1][mapBuf[bufLoc]];
+			megaData2.mainmap[y][x] = ref[1][mapBuf[bufLoc]];
 			bufLoc++;
 		}
 	}
@@ -3373,7 +3371,7 @@ new_game:
 	{
 		for (x = 0; x < 15; x++)
 		{
-			megaData3->mainmap[y][x] = ref[2][mapBuf[bufLoc]];
+			megaData3.mainmap[y][x] = ref[2][mapBuf[bufLoc]];
 			bufLoc++;
 		}
 	}
@@ -5093,7 +5091,7 @@ void JE_eventSystem( void )
 		break;
 		
 	case 71:
-		if (((((intptr_t)mapYPos - (intptr_t)&megaData1->mainmap) / sizeof(JE_byte *)) * 2) <= eventRec[eventLoc-1].eventdat2)
+		if (((((intptr_t)mapYPos - (intptr_t)&megaData1.mainmap) / sizeof(JE_byte *)) * 2) <= eventRec[eventLoc-1].eventdat2)
 		{
 			JE_eventJump(eventRec[eventLoc-1].eventdat);
 		}
@@ -5168,16 +5166,16 @@ void JE_eventSystem( void )
 		break;
 		
 	case 77:
-		mapYPos = &megaData1->mainmap[0][0];
+		mapYPos = &megaData1.mainmap[0][0];
 		mapYPos += eventRec[eventLoc-1].eventdat / 2;
 		if (eventRec[eventLoc-1].eventdat2 > 0)
 		{
-			mapY2Pos = &megaData2->mainmap[0][0];
+			mapY2Pos = &megaData2.mainmap[0][0];
 			mapY2Pos += eventRec[eventLoc-1].eventdat2 / 2;
 		}
 		else
 		{
-			mapY2Pos = &megaData2->mainmap[0][0];
+			mapY2Pos = &megaData2.mainmap[0][0];
 			mapY2Pos += eventRec[eventLoc-1].eventdat / 2;
 		}
 		break;
@@ -5198,9 +5196,9 @@ void JE_eventSystem( void )
 		break;
 		
 	case 81: /*WRAP2*/
-		BKwrap2   = &megaData2->mainmap[0][0];
+		BKwrap2   = &megaData2.mainmap[0][0];
 		BKwrap2   += eventRec[eventLoc-1].eventdat / 2;
-		BKwrap2to = &megaData2->mainmap[0][0];
+		BKwrap2to = &megaData2.mainmap[0][0];
 		BKwrap2to += eventRec[eventLoc-1].eventdat2 / 2;
 		break;
 		

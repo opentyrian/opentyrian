@@ -214,9 +214,9 @@ JE_word enemyKilled;
 JE_Map1Buffer *map1BufferTop, *map1BufferBot;
 
 /* Shape/Map Data - All in one Segment! */
-struct JE_MegaDataType1 *megaData1 = NULL;
-struct JE_MegaDataType2 *megaData2 = NULL;
-struct JE_MegaDataType3 *megaData3 = NULL;
+struct JE_MegaDataType1 megaData1;
+struct JE_MegaDataType2 megaData2;
+struct JE_MegaDataType3 megaData3;
 
 /* Secret Level Display */
 JE_byte flash;
@@ -602,13 +602,6 @@ void JE_tyrianHalt( JE_byte code )
 
 	/* TODO: NETWORK */
 
-	free(megaData1);
-	megaData1 = NULL;
-	free(megaData2);
-	megaData2 = NULL;
-	free(megaData3);
-	megaData3 = NULL;
-	
 	free_main_shape_tables();
 	
 	free_sprite2s(&shapes6);
