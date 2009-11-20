@@ -3455,25 +3455,29 @@ redo:
 				}
 
 				if (*stopWaitX_ > 0)
+				{
 					(*stopWaitX_)--;
-				else {
+				}
+				else
+				{
 					*stopWaitX_ = 2;
 					if (*lastTurn_ < 0)
 						(*lastTurn_)++;
-					else
-						if (*lastTurn_ > 0)
-							(*lastTurn_)--;
+					else if (*lastTurn_ > 0)
+						(*lastTurn_)--;
 				}
 
 				if (*stopWaitY_ > 0)
+				{
 					(*stopWaitY_)--;
-				else {
+				}
+				else
+				{
 					*stopWaitY_ = 1;
 					if (*lastTurn2_ < 0)
 						(*lastTurn2_)++;
-					else
-						if (*lastTurn2_ > 0)
-							(*lastTurn2_)--;
+					else if (*lastTurn2_ > 0)
+						(*lastTurn2_)--;
 				}
 
 				*lastTurn_ += accelYC;
@@ -3494,22 +3498,27 @@ redo:
 
 				/*Option History for special new sideships*/
 				if (playerHNotReady)
+				{
 					JE_resetPlayerH();
-				else
-					if ((playerNum_ == 1 && !twoPlayerMode)
-					    || (playerNum_ == 2 && twoPlayerMode))
-						if (*PX_ - *mouseX_ != 0 || *PY_ - *mouseY_ != 0)
-						{ /*Option History*/
-							for (temp = 0; temp < 19; temp++)
-							{
-								playerHX[temp] = playerHX[temp + 1];
-								playerHY[temp] = playerHY[temp + 1];
-							}
-							playerHX[20-1] = *PX_;
-							playerHY[20-1] = *PY_;
+				}
+				else if ((playerNum_ == 1 && !twoPlayerMode) ||
+				         (playerNum_ == 2 && twoPlayerMode))
+				{
+					// if player moved, add new ship x, y history entry
+					if (*PX_ - *mouseX_ != 0 || *PY_ - *mouseY_ != 0)
+					{
+						for (int i = 0; i < 19; i++)
+						{
+							playerHX[i] = playerHX[i + 1];
+							playerHY[i] = playerHY[i + 1];
 						}
-
-			} else {  /*twoPlayerLinked*/
+						playerHX[19] = *PX_;
+						playerHY[19] = *PY_;
+					}
+				}
+			}
+			else  /*twoPlayerLinked*/
+			{
 				if (shipGr_ == 0)
 					*PX_ = PX - 1;
 				else
@@ -3517,58 +3526,54 @@ redo:
 				*PY_ = PY + 8;
 				*lastTurn2_ = lastTurn2;
 				*lastTurn_ = 4;
-
+				
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26),
-				                  *mouseX_, *mouseY_, 148, playerNum_);
+				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26),
-				                  *mouseX_, *mouseY_, 148, playerNum_);
+				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26),
-				                  *mouseX_, *mouseY_, 147, playerNum_);
-
+				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26), *mouseX_, *mouseY_, 147, playerNum_);
+				
 				if (shotRepeat[2-1] > 0)
-					shotRepeat[2-1]--;
-				else
-					if (button[1-1])
+				{
+					--shotRepeat[2-1];
+				}
+				else if (button[1-1])
+				{
+					shotMultiPos[2-1] = 0;
+					JE_initPlayerShot(0, 2, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20), *mouseX_, *mouseY_, linkGunWeapons[pItems_[P_REAR]-1], playerNum_);
+					playerShotData[b].shotXM = -roundf(sinf(linkGunDirec) * playerShotData[b].shotYM);
+					playerShotData[b].shotYM = -roundf(cosf(linkGunDirec) * playerShotData[b].shotYM);
+					
+					switch (pItems_[P_REAR])
 					{
-						shotMultiPos[2-1] = 0;
-						JE_initPlayerShot(0, 2, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20),
-						                  *mouseX_, *mouseY_, linkGunWeapons[pItems_[P_REAR]-1], playerNum_);
-						playerShotData[b].shotXM = -roundf(sinf(linkGunDirec) * playerShotData[b].shotYM);
-						playerShotData[b].shotYM = -roundf(cosf(linkGunDirec) * playerShotData[b].shotYM);
-
-						switch (pItems_[P_REAR])
+					case 27:
+					case 32:
+					case 10:
+						temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
+						playerShotData[b].shotGr = linkMultiGr[temp];
+						break;
+					case 28:
+					case 33:
+					case 11:
+						temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
+						playerShotData[b].shotGr = linkSonicGr[temp];
+						break;
+					case 30:
+					case 35:
+					case 14:
+						if (linkGunDirec > M_PI_2 && linkGunDirec < M_PI + M_PI_2)
 						{
-							case 27:
-							case 32:
-							case 10:
-								temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
-								playerShotData[b].shotGr = linkMultiGr[temp];
-								break;
-							case 28:
-							case 33:
-							case 11:
-								temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
-								playerShotData[b].shotGr = linkSonicGr[temp];
-								break;
-							case 30:
-							case 35:
-							case 14:
-								if (linkGunDirec > M_PI_2 && linkGunDirec < M_PI + M_PI_2)
-								{
-									playerShotData[b].shotYC = 1;
-								}
-								break;
-							case 38:
-							case 22:
-								temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
-								playerShotData[b].shotGr = linkMult2Gr[temp];
-								break;
+							playerShotData[b].shotYC = 1;
 						}
-
+						break;
+					case 38:
+					case 22:
+						temp = roundf(linkGunDirec * (16 / (2 * M_PI)));  /*16 directions*/
+						playerShotData[b].shotGr = linkMult2Gr[temp];
+						break;
 					}
+				}
 			}
 
 		}  /*moveOK*/

@@ -1509,17 +1509,20 @@ void JE_drawArmor( void )
 	}
 }
 
-void JE_resetPlayerH( void )
+void JE_resetPlayerH( void ) // ship x, y history
 {
-	for (temp = 0; temp < 20; temp++)
+	for (int i = 0; i < 20; ++i)
 	{
+		// history is used for some option ships; in two player mode, only second player can have them
 		if (twoPlayerMode)
 		{
-			playerHX[temp] = PXB - (20 - temp);
-			playerHY[temp] = PYB - 18;
-		} else {
-			playerHX[temp] = PX - (20 - temp);
-			playerHY[temp] = PY - 18;
+			playerHX[i] = PXB - (19 - i);
+			playerHY[i] = PYB - 18;
+		}
+		else
+		{
+			playerHX[i] = PX - (19 - i);
+			playerHY[i] = PY - 18;
 		}
 	}
 	playerHNotReady = false;
