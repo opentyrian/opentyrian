@@ -69,7 +69,6 @@ JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems );
 
 void JE_drawPortConfigButtons( void );
 void JE_outCharGlow( JE_word x, JE_word y, const char *s );
-JE_boolean JE_getPassword( void );
 
 void JE_playCredits( void );
 void JE_endLevelAni( void );

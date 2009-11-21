@@ -252,7 +252,7 @@ void stop_song( void )
 
 void fade_song( void )
 {
-	STUB();
+	printf("TODO: %s\n", __PRETTY_FUNCTION__);
 }
 
 void set_volume( unsigned int music, unsigned int sample )

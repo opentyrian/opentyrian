@@ -1953,12 +1953,6 @@ void JE_sort( void )
 	}
 }
 
-JE_boolean JE_getPassword( void )
-{
-	STUB();
-	return false;
-}
-
 void JE_playCredits( void )
 {
 	const int maxlines = 132;
