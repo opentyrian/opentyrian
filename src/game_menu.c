@@ -2240,10 +2240,10 @@ void JE_initWeaponView( void )
 	power = 500;
 	lastPower = 500;
 
-	memset(shotAvail, sizeof(shotAvail), 0);
+	memset(shotAvail, 0, sizeof(shotAvail));
 
-	memset(shotRepeat, sizeof(shotRepeat), 1);
-	memset(shotMultiPos, sizeof(shotMultiPos), 0);
+	memset(shotRepeat, 1, sizeof(shotRepeat));
+	memset(shotMultiPos, 0, sizeof(shotMultiPos));
 
 	JE_setupStars();
 }

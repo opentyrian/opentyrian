@@ -30,12 +30,8 @@
 #include "video.h"
 #include "video_scale.h"
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 
 /* Configuration Load/Save handler */
