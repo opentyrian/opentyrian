@@ -19,8 +19,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <stdbool.h>
-typedef unsigned int uint;
+#include <opentyr.h>
 
 enum
 {
@@ -53,11 +52,11 @@ PlayerItems;
 typedef struct
 {
 	uint initial_episode;     // can only get highscore on initial episode
-	bool has_completed_game;  // can only get highscore on first play though
+	bool has_completed_game;  // can only get highscore on first play-through
 	
 	PlayerItems items;
 	
-	uint weapon_mode;    // TODO: portConfig
+	uint weapon_mode;
 	
 	bool is_dragonwing;  // i.e., is player 2
 	uint *lives;
