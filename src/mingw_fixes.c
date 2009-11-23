@@ -20,7 +20,7 @@
 
 extern int main(); // silence "empty translation unit warning"
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(__APPLE__)
 
 char *strchrnul( const char *s, int c )
 {
