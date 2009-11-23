@@ -1189,7 +1189,8 @@ void JE_itemScreen( void )
 							else
 							{
 								if (curSel[1] == 4)
-									portConfig[1] = 1;
+									player[0].weapon_mode = 1;
+								
 								curSel[curMenu] = tempI;
 							}
 							
@@ -1249,8 +1250,8 @@ void JE_itemScreen( void )
 				if ( (curMenu == 4) && (curSel[1] == 4))
 				{
 					// cycle weapon modes
-					if (++portConfig[1] > weaponPort[pItems[P_REAR]].opnum)
-						portConfig[1] = 1;
+					if (++player[0].weapon_mode > weaponPort[pItems[P_REAR]].opnum)
+						player[0].weapon_mode = 1;
 				}
 				break;
 				
@@ -1346,7 +1347,7 @@ void JE_itemScreen( void )
 				{
 					player[0].items.weapon[curSel[1]-3].power = temp_weapon_power[curSel[4]-2];
 					if (curSel[curMenu] == 4)
-						portConfig[1] = 1;
+						player[0].weapon_mode = 1;
 				}
 				
 				// if joystick config, skip disabled items when digital
@@ -1371,7 +1372,7 @@ void JE_itemScreen( void )
 				{
 					player[0].items.weapon[curSel[1]-3].power = temp_weapon_power[curSel[4]-2];
 					if (curSel[curMenu] == 4)
-						portConfig[1] = 1;
+						player[0].weapon_mode = 1;
 				}
 				
 				// if in joystick config, skip disabled items when digital
@@ -3161,9 +3162,10 @@ void JE_weaponViewFrame( void )
 			shotRepeat[temp]--;
 		else
 		{
-			const uint item_power = player[0].items.weapon[temp].power - 1;
+			const uint item_power = player[0].items.weapon[temp].power - 1,
+			           item_mode = (temp == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
 			
-			JE_initPlayerShot(pItems[temp], temp + 1, PX, PY, mouseX, mouseY, weaponPort[pItems[temp]].op[portConfig[temp] - 1][item_power], 1);
+			JE_initPlayerShot(pItems[temp], temp + 1, PX, PY, mouseX, mouseY, weaponPort[pItems[temp]].op[item_mode][item_power], 1);
 		}
 	}
 	

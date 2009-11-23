@@ -168,7 +168,6 @@ JE_integer    armorLevel, armorLevel2;
 JE_byte       shieldWait, shieldT;
 
 JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
-JE_byte          portConfig[10]; /* [1..10] */
 JE_boolean       portConfigChange, portConfigDone;
 
 JE_boolean resetVersion;

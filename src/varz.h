@@ -401,7 +401,7 @@ void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_intege
 void JE_drawShield( void );
 void JE_drawArmor( void );
 
-void JE_portConfigs( void );
+JE_word JE_portConfigs( void );
 
 void JE_resetPlayerH( void );
 

@@ -173,12 +173,12 @@ void JE_drawPortConfigButtons( void ) // rear weapon pattern indicator
 	if (twoPlayerMode)
 		return;
 	
-	if (portConfig[1] == 1)
+	if (player[0].weapon_mode == 1)
 	{
 		blit_sprite(VGAScreenSeg, 285, 44, OPTION_SHAPES, 18);  // lit
 		blit_sprite(VGAScreenSeg, 302, 44, OPTION_SHAPES, 19);  // unlit
 	}
-	else
+	else // == 2
 	{
 		blit_sprite(VGAScreenSeg, 285, 44, OPTION_SHAPES, 19);  // unlit
 		blit_sprite(VGAScreenSeg, 302, 44, OPTION_SHAPES, 18);  // lit
@@ -859,9 +859,6 @@ void JE_initPlayerData( void )
 		player[p].lives = &player[p].items.weapon[p].power;
 		
 	}
-	
-	portConfig[0] = 1;
-	portConfig[1] = 1;
 	
 	mainLevel = FIRST_LEVEL;
 	saveLevel = FIRST_LEVEL;
@@ -2602,9 +2599,10 @@ void JE_mainKeyboardInput( void )
 					/*Armor*/
 					pItems[P_SHIELD] = extraShips[z + 8];
 					memset(shotMultiPos, 0, sizeof(shotMultiPos));
-					JE_portConfigs();
-					if (portConfig[1] > tempW)
-						portConfig[1] = 1;
+					
+					if (player[0].weapon_mode > JE_portConfigs())
+						player[0].weapon_mode = 1;
+					
 					tempW = armorLevel;
 					JE_getShipInfo();
 					if (armorLevel > tempW && editShip1)
@@ -2645,9 +2643,10 @@ void JE_mainKeyboardInput( void )
 					/*Armor*/
 					pItemsPlayer2[P_SHIELD] = extraShips[z + 8];
 					memset(shotMultiPos, 0, sizeof(shotMultiPos));
-					JE_portConfigs();
-					if (portConfig[1] > tempW)
-						portConfig[1] = 1;
+					
+					if (player[1].weapon_mode > JE_portConfigs())
+						player[1].weapon_mode = 1;
+					
 					tempW = armorLevel2;
 					JE_getShipInfo();
 					if (armorLevel2 > tempW && editShip2)
@@ -2958,16 +2957,10 @@ void JE_playerMovement( Player *this_player,
 
 	if (playerNum_ == 2 || !twoPlayerMode)
 	{
-		if (playerNum_ == 2)
-		{
-			tempW = weaponPort[pItemsPlayer2[P_REAR]].opnum;
-		} else {
-			tempW = weaponPort[pItems_[P_REAR]].opnum;
-		}
-		if (portConfig[2-1] > tempW)
-		{
-			portConfig[2-1] = 1;
-		}
+		tempW = (playerNum_ == 2) ? weaponPort[pItemsPlayer2[P_REAR]].opnum : weaponPort[pItems_[P_REAR]].opnum;
+		
+		if (this_player->weapon_mode > tempW)
+			this_player->weapon_mode = 1;
 	}
 
 	if (isNetworkGame && thisPlayerNum == playerNum_)
@@ -3791,21 +3784,16 @@ redo:
 								if (pItems[P_SPECIAL] == SASpecialWeapon[superArcadeMode-1])
 								{
 									pItems[P_SPECIAL] = SASpecialWeaponB[superArcadeMode-1];
-									portConfig[2-1] = 2;
+									this_player->weapon_mode = 2;
 								}
 								else
 								{
 									pItems[P_SPECIAL] = SASpecialWeapon[superArcadeMode-1];
-									portConfig[2-1] = 1;
+									this_player->weapon_mode = 1;
 								}
 							}
-							else
-							{
-								portConfig[2-1]++;
-								JE_portConfigs();
-								if (portConfig[2-1] > tempW)
-									portConfig[2-1] = 1;
-							}
+							else if (++this_player->weapon_mode > JE_portConfigs())
+								this_player->weapon_mode = 1;
 
 							JE_drawPortConfigButtons();
 							portConfigDone = false;
@@ -3844,9 +3832,10 @@ redo:
 										shotRepeat[temp]--;
 									else if (button[1-1])
 									{
-										const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1;
+										const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1,
+										           item_mode = (temp == REAR_WEAPON) ? this_player->weapon_mode - 1 : 0;
 										
-										JE_initPlayerShot(pItems_[temp], temp + 1, *PX_, *PY_, *mouseX_, *mouseY_, weaponPort[pItems_[temp]].op[portConfig[temp]-1][item_power], playerNum_);
+										JE_initPlayerShot(pItems_[temp], temp + 1, *PX_, *PY_, *mouseX_, *mouseY_, weaponPort[pItems_[temp]].op[item_mode][item_power], playerNum_);
 									}
 								}
 					}
@@ -4622,7 +4611,10 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						pItems[P_REAR] = 26;
 						pItemsPlayer2[P_REAR] = 26;
 						memcpy(pItemsBack2, pItems, sizeof(pItemsBack2));
-						portConfig[2-1] = 1;
+						
+						for (uint i = 0; i < COUNTOF(player); ++i)
+							player[i].weapon_mode = 1;
+						
 						memset(shotMultiPos, 0, sizeof(shotMultiPos));
 					}
 					else if (twoPlayerLinked)

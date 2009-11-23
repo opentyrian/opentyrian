@@ -1472,14 +1472,9 @@ void JE_powerUp( JE_byte port )
 		score += 1000;
 }
 
-void JE_portConfigs( void )
+JE_word JE_portConfigs( void )
 {
-	if (twoPlayerMode)
-	{
-		tempW = weaponPort[pItemsPlayer2[P_REAR]].opnum;
-	} else {
-		tempW = weaponPort[pItems[P_REAR]].opnum;
-	}
+	return tempW = twoPlayerMode ? weaponPort[pItemsPlayer2[P_REAR]].opnum : weaponPort[pItems[P_REAR]].opnum;
 }
 
 void JE_drawShield( void )
