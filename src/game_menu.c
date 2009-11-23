@@ -32,6 +32,7 @@
 #include "params.h"
 #include "pcxmast.h"
 #include "picload.h"
+#include "player.h"
 #include "sprite.h"
 #include "tyrian2.h"
 #include "varz.h"
@@ -98,34 +99,31 @@ JE_integer tempNavX, tempNavY;
 JE_byte planetDots[5]; /* [1..5] */
 JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
 
+PlayerItems old_items; // TODO: shouldn't be global
+
 void draw_ship_illustration( void );
 
 JE_longint JE_cashLeft( void )
 {
-	JE_longint tempL;
-	JE_byte x;
-	JE_word itemNum;
-
-	tempL = score;
-	itemNum = pItems[pItemButtonMap[curSel[1] - 2] - 1];
-
+	JE_longint tempL = score;
+	JE_word itemNum = pItems[pItemButtonMap[curSel[1] - 2] - 1];
+	
 	tempL -= JE_getCost(curSel[1], itemNum);
-
+	
 	tempW = 0;
-
+	
 	switch (curSel[1])
 	{
-		case 3:
-		case 4:
-			tempW2 = weaponPort[itemNum].cost;
-			for (x = 1; x < portPower[curSel[1] - 3]; x++)
-			{
-				tempW += tempW2 * x;
-				tempL -= tempW;
-			}
-			break;
+	case 3:
+	case 4:
+		for (int i = 1; i < player[0].items.weapon[curSel[1]-3].power; ++i)
+		{
+			tempW += weaponPort[itemNum].cost * i;
+			tempL -= tempW;
+		}
+		break;
 	}
-
+	
 	return tempL;
 }
 
@@ -269,19 +267,23 @@ void JE_itemScreen( void )
 		
 		if (curMenu == 1 && (curSel[curMenu] == 3 || curSel[curMenu] == 4))
 		{
-			// reset every time we select upgrading front or back
-			int i = curSel[curMenu]-2;
-			int item = pItems[pItemButtonMap[i]-1];
+			// reset temp_weapon_power[] every time we select upgrading front or back
+			const uint i = curSel[curMenu] - 2,       // 1 or 2 (front or rear)
+			           port = pItemButtonMap[i] - 1,  // 0 or 1 (front or rear)
+			           item = pItems[port],
+			           item_level = player[0].items.weapon[port].power;
 			
+			// set power level of owned weapon
 			for (int slot = 0; slot < itemAvailMax[itemAvailMap[i]-1]; ++slot)
 			{
 				if (itemAvail[itemAvailMap[i]-1][slot] == item)
-					temp_weapon_power[slot] = portPower[pItemButtonMap[i]-1];
+					temp_weapon_power[slot] = item_level;
 				else
 					temp_weapon_power[slot] = 1;
 			}
 			
-			temp_weapon_power[itemAvailMax[itemAvailMap[i]-1]] = portPower[curSel[1]-3];
+			// set power level for "Done"
+			temp_weapon_power[itemAvailMax[itemAvailMap[i]-1]] = item_level;
 		}
 		
 		/* play next level menu */
@@ -497,15 +499,17 @@ void JE_itemScreen( void )
 			/* Get power level info for front and rear weapons */
 			if ((curSel[1] == 3 && curSel[4] < menuChoices[4]) || (curSel[1] == 4 && curSel[4] < menuChoices[4]-1))
 			{
-				/* JE: Only needed if change */
-				tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[5]-2]);
-
-				leftPower  = portPower[curSel[1] - 3] > 1; /* Can downgrade */
-				rightPower = portPower[curSel[1] - 3] < 11; /* Can upgrade */
-
-				if (rightPower)
-					rightPowerAfford = JE_cashLeft() >= upgradeCost; /* Can player afford an upgrade? */
+				const uint port = curSel[1] - 3,  // 0 or 1 (front or back)
+				           item_level = player[0].items.weapon[port].power;
 				
+				// calculate upgradeCost
+				JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[5]-2]);
+				
+				leftPower  = item_level > 1;  // can downgrade
+				rightPower = item_level < 11; // can upgrade
+				
+				if (rightPower)
+					rightPowerAfford = JE_cashLeft() >= upgradeCost; // can afford upgrade
 			}
 			else
 			{
@@ -1191,8 +1195,7 @@ void JE_itemScreen( void )
 							
 							// in front or rear weapon upgrade screen?
 							if ((curMenu == 4) && ((curSel[1] == 3) || (curSel[1] == 4)))
-								portPower[curSel[1] - 3] = temp_weapon_power[curSel[4] - 2];
-							
+								player[0].items.weapon[curSel[1]-3].power = temp_weapon_power[curSel[4]-2];
 						}
 					}
 				}
@@ -1210,7 +1213,7 @@ void JE_itemScreen( void )
 					case 3:
 					case 4:
 						if (leftPower)
-							portPower[curSel[1]-3] = --temp_weapon_power[curSel[4]-2];
+							player[0].items.weapon[curSel[1]-3].power = --temp_weapon_power[curSel[4]-2];
 						else
 							JE_playSampleNum(S_CLINK);
 						
@@ -1227,7 +1230,7 @@ void JE_itemScreen( void )
 					case 3:
 					case 4:
 						if (rightPower && rightPowerAfford)
-							portPower[curSel[1]-3] = ++temp_weapon_power[curSel[4]-2];
+							player[0].items.weapon[curSel[1]-3].power = ++temp_weapon_power[curSel[4]-2];
 						else
 							JE_playSampleNum(S_CLINK);
 						
@@ -1257,7 +1260,7 @@ void JE_itemScreen( void )
 				
 				// if front or rear weapon, update "Done" power level
 				if (curMenu == 4 && (curSel[1] == 3 || curSel[1] == 4))
-					temp_weapon_power[itemAvailMax[itemAvailMap[curSel[1]-2]-1]] = portPower[curSel[1]-3];
+					temp_weapon_power[itemAvailMax[itemAvailMap[curSel[1]-2]-1]] = player[0].items.weapon[curSel[1]-3].power;
 				
 				JE_menuFunction(curSel[curMenu]);
 				break;
@@ -1284,7 +1287,7 @@ void JE_itemScreen( void )
 					if (curMenu == 4)
 					{
 						memcpy(pItems, pItemsBack, sizeof(pItems));
-						memcpy(portPower, lastPortPower, sizeof(portPower));
+						player[0].items = old_items;
 						curSel[4] = lastCurSel;
 						score = JE_cashLeft();
 					}
@@ -1341,7 +1344,7 @@ void JE_itemScreen( void )
 				// if in front or rear weapon upgrade screen
 				if (curMenu == 4 && (curSel[1] == 3 || curSel[1] == 4))
 				{
-					portPower[curSel[1] - 3] = temp_weapon_power[curSel[4] - 2];
+					player[0].items.weapon[curSel[1]-3].power = temp_weapon_power[curSel[4]-2];
 					if (curSel[curMenu] == 4)
 						portConfig[1] = 1;
 				}
@@ -1366,7 +1369,7 @@ void JE_itemScreen( void )
 				// if in front or rear weapon upgrade screen
 				if (curMenu == 4 && (curSel[1] == 3 || curSel[1] == 4))
 				{
-					portPower[curSel[1] - 3] = temp_weapon_power[curSel[4] - 2];
+					player[0].items.weapon[curSel[1]-3].power = temp_weapon_power[curSel[4]-2];
 					if (curSel[curMenu] == 4)
 						portConfig[1] = 1;
 				}
@@ -1476,7 +1479,7 @@ void JE_itemScreen( void )
 					case 3:
 					case 4:
 						if (leftPower)
-							portPower[curSel[1]-3] = --temp_weapon_power[curSel[4]-2];
+							player[0].items.weapon[curSel[1]-3].power = --temp_weapon_power[curSel[4]-2];
 						else
 							JE_playSampleNum(S_CLINK);
 						
@@ -1570,7 +1573,7 @@ void JE_itemScreen( void )
 					case 3:
 					case 4:
 						if (rightPower && rightPowerAfford)
-							portPower[curSel[1]-3] = ++temp_weapon_power[curSel[4]-2];
+							player[0].items.weapon[curSel[1]-3].power = ++temp_weapon_power[curSel[4]-2];
 						else
 							JE_playSampleNum(S_CLINK);
 						
@@ -2604,7 +2607,7 @@ void JE_menuFunction( JE_byte select )
 		else
 		{
 			lastDirection = 1;
-			memcpy(lastPortPower, portPower, sizeof(lastPortPower));
+			old_items = player[0].items;
 			memcpy(pItemsBack, pItems, sizeof(pItemsBack));
 			tempScore = score;
 			JE_genItemMenu(select);
@@ -2975,7 +2978,7 @@ joystick_assign_done:
 		break;
 	}
 
-	memcpy(lastPortPower, portPower, sizeof(lastPortPower));
+	old_items = player[0].items;
 	memcpy(pItemsBack, pItems, sizeof(pItemsBack));
 
 }
@@ -3088,10 +3091,8 @@ void JE_weaponSimUpdate( void )
 			blit_sprite(VGAScreenSeg, 119, 149, OPTION_SHAPES, 14);  // upgrade disabled
 		}
 		
-		if (curSel[1] == 3)
-			temp = portPower[1 - 1];
-		else
-			temp = portPower[2 - 1];
+		temp = player[0].items.weapon[curSel[1]-3].power;
+		
 		for (int x = 1; x <= temp; x++)
 		{
 			JE_bar(39 + x * 6, 151, 39 + x * 6 + 4, 151, 251);
@@ -3154,12 +3155,16 @@ void JE_weaponViewFrame( void )
 	mouseY = PY;
 	
 	/* JE: (* PLAYER SHOT Creation *) */
-	for (temp = 0; temp <= 1; temp++)
+	for (temp = 0; temp < 2; temp++)
 	{
 		if (shotRepeat[temp] > 0)
 			shotRepeat[temp]--;
 		else
-			JE_initPlayerShot(pItems[temp], temp + 1, PX, PY, mouseX, mouseY, weaponPort[pItems[temp]].op[portConfig[temp] - 1][portPower[temp] - 1], 1);
+		{
+			const uint item_power = player[0].items.weapon[temp].power - 1;
+			
+			JE_initPlayerShot(pItems[temp], temp + 1, PX, PY, mouseX, mouseY, weaponPort[pItems[temp]].op[portConfig[temp] - 1][item_power], 1);
+		}
 	}
 	
 	if (options[pItems[4 - 1]].wport > 0)

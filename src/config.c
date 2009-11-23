@@ -24,6 +24,7 @@
 #include "mtrand.h"
 #include "nortsong.h"
 #include "opentyr.h"
+#include "player.h"
 #include "varz.h"
 #include "vga256d.h"
 #include "video.h"
@@ -173,7 +174,6 @@ JE_byte       shieldWait, shieldT;
 JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
 JE_byte          portConfig[10]; /* [1..10] */
 JE_boolean       portConfigChange, portConfigDone;
-JE_PortPowerType portPower, lastPortPower;
 
 JE_boolean resetVersion;
 
@@ -328,12 +328,13 @@ void JE_saveGame( JE_byte slot, const char *name )
 	saveFiles[slot-1].input2 = inputDevice[1];
 
 	strcpy(saveFiles[slot-1].name, name);
-
-	for (x = 0; x < 2; x++)
+	
+	for (uint port = 0; port < 2; ++port)
 	{
-		saveFiles[slot-1].power[x] = portPower[x];
+		// if two-player, use first player's front and second player's rear weapon
+		saveFiles[slot-1].power[port] = player[twoPlayerMode ? port : 0].items.weapon[port].power;
 	}
-
+	
 	JE_saveConfiguration();
 }
 
@@ -389,11 +390,12 @@ void JE_loadGame( JE_byte slot )
 	inputDevice[0] = saveFiles[slot-1].input1;
 	inputDevice[1] = saveFiles[slot-1].input2;
 
-	for (temp = 0; temp < 2; temp++)
+	for (uint port = 0; port < 2; ++port)
 	{
-		portPower[temp] = saveFiles[slot-1].power[temp];
+		// if two-player, use first player's front and second player's rear weapon
+		player[twoPlayerMode ? port : 0].items.weapon[port].power = saveFiles[slot-1].power[port];
 	}
-
+	
 	temp5 = saveFiles[slot-1].episode;
 
 	memcpy(&levelName, &saveFiles[slot-1].levelName, sizeof(levelName));

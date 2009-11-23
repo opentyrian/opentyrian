@@ -359,10 +359,10 @@ const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 SDL_Surface *destructTempScreen;
 JE_boolean destructFirstTime;
 
-struct destruct_player_s player[MAX_PLAYERS];
-struct destruct_world_s  world;
-struct destruct_shot_s   shotRec[MAX_SHOTS];
-struct destruct_explo_s  exploRec[MAX_EXPLO];
+static struct destruct_player_s player[MAX_PLAYERS];
+static struct destruct_world_s  world;
+static struct destruct_shot_s   shotRec[MAX_SHOTS];
+static struct destruct_explo_s  exploRec[MAX_EXPLO];
 
 
 void JE_destructGame( void )

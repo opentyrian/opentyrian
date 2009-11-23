@@ -730,6 +730,8 @@ start_level:
 	if (play_demo)
 		return;
 	
+	int old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
+	
 start_level_first:
 
 	set_volume(tyrMusicVolume, fxVolume);
@@ -930,11 +932,6 @@ start_level_first:
 	/* Set cubes to 0 */
 	cubeMax = 0;
 
-	lastPortPower[0] = 0;
-	lastPortPower[1] = 0;
-	lastPortPower[2] = 0;
-	lastPortPower[3] = 0;
-
 	/* Secret Level Display */
 	flash = 0;
 	flashChange = 1;
@@ -985,7 +982,13 @@ start_level_first:
 		efwrite(levelName,   1, 10, demo_file);
 		efwrite(&lvlFileNum, 1,  1, demo_file);
 		efwrite(pItems,      1, 12, demo_file);
-		efwrite(portPower,   1,  5, demo_file);
+		
+		for (uint i = 0; i < 2; ++i)
+			fputc(player[0].items.weapon[i].power, demo_file);
+		
+		for (uint i = 0; i < 3; ++i)
+			fputc(0, demo_file);
+		
 		efwrite(&levelSong,  1,  1, demo_file);
 
 		demo_keys = 0;
@@ -1118,8 +1121,8 @@ level_loop:
 
 	allPlayersGone = !playerAlive &&
 	                 (!playerAliveB || !twoPlayerMode) &&
-	                 ((portPower[0] == 1 && playerStillExploding == 0) || (!onePlayerAction && !twoPlayerMode)) &&
-	                 ((portPower[1] == 1 && playerStillExploding2 == 0) || !twoPlayerMode);
+	                 ((*player[0].lives == 1 && playerStillExploding == 0) || (!onePlayerAction && !twoPlayerMode)) &&
+	                 ((*player[1].lives == 1 && playerStillExploding2 == 0) || !twoPlayerMode);
 
 
 	/*-----MUSIC FADE------*/
@@ -1160,8 +1163,9 @@ level_loop:
 		{
 			shield = 0;
 			shield2 = 0;
-
-			if (portPower[2-1] == 0 || armorLevel2 == 0)
+			
+			// spawned dragonwing died :(
+			if (*player[1].lives == 0 || armorLevel2 == 0)
 				twoPlayerMode = false;
 
 			if (score >= galagaLife)
@@ -1169,8 +1173,8 @@ level_loop:
 				soundQueue[6] = S_EXPLOSION_11;
 				soundQueue[7] = S_SOUL_OF_ZINGLON;
 
-				if (portPower[1-1] < 11)
-					portPower[1-1]++;
+				if (*player[0].lives < 11)
+					++(*player[0].lives);
 				else
 					score += 1000;
 
@@ -1213,51 +1217,24 @@ level_loop:
 		}
 
 		/*---------------------Weapon Display-------------------------*/
-		if (lastPortPower[1-1] != portPower[1-1])
+		for (uint i = 0; i < 2; ++i)
 		{
-			lastPortPower[1-1] = portPower[1-1];
-
-			if (twoPlayerMode)
+			uint item_power = player[twoPlayerMode ? i : 0].items.weapon[i].power;
+			
+			if (old_weapon_bar[i] != item_power)
 			{
-				tempW2 = 6;
-				tempW = 286;
-			}
-			else
-			{
-				tempW2 = 17;
-				tempW = 289;
-			}
-
-			JE_c_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0);
-
-			for (temp = 1; temp <= portPower[1-1]; temp++)
-			{
-				JE_rectangle(tempW, tempW2, tempW + 1, tempW2 + 2, 115 + temp); /* <MXD> SEGa000 */
-				tempW += 2;
-			}
-		}
-
-		if (lastPortPower[2-1] != portPower[2-1])
-		{
-			lastPortPower[2-1] = portPower[2-1];
-
-			if (twoPlayerMode)
-			{
-				tempW2 = 100;
-				tempW = 286;
-			}
-			else
-			{
-				tempW2 = 38;
-				tempW = 289;
-			}
-
-			JE_c_bar(tempW, tempW2, tempW + 1 + 10 * 2, tempW2 + 2, 0);
-
-			for (temp = 1; temp <= portPower[2-1]; temp++)
-			{
-				JE_rectangle(tempW, tempW2, tempW + 1, tempW2 + 2, 115 + temp); /* <MXD> SEGa000 */
-				tempW += 2;
+				old_weapon_bar[i] = item_power;
+				
+				int x = twoPlayerMode ? 286 : 289,
+				    y = (i == 0) ? (twoPlayerMode ? 6 : 17) : (twoPlayerMode ? 100 : 38);
+				
+				JE_c_bar(x, y, x + 1 + 10 * 2, y + 2, 0);
+				
+				for (int j = 1; j <= item_power; ++j)
+				{
+					JE_rectangle(x, y, x + 1, y + 2, 115 + j); /* SEGa000 */
+					x += 2;
+				}
 			}
 		}
 
@@ -2740,8 +2717,8 @@ new_game:
 						pItems[P2_SIDEKICK_MODE] = 2;  // not sure
 						pItems[P2_SIDEKICK_TYPE] = 1;  // not sure
 						
-						portPower[0] = 3;
-						portPower[1] = 0;
+						player[0].items.weapon[FRONT_WEAPON].power = 3;
+						player[0].items.weapon[REAR_WEAPON].power = 1;
 						break;
 						
 					case 'J':  // section jump
@@ -4795,12 +4772,13 @@ void JE_eventSystem( void )
 				if (eventRec[eventLoc-1].eventdat == 534)
 					eventRec[eventLoc-1].eventdat = 827;
 			}
-			else
+			else if (!superTyrian)
 			{
-				if (eventRec[eventLoc-1].eventdat == 533
-				    && (portPower[1-1] == 11 || (mt_rand() % 15) < portPower[1-1])
-				    && !superTyrian)
+				const uint lives = *player[0].lives;
+				
+				if (eventRec[eventLoc-1].eventdat == 533 && (lives == 11 || (mt_rand() % 15) < lives))
 				{
+					// enemy will drop random special weapon
 					eventRec[eventLoc-1].eventdat = 829 + (mt_rand() % 6);
 				}
 			}
@@ -4895,11 +4873,12 @@ void JE_eventSystem( void )
 		filterFadeStart    = (eventRec[eventLoc-1].eventdat6 == 0);
 		break;
 		
-	case 45: /* Two Player Enemy from other Enemies */
+	case 45: /* arcade-only enemy from other enemies */
 		if (!superTyrian)
 		{
-			if (eventRec[eventLoc-1].eventdat == 533
-			    && (portPower[1-1] == 11 || (mt_rand() % 15) < portPower[1-1]))
+			const uint lives = *player[0].lives;
+			
+			if (eventRec[eventLoc-1].eventdat == 533 && (lives == 11 || (mt_rand() % 15) < lives))
 			{
 				eventRec[eventLoc-1].eventdat = 829 + (mt_rand() % 6);
 			}

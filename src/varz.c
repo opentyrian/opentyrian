@@ -462,11 +462,13 @@ JE_word JE_SGr( JE_word ship, Sprite2_array **ptr )
 	return GR[tempW-1];
 }
 
-void JE_calcPurpleBall( JE_byte playernum )
+void JE_calcPurpleBall( JE_byte player_num )
 {
-	static const JE_byte purpleBallMax[12] /* [0..11] */ = {1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50};
-
-	purpleBallsRemaining[playernum-1] = purpleBallMax[portPower[playernum-1]];
+	static const uint purple_balls_required[12] = {1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50};
+	
+	--player_num; // TODO: change calls so this isn't necessary
+	
+	purpleBallsRemaining[player_num] = purple_balls_required[*player[player_num].lives];
 }
 
 void JE_drawOptions( void )
@@ -940,12 +942,12 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialTy
 				case 6:
 					specialWeaponFilter = 1;
 					specialWeaponFreq = 7;
-					flareDuration = 200 + portPower[1-1] * 25;
+					flareDuration = 200 + 25 * player[0].items.weapon[FRONT_WEAPON].power;
 					break;
 				case 7:
 					specialWeaponFilter = 3;
 					specialWeaponFreq = 3;
-					flareDuration = 50 + portPower[1-1] * 10;
+					flareDuration = 50 + 10 * player[0].items.weapon[FRONT_WEAPON].power;
 					zinglonDuration = 50;
 					shotRepeat[9-1] = 100;
 					soundQueue[7] = S_SOUL_OF_ZINGLON;
@@ -953,26 +955,26 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialTy
 				case 8:
 					specialWeaponFilter = -99;
 					specialWeaponFreq = 7;
-					flareDuration = 10 + portPower[1-1];
+					flareDuration = 10 + player[0].items.weapon[FRONT_WEAPON].power;
 					break;
 				case 9:
 					specialWeaponFilter = -99;
 					specialWeaponFreq = 8;
-					flareDuration = portPower[1-1] * 2 + 8;
+					flareDuration = 8 + 2 * player[0].items.weapon[FRONT_WEAPON].power;
 					linkToPlayer = true;
 					nextSpecialWait = special[specialType].pwr;
 					break;
 				case 10:
 					specialWeaponFilter = -99;
 					specialWeaponFreq = 8;
-					flareDuration = 14 + portPower[1-1] * 4;
+					flareDuration = 14 + 4 * player[0].items.weapon[FRONT_WEAPON].power;
 					linkToPlayer = true;
 					break;
 				case 11:
 					specialWeaponFilter = -99;
 					specialWeaponFreq = special[specialType].pwr;
-					flareDuration = 10 + portPower[1-1] * 10;
-					astralDuration = 20 + portPower[1-1] * 10;
+					flareDuration = 10 + 10 * player[0].items.weapon[FRONT_WEAPON].power;
+					astralDuration = 20 + 10 * player[0].items.weapon[FRONT_WEAPON].power;
 					break;
 				case 16:
 					specialWeaponFilter = -99;
@@ -1457,9 +1459,15 @@ JE_byte JE_playerDamage( JE_byte temp,
 
 void JE_powerUp( JE_byte port )
 {
-	shotMultiPos[port-1] = 0;
-	if (portPower[port-1] < 11 && (pItems[port-1] > 0 || twoPlayerMode))
-		portPower[port-1]++;
+	--port; // TODO: change calls so this isn't necessary
+	
+	uint *item_power = &player[twoPlayerMode ? port : 0].items.weapon[port].power;
+	
+	if (*item_power < 11 && (pItems[port] > 0 || twoPlayerMode))
+	{
+		++(*item_power);
+		shotMultiPos[port] = 0;
+	}
 	else
 		score += 1000;
 }
