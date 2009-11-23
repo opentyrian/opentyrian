@@ -3813,31 +3813,36 @@ redo:
 						{
 							min = 1;
 							max = 2;
-						} else
+						}
+						else
+						{
 							switch (playerNum_)
 							{
-								case 1:
-									min = 1;
-									max = 1;
-									break;
-								case 2:
-									min = 2;
-									max = 2;
-									break;
+							case 1:
+								min = 1;
+								max = 1;
+								break;
+							case 2:
+								min = 2;
+								max = 2;
+								break;
 							}
-							for (temp = min - 1; temp < max; temp++)
-								if (pItems_[temp] > 0)
+						}
+						for (temp = min - 1; temp < max; temp++)
+						{
+							if (pItems_[temp] > 0)
+							{
+								if (shotRepeat[temp] > 0)
+									shotRepeat[temp]--;
+								else if (button[1-1])
 								{
-									if (shotRepeat[temp] > 0)
-										shotRepeat[temp]--;
-									else if (button[1-1])
-									{
-										const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1,
-										           item_mode = (temp == REAR_WEAPON) ? this_player->weapon_mode - 1 : 0;
-										
-										JE_initPlayerShot(pItems_[temp], temp + 1, *PX_, *PY_, *mouseX_, *mouseY_, weaponPort[pItems_[temp]].op[item_mode][item_power], playerNum_);
-									}
+									const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1,
+									           item_mode = (temp == REAR_WEAPON) ? this_player->weapon_mode - 1 : 0;
+									
+									JE_initPlayerShot(pItems_[temp], temp + 1, *PX_, *PY_, *mouseX_, *mouseY_, weaponPort[pItems_[temp]].op[item_mode][item_power], playerNum_);
 								}
+							}
+						}
 					}
 
 					/*Super Charge Weapons*/
