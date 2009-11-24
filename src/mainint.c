@@ -483,7 +483,7 @@ void JE_loadScreen( void )
 	tempstr = NULL;
 
 	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  /* Items */
+	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
 
 	fade_black(10);
 	JE_loadPic(2, false);
@@ -868,7 +868,7 @@ void JE_highScoreScreen( void )
 	char scoretemp[32];
 	
 	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  /* Items */
+	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
 	
 	fade_black(10);
 	JE_loadPic(2, false);
@@ -1439,6 +1439,9 @@ void JE_inGameHelp( void )
 
 void JE_highScoreCheck( void )
 {
+	free_sprite2s(&shapes6);
+	JE_loadCompShapes(&shapes6, '1');  // need mouse cursor sprite
+	
 	Sint32 temp_score;
 	
 	for (int temp_p = 0; temp_p < (twoPlayerMode ? 2 : 1); ++temp_p)

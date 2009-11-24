@@ -794,7 +794,8 @@ start_level_first:
 	JE_gammaCorrect(&colors, gammaCorrection);
 	fade_palette(colors, 50, 0, 255);
 
-	JE_loadCompShapes(&shapes6, '6'); /* Explosions */
+	free_sprite2s(&shapes6);
+	JE_loadCompShapes(&shapes6, '6'); // explosion sprites
 
 	/* MAPX will already be set correctly */
 	mapY = 300 - 8;

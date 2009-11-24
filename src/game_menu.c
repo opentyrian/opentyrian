@@ -151,7 +151,7 @@ void JE_itemScreen( void )
 	*/
 	
 	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  /* Items */
+	JE_loadCompShapes(&shapes6, '1');  // item sprites
 	
 	load_cubes();
 	
