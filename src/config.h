@@ -110,7 +110,6 @@ extern JE_boolean gameHasRepeated;
 extern JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
 extern JE_integer power, lastPower, powerAdd;
 extern JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
-extern JE_integer armorLevel, armorLevel2;
 extern JE_byte shieldWait, shieldT;
 extern JE_byte shotRepeat[11], shotMultiPos[11];
 extern JE_boolean portConfigChange, portConfigDone;

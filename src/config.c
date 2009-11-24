@@ -160,7 +160,6 @@ JE_shortint difficultyLevel, oldDifficultyLevel,
 /* Player Stuff */
 JE_integer    power, lastPower, powerAdd;
 JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
-JE_integer    armorLevel, armorLevel2;
 JE_byte       shieldWait, shieldT;
 
 JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */

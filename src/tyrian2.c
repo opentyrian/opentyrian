@@ -1168,7 +1168,7 @@ level_loop:
 				player[i].shield = 0;
 			
 			// spawned dragonwing died :(
-			if (*player[1].lives == 0 || armorLevel2 == 0)
+			if (*player[1].lives == 0 || player[1].armor == 0)
 				twoPlayerMode = false;
 
 			if (player[0].cash >= galagaLife)
@@ -1925,10 +1925,10 @@ draw_player_shot_loop_end:
 	/*=================================*/
 
 	if (playerAlive && !endLevel)
-		JE_playerCollide(&player[0], &PX, &PY, &lastTurn, &lastTurn2, &armorLevel, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
+		JE_playerCollide(&player[0], &PX, &PY, &lastTurn, &lastTurn2, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
 
 	if (twoPlayerMode && playerAliveB && !endLevel)
-		JE_playerCollide(&player[1], &PXB, &PYB, &lastTurnB, &lastTurn2B, &armorLevel2, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
+		JE_playerCollide(&player[1], &PXB, &PYB, &lastTurnB, &lastTurn2B, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -2008,7 +2008,7 @@ draw_player_shot_loop_end:
 						case 1:
 							if (playerInvulnerable1 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &PX, &PY, &playerAlive, &playerStillExploding, &armorLevel, &player[0].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &PX, &PY, &playerAlive, &playerStillExploding, &player[0].armor, &player[0].shield)) > 0)
 								{
 									lastTurn2 += (enemyShot[z].sxm * temp) / 2;
 									lastTurn  += (enemyShot[z].sym * temp) / 2;
@@ -2018,7 +2018,7 @@ draw_player_shot_loop_end:
 						case 2:
 							if (playerInvulnerable2 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &armorLevel2, &player[1].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &player[1].armor, &player[1].shield)) > 0)
 								{
 									lastTurn2B += (enemyShot[z].sxm * temp) / 2;
 									lastTurnB  += (enemyShot[z].sym * temp) / 2;
@@ -2168,10 +2168,10 @@ draw_player_shot_loop_end:
 	}
 
 	/*-------------------------Warning---------------------------*/
-	if ((playerAlive && armorLevel < 6) ||
-	    (twoPlayerMode && !galagaMode && playerAliveB && armorLevel2 < 6))
+	if ((playerAlive && player[0].armor < 6) ||
+	    (twoPlayerMode && !galagaMode && playerAliveB && player[1].armor < 6))
 	{
-		tempW2 = (playerAlive && armorLevel < 6) ? armorLevel : armorLevel2;
+		tempW2 = (playerAlive && player[0].armor < 6) ? player[0].armor : player[1].armor;
 
 		if (armorShipDelay > 0)
 		{
@@ -2190,8 +2190,8 @@ draw_player_shot_loop_end:
 			armorShipDelay = 500;
 		}
 
-		if ((playerAlive && armorLevel < 6 && (!isNetworkGame || thisPlayerNum == 1))
-		    || (twoPlayerMode && playerAliveB && armorLevel2 < 6 && (!isNetworkGame || thisPlayerNum == 2)))
+		if ((playerAlive && player[0].armor < 6 && (!isNetworkGame || thisPlayerNum == 1))
+		    || (twoPlayerMode && playerAliveB && player[1].armor < 6 && (!isNetworkGame || thisPlayerNum == 2)))
 		{
 
 			tempW = tempW2 * 4 + 8;

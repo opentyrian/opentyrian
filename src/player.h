@@ -60,10 +60,12 @@ typedef struct
 	
 	// calculatables
 	uint shield_max;
+	uint initial_armor;
 	
 	// state
 	uint weapon_mode;
 	uint shield;
+	uint armor;
 }
 Player;
 

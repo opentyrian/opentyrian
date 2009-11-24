@@ -845,7 +845,7 @@ void JE_initPlayerData( void )
 	
 	secretHint = (mt_rand() % 3) + 1;
 	
-	armorLevel = ships[pItems[P_SHIP]].dmg;
+	player[0].armor = ships[pItems[P_SHIP]].dmg;
 	
 	for (uint p = 0; p < COUNTOF(player); ++p)
 	{
@@ -2602,11 +2602,12 @@ void JE_mainKeyboardInput( void )
 					if (player[0].weapon_mode > JE_portConfigs())
 						player[0].weapon_mode = 1;
 					
-					tempW = armorLevel;
+					tempW = player[0].armor;
 					JE_getShipInfo();
-					if (armorLevel > tempW && editShip1)
-						armorLevel = tempW;
-					editShip1 = true;
+					if (player[0].armor > tempW && editShip1)
+						player[0].armor = tempW;
+					else
+						editShip1 = true;
 					
 					SDL_Surface *temp_surface = VGAScreen;
 					VGAScreen = VGAScreenSeg;
@@ -2646,11 +2647,12 @@ void JE_mainKeyboardInput( void )
 					if (player[1].weapon_mode > JE_portConfigs())
 						player[1].weapon_mode = 1;
 					
-					tempW = armorLevel2;
+					tempW = player[1].armor;
 					JE_getShipInfo();
-					if (armorLevel2 > tempW && editShip2)
-						armorLevel2 = tempW;
-					editShip2 = true;
+					if (player[1].armor > tempW && editShip2)
+						player[1].armor = tempW;
+					else
+						editShip2 = true;
 					
 					SDL_Surface *temp_surface = VGAScreen;
 					VGAScreen = VGAScreenSeg;
@@ -2706,8 +2708,9 @@ void JE_mainKeyboardInput( void )
 
 		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && (keysactive[SDLK_F4] || keysactive[SDLK_F5]) && !superTyrian)
 		{
-			armorLevel = 0;
-			armorLevel2 = 0;
+			for (uint i = 0; i < COUNTOF(player); ++i)
+				player[i].armor = 0;
+			
 			youAreCheating = !youAreCheating;
 			JE_drawTextWindow(miscText[63-1]);
 		}
@@ -2936,7 +2939,6 @@ void JE_playerMovement( Player *this_player,
                         JE_byte playerNum_,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
-                        JE_integer *armorLevel_, JE_integer *baseArmor_,
                         JE_word *playerInvulnerable_,
                         JE_integer *PX_, JE_integer *PY_,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
@@ -3030,9 +3032,9 @@ redo:
 					endLevel = false;
 
 					if (galagaMode || episodeNum == 4)
-						*armorLevel_ = *baseArmor_;
+						this_player->armor = this_player->initial_armor;
 					else
-						*armorLevel_ = *baseArmor_ / 2;
+						this_player->armor = this_player->initial_armor / 2;
 
 					if (galagaMode)
 						this_player->shield = 0;
@@ -3062,9 +3064,9 @@ redo:
 		{
 			this_player->shield = 0;
 			
-			if (*armorLevel_ > 0)
+			if (this_player->armor > 0)
 			{
-				(*armorLevel_)--;
+				--this_player->armor;
 			}
 			else
 			{
@@ -3805,7 +3807,7 @@ redo:
 
 					/*SpecialShot*/
 					if (!galagaMode)
-						JE_doSpecialShot(playerNum_, armorLevel_, &this_player->shield);
+						JE_doSpecialShot(playerNum_, &this_player->armor, &this_player->shield);
 
 					/*Normal Main Weapons*/
 					if (!(twoPlayerLinked && playerNum_ == 2))
@@ -4252,7 +4254,6 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
-		                  &armorLevel, &baseArmor,
 		                  &playerInvulnerable1,
 		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
@@ -4260,7 +4261,6 @@ void JE_mainGamePlayerFunctions( void )
 		                  &playerAlive, &playerStillExploding, pItems);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
-		                  &armorLevel2, &baseArmor2,
 		                  &playerInvulnerable2,
 		                  &PXB, &PYB, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
@@ -4271,7 +4271,6 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
-		                  &armorLevel, &baseArmor,
 		                  &playerInvulnerable1,
 		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
@@ -4321,7 +4320,7 @@ const char *JE_getName( JE_byte pnum )
 
 void JE_playerCollide( Player *this_player,
                        JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
-                       JE_integer *armorLevel_, JE_boolean *playerAlive_,
+                       JE_boolean *playerAlive_,
                        JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {
 	char tempStr[256];
@@ -4361,7 +4360,7 @@ void JE_playerCollide( Player *this_player,
 							twoPlayerMode = true;
 							twoPlayerLinked = true;
 							player[1].items.weapon[REAR_WEAPON].power = 1;
-							armorLevel2 = 10;
+							player[1].armor = 10;
 							playerAliveB = true;
 						}
 						enemyAvail[z] = 1;
@@ -4535,18 +4534,19 @@ void JE_playerCollide( Player *this_player,
 				{
 					if (twoPlayerLinked)
 					{
-						armorLevel += (tempI4 - 20000) / 2;
-						if (armorLevel > 28)
-							armorLevel = 28;
-						armorLevel2 += (tempI4 - 20000) / 2;
-						if (armorLevel2 > 28)
-							armorLevel2 = 28;
+						// share the armor evenly between linked players
+						for (uint i = 0; i < COUNTOF(player); ++i)
+						{
+							player[i].armor += (tempI4 - 20000) / COUNTOF(player);
+							if (player[i].armor > 28)
+								player[i].armor = 28;
+						}
 					}
 					else
 					{
-						*armorLevel_ += tempI4 - 20000;
-						if (*armorLevel_ > 28)
-							*armorLevel_ = 28;
+						player[0].armor += tempI4 - 20000;
+						if (player[0].armor > 28)
+							player[0].armor = 28;
 					}
 					enemyAvail[z] = 1;
 					VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
@@ -4641,7 +4641,7 @@ void JE_playerCollide( Player *this_player,
 					if (tempI3 > damageRate)
 						tempI3 = damageRate;
 					
-					JE_playerDamage(tempI3, PX_, PY_, playerAlive_, playerStillExploding_, armorLevel_, &this_player->shield);
+					JE_playerDamage(tempI3, PX_, PY_, playerAlive_, playerStillExploding_, &this_player->armor, &this_player->shield);
 					
 					if (enemy[z].armorleft > 0)
 					{

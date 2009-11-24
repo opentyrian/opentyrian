@@ -629,7 +629,7 @@ void JE_itemScreen( void )
 				snprintf(buf, sizeof buf, "%lu", player[0].cash);
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
-			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
+			JE_barDrawShadow(42, 152, 3, 14, player[0].armor, 2, 13);
 			JE_barDrawShadow(104, 152, 2, 14, shields[pItems[P_SHIELD]].mpwr * 2, 2, 13);
 		}
 

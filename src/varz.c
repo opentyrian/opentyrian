@@ -390,7 +390,6 @@ JE_shortint specialWeaponFilter, specialWeaponFreq;
 JE_word     specialWeaponWpn;
 JE_boolean  linkToPlayer;
 
-JE_integer baseArmor, baseArmor2;
 JE_word shipGr, shipGr2;
 Sprite2_array *shipGrPtr, *shipGr2ptr;
 
@@ -408,10 +407,12 @@ void JE_getShipInfo( void )
 	{
 		JE_byte base = (pItems[P_SHIP] - 91) * 15;
 		shipGr = JE_SGr(pItems[P_SHIP] - 90, &shipGrPtr);
-		armorLevel = extraShips[base + 7];
-	} else {
+		player[0].armor = extraShips[base + 7];
+	}
+	else
+	{
 		shipGr = ships[pItems[P_SHIP]].shipgraphic;
-		armorLevel = ships[pItems[P_SHIP]].dmg;
+		player[0].armor = ships[pItems[P_SHIP]].dmg;
 	}
 
 	extraShip2 = pItemsPlayer2[P_SHIP] > 90;
@@ -419,28 +420,28 @@ void JE_getShipInfo( void )
 	{
 		JE_byte base2 = (pItemsPlayer2[P_SHIP] - 91) * 15;
 		shipGr2 = JE_SGr(pItemsPlayer2[P_SHIP] - 90, &shipGr2ptr);
-		baseArmor2 = extraShips[base2 + 7]; /* bug? */
-	} else {
-		shipGr2 = 0;
-		armorLevel2 = 10;
+		player[1].armor = extraShips[base2 + 7]; /* bug? */
 	}
-
-	baseArmor = armorLevel;
-	baseArmor2 = armorLevel2;
-
-	if (extraShip)
+	else
 	{
-		sAni = 2;
-	} else {
-		sAni = ships[pItems[P_SHIP]].ani;
+		shipGr2 = 0;
+		player[1].armor = 10;
 	}
+	
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		player[i].initial_armor = player[i].armor;
+	
+	sAni = extraShip ? 2 : ships[pItems[P_SHIP]].ani;
+	
 	if (sAni == 0)
 	{
 		sAniX = 12;
 		sAniY = 10;
 		sAniXNeg = -12;
 		sAniYNeg = -10;
-	} else {
+	}
+	else
+	{
 		sAniX = 11;
 		sAniY = 14;
 		sAniXNeg = -11;
@@ -858,7 +859,7 @@ void JE_initPlayerShot( JE_word portNum, JE_byte temp, JE_word PX, JE_word PY, J
 	}
 }
 
-void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialType )
+void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 {
 	nextSpecialWait = 0;
 	switch (special[specialType].stype)
@@ -1003,19 +1004,13 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialTy
 			}
 			break;
 		case 13:
-			if (playerNum == 1)
-				*armor += temp2 / 4 + 1;
-			else
-				armorLevel += temp2 / 4 + 1;
-
+			player[0].armor += temp2 / 4 + 1;
+			
 			soundQueue[3] = S_POWERUP;
 			break;
 		case 14:
-			if (playerNum == 2)
-				*armor += temp2 / 4 + 1;
-			else
-				armorLevel2 += temp2 / 4 + 1;
-
+			player[1].armor += temp2 / 4 + 1;
+			
 			soundQueue[3] = S_POWERUP;
 			break;
 		case 17:
@@ -1048,7 +1043,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialTy
 	}
 }
 
-void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, uint *shield )
+void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 {
 	if (pItems[P_SPECIAL] > 0)
 	{
@@ -1107,7 +1102,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, uint *shield )
 		shotMultiPos[11-1] = 0;
 		if (tempB)
 		{
-			JE_specialComplete(playerNum, armor, temp);
+			JE_specialComplete(playerNum, temp);
 		}
 		SFExecuted[playerNum-1] = 0;
 
@@ -1132,7 +1127,7 @@ void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, uint *shield )
 		else if (shotRepeat[9-1] == 0 && !fireButtonHeld && !(flareDuration > 0) && specialWait == 0)
 		{
 			fireButtonHeld = true;
-			JE_specialComplete(playerNum, armor, pItems[P_SPECIAL]);
+			JE_specialComplete(playerNum, pItems[P_SPECIAL]);
 		}
 
 	}  /*Main End*/
@@ -1384,7 +1379,7 @@ void JE_wipeShieldArmorBars( void )
 	}
 	if (!twoPlayerMode || galagaMode)
 	{
-		JE_c_bar(307, 137, 315, 194 - armorLevel * 2, 0);
+		JE_c_bar(307, 137, 315, 194 - player[0].armor * 2, 0);
 	}
 	else
 	{
@@ -1397,7 +1392,7 @@ JE_byte JE_playerDamage( JE_byte temp,
                          JE_integer *PX, JE_integer *PY,
                          JE_boolean *playerAlive,
                          JE_byte *playerStillExploding,
-                         JE_integer *armorLevel,
+                         uint *armorLevel,
                          uint *shield )
 {
 	int playerDamage = 0;
@@ -1501,21 +1496,18 @@ void JE_drawShield( void )
 
 void JE_drawArmor( void )
 {
-	if (armorLevel > 28)
-	{
-		armorLevel = 28;
-	}
-	if (armorLevel2 > 28)
-	{
-		armorLevel2 = 28;
-	}
-
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		if (player[i].armor > 28)
+			player[i].armor = 28;
+	
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(307, 60, roundf(armorLevel * 0.8f), 224);
-		JE_dBar3(307, 194, roundf(armorLevel2 * 0.8f), 224);
-	} else {
-		JE_dBar3(307, 194, armorLevel, 224);
+		for (uint i = 0; i < COUNTOF(player); ++i)
+			JE_dBar3(307, 60 + 134 * i, roundf(player[i].armor * 0.8f), 224);
+	}
+	else
+	{
+		JE_dBar3(307, 194, player[0].armor, 224);
 	}
 }
 
