@@ -29,4 +29,8 @@ char *strchrnul( const char *s, int c );
 
 #endif // __MINGW32__
 
+#ifdef __APPLE__
+char *strchrnul( const char *s, int c );
+#endif
+
 #endif // MINGW_FIXES_H
