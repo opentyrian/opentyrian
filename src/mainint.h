@@ -86,9 +86,7 @@ void JE_playerMovement( Player *this_player, JE_byte inputDevice, JE_byte player
 void JE_mainGamePlayerFunctions( void );
 const char *JE_getName( JE_byte pnum );
 
-void JE_playerCollide( JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_integer *lastTurn2,
-                       JE_longint *score, JE_integer *armorLevel, JE_shortint *shield, JE_boolean *playerAlive,
-                       JE_byte *playerStillExploding, JE_byte playerNum, JE_byte playerInvulnerable );
+void JE_playerCollide( Player *this_player, JE_integer *px, JE_integer *py, JE_integer *lastTurn, JE_integer *lastTurn2, JE_integer *armorLevel, JE_shortint *shield, JE_boolean *playerAlive, JE_byte *playerStillExploding, JE_byte playerNum, JE_byte playerInvulnerable );
 
 
 #endif /* MAININT_H */

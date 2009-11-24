@@ -40,6 +40,7 @@
 #endif
 
 typedef unsigned int uint;
+typedef unsigned long ulong;
 
 // Pascal types, yuck.
 typedef Sint32 JE_longint;

@@ -105,7 +105,7 @@ void draw_ship_illustration( void );
 
 JE_longint JE_cashLeft( void )
 {
-	JE_longint tempL = score;
+	JE_longint tempL = player[0].cash;
 	JE_word itemNum = pItems[pItemButtonMap[curSel[1] - 2] - 1];
 	
 	tempL -= JE_getCost(curSel[1], itemNum);
@@ -476,7 +476,7 @@ void JE_itemScreen( void )
 		if (curMenu == 4)
 		{
 			/* Move cursor until we hit either "Done" or a weapon the player can afford */
-			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2]) > score)
+			while (curSel[4] < menuChoices[4] && JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][curSel[4]-2]) > player[0].cash)
 			{
 				curSel[4] += lastDirection;
 				if (curSel[4] < 2)
@@ -538,12 +538,7 @@ void JE_itemScreen( void )
 					tempW3 = 0;
 				}
 
-				if (tempW3 > score) /* Can player afford current weapon at all */
-				{
-					temp4 = 4;
-				} else {
-					temp4 = 0;
-				}
+				temp4 = (tempW3 > player[0].cash) ? 4 : 0;  // can player afford current weapon at all
 
 				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]; /* Item ID */
 				switch (curSel[1]-1)
@@ -631,7 +626,7 @@ void JE_itemScreen( void )
 			{
 				char buf[20];
 
-				snprintf(buf, sizeof buf, "%d", score);
+				snprintf(buf, sizeof buf, "%lu", player[0].cash);
 				JE_textShade(65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, armorLevel, 2, 13);
@@ -645,11 +640,11 @@ void JE_itemScreen( void )
 			{
 				char buf[50];
 				
-				snprintf(buf, sizeof buf, "%s %d", miscText[40], score);
-				JE_textShade(25, 50, buf, 15, 0, FULL_SHADE);
-				
-				snprintf(buf, sizeof buf, "%s %d", miscText[41], score2);
-				JE_textShade(25, 60, buf, 15, 0, FULL_SHADE);
+				for (uint i = 0; i < 2; ++i)
+				{
+					snprintf(buf, sizeof(buf), "%s %lu", miscText[40 + i], player[i].cash);
+					JE_textShade(25, 50 + 10 * i, buf, 15, 0, FULL_SHADE);
+				}
 			}
 			else if (superArcadeMode != SA_NONE || superTyrian)
 			{
@@ -1169,7 +1164,7 @@ void JE_itemScreen( void )
 				{
 					if ((curMenu == 4) && (tempI == menuChoices[4]))
 					{
-						score = JE_cashLeft();
+						player[0].cash = JE_cashLeft();
 						curMenu = 1;
 						JE_playSampleNum(S_ITEM);
 					}
@@ -1182,7 +1177,7 @@ void JE_itemScreen( void )
 						}
 						else
 						{
-							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > score))
+							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > player[0].cash))
 							{
 								JE_playSampleNum(S_CLINK);
 							}
@@ -1290,7 +1285,7 @@ void JE_itemScreen( void )
 						memcpy(pItems, pItemsBack, sizeof(pItems));
 						player[0].items = old_items;
 						curSel[4] = lastCurSel;
-						score = JE_cashLeft();
+						player[0].cash = JE_cashLeft();
 					}
 					
 					if (curMenu != 8) // not data cube
@@ -2545,7 +2540,6 @@ void JE_drawScore( void )
 void JE_menuFunction( JE_byte select )
 {
 	JE_byte x;
-	JE_longint tempScore;
 	JE_word curSelect;
 
 	col = 0;
@@ -2610,12 +2604,11 @@ void JE_menuFunction( JE_byte select )
 			lastDirection = 1;
 			old_items = player[0].items;
 			memcpy(pItemsBack, pItems, sizeof(pItemsBack));
-			tempScore = score;
 			JE_genItemMenu(select);
 			JE_initWeaponView();
 			curMenu = 4;
 			lastCurSel = curSel[4];
-			score = tempScore - JE_cashLeft() + tempScore;
+			player[0].cash = player[0].cash * 2 - JE_cashLeft();
 		}
 		break;
 
@@ -2665,7 +2658,7 @@ void JE_menuFunction( JE_byte select )
 		{
 			JE_playSampleNum(S_ITEM);
 			
-			score = JE_cashLeft();
+			player[0].cash = JE_cashLeft();
 			curMenu = 1;
 		}
 		break;

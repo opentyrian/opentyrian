@@ -108,7 +108,6 @@ extern JE_word lastCubeMax, cubeMax;
 extern JE_word cubeList[4];
 extern JE_boolean gameHasRepeated;
 extern JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
-extern JE_longint score, score2;
 extern JE_integer power, lastPower, powerAdd;
 extern JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
 extern JE_shortint shield, shieldMax;

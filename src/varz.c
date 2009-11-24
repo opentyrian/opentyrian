@@ -1469,7 +1469,7 @@ void JE_powerUp( JE_byte port )
 		shotMultiPos[port] = 0;
 	}
 	else
-		score += 1000;
+		player[twoPlayerMode ? port : 0].cash += 1000;
 }
 
 JE_word JE_portConfigs( void )

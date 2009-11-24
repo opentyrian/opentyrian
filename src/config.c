@@ -157,8 +157,6 @@ JE_boolean gameHasRepeated;
 JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
 
 /* Player Stuff */
-JE_longint score, score2;
-
 JE_integer    power, lastPower, powerAdd;
 JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
 JE_shortint   shield, shieldMax;
@@ -298,8 +296,9 @@ void JE_saveGame( JE_byte slot, const char *name )
 	else
 		memcpy(&saveFiles[slot-1].lastItems, &pItemsBack2, sizeof(pItemsBack2));
 	
-	saveFiles[slot-1].score  = score;
-	saveFiles[slot-1].score2 = score2;
+	saveFiles[slot-1].score  = player[0].cash;
+	saveFiles[slot-1].score2 = player[1].cash;
+	
 	memcpy(&saveFiles[slot-1].levelName, &lastLevelName, sizeof(lastLevelName));
 	saveFiles[slot-1].cubes  = lastCubeMax;
 
@@ -374,9 +373,10 @@ void JE_loadGame( JE_byte slot )
 		pItemsPlayer2[P2_SIDEKICK_MODE] = 101;
 		pItemsPlayer2[P2_SIDEKICK_TYPE] = pItemsPlayer2[P_LEFT_SIDEKICK];
 	}
-
-	score       = saveFiles[slot-1].score;
-	score2      = saveFiles[slot-1].score2;
+	
+	player[0].cash = saveFiles[slot-1].score;
+	player[1].cash = saveFiles[slot-1].score2;
+	
 	mainLevel   = saveFiles[slot-1].level;
 	cubeMax     = saveFiles[slot-1].cubes;
 	lastCubeMax = cubeMax;

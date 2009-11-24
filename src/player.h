@@ -54,6 +54,8 @@ typedef struct
 	uint initial_episode;     // can only get highscore on initial episode
 	bool has_completed_game;  // can only get highscore on first play-through
 	
+	ulong cash;
+	
 	PlayerItems items;
 	
 	uint weapon_mode;

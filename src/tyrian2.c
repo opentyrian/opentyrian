@@ -1168,7 +1168,7 @@ level_loop:
 			if (*player[1].lives == 0 || armorLevel2 == 0)
 				twoPlayerMode = false;
 
-			if (score >= galagaLife)
+			if (player[0].cash >= galagaLife)
 			{
 				soundQueue[6] = S_EXPLOSION_11;
 				soundQueue[7] = S_SOUL_OF_ZINGLON;
@@ -1176,7 +1176,7 @@ level_loop:
 				if (*player[0].lives < 11)
 					++(*player[0].lives);
 				else
-					score += 1000;
+					player[0].cash += 1000;
 
 				if (galagaLife == 10000)
 					galagaLife = 20000;
@@ -1850,10 +1850,8 @@ level_loop:
 											}
 											else
 											{
-												if ((playerNum < 2) || galagaMode)
-													score += enemy[temp2].evalue;
-												else
-													score2 += enemy[temp2].evalue;
+												// in galaga mode player 2 is sidekick, so give cash to player 1
+												player[galagaMode ? 0 : playerNum - 1].cash += enemy[temp2].evalue;
 											}
 										}
 
@@ -1923,10 +1921,10 @@ draw_player_shot_loop_end:
 	/*=================================*/
 
 	if (playerAlive && !endLevel)
-		JE_playerCollide(&PX, &PY, &lastTurn, &lastTurn2, &score, &armorLevel, &shield, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
+		JE_playerCollide(&player[0], &PX, &PY, &lastTurn, &lastTurn2, &armorLevel, &shield, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
 
 	if (twoPlayerMode && playerAliveB && !endLevel)
-		JE_playerCollide(&PXB, &PYB, &lastTurnB, &lastTurn2B, &score2, &armorLevel2, &shield2, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
+		JE_playerCollide(&player[1], &PXB, &PYB, &lastTurnB, &lastTurn2B, &armorLevel2, &shield2, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -2704,7 +2702,7 @@ new_game:
 						superTyrian = true;
 						twoPlayerMode = false;
 						
-						score = 0;
+						player[0].cash = 0;
 						
 						pItems[P_SHIP] = 13;           // The Stalker 21.126
 						pItems[P_FRONT] = 39;          // Atomic RailGun
@@ -2826,14 +2824,14 @@ new_game:
 						
 						if (twoPlayerMode)
 						{
-							sprintf(levelWarningText[0], "%s %d", miscText[40], score);
-							sprintf(levelWarningText[1], "%s %d", miscText[41], score2);
+							for (uint i = 0; i < 2; ++i)
+								snprintf(levelWarningText[i], sizeof(*levelWarningText), "%s %lu", miscText[40], player[i].cash);
 							strcpy(levelWarningText[2], "");
 							levelWarningLines = 3;
 						}
 						else
 						{
-							sprintf(levelWarningText[0], "%s %d", miscText[37], JE_totalScore(score, pItems));
+							sprintf(levelWarningText[0], "%s %d", miscText[37], JE_totalScore(player[0].cash, pItems));
 							strcpy(levelWarningText[1], "");
 							levelWarningLines = 2;
 						}
@@ -3453,9 +3451,9 @@ bool JE_titleScreen( JE_boolean animate )
 			network_update();
 		}
 
-		score = 0;
-		score2 = 0;
-
+		for (uint i = 0; i < COUNTOF(player); ++i)
+			player[i].cash = 0;
+		
 		pItems[P_SHIP] = 11;
 
 		while (!network_is_sync())
@@ -3633,7 +3631,8 @@ bool JE_titleScreen( JE_boolean animate )
 						onePlayerAction = true;
 						gameLoaded = true;
 						difficultyLevel = initialDifficulty;
-						score = 0;
+						
+						player[0].cash = 0;
 
 						pItems[P_SHIP] = 13;           // The Stalker 21.126
 						pItems[P_FRONT] = 39;          // Atomic RailGun
@@ -3665,7 +3664,8 @@ bool JE_titleScreen( JE_boolean animate )
 							superArcadeMode = i+1;
 							gameLoaded = true;
 							initialDifficulty = ++difficultyLevel;
-							score = 0;
+							
+							player[0].cash = 0;
 
 							pItems[P_FRONT] = SAWeapon[i][0];
 							pItems[P_SPECIAL] = SASpecialWeapon[i];
@@ -3710,13 +3710,15 @@ bool JE_titleScreen( JE_boolean animate )
 							
 							if (onePlayerAction)
 							{
-								score = 0;
+								player[0].cash = 0;
+								
 								pItems[P_SHIP] = 8;
 							}
 							else if (twoPlayerMode)
 							{
-								score = 0;
-								score2 = 0;
+								for (uint i = 0; i < COUNTOF(player); ++i)
+									player[i].cash = 0;
+								
 								pItems[P_SHIP] = 11;
 								difficultyLevel++;
 								inputDevice[0] = 1;
@@ -3724,25 +3726,14 @@ bool JE_titleScreen( JE_boolean animate )
 							}
 							else if (richMode)
 							{
-								score = 1000000;
+								player[0].cash = 1000000;
 							}
 							else
 							{
-								switch (episodeNum)
-								{
-								case 1:
-									score = 10000;
-									break;
-								case 2:
-									score = 15000;
-									break;
-								case 3:
-									score = 20000;
-									break;
-								case 4:
-									score = 30000;
-									break;
-								}
+								ulong initial_cash[] = { 10000, 15000, 20000, 30000 };
+								
+								assert(episodeNum >= 1 && episodeNum <= 4);
+								player[0].cash = initial_cash[episodeNum-1];
 							}
 						}
 						fadeIn = true;

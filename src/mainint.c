@@ -1471,15 +1471,15 @@ void JE_highScoreCheck( void )
 		if (twoPlayerMode)
 		{
 			// ask for the highest scorer first
-			if (score < score2)
+			if (player[0].cash < player[1].cash)
 				p = (temp_p == 0) ? 1 : 0;
 			
-			temp_score = (p == 0) ? score : score2;
+			temp_score = (p == 0) ? player[0].cash : player[1].cash;
 		}
 		else
 		{
 			// single player highscore includes cost of upgrades
-			temp_score = JE_totalScore(score, pItems);
+			temp_score = JE_totalScore(player[0].cash, pItems);
 		}
 		
 		int slot;
@@ -1711,11 +1711,9 @@ void JE_changeDifficulty( void )
 	JE_longint temp;
 
 	if (twoPlayerMode)
-	{
-		temp = score + score2;
-	} else {
-		temp = JE_totalScore(score, pItems);
-	}
+		temp = player[0].cash + player[1].cash;
+	else
+		temp = JE_totalScore(player[0].cash, pItems);
 
 	switch (initialDifficulty)
 	{
@@ -2207,15 +2205,15 @@ void JE_endLevelAni( void )
 	
 	if (twoPlayerMode)
 	{
-		sprintf(tempStr, "%s %d", miscText[41-1], score);
-		JE_outTextGlow(30, 50, tempStr);
-		
-		sprintf(tempStr, "%s %d", miscText[42-1], score2);
-		JE_outTextGlow(30, 70, tempStr);
+		for (uint i = 0; i < 2; ++i)
+		{
+			snprintf(tempStr, sizeof(tempStr), "%s %lu", miscText[40 + i], player[i].cash);
+			JE_outTextGlow(30, 50 + 20 * i, tempStr);
+		}
 	}
 	else
 	{
-		sprintf(tempStr, "%s %d", miscText[28-1], score);
+		sprintf(tempStr, "%s %lu", miscText[28-1], player[0].cash);
 		JE_outTextGlow(30, 50, tempStr);
 	}
 	
@@ -2498,15 +2496,13 @@ void JE_inGameDisplays( void )
 	JE_byte temp;
 	
 	char tempstr[256];
-
-	sprintf(tempstr, "%d", score);
-	JE_textShade(30, 175, tempstr, 2, 4, FULL_SHADE);
-	if (twoPlayerMode && !galagaMode)
+	
+	for (uint i = 0; i < ((twoPlayerMode && !galagaMode) ? 2 : 1); ++i)
 	{
-		sprintf(tempstr, "%d", score2);
-		JE_textShade(230, 175, tempstr, 2, 4, FULL_SHADE);
+		snprintf(tempstr, sizeof(tempstr), "%lu", player[i].cash);
+		JE_textShade(30 + 200 * i, 175, tempstr, 2, 4, FULL_SHADE);
 	}
-
+	
 	/*Special Weapon?*/
 	if (pItems[P_SPECIAL] > 0)
 	{
@@ -4321,8 +4317,9 @@ const char *JE_getName( JE_byte pnum )
 	return miscText[47 + pnum];
 }
 
-void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
-                       JE_longint *score_, JE_integer *armorLevel_, JE_shortint *shield_, JE_boolean *playerAlive_,
+void JE_playerCollide( Player *this_player,
+                       JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
+                       JE_integer *armorLevel_, JE_shortint *shield_, JE_boolean *playerAlive_,
                        JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {
 	char tempStr[256];
@@ -4340,7 +4337,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 				{
 					if (tempI4 == 30000)
 					{
-						*score_ += 100;
+						this_player->cash += 100;
 						
 						if (!galagaMode)
 						{
@@ -4358,7 +4355,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						{
 							// spawn the dragonwing?
 							if (twoPlayerMode)
-								*score_ += 2400;
+								this_player->cash += 2400;
 							twoPlayerMode = true;
 							twoPlayerLinked = true;
 							player[1].items.weapon[REAR_WEAPON].power = 1;
@@ -4377,7 +4374,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						
 						if (tempW == pItems[P_FRONT])
 						{
-							*score_ += 1000;
+							this_player->cash += 1000;
 							if (player[0].items.weapon[FRONT_WEAPON].power < 11)
 								JE_powerUp(1);
 							JE_calcPurpleBall(playerNum_);
@@ -4393,7 +4390,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 						}
 						
 						pItems[P_FRONT] = tempW;
-						*score_ += 200;
+						this_player->cash += 200;
 						soundQueue[7] = S_POWERUP;
 						enemyAvail[z] = 1;
 					}
@@ -4401,7 +4398,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 					{
 						if (playerNum_ == 1)
 						{
-							*score_ += 250;
+							this_player->cash += 250;
 							pItems[P_SPECIAL] = tempI4 - 32100;
 							shotMultiPos[9-1] = 0;
 							shotRepeat[9-1] = 10;
@@ -4463,11 +4460,11 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							soundQueue[7] = S_POWERUP;
 						}
 						if (enemyAvail[z] == 1)
-							*score_ += 250;
+							this_player->cash += 250;
 					}
 					else if (tempI4 > 31000)
 					{
-						*score_ += 250;
+						this_player->cash += 250;
 						if (playerNum_ == 2)
 						{
 							if (isNetworkGame)
@@ -4527,7 +4524,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 								shotMultiPos[11-1] = 0;
 								shotRepeat[11-1] = 0;
 							}
-							*score_ += 250;
+							this_player->cash += 250;
 						}
 						
 					}
@@ -4624,12 +4621,13 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 					}
 					else if (twoPlayerLinked)
 					{
-						score += tempI4 / 2;
-						score2 += tempI4 / 2;
+						// players get equal share of pick-up cash when linked
+						for (uint i = 0; i < COUNTOF(player); ++i)
+							player[i].cash += tempI4 / COUNTOF(player);
 					}
 					else
 					{
-						*score_ += tempI4;
+						this_player->cash += tempI4;
 					}
 					JE_setupExplosion(tempI3, enemy[z].ey, 0, enemyDat[enemy[z].enemytype].explosiontype, true, false);
 				}
