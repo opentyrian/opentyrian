@@ -1048,7 +1048,7 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialTy
 	}
 }
 
-void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, JE_shortint *shield )
+void JE_doSpecialShot( JE_byte playerNum, JE_integer *armor, uint *shield )
 {
 	if (pItems[P_SPECIAL] > 0)
 	{
@@ -1375,15 +1375,19 @@ void JE_wipeShieldArmorBars( void )
 {
 	if (!twoPlayerMode || galagaMode)
 	{
-		JE_c_bar(270, 137, 278, 194 - shield * 2, 0);
-	} else {
+		JE_c_bar(270, 137, 278, 194 - player[0].shield * 2, 0);
+	}
+	else
+	{
 		JE_c_bar(270, 60 - 44, 278, 60, 0);
 		JE_c_bar(270, 194 - 44, 278, 194, 0);
 	}
 	if (!twoPlayerMode || galagaMode)
 	{
 		JE_c_bar(307, 137, 315, 194 - armorLevel * 2, 0);
-	} else {
+	}
+	else
+	{
 		JE_c_bar(307, 60 - 44, 315, 60, 0);
 		JE_c_bar(307, 194 - 44, 315, 194, 0);
 	}
@@ -1394,7 +1398,7 @@ JE_byte JE_playerDamage( JE_byte temp,
                          JE_boolean *playerAlive,
                          JE_byte *playerStillExploding,
                          JE_integer *armorLevel,
-                         JE_shortint *shield )
+                         uint *shield )
 {
 	int playerDamage = 0;
 	soundQueue[7] = S_SHIELD_HIT;
@@ -1481,13 +1485,16 @@ void JE_drawShield( void )
 {
 	if (twoPlayerMode && !galagaMode)
 	{
-		JE_dBar3(270, 60, roundf(shield * 0.8f), 144);
-		JE_dBar3(270, 194, roundf(shield2 * 0.8f), 144);
-	} else {
-		JE_dBar3(270, 194, shield, 144);
-		if (shield != shieldMax)
+		for (uint i = 0; i < COUNTOF(player); ++i)
+			JE_dBar3(270, 60 + 134 * i, roundf(player[i].shield * 0.8f), 144);
+	}
+	else
+	{
+		JE_dBar3(270, 194, player[0].shield, 144);
+		if (player[0].shield != player[0].shield_max)
 		{
-			JE_rectangle(270, 193 - (shieldMax << 1), 278, 193 - (shieldMax << 1), 68); /* <MXD> SEGa000 */
+			const uint y = 193 - (player[0].shield_max * 2);
+			JE_rectangle(270, y, 278, y, 68); /* <MXD> SEGa000 */
 		}
 	}
 }

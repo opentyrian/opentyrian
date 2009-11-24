@@ -2937,7 +2937,6 @@ void JE_playerMovement( Player *this_player,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
                         JE_integer *armorLevel_, JE_integer *baseArmor_,
-                        JE_shortint *shield_, JE_shortint *shieldMax_,
                         JE_word *playerInvulnerable_,
                         JE_integer *PX_, JE_integer *PY_,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
@@ -3036,9 +3035,9 @@ redo:
 						*armorLevel_ = *baseArmor_ / 2;
 
 					if (galagaMode)
-						*shield_ = 0;
+						this_player->shield = 0;
 					else
-						*shield_ = *shieldMax_ / 2;
+						this_player->shield = this_player->shield_max / 2;
 
 					VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 					JE_drawArmor();
@@ -3061,11 +3060,14 @@ redo:
 	{
 		if (*playerStillExploding_ == 0)
 		{
-			*shield_ = 0;
+			this_player->shield = 0;
+			
 			if (*armorLevel_ > 0)
 			{
 				(*armorLevel_)--;
-			} else {
+			}
+			else
+			{
 				*playerAlive_ = false;
 				*playerStillExploding_ = 60;
 				levelEnd = 40;
@@ -3803,7 +3805,7 @@ redo:
 
 					/*SpecialShot*/
 					if (!galagaMode)
-						JE_doSpecialShot(playerNum_, armorLevel_, shield_);
+						JE_doSpecialShot(playerNum_, armorLevel_, &this_player->shield);
 
 					/*Normal Main Weapons*/
 					if (!(twoPlayerLinked && playerNum_ == 2))
@@ -4251,7 +4253,6 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
 		                  &armorLevel, &baseArmor,
-		                  &shield, &shieldMax,
 		                  &playerInvulnerable1,
 		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
@@ -4260,7 +4261,6 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
 		                  &armorLevel2, &baseArmor2,
-		                  &shield2, &shieldMax2,
 		                  &playerInvulnerable2,
 		                  &PXB, &PYB, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
@@ -4272,7 +4272,6 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
 		                  &armorLevel, &baseArmor,
-		                  &shield, &shieldMax,
 		                  &playerInvulnerable1,
 		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
@@ -4322,7 +4321,7 @@ const char *JE_getName( JE_byte pnum )
 
 void JE_playerCollide( Player *this_player,
                        JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
-                       JE_integer *armorLevel_, JE_shortint *shield_, JE_boolean *playerAlive_,
+                       JE_integer *armorLevel_, JE_boolean *playerAlive_,
                        JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {
 	char tempStr[256];
@@ -4642,7 +4641,7 @@ void JE_playerCollide( Player *this_player,
 					if (tempI3 > damageRate)
 						tempI3 = damageRate;
 					
-					JE_playerDamage(tempI3, PX_, PY_, playerAlive_, playerStillExploding_, armorLevel_, shield_);
+					JE_playerDamage(tempI3, PX_, PY_, playerAlive_, playerStillExploding_, armorLevel_, &this_player->shield);
 					
 					if (enemy[z].armorleft > 0)
 					{

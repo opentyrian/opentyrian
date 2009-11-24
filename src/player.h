@@ -51,17 +51,19 @@ PlayerItems;
 
 typedef struct
 {
-	uint initial_episode;     // can only get highscore on initial episode
-	bool has_completed_game;  // can only get highscore on first play-through
-	
 	ulong cash;
 	
 	PlayerItems items;
 	
-	uint weapon_mode;
-	
 	bool is_dragonwing;  // i.e., is player 2
 	uint *lives;
+	
+	// calculatables
+	uint shield_max;
+	
+	// state
+	uint weapon_mode;
+	uint shield;
 }
 Player;
 

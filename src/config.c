@@ -151,17 +151,15 @@ JE_word lastCubeMax, cubeMax;
 JE_word cubeList[4]; /* [1..4] */
 
 /* High-Score Stuff */
-JE_boolean gameHasRepeated;
+JE_boolean gameHasRepeated;  // can only get highscore on first play-through
 
 /* Difficulty */
-JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
+JE_shortint difficultyLevel, oldDifficultyLevel,
+            initialDifficulty;  // can only get highscore on initial episode
 
 /* Player Stuff */
 JE_integer    power, lastPower, powerAdd;
 JE_PItemsType pItems, pItemsPlayer2, pItemsBack, pItemsBack2;
-JE_shortint   shield, shieldMax;
-const JE_shortint shieldSet = 5;
-JE_shortint   shield2, shieldMax2;
 JE_integer    armorLevel, armorLevel2;
 JE_byte       shieldWait, shieldT;
 
@@ -204,12 +202,10 @@ JE_boolean superPause = false;
 JE_boolean explosionTransparent,
            youAreCheating,
            displayScore,
-           soundHasChanged,
            background2, smoothScroll, wild, superWild, starActive,
            topEnemyOver,
            skyEnemyOverAll,
-           background2notTransparent,
-           tempb;
+           background2notTransparent;
 
 JE_byte soundEffects; // dummy value for config
 JE_byte versionNum;   /* SW 1.0 and SW/Reg 1.1 = 0 or 1

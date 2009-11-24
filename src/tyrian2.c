@@ -919,11 +919,13 @@ start_level_first:
 
 	/* Setup Armor/Shield Data */
 	shieldWait = 1;
-	shield     = shields[pItems[P_SHIELD]].mpwr;
 	shieldT    = shields[pItems[P_SHIELD]].tpwr * 20;
-	shieldMax  = shield * 2;
-	shield2    = shields[pItemsPlayer2[P_SHIELD]].mpwr;
-	shieldMax2 = shield * 2;
+	
+	player[0].shield     = shields[pItems[P_SHIELD]].mpwr;
+	player[0].shield_max = player[0].shield * 2;
+	player[1].shield     = shields[pItemsPlayer2[P_SHIELD]].mpwr;
+	player[1].shield_max = player[1].shield * 2;
+	
 	JE_drawShield();
 	JE_drawArmor();
 
@@ -1162,8 +1164,8 @@ level_loop:
 		/*------------------------Shield Gen-------------------------*/
 		if (galagaMode)
 		{
-			shield = 0;
-			shield2 = 0;
+			for (uint i = 0; i < COUNTOF(player); ++i)
+				player[i].shield = 0;
 			
 			// spawned dragonwing died :(
 			if (*player[1].lives == 0 || armorLevel2 == 0)
@@ -1191,27 +1193,28 @@ level_loop:
 			{
 				if (--shieldWait == 0)
 				{
-					shieldWait = 20 - shieldSet;
-
-					if (shield < shieldMax && playerAlive)
-						shield++;
-					if (shield2 < shieldMax2 && playerAliveB)
-						shield2++;
-
+					shieldWait = 15;
+					
+					if (player[0].shield < player[0].shield_max && playerAlive)
+						++player[0].shield;
+					if (player[1].shield < player[1].shield_max && playerAliveB)
+						++player[1].shield;
+					
 					JE_drawShield();
 				}
 			}
-			else if (playerAlive && shield < shieldMax && power > shieldT)
+			else if (playerAlive && player[0].shield < player[0].shield_max && power > shieldT)
 			{
 				if (--shieldWait == 0)
 				{
-					shieldWait = 20 - shieldSet;
-
+					shieldWait = 15;
+					
 					power -= shieldT;
-					shield++;
-					if (shield2 < shieldMax)
-						shield2++;
-
+					
+					++player[0].shield;
+					if (player[1].shield < player[0].shield_max)
+						++player[1].shield;
+					
 					JE_drawShield();
 				}
 			}
@@ -1922,10 +1925,10 @@ draw_player_shot_loop_end:
 	/*=================================*/
 
 	if (playerAlive && !endLevel)
-		JE_playerCollide(&player[0], &PX, &PY, &lastTurn, &lastTurn2, &armorLevel, &shield, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
+		JE_playerCollide(&player[0], &PX, &PY, &lastTurn, &lastTurn2, &armorLevel, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
 
 	if (twoPlayerMode && playerAliveB && !endLevel)
-		JE_playerCollide(&player[1], &PXB, &PYB, &lastTurnB, &lastTurn2B, &armorLevel2, &shield2, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
+		JE_playerCollide(&player[1], &PXB, &PYB, &lastTurnB, &lastTurn2B, &armorLevel2, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -2005,7 +2008,7 @@ draw_player_shot_loop_end:
 						case 1:
 							if (playerInvulnerable1 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &PX, &PY, &playerAlive, &playerStillExploding, &armorLevel, &shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &PX, &PY, &playerAlive, &playerStillExploding, &armorLevel, &player[0].shield)) > 0)
 								{
 									lastTurn2 += (enemyShot[z].sxm * temp) / 2;
 									lastTurn  += (enemyShot[z].sym * temp) / 2;
@@ -2015,7 +2018,7 @@ draw_player_shot_loop_end:
 						case 2:
 							if (playerInvulnerable2 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &armorLevel2, &shield2)) > 0)
+								if ((temp = JE_playerDamage(temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &armorLevel2, &player[1].shield)) > 0)
 								{
 									lastTurn2B += (enemyShot[z].sxm * temp) / 2;
 									lastTurnB  += (enemyShot[z].sym * temp) / 2;
