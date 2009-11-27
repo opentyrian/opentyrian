@@ -171,8 +171,6 @@ JE_byte          portConfig[10]; /* [1..10] */
 JE_boolean       portConfigChange, portConfigDone;
 JE_PortPowerType portPower, lastPortPower;
 
-JE_boolean resetVersion;
-
 /* Level Data */
 char    lastLevelName[11], levelName[11]; /* string [10] */
 JE_byte mainLevel, nextLevel, saveLevel;   /*Current Level #*/
@@ -211,8 +209,7 @@ JE_boolean explosionTransparent,
            background2, smoothScroll, wild, superWild, starActive,
            topEnemyOver,
            skyEnemyOverAll,
-           background2notTransparent,
-           tempb;
+           background2notTransparent;
 
 JE_byte soundEffects; // dummy value for config
 JE_byte versionNum;   /* SW 1.0 and SW/Reg 1.1 = 0 or 1
@@ -679,10 +676,6 @@ void JE_loadConfiguration( void )
 		efread(&jConfigure, 1, 1, fi);
 
 		efread(&versionNum, 1, 1, fi);
-		if (resetVersion)
-		{
-			versionNum = 2; /* JE: {Shareware 1.0 and Registered 1.1 = 1} */
-		}
 
 		efread(&processorType, 1, 1, fi);
 		efread(&midiPort, 1, 1, fi);
