@@ -71,8 +71,6 @@ char tempStr[31];
 JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
 JE_byte itemAvailMax[9]; /* [1..9] */
 
-//const JE_byte weaponReset[7] = { 0, 1, 2, 0, 0, 3, 4 };
-
 void JE_starShowVGA( void )
 {
 	JE_byte *src;

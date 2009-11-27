@@ -46,8 +46,7 @@ int joystick_config = 0; // which joystick is being configured in menu
 const JE_MenuChoiceType menuChoicesDefault = { 7, 9, 8, 0, 0, 11, (SAVE_FILES_NUM / 2) + 2, 0, 0, 6, 4, 6, 7, 5 };
 const JE_byte menuEsc[MAX_MENU] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 3, 0 };
 
-const JE_byte pItemButtonMap[7] /* [1..7] */ = {12,1,2,10,6,4,5}; /*Financial Stuff*/
-
+const JE_byte pItemButtonMap[7] = { 12, 1, 2, 10, 6, 4, 5}; /* ship, front, rear, shield, generator, left sidekick, right sidekick */
 const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
 
 const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
@@ -62,18 +61,11 @@ JE_boolean backFromHelp;
 JE_integer lastDirection;
 JE_boolean firstMenu9, paletteChanged;
 JE_MenuChoiceType menuChoices;
-JE_longint shipValue;
-JE_word curX, curY, curWindow, selectX, selectY, tempAvail, textYPos;
-JE_byte flashDelay;
 JE_integer col, colC;
-JE_byte curAvail, curSelectDat;
 JE_byte lastCurSel;
-JE_word mouseSetY;
-JE_boolean firstRun;
 JE_integer curMenu;
 JE_byte curSel[MAX_MENU]; /* [1..maxmenu] */
 JE_byte curItemType, curItem, cursor;
-JE_boolean buyActive, sellActive, sellViewActive, buyViewActive, /*flash,*/ purchase, cannotAfford, slotFull;
 JE_boolean leftPower, rightPower, rightPowerAfford;
 
 struct cube_struct
@@ -181,9 +173,6 @@ void JE_itemScreen( void )
 	}
 
 	curMenu = 0;
-	curX = 1;
-	curY = 1;
-	curWindow = 1;
 	
 	int temp_weapon_power[7]; // assumes there'll never be more than 6 weapons to choose from, 7th is "Done"
 	
@@ -771,10 +760,6 @@ void JE_itemScreen( void )
 		/* JE: { - Step VI - Help text for current cursor location } */
 		
 		flash = false;
-		flashDelay = 5;
-		
-		/* scanCode = 0; */
-		/* k = 0; */
 		
 		/* JE: {Reset player weapons} */
 		memset(shotMultiPos, 0, sizeof(shotMultiPos));
@@ -3105,7 +3090,7 @@ void JE_weaponSimUpdate( void )
 		blit_sprite(VGAScreenSeg, 20, 146, OPTION_SHAPES, 17);  // hide power level interface
 	}
 	
-	JE_drawItem(1, pItems[12 - 1], PX - 5, PY - 7);
+	JE_drawItem(1, pItems[P_SHIP], PX - 5, PY - 7);
 }
 
 void JE_weaponViewFrame( void )
@@ -3162,7 +3147,7 @@ void JE_weaponViewFrame( void )
 		}
 	}
 	
-	if (options[pItems[4 - 1]].wport > 0)
+	if (options[pItems[P_LEFT_SIDEKICK]].wport > 0)
 	{
 		if (shotRepeat[3 - 1] > 0)
 			shotRepeat[3 - 1]--;
@@ -3183,7 +3168,7 @@ void JE_weaponViewFrame( void )
 		option2Y = 120;
 	}
 	
-	if (options[pItems[5 - 1]].wport > 0)
+	if (options[pItems[P_RIGHT_SIDEKICK]].wport > 0)
 	{
 		if (shotRepeat[4 - 1] > 0)
 			shotRepeat[4 - 1]--;
