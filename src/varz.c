@@ -859,31 +859,29 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 		/*Weapon*/
 		case 1:
 			if (playerNum == 1)
-			{
 				JE_initPlayerShot(0, 11, PX, PY, mouseX, mouseY, special[specialType].wpn, playerNum);
-			} else {
+			else
 				JE_initPlayerShot(0, 11, PXB, PYB, mouseX, mouseY, special[specialType].wpn, playerNum);
-			}
+			
 			shotRepeat[9-1] = shotRepeat[11-1];
 			break;
 		/*Repulsor*/
 		case 2:
 			for (temp = 0; temp < ENEMY_SHOT_MAX; temp++)
+			{
 				if (!enemyShotAvail[temp])
 				{
 					if (PX > enemyShot[temp].sx)
-					{
 						enemyShot[temp].sxm--;
-					} else if (PX < enemyShot[temp].sx) {
+					else if (PX < enemyShot[temp].sx)
 						enemyShot[temp].sxm++;
-					}
+					
 					if (PY > enemyShot[temp].sy)
-					{
 						enemyShot[temp].sym--;
-					} else if (PY < enemyShot[temp].sy) {
+					else if (PY < enemyShot[temp].sy)
 						enemyShot[temp].sym++;
-					}
 				}
+			}
 			break;
 		/*Zinglon Blast*/
 		case 3:

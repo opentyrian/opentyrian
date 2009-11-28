@@ -3658,7 +3658,7 @@ redo:
 			explosionFollowAmountY = tempI4;
 			*lastPX2_ = *PX_;
 			*lastPY2_ = *PY_;
-
+			
 			if (shipGr_ == 0)
 			{
 				if (background2)
@@ -3671,88 +3671,94 @@ redo:
 						blit_sprite2x2_darken(VGAScreen, *PX_ + 6 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI + 51);
 					}
 				}
-			} else
-				if (shipGr_ == 1)
+			}
+			else if (shipGr_ == 1)
+			{
+				if (background2)
 				{
-					if (background2)
+					blit_sprite2x2_darken(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, 220);
+					blit_sprite2x2_darken(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, 222);
+				}
+			}
+			else
+			{
+				if (background2)
+				{
+					blit_sprite2x2_darken(VGAScreen, *PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI);
+					if (superWild)
 					{
-						blit_sprite2x2_darken(VGAScreen, *PX_ - 17 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, 220);
-						blit_sprite2x2_darken(VGAScreen, *PX_ + 7 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, 222);
-					}
-				} else {
-					if (background2)
-					{
-						blit_sprite2x2_darken(VGAScreen, *PX_ - 5 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI);
-						if (superWild)
-						{
-							blit_sprite2x2_darken(VGAScreen, *PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI);
-						}
+						blit_sprite2x2_darken(VGAScreen, *PX_ - 4 - mapX2Ofs + 30, *PY_ - 7 + shadowyDist, *shapes9ptr_, tempI);
 					}
 				}
-
+			}
+			
 			if (*playerInvulnerable_ > 0)
 			{
 				(*playerInvulnerable_)--;
-
+				
 				if (shipGr_ == 0)
 				{
 					blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, tempI + 13);
 					blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, *shapes9ptr_, tempI + 51);
-				} else
-					if (shipGr_ == 1)
-					{
-						blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, 220);
-						blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, *shapes9ptr_, 222);
-					} else
-						blit_sprite2x2_blend(VGAScreen, *PX_ - 5, *PY_ - 7, *shapes9ptr_, tempI);
-
-			} else {
+				}
+				else if (shipGr_ == 1)
+				{
+					blit_sprite2x2_blend(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, 220);
+					blit_sprite2x2_blend(VGAScreen, *PX_ + 7 , *PY_ - 7, *shapes9ptr_, 222);
+				}
+				else
+					blit_sprite2x2_blend(VGAScreen, *PX_ - 5, *PY_ - 7, *shapes9ptr_, tempI);
+			}
+			else
+			{
 				if (shipGr_ == 0)
 				{
 					blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, tempI + 13);
 					blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, *shapes9ptr_, tempI + 51);
-				} else
-					if (shipGr_ == 1)
+				}
+				else if (shipGr_ == 1)
+				{
+					blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, 220);
+					blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, *shapes9ptr_, 222);
+					switch (tempI)
 					{
-						blit_sprite2x2(VGAScreen, *PX_ - 17, *PY_ - 7, *shapes9ptr_, 220);
-						blit_sprite2x2(VGAScreen, *PX_ + 7, *PY_ - 7, *shapes9ptr_, 222);
-						switch (tempI)
+					case 5:
+						blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, *shapes9ptr_, 40);
+						tempW = *PX_ - 7;
+						tempI2 = -2;
+						break;
+					case 3:
+						blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, *shapes9ptr_, 39);
+						tempW = *PX_ - 7;
+						tempI2 = -1;
+						break;
+					case 1:
+						tempI2 = 0;
+						break;
+					case -1:
+						blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, *shapes9ptr_, 58);
+						tempW = *PX_ + 9;
+						tempI2 = 1;
+						break;
+					case -3:
+						blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, *shapes9ptr_, 59);
+						tempW = *PX_ + 9;
+						tempI2 = 2;
+						break;
+					}
+					if (tempI2 != 0)  // NortSparks
+					{
+						if (shotRepeat[10-1] > 0)
+							shotRepeat[10-1]--;
+						else
 						{
-							case 5:
-								blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, *shapes9ptr_, 40);
-								tempW = *PX_ - 7;
-								tempI2 = -2;
-								break;
-							case 3:
-								blit_sprite2(VGAScreen, *PX_ - 17, *PY_ + 7, *shapes9ptr_, 39);
-								tempW = *PX_ - 7;
-								tempI2 = -1;
-								break;
-							case 1:
-								tempI2 = 0;
-								break;
-							case -1:
-								blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, *shapes9ptr_, 58);
-								tempW = *PX_ + 9;
-								tempI2 = 1;
-								break;
-							case -3:
-								blit_sprite2(VGAScreen, *PX_ + 19, *PY_ + 7, *shapes9ptr_, 59);
-								tempW = *PX_ + 9;
-								tempI2 = 2;
-								break;
+							JE_initPlayerShot(0, 10, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
+							shotRepeat[10-1] = abs(tempI2) - 1;
 						}
-						if (tempI2 != 0)
-						{  /*NortSparks*/
-							if (shotRepeat[10-1] > 0)
-								shotRepeat[10-1]--;
-							else {
-									JE_initPlayerShot(0, 10, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
-									shotRepeat[10-1] = abs(tempI2) - 1;
-							}
-						}
-					} else
-						blit_sprite2x2(VGAScreen, *PX_ - 5, *PY_ - 7, *shapes9ptr_, tempI);
+					}
+				}
+				else
+					blit_sprite2x2(VGAScreen, *PX_ - 5, *PY_ - 7, *shapes9ptr_, tempI);
 			}
 		}  /*endLevel*/
 
