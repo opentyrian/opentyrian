@@ -379,7 +379,7 @@ void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );
 
 void JE_tyrianHalt( JE_byte code ); /* This ends the game */
-void JE_initPlayerShot( JE_word portnum, JE_byte temp, JE_word px, JE_word py,
+void JE_initPlayerShot( JE_word portnum, uint shot_i, JE_word px, JE_word py,
                         JE_word mousex, JE_word mousey,
                         JE_word wpnum, JE_byte playernum );
 void JE_specialComplete( JE_byte playernum, JE_byte specialType );

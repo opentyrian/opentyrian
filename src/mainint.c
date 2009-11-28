@@ -3564,11 +3564,11 @@ redo:
 				*lastTurn_ = 4;
 				
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
+				JE_initPlayerShot(0, 5-1, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
+				JE_initPlayerShot(0, 5-1, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
 				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26), *mouseX_, *mouseY_, 147, playerNum_);
+				JE_initPlayerShot(0, 5-1, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26), *mouseX_, *mouseY_, 147, playerNum_);
 				
 				if (shotRepeat[2-1] > 0)
 				{
@@ -3577,7 +3577,7 @@ redo:
 				else if (button[1-1])
 				{
 					shotMultiPos[2-1] = 0;
-					JE_initPlayerShot(0, 2, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20), *mouseX_, *mouseY_, linkGunWeapons[this_player->items.weapon[REAR_WEAPON].id-1], playerNum_);
+					JE_initPlayerShot(0, 2-1, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20), *mouseX_, *mouseY_, linkGunWeapons[this_player->items.weapon[REAR_WEAPON].id-1], playerNum_);
 					playerShotData[b].shotXM = -roundf(sinf(linkGunDirec) * playerShotData[b].shotYM);
 					playerShotData[b].shotYM = -roundf(cosf(linkGunDirec) * playerShotData[b].shotYM);
 					
@@ -3752,7 +3752,7 @@ redo:
 							shotRepeat[10-1]--;
 						else
 						{
-							JE_initPlayerShot(0, 10, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
+							JE_initPlayerShot(0, 10-1, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
 							shotRepeat[10-1] = abs(tempI2) - 1;
 						}
 					}
@@ -3858,7 +3858,7 @@ redo:
 									const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1,
 									           item_mode = (temp == REAR_WEAPON) ? this_player->weapon_mode - 1 : 0;
 									
-									JE_initPlayerShot(item, temp + 1, *PX_, *PY_, *mouseX_, *mouseY_, weaponPort[item].op[item_mode][item_power], playerNum_);
+									JE_initPlayerShot(item, temp, *PX_, *PY_, *mouseX_, *mouseY_, weaponPort[item].op[item_mode][item_power], playerNum_);
 								}
 							}
 						}
@@ -3912,7 +3912,7 @@ redo:
 							    && (!twoPlayerLinked || chargeLevel > 0))
 							{
 								shotMultiPos[6-1] = 0;
-								JE_initPlayerShot(16, 6, *PX_, *PY_, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
+								JE_initPlayerShot(16, 6-1, *PX_, *PY_, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
 
 								if (chargeLevel > 0)
 								{
@@ -3939,7 +3939,7 @@ redo:
 							{
 								superBomb[temp-1]--;
 								shotMultiPos[temp-1 + 6] = 0;
-								JE_initPlayerShot(16, temp + 6, *PX_, *PY_, *mouseX_, *mouseY_, 535, playerNum_);
+								JE_initPlayerShot(16, temp-1 + 6, *PX_, *PY_, *mouseX_, *mouseY_, 535, playerNum_);
 							}
 						}
 					}
@@ -4089,11 +4089,7 @@ redo:
 								{
 									if (button[2-1])
 									{
-										JE_initPlayerShot(options[option1Item].wport, 3,
-										                  option1X, option1Y,
-										                  *mouseX_, *mouseY_,
-										                  options[option1Item].wpnum + optionCharge1,
-										                  playerNum_);
+										JE_initPlayerShot(options[option1Item].wport, 3-1, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
 										if (optionCharge1 > 0)
 											shotMultiPos[3-1] = 0;
 										optionAni1Go = true;
@@ -4108,11 +4104,7 @@ redo:
 								{
 									if (button[1-1] || button[2-1])
 									{
-										JE_initPlayerShot(options[option1Item].wport, 3,
-										                  option1X, option1Y,
-										                  *mouseX_, *mouseY_,
-										                  options[option1Item].wpnum + optionCharge1,
-										                  playerNum_);
+										JE_initPlayerShot(options[option1Item].wport, 3-1, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
 										if (optionCharge1 > 0)
 											shotMultiPos[3-1] = 0;
 										optionCharge1Wait = 20;
@@ -4150,10 +4142,7 @@ redo:
 								{
 									if (button[3-1])
 									{
-										JE_initPlayerShot(options[option2Item].wport, 4, option2X, option2Y,
-										                  *mouseX_, *mouseY_,
-										                  options[option2Item].wpnum + optionCharge2,
-										                  playerNum_);
+										JE_initPlayerShot(options[option2Item].wport, 4-1, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
 										if (optionCharge2 > 0)
 										{
 											shotMultiPos[4-1] = 0;
@@ -4171,10 +4160,7 @@ redo:
 								{
 									if (button[1-1] || button[3-1])
 									{
-										JE_initPlayerShot(options[option2Item].wport, 4, option2X, option2Y,
-										                  *mouseX_, *mouseY_,
-										                  options[option2Item].wpnum + optionCharge2,
-										                  playerNum_);
+										JE_initPlayerShot(options[option2Item].wport, 4-1, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
 										if (optionCharge2 > 0)
 										{
 											shotMultiPos[4-1] = 0;
@@ -4622,7 +4608,7 @@ void JE_playerCollide( Player *this_player,
 					else if (tempI4 == -3)
 					{
 						shotMultiPos[5-1] = 0;
-						JE_initPlayerShot(0, 5, *PX_, *PY_, mouseX, mouseY, 104, playerNum_);
+						JE_initPlayerShot(0, 5-1, *PX_, *PY_, mouseX, mouseY, 104, playerNum_);
 						shotAvail[z] = 0;
 					}
 					else if (tempI4 == -4)

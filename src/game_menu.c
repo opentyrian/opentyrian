@@ -3144,16 +3144,16 @@ void JE_weaponViewFrame( void )
 			           item_power = player[0].items.weapon[temp].power - 1,
 			           item_mode = (temp == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
 			
-			JE_initPlayerShot(item, temp + 1, PX, PY, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
+			JE_initPlayerShot(item, temp, PX, PY, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
 		}
 	}
 	
 	if (options[player[0].items.sidekick[LEFT_SIDEKICK]].wport > 0)
 	{
-		if (shotRepeat[3 - 1] > 0)
-			shotRepeat[3 - 1]--;
+		if (shotRepeat[3-1] > 0)
+			shotRepeat[3-1]--;
 		else
-			JE_initPlayerShot(options[player[0].items.sidekick[LEFT_SIDEKICK]].wport, 3, option1X, option1Y, mouseX, mouseY, options[player[0].items.sidekick[LEFT_SIDEKICK]].wpnum, 1);
+			JE_initPlayerShot(options[player[0].items.sidekick[LEFT_SIDEKICK]].wport, 3-1, option1X, option1Y, mouseX, mouseY, options[player[0].items.sidekick[LEFT_SIDEKICK]].wpnum, 1);
 	}
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].tr == 2)
@@ -3171,10 +3171,10 @@ void JE_weaponViewFrame( void )
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].wport > 0)
 	{
-		if (shotRepeat[4 - 1] > 0)
-			shotRepeat[4 - 1]--;
+		if (shotRepeat[4-1] > 0)
+			shotRepeat[4-1]--;
 		else
-			JE_initPlayerShot(options[player[0].items.sidekick[RIGHT_SIDEKICK]].wport, 4, option2X, option2Y, mouseX, mouseY, options[player[0].items.sidekick[RIGHT_SIDEKICK]].wpnum, 1);
+			JE_initPlayerShot(options[player[0].items.sidekick[RIGHT_SIDEKICK]].wport, 4-1, option2X, option2Y, mouseX, mouseY, options[player[0].items.sidekick[RIGHT_SIDEKICK]].wpnum, 1);
 	}
 	
 	/* Player Shot Images */

@@ -1678,7 +1678,7 @@ level_loop:
 						if (chain > 0)
 						{
 							shotMultiPos[5-1] = 0;
-							JE_initPlayerShot(0, 5, tempShotX, tempShotY, mouseX, mouseY, chain, playerNum);
+							JE_initPlayerShot(0, 5-1, tempShotX, tempShotY, mouseX, mouseY, chain, playerNum);
 							shotAvail[z] = 0;
 							goto draw_player_shot_loop_end;
 						}
