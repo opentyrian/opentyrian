@@ -154,7 +154,7 @@ extern JE_OptionType options;
 extern JE_ShieldType shields;
 extern JE_SpecialType special;
 extern JE_EnemyDatType enemyDat;
-extern JE_byte episodeNum;
+extern JE_byte initial_episode_num, episodeNum;
 extern JE_boolean episodeAvail[EPISODE_MAX];
 
 extern char episode_file[13], cube_file[13];

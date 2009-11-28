@@ -39,7 +39,7 @@ JE_SpecialType special;
 JE_EnemyDatType enemyDat;
 
 /* EPISODE variables */
-JE_byte    episodeNum = 0;
+JE_byte    initial_episode_num, episodeNum = 0;
 JE_boolean episodeAvail[EPISODE_MAX]; /* [1..episodemax] */
 char       episode_file[13], cube_file[13];
 

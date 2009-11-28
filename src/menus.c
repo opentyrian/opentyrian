@@ -166,7 +166,7 @@ bool select_episode( void )
 				fade_black(10);
 				
 				JE_initEpisode(episode);
-				pItems[P_EPISODE] = episodeNum;
+				initial_episode_num = episodeNum;
 				return true;
 				
 			case SDLK_ESCAPE:

@@ -715,7 +715,7 @@ start_level:
 			{
 				superTyrian = false;
 				onePlayerAction = false;
-				pItems[P_SUPERARCADE] = SA_NONE;
+				player[0].items.super_arcade_mode = SA_NONE;
 			}
 			if (bonusLevelCurrent && !playerEndLevel)
 			{
@@ -917,12 +917,13 @@ start_level_first:
 
 	/* Setup Armor/Shield Data */
 	shieldWait = 1;
-	shieldT    = shields[pItems[P_SHIELD]].tpwr * 20;
+	shieldT    = shields[player[0].items.shield].tpwr * 20;
 	
-	player[0].shield     = shields[pItems[P_SHIELD]].mpwr;
-	player[0].shield_max = player[0].shield * 2;
-	player[1].shield     = shields[pItemsPlayer2[P_SHIELD]].mpwr;
-	player[1].shield_max = player[1].shield * 2;
+	for (uint i = 0; i < COUNTOF(player); ++i)
+	{
+		player[i].shield     = shields[player[i].items.shield].mpwr;
+		player[i].shield_max = player[i].shield * 2;
+	}
 	
 	JE_drawShield();
 	JE_drawArmor();
@@ -982,7 +983,22 @@ start_level_first:
 		efwrite(&episodeNum, 1,  1, demo_file);
 		efwrite(levelName,   1, 10, demo_file);
 		efwrite(&lvlFileNum, 1,  1, demo_file);
-		efwrite(pItems,      1, 12, demo_file);
+		
+		fputc(player[0].items.weapon[FRONT_WEAPON].id,  demo_file);
+		fputc(player[0].items.weapon[REAR_WEAPON].id,   demo_file);
+		fputc(player[0].items.super_arcade_mode,        demo_file);
+		fputc(player[0].items.sidekick[LEFT_SIDEKICK],  demo_file);
+		fputc(player[0].items.sidekick[RIGHT_SIDEKICK], demo_file);
+		fputc(player[0].items.generator,                demo_file);
+		
+		fputc(player[0].items.sidekick_level,           demo_file);
+		fputc(player[0].items.sidekick_series,          demo_file);
+		
+		fputc(initial_episode_num,                      demo_file);
+		
+		fputc(player[0].items.shield,                   demo_file);
+		fputc(player[0].items.special,                  demo_file);
+		fputc(player[0].items.ship,                     demo_file);
 		
 		for (uint i = 0; i < 2; ++i)
 			fputc(player[0].items.weapon[i].power, demo_file);
@@ -2471,12 +2487,12 @@ draw_player_shot_loop_end:
 					endLevel = true;
 					levelEnd = 40;
 				}
-				if (requests & 8)
+				if (requests & 8) // nortship
 				{
-					pItems[P_SHIP] = 12;
-					pItems[P_SPECIAL] = 13;
-					pItems[P_FRONT] = 36;
-					pItems[P_REAR] = 37;
+					player[0].items.ship = 12;
+					player[0].items.special = 13;
+					player[0].items.weapon[FRONT_WEAPON].id = 36;
+					player[0].items.weapon[REAR_WEAPON].id = 37;
 					shipGr = 1;
 				}
 
@@ -2687,10 +2703,11 @@ new_game:
 						
 					case 'g':
 						galagaMode = true;   /*GALAGA mode*/
-						memcpy(&pItemsPlayer2, &pItems, sizeof(pItemsPlayer2));
-						pItemsPlayer2[P_REAR] = 15; /*Player 2 starts with 15 - MultiCannon and 2 single shot options*/
-						pItemsPlayer2[P_LEFT_SIDEKICK] = 0;
-						pItemsPlayer2[P_RIGHT_SIDEKICK] = 0;
+						
+						player[1].items = player[0].items;
+						player[1].items.weapon[REAR_WEAPON].id = 15;  // Vulcan Cannon
+						for (uint i = 0; i < COUNTOF(player[1].items.sidekick); ++i)
+							player[1].items.sidekick[i] = 0;          // None
 						break;
 						
 					case 'x':
@@ -2706,16 +2723,14 @@ new_game:
 						
 						player[0].cash = 0;
 						
-						pItems[P_SHIP] = 13;           // The Stalker 21.126
-						pItems[P_FRONT] = 39;          // Atomic RailGun
-						pItems[P_REAR] = 0;            // None
-						pItems[P_LEFT_SIDEKICK] = 0;   // None
-						pItems[P_RIGHT_SIDEKICK] = 0;  // None
-						pItems[P_GENERATOR] = 2;       // Advanced MR-12
-						pItems[P_SHIELD] = 4;          // Advanced Integrity Field
-						pItems[P_SPECIAL] = 0;         // None
-						pItems[P2_SIDEKICK_MODE] = 2;  // not sure
-						pItems[P2_SIDEKICK_TYPE] = 1;  // not sure
+						player[0].items.ship = 13;                     // The Stalker 21.126
+						player[0].items.weapon[FRONT_WEAPON].id = 39;  // Atomic RailGun
+						player[0].items.weapon[REAR_WEAPON].id = 0;    // None
+						for (uint i = 0; i < COUNTOF(player[0].items.sidekick); ++i)
+							player[0].items.sidekick[i] = 0;           // None
+						player[0].items.generator = 2;                 // Advanced MR-12
+						player[0].items.shield = 4;                    // Advanced Integrity Field
+						player[0].items.special = 0;                   // None
 						
 						player[0].items.weapon[FRONT_WEAPON].power = 3;
 						player[0].items.weapon[REAR_WEAPON].power = 1;
@@ -2738,7 +2753,7 @@ new_game:
 						
 					case 'w':  // Stalker 21.126 section jump
 						temp = atoi(strnztcpy(buffer, s + 3, 3));   /*Allowed to go to Time War?*/
-						if (pItems[P_SHIP] == 13)
+						if (player[0].items.ship == 13)
 						{
 							mainLevel = temp;
 							jumpSection = true;
@@ -2833,7 +2848,7 @@ new_game:
 						}
 						else
 						{
-							sprintf(levelWarningText[0], "%s %d", miscText[37], JE_totalScore(player[0].cash, pItems));
+							sprintf(levelWarningText[0], "%s %lu", miscText[37], JE_totalScore(&player[0]));
 							strcpy(levelWarningText[1], "");
 							levelWarningLines = 2;
 						}
@@ -3456,7 +3471,7 @@ bool JE_titleScreen( JE_boolean animate )
 		for (uint i = 0; i < COUNTOF(player); ++i)
 			player[i].cash = 0;
 		
-		pItems[P_SHIP] = 11;
+		player[0].items.ship = 11;
 
 		while (!network_is_sync())
 		{
@@ -3636,12 +3651,12 @@ bool JE_titleScreen( JE_boolean animate )
 						
 						player[0].cash = 0;
 
-						pItems[P_SHIP] = 13;           // The Stalker 21.126
-						pItems[P_FRONT] = 39;          // Atomic RailGun
+						player[0].items.ship = 13;                     // The Stalker 21.126
+						player[0].items.weapon[FRONT_WEAPON].id = 39;  // Atomic RailGun
 					}
 					else
 					{
-						pItems[P_SHIP] = SAShip[i];
+						player[0].items.ship = SAShip[i];
 
 						fade_black(10);
 						if (select_episode() && select_difficulty())
@@ -3652,7 +3667,7 @@ bool JE_titleScreen( JE_boolean animate )
 							JE_clr256();
 							JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
 							JE_dString(JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
-							tempW = ships[pItems[P_SHIP]].shipgraphic;
+							tempW = ships[player[0].items.ship].shipgraphic;
 							if (tempW != 1)
 								blit_sprite2x2(VGAScreen, 148, 70, shapes9, tempW);
 
@@ -3669,12 +3684,12 @@ bool JE_titleScreen( JE_boolean animate )
 							
 							player[0].cash = 0;
 
-							pItems[P_FRONT] = SAWeapon[i][0];
-							pItems[P_SPECIAL] = SASpecialWeapon[i];
+							player[0].items.weapon[FRONT_WEAPON].id = SAWeapon[i][0];
+							player[0].items.special = SASpecialWeapon[i];
 							if (superArcadeMode == SA_NORTSHIPZ)
 							{
-								pItems[P_LEFT_SIDEKICK] = 24;   // Companion Ship Quicksilver
-								pItems[P_RIGHT_SIDEKICK] = 24;  // Companion Ship Quicksilver
+								for (uint i = 0; i < COUNTOF(player[0].items.sidekick); ++i)
+									player[0].items.sidekick[i] = 24;  // Companion Ship Quicksilver
 							}
 						}
 						else
@@ -3714,14 +3729,14 @@ bool JE_titleScreen( JE_boolean animate )
 							{
 								player[0].cash = 0;
 								
-								pItems[P_SHIP] = 8;
+								player[0].items.ship = 8;
 							}
 							else if (twoPlayerMode)
 							{
 								for (uint i = 0; i < COUNTOF(player); ++i)
 									player[i].cash = 0;
 								
-								pItems[P_SHIP] = 11;
+								player[0].items.ship = 11;
 								difficultyLevel++;
 								inputDevice[0] = 1;
 								inputDevice[1] = 2;
@@ -5175,7 +5190,7 @@ void JE_eventSystem( void )
 		break;
 		
 	case 82: /*Give SPECIAL WEAPON*/
-		pItems[P_SPECIAL] = eventRec[eventLoc-1].eventdat;
+		player[0].items.special = eventRec[eventLoc-1].eventdat;
 		shotMultiPos[9-1] = 0;
 		shotRepeat[9-1] = 0;
 		shotMultiPos[11-1] = 0;

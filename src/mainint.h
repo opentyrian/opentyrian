@@ -60,13 +60,13 @@ bool load_next_demo( void );
 bool replay_demo_keys( void );
 bool read_demo_keys( void );
 
-void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer mouseX_, JE_integer mouseY_, JE_PItemsType pItems_ );
+void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer mouseX_, JE_integer mouseY_ );
 void JE_sort( void );
 
 long weapon_upgrade_cost( long base_cost, unsigned int power );
 JE_longint JE_getCost( JE_byte itemType, JE_word itemNum );
 JE_longint JE_getValue( JE_byte itemType, JE_word itemNum );
-JE_longint JE_totalScore( JE_longint score, JE_PItemsType pitems );
+ulong JE_totalScore( const Player * );
 
 void JE_drawPortConfigButtons( void );
 void JE_outCharGlow( JE_word x, JE_word y, const char *s );
@@ -82,7 +82,7 @@ void JE_inGameDisplays( void );
 void JE_mainKeyboardInput( void );
 void JE_pauseGame( void );
 
-void JE_playerMovement( Player *this_player, JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, Sprite2_array *shapes9ptr_, JE_word *playerInvulnerable, JE_integer *PX, JE_integer *PY, JE_integer *lastPX2, JE_integer *lastPY2, JE_integer *PXChange, JE_integer *PYChange, JE_integer *lastTurn, JE_integer *lastTurn2, JE_byte *stopWaitX, JE_byte *stopWaitY, JE_word *mouseX, JE_word *mouseY, JE_boolean *playerAlive, JE_byte *playerStillExploding, JE_PItemsType pItems );
+void JE_playerMovement( Player *this_player, JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, Sprite2_array *shapes9ptr_, JE_word *playerInvulnerable, JE_integer *PX, JE_integer *PY, JE_integer *lastPX2, JE_integer *lastPY2, JE_integer *PXChange, JE_integer *PYChange, JE_integer *lastTurn, JE_integer *lastTurn2, JE_byte *stopWaitX, JE_byte *stopWaitY, JE_word *mouseX, JE_word *mouseY, JE_boolean *playerAlive, JE_byte *playerStillExploding );
 void JE_mainGamePlayerFunctions( void );
 const char *JE_getName( JE_byte pnum );
 

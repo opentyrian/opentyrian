@@ -38,7 +38,7 @@ typedef struct
 	uint ship;
 	uint generator;
 	uint shield;
-	struct { uint type; uint power; } weapon[2];
+	struct { uint id; uint power; } weapon[2];
 	uint sidekick[2];
 	uint special;
 	
@@ -46,6 +46,9 @@ typedef struct
 	// repeatedly collecting the same powerup gives a series of sidekick upgrades
 	uint sidekick_series;
 	uint sidekick_level;
+	
+	// Single-player only
+	uint super_arcade_mode;  // stored as an item for compatability :(
 }
 PlayerItems;
 
@@ -53,7 +56,7 @@ typedef struct
 {
 	ulong cash;
 	
-	PlayerItems items;
+	PlayerItems items, last_items;
 	
 	bool is_dragonwing;  // i.e., is player 2
 	uint *lives;
