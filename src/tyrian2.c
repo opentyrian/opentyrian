@@ -728,8 +728,6 @@ start_level:
 	if (play_demo)
 		return;
 	
-	int old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
-	
 start_level_first:
 
 	set_volume(tyrMusicVolume, fxVolume);
@@ -909,6 +907,8 @@ start_level_first:
 
 	background2notTransparent = false;
 
+	int old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
+	
 	/* Initially erase power bars */
 	lastPower = power / 10;
 
