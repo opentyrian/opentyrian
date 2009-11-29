@@ -3827,24 +3827,10 @@ redo:
 					if (!(twoPlayerLinked && playerNum_ == 2))
 					{
 						if (!twoPlayerMode)
-						{
-							min = 1;
-							max = 2;
-						}
+							min = 1, max = 2;
 						else
-						{
-							switch (playerNum_)
-							{
-							case 1:
-								min = 1;
-								max = 1;
-								break;
-							case 2:
-								min = 2;
-								max = 2;
-								break;
-							}
-						}
+							min = max = playerNum_;
+						
 						for (temp = min - 1; temp < max; temp++)
 						{
 							const uint item = this_player->items.weapon[temp].id;
