@@ -3563,21 +3563,22 @@ redo:
 				*lastTurn2_ = lastTurn2;
 				*lastTurn_ = 4;
 				
-				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5-1, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
-				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5-1, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
-				shotMultiPos[5-1] = 0;
-				JE_initPlayerShot(0, 5-1, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26), *mouseX_, *mouseY_, 147, playerNum_);
+				// turret direction marker/shield
+				shotMultiPos[SHOT_MISC] = 0;
+				JE_initPlayerShot(0, SHOT_MISC, *PX_ + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec + 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
+				shotMultiPos[SHOT_MISC] = 0;
+				JE_initPlayerShot(0, SHOT_MISC, *PX_ + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), *PY_ + roundf(cosf(linkGunDirec - 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
+				shotMultiPos[SHOT_MISC] = 0;
+				JE_initPlayerShot(0, SHOT_MISC, *PX_ + 1 + roundf(sinf(linkGunDirec) * 26), *PY_ + roundf(cosf(linkGunDirec) * 26), *mouseX_, *mouseY_, 147, playerNum_);
 				
-				if (shotRepeat[2-1] > 0)
+				if (shotRepeat[SHOT_REAR] > 0)
 				{
-					--shotRepeat[2-1];
+					--shotRepeat[SHOT_REAR];
 				}
 				else if (button[1-1])
 				{
-					shotMultiPos[2-1] = 0;
-					JE_initPlayerShot(0, 2-1, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20), *mouseX_, *mouseY_, linkGunWeapons[this_player->items.weapon[REAR_WEAPON].id-1], playerNum_);
+					shotMultiPos[SHOT_REAR] = 0;
+					JE_initPlayerShot(0, SHOT_REAR, *PX_ + 1 + roundf(sinf(linkGunDirec) * 20), *PY_ + roundf(cosf(linkGunDirec) * 20), *mouseX_, *mouseY_, linkGunWeapons[this_player->items.weapon[REAR_WEAPON].id-1], playerNum_);
 					playerShotData[b].shotXM = -roundf(sinf(linkGunDirec) * playerShotData[b].shotYM);
 					playerShotData[b].shotYM = -roundf(cosf(linkGunDirec) * playerShotData[b].shotYM);
 					
@@ -3748,12 +3749,14 @@ redo:
 					}
 					if (tempI2 != 0)  // NortSparks
 					{
-						if (shotRepeat[10-1] > 0)
-							shotRepeat[10-1]--;
+						if (shotRepeat[SHOT_NORTSPARKS] > 0)
+						{
+							--shotRepeat[SHOT_NORTSPARKS];
+						}
 						else
 						{
-							JE_initPlayerShot(0, 10-1, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
-							shotRepeat[10-1] = abs(tempI2) - 1;
+							JE_initPlayerShot(0, SHOT_NORTSPARKS, tempW + (mt_rand() % 8) - 4, (*PY_) + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
+							shotRepeat[SHOT_NORTSPARKS] = abs(tempI2) - 1;
 						}
 					}
 				}
@@ -3792,12 +3795,12 @@ redo:
 						if (portConfigDone)
 						{
 
-							shotMultiPos[2-1] = 0;
+							shotMultiPos[SHOT_REAR] = 0;
 
 							if (superArcadeMode != SA_NONE && superArcadeMode <= SA_NORTSHIPZ)
 							{
-								shotMultiPos[9-1] = 0;
-								shotMultiPos[11-1] = 0;
+								shotMultiPos[SHOT_SPECIAL] = 0;
+								shotMultiPos[SHOT_SPECIAL2] = 0;
 								if (player[0].items.special == SASpecialWeapon[superArcadeMode-1])
 								{
 									player[0].items.special = SASpecialWeaponB[superArcadeMode-1];
@@ -3838,7 +3841,9 @@ redo:
 							if (item > 0)
 							{
 								if (shotRepeat[temp] > 0)
-									shotRepeat[temp]--;
+								{
+									--shotRepeat[temp];
+								}
 								else if (button[1-1])
 								{
 									const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1,
@@ -3885,29 +3890,25 @@ redo:
 							if (difficultyLevel > 3)
 								chargeWait -= 5;
 						}
-
+						
 						if (chargeLevel > 0)
-						{
 							JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
+						
+						if (shotRepeat[SHOT_P2_CHARGE] > 0)
+						{
+							--shotRepeat[SHOT_P2_CHARGE];
 						}
-
-						if (shotRepeat[6-1] > 0)
-							shotRepeat[6-1]--;
-						else
-							if (button[1-1]
-							    && (!twoPlayerLinked || chargeLevel > 0))
-							{
-								shotMultiPos[6-1] = 0;
-								JE_initPlayerShot(16, 6-1, *PX_, *PY_, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
-
-								if (chargeLevel > 0)
-								{
-									JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
-								}
-
-								chargeLevel = 0;
-								chargeWait = 30 - this_player->items.weapon[REAR_WEAPON].power * 2;
-							}
+						else if (button[1-1] && (!twoPlayerLinked || chargeLevel > 0))
+						{
+							shotMultiPos[SHOT_P2_CHARGE] = 0;
+							JE_initPlayerShot(16, SHOT_P2_CHARGE, *PX_, *PY_, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
+							
+							if (chargeLevel > 0)
+								JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
+							
+							chargeLevel = 0;
+							chargeWait = 30 - this_player->items.weapon[REAR_WEAPON].power * 2;
+						}
 					}
 
 
@@ -3918,15 +3919,15 @@ redo:
 
 					if (superBomb[temp-1] > 0)
 					{
-						if (shotRepeat[temp-1 + 6] > 0)
-							shotRepeat[temp-1 + 6]--;
-						else {
-							if (button[3-1] || button[2-1])
-							{
-								superBomb[temp-1]--;
-								shotMultiPos[temp-1 + 6] = 0;
-								JE_initPlayerShot(16, temp-1 + 6, *PX_, *PY_, *mouseX_, *mouseY_, 535, playerNum_);
-							}
+						if (shotRepeat[SHOT_P1_SUPERBOMB + temp-1] > 0)
+						{
+							--shotRepeat[SHOT_P1_SUPERBOMB + temp-1];
+						}
+						else if (button[3-1] || button[2-1])
+						{
+							superBomb[temp-1]--;
+							shotMultiPos[SHOT_P1_SUPERBOMB + temp-1] = 0;
+							JE_initPlayerShot(16, SHOT_P1_SUPERBOMB + temp-1, *PX_, *PY_, *mouseX_, *mouseY_, 535, playerNum_);
 						}
 					}
 
@@ -4050,9 +4051,9 @@ redo:
 					{
 						if (options[option1Item].wport > 0)
 						{
-							if (shotRepeat[3-1] > 0)
+							if (shotRepeat[SHOT_LEFT_SIDEKICK] > 0)
 							{
-								shotRepeat[3-1]--;
+								--shotRepeat[SHOT_LEFT_SIDEKICK];
 							}
 							else
 							{
@@ -4075,9 +4076,9 @@ redo:
 								{
 									if (button[2-1])
 									{
-										JE_initPlayerShot(options[option1Item].wport, 3-1, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
+										JE_initPlayerShot(options[option1Item].wport, SHOT_LEFT_SIDEKICK, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
 										if (optionCharge1 > 0)
-											shotMultiPos[3-1] = 0;
+											shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
 										optionAni1Go = true;
 										optionCharge1Wait = 20;
 										optionCharge1 = 0;
@@ -4090,9 +4091,9 @@ redo:
 								{
 									if (button[1-1] || button[2-1])
 									{
-										JE_initPlayerShot(options[option1Item].wport, 3-1, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
+										JE_initPlayerShot(options[option1Item].wport, SHOT_LEFT_SIDEKICK, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
 										if (optionCharge1 > 0)
-											shotMultiPos[3-1] = 0;
+											shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
 										optionCharge1Wait = 20;
 										optionCharge1 = 0;
 										optionAni1Go = true;
@@ -4103,9 +4104,9 @@ redo:
 						
 						if (options[option2Item].wport > 0)
 						{
-							if (shotRepeat[4-1] > 0)
+							if (shotRepeat[SHOT_RIGHT_SIDEKICK] > 0)
 							{
-								shotRepeat[4-1]--;
+								--shotRepeat[SHOT_RIGHT_SIDEKICK];
 							}
 							else
 							{
@@ -4128,10 +4129,10 @@ redo:
 								{
 									if (button[3-1])
 									{
-										JE_initPlayerShot(options[option2Item].wport, 4-1, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
+										JE_initPlayerShot(options[option2Item].wport, SHOT_RIGHT_SIDEKICK, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
 										if (optionCharge2 > 0)
 										{
-											shotMultiPos[4-1] = 0;
+											shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
 											optionCharge2 = 0;
 										}
 										optionCharge2Wait = 20;
@@ -4146,10 +4147,10 @@ redo:
 								{
 									if (button[1-1] || button[3-1])
 									{
-										JE_initPlayerShot(options[option2Item].wport, 4-1, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
+										JE_initPlayerShot(options[option2Item].wport, SHOT_RIGHT_SIDEKICK, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
 										if (optionCharge2 > 0)
 										{
-											shotMultiPos[4-1] = 0;
+											shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
 											optionCharge2 = 0;
 										}
 										optionCharge2Wait = 20;
@@ -4355,8 +4356,8 @@ void JE_playerCollide( Player *this_player,
 					}
 					else if (superArcadeMode != SA_NONE && tempI4 > 30000)
 					{
-						shotMultiPos[1-1] = 0;
-						shotRepeat[1-1] = 10;
+						shotMultiPos[SHOT_FRONT] = 0;
+						shotRepeat[SHOT_FRONT] = 10;
 						
 						tempW = SAWeapon[superArcadeMode-1][tempI4 - 30000-1];
 						
@@ -4388,10 +4389,10 @@ void JE_playerCollide( Player *this_player,
 						{
 							this_player->cash += 250;
 							player[0].items.special = tempI4 - 32100;
-							shotMultiPos[9-1] = 0;
-							shotRepeat[9-1] = 10;
-							shotMultiPos[11-1] = 0;
-							shotRepeat[11-1] = 0;
+							shotMultiPos[SHOT_SPECIAL] = 0;
+							shotRepeat[SHOT_SPECIAL] = 10;
+							shotMultiPos[SHOT_SPECIAL2] = 0;
+							shotRepeat[SHOT_SPECIAL2] = 0;
 							
 							if (isNetworkGame)
 								sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], special[tempI4 - 32100].name);
@@ -4431,8 +4432,8 @@ void JE_playerCollide( Player *this_player,
 								player[1].items.sidekick[i] = optionSelect[player[1].items.sidekick_series][temp][i];
 							
 							
-							shotMultiPos[3-1] = 0;
-							shotMultiPos[4-1] = 0;
+							shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
+							shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
 							tempScreenSeg = VGAScreenSeg;
 							JE_drawOptions();
 							soundQueue[7] = S_POWERUP;
@@ -4446,8 +4447,8 @@ void JE_playerCollide( Player *this_player,
 							
 							for (uint i = 0; i < COUNTOF(player[0].items.sidekick); ++i)
 								player[0].items.sidekick[i] = tempI4 - 32000;
-							shotMultiPos[3-1] = 0;
-							shotMultiPos[4-1] = 0;
+							shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
+							shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
 							
 							tempScreenSeg = VGAScreenSeg;
 							JE_drawOptions();
@@ -4467,7 +4468,7 @@ void JE_playerCollide( Player *this_player,
 								sprintf(tempStr, "%s %s", miscText[44-1], weaponPort[tempI4 - 31000].name);
 							JE_drawTextWindow(tempStr);
 							player[1].items.weapon[REAR_WEAPON].id = tempI4 - 31000;
-							shotMultiPos[2-1] = 0;
+							shotMultiPos[SHOT_REAR] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
 						}
@@ -4476,7 +4477,7 @@ void JE_playerCollide( Player *this_player,
 							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 31000].name);
 							JE_drawTextWindow(tempStr);
 							player[0].items.weapon[REAR_WEAPON].id = tempI4 - 31000;
-							shotMultiPos[2-1] = 0;
+							shotMultiPos[SHOT_REAR] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
 							
@@ -4494,7 +4495,7 @@ void JE_playerCollide( Player *this_player,
 								sprintf(tempStr, "%s %s", miscText[43-1], weaponPort[tempI4 - 30000].name);
 							JE_drawTextWindow(tempStr);
 							player[0].items.weapon[FRONT_WEAPON].id = tempI4 - 30000;
-							shotMultiPos[1-1] = 0;
+							shotMultiPos[SHOT_FRONT] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
 						}
@@ -4503,7 +4504,7 @@ void JE_playerCollide( Player *this_player,
 							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 30000].name);
 							JE_drawTextWindow(tempStr);
 							player[0].items.weapon[FRONT_WEAPON].id = tempI4 - 30000;
-							shotMultiPos[1-1] = 0;
+							shotMultiPos[SHOT_FRONT] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
 						}
@@ -4513,10 +4514,10 @@ void JE_playerCollide( Player *this_player,
 							player[0].items.special = specialArcadeWeapon[tempI4 - 30000-1];
 							if (player[0].items.special > 0)
 							{
-								shotMultiPos[9-1] = 0;
-								shotRepeat[9-1] = 0;
-								shotMultiPos[11-1] = 0;
-								shotRepeat[11-1] = 0;
+								shotMultiPos[SHOT_SPECIAL] = 0;
+								shotRepeat[SHOT_SPECIAL] = 0;
+								shotMultiPos[SHOT_SPECIAL2] = 0;
+								shotRepeat[SHOT_SPECIAL2] = 0;
 							}
 							this_player->cash += 250;
 						}
@@ -4593,8 +4594,9 @@ void JE_playerCollide( Player *this_player,
 					}
 					else if (tempI4 == -3)
 					{
-						shotMultiPos[5-1] = 0;
-						JE_initPlayerShot(0, 5-1, *PX_, *PY_, mouseX, mouseY, 104, playerNum_);
+						// picked up orbiting asteroid killer
+						shotMultiPos[SHOT_MISC] = 0;
+						JE_initPlayerShot(0, SHOT_MISC, *PX_, *PY_, mouseX, mouseY, 104, playerNum_);
 						shotAvail[z] = 0;
 					}
 					else if (tempI4 == -4)

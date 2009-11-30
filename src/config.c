@@ -161,7 +161,7 @@ JE_shortint difficultyLevel, oldDifficultyLevel,
 JE_integer    power, lastPower, powerAdd;
 JE_byte       shieldWait, shieldT;
 
-JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
+JE_byte          shotRepeat[11], shotMultiPos[11];
 JE_boolean       portConfigChange, portConfigDone;
 
 /* Level Data */

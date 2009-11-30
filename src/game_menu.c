@@ -3133,27 +3133,35 @@ void JE_weaponViewFrame( void )
 	mouseX = PX;
 	mouseY = PY;
 	
-	/* JE: (* PLAYER SHOT Creation *) */
-	for (temp = 0; temp < 2; temp++)
+	// create shots in weapon simulator
+	for (uint i = 0; i < 2; ++i)
 	{
-		if (shotRepeat[temp] > 0)
-			shotRepeat[temp]--;
+		if (shotRepeat[i] > 0)
+		{
+			--shotRepeat[i];
+		}
 		else
 		{
-			const uint item       = player[0].items.weapon[temp].id,
-			           item_power = player[0].items.weapon[temp].power - 1,
-			           item_mode = (temp == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
+			const uint item       = player[0].items.weapon[i].id,
+			           item_power = player[0].items.weapon[i].power - 1,
+			           item_mode = (i == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
 			
-			JE_initPlayerShot(item, temp, PX, PY, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
+			JE_initPlayerShot(item, i, PX, PY, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
 		}
 	}
 	
 	if (options[player[0].items.sidekick[LEFT_SIDEKICK]].wport > 0)
 	{
-		if (shotRepeat[3-1] > 0)
-			shotRepeat[3-1]--;
+		if (shotRepeat[SHOT_LEFT_SIDEKICK] > 0)
+		{
+			--shotRepeat[SHOT_LEFT_SIDEKICK];
+		}
 		else
-			JE_initPlayerShot(options[player[0].items.sidekick[LEFT_SIDEKICK]].wport, 3-1, option1X, option1Y, mouseX, mouseY, options[player[0].items.sidekick[LEFT_SIDEKICK]].wpnum, 1);
+		{
+			const uint item = player[0].items.sidekick[LEFT_SIDEKICK];
+			
+			JE_initPlayerShot(options[item].wport, SHOT_LEFT_SIDEKICK, option1X, option1Y, mouseX, mouseY, options[item].wpnum, 1);
+		}
 	}
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].tr == 2)
@@ -3171,10 +3179,16 @@ void JE_weaponViewFrame( void )
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].wport > 0)
 	{
-		if (shotRepeat[4-1] > 0)
-			shotRepeat[4-1]--;
+		if (shotRepeat[SHOT_RIGHT_SIDEKICK] > 0)
+		{
+			--shotRepeat[SHOT_RIGHT_SIDEKICK];
+		}
 		else
-			JE_initPlayerShot(options[player[0].items.sidekick[RIGHT_SIDEKICK]].wport, 4-1, option2X, option2Y, mouseX, mouseY, options[player[0].items.sidekick[RIGHT_SIDEKICK]].wpnum, 1);
+		{
+			const uint item = player[0].items.sidekick[RIGHT_SIDEKICK];
+			
+			JE_initPlayerShot(options[item].wport, SHOT_RIGHT_SIDEKICK, option2X, option2Y, mouseX, mouseY, options[item].wpnum, 1);
+		}
 	}
 	
 	/* Player Shot Images */

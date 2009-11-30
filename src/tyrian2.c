@@ -1677,8 +1677,8 @@ level_loop:
 					{
 						if (chain > 0)
 						{
-							shotMultiPos[5-1] = 0;
-							JE_initPlayerShot(0, 5-1, tempShotX, tempShotY, mouseX, mouseY, chain, playerNum);
+							shotMultiPos[SHOT_MISC] = 0;
+							JE_initPlayerShot(0, SHOT_MISC, tempShotX, tempShotY, mouseX, mouseY, chain, playerNum);
 							shotAvail[z] = 0;
 							goto draw_player_shot_loop_end;
 						}
@@ -5191,10 +5191,10 @@ void JE_eventSystem( void )
 		
 	case 82: /*Give SPECIAL WEAPON*/
 		player[0].items.special = eventRec[eventLoc-1].eventdat;
-		shotMultiPos[9-1] = 0;
-		shotRepeat[9-1] = 0;
-		shotMultiPos[11-1] = 0;
-		shotRepeat[11-1] = 0;
+		shotMultiPos[SHOT_SPECIAL] = 0;
+		shotRepeat[SHOT_SPECIAL] = 0;
+		shotMultiPos[SHOT_SPECIAL2] = 0;
+		shotRepeat[SHOT_SPECIAL2] = 0;
 		break;
 		
 	default:

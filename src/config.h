@@ -94,6 +94,22 @@ extern JE_boolean gameHasRepeated;
 extern JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
 extern JE_integer power, lastPower, powerAdd;
 extern JE_byte shieldWait, shieldT;
+
+enum
+{
+	SHOT_FRONT,
+	SHOT_REAR,
+	SHOT_LEFT_SIDEKICK,
+	SHOT_RIGHT_SIDEKICK,
+	SHOT_MISC,
+	SHOT_P2_CHARGE,
+	SHOT_P1_SUPERBOMB,
+	SHOT_P2_SUPERBOMB,
+	SHOT_SPECIAL,
+	SHOT_NORTSPARKS,
+	SHOT_SPECIAL2
+};
+
 extern JE_byte shotRepeat[11], shotMultiPos[11];
 extern JE_boolean portConfigChange, portConfigDone;
 extern char lastLevelName[11], levelName[11];
