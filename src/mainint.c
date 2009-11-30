@@ -4448,7 +4448,7 @@ void JE_playerCollide( JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, 
 							sprintf(tempStr, "%s %s", miscText[64-1], weaponPort[tempI4 - 31000].name);
 							JE_drawTextWindow(tempStr);
 							pItems[P_REAR] = tempI4 - 31000;
-							shotMultiPos[2] = 0;
+							shotMultiPos[2-1] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
 							if (portPower[2-1] == 0)

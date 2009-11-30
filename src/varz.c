@@ -1022,12 +1022,12 @@ void JE_specialComplete( JE_byte playerNum, JE_integer *armor, JE_byte specialTy
 			if (pItems[P_LEFT_SIDEKICK] == special[specialType].wpn)
 			{
 				pItems[P_RIGHT_SIDEKICK] = special[specialType].wpn;
-				shotMultiPos[4] = 0;
+				shotMultiPos[4-1] = 0;
 			}
 			else
 			{
 				pItems[P_LEFT_SIDEKICK] = special[specialType].wpn;
-				shotMultiPos[3] = 0;
+				shotMultiPos[3-1] = 0;
 			}
 
 			tempScreenSeg = VGAScreenSeg;
