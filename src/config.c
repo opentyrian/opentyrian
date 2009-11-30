@@ -164,8 +164,6 @@ JE_byte       shieldWait, shieldT;
 JE_byte          shotRepeat[11], shotMultiPos[11]; /* [1..11] */  /* 7,8 = Superbomb */
 JE_boolean       portConfigChange, portConfigDone;
 
-JE_boolean resetVersion;
-
 /* Level Data */
 char    lastLevelName[11], levelName[11]; /* string [10] */
 JE_byte mainLevel, nextLevel, saveLevel;   /*Current Level #*/
@@ -708,10 +706,6 @@ void JE_loadConfiguration( void )
 		efread(&jConfigure, 1, 1, fi);
 
 		efread(&versionNum, 1, 1, fi);
-		if (resetVersion)
-		{
-			versionNum = 2; /* JE: {Shareware 1.0 and Registered 1.1 = 1} */
-		}
 
 		efread(&processorType, 1, 1, fi);
 		efread(&midiPort, 1, 1, fi);

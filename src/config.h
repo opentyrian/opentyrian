@@ -96,7 +96,6 @@ extern JE_integer power, lastPower, powerAdd;
 extern JE_byte shieldWait, shieldT;
 extern JE_byte shotRepeat[11], shotMultiPos[11];
 extern JE_boolean portConfigChange, portConfigDone;
-extern JE_boolean resetVersion;
 extern char lastLevelName[11], levelName[11];
 extern JE_byte mainLevel, nextLevel, saveLevel;
 extern JE_KeySettingType keySettings;

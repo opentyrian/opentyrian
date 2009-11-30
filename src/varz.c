@@ -1009,12 +1009,12 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			if (player[0].items.sidekick[LEFT_SIDEKICK] == special[specialType].wpn)
 			{
 				player[0].items.sidekick[RIGHT_SIDEKICK] = special[specialType].wpn;
-				shotMultiPos[4] = 0;
+				shotMultiPos[4-1] = 0;
 			}
 			else
 			{
 				player[0].items.sidekick[LEFT_SIDEKICK] = special[specialType].wpn;
-				shotMultiPos[3] = 0;
+				shotMultiPos[3-1] = 0;
 			}
 
 			tempScreenSeg = VGAScreenSeg;
