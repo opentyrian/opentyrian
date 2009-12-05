@@ -55,7 +55,7 @@ bool xmas_prompt( void )
 	
 	int selection = 0;
 	
-	bool decided = false;
+	bool decided = false, quit = false;
 	while (!decided)
 	{
 		for (int i = 0; i < COUNTOF(choice); ++i)
@@ -79,16 +79,21 @@ bool xmas_prompt( void )
 					selection++;
 					selection %= 2;
 					break;
+					
 				case SDLK_RETURN:
 					decided = true;
 					break;
 				case SDLK_ESCAPE:
-					return false;
+					decided = true;
+					quit = true;
+					break;
 				default:
 					break;
 			}
 		}
 	}
 	
-	return (selection == 0);
+	fade_black(10);
+	
+	return (selection == 0 && quit == false);
 }
