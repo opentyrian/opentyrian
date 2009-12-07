@@ -1246,7 +1246,7 @@ level_loop:
 				int x = twoPlayerMode ? 286 : 289,
 				    y = (i == 0) ? (twoPlayerMode ? 6 : 17) : (twoPlayerMode ? 100 : 38);
 				
-				JE_c_bar(x, y, x + 1 + 10 * 2, y + 2, 0);
+				filled_rectangle(VGAScreenSeg, x, y, x + 1 + 10 * 2, y + 2, 0);
 				
 				for (int j = 1; j <= item_power; ++j)
 				{
@@ -1272,9 +1272,9 @@ level_loop:
 			if (temp != lastPower)
 			{
 				if (temp > lastPower)
-					JE_c_bar(269, 113 - 11 - temp, 276, 114 - 11 - lastPower, 113 + temp / 7);
+					filled_rectangle(VGAScreenSeg, 269, 113 - 11 - temp, 276, 114 - 11 - lastPower, 113 + temp / 7);
 				else
-					JE_c_bar(269, 113 - 11 - lastPower, 276, 114 - 11 - temp, 0);
+					filled_rectangle(VGAScreenSeg, 269, 113 - 11 - lastPower, 276, 114 - 11 - temp, 0);
 			}
 
 			lastPower = temp;
@@ -2232,9 +2232,9 @@ draw_player_shot_loop_end:
 			{
 				warningColChange = -warningColChange;
 			}
-			JE_bar(24, 181, 138, 183, warningCol);
-			JE_bar(175, 181, 287, 183, warningCol);
-			JE_bar(24, 0, 287, 3, warningCol);
+			filled_rectangle(VGAScreen, 24, 181, 138, 183, warningCol);
+			filled_rectangle(VGAScreen, 175, 181, 287, 183, warningCol);
+			filled_rectangle(VGAScreen, 24, 0, 287, 3, warningCol);
 
 			JE_outText(140, 178, "WARNING", 7, (warningCol % 16) / 2);
 
@@ -5286,9 +5286,9 @@ void JE_whoa( void )
 
 void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
 {
-	JE_bar(x1, y1,     x2, y1,     col + 1);
-	JE_bar(x1, y1 + 1, x2, y2 - 1, col    );
-	JE_bar(x1, y2,     x2, y2,     col - 1);
+	filled_rectangle(VGAScreen, x1, y1,     x2, y1,     col + 1);
+	filled_rectangle(VGAScreen, x1, y1 + 1, x2, y2 - 1, col    );
+	filled_rectangle(VGAScreen, x1, y2,     x2, y2,     col - 1);
 }
 
 void draw_boss_bar( void )

@@ -267,8 +267,8 @@ void JE_updateWarning( void )
 		{
 			warningColChange = -warningColChange;
 		}
-		JE_bar(0, 0, 319, 5, warningCol);
-		JE_bar(0, 194, 319, 199, warningCol);
+		filled_rectangle(VGAScreen, 0, 0, 319, 5, warningCol);
+		filled_rectangle(VGAScreen, 0, 194, 319, 199, warningCol);
 		JE_showVGA();
 		
 		setjasondelay2(6);

@@ -1372,7 +1372,7 @@ void JE_inGameHelp( void )
 	JE_barShade(3, 3, 260, 180);
 	JE_barShade(5, 5, 258, 178);
 	JE_barShade(7, 7, 256, 176);
-	JE_bar     (9, 9, 254, 174, 0);
+	filled_rectangle(VGAScreen, 9, 9, 254, 174, 0);
 	
 	if (twoPlayerMode)  // Two-Player Help
 	{
@@ -1557,7 +1557,7 @@ void JE_highScoreCheck( void )
 						JE_outText(65, 89, tempstr, 8, 3);
 						tempW = 65 + JE_textWidth(tempstr, TINY_FONT);
 						JE_barShade(tempW + 2, 90, tempW + 6, 95);
-						JE_bar(tempW + 1, 89, tempW + 5, 94, flash);
+						filled_rectangle(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
 						
 						for (int i = 0; i < 14; i++)
 						{
@@ -2125,8 +2125,8 @@ void JE_playCredits( void )
 			yloc += 20;
 		}
 		
-		JE_bar(0,  0, 319, 10, 0);
-		JE_bar(0, 190, 319, 199, 0);
+		filled_rectangle(VGAScreen, 0,  0, 319, 10, 0);
+		filled_rectangle(VGAScreen, 0, 190, 319, 199, 0);
 		
 		if (currentpic == sprite_table[EXTRA_SHAPES].count)
 			JE_outTextAdjust(5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
@@ -2406,7 +2406,7 @@ void JE_operation( JE_byte slot )
 				JE_outText(65, 89, tempStr, 8, 3);
 				tempW = 65 + JE_textWidth(tempStr, TINY_FONT);
 				JE_barShade(tempW + 2, 90, tempW + 6, 95);
-				JE_bar(tempW + 1, 89, tempW + 5, 94, flash);
+				filled_rectangle(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
 				
 				for (int i = 0; i < 14; i++)
 				{
@@ -3874,7 +3874,7 @@ redo:
 
 						if (chargeLevel > 0)
 						{
-							JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
+							filled_rectangle(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 						}
 
 						if (chargeWait > 0)
@@ -3892,7 +3892,7 @@ redo:
 						}
 						
 						if (chargeLevel > 0)
-							JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
+							filled_rectangle(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
 						
 						if (shotRepeat[SHOT_P2_CHARGE] > 0)
 						{
@@ -3904,7 +3904,7 @@ redo:
 							JE_initPlayerShot(16, SHOT_P2_CHARGE, *PX_, *PY_, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
 							
 							if (chargeLevel > 0)
-								JE_c_bar(269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
+								filled_rectangle(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 							
 							chargeLevel = 0;
 							chargeWait = 30 - this_player->items.weapon[REAR_WEAPON].power * 2;
@@ -4083,7 +4083,7 @@ redo:
 										optionCharge1Wait = 20;
 										optionCharge1 = 0;
 										option1Ammo--;
-										JE_c_bar(284, option1Draw + 13, 312, option1Draw + 15, 0);
+										filled_rectangle(VGAScreenSeg, 284, option1Draw + 13, 312, option1Draw + 15, 0);
 										JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);
 									}
 								}
@@ -4139,7 +4139,7 @@ redo:
 										optionCharge2 = 0;
 										optionAni2Go = true;
 										option2Ammo--;
-										JE_c_bar(284, option2Draw + 13, 312, option2Draw + 15, 0);
+										filled_rectangle(VGAScreenSeg, 284, option2Draw + 13, 312, option2Draw + 15, 0);
 										JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
 									}
 								}

@@ -80,42 +80,10 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
 	}
 }
 
-void JE_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e ) /* x1, y1, x2, y2, color */
+void filled_rectangle( SDL_Surface *surface, int x, int y, int x2, int y2, Uint8 color )
 {
-	if (a < VGAScreen->pitch && b < VGAScreen->h &&
-	    c < VGAScreen->pitch && d < VGAScreen->h)
-	{
-		Uint8 *vga = VGAScreen->pixels;
-		int i, width;
-
-		width = c - a + 1;
-
-		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
-		{
-			memset(&vga[i], e, width);
-		}
-	} else {
-		printf("!!! WARNING: Filled Rectangle clipped: %d %d %d %d %d\n", a, b, c, d, e);
-	}
-}
-
-void JE_c_bar( JE_word a, JE_word b, JE_word c, JE_word d, JE_byte e )
-{
-	if (a < VGAScreen->pitch && b < VGAScreen->h &&
-	    c < VGAScreen->pitch && d < VGAScreen->h)
-	{
-		Uint8 *vga = VGAScreenSeg->pixels;
-		int i, width;
-
-		width = c - a + 1;
-
-		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
-		{
-			memset(&vga[i], e, width);
-		}
-	} else {
-		printf("!!! WARNING: Filled Rectangle clipped: %d %d %d %d %d\n", a,b,c,d,e);
-	}
+	SDL_Rect rect = { x, y, x2 - x + 1, y2 - y + 1 };
+	SDL_FillRect(surface, &rect, color);
 }
 
 void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */

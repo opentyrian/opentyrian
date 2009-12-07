@@ -323,7 +323,7 @@ int main( int argc, char *argv[] )
 		JE_sortHighScores();
 		
 		if (JE_titleScreen(true))
-			break;
+			break;  // user quit from title screen
 		
 		if (loadDestruct)
 		{

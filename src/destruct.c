@@ -2000,20 +2000,20 @@ void DE_RunTickDrawHUD( void )
 		curUnit = &(player[i].unit[player[i].unitSelected]);
 		startX = ((i == PLAYER_LEFT) ? 0 : 320 - 150);
 
-		JE_bar       ( startX +  5, 3, startX +  14, 8, 241);
-		JE_rectangle ( startX +  4, 2, startX +  15, 9, 242);
-		JE_rectangle ( startX +  3, 1, startX +  16, 10, 240);
-		JE_bar       ( startX + 18, 3, startX + 140, 8, 241);
-		JE_rectangle ( startX + 17, 2, startX + 143, 9, 242);
-		JE_rectangle ( startX + 16, 1, startX + 144, 10, 240);
+		filled_rectangle(VGAScreen, startX +  5, 3, startX +  14, 8, 241);
+		JE_rectangle(startX +  4, 2, startX +  15, 9, 242);
+		JE_rectangle(startX +  3, 1, startX +  16, 10, 240);
+		filled_rectangle(VGAScreen, startX + 18, 3, startX + 140, 8, 241);
+		JE_rectangle(startX + 17, 2, startX + 143, 9, 242);
+		JE_rectangle(startX + 16, 1, startX + 144, 10, 240);
 
 		blit_sprite2(VGAScreen, startX +  4, 0, eShapes1, 191 + curUnit->shotType);
 
-		JE_outText   ( startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
+		JE_outText   (startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
 		sprintf      (tempstr, "dmg~%d~", curUnit->health);
-		JE_outText   ( startX + 75, 3, tempstr, 15, 0);
+		JE_outText   (startX + 75, 3, tempstr, 15, 0);
 		sprintf      (tempstr, "pts~%d~", player[i].score);
-		JE_outText   ( startX + 110, 3, tempstr, 15, 0);
+		JE_outText   (startX + 110, 3, tempstr, 15, 0);
 	}
 }
 void DE_RunTickGetInput( void )

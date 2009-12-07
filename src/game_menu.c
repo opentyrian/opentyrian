@@ -574,7 +574,7 @@ void JE_itemScreen( void )
 				/* item-owned marker */
 				if (temp == *playeritem_map(&old_items[0], curSel[1] - 2) && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
-					JE_bar(160, tempY+7, 300, tempY+11, 227);
+					filled_rectangle(VGAScreen, 160, tempY+7, 300, tempY+11, 227);
 					blit_sprite2(VGAScreen, 298, tempY+2, shapes6, 247);
 				}
 
@@ -671,7 +671,7 @@ void JE_itemScreen( void )
 		{
 			firstMenu9 = false;
 			menuChoices[7] = cubeMax + 2;
-			JE_bar(1, 1, 145, 170, 0);
+			filled_rectangle(VGAScreen, 1, 1, 145, 170, 0);
 			
 			blit_sprite(VGAScreenSeg, 1, 1, OPTION_SHAPES, 20); /* Portrait area background */
 			
@@ -825,7 +825,7 @@ void JE_itemScreen( void )
 							mouseCursor = 1;
 					}
 					
-					JE_bar(160, 49, 310, 158, 228);
+					filled_rectangle(VGAScreen, 160, 49, 310, 158, 228);
 					if (yLoc + yChg < 0)
 					{
 						yChg = 0;
@@ -847,8 +847,8 @@ void JE_itemScreen( void )
 						}
 					}
 					
-					JE_bar(160, 39, 310, 48, 228);
-					JE_bar(160, 157, 310, 166, 228);
+					filled_rectangle(VGAScreen, 160, 39, 310, 48, 228);
+					filled_rectangle(VGAScreen, 160, 157, 310, 166, 228);
 					
 					int percent_read = (cube[currentCube].last_line <= 9)
 					                   ? 100
@@ -1959,7 +1959,7 @@ void JE_updateNavScreen( void )
 	
 	tempNavX = roundf(navX);
 	tempNavY = roundf(navY);
-	JE_bar(19, 16, 135, 169, 2);
+	filled_rectangle(VGAScreen, 19, 16, 135, 169, 2);
 	JE_drawNavLines(true);
 	JE_drawNavLines(false);
 	JE_drawDots();
@@ -1999,7 +1999,7 @@ void JE_updateNavScreen( void )
 	if (abs(newNavY - navY) < 1)
 		navY = newNavY;
 	
-	JE_bar(314, 0, 319, 199, 230);
+	filled_rectangle(VGAScreen, 314, 0, 319, 199, 230);
 	
 	if (planetAniWait > 0)
 	{
@@ -2207,7 +2207,7 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 
 void JE_initWeaponView( void )
 {
-	JE_bar(8, 8, 144, 177, 0);
+	filled_rectangle(VGAScreen, 8, 8, 144, 177, 0);
 
 	option1X = 72 - 15;
 	option1Y = 120;
@@ -3074,10 +3074,10 @@ void JE_weaponSimUpdate( void )
 		
 		for (int x = 1; x <= temp; x++)
 		{
-			JE_bar(39 + x * 6, 151, 39 + x * 6 + 4, 151, 251);
+			filled_rectangle(VGAScreen, 39 + x * 6, 151, 39 + x * 6 + 4, 151, 251);
 			JE_pix(39 + x * 6, 151, 252);
-			JE_bar(39 + x * 6, 152, 39 + x * 6 + 4, 164, 250);
-			JE_bar(39 + x * 6, 165, 39 + x * 6 + 4, 165, 249);
+			filled_rectangle(VGAScreen, 39 + x * 6, 152, 39 + x * 6 + 4, 164, 250);
+			filled_rectangle(VGAScreen, 39 + x * 6, 165, 39 + x * 6 + 4, 165, 249);
 		}
 		
 		sprintf(buf, "POWER: %d", temp);
@@ -3098,7 +3098,7 @@ void JE_weaponViewFrame( void )
 	Uint8 *s; /* screen pointer, 8-bit specific */
 	int i;
 	
-	JE_bar(8, 8, 143, 182, 0);
+	filled_rectangle(VGAScreen, 8, 8, 143, 182, 0);
 	
 	/* JE: (* Port Configuration Display *)
 	(*    drawportconfigbuttons;*/
@@ -3293,7 +3293,7 @@ draw_player_shot_loop_end:
 		JE_pix(142, temp, temp2 - 3);
 		JE_pix(143, temp, temp2 - 2);
 		JE_pix(144, temp, temp2 - 1);
-		JE_bar(145, temp, 149, temp, temp2);
+		filled_rectangle(VGAScreen, 145, temp, 149, temp, temp2);
 		
 		if (temp2 - 3 < 112)
 			temp2++;
@@ -3307,7 +3307,7 @@ draw_player_shot_loop_end:
 	JE_pix(143, temp - 1, temp2 - 1);
 	JE_pix(144, temp - 1, temp2 - 1);
 	
-	JE_bar(145, temp-1, 149, temp-1, temp2);
+	filled_rectangle(VGAScreen, 145, temp-1, 149, temp-1, temp2);
 	
 	lastPower = temp;
 	

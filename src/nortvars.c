@@ -64,10 +64,10 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 	for (int z = 1; z <= amt / res; z++)
 	{
 		JE_barShade(x+2, y+2, x+xsize+2, y+ysize+2);
-		JE_bar(x, y, x+xsize, y+ysize, col+12);
-		JE_bar(x, y, x+xsize, y, col+13);
+		filled_rectangle(VGAScreen, x, y, x+xsize, y+ysize, col+12);
+		filled_rectangle(VGAScreen, x, y, x+xsize, y, col+13);
 		JE_pix(x, y, col+15);
-		JE_bar(x, y+ysize, x+xsize, y+ysize, col+11);
+		filled_rectangle(VGAScreen, x, y+ysize, x+xsize, y+ysize, col+11);
 		x += xsize + 2;
 	}
 
@@ -75,7 +75,7 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 	if (amt > 0)
 	{
 		JE_barShade(x+2, y+2, x+xsize+2, y+ysize+2);
-		JE_bar(x,y, x+xsize, y+ysize, col+(12 / res * amt));
+		filled_rectangle(VGAScreen, x,y, x+xsize, y+ysize, col+(12 / res * amt));
 	}
 }
 
@@ -85,14 +85,14 @@ void JE_barDrawDirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 	ysize--;
 	for (int z = 1; z <= amt / res; z++)
 	{
-		JE_c_bar(x, y, x + xsize, y + ysize, col + 12);
+		filled_rectangle(VGAScreenSeg, x, y, x + xsize, y + ysize, col + 12);
 		x += xsize + 2;
 	}
 	
 	amt %= res;
 	if (amt > 0)
 	{
-		JE_c_bar(x, y, x + xsize, y + ysize, col + ((12 / res) * amt));
+		filled_rectangle(VGAScreenSeg, x, y, x + xsize, y + ysize, col + ((12 / res) * amt));
 	}
 }
 
