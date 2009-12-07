@@ -244,7 +244,9 @@ int main( int argc, char *argv[] )
 	}
 	
 	JE_loadConfiguration();
-
+	
+	xmas = xmas_time();  // arg handler may override
+	
 	JE_paramCheck(argc, argv);
 
 	JE_scanForEpisodes();
@@ -254,7 +256,6 @@ int main( int argc, char *argv[] )
 	init_joysticks();
 	printf("assuming mouse detected\n"); // SDL can't tell us if there isn't one
 	
-	xmas |= xmas_time();
 	if (xmas && (!dir_file_exists(data_dir(), "tyrianc.shp") || !dir_file_exists(data_dir(), "voicesc.snd")))
 	{
 		xmas = false;
