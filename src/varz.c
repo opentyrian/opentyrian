@@ -312,13 +312,11 @@ JE_boolean keyMoveWait;
 
 JE_word playerInvulnerable1, playerInvulnerable2;
 
-JE_integer lastPXShotMove, lastPYShotMove;
-
-JE_integer lastPX2B, lastPY2B, PXChangeB, PYChangeB,
+JE_integer lastPX2B, lastPY2B,
            lastTurnB, lastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
 
-JE_integer lastPX2, lastPY2, PXChange, PYChange,
+JE_integer lastPX2, lastPY2,
            lastTurn, lastTurn2;
 JE_byte stopWaitX, stopWaitY;
 
@@ -801,7 +799,7 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 							if (weapons[wpNum].sy[shotMultiPos[shot_i]-1] > 100)
 							{
 								playerShotData[b].shotYM = weapons[wpNum].sy[shotMultiPos[shot_i]-1];
-								playerShotData[b].shotY -= PYChange;
+								playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y;
 							} else {
 								playerShotData[b].shotYM = -weapons[wpNum].sy[shotMultiPos[shot_i]-1];
 							}
@@ -811,10 +809,10 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 					if (weapons[wpNum].sx[shotMultiPos[shot_i]-1] > 100)
 					{
 						playerShotData[b].shotXM = weapons[wpNum].sx[shotMultiPos[shot_i]-1];
-						playerShotData[b].shotX -= PXChange;
+						playerShotData[b].shotX -= player[playerShotData[b].playerNumber-1].delta_x;
 						if (playerShotData[b].shotXM == 101)
 						{
-							playerShotData[b].shotY -= PYChange;
+							playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y;
 						}
 					}
 

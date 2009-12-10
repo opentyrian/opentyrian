@@ -2951,7 +2951,6 @@ void JE_playerMovement( Player *this_player,
                         JE_word *playerInvulnerable_,
                         int *PX_, int *PY_,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
-                        JE_integer *PXChange_, JE_integer *PYChange_,
                         JE_integer *lastTurn_, JE_integer *lastTurn2_,
                         JE_byte *stopWaitX_, JE_byte *stopWaitY_,
                         JE_word *mouseX_, JE_word *mouseY_,
@@ -3785,8 +3784,8 @@ redo:
 			{
 				if (!endLevel)
 				{
-					*PXChange_ = *PX_ - lastPXShotMove;
-					*PYChange_ = *PY_ - lastPYShotMove;
+					this_player->delta_x = *PX_ - this_player->last_shot_move_x;
+					this_player->delta_y = *PY_ - this_player->last_shot_move_y;
 
 					/* PLAYER SHOT Change */
 					if (button[4-1])
@@ -4243,14 +4242,14 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
 		                  &playerInvulnerable1,
-		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
 		                  &playerAlive, &playerStillExploding);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
 		                  &playerInvulnerable2,
-		                  &player[1].x, &player[1].y, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
+		                  &player[1].x, &player[1].y, &lastPX2B, &lastPY2B,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB,
 		                  &playerAliveB, &playerStillExploding2);
@@ -4260,7 +4259,7 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
 		                  &playerInvulnerable1,
-		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
 		                  &playerAlive, &playerStillExploding);

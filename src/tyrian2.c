@@ -767,8 +767,8 @@ start_level_first:
 
 	playerHNotReady = true;
 
-	lastPXShotMove = player[0].x;
-	lastPYShotMove = player[0].y;
+	player[0].last_shot_move_x = player[0].x;
+	player[0].last_shot_move_y = player[0].y;
 
 	if (twoPlayerMode)
 	{
@@ -1521,13 +1521,13 @@ level_loop:
 					if (playerShotData[z].shotXM == 101)
 					{
 						playerShotData[z].shotX -= 101;
-						playerShotData[z].shotX += PXChange;
-						playerShotData[z].shotY += PYChange;
+						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x;
+						playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y;
 					}
 					else
 					{
 						playerShotData[z].shotX -= 120;
-						playerShotData[z].shotX += PXChange;
+						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x;
 					}
 				}
 
@@ -1537,7 +1537,7 @@ level_loop:
 				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
-					playerShotData[z].shotY += PYChange;
+					playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y;
 				}
 
 				if (playerShotData[z].shotComplicated != 0)
@@ -1931,8 +1931,8 @@ draw_player_shot_loop_end:
 	}
 
 	/* Player movement indicators for shots that track your ship */
-	lastPXShotMove = player[0].x;
-	lastPYShotMove = player[0].y;
+	player[0].last_shot_move_x = player[0].x;
+	player[0].last_shot_move_y = player[0].y;
 
 	/*=================================*/
 	/*=======Collisions Detection======*/

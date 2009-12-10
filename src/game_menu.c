@@ -2216,8 +2216,8 @@ void JE_initWeaponView( void )
 
 	player[0].x = 72;
 	player[0].y = 110;
-	PXChange = 0;
-	PYChange = 0;
+	player[0].delta_x = 0;
+	player[0].delta_y = 0;
 	lastPX2 = 72;
 	lastPY2 = 110;
 	power = 500;
@@ -3210,7 +3210,7 @@ void JE_weaponViewFrame( void )
 				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
-					playerShotData[z].shotY += PYChange;
+					playerShotData[z].shotY += player[0].delta_y;
 				}
 				
 				if (playerShotData[z].shotComplicated != 0)

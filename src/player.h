@@ -71,6 +71,9 @@ typedef struct
 	uint armor;
 	
 	int x, y;
+	int delta_x, delta_y;
+	
+	int last_shot_move_x, last_shot_move_y;
 }
 Player;
 
