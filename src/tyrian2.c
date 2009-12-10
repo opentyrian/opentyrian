@@ -928,8 +928,8 @@ start_level_first:
 	JE_drawShield();
 	JE_drawArmor();
 
-	superBomb[0] = 0;
-	superBomb[1] = 0;
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		player[i].superbombs = 0;
 
 	/* Set cubes to 0 */
 	cubeMax = 0;

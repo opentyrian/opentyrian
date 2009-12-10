@@ -69,6 +69,7 @@ typedef struct
 	uint weapon_mode;
 	uint shield;
 	uint armor;
+	uint superbombs;
 	
 	int x, y;
 	int delta_x, delta_y;

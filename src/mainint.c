@@ -2507,8 +2507,6 @@ void JE_operation( JE_byte slot )
 void JE_inGameDisplays( void )
 {
 	char stemp[21];
-	JE_byte temp;
-	
 	char tempstr[256];
 	
 	for (uint i = 0; i < ((twoPlayerMode && !galagaMode) ? 2 : 1); ++i)
@@ -2524,7 +2522,7 @@ void JE_inGameDisplays( void )
 	/*Lives Left*/
 	if (onePlayerAction || twoPlayerMode)
 	{
-		for (temp = 0; temp < (onePlayerAction ? 1 : 2); temp++)
+		for (int temp = 0; temp < (onePlayerAction ? 1 : 2); temp++)
 		{
 			const uint extra_lives = *player[temp].lives - 1;
 			
@@ -2560,17 +2558,14 @@ void JE_inGameDisplays( void )
 	}
 
 	/*Super Bombs!!*/
-	for (temp = 0; temp < 2; temp++)
+	for (uint i = 0; i < COUNTOF(player); ++i)
 	{
-		if (superBomb[temp] > 0)
+		int x = (i == 0) ? 30 : 270;
+		
+		for (uint j = player[i].superbombs; j > 0; --j)
 		{
-			tempW = (temp == 0) ? 30 : 270;
-			
-			for (temp2 = 0; temp2 < superBomb[temp]; temp2++)
-			{
-				blit_sprite2(VGAScreen, tempW, 160, shapes9, 304);
-				tempW = (temp == 0) ? (tempW + 12) : (tempW - 12);
-			}
+			blit_sprite2(VGAScreen, x, 160, shapes9, 304);
+			x += (i == 0) ? 12 : -12;
 		}
 	}
 
@@ -3916,7 +3911,7 @@ redo:
 					if (temp == 0)
 						temp = 1;  /*Get whether player 1 or 2*/
 
-					if (superBomb[temp-1] > 0)
+					if (player[temp-1].superbombs > 0)
 					{
 						if (shotRepeat[SHOT_P1_SUPERBOMB + temp-1] > 0)
 						{
@@ -3924,7 +3919,7 @@ redo:
 						}
 						else if (button[3-1] || button[2-1])
 						{
-							superBomb[temp-1]--;
+							--player[temp-1].superbombs;
 							shotMultiPos[SHOT_P1_SUPERBOMB + temp-1] = 0;
 							JE_initPlayerShot(16, SHOT_P1_SUPERBOMB + temp-1, *PX_, *PY_, *mouseX_, *mouseY_, 535, playerNum_);
 						}
@@ -4600,8 +4595,8 @@ void JE_playerCollide( Player *this_player,
 					}
 					else if (tempI4 == -4)
 					{
-						if (superBomb[playerNum_-1] < 10)
-							superBomb[playerNum_-1]++;
+						if (player[playerNum_-1].superbombs < 10)
+							++player[playerNum_-1].superbombs;
 					}
 					else if (tempI4 == -5)
 					{

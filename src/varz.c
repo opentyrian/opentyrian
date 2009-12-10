@@ -287,8 +287,6 @@ JE_boolean  spraySpecial;
 JE_byte     doIced;
 JE_boolean  infiniteShot;
 
-JE_byte superBomb[2]; /* [1..2] */
-
 JE_integer tempShotX, tempShotY;
 PlayerShotDataType playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
 

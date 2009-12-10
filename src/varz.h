@@ -315,7 +315,6 @@ extern JE_byte nextSpecialWait;
 extern JE_boolean spraySpecial;
 extern JE_byte doIced;
 extern JE_boolean infiniteShot;
-extern JE_byte superBomb[2];
 extern JE_integer tempShotX, tempShotY;
 extern PlayerShotDataType playerShotData[MAX_PWEAPON + 1];
 extern JE_byte chain;
