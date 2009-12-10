@@ -1848,14 +1848,14 @@ bool replay_demo_keys( void )
 		demo_keys_wait--;
 	
 	if (demo_keys & (1 << 0))
-		PY -= CURRENT_KEY_SPEED;
+		player[0].y -= CURRENT_KEY_SPEED;
 	if (demo_keys & (1 << 1))
-		PY += CURRENT_KEY_SPEED;
+		player[0].y += CURRENT_KEY_SPEED;
 	
 	if (demo_keys & (1 << 2))
-		PX -= CURRENT_KEY_SPEED;
+		player[0].x -= CURRENT_KEY_SPEED;
 	if (demo_keys & (1 << 3))
-		PX += CURRENT_KEY_SPEED;
+		player[0].x += CURRENT_KEY_SPEED;
 	
 	button[0] = (bool)(demo_keys & (1 << 4));
 	button[3] = (bool)(demo_keys & (1 << 5));
@@ -2949,7 +2949,7 @@ void JE_playerMovement( Player *this_player,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
                         JE_word *playerInvulnerable_,
-                        JE_integer *PX_, JE_integer *PY_,
+                        int *PX_, int *PY_,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
                         JE_integer *PXChange_, JE_integer *PYChange_,
                         JE_integer *lastTurn_, JE_integer *lastTurn2_,
@@ -3360,7 +3360,7 @@ redo:
 				/*Linking Routines*/
 
 				if (twoPlayerMode && !twoPlayerLinked && *PX_ == *mouseX_ && *PY_ == *mouseY_
-				    && abs(PX - PXB) < 8 && abs(PY - PYB) < 8
+				    && abs(player[0].x - player[1].x) < 8 && abs(player[0].y - player[1].y) < 8
 				    && playerAlive && playerAliveB && !galagaMode)
 				{
 					twoPlayerLinked = true;
@@ -3556,10 +3556,10 @@ redo:
 			else  /*twoPlayerLinked*/
 			{
 				if (shipGr_ == 0)
-					*PX_ = PX - 1;
+					*PX_ = player[0].x - 1;
 				else
-					*PX_ = PX;
-				*PY_ = PY + 8;
+					*PX_ = player[0].x;
+				*PY_ = player[0].y + 8;
 				*lastTurn2_ = lastTurn2;
 				*lastTurn_ = 4;
 				
@@ -4243,14 +4243,14 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
 		                  &playerInvulnerable1,
-		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2, &PXChange, &PYChange,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
 		                  &playerAlive, &playerStillExploding);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
 		                  &playerInvulnerable2,
-		                  &PXB, &PYB, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
+		                  &player[1].x, &player[1].y, &lastPX2B, &lastPY2B, &PXChangeB, &PYChangeB,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB,
 		                  &playerAliveB, &playerStillExploding2);
@@ -4260,7 +4260,7 @@ void JE_mainGamePlayerFunctions( void )
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
 		                  &playerInvulnerable1,
-		                  &PX, &PY, &lastPX2, &lastPY2, &PXChange, &PYChange,
+		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2, &PXChange, &PYChange,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
 		                  &playerAlive, &playerStillExploding);
@@ -4269,9 +4269,9 @@ void JE_mainGamePlayerFunctions( void )
 	/* == Parallax Map Scrolling == */
 	if (twoPlayerMode)
 	{
-		tempX = (PX + PXB) / 2;
+		tempX = (player[0].x + player[1].x) / 2;
 	} else {
-		tempX = PX;
+		tempX = player[0].x;
 	}
 
 	tempW = floorf((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
@@ -4307,7 +4307,7 @@ const char *JE_getName( JE_byte pnum )
 }
 
 void JE_playerCollide( Player *this_player,
-                       JE_integer *PX_, JE_integer *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
+                       int *PX_, int *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
                        JE_boolean *playerAlive_,
                        JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {

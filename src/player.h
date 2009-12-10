@@ -48,7 +48,7 @@ typedef struct
 	uint sidekick_level;
 	
 	// Single-player only
-	uint super_arcade_mode;  // stored as an item for compatability :(
+	uint super_arcade_mode;  // stored as an item for compatibility :(
 }
 PlayerItems;
 
@@ -69,6 +69,8 @@ typedef struct
 	uint weapon_mode;
 	uint shield;
 	uint armor;
+	
+	int x, y;
 }
 Player;
 

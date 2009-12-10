@@ -2214,8 +2214,8 @@ void JE_initWeaponView( void )
 	option2X = 72 + 15;
 	option2Y = 120;
 
-	PX    = 72;
-	PY    = 110;
+	player[0].x = 72;
+	player[0].y = 110;
 	PXChange = 0;
 	PYChange = 0;
 	lastPX2 = 72;
@@ -3090,7 +3090,7 @@ void JE_weaponSimUpdate( void )
 		blit_sprite(VGAScreenSeg, 20, 146, OPTION_SHAPES, 17);  // hide power level interface
 	}
 	
-	JE_drawItem(1, player[0].items.ship, PX - 5, PY - 7);
+	JE_drawItem(1, player[0].items.ship, player[0].x - 5, player[0].y - 7);
 }
 
 void JE_weaponViewFrame( void )
@@ -3130,8 +3130,8 @@ void JE_weaponViewFrame( void )
 		}
 	}
 	
-	mouseX = PX;
-	mouseY = PY;
+	mouseX = player[0].x;
+	mouseY = player[0].y;
 	
 	// create shots in weapon simulator
 	for (uint i = 0; i < 2; ++i)
@@ -3146,7 +3146,7 @@ void JE_weaponViewFrame( void )
 			           item_power = player[0].items.weapon[i].power - 1,
 			           item_mode = (i == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
 			
-			JE_initPlayerShot(item, i, PX, PY, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
+			JE_initPlayerShot(item, i, player[0].x, player[0].y, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
 		}
 	}
 	
@@ -3166,8 +3166,8 @@ void JE_weaponViewFrame( void )
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].tr == 2)
 	{
-		option2X = PX;
-		option2Y = PY - 20;
+		option2X = player[0].x;
+		option2Y = player[0].y - 20;
 		if (option2Y < 10)
 			option2Y = 10;
 	}

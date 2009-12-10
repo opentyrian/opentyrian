@@ -331,9 +331,9 @@ extern JE_integer baseSpeedOld, baseSpeedOld2, baseSpeed, baseSpeedB, baseSpeed2
 extern JE_boolean keyMoveWait;
 extern JE_word playerInvulnerable1, playerInvulnerable2;
 extern JE_integer lastPXShotMove, lastPYShotMove;
-extern JE_integer PXB, PYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB, lastTurnB, lastTurn2B;
+extern JE_integer lastPX2B, lastPY2B, PXChangeB, PYChangeB, lastTurnB, lastTurn2B;
 extern JE_byte stopWaitXB, stopWaitYB;
-extern JE_integer PX, PY, lastPX2, lastPY2, PXChange, PYChange, lastTurn, lastTurn2;
+extern JE_integer lastPX2, lastPY2, PXChange, PYChange, lastTurn, lastTurn2;
 extern JE_byte stopWaitX, stopWaitY;
 extern JE_integer PYHist[3], PYHistB[3];
 extern JE_word option1Draw, option2Draw, option1Item, option2Item;
@@ -388,7 +388,7 @@ void JE_doSpecialShot( JE_byte playernum, uint *armor, uint *shield );
 void JE_powerUp( JE_byte port );
 void JE_wipeShieldArmorBars( void );
 JE_byte JE_playerDamage( JE_byte temp,
-                         JE_integer *PX, JE_integer *PY,
+                         int *PX, int *PY,
                          JE_boolean *playerAlive,
                          JE_byte *playerStillExploding,
                          uint *armor,

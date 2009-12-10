@@ -314,11 +314,11 @@ JE_word playerInvulnerable1, playerInvulnerable2;
 
 JE_integer lastPXShotMove, lastPYShotMove;
 
-JE_integer PXB, PYB, lastPX2B, lastPY2B, PXChangeB, PYChangeB,
+JE_integer lastPX2B, lastPY2B, PXChangeB, PYChangeB,
            lastTurnB, lastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
 
-JE_integer PX, PY, lastPX2, lastPY2, PXChange, PYChange,
+JE_integer lastPX2, lastPY2, PXChange, PYChange,
            lastTurn, lastTurn2;
 JE_byte stopWaitX, stopWaitY;
 
@@ -483,8 +483,8 @@ void JE_drawOptions( void )
 		option2Item = player[1].items.sidekick[RIGHT_SIDEKICK];
 		option1Draw = (option1Item != 0) ? 108 : 0;
 		option2Draw = (option2Item != 0) ? 126 : 0;
-		tempX = PXB;
-		tempY = PYB;
+		tempX = player[1].x;
+		tempY = player[1].y;
 	}
 	else
 	{
@@ -492,8 +492,8 @@ void JE_drawOptions( void )
 		option2Item = player[0].items.sidekick[RIGHT_SIDEKICK];
 		option1Draw = (option1Item != 0) ? 64 : 0;
 		option2Draw = (option2Item != 0) ? 82 : 0;
-		tempX = PX;
-		tempY = PY;
+		tempX = player[0].x;
+		tempY = player[0].y;
 	}
 	option1X = tempX - 8;
 	option1LastX = 0;
@@ -859,9 +859,9 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 		/*Weapon*/
 		case 1:
 			if (playerNum == 1)
-				JE_initPlayerShot(0, SHOT_SPECIAL2, PX, PY, mouseX, mouseY, special[specialType].wpn, playerNum);
+				JE_initPlayerShot(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, special[specialType].wpn, playerNum);
 			else
-				JE_initPlayerShot(0, SHOT_SPECIAL2, PXB, PYB, mouseX, mouseY, special[specialType].wpn, playerNum);
+				JE_initPlayerShot(0, SHOT_SPECIAL2, player[1].x, player[1].y, mouseX, mouseY, special[specialType].wpn, playerNum);
 			
 			shotRepeat[SHOT_SPECIAL] = shotRepeat[SHOT_SPECIAL2];
 			break;
@@ -871,14 +871,14 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			{
 				if (!enemyShotAvail[temp])
 				{
-					if (PX > enemyShot[temp].sx)
+					if (player[0].x > enemyShot[temp].sx)
 						enemyShot[temp].sxm--;
-					else if (PX < enemyShot[temp].sx)
+					else if (player[0].x < enemyShot[temp].sx)
 						enemyShot[temp].sxm++;
 					
-					if (PY > enemyShot[temp].sy)
+					if (player[0].y > enemyShot[temp].sy)
 						enemyShot[temp].sym--;
-					else if (PY < enemyShot[temp].sy)
+					else if (player[0].y < enemyShot[temp].sy)
 						enemyShot[temp].sym++;
 				}
 			}
@@ -896,14 +896,14 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 				if (enemyAvail[temp] != 1 && enemy[temp].scoreitem
 				    && enemy[temp].evalue != 0)
 				{
-					if (PX > enemy[temp].ex)
+					if (player[0].x > enemy[temp].ex)
 						enemy[temp].exc++;
-					else if (PX < enemy[temp].ex)
+					else if (player[0].x < enemy[temp].ex)
 						enemy[temp].exc--;
 
-					if (PY > enemy[temp].ey)
+					if (player[0].y > enemy[temp].ey)
 						enemy[temp].eyc++;
-					else if (PY < enemy[temp].ey)
+					else if (player[0].y < enemy[temp].ey)
 						enemy[temp].eyc--;
 				}
 			}
@@ -989,7 +989,7 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			if (superArcadeMode > 0 && superArcadeMode <= SA)
 			{
 				shotRepeat[SHOT_SPECIAL] = 250;
-				JE_initPlayerShot(0, SHOT_SPECIAL2, PX, PY, mouseX, mouseY, 707, 1);
+				JE_initPlayerShot(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, 707, 1);
 				playerInvulnerable1 = 100;
 			}
 			break;
@@ -1171,7 +1171,7 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 			{
 				if (shotRepeat[SHOT_SPECIAL] == 0)
 				{
-					JE_initPlayerShot(0, SHOT_SPECIAL, PX, PY, mouseX, mouseY, specialWeaponWpn, playerNum);
+					JE_initPlayerShot(0, SHOT_SPECIAL, player[0].x, player[0].y, mouseX, mouseY, specialWeaponWpn, playerNum);
 				}
 			}
 			else
@@ -1213,8 +1213,8 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 	{
 		temp = 25 - abs(zinglonDuration - 25);
 
-		JE_barBright(PX + 7 - temp,     0, PX + 7 + temp,     184);
-		JE_barBright(PX + 7 - temp - 2, 0, PX + 7 + temp + 2, 184);
+		JE_barBright(player[0].x + 7 - temp,     0, player[0].x + 7 + temp,     184);
+		JE_barBright(player[0].x + 7 - temp - 2, 0, player[0].x + 7 + temp + 2, 184);
 
 		zinglonDuration--;
 		if (zinglonDuration % 5 == 0)
@@ -1379,7 +1379,7 @@ void JE_wipeShieldArmorBars( void )
 }
 
 JE_byte JE_playerDamage( JE_byte temp,
-                         JE_integer *PX, JE_integer *PY,
+                         int *PX, int *PY,
                          JE_boolean *playerAlive,
                          JE_byte *playerStillExploding,
                          uint *armorLevel,
@@ -1510,13 +1510,13 @@ void JE_resetPlayerH( void ) // ship x, y history
 		// history is used for some option ships; in two player mode, only second player can have them
 		if (twoPlayerMode)
 		{
-			playerHX[i] = PXB - (19 - i);
-			playerHY[i] = PYB - 18;
+			playerHX[i] = player[1].x - (19 - i);
+			playerHY[i] = player[1].y - 18;
 		}
 		else
 		{
-			playerHX[i] = PX - (19 - i);
-			playerHY[i] = PY - 18;
+			playerHX[i] = player[0].x - (19 - i);
+			playerHY[i] = player[0].y - 18;
 		}
 	}
 	playerHNotReady = false;

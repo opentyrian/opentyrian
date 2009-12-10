@@ -104,8 +104,8 @@ void JE_starShowVGA( void )
 		}
 		else if (starShowVGASpecialCode == 2 && processorType >= 2)
 		{
-			lighty = 172 - PY;
-			lightx = 281 - PX;
+			lighty = 172 - player[0].y;
+			lightx = 281 - player[0].x;
 
 			for (y = 184; y; y--)
 			{
@@ -167,7 +167,7 @@ inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int 
 
 void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just drawing
 {
-	PX -= 25;
+	player[0].x -= 25;
 
 	for (int i = enemyOffset - 25; i < enemyOffset; i++)
 	{
@@ -177,7 +177,7 @@ void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just
 
 			if (enemy[i].xaccel && enemy[i].xaccel - 89 > mt_rand() % 11)
 			{
-				if (PX > enemy[i].ex)
+				if (player[0].x > enemy[i].ex)
 				{
 					if (enemy[i].exc < enemy[i].xaccel - 89)
 						enemy[i].exc++;
@@ -191,7 +191,7 @@ void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just
 
 			if (enemy[i].yaccel && enemy[i].yaccel - 89 > mt_rand() % 11)
 			{
-				if (PY > enemy[i].ey)
+				if (player[0].y > enemy[i].ey)
 				{
 					if (enemy[i].eyc < enemy[i].yaccel - 89)
 						enemy[i].eyc++;
@@ -379,30 +379,30 @@ enemy_still_exists:
 							}
 							break;
 						case 251: /* Suck-O-Magnet */
-							tempI4 = 4 - (abs(PX - tempX) + abs(PY - tempY)) / 100;
-							if (PX > tempX)
+							tempI4 = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 100;
+							if (player[0].x > tempX)
 								lastTurn2 -= tempI4;
 							else
 								lastTurn2 += tempI4;
 							break;
 						case 253: /* Left ShortRange Magnet */
-							if (abs(PX + 25 - 14 - tempX) < 24 && abs(PY - tempY) < 28)
+							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
 							{
 								lastTurn2 += 2;
 							}
 							if (twoPlayerMode &&
-							   (abs(PXB - 14 - tempX) < 24 && abs(PYB - tempY) < 28))
+							   (abs(player[1].x - 14 - tempX) < 24 && abs(player[1].y - tempY) < 28))
 							{
 								lastTurn2B += 2;
 							}
 							break;
 						case 254: /* Left ShortRange Magnet */
-							if (abs(PX + 25 - 14 - tempX) < 24 && abs(PY - tempY) < 28)
+							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
 							{
 								lastTurn2 -= 2;
 							}
 							if (twoPlayerMode &&
-							   (abs(PXB - 14 - tempX) < 24 && abs(PYB - tempY) < 28))
+							   (abs(player[1].x - 14 - tempX) < 24 && abs(player[1].y - tempY) < 28))
 							{
 								lastTurn2B -= 2;
 							}
@@ -416,10 +416,10 @@ enemy_still_exists:
 								}
 								else
 								{
-									tempI4 = 4 - (abs(PX - tempX) + abs(PY - tempY)) / 20;
+									tempI4 = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 20;
 									if (tempI4 > 0)
 									{
-										if (PX > tempX)
+										if (player[0].x > tempX)
 											lastTurn2 += tempI4;
 										else
 											lastTurn2 -= tempI4;
@@ -507,8 +507,8 @@ enemy_still_exists:
 										temp4 += difficultyLevel - 2;
 									}
 									
-									tempX2 = PX;
-									tempY2 = PY;
+									tempX2 = player[0].x;
+									tempY2 = player[0].y;
 									
 									if (twoPlayerMode)
 									{
@@ -521,8 +521,8 @@ enemy_still_exists:
 										
 										if (temp == 1)
 										{
-											tempX2 = PXB - 25;
-											tempY2 = PYB;
+											tempX2 = player[1].x - 25;
+											tempY2 = player[1].y;
 										}
 									}
 									
@@ -556,7 +556,7 @@ enemy_still_exists:
 					if (enemy[i].launchspecial != 0)
 					{
 						/*Type  1 : Must be inline with player*/
-						if (abs(enemy[i].ey - PY) > 5)
+						if (abs(enemy[i].ey - player[0].y) > 5)
 							goto draw_enemy_end;
 					}
 					
@@ -589,10 +589,10 @@ enemy_still_exists:
 							}
 							else
 							{
-								tempI4 = (PX + 25) - tempX - tempMapXOfs - 4;
+								tempI4 = (player[0].x + 25) - tempX - tempMapXOfs - 4;
 								if (tempI4 == 0)
 									tempI4++;
-								tempI5 = PY - tempY;
+								tempI5 = player[0].y - tempY;
 								if (tempI5 == 0)
 									tempI5++;
 								if (abs(tempI4) > abs(tempI5))
@@ -625,7 +625,7 @@ draw_enemy_end:
 		;
 	}
 	
-	PX += 25;
+	player[0].x += 25;
 }
 
 void JE_main( void )
@@ -759,16 +759,16 @@ start_level_first:
 		difficultyLevel = 1;
 	}
 
-	PX = 100;
-	PY = 180;
+	player[0].x = 100;
+	player[0].y = 180;
 
-	PXB = 190;
-	PYB = 180;
+	player[1].x = 190;
+	player[1].y = 180;
 
 	playerHNotReady = true;
 
-	lastPXShotMove = PX;
-	lastPYShotMove = PY;
+	lastPXShotMove = player[0].x;
+	lastPYShotMove = player[0].y;
 
 	if (twoPlayerMode)
 	{
@@ -840,7 +840,7 @@ start_level_first:
 
 	/* Setup player ship graphics */
 	JE_getShipInfo();
-	tempI = (((PX - mouseX) / (100 - baseSpeed)) * 2) * 168;
+	tempI = (((player[0].x - mouseX) / (100 - baseSpeed)) * 2) * 168;
 	lastTurn   = 0;
 	lastTurnB  = 0;
 	lastTurn2  = 0;
@@ -1651,7 +1651,7 @@ level_loop:
 					if (z == MAX_PWEAPON - 1)
 					{
 						temp = 25 - abs(zinglonDuration - 25);
-						tempB = abs(enemy[b].ex + enemy[b].mapoffset - (PX + 7)) < temp;
+						tempB = abs(enemy[b].ex + enemy[b].mapoffset - (player[0].x + 7)) < temp;
 						temp2 = 9;
 						chain = 0;
 						tempI2 = 10;
@@ -1931,18 +1931,18 @@ draw_player_shot_loop_end:
 	}
 
 	/* Player movement indicators for shots that track your ship */
-	lastPXShotMove = PX;
-	lastPYShotMove = PY;
+	lastPXShotMove = player[0].x;
+	lastPYShotMove = player[0].y;
 
 	/*=================================*/
 	/*=======Collisions Detection======*/
 	/*=================================*/
 
 	if (playerAlive && !endLevel)
-		JE_playerCollide(&player[0], &PX, &PY, &lastTurn, &lastTurn2, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
+		JE_playerCollide(&player[0], &player[0].x, &player[0].y, &lastTurn, &lastTurn2, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
 
 	if (twoPlayerMode && playerAliveB && !endLevel)
-		JE_playerCollide(&player[1], &PXB, &PYB, &lastTurnB, &lastTurn2B, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
+		JE_playerCollide(&player[1], &player[1].x, &player[1].y, &lastTurnB, &lastTurn2B, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -1960,7 +1960,7 @@ draw_player_shot_loop_end:
 
 				if (enemyShot[z].tx != 0)
 				{
-					if (enemyShot[z].sx > PX)
+					if (enemyShot[z].sx > player[0].x)
 					{
 						if (enemyShot[z].sxm > -enemyShot[z].tx)
 						{
@@ -1979,7 +1979,7 @@ draw_player_shot_loop_end:
 
 				if (enemyShot[z].ty != 0)
 				{
-					if (enemyShot[z].sy > PY)
+					if (enemyShot[z].sy > player[0].y)
 					{
 						if (enemyShot[z].sym > -enemyShot[z].ty)
 						{
@@ -2001,13 +2001,13 @@ draw_player_shot_loop_end:
 				{
 					if (((temp3 = 1)
 					     && playerAlive != 0
-					     && enemyShot[z].sx - PX > sAniXNeg && enemyShot[z].sx - PX < sAniX
-					     && enemyShot[z].sy - PY > sAniYNeg && enemyShot[z].sy - PY < sAniY)
+					     && enemyShot[z].sx - player[0].x > sAniXNeg && enemyShot[z].sx - player[0].x < sAniX
+					     && enemyShot[z].sy - player[0].y > sAniYNeg && enemyShot[z].sy - player[0].y < sAniY)
 					 || ((temp3 = 2)
 					     && twoPlayerMode != 0
 					     && playerAliveB != 0
-					     && enemyShot[z].sx - PXB > sAniXNeg && enemyShot[z].sx - PXB < sAniX
-					     && enemyShot[z].sy - PYB > sAniYNeg && enemyShot[z].sy - PYB < sAniY))
+					     && enemyShot[z].sx - player[1].x > sAniXNeg && enemyShot[z].sx - player[1].x < sAniX
+					     && enemyShot[z].sy - player[1].y > sAniYNeg && enemyShot[z].sy - player[1].y < sAniY))
 					{
 						tempX = enemyShot[z].sx;
 						tempY = enemyShot[z].sy;
@@ -2022,7 +2022,7 @@ draw_player_shot_loop_end:
 						case 1:
 							if (playerInvulnerable1 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &PX, &PY, &playerAlive, &playerStillExploding, &player[0].armor, &player[0].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &player[0].x, &player[0].y, &playerAlive, &playerStillExploding, &player[0].armor, &player[0].shield)) > 0)
 								{
 									lastTurn2 += (enemyShot[z].sxm * temp) / 2;
 									lastTurn  += (enemyShot[z].sym * temp) / 2;
@@ -2032,7 +2032,7 @@ draw_player_shot_loop_end:
 						case 2:
 							if (playerInvulnerable2 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &PXB, &PYB, &playerAliveB, &playerStillExploding2, &player[1].armor, &player[1].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &player[1].x, &player[1].y, &playerAliveB, &playerStillExploding2, &player[1].armor, &player[1].shield)) > 0)
 								{
 									lastTurn2B += (enemyShot[z].sxm * temp) / 2;
 									lastTurnB  += (enemyShot[z].sym * temp) / 2;
@@ -2300,7 +2300,7 @@ draw_player_shot_loop_end:
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
 		sprintf(tempStr, "%2.3f", 1000.0f / roundf(debugHist / debugHistCount));
-		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + PX, curLoc, tempStr, lastTurn2, lastTurn, PX, PY);
+		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + player[0].x, curLoc, tempStr, lastTurn2, lastTurn, player[0].x, player[0].y);
 		JE_outText(45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
 	}
@@ -2455,10 +2455,10 @@ draw_player_shot_loop_end:
 			SDLNet_Write16(requests,        &packet_state_out[0]->data[14]);
 
 			SDLNet_Write16(difficultyLevel, &packet_state_out[0]->data[16]);
-			SDLNet_Write16(PX,              &packet_state_out[0]->data[18]);
-			SDLNet_Write16(PXB,             &packet_state_out[0]->data[20]);
-			SDLNet_Write16(PY,              &packet_state_out[0]->data[22]);
-			SDLNet_Write16(PYB,             &packet_state_out[0]->data[24]);
+			SDLNet_Write16(player[0].x,     &packet_state_out[0]->data[18]);
+			SDLNet_Write16(player[1].x,     &packet_state_out[0]->data[20]);
+			SDLNet_Write16(player[0].y,     &packet_state_out[0]->data[22]);
+			SDLNet_Write16(player[1].y,     &packet_state_out[0]->data[24]);
 			SDLNet_Write16(curLoc,          &packet_state_out[0]->data[26]);
 
 			network_state_send();
