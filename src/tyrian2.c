@@ -735,9 +735,7 @@ start_level_first:
 	reallyEndLevel = false;
 	playerEndLevel = false;
 	extraGame = false;
-
-	/*debuginfo('Loading LEVELS.DAT');*/
-
+	
 	doNotSaveBackup = false;
 	JE_loadMap();
 	
@@ -751,14 +749,10 @@ start_level_first:
 	
 	oldDifficultyLevel = difficultyLevel;
 	if (episodeNum == 4)
-	{
 		difficultyLevel--;
-	}
 	if (difficultyLevel < 1)
-	{
 		difficultyLevel = 1;
-	}
-
+	
 	player[0].x = 100;
 	player[0].y = 180;
 
@@ -769,25 +763,14 @@ start_level_first:
 
 	player[0].last_shot_move_x = player[0].x;
 	player[0].last_shot_move_y = player[0].y;
-
-	if (twoPlayerMode)
-	{
-		JE_loadPic(6, false);
-	} else {
-		JE_loadPic(3, false);
-	}
-
+	
+	JE_loadPic(twoPlayerMode ? 6 : 3, false);
+	
 	tempScreenSeg = VGAScreen;
 	JE_drawOptions();
-
-	if (twoPlayerMode)
-	{
-		temp = 76;
-	} else {
-		temp = 118;
-	}
-	JE_outText(268, temp, levelName, 12, 4);
-
+	
+	JE_outText(268, twoPlayerMode ? 76 : 118, levelName, 12, 4);
+	
 	JE_showVGA();
 	JE_gammaCorrect(&colors, gammaCorrection);
 	fade_palette(colors, 50, 0, 255);
@@ -824,16 +807,9 @@ start_level_first:
 	power = 0;
 	starY = VGAScreen->pitch;
 
-	/* Setup maximum player speed */
-	/* ==== Mouse Input ==== */
-	baseSpeed = 6;
-
-	baseSpeed   = 100 - (((baseSpeed + 1) / 4) + 1);
-	shadowyDist = 10;
-
 	/* Setup player ship graphics */
 	JE_getShipInfo();
-	tempI = (((player[0].x - mouseX) / (100 - baseSpeed)) * 2) * 168;
+	tempI = (((player[0].x - mouseX) / 2) * 2) * 168; // is this used for anything?
 	lastTurn   = 0;
 	lastTurnB  = 0;
 	lastTurn2  = 0;
@@ -1623,14 +1599,14 @@ level_loop:
 					}
 					if (tempW > 500)
 					{
-						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, shapesW2, tempW - 500);
+						if (background2 && tempShotY + shadowYDist < 190 && tempI4 < 100)
+							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowYDist, shapesW2, tempW - 500);
 						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, tempW - 500);
 					}
 					else
 					{
-						if (background2 && tempShotY + shadowyDist < 190 && tempI4 < 100)
-							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowyDist, shapesC1, tempW);
+						if (background2 && tempShotY + shadowYDist < 190 && tempI4 < 100)
+							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowYDist, shapesC1, tempW);
 						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, tempW);
 					}
 				}

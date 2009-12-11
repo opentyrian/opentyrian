@@ -293,12 +293,11 @@ JE_byte chain;
 JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
-JE_byte shadowyDist;
+const uint shadowYDist = 10;
 JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
-JE_integer baseSpeed;
 
 JE_integer lastPX2B, lastPY2B,
            lastTurnB, lastTurn2B;
