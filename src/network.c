@@ -83,6 +83,7 @@ UDPpacket *packet_state_in[NET_PACKET_QUEUE] = { NULL },
 Uint16 last_state_in_sync = 0, last_state_out_sync = 0;
 Uint32 last_state_in_tick = 0;
 
+bool net_initialized = false;
 static bool connected = false, quit = false;
 
 
@@ -144,6 +145,9 @@ bool network_send_no_ack( int len )
 // poll for new packets received, check that connection is alive, resend queued packets if necessary
 int network_check( void )
 {
+	if (!net_initialized)
+		return -1;
+	
 	if (connected)
 	{
 		// timeout
@@ -537,7 +541,8 @@ void network_state_reset( void )
 
 // attempt to punch through firewall by firing off UDP packets at the opponent
 // exchange game information
-int network_connect( void ) {
+int network_connect( void )
+{
 	SDLNet_ResolveHost(&ip, network_opponent_host, network_opponent_port);
 	
 	SDLNet_UDP_Bind(socket, 0, &ip);
@@ -729,6 +734,8 @@ int network_init( void )
 		printf("SDLNet_AllocPacket: %s\n", SDLNet_GetError());
 		return -3;
 	}
+	
+	net_initialized = true;
 	
 	return 0;
 }
