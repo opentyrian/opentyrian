@@ -2948,8 +2948,7 @@ void JE_playerMovement( Player *this_player,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
                         JE_integer *lastTurn_, JE_integer *lastTurn2_,
                         JE_byte *stopWaitX_, JE_byte *stopWaitY_,
-                        JE_word *mouseX_, JE_word *mouseY_,
-                        JE_byte *playerStillExploding_ )
+                        JE_word *mouseX_, JE_word *mouseY_ )
 {
 	JE_integer mouseXC, mouseYC;
 	JE_integer accelXC, accelYC;
@@ -2988,10 +2987,10 @@ redo:
 	/* Draw Player */
 	if (!this_player->is_alive)
 	{
-		if (*playerStillExploding_ > 0)
+		if (this_player->exploding_ticks > 0)
 		{
-			(*playerStillExploding_)--;
-
+			--this_player->exploding_ticks;
+			
 			if (levelEndFxWait > 0)
 			{
 				levelEndFxWait--;
@@ -3061,7 +3060,8 @@ redo:
 	}
 	else if (constantDie)
 	{
-		if (*playerStillExploding_ == 0)
+		// finished exploding?  start dying again
+		if (this_player->exploding_ticks == 0)
 		{
 			this_player->shield = 0;
 			
@@ -3072,7 +3072,7 @@ redo:
 			else
 			{
 				this_player->is_alive = false;
-				*playerStillExploding_ = 60;
+				this_player->exploding_ticks = 60;
 				levelEnd = 40;
 			}
 
@@ -3176,7 +3176,7 @@ redo:
 						}
 
 						if ((!isNetworkGame || playerNum_ == thisPlayerNum)
-						    && (!galagaMode || (playerNum_ == 2 || !twoPlayerMode || playerStillExploding2 > 0)))
+						    && (!galagaMode || (playerNum_ == 2 || !twoPlayerMode || player[1].exploding_ticks > 0)))
 							set_mouse_position(159, 100);
 					}
 
@@ -4240,15 +4240,13 @@ void JE_mainGamePlayerFunctions( void )
 		                  &playerInvulnerable1,
 		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
-		                  &mouseX, &mouseY,
-		                  &playerStillExploding);
+		                  &mouseX, &mouseY);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
 		                  &playerInvulnerable2,
 		                  &player[1].x, &player[1].y, &lastPX2B, &lastPY2B,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
-		                  &mouseXB, &mouseYB,
-		                  &playerStillExploding2);
+		                  &mouseXB, &mouseYB);
 	}
 	else
 	{
@@ -4257,8 +4255,7 @@ void JE_mainGamePlayerFunctions( void )
 		                  &playerInvulnerable1,
 		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
-		                  &mouseX, &mouseY,
-		                  &playerStillExploding);
+		                  &mouseX, &mouseY);
 	}
 
 	/* == Parallax Map Scrolling == */
@@ -4303,7 +4300,7 @@ const char *JE_getName( JE_byte pnum )
 
 void JE_playerCollide( Player *this_player,
                        JE_integer *lastTurn_, JE_integer *lastTurn2_,
-                       JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
+                       JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {
 	char tempStr[256];
 	
@@ -4631,7 +4628,7 @@ void JE_playerCollide( Player *this_player,
 					if (tempI3 > damageRate)
 						tempI3 = damageRate;
 					
-					JE_playerDamage(tempI3, &this_player->x, &this_player->y, &this_player->is_alive, playerStillExploding_, &this_player->armor, &this_player->shield);
+					JE_playerDamage(tempI3, this_player);
 					
 					if (enemy[z].armorleft > 0)
 					{

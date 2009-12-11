@@ -21,6 +21,7 @@
 
 #include "episodes.h"
 #include "opentyr.h"
+#include "player.h"
 #include "sprite.h"
 
 #include <stdbool.h>
@@ -321,7 +322,6 @@ extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
 extern JE_byte shadowyDist;
 extern JE_byte purpleBallsRemaining[2];
-extern JE_byte playerStillExploding, playerStillExploding2;
 extern JE_byte sAni;
 extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;
 extern JE_integer baseSpeed;
@@ -379,12 +379,7 @@ void JE_doSpecialShot( JE_byte playernum, uint *armor, uint *shield );
 
 void JE_powerUp( JE_byte port );
 void JE_wipeShieldArmorBars( void );
-JE_byte JE_playerDamage( JE_byte temp,
-                         int *PX, int *PY,
-                         JE_boolean *playerAlive,
-                         JE_byte *playerStillExploding,
-                         uint *armor,
-                         uint *shield );
+JE_byte JE_playerDamage( JE_byte temp, Player * );
 
 void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player );
 void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );

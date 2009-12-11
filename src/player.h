@@ -68,6 +68,7 @@ typedef struct
 	
 	// state
 	bool is_alive;
+	uint exploding_ticks;
 	uint shield;
 	uint armor;
 	uint weapon_mode;

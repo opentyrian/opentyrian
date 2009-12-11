@@ -55,11 +55,12 @@
 #include "palette.h"
 #include "picload.h"
 #include "sprite.h"
-#include "varz.h"
 #include "vga256d.h"
 #include "video.h"
 
 #include <assert.h>
+
+extern JE_byte soundQueue[8];
 
 /*** Defines ***/
 #define MAX_SHOTS 40

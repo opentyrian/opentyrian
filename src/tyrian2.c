@@ -1032,10 +1032,10 @@ start_level_first:
 	yourInGameMenuRequest = false;
 
 	constantLastX = -1;
-
-	playerStillExploding = 0;
-	playerStillExploding2 = 0;
-
+	
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		player[i].exploding_ticks = 0;
+	
 	if (isNetworkGame)
 	{
 		JE_loadItemDat();
@@ -1130,8 +1130,8 @@ level_loop:
 
 
 	allPlayersGone = all_players_dead() &&
-	                 ((*player[0].lives == 1 && playerStillExploding == 0) || (!onePlayerAction && !twoPlayerMode)) &&
-	                 ((*player[1].lives == 1 && playerStillExploding2 == 0) || !twoPlayerMode);
+	                 ((*player[0].lives == 1 && player[0].exploding_ticks == 0) || (!onePlayerAction && !twoPlayerMode)) &&
+	                 ((*player[1].lives == 1 && player[1].exploding_ticks == 0) || !twoPlayerMode);
 
 
 	/*-----MUSIC FADE------*/
@@ -1932,10 +1932,10 @@ draw_player_shot_loop_end:
 	/*=================================*/
 
 	if (player[0].is_alive && !endLevel)
-		JE_playerCollide(&player[0], &lastTurn, &lastTurn2, &playerStillExploding, 1, playerInvulnerable1);
+		JE_playerCollide(&player[0], &lastTurn, &lastTurn2, 1, playerInvulnerable1);
 
 	if (twoPlayerMode && player[1].is_alive && !endLevel)
-		JE_playerCollide(&player[1], &lastTurnB, &lastTurn2B, &playerStillExploding2, 2, playerInvulnerable2);
+		JE_playerCollide(&player[1], &lastTurnB, &lastTurn2B, 2, playerInvulnerable2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -2020,7 +2020,7 @@ draw_player_shot_loop_end:
 						case 1:
 							if (playerInvulnerable1 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &player[0].x, &player[0].y, &player[0].is_alive, &playerStillExploding, &player[0].armor, &player[0].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &player[0])) > 0)
 								{
 									lastTurn2 += (enemyShot[z].sxm * temp) / 2;
 									lastTurn  += (enemyShot[z].sym * temp) / 2;
@@ -2030,7 +2030,7 @@ draw_player_shot_loop_end:
 						case 2:
 							if (playerInvulnerable2 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &player[1].x, &player[1].y, &player[1].is_alive, &playerStillExploding2, &player[1].armor, &player[1].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &player[1])) > 0)
 								{
 									lastTurn2B += (enemyShot[z].sxm * temp) / 2;
 									lastTurnB  += (enemyShot[z].sym * temp) / 2;
@@ -2348,10 +2348,10 @@ draw_player_shot_loop_end:
 	{
 		if (allPlayersGone)
 		{
-			if (playerStillExploding > 0 || playerStillExploding2 > 0)
+			if (player[0].exploding_ticks > 0 || player[1].exploding_ticks > 0)
 			{
 				if (galagaMode)
-					playerStillExploding2 = 0;
+					player[1].exploding_ticks = 0;
 
 				musicFade = true;
 			}

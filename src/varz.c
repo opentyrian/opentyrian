@@ -296,8 +296,6 @@ JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration
 JE_byte shadowyDist;
 JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
-JE_byte playerStillExploding, playerStillExploding2;
-
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
 JE_integer baseSpeed;
@@ -1361,62 +1359,59 @@ void JE_wipeShieldArmorBars( void )
 }
 
 JE_byte JE_playerDamage( JE_byte temp,
-                         int *PX, int *PY,
-                         JE_boolean *playerAlive,
-                         JE_byte *playerStillExploding,
-                         uint *armorLevel,
-                         uint *shield )
+                         Player *this_player )
 {
 	int playerDamage = 0;
 	soundQueue[7] = S_SHIELD_HIT;
 
 	/* Player Damage Routines */
-	if (*shield < temp)
+	if (this_player->shield < temp)
 	{
 		playerDamage = temp;
-		temp -= *shield;
-		*shield = 0;
-
+		temp -= this_player->shield;
+		this_player->shield = 0;
+		
 		if (temp > 0)
 		{
 			/*Through Shields - Now Armor */
-			if (*armorLevel < temp)
+			
+			if (this_player->armor < temp)
 			{
-				temp -= *armorLevel;
-				*armorLevel = 0;
-				if (playerAlive && !youAreCheating)
+				temp -= this_player->armor;
+				this_player->armor = 0;
+				
+				if (this_player->is_alive && !youAreCheating)
 				{
 					levelTimer = false;
-					*playerAlive = false;
-					*playerStillExploding = 60;
+					this_player->is_alive = false;
+					this_player->exploding_ticks = 60;
 					levelEnd = 40;
 					tempVolume = tyrMusicVolume;
 					soundQueue[1] = S_EXPLOSION_22;
 				}
-
-				/*Through Armor - Now What? */
 			}
 			else
 			{
-				*armorLevel -= temp;
+				this_player->armor -= temp;
 				soundQueue[7] = S_HULL_HIT;
 			}
 		}
-
-	} else {
-		*shield -= temp;
-
-		JE_setupExplosion(*PX - 17, *PY - 12, 0, 14, false, !twoPlayerMode);
-		JE_setupExplosion(*PX - 5 , *PY - 12, 0, 15, false, !twoPlayerMode);
-		JE_setupExplosion(*PX + 7 , *PY - 12, 0, 16, false, !twoPlayerMode);
-		JE_setupExplosion(*PX + 19, *PY - 12, 0, 17, false, !twoPlayerMode);
-
-		JE_setupExplosion(*PX - 17, *PY + 2, 0,  18, false, !twoPlayerMode);
-		JE_setupExplosion(*PX + 19, *PY + 2, 0,  19, false, !twoPlayerMode);
-
-		JE_setupExplosion(*PX - 17, *PY + 16, 0, 20, false, !twoPlayerMode);
-		JE_setupExplosion(*PX - 5 , *PY + 16, 0, 21, false, !twoPlayerMode);
-		JE_setupExplosion(*PX + 7 , *PY + 16, 0, 22, false, !twoPlayerMode);
+	}
+	else
+	{
+		this_player->shield -= temp;
+		
+		JE_setupExplosion(this_player->x - 17, this_player->y - 12, 0, 14, false, !twoPlayerMode);
+		JE_setupExplosion(this_player->x - 5 , this_player->y - 12, 0, 15, false, !twoPlayerMode);
+		JE_setupExplosion(this_player->x + 7 , this_player->y - 12, 0, 16, false, !twoPlayerMode);
+		JE_setupExplosion(this_player->x + 19, this_player->y - 12, 0, 17, false, !twoPlayerMode);
+		
+		JE_setupExplosion(this_player->x - 17, this_player->y + 2, 0,  18, false, !twoPlayerMode);
+		JE_setupExplosion(this_player->x + 19, this_player->y + 2, 0,  19, false, !twoPlayerMode);
+		
+		JE_setupExplosion(this_player->x - 17, this_player->y + 16, 0, 20, false, !twoPlayerMode);
+		JE_setupExplosion(this_player->x - 5 , this_player->y + 16, 0, 21, false, !twoPlayerMode);
+		JE_setupExplosion(this_player->x + 7 , this_player->y + 16, 0, 22, false, !twoPlayerMode);
 	}
 
 	JE_wipeShieldArmorBars();
