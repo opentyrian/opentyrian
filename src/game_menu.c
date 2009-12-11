@@ -316,6 +316,8 @@ void JE_itemScreen( void )
 		/* load/save menu */
 		if (curMenu == 6)
 		{
+			int min, max;
+			
 			if (twoPlayerMode)
 			{
 				min = 13;

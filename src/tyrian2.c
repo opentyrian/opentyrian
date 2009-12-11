@@ -827,15 +827,8 @@ start_level_first:
 	/* Setup maximum player speed */
 	/* ==== Mouse Input ==== */
 	baseSpeed = 6;
-	baseSpeedKeyH = (baseSpeed / 4) + 1;
-	baseSpeedKeyV = (baseSpeed / 4) + 1;
 
-	baseSpeedOld = baseSpeed;
-	baseSpeedOld2 = (baseSpeed * 0.7f) + 1;
-	baseSpeed2  = 100 - (((baseSpeed + 1) / 4) + 1);
-	baseSpeed2B = 100 + 100 - baseSpeed2;
 	baseSpeed   = 100 - (((baseSpeed + 1) / 4) + 1);
-	baseSpeedB  = 100 + 100 - baseSpeed;
 	shadowyDist = 10;
 
 	/* Setup player ship graphics */

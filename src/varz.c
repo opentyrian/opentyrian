@@ -206,9 +206,6 @@ JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
 JE_word totalEnemy;
 JE_word enemyKilled;
 
-/* Buffer */
-JE_Map1Buffer *map1BufferTop, *map1BufferBot;
-
 /* Shape/Map Data - All in one Segment! */
 struct JE_MegaDataType1 megaData1;
 struct JE_MegaDataType2 megaData2;
@@ -264,7 +261,7 @@ JE_boolean skipStarShowVGA;
 /*EnemyData*/
 JE_EnemyType enemy;
 JE_EnemyAvailType enemyAvail;
-JE_word enemyAvailOfs, topEnemyAvailOfs, groundEnemyAvailOfs, groundEnemyAvailOfs2, enemyOffset;
+JE_word enemyOffset;
 JE_word enemyOnScreen;
 JE_byte enemyShapeTables[6]; /* [1..6] */
 JE_boolean uniqueEnemy;
@@ -304,9 +301,7 @@ JE_byte playerStillExploding, playerStillExploding2;
 
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
-JE_integer baseSpeedOld, baseSpeedOld2, baseSpeed, baseSpeedB, baseSpeed2, baseSpeed2B,
-           baseSpeedKeyH, baseSpeedKeyV;
-JE_boolean keyMoveWait;
+JE_integer baseSpeed;
 
 JE_word playerInvulnerable1, playerInvulnerable2;
 
@@ -318,9 +313,6 @@ JE_integer lastPX2, lastPY2,
            lastTurn, lastTurn2;
 JE_byte stopWaitX, stopWaitY;
 
-JE_integer PYHist[3], PYHistB[3]; /* [1..3] */
-
-/*JE_shortint optionMoveX[10], optionMoveY[10]; \* [1..10] *\ */
 JE_word option1Draw, option2Draw, option1Item, option2Item;
 JE_byte option1AmmoMax, option2AmmoMax;
 JE_word option1AmmoRechargeWait, option2AmmoRechargeWait,
@@ -358,16 +350,13 @@ superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
 unsigned int last_superpixel;
 
 /*Temporary Numbers*/
-JE_word avail;
 JE_integer tempI, tempI2, tempI3, tempI4, tempI5;
 JE_longint tempL;
-/*JE_integer tempX, tempY;*/
 
 JE_boolean tempB;
 JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 JE_word tempX, tempY, tempX2, tempY2;
-JE_word tempW, tempW2, tempW3, tempW4, tempW5, tempOfs;
-
+JE_word tempW, tempW2, tempW3, tempW4;
 
 JE_boolean doNotSaveBackup;
 
@@ -379,8 +368,6 @@ JE_byte playerNum;
 
 JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to,
         **BKwrap1, **BKwrap2, **BKwrap3;
-
-JE_byte min, max;
 
 JE_shortint specialWeaponFilter, specialWeaponFreq;
 JE_word     specialWeaponWpn;

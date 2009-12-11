@@ -3823,6 +3823,8 @@ redo:
 					/*Normal Main Weapons*/
 					if (!(twoPlayerLinked && playerNum_ == 2))
 					{
+						int min, max;
+						
 						if (!twoPlayerMode)
 							min = 1, max = 2;
 						else
