@@ -296,7 +296,6 @@ JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration
 JE_byte shadowyDist;
 JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
-JE_boolean playerAlive, playerAliveB;
 JE_byte playerStillExploding, playerStillExploding2;
 
 JE_byte sAni;

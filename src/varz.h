@@ -321,7 +321,6 @@ extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
 extern JE_byte shadowyDist;
 extern JE_byte purpleBallsRemaining[2];
-extern JE_boolean playerAlive, playerAliveB;
 extern JE_byte playerStillExploding, playerStillExploding2;
 extern JE_byte sAni;
 extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;

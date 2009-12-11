@@ -512,10 +512,11 @@ enemy_still_exists:
 									
 									if (twoPlayerMode)
 									{
-										if (playerAliveB && !playerAlive)
-											temp = 1;
-										else if (playerAlive && !playerAliveB)
+										// fire at live player(s)
+										if (player[0].is_alive && !player[1].is_alive)
 											temp = 0;
+										else if (player[1].is_alive && !player[0].is_alive)
+											temp = 1;
 										else
 											temp = mt_rand() % 2;
 										
@@ -696,9 +697,7 @@ start_level:
 
 	if (!play_demo)
 	{
-		if (((playerAlive || (twoPlayerMode && playerAliveB))
-		   || normalBonusLevelCurrent || bonusLevelCurrent)
-		   && !playerEndLevel)
+		if ((!all_players_dead() || normalBonusLevelCurrent || bonusLevelCurrent) && !playerEndLevel)
 		{
 			mainLevel = nextLevel;
 			JE_endLevelAni();
@@ -746,9 +745,10 @@ start_level_first:
 		return;          // back to titlescreen
 	
 	fade_song();
-
-	playerAlive = true;
-	playerAliveB = true;
+	
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		player[i].is_alive = true;
+	
 	oldDifficultyLevel = difficultyLevel;
 	if (episodeNum == 4)
 	{
@@ -1129,8 +1129,7 @@ level_loop:
 	}
 
 
-	allPlayersGone = !playerAlive &&
-	                 (!playerAliveB || !twoPlayerMode) &&
+	allPlayersGone = all_players_dead() &&
 	                 ((*player[0].lives == 1 && playerStillExploding == 0) || (!onePlayerAction && !twoPlayerMode)) &&
 	                 ((*player[1].lives == 1 && playerStillExploding2 == 0) || !twoPlayerMode);
 
@@ -1202,15 +1201,16 @@ level_loop:
 				{
 					shieldWait = 15;
 					
-					if (player[0].shield < player[0].shield_max && playerAlive)
-						++player[0].shield;
-					if (player[1].shield < player[1].shield_max && playerAliveB)
-						++player[1].shield;
+					for (uint i = 0; i < COUNTOF(player); ++i)
+					{
+						if (player[i].shield < player[i].shield_max && player[i].is_alive)
+							++player[i].shield;
+					}
 					
 					JE_drawShield();
 				}
 			}
-			else if (playerAlive && player[0].shield < player[0].shield_max && power > shieldT)
+			else if (player[0].is_alive && player[0].shield < player[0].shield_max && power > shieldT)
 			{
 				if (--shieldWait == 0)
 				{
@@ -1931,11 +1931,11 @@ draw_player_shot_loop_end:
 	/*=======Collisions Detection======*/
 	/*=================================*/
 
-	if (playerAlive && !endLevel)
-		JE_playerCollide(&player[0], &player[0].x, &player[0].y, &lastTurn, &lastTurn2, &playerAlive, &playerStillExploding, 1, playerInvulnerable1);
+	if (player[0].is_alive && !endLevel)
+		JE_playerCollide(&player[0], &lastTurn, &lastTurn2, &playerStillExploding, 1, playerInvulnerable1);
 
-	if (twoPlayerMode && playerAliveB && !endLevel)
-		JE_playerCollide(&player[1], &player[1].x, &player[1].y, &lastTurnB, &lastTurn2B, &playerAliveB, &playerStillExploding2, 2, playerInvulnerable2);
+	if (twoPlayerMode && player[1].is_alive && !endLevel)
+		JE_playerCollide(&player[1], &lastTurnB, &lastTurn2B, &playerStillExploding2, 2, playerInvulnerable2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -1992,15 +1992,20 @@ draw_player_shot_loop_end:
 				}
 				else
 				{
-					if (((temp3 = 1)
-					     && playerAlive != 0
-					     && enemyShot[z].sx - player[0].x > sAniXNeg && enemyShot[z].sx - player[0].x < sAniX
-					     && enemyShot[z].sy - player[0].y > sAniYNeg && enemyShot[z].sy - player[0].y < sAniY)
-					 || ((temp3 = 2)
-					     && twoPlayerMode != 0
-					     && playerAliveB != 0
-					     && enemyShot[z].sx - player[1].x > sAniXNeg && enemyShot[z].sx - player[1].x < sAniX
-					     && enemyShot[z].sy - player[1].y > sAniYNeg && enemyShot[z].sy - player[1].y < sAniY))
+					temp3 = 0;
+					
+					for (uint i = 0; i < (twoPlayerMode ? 2 : 1); ++i)
+					{
+						if (player[i].is_alive &&
+						    enemyShot[z].sx - player[i].x > sAniXNeg && enemyShot[z].sx - player[i].x < sAniX &&
+						    enemyShot[z].sy - player[i].y > sAniYNeg && enemyShot[z].sy - player[i].y < sAniY)
+						{
+							temp3 = i + 1;
+							break;
+						}
+					}
+					
+					if (temp3 != 0)
 					{
 						tempX = enemyShot[z].sx;
 						tempY = enemyShot[z].sy;
@@ -2015,7 +2020,7 @@ draw_player_shot_loop_end:
 						case 1:
 							if (playerInvulnerable1 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &player[0].x, &player[0].y, &playerAlive, &playerStillExploding, &player[0].armor, &player[0].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &player[0].x, &player[0].y, &player[0].is_alive, &playerStillExploding, &player[0].armor, &player[0].shield)) > 0)
 								{
 									lastTurn2 += (enemyShot[z].sxm * temp) / 2;
 									lastTurn  += (enemyShot[z].sym * temp) / 2;
@@ -2025,7 +2030,7 @@ draw_player_shot_loop_end:
 						case 2:
 							if (playerInvulnerable2 == 0)
 							{
-								if ((temp = JE_playerDamage(temp, &player[1].x, &player[1].y, &playerAliveB, &playerStillExploding2, &player[1].armor, &player[1].shield)) > 0)
+								if ((temp = JE_playerDamage(temp, &player[1].x, &player[1].y, &player[1].is_alive, &playerStillExploding2, &player[1].armor, &player[1].shield)) > 0)
 								{
 									lastTurn2B += (enemyShot[z].sxm * temp) / 2;
 									lastTurnB  += (enemyShot[z].sym * temp) / 2;
@@ -2175,10 +2180,10 @@ draw_player_shot_loop_end:
 	}
 
 	/*-------------------------Warning---------------------------*/
-	if ((playerAlive && player[0].armor < 6) ||
-	    (twoPlayerMode && !galagaMode && playerAliveB && player[1].armor < 6))
+	if ((player[0].is_alive && player[0].armor < 6) ||
+	    (twoPlayerMode && !galagaMode && player[1].is_alive && player[1].armor < 6))
 	{
-		tempW2 = (playerAlive && player[0].armor < 6) ? player[0].armor : player[1].armor;
+		tempW2 = (player[0].is_alive && player[0].armor < 6) ? player[0].armor : player[1].armor;
 
 		if (armorShipDelay > 0)
 		{
@@ -2197,8 +2202,8 @@ draw_player_shot_loop_end:
 			armorShipDelay = 500;
 		}
 
-		if ((playerAlive && player[0].armor < 6 && (!isNetworkGame || thisPlayerNum == 1))
-		    || (twoPlayerMode && playerAliveB && player[1].armor < 6 && (!isNetworkGame || thisPlayerNum == 2)))
+		if ((player[0].is_alive && player[0].armor < 6 && (!isNetworkGame || thisPlayerNum == 1)) ||
+		    (twoPlayerMode && player[1].is_alive && player[1].armor < 6 && (!isNetworkGame || thisPlayerNum == 2)))
 		{
 
 			tempW = tempW2 * 4 + 8;
@@ -2764,7 +2769,7 @@ new_game:
 						
 					case 'l':
 						temp = atoi(strnztcpy(buffer, s + 3, 3));
-						if (!playerAlive || (twoPlayerMode && !playerAliveB))
+						if (!all_players_alive())
 						{
 							mainLevel = temp;
 							jumpSection = true;

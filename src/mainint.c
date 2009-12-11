@@ -2201,19 +2201,19 @@ void JE_endLevelAni( void )
 		JE_playSampleNum(V_LEVEL_END);
 	else
 		play_song(21);
-	  
+	
 	if (bonusLevel)
 	{
 		JE_outTextGlow(20, 20, miscText[17-1]);
 	}
-	else if (playerAlive && (!twoPlayerMode || playerAliveB))
+	else if (all_players_alive())
 	{
-		sprintf(tempStr, "%s %s", miscText[27-1], levelName);
+		sprintf(tempStr, "%s %s", miscText[27-1], levelName); // "Completed"
 		JE_outTextGlow(20, 20, tempStr);
 	}
 	else
 	{
-		sprintf(tempStr, "%s %s", miscText[62-1], levelName);
+		sprintf(tempStr, "%s %s", miscText[62-1], levelName); // "Exiting"
 		JE_outTextGlow(20, 20, tempStr);
 	}
 	
@@ -2949,7 +2949,6 @@ void JE_playerMovement( Player *this_player,
                         JE_integer *lastTurn_, JE_integer *lastTurn2_,
                         JE_byte *stopWaitX_, JE_byte *stopWaitY_,
                         JE_word *mouseX_, JE_word *mouseY_,
-                        JE_boolean *playerAlive_,
                         JE_byte *playerStillExploding_ )
 {
 	JE_integer mouseXC, mouseYC;
@@ -2987,7 +2986,7 @@ redo:
 	float link_gun_angle = 0;
 
 	/* Draw Player */
-	if (!*playerAlive_)
+	if (!this_player->is_alive)
 	{
 		if (*playerStillExploding_ > 0)
 		{
@@ -3030,7 +3029,7 @@ redo:
 						twoPlayerMode = false;
 					*PY_ = 160;
 					*playerInvulnerable_ = 100;
-					*playerAlive_ = true;
+					this_player->is_alive = true;
 					endLevel = false;
 
 					if (galagaMode || episodeNum == 4)
@@ -3072,7 +3071,7 @@ redo:
 			}
 			else
 			{
-				*playerAlive_ = false;
+				this_player->is_alive = false;
 				*playerStillExploding_ = 60;
 				levelEnd = 40;
 			}
@@ -3089,7 +3088,7 @@ redo:
 	}
 
 
-	if (!*playerAlive_)
+	if (!this_player->is_alive)
 	{
 		explosionFollowAmountX = explosionFollowAmountY = 0;
 		return;
@@ -3355,7 +3354,7 @@ redo:
 
 				if (twoPlayerMode && !twoPlayerLinked && *PX_ == *mouseX_ && *PY_ == *mouseY_
 				    && abs(player[0].x - player[1].x) < 8 && abs(player[0].y - player[1].y) < 8
-				    && playerAlive && playerAliveB && !galagaMode)
+				    && player[0].is_alive && player[1].is_alive && !galagaMode)
 				{
 					twoPlayerLinked = true;
 				}
@@ -3409,11 +3408,11 @@ redo:
 		} /*if (!endLevel) ...*/
 
 
-		if (levelEnd > 0 &&
-		    !*playerAlive_ && (!twoPlayerMode || !playerAliveB))
+		if (levelEnd > 0 && all_players_dead())
 			reallyEndLevel = true;
+		
 		/* End Level Fade-Out */
-		if (*playerAlive_ && endLevel)
+		if (this_player->is_alive && endLevel)
 		{
 
 			if (levelEnd == 0)
@@ -3466,7 +3465,7 @@ redo:
 		if (play_demo)
 			JE_dString(115, 10, miscText[7], SMALL_FONT_SHAPES); // insert coin
 
-		if (*playerAlive_ && !endLevel)
+		if (this_player->is_alive && !endLevel)
 		{
 
 			if (!twoPlayerLinked || playerNum_ < 2)
@@ -3775,7 +3774,7 @@ redo:
 		if (moveOk)
 		{
 
-			if (*playerAlive_)
+			if (this_player->is_alive)
 			{
 				if (!endLevel)
 				{
@@ -4242,14 +4241,14 @@ void JE_mainGamePlayerFunctions( void )
 		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
-		                  &playerAlive, &playerStillExploding);
+		                  &playerStillExploding);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
 		                  &playerInvulnerable2,
 		                  &player[1].x, &player[1].y, &lastPX2B, &lastPY2B,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB,
-		                  &playerAliveB, &playerStillExploding2);
+		                  &playerStillExploding2);
 	}
 	else
 	{
@@ -4259,7 +4258,7 @@ void JE_mainGamePlayerFunctions( void )
 		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY,
-		                  &playerAlive, &playerStillExploding);
+		                  &playerStillExploding);
 	}
 
 	/* == Parallax Map Scrolling == */
@@ -4303,8 +4302,7 @@ const char *JE_getName( JE_byte pnum )
 }
 
 void JE_playerCollide( Player *this_player,
-                       int *PX_, int *PY_, JE_integer *lastTurn_, JE_integer *lastTurn2_,
-                       JE_boolean *playerAlive_,
+                       JE_integer *lastTurn_, JE_integer *lastTurn2_,
                        JE_byte *playerStillExploding_, JE_byte playerNum_, JE_byte playerInvulnerable_ )
 {
 	char tempStr[256];
@@ -4315,7 +4313,7 @@ void JE_playerCollide( Player *this_player,
 		{
 			tempI3 = enemy[z].ex + enemy[z].mapoffset;
 			
-			if (abs(*PX_ - tempI3) < 12 && abs(*PY_ - enemy[z].ey) < 14)
+			if (abs(this_player->x - tempI3) < 12 && abs(this_player->y - enemy[z].ey) < 14)
 			{   /*Collide*/
 				tempI4 = enemy[z].evalue;
 				if (tempI4 > 29999)
@@ -4345,7 +4343,7 @@ void JE_playerCollide( Player *this_player,
 							twoPlayerLinked = true;
 							player[1].items.weapon[REAR_WEAPON].power = 1;
 							player[1].armor = 10;
-							playerAliveB = true;
+							player[1].is_alive = true;
 						}
 						enemyAvail[z] = 1;
 						soundQueue[7] = S_POWERUP;
@@ -4592,7 +4590,7 @@ void JE_playerCollide( Player *this_player,
 					{
 						// picked up orbiting asteroid killer
 						shotMultiPos[SHOT_MISC] = 0;
-						JE_initPlayerShot(0, SHOT_MISC, *PX_, *PY_, mouseX, mouseY, 104, playerNum_);
+						JE_initPlayerShot(0, SHOT_MISC, this_player->x, this_player->y, mouseX, mouseY, 104, playerNum_);
 						shotAvail[z] = 0;
 					}
 					else if (tempI4 == -4)
@@ -4633,7 +4631,7 @@ void JE_playerCollide( Player *this_player,
 					if (tempI3 > damageRate)
 						tempI3 = damageRate;
 					
-					JE_playerDamage(tempI3, PX_, PY_, playerAlive_, playerStillExploding_, &this_player->armor, &this_player->shield);
+					JE_playerDamage(tempI3, &this_player->x, &this_player->y, &this_player->is_alive, playerStillExploding_, &this_player->armor, &this_player->shield);
 					
 					if (enemy[z].armorleft > 0)
 					{

@@ -19,7 +19,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <opentyr.h>
+#include "config.h"
+#include "opentyr.h"
 
 enum
 {
@@ -66,9 +67,10 @@ typedef struct
 	uint initial_armor;
 	
 	// state
-	uint weapon_mode;
+	bool is_alive;
 	uint shield;
 	uint armor;
+	uint weapon_mode;
 	uint superbombs;
 	
 	int x, y;
@@ -79,5 +81,15 @@ typedef struct
 Player;
 
 extern Player player[2];
+
+static inline bool all_players_dead( void )
+{
+	return (!player[0].is_alive && (!twoPlayerMode || !player[1].is_alive));
+}
+
+static inline bool all_players_alive( void )
+{
+	return (player[0].is_alive && (!twoPlayerMode || player[1].is_alive));
+}
 
 #endif // PLAYER_H
