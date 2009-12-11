@@ -325,7 +325,6 @@ extern JE_byte purpleBallsRemaining[2];
 extern JE_byte sAni;
 extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;
 extern JE_integer baseSpeed;
-extern JE_word playerInvulnerable1, playerInvulnerable2;
 extern JE_integer lastPX2B, lastPY2B, lastTurnB, lastTurn2B;
 extern JE_byte stopWaitXB, stopWaitYB;
 extern JE_integer lastPX2, lastPY2, lastTurn, lastTurn2;

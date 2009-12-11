@@ -300,8 +300,6 @@ JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
 JE_integer baseSpeed;
 
-JE_word playerInvulnerable1, playerInvulnerable2;
-
 JE_integer lastPX2B, lastPY2B,
            lastTurnB, lastTurn2B;
 JE_byte stopWaitXB, stopWaitYB;
@@ -957,20 +955,13 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			}
 			break;
 		case 12:
-			switch (playerNum)
-			{
-				case 1:
-					playerInvulnerable1 = temp2 * 10;
-					break;
-				case 2:
-					playerInvulnerable2 = temp2 * 10;
-					break;
-			}
+			player[playerNum-1].invulnerable_ticks = temp2 * 10;
+			
 			if (superArcadeMode > 0 && superArcadeMode <= SA)
 			{
 				shotRepeat[SHOT_SPECIAL] = 250;
 				JE_initPlayerShot(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, 707, 1);
-				playerInvulnerable1 = 100;
+				player[0].invulnerable_ticks = 100;
 			}
 			break;
 		case 13:

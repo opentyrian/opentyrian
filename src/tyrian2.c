@@ -838,10 +838,10 @@ start_level_first:
 	lastTurnB  = 0;
 	lastTurn2  = 0;
 	lastTurn2B = 0;
-
-	playerInvulnerable1 = 100;
-	playerInvulnerable2 = 100;
-
+	
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		player[i].invulnerable_ticks = 100;
+	
 	newkey = newmouse = false;
 
 	/* Initialize Level Data and Debug Mode */
@@ -1932,10 +1932,10 @@ draw_player_shot_loop_end:
 	/*=================================*/
 
 	if (player[0].is_alive && !endLevel)
-		JE_playerCollide(&player[0], &lastTurn, &lastTurn2, 1, playerInvulnerable1);
+		JE_playerCollide(&player[0], &lastTurn, &lastTurn2, 1);
 
 	if (twoPlayerMode && player[1].is_alive && !endLevel)
-		JE_playerCollide(&player[1], &lastTurnB, &lastTurn2B, 2, playerInvulnerable2);
+		JE_playerCollide(&player[1], &lastTurnB, &lastTurn2B, 2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -2018,7 +2018,7 @@ draw_player_shot_loop_end:
 						switch (temp3)
 						{
 						case 1:
-							if (playerInvulnerable1 == 0)
+							if (player[0].invulnerable_ticks == 0)
 							{
 								if ((temp = JE_playerDamage(temp, &player[0])) > 0)
 								{
@@ -2028,7 +2028,7 @@ draw_player_shot_loop_end:
 							}
 							break;
 						case 2:
-							if (playerInvulnerable2 == 0)
+							if (player[1].invulnerable_ticks == 0)
 							{
 								if ((temp = JE_playerDamage(temp, &player[1])) > 0)
 								{
@@ -5052,8 +5052,8 @@ void JE_eventSystem( void )
 		break;
 		
 	case 69:
-		playerInvulnerable1 = eventRec[eventLoc-1].eventdat;
-		playerInvulnerable2 = eventRec[eventLoc-1].eventdat;
+		for (uint i = 0; i < COUNTOF(player); ++i)
+			player[i].invulnerable_ticks = eventRec[eventLoc-1].eventdat;
 		break;
 		
 	case 70:

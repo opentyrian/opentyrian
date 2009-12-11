@@ -2943,7 +2943,6 @@ void JE_playerMovement( Player *this_player,
                         JE_byte playerNum_,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
-                        JE_word *playerInvulnerable_,
                         int *PX_, int *PY_,
                         JE_integer *lastPX2_, JE_integer *lastPY2_,
                         JE_integer *lastTurn_, JE_integer *lastTurn2_,
@@ -3027,7 +3026,7 @@ redo:
 					if (galagaMode)
 						twoPlayerMode = false;
 					*PY_ = 160;
-					*playerInvulnerable_ = 100;
+					this_player->invulnerable_ticks = 100;
 					this_player->is_alive = true;
 					endLevel = false;
 
@@ -3686,9 +3685,9 @@ redo:
 				}
 			}
 			
-			if (*playerInvulnerable_ > 0)
+			if (this_player->invulnerable_ticks > 0)
 			{
-				(*playerInvulnerable_)--;
+				--this_player->invulnerable_ticks;
 				
 				if (shipGr_ == 0)
 				{
@@ -4237,13 +4236,11 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
-		                  &playerInvulnerable1,
 		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
-		                  &playerInvulnerable2,
 		                  &player[1].x, &player[1].y, &lastPX2B, &lastPY2B,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB);
@@ -4252,7 +4249,6 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
-		                  &playerInvulnerable1,
 		                  &player[0].x, &player[0].y, &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
@@ -4300,7 +4296,7 @@ const char *JE_getName( JE_byte pnum )
 
 void JE_playerCollide( Player *this_player,
                        JE_integer *lastTurn_, JE_integer *lastTurn2_,
-                       JE_byte playerNum_, JE_byte playerInvulnerable_ )
+                       JE_byte playerNum_ )
 {
 	char tempStr[256];
 	
@@ -4620,7 +4616,7 @@ void JE_playerCollide( Player *this_player,
 					}
 					JE_setupExplosion(tempI3, enemy[z].ey, 0, enemyDat[enemy[z].enemytype].explosiontype, true, false);
 				}
-				else if (playerInvulnerable_ == 0 && enemyAvail[z] == 0 &&
+				else if (this_player->invulnerable_ticks == 0 && enemyAvail[z] == 0 &&
 				         enemyDat[enemy[z].enemytype].explosiontype % 2 == 0)
 				{
 					
