@@ -761,8 +761,8 @@ start_level_first:
 
 	playerHNotReady = true;
 
-	player[0].last_shot_move_x = player[0].x;
-	player[0].last_shot_move_y = player[0].y;
+	player[0].last_x_shot_move = player[0].x;
+	player[0].last_y_shot_move = player[0].y;
 	
 	JE_loadPic(twoPlayerMode ? 6 : 3, false);
 	
@@ -1900,8 +1900,8 @@ draw_player_shot_loop_end:
 	}
 
 	/* Player movement indicators for shots that track your ship */
-	player[0].last_shot_move_x = player[0].x;
-	player[0].last_shot_move_y = player[0].y;
+	player[0].last_x_shot_move = player[0].x;
+	player[0].last_y_shot_move = player[0].y;
 
 	/*=================================*/
 	/*=======Collisions Detection======*/

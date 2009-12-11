@@ -299,13 +299,11 @@ JE_byte purpleBallsRemaining[2]; /* [1..2] */
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
 
-JE_integer lastPX2B, lastPY2B,
-           lastTurnB, lastTurn2B;
-JE_byte stopWaitXB, stopWaitYB;
+JE_integer lastTurn, lastTurn2;
+JE_integer lastTurnB, lastTurn2B;
 
-JE_integer lastPX2, lastPY2,
-           lastTurn, lastTurn2;
 JE_byte stopWaitX, stopWaitY;
+JE_byte stopWaitXB, stopWaitYB;
 
 JE_word option1Draw, option2Draw, option1Item, option2Item;
 JE_byte option1AmmoMax, option2AmmoMax;

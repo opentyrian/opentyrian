@@ -78,7 +78,8 @@ typedef struct
 	int x, y;
 	int delta_x, delta_y;
 	
-	int last_shot_move_x, last_shot_move_y;
+	int last_x_shot_move, last_y_shot_move;
+	int last_x_explosion_follow, last_y_explosion_follow;
 }
 Player;
 

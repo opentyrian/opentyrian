@@ -2220,8 +2220,8 @@ void JE_initWeaponView( void )
 	player[0].y = 110;
 	player[0].delta_x = 0;
 	player[0].delta_y = 0;
-	lastPX2 = 72;
-	lastPY2 = 110;
+	player[0].last_x_explosion_follow = 72;
+	player[0].last_y_explosion_follow = 110;
 	power = 500;
 	lastPower = 500;
 

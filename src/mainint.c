@@ -2943,7 +2943,6 @@ void JE_playerMovement( Player *this_player,
                         JE_byte playerNum_,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
-                        JE_integer *lastPX2_, JE_integer *lastPY2_,
                         JE_integer *lastTurn_, JE_integer *lastTurn2_,
                         JE_byte *stopWaitX_, JE_byte *stopWaitY_,
                         JE_word *mouseX_, JE_word *mouseY_ )
@@ -3642,14 +3641,15 @@ redo:
 
 
 			tempI  = tempI2 * 2 + shipGr_;
-
-			tempI4 = this_player->y - *lastPY2_;
-			if (tempI4 < 1)
-				tempI4 = 0;
-			explosionFollowAmountX = this_player->x - *lastPX2_;
-			explosionFollowAmountY = tempI4;
-			*lastPX2_ = this_player->x;
-			*lastPY2_ = this_player->y;
+			
+			explosionFollowAmountX = this_player->x - this_player->last_x_explosion_follow;
+			explosionFollowAmountY = this_player->y - this_player->last_y_explosion_follow;
+			
+			if (explosionFollowAmountY < 0)
+				explosionFollowAmountY = 0;
+			
+			this_player->last_x_explosion_follow = this_player->x;
+			this_player->last_y_explosion_follow = this_player->y;
 			
 			if (shipGr_ == 0)
 			{
@@ -3776,8 +3776,8 @@ redo:
 			{
 				if (!endLevel)
 				{
-					this_player->delta_x = this_player->x - this_player->last_shot_move_x;
-					this_player->delta_y = this_player->y - this_player->last_shot_move_y;
+					this_player->delta_x = this_player->x - this_player->last_x_shot_move;
+					this_player->delta_y = this_player->y - this_player->last_y_shot_move;
 
 					/* PLAYER SHOT Change */
 					if (button[4-1])
@@ -4235,12 +4235,10 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
-		                  &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
-		                  &lastPX2B, &lastPY2B,
 		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB);
 	}
@@ -4248,7 +4246,6 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
-		                  &lastPX2, &lastPY2,
 		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 	}
