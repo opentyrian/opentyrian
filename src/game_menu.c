@@ -2218,8 +2218,8 @@ void JE_initWeaponView( void )
 
 	player[0].x = 72;
 	player[0].y = 110;
-	player[0].delta_x = 0;
-	player[0].delta_y = 0;
+	player[0].delta_x_shot_move = 0;
+	player[0].delta_y_shot_move = 0;
 	player[0].last_x_explosion_follow = 72;
 	player[0].last_y_explosion_follow = 110;
 	power = 500;
@@ -3212,7 +3212,7 @@ void JE_weaponViewFrame( void )
 				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
-					playerShotData[z].shotY += player[0].delta_y;
+					playerShotData[z].shotY += player[0].delta_y_shot_move;
 				}
 				
 				if (playerShotData[z].shotComplicated != 0)

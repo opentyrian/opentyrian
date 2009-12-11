@@ -3776,8 +3776,8 @@ redo:
 			{
 				if (!endLevel)
 				{
-					this_player->delta_x = this_player->x - this_player->last_x_shot_move;
-					this_player->delta_y = this_player->y - this_player->last_y_shot_move;
+					this_player->delta_x_shot_move = this_player->x - this_player->last_x_shot_move;
+					this_player->delta_y_shot_move = this_player->y - this_player->last_y_shot_move;
 
 					/* PLAYER SHOT Change */
 					if (button[4-1])

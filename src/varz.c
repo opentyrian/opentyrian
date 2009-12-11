@@ -776,7 +776,7 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 							if (weapons[wpNum].sy[shotMultiPos[shot_i]-1] > 100)
 							{
 								playerShotData[b].shotYM = weapons[wpNum].sy[shotMultiPos[shot_i]-1];
-								playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y;
+								playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y_shot_move;
 							} else {
 								playerShotData[b].shotYM = -weapons[wpNum].sy[shotMultiPos[shot_i]-1];
 							}
@@ -786,10 +786,10 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 					if (weapons[wpNum].sx[shotMultiPos[shot_i]-1] > 100)
 					{
 						playerShotData[b].shotXM = weapons[wpNum].sx[shotMultiPos[shot_i]-1];
-						playerShotData[b].shotX -= player[playerShotData[b].playerNumber-1].delta_x;
+						playerShotData[b].shotX -= player[playerShotData[b].playerNumber-1].delta_x_shot_move;
 						if (playerShotData[b].shotXM == 101)
 						{
-							playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y;
+							playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y_shot_move;
 						}
 					}
 

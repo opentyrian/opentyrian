@@ -76,7 +76,8 @@ typedef struct
 	uint superbombs;
 	
 	int x, y;
-	int delta_x, delta_y;
+	
+	int delta_x_shot_move, delta_y_shot_move;
 	
 	int last_x_shot_move, last_y_shot_move;
 	int last_x_explosion_follow, last_y_explosion_follow;

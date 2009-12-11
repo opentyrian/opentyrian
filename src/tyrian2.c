@@ -1490,13 +1490,13 @@ level_loop:
 					if (playerShotData[z].shotXM == 101)
 					{
 						playerShotData[z].shotX -= 101;
-						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x;
-						playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y;
+						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x_shot_move;
+						playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y_shot_move;
 					}
 					else
 					{
 						playerShotData[z].shotX -= 120;
-						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x;
+						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x_shot_move;
 					}
 				}
 
@@ -1506,7 +1506,7 @@ level_loop:
 				if (playerShotData[z].shotYM > 100)
 				{
 					playerShotData[z].shotY -= 120;
-					playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y;
+					playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y_shot_move;
 				}
 
 				if (playerShotData[z].shotComplicated != 0)
