@@ -3692,12 +3692,9 @@ bool JE_titleScreen( JE_boolean animate )
 					{
 					case 0: /* New game */
 						fade_black(10);
-						if (select_gameplay())
+						if (select_gameplay() && select_episode() && select_difficulty())
 						{
-							if (select_episode() && select_difficulty())
-							{
-								gameLoaded = true;
-							}
+							gameLoaded = true;
 							
 							initialDifficulty = difficultyLevel;
 							
