@@ -355,7 +355,7 @@ JE_boolean doNotSaveBackup;
 JE_boolean tempSpecial;
 
 JE_word x, y;
-JE_integer a, b, c, d;
+JE_integer b;
 JE_byte playerNum;
 
 JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to,

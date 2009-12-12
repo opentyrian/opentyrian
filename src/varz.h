@@ -353,7 +353,7 @@ extern JE_word tempW, tempW2, tempW3, tempW4;
 extern JE_boolean doNotSaveBackup;
 extern JE_boolean tempSpecial;
 extern JE_word x, y;
-extern JE_integer a, b, c, d;
+extern JE_integer b;
 extern JE_byte playerNum;
 extern JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to, **BKwrap1, **BKwrap2, **BKwrap3;
 extern JE_shortint specialWeaponFilter, specialWeaponFreq;

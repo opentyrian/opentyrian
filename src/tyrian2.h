@@ -43,7 +43,7 @@ void JE_createNewEventEnemy( JE_byte enemytypeofs, JE_word enemyoffset );
 
 void JE_doNetwork( void );
 
-void JE_makeEnemy( struct JE_SingleEnemyType *enemy );
+uint JE_makeEnemy( struct JE_SingleEnemyType *enemy );
 
 void JE_eventJump( JE_word jump );
 

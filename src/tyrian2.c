@@ -3886,15 +3886,16 @@ void JE_newEnemy( int enemyOffset )
 		if (enemyAvail[i] == 1)
 		{
 			b = i+1;
-			JE_makeEnemy(&enemy[b-1]);
-			enemyAvail[b-1] = a;
+			enemyAvail[b-1] = JE_makeEnemy(&enemy[b-1]);
 			break;
 		}
 	}
 }
 
-void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tempI2, b, a
+uint JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tempI2, b
 {
+	uint a;
+	
 	JE_byte temp;
 	int t = 0;
 
@@ -3914,11 +3915,11 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 		temp = enemyDat[tempW].shapebank;
 	}
 
-	for (a = 0; a < 6; a++)
+	for (uint i = 0; i < 6; ++i)
 	{
-		if (temp == enemyShapeTables[a])
+		if (temp == enemyShapeTables[i])
 		{
-			switch (a)
+			switch (i)
 			{
 			case 0:
 				enemy->sprite2s = &eShapes1;
@@ -3946,9 +3947,9 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 
 	enemy->mapoffset = 0;
 
-	for (a = 0; a < 3; a++)
+	for (uint i = 0; i < 3; ++i)
 	{
-		enemy->eshotmultipos[a] = 0;
+		enemy->eshotmultipos[i] = 0;
 	}
 
 	temp4 = enemyDat[tempW].explosiontype;
@@ -3969,9 +3970,9 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 	enemy->ymaxbounce = 10000;
 	/*Far enough away to be impossible to reach*/
 
-	for (a = 0; a < 3; a++)
+	for (uint i = 0; i < 3; ++i)
 	{
-		enemy->tur[a] = enemyDat[tempW].tur[a];
+		enemy->tur[i] = enemyDat[tempW].tur[i];
 	}
 
 	enemy->ani = enemyDat[tempW].ani;
@@ -4041,17 +4042,17 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 
 	enemy->enemytype = tempW;
 
-	for (a = 0; a < 3; a++)
+	for (uint i = 0; i < 3; ++i)
 	{
-		if (enemy->tur[a] == 252)
-			enemy->eshotwait[a] = 1;
-		else if (enemy->tur[a] > 0)
-			enemy->eshotwait[a] = 20;
+		if (enemy->tur[i] == 252)
+			enemy->eshotwait[i] = 1;
+		else if (enemy->tur[i] > 0)
+			enemy->eshotwait[i] = 20;
 		else
-			enemy->eshotwait[a] = 255;
+			enemy->eshotwait[i] = 255;
 	}
-	for (a = 0; a < 20; a++)
-		enemy->egr[a] = enemyDat[tempW].egraphic[a];
+	for (uint i = 0; i < 20; ++i)
+		enemy->egr[i] = enemyDat[tempW].egraphic[i];
 	enemy->size = enemyDat[tempW].esize;
 	enemy->linknum = 0;
 	enemy->edamaged = enemyDat[tempW].dani < 0;
@@ -4174,12 +4175,14 @@ void JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 		if (enemy->evalue != 0)
 			enemy->scoreitem = true;
 	}
-	/*The returning A value indicates what to set ENEMYAVAIL to */
-
+	
 	if (!enemy->scoreitem)
 	{
 		totalEnemy++;  /*Destruction ratio*/
 	}
+	
+	/*The returning A value indicates what to set ENEMYAVAIL to */
+	return a;
 }
 
 void JE_createNewEventEnemy( JE_byte enemyTypeOfs, JE_word enemyOffset )
@@ -4203,11 +4206,9 @@ void JE_createNewEventEnemy( JE_byte enemyTypeOfs, JE_word enemyOffset )
 	}
 
 	tempW = eventRec[eventLoc-1].eventdat + enemyTypeOfs;
-
-	JE_makeEnemy(&enemy[b-1]);
-
-	enemyAvail[b-1] = a;
-
+	
+	enemyAvail[b-1] = JE_makeEnemy(&enemy[b-1]);
+	
 	if (eventRec[eventLoc-1].eventdat2 != -99)
 	{
 		switch (enemyOffset)
