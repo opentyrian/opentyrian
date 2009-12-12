@@ -74,6 +74,7 @@ typedef struct
 	uint armor;
 	uint weapon_mode;
 	uint superbombs;
+	uint purple_balls_needed;
 	
 	int x, y;
 	
@@ -95,5 +96,9 @@ static inline bool all_players_alive( void )
 {
 	return (player[0].is_alive && (!twoPlayerMode || player[1].is_alive));
 }
+
+void calc_purple_balls_needed( Player * );
+bool power_up_weapon( Player *, uint port );
+void handle_got_purple_ball( Player * );
 
 #endif // PLAYER_H

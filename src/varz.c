@@ -294,7 +294,6 @@ JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 const uint shadowYDist = 10;
-JE_byte purpleBallsRemaining[2]; /* [1..2] */
 
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
@@ -435,15 +434,6 @@ JE_word JE_SGr( JE_word ship, Sprite2_array **ptr )
 		*ptr = extraShapes;
 	}
 	return GR[tempW-1];
-}
-
-void JE_calcPurpleBall( JE_byte player_num )
-{
-	static const uint purple_balls_required[12] = {1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50};
-	
-	--player_num; // TODO: change calls so this isn't necessary
-	
-	purpleBallsRemaining[player_num] = purple_balls_required[*player[player_num].lives];
 }
 
 void JE_drawOptions( void )
@@ -1414,22 +1404,6 @@ JE_byte JE_playerDamage( JE_byte temp,
 	VGAScreen = game_screen; /* side-effect of game_screen */
 
 	return playerDamage;
-}
-
-void JE_powerUp( JE_byte port )
-{
-	--port; // TODO: change calls so this isn't necessary
-	
-	const uint item = player[0].items.weapon[port].id;
-	uint *item_power = &player[twoPlayerMode ? port : 0].items.weapon[port].power;
-	
-	if (*item_power < 11 && (item > 0 || twoPlayerMode))
-	{
-		++(*item_power);
-		shotMultiPos[port] = 0;
-	}
-	else
-		player[twoPlayerMode ? port : 0].cash += 1000;
 }
 
 JE_word JE_portConfigs( void )

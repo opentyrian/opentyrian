@@ -321,7 +321,6 @@ extern JE_byte chain;
 extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
 extern const uint shadowYDist;
-extern JE_byte purpleBallsRemaining[2];
 extern JE_byte sAni;
 extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;
 extern JE_integer lastTurnY, lastTurnX;
@@ -364,7 +363,6 @@ extern Sprite2_array *shipGrPtr, *shipGr2ptr;
 void JE_getShipInfo( void );
 JE_word JE_SGr( JE_word ship, Sprite2_array **ptr );
 
-void JE_calcPurpleBall( JE_byte playernum );
 void JE_drawOptions( void );
 
 void JE_tyrianHalt( JE_byte code ); /* This ends the game */
@@ -374,7 +372,6 @@ void JE_initPlayerShot( JE_word portnum, uint shot_i, JE_word px, JE_word py,
 void JE_specialComplete( JE_byte playernum, JE_byte specialType );
 void JE_doSpecialShot( JE_byte playernum, uint *armor, uint *shield );
 
-void JE_powerUp( JE_byte port );
 void JE_wipeShieldArmorBars( void );
 JE_byte JE_playerDamage( JE_byte temp, Player * );
 

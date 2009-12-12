@@ -3019,7 +3019,7 @@ redo:
 					
 					reallyEndLevel = false;
 					shotMultiPos[playerNum_-1] = 0;
-					JE_calcPurpleBall(playerNum_);
+					calc_purple_balls_needed(this_player);
 					twoPlayerLinked = false;
 					if (galagaMode)
 						twoPlayerMode = false;
@@ -4293,21 +4293,13 @@ void JE_playerCollide( Player *this_player,
 				tempI4 = enemy[z].evalue;
 				if (tempI4 > 29999)
 				{
-					if (tempI4 == 30000)
+					if (tempI4 == 30000)  // spawn dragonwing in galaga mode, otherwise just a purple ball
 					{
 						this_player->cash += 100;
 						
 						if (!galagaMode)
 						{
-							if (purpleBallsRemaining[playerNum_ - 1] > 1)
-							{
-								purpleBallsRemaining[playerNum_ - 1]--;
-							}
-							else
-							{
-								JE_powerUp(playerNum_);
-								JE_calcPurpleBall(playerNum_);
-							}
+							handle_got_purple_ball(this_player);
 						}
 						else
 						{
@@ -4330,21 +4322,16 @@ void JE_playerCollide( Player *this_player,
 						
 						tempW = SAWeapon[superArcadeMode-1][tempI4 - 30000-1];
 						
+						// if picked up already-owned weapon, power weapon up
 						if (tempW == player[0].items.weapon[FRONT_WEAPON].id)
 						{
 							this_player->cash += 1000;
-							if (player[0].items.weapon[FRONT_WEAPON].power < 11)
-								JE_powerUp(1);
-							JE_calcPurpleBall(playerNum_);
+							power_up_weapon(this_player, FRONT_WEAPON);
 						}
-						else if (purpleBallsRemaining[playerNum_-1] > 1)
-						{
-							purpleBallsRemaining[playerNum_-1]--;
-						}
+						// else weapon also gives purple ball
 						else
 						{
-							JE_powerUp(playerNum_);
-							JE_calcPurpleBall(playerNum_);
+							handle_got_purple_ball(this_player);
 						}
 						
 						player[0].items.weapon[FRONT_WEAPON].id = tempW;
@@ -4537,7 +4524,7 @@ void JE_playerCollide( Player *this_player,
 						cubeMax++;
 						soundQueue[3] = V_DATA_CUBE;
 					}
-					else if (tempI4 == -1)
+					else if (tempI4 == -1)  // got front weapon powerup
 					{
 						if (isNetworkGame)
 							sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], miscText[45-1]);
@@ -4546,10 +4533,11 @@ void JE_playerCollide( Player *this_player,
 						else
 							strcpy(tempStr, miscText[45-1]);
 						JE_drawTextWindow(tempStr);
-						JE_powerUp(1);
+						
+						power_up_weapon(&player[0], FRONT_WEAPON);
 						soundQueue[7] = S_POWERUP;
 					}
-					else if (tempI4 == -2)
+					else if (tempI4 == -2)  // got rear weapon powerup
 					{
 						if (isNetworkGame)
 							sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], miscText[46-1]);
@@ -4558,7 +4546,8 @@ void JE_playerCollide( Player *this_player,
 						else
 							strcpy(tempStr, miscText[46-1]);
 						JE_drawTextWindow(tempStr);
-						JE_powerUp(2);
+						
+						power_up_weapon(twoPlayerMode ? &player[1] : &player[0], REAR_WEAPON);
 						soundQueue[7] = S_POWERUP;
 					}
 					else if (tempI4 == -3)

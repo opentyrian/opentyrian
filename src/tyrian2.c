@@ -983,10 +983,10 @@ start_level_first:
 
 	twoPlayerLinked = false;
 	linkGunDirec = M_PI;
-
-	JE_calcPurpleBall(1);
-	JE_calcPurpleBall(2);
-
+	
+	for (uint i = 0; i < COUNTOF(player); ++i)
+		calc_purple_balls_needed(&player[i]);
+	
 	damageRate = 2;  /*Normal Rate for Collision Damage*/
 
 	chargeWait   = 5;
