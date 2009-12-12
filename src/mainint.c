@@ -2943,7 +2943,7 @@ void JE_playerMovement( Player *this_player,
                         JE_byte playerNum_,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
-                        JE_integer *lastTurn_, JE_integer *lastTurn2_,
+                        JE_integer *lastTurnY_, JE_integer *lastTurnX_,
                         JE_byte *stopWaitX_, JE_byte *stopWaitY_,
                         JE_word *mouseX_, JE_word *mouseY_ )
 {
@@ -3487,10 +3487,10 @@ redo:
 				else
 				{
 					*stopWaitX_ = 2;
-					if (*lastTurn_ < 0)
-						(*lastTurn_)++;
-					else if (*lastTurn_ > 0)
-						(*lastTurn_)--;
+					if (*lastTurnY_ < 0)
+						(*lastTurnY_)++;
+					else if (*lastTurnY_ > 0)
+						(*lastTurnY_)--;
 				}
 
 				if (*stopWaitY_ > 0)
@@ -3500,26 +3500,26 @@ redo:
 				else
 				{
 					*stopWaitY_ = 1;
-					if (*lastTurn2_ < 0)
-						(*lastTurn2_)++;
-					else if (*lastTurn2_ > 0)
-						(*lastTurn2_)--;
+					if (*lastTurnX_ < 0)
+						(*lastTurnX_)++;
+					else if (*lastTurnX_ > 0)
+						(*lastTurnX_)--;
 				}
 
-				*lastTurn_ += accelYC;
-				*lastTurn2_ += accelXC;
+				*lastTurnY_ += accelYC;
+				*lastTurnX_ += accelXC;
 
-				if (*lastTurn2_ < -4)
-					*lastTurn2_ = -4;
-				if (*lastTurn2_ > 4)
-					*lastTurn2_ = 4;
-				if (*lastTurn_ < -4)
-					*lastTurn_ = -4;
-				if (*lastTurn_ > 4)
-					*lastTurn_ = 4;
+				if (*lastTurnX_ < -4)
+					*lastTurnX_ = -4;
+				if (*lastTurnX_ > 4)
+					*lastTurnX_ = 4;
+				if (*lastTurnY_ < -4)
+					*lastTurnY_ = -4;
+				if (*lastTurnY_ > 4)
+					*lastTurnY_ = 4;
 
-				this_player->x += *lastTurn2_;
-				this_player->y += *lastTurn_;
+				this_player->x += *lastTurnX_;
+				this_player->y += *lastTurnY_;
 
 
 				/*Option History for special new sideships*/
@@ -3550,8 +3550,8 @@ redo:
 				else
 					this_player->x = player[0].x;
 				this_player->y = player[0].y + 8;
-				*lastTurn2_ = lastTurn2;
-				*lastTurn_ = 4;
+				*lastTurnX_ = lastTurnX;
+				*lastTurnY_ = 4;
 				
 				// turret direction marker/shield
 				shotMultiPos[SHOT_MISC] = 0;
@@ -3630,7 +3630,7 @@ redo:
 			if (this_player->y < 10)
 				this_player->y = 10;
 
-			tempI2 = *lastTurn2_ / 2;
+			tempI2 = *lastTurnX_ / 2;
 			tempI2 += (this_player->x - *mouseX_) / 6;
 
 			if (tempI2 < -2)
@@ -4235,18 +4235,18 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
-		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
+		                  &lastTurnY, &lastTurnX, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
-		                  &lastTurnB, &lastTurn2B, &stopWaitXB, &stopWaitYB,
+		                  &lastTurnYB, &lastTurnXB, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB);
 	}
 	else
 	{
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
-		                  &lastTurn, &lastTurn2, &stopWaitX, &stopWaitY,
+		                  &lastTurnY, &lastTurnX, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 	}
 
@@ -4291,7 +4291,7 @@ const char *JE_getName( JE_byte pnum )
 }
 
 void JE_playerCollide( Player *this_player,
-                       JE_integer *lastTurn_, JE_integer *lastTurn2_,
+                       JE_integer *lastTurnY_, JE_integer *lastTurnX_,
                        JE_byte playerNum_ )
 {
 	char tempStr[256];
@@ -4624,8 +4624,8 @@ void JE_playerCollide( Player *this_player,
 					
 					if (enemy[z].armorleft > 0)
 					{
-						*lastTurn2_ += (enemy[z].exc * enemy[z].armorleft) / 2;
-						*lastTurn_  += (enemy[z].eyc * enemy[z].armorleft) / 2;
+						*lastTurnX_ += (enemy[z].exc * enemy[z].armorleft) / 2;
+						*lastTurnY_  += (enemy[z].eyc * enemy[z].armorleft) / 2;
 					}
 					
 					tempI = enemy[z].armorleft;

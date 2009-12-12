@@ -299,8 +299,8 @@ JE_byte purpleBallsRemaining[2]; /* [1..2] */
 JE_byte sAni;
 JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
 
-JE_integer lastTurn, lastTurn2;
-JE_integer lastTurnB, lastTurn2B;
+JE_integer lastTurnY, lastTurnX;
+JE_integer lastTurnYB, lastTurnXB;
 
 JE_byte stopWaitX, stopWaitY;
 JE_byte stopWaitXB, stopWaitYB;
