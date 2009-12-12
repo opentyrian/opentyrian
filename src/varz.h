@@ -346,7 +346,6 @@ extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
 extern JE_integer tempI, tempI2, tempI3, tempI4, tempI5;
 extern JE_longint tempL;
-extern JE_boolean tempB;
 extern JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 extern JE_word tempX, tempY, tempX2, tempY2;
 extern JE_word tempW, tempW2;

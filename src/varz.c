@@ -345,7 +345,6 @@ unsigned int last_superpixel;
 JE_integer tempI, tempI2, tempI3, tempI4, tempI5;
 JE_longint tempL;
 
-JE_boolean tempB;
 JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 JE_word tempX, tempY, tempX2, tempY2;
 JE_word tempW, tempW2;
@@ -1024,45 +1023,46 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 	if (temp > 0 && shotRepeat[SHOT_SPECIAL] == 0 && flareDuration == 0)
 	{
 		temp2 = special[temp].pwr;
-
-		tempB = true;
+		
+		bool can_afford = true;
+		
 		if (temp2 > 0)
 		{
-			if (temp2 < 98)
+			if (temp2 < 98)  // costs some shield
 			{
 				if (*shield >= temp2)
 					*shield -= temp2;
 				else
-					tempB = false;
+					can_afford = false;
 			}
-			else if (temp2 == 98)
+			else if (temp2 == 98)  // costs all shield
 			{
 				if (*shield < 4)
-					tempB = false;
+					can_afford = false;
 				temp2 = *shield;
 				*shield = 0;
 			}
-			else if (temp2 == 99)
+			else if (temp2 == 99)  // costs half shield
 			{
 				temp2 = *shield / 2;
 				*shield = temp2;
 			}
-			else
+			else  // costs some armor
 			{
 				temp2 -= 100;
 				if (*armor > temp2)
 					*armor -= temp2;
 				else
-					tempB = false;
+					can_afford = false;
 			}
 		}
 
 		shotMultiPos[SHOT_SPECIAL] = 0;
 		shotMultiPos[SHOT_SPECIAL2] = 0;
-		if (tempB)
-		{
+		
+		if (can_afford)
 			JE_specialComplete(playerNum, temp);
-		}
+		
 		SFExecuted[playerNum-1] = 0;
 
 		JE_wipeShieldArmorBars();
@@ -1298,13 +1298,17 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 			JE_setupExplosion(x - 6, y,      0,  8, false, false);
 			JE_setupExplosion(x + 6, y,      0, 10, false, false);
 		}
-
+		
+		bool big;
+		
 		if (exploNum > 10)
 		{
 			exploNum -= 10;
-			tempB = true;
-		} else {
-			tempB = false;
+			big = true;
+		}
+		else
+		{
+			big = false;
 		}
 
 		if (exploNum)
@@ -1317,7 +1321,7 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 					rep_explosions[i].delay = 2;
 					rep_explosions[i].x = x;
 					rep_explosions[i].y = y;
-					rep_explosions[i].big = tempB;
+					rep_explosions[i].big = big;
 					break;
 				}
 			}

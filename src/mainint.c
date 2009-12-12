@@ -2577,7 +2577,7 @@ void JE_inGameDisplays( void )
 
 void JE_mainKeyboardInput( void )
 {
-	tempB = JE_gammaCheck();
+	JE_gammaCheck();
 
 	/* { Network Request Commands } */
 

@@ -1084,8 +1084,6 @@ void JE_itemScreen( void )
 				}
 			}
 
-			tempB = true;
-
 			if (curMenu == 2 || curMenu == 11)
 			{
 				if ((mouseX >= (225 - 4)) && (mouseY >= 70) && (mouseY <= 82))
@@ -1121,7 +1119,7 @@ void JE_itemScreen( void )
 				JE_playSampleNum(S_CURSOR);
 			}
 
-			if (tempB && (mouseY > 20) && (mouseX > 170) && (mouseX < 308) && (curMenu != 8))
+			if ((mouseY > 20) && (mouseX > 170) && (mouseX < 308) && (curMenu != 8))
 			{
 				const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 8, 16 };
 				
@@ -2694,14 +2692,14 @@ void JE_menuFunction( JE_byte select )
 				wait_delay();
 			} while (!newkey && !mousedown && !joydown);
 			
-			tempB = newkey;
+			bool do_assignment = newkey;
 			
 			// already used?
 			for (x = 0; x < 8; x++)
 			{
 				if (keySettings[x] == lastkey_sym)
 				{
-					tempB = false;
+					do_assignment = false;
 					JE_playSampleNum(false);
 				}
 			}
@@ -2711,7 +2709,7 @@ void JE_menuFunction( JE_byte select )
 				 lastkey_sym != SDLK_s &&      // reserved for sample mute
 				 lastkey_sym != SDLK_m &&      // reserved for music mute
 				 lastkey_sym != SDLK_p &&      // reserved for pause
-				 tempB )
+				 do_assignment )
 			{
 				JE_playSampleNum(S_CLICK);
 				keySettings[curSelect-2] = lastkey_sym;
