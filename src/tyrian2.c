@@ -4441,30 +4441,31 @@ void JE_eventSystem( void )
 			}
 		break;
 		
-	case 12: /* Custom 4x4 Ground Enemy */
+	case 12:; /* Custom 4x4 Ground Enemy */
+		uint temp = 0;
 		switch (eventRec[eventLoc-1].eventdat6)
 		{
 		case 0:
 		case 1:
-			tempW4 = 25;
+			temp = 25;
 			break;
 		case 2:
-			tempW4 = 0;
+			temp = 0;
 			break;
 		case 3:
-			tempW4 = 50;
+			temp = 50;
 			break;
 		case 4:
-			tempW4 = 75;
+			temp = 75;
 			break;
 		}
 		eventRec[eventLoc-1].eventdat6 = 0;   /* We use EVENTDAT6 for the background */
-		JE_createNewEventEnemy(0, tempW4);
-		JE_createNewEventEnemy(1, tempW4);
+		JE_createNewEventEnemy(0, temp);
+		JE_createNewEventEnemy(1, temp);
 		enemy[b-1].ex += 24;
-		JE_createNewEventEnemy(2, tempW4);
+		JE_createNewEventEnemy(2, temp);
 		enemy[b-1].ey -= 28;
-		JE_createNewEventEnemy(3, tempW4);
+		JE_createNewEventEnemy(3, temp);
 		enemy[b-1].ex += 24;
 		enemy[b-1].ey -= 28;
 		break;

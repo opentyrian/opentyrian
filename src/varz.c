@@ -348,7 +348,7 @@ JE_longint tempL;
 JE_boolean tempB;
 JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 JE_word tempX, tempY, tempX2, tempY2;
-JE_word tempW, tempW2, tempW3, tempW4;
+JE_word tempW, tempW2;
 
 JE_boolean doNotSaveBackup;
 
@@ -794,10 +794,9 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 					}
 
 
-					if (weapons[wpNum].aim > 5)
-					{  /*Guided Shot*/
-
-						tempW3 = 65000;
+					if (weapons[wpNum].aim > 5)  /*Guided Shot*/
+					{
+						uint best_dist = 65000;
 						temp3 = 0;
 						/*Find Closest Enemy*/
 						for (x = 0; x < 100; x++)
@@ -805,9 +804,9 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 							if (enemyAvail[x] != 1 && !enemy[x].scoreitem)
 							{
 								y = abs(enemy[x].ex - playerShotData[b].shotX) + abs(enemy[x].ey - playerShotData[b].shotY);
-								if (y < tempW3)
+								if (y < best_dist)
 								{
-									tempW3 = y;
+									best_dist = y;
 									temp3 = x + 1;
 								}
 							}
@@ -815,7 +814,9 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 						playerShotData[b].aimAtEnemy = temp3;
 						playerShotData[b].aimDelay = 5;
 						playerShotData[b].aimDelayMax = weapons[wpNum].aim - 5;
-					} else {
+					}
+					else
+					{
 						playerShotData[b].aimAtEnemy = 0;
 					}
 

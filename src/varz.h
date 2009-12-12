@@ -349,7 +349,7 @@ extern JE_longint tempL;
 extern JE_boolean tempB;
 extern JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
 extern JE_word tempX, tempY, tempX2, tempY2;
-extern JE_word tempW, tempW2, tempW3, tempW4;
+extern JE_word tempW, tempW2;
 extern JE_boolean doNotSaveBackup;
 extern JE_boolean tempSpecial;
 extern JE_word x, y;

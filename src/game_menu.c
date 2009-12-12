@@ -521,18 +521,21 @@ void JE_itemScreen( void )
 			for (tempW = 1; tempW < menuChoices[curMenu]; tempW++)
 			{
 				int tempY = 40 + (tempW-1) * 26; /* Calculate y position */
+				uint temp_cost;
 
 				/* Is this a item or None/DONE? */
 				if (tempW < menuChoices[4] - 1)
 				{
 					/* Get base cost for choice */
-					tempW3 = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]);
-				} else {
+					temp_cost = JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]);
+				}
+				else
+				{
 					/* "None" is free :) */
-					tempW3 = 0;
+					temp_cost = 0;
 				}
 
-				temp4 = (tempW3 > player[0].cash) ? 4 : 0;  // can player afford current weapon at all
+				temp4 = (temp_cost > player[0].cash) ? 4 : 0;  // can player afford current weapon at all
 
 				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]; /* Item ID */
 				switch (curSel[1]-1)
@@ -594,19 +597,14 @@ void JE_itemScreen( void )
 				}
 
 				/* Make selected text brigther */
-				if (tempW == curSel[curMenu]-1)
-				{
-					temp2 = 15;
-				} else {
-					temp2 = 28;
-				}
-
+				temp2 = (tempW == curSel[curMenu]-1) ? 15 : 28;
+				
 				/* Draw Cost: if it's not the DONE option */
 				if (tempW != menuChoices[curMenu]-1)
 				{
 					char buf[20];
-
-					snprintf(buf, sizeof buf, "Cost: %d", tempW3);
+					
+					snprintf(buf, sizeof buf, "Cost: %d", temp_cost);
 					JE_textShade(187, tempY+10, buf, temp2 / 16, temp2 % 16 - 8 - temp4, DARKEN);
 				}
 			}
