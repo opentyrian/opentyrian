@@ -1984,8 +1984,10 @@ draw_player_shot_loop_end:
 					for (uint i = 0; i < (twoPlayerMode ? 2 : 1); ++i)
 					{
 						if (player[i].is_alive &&
-						    enemyShot[z].sx - player[i].x > sAniXNeg && enemyShot[z].sx - player[i].x < sAniX &&
-						    enemyShot[z].sy - player[i].y > sAniYNeg && enemyShot[z].sy - player[i].y < sAniY)
+						    enemyShot[z].sx > player[i].x - player[i].shot_hit_area_x &&
+						    enemyShot[z].sx < player[i].x + player[i].shot_hit_area_x &&
+						    enemyShot[z].sy > player[i].y - player[i].shot_hit_area_y &&
+						    enemyShot[z].sy < player[i].y + player[i].shot_hit_area_y)
 						{
 							temp3 = i + 1;
 							break;

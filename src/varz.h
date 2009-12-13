@@ -321,8 +321,6 @@ extern JE_byte chain;
 extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
 extern const uint shadowYDist;
-extern JE_byte sAni;
-extern JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;
 extern JE_integer lastTurnY, lastTurnX;
 extern JE_integer lastTurnYB, lastTurnXB;
 extern JE_byte stopWaitX, stopWaitY;

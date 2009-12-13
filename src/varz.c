@@ -295,9 +295,6 @@ JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 const uint shadowYDist = 10;
 
-JE_byte sAni;
-JE_integer sAniX, sAniY, sAniXNeg, sAniYNeg;  /* X,Y ranges of field of hit */
-
 JE_integer lastTurnY, lastTurnX;
 JE_integer lastTurnYB, lastTurnXB;
 
@@ -399,23 +396,23 @@ void JE_getShipInfo( void )
 	}
 	
 	for (uint i = 0; i < COUNTOF(player); ++i)
+	{
 		player[i].initial_armor = player[i].armor;
-	
-	sAni = extraShip ? 2 : ships[player[0].items.ship].ani;
-	
-	if (sAni == 0)
-	{
-		sAniX = 12;
-		sAniY = 10;
-		sAniXNeg = -12;
-		sAniYNeg = -10;
-	}
-	else
-	{
-		sAniX = 11;
-		sAniY = 14;
-		sAniXNeg = -11;
-		sAniYNeg = -14;
+		
+		
+		uint temp = ((i == 0 && extraShip) ||
+		             (i == 1 && extraShip2)) ? 2 : ships[player[i].items.ship].ani;
+		
+		if (temp == 0)
+		{
+			player[i].shot_hit_area_x = 12;
+			player[i].shot_hit_area_y = 10;
+		}
+		else
+		{
+			player[i].shot_hit_area_x = 11;
+			player[i].shot_hit_area_y = 14;
+		}
 	}
 }
 

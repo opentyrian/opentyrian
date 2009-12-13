@@ -65,6 +65,7 @@ typedef struct
 	// calculatables
 	uint shield_max;
 	uint initial_armor;
+	uint shot_hit_area_x, shot_hit_area_y;
 	
 	// state
 	bool is_alive;
