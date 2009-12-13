@@ -378,33 +378,30 @@ enemy_still_exists:
 								JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, -2, 6, false, false);
 							}
 							break;
-						case 251: /* Suck-O-Magnet */
-							tempI4 = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 100;
-							if (player[0].x > tempX)
-								lastTurnX -= tempI4;
-							else
-								lastTurnX += tempI4;
+						case 251:; /* Suck-O-Magnet */
+							const int attractivity = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 100;
+							player[0].x_velocity += (player[0].x > tempX) ? -attractivity : attractivity;
 							break;
 						case 253: /* Left ShortRange Magnet */
 							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
 							{
-								lastTurnX += 2;
+								player[0].x_velocity += 2;
 							}
 							if (twoPlayerMode &&
 							   (abs(player[1].x - 14 - tempX) < 24 && abs(player[1].y - tempY) < 28))
 							{
-								lastTurnXB += 2;
+								player[1].x_velocity += 2;
 							}
 							break;
 						case 254: /* Left ShortRange Magnet */
 							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
 							{
-								lastTurnX -= 2;
+								player[0].x_velocity -= 2;
 							}
 							if (twoPlayerMode &&
 							   (abs(player[1].x - 14 - tempX) < 24 && abs(player[1].y - tempY) < 28))
 							{
-								lastTurnXB -= 2;
+								player[1].x_velocity -= 2;
 							}
 							break;
 						case 255: /* Magneto RePulse!! */
@@ -416,14 +413,9 @@ enemy_still_exists:
 								}
 								else
 								{
-									tempI4 = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 20;
-									if (tempI4 > 0)
-									{
-										if (player[0].x > tempX)
-											lastTurnX += tempI4;
-										else
-											lastTurnX -= tempI4;
-									}
+									const int repulsivity = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 20;
+									if (repulsivity > 0)
+										player[0].x_velocity += (player[0].x > tempX) ? repulsivity : -repulsivity;
 								}
 							}
 							break;
@@ -819,13 +811,14 @@ start_level_first:
 	/* Setup player ship graphics */
 	JE_getShipInfo();
 	tempI = (((player[0].x - mouseX) / 2) * 2) * 168; // is this used for anything?
-	lastTurnY   = 0;
-	lastTurnYB  = 0;
-	lastTurnX  = 0;
-	lastTurnXB = 0;
 	
 	for (uint i = 0; i < COUNTOF(player); ++i)
+	{
+		player[i].x_velocity = 0;
+		player[i].y_velocity = 0;
+		
 		player[i].invulnerable_ticks = 100;
+	}
 	
 	newkey = newmouse = false;
 
@@ -1921,10 +1914,10 @@ draw_player_shot_loop_end:
 	/*=================================*/
 
 	if (player[0].is_alive && !endLevel)
-		JE_playerCollide(&player[0], &lastTurnY, &lastTurnX, 1);
+		JE_playerCollide(&player[0], 1);
 
 	if (twoPlayerMode && player[1].is_alive && !endLevel)
-		JE_playerCollide(&player[1], &lastTurnYB, &lastTurnXB, 2);
+		JE_playerCollide(&player[1], 2);
 
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
@@ -1977,12 +1970,10 @@ draw_player_shot_loop_end:
 
 				if (enemyShot[z].duration-- == 0 || enemyShot[z].sy > 190 || enemyShot[z].sy <= -14 || enemyShot[z].sx > 275 || enemyShot[z].sx <= 0)
 				{
-					enemyShotAvail[z] = 1;
+					enemyShotAvail[z] = true;
 				}
-				else
+				else  // check if shot collided with player
 				{
-					temp3 = 0;
-					
 					for (uint i = 0; i < (twoPlayerMode ? 2 : 1); ++i)
 					{
 						if (player[i].is_alive &&
@@ -1991,46 +1982,28 @@ draw_player_shot_loop_end:
 						    enemyShot[z].sy > player[i].y - player[i].shot_hit_area_y &&
 						    enemyShot[z].sy < player[i].y + player[i].shot_hit_area_y)
 						{
-							temp3 = i + 1;
+							tempX = enemyShot[z].sx;
+							tempY = enemyShot[z].sy;
+							temp = enemyShot[z].sdmg;
+							
+							enemyShotAvail[z] = true;
+							
+							JE_setupExplosion(tempX, tempY, 0, 0, false, false);
+							
+							if (player[i].invulnerable_ticks == 0)
+							{
+								if ((temp = JE_playerDamage(temp, &player[i])) > 0)
+								{
+									player[i].x_velocity += (enemyShot[z].sxm * temp) / 2;
+									player[i].y_velocity += (enemyShot[z].sym * temp) / 2;
+								}
+							}
+							
 							break;
 						}
 					}
 					
-					if (temp3 != 0)
-					{
-						tempX = enemyShot[z].sx;
-						tempY = enemyShot[z].sy;
-						temp = enemyShot[z].sdmg;
-
-						enemyShotAvail[z] = 1;
-
-						JE_setupExplosion(tempX, tempY, 0, 0, false, false);
-
-						switch (temp3)
-						{
-						case 1:
-							if (player[0].invulnerable_ticks == 0)
-							{
-								if ((temp = JE_playerDamage(temp, &player[0])) > 0)
-								{
-									lastTurnX += (enemyShot[z].sxm * temp) / 2;
-									lastTurnY  += (enemyShot[z].sym * temp) / 2;
-								}
-							}
-							break;
-						case 2:
-							if (player[1].invulnerable_ticks == 0)
-							{
-								if ((temp = JE_playerDamage(temp, &player[1])) > 0)
-								{
-									lastTurnXB += (enemyShot[z].sxm * temp) / 2;
-									lastTurnYB  += (enemyShot[z].sym * temp) / 2;
-								}
-							}
-							break;
-						}
-					}
-					else
+					if (enemyShotAvail[z] == false)
 					{
 						if (enemyShot[z].animax != 0)
 						{
@@ -2289,7 +2262,7 @@ draw_player_shot_loop_end:
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
 		sprintf(tempStr, "%2.3f", 1000.0f / roundf(debugHist / debugHistCount));
-		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + player[0].x, curLoc, tempStr, lastTurnX, lastTurnY, player[0].x, player[0].y);
+		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + player[0].x, curLoc, tempStr, player[0].x_velocity, player[0].y_velocity, player[0].x, player[0].y);
 		JE_outText(45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
 	}

@@ -2943,8 +2943,6 @@ void JE_playerMovement( Player *this_player,
                         JE_byte playerNum_,
                         JE_word shipGr_,
                         Sprite2_array *shapes9ptr_,
-                        JE_integer *lastTurnY_, JE_integer *lastTurnX_,
-                        JE_byte *stopWaitX_, JE_byte *stopWaitY_,
                         JE_word *mouseX_, JE_word *mouseY_ )
 {
 	JE_integer mouseXC, mouseYC;
@@ -3474,46 +3472,42 @@ redo:
 				}
 			}
 			
-			if (*stopWaitX_ > 0)
+			if (this_player->x_friction_ticks > 0)
 			{
-				(*stopWaitX_)--;
+				--this_player->x_friction_ticks;
 			}
 			else
 			{
-				*stopWaitX_ = 2;
-				if (*lastTurnY_ < 0)
-					(*lastTurnY_)++;
-				else if (*lastTurnY_ > 0)
-					(*lastTurnY_)--;
+				this_player->x_friction_ticks = 1;
+				
+				if (this_player->x_velocity < 0)
+					++this_player->x_velocity;
+				else if (this_player->x_velocity > 0)
+					--this_player->x_velocity;
 			}
 			
-			if (*stopWaitY_ > 0)
+			if (this_player->y_friction_ticks > 0)
 			{
-				(*stopWaitY_)--;
+				--this_player->y_friction_ticks;
 			}
 			else
 			{
-				*stopWaitY_ = 1;
-				if (*lastTurnX_ < 0)
-					(*lastTurnX_)++;
-				else if (*lastTurnX_ > 0)
-					(*lastTurnX_)--;
+				this_player->y_friction_ticks = 2;
+				
+				if (this_player->y_velocity < 0)
+					++this_player->y_velocity;
+				else if (this_player->y_velocity > 0)
+					--this_player->y_velocity;
 			}
 			
-			*lastTurnY_ += accelYC;
-			*lastTurnX_ += accelXC;
+			this_player->x_velocity += accelXC;
+			this_player->y_velocity += accelYC;
 			
-			if (*lastTurnX_ < -4)
-				*lastTurnX_ = -4;
-			if (*lastTurnX_ > 4)
-				*lastTurnX_ = 4;
-			if (*lastTurnY_ < -4)
-				*lastTurnY_ = -4;
-			if (*lastTurnY_ > 4)
-				*lastTurnY_ = 4;
+			this_player->x_velocity = MIN(MAX(-4, this_player->x_velocity), 4);
+			this_player->y_velocity = MIN(MAX(-4, this_player->y_velocity), 4);
 			
-			this_player->x += *lastTurnX_;
-			this_player->y += *lastTurnY_;
+			this_player->x += this_player->x_velocity;
+			this_player->y += this_player->y_velocity;
 			
 			// if player moved, add new ship x, y history entry
 			if (this_player->x - *mouseX_ != 0 || this_player->y - *mouseY_ != 0)
@@ -3534,8 +3528,9 @@ redo:
 			else
 				this_player->x = player[0].x;
 			this_player->y = player[0].y + 8;
-			*lastTurnX_ = lastTurnX;
-			*lastTurnY_ = 4;
+			
+			this_player->x_velocity = player[0].x_velocity;
+			this_player->y_velocity = 4;
 			
 			// turret direction marker/shield
 			shotMultiPos[SHOT_MISC] = 0;
@@ -3615,7 +3610,7 @@ redo:
 		if (this_player->y < 10)
 			this_player->y = 10;
 		
-		tempI2 = *lastTurnX_ / 2;
+		tempI2 = this_player->x_velocity / 2;
 		tempI2 += (this_player->x - *mouseX_) / 6;
 		
 		if (tempI2 < -2)
@@ -4212,18 +4207,15 @@ void JE_mainGamePlayerFunctions( void )
 	{
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
-		                  &lastTurnY, &lastTurnX, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
-		                  &lastTurnYB, &lastTurnXB, &stopWaitXB, &stopWaitYB,
 		                  &mouseXB, &mouseYB);
 	}
 	else
 	{
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
-		                  &lastTurnY, &lastTurnX, &stopWaitX, &stopWaitY,
 		                  &mouseX, &mouseY);
 	}
 
@@ -4267,9 +4259,7 @@ const char *JE_getName( JE_byte pnum )
 	return miscText[47 + pnum];
 }
 
-void JE_playerCollide( Player *this_player,
-                       JE_integer *lastTurnY_, JE_integer *lastTurnX_,
-                       JE_byte playerNum_ )
+void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 {
 	char tempStr[256];
 	
@@ -4588,10 +4578,11 @@ void JE_playerCollide( Player *this_player,
 					
 					JE_playerDamage(tempI3, this_player);
 					
+					// player ship gets push-back from collision
 					if (enemy[z].armorleft > 0)
 					{
-						*lastTurnX_ += (enemy[z].exc * enemy[z].armorleft) / 2;
-						*lastTurnY_  += (enemy[z].eyc * enemy[z].armorleft) / 2;
+						this_player->x_velocity += (enemy[z].exc * enemy[z].armorleft) / 2;
+						this_player->y_velocity += (enemy[z].eyc * enemy[z].armorleft) / 2;
 					}
 					
 					tempI = enemy[z].armorleft;

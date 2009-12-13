@@ -82,11 +82,11 @@ void JE_inGameDisplays( void );
 void JE_mainKeyboardInput( void );
 void JE_pauseGame( void );
 
-void JE_playerMovement( Player *this_player, JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, Sprite2_array *shapes9ptr_, JE_integer *lastTurnY, JE_integer *lastTurnX, JE_byte *stopWaitX, JE_byte *stopWaitY, JE_word *mouseX, JE_word *mouseY );
+void JE_playerMovement( Player *this_player, JE_byte inputDevice, JE_byte playerNum, JE_word shipGr, Sprite2_array *shapes9ptr_, JE_word *mouseX, JE_word *mouseY );
 void JE_mainGamePlayerFunctions( void );
 const char *JE_getName( JE_byte pnum );
 
-void JE_playerCollide( Player *this_player, JE_integer *lastTurnY, JE_integer *lastTurnX, JE_byte playerNum );
+void JE_playerCollide( Player *this_player, JE_byte playerNum );
 
 
 #endif /* MAININT_H */

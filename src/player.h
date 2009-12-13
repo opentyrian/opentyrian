@@ -80,6 +80,9 @@ typedef struct
 	int x, y;
 	int old_x[20], old_y[20];
 	
+	int x_velocity, y_velocity;
+	uint x_friction_ticks, y_friction_ticks;  // ticks until friction is applied
+	
 	int delta_x_shot_move, delta_y_shot_move;
 	
 	int last_x_shot_move, last_y_shot_move;

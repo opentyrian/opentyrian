@@ -294,12 +294,6 @@ JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 const uint shadowYDist = 10;
 
-JE_integer lastTurnY, lastTurnX;
-JE_integer lastTurnYB, lastTurnXB;
-
-JE_byte stopWaitX, stopWaitY;
-JE_byte stopWaitXB, stopWaitYB;
-
 JE_word option1Draw, option2Draw, option1Item, option2Item;
 JE_byte option1AmmoMax, option2AmmoMax;
 JE_word option1AmmoRechargeWait, option2AmmoRechargeWait,
