@@ -3227,8 +3227,8 @@ void JE_weaponViewFrame( void )
 					/*Double Speed Circle Shots - add a second copy of above loop*/
 				}
 				
-				tempShotX = playerShotData[z].shotX;
-				tempShotY = playerShotData[z].shotY;
+				int tempShotX = playerShotData[z].shotX;
+				int tempShotY = playerShotData[z].shotY;
 				
 				if (playerShotData[z].shotX < 0 || playerShotData[z].shotX > 140 ||
 				    playerShotData[z].shotY < 0 || playerShotData[z].shotY > 170)

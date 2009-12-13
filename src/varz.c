@@ -284,7 +284,6 @@ JE_boolean  spraySpecial;
 JE_byte     doIced;
 JE_boolean  infiniteShot;
 
-JE_integer tempShotX, tempShotY;
 PlayerShotDataType playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
 
 JE_byte chain;
@@ -335,7 +334,7 @@ superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
 unsigned int last_superpixel;
 
 /*Temporary Numbers*/
-JE_integer tempI, tempI2, tempI3, tempI4, tempI5;
+JE_integer tempI, tempI2, tempI3, tempI4;
 JE_longint tempL;
 
 JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
@@ -343,8 +342,6 @@ JE_word tempX, tempY, tempX2, tempY2;
 JE_word tempW, tempW2;
 
 JE_boolean doNotSaveBackup;
-
-JE_boolean tempSpecial;
 
 JE_word x, y;
 JE_integer b;

@@ -593,7 +593,7 @@ enemy_still_exists:
 								tempI4 = (player[0].x + 25) - tempX - tempMapXOfs - 4;
 								if (tempI4 == 0)
 									tempI4++;
-								tempI5 = player[0].y - tempY;
+								int tempI5 = player[0].y - tempY;
 								if (tempI5 == 0)
 									tempI5++;
 								if (abs(tempI4) > abs(tempI5))
@@ -1486,6 +1486,9 @@ level_loop:
 	{
 		if (shotAvail[z] != 0)
 		{
+			bool is_special = false;
+			int tempShotX = 0, tempShotY = 0;
+			
 			shotAvail[z]--;
 			if (z != MAX_PWEAPON - 1)
 			{
@@ -1590,9 +1593,9 @@ level_loop:
 				chain = playerShotData[z].chainReaction;
 				playerNum = playerShotData[z].playerNumber;
 
-				tempSpecial = tempW > 60000;
+				is_special = tempW > 60000;
 
-				if (tempSpecial)
+				if (is_special)
 				{
 					blit_sprite_blend(VGAScreen, tempShotX+1, tempShotY, OPTION_SHAPES, tempW - 60001);
 					
@@ -1619,7 +1622,6 @@ level_loop:
 						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, tempW);
 					}
 				}
-
 			}
 
 			for (b = 0; b < 100; b++)
@@ -1636,7 +1638,7 @@ level_loop:
 						chain = 0;
 						tempI2 = 10;
 					}
-					else if (tempSpecial)
+					else if (is_special)
 					{
 						collided = ((enemy[b].enemycycle == 0) &&
 						            (abs(enemy[b].ex + enemy[b].mapoffset - tempShotX - tempX2) < (25 + tempX2)) &&
