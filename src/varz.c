@@ -323,9 +323,6 @@ JE_boolean optionAttachmentLinked, optionAttachmentReturn;
 
 JE_byte chargeWait, chargeLevel, chargeMax, chargeGr, chargeGrWait;
 
-JE_boolean playerHNotReady;
-JE_word playerHX[20], playerHY[20]; /* [1..20] */
-
 JE_word neat;
 
 
@@ -1445,25 +1442,6 @@ void JE_drawArmor( void )
 	{
 		JE_dBar3(307, 194, player[0].armor, 224);
 	}
-}
-
-void JE_resetPlayerH( void ) // ship x, y history
-{
-	for (int i = 0; i < 20; ++i)
-	{
-		// history is used for some option ships; in two player mode, only second player can have them
-		if (twoPlayerMode)
-		{
-			playerHX[i] = player[1].x - (19 - i);
-			playerHY[i] = player[1].y - 18;
-		}
-		else
-		{
-			playerHX[i] = player[0].x - (19 - i);
-			playerHY[i] = player[0].y - 18;
-		}
-	}
-	playerHNotReady = false;
 }
 
 void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ) /* superpixels */

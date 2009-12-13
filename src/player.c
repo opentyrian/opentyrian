@@ -29,8 +29,8 @@ void calc_purple_balls_needed( Player *this_player )
 
 bool power_up_weapon( Player *this_player, uint port )
 {
-	bool can_power_up = this_player->items.weapon[port].id != 0 &&  // not None
-	                    this_player->items.weapon[port].power < 11; // not at max power
+	const bool can_power_up = this_player->items.weapon[port].id != 0 &&  // not None
+	                          this_player->items.weapon[port].power < 11; // not at max power
 	if (can_power_up)
 	{
 		++this_player->items.weapon[port].power;

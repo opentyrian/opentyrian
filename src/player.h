@@ -77,6 +77,7 @@ typedef struct
 	uint purple_balls_needed;
 	
 	int x, y;
+	int old_x[20], old_y[20];
 	
 	int delta_x_shot_move, delta_y_shot_move;
 	

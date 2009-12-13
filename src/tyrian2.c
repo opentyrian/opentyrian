@@ -758,9 +758,18 @@ start_level_first:
 
 	player[1].x = 190;
 	player[1].y = 180;
-
-	playerHNotReady = true;
-
+	
+	assert(COUNTOF(player->old_x) == COUNTOF(player->old_y));
+	
+	for (uint i = 0; i < COUNTOF(player); ++i)
+	{
+		for (uint j = 0; j < COUNTOF(player->old_x); ++j)
+		{
+			player[i].old_x[j] = player[i].x - (19 - j);
+			player[i].old_y[j] = player[i].y - 18;
+		}
+	}
+	
 	player[0].last_x_shot_move = player[0].x;
 	player[0].last_y_shot_move = player[0].y;
 	

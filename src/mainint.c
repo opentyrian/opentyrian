@@ -3515,25 +3515,16 @@ redo:
 			this_player->x += *lastTurnX_;
 			this_player->y += *lastTurnY_;
 			
-			/*Option History for special new sideships*/
-			if (playerHNotReady)
+			// if player moved, add new ship x, y history entry
+			if (this_player->x - *mouseX_ != 0 || this_player->y - *mouseY_ != 0)
 			{
-				JE_resetPlayerH();
-			}
-			else if ((playerNum_ == 1 && !twoPlayerMode) ||
-			         (playerNum_ == 2 && twoPlayerMode))
-			{
-				// if player moved, add new ship x, y history entry
-				if (this_player->x - *mouseX_ != 0 || this_player->y - *mouseY_ != 0)
+				for (uint i = 1; i < COUNTOF(player->old_x); ++i)
 				{
-					for (int i = 0; i < 19; i++)
-					{
-						playerHX[i] = playerHX[i + 1];
-						playerHY[i] = playerHY[i + 1];
-					}
-					playerHX[19] = this_player->x;
-					playerHY[19] = this_player->y;
+					this_player->old_x[i - 1] = this_player->old_x[i];
+					this_player->old_y[i - 1] = this_player->old_y[i];
 				}
+				this_player->old_x[COUNTOF(player->old_x) - 1] = this_player->x;
+				this_player->old_y[COUNTOF(player->old_x) - 1] = this_player->y;
 			}
 		}
 		else  /*twoPlayerLinked*/
@@ -3920,8 +3911,8 @@ redo:
 				{
 				case 1:
 				case 3:
-					option1X = playerHX[10-1];
-					option1Y = playerHY[10-1];
+					option1X = this_player->old_x[COUNTOF(player->old_x) / 2 - 1];
+					option1Y = this_player->old_y[COUNTOF(player->old_x) / 2 - 1];
 					break;
 				case 2:
 					option1X = this_player->x;
@@ -3949,8 +3940,8 @@ redo:
 					break;
 				case 1:
 				case 3:
-					option2X = playerHX[1-1];
-					option2Y = playerHY[1-1];
+					option2X = this_player->old_x[0];
+					option2Y = this_player->old_y[0];
 					break;
 				case 2:
 					if (!optionAttachmentLinked)

@@ -337,8 +337,6 @@ extern JE_real optionSatelliteRotate;
 extern JE_integer optionAttachmentMove;
 extern JE_boolean optionAttachmentLinked, optionAttachmentReturn;
 extern JE_byte chargeWait, chargeLevel, chargeMax, chargeGr, chargeGrWait;
-extern JE_boolean playerHNotReady;
-extern JE_word playerHX[20], playerHY[20];
 extern JE_word neat;
 extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
@@ -382,8 +380,6 @@ void JE_drawShield( void );
 void JE_drawArmor( void );
 
 JE_word JE_portConfigs( void );
-
-void JE_resetPlayerH( void );
 
 /*SuperPixels*/
 void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color );
