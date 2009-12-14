@@ -1372,7 +1372,7 @@ void JE_inGameHelp( void )
 	JE_barShade(3, 3, 260, 180);
 	JE_barShade(5, 5, 258, 178);
 	JE_barShade(7, 7, 256, 176);
-	filled_rectangle(VGAScreen, 9, 9, 254, 174, 0);
+	fill_rectangle_xy(VGAScreen, 9, 9, 254, 174, 0);
 	
 	if (twoPlayerMode)  // Two-Player Help
 	{
@@ -1557,7 +1557,7 @@ void JE_highScoreCheck( void )
 						JE_outText(65, 89, tempstr, 8, 3);
 						tempW = 65 + JE_textWidth(tempstr, TINY_FONT);
 						JE_barShade(tempW + 2, 90, tempW + 6, 95);
-						filled_rectangle(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
+						fill_rectangle_xy(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
 						
 						for (int i = 0; i < 14; i++)
 						{
@@ -2125,8 +2125,8 @@ void JE_playCredits( void )
 			yloc += 20;
 		}
 		
-		filled_rectangle(VGAScreen, 0,  0, 319, 10, 0);
-		filled_rectangle(VGAScreen, 0, 190, 319, 199, 0);
+		fill_rectangle_xy(VGAScreen, 0,  0, 319, 10, 0);
+		fill_rectangle_xy(VGAScreen, 0, 190, 319, 199, 0);
 		
 		if (currentpic == sprite_table[EXTRA_SHAPES].count)
 			JE_outTextAdjust(5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
@@ -2406,7 +2406,7 @@ void JE_operation( JE_byte slot )
 				JE_outText(65, 89, tempStr, 8, 3);
 				tempW = 65 + JE_textWidth(tempStr, TINY_FONT);
 				JE_barShade(tempW + 2, 90, tempW + 6, 95);
-				filled_rectangle(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
+				fill_rectangle_xy(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
 				
 				for (int i = 0; i < 14; i++)
 				{
@@ -3845,7 +3845,7 @@ redo:
 					
 					if (chargeLevel > 0)
 					{
-						filled_rectangle(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
+						fill_rectangle_xy(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 					}
 					
 					if (chargeWait > 0)
@@ -3863,7 +3863,7 @@ redo:
 					}
 					
 					if (chargeLevel > 0)
-						filled_rectangle(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
+						fill_rectangle_xy(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
 					
 					if (shotRepeat[SHOT_P2_CHARGE] > 0)
 					{
@@ -3875,7 +3875,7 @@ redo:
 						JE_initPlayerShot(16, SHOT_P2_CHARGE, this_player->x, this_player->y, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
 						
 						if (chargeLevel > 0)
-							filled_rectangle(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
+							fill_rectangle_xy(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 						
 						chargeLevel = 0;
 						chargeWait = 30 - this_player->items.weapon[REAR_WEAPON].power * 2;
@@ -4032,7 +4032,9 @@ redo:
 									option1AmmoRechargeWait = option1AmmoRechargeWaitMax;
 									if (option1Ammo < options[option1Item].ammo)
 										option1Ammo++;
-									JE_barDrawDirect (284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2); /*Option1Ammo*/
+									
+									// draw left sidekick recharge ammo gauge
+									draw_segmented_gauge(VGAScreenSeg, 284, option1Draw + 13, 112, 2, 2, option1AmmoMax, option1Ammo);
 								}
 							}
 							
@@ -4048,8 +4050,10 @@ redo:
 									optionCharge1Wait = 20;
 									optionCharge1 = 0;
 									option1Ammo--;
-									filled_rectangle(VGAScreenSeg, 284, option1Draw + 13, 312, option1Draw + 15, 0);
-									JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);
+									
+									// draw left sidekick ammo discharge ammo gauge
+									fill_rectangle_xy(VGAScreenSeg, 284, option1Draw + 13, 312, option1Draw + 15, 0);
+									draw_segmented_gauge(VGAScreenSeg, 284, option1Draw + 13, 112, 2, 2, option1AmmoMax, option1Ammo);
 								}
 							}
 							else if (option1Ammo < 0)
@@ -4088,7 +4092,9 @@ redo:
 									option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
 									if (option2Ammo < options[option2Item].ammo)
 										option2Ammo++;
-									JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
+									
+									// draw right sidekick recharge ammo gauge
+									draw_segmented_gauge(VGAScreenSeg, 284, option2Draw + 13, 112, 2, 2, option2AmmoMax, option2Ammo);
 								}
 							}
 							
@@ -4107,8 +4113,10 @@ redo:
 									optionCharge2 = 0;
 									optionAni2Go = true;
 									option2Ammo--;
-									filled_rectangle(VGAScreenSeg, 284, option2Draw + 13, 312, option2Draw + 15, 0);
-									JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
+									
+									// draw right sidekick ammo discharge ammo gauge
+									fill_rectangle_xy(VGAScreenSeg, 284, option2Draw + 13, 312, option2Draw + 15, 0);
+									draw_segmented_gauge(VGAScreenSeg, 284, option2Draw + 13, 112, 2, 2, option2AmmoMax, option2Ammo);
 								}
 							}
 							else if (option2Ammo < 0)

@@ -25,10 +25,18 @@ void JE_pix( JE_word x, JE_word y, JE_byte c );
 void JE_pix3( JE_word x, JE_word y, JE_byte c );
 void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e );
 
-void filled_rectangle( SDL_Surface *, int x, int y, int x2, int y2, Uint8 color );
+void fill_rectangle_xy( SDL_Surface *, int x, int y, int x2, int y2, Uint8 color );
 
 void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d );
 void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d );
+
+static inline void fill_rectangle_hw( SDL_Surface *surface, int x, int y, uint h, uint w, Uint8 color )
+{
+	SDL_Rect rect = { x, y, h, w };
+	SDL_FillRect(surface, &rect, color);
+}
+
+void draw_segmented_gauge( SDL_Surface *surface, int x, int y, Uint8 color, uint segment_width, uint segment_height, uint segment_value, uint value );
 
 #endif /* VGA256D_H */
 

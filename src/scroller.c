@@ -214,8 +214,8 @@ void scroller_sine( const struct about_text_type text[] )
 			}
 		}
 
-		filled_rectangle(VGAScreen, 0, 0, vga_width - 1, 14, 0);
-		filled_rectangle(VGAScreen, 0, vga_height - 14, vga_width - 1, vga_height - 1, 0);
+		fill_rectangle_xy(VGAScreen, 0, 0, vga_width - 1, 14, 0);
+		fill_rectangle_xy(VGAScreen, 0, vga_height - 14, vga_width - 1, vga_height - 1, 0);
 		
 		if (!ale)
 		{

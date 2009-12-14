@@ -29,7 +29,6 @@ JE_boolean JE_anyButton( void );
 
 void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col );
 void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
-void JE_barDrawDirect( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
 void JE_wipeKey( void );
 
 #endif /* NORTVARS_H */

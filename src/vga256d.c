@@ -80,7 +80,7 @@ void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1
 	}
 }
 
-void filled_rectangle( SDL_Surface *surface, int x, int y, int x2, int y2, Uint8 color )
+void fill_rectangle_xy( SDL_Surface *surface, int x, int y, int x2, int y2, Uint8 color )
 {
 	SDL_Rect rect = { x, y, x2 - x + 1, y2 - y + 1 };
 	SDL_FillRect(surface, &rect, color);
@@ -139,6 +139,22 @@ void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y
 	} else {
 		printf("!!! WARNING: Brighter Rectangle clipped: %d %d %d %d\n", a,b,c,d);
 	}
+}
+
+void draw_segmented_gauge( SDL_Surface *surface, int x, int y, Uint8 color, uint segment_width, uint segment_height, uint segment_value, uint value )
+{
+	assert(segment_width > 0 && segment_height > 0);
+	
+	const uint segments = value / segment_value,
+	           partial_segment = value % segment_value;
+	
+	for (uint i = 0; i < segments; ++i)
+	{
+		fill_rectangle_hw(surface, x, y, segment_width, segment_height, color + 12);
+		x += segment_width + 1;
+	}
+	if (partial_segment > 0)
+		fill_rectangle_hw(surface, x, y, segment_width, segment_height, color + (12 * partial_segment / segment_value));
 }
 
 // kate: tab-width 4; vim: set noet:

@@ -465,9 +465,9 @@ void JE_drawOptions( void )
 	option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
 
 	if (option1Draw > 0)
-		filled_rectangle(VGAScreenSeg, 284, option1Draw, 284 + 28, option1Draw + 15, 0);
+		fill_rectangle_xy(VGAScreenSeg, 284, option1Draw, 284 + 28, option1Draw + 15, 0);
 	if (option2Draw > 0)
-		filled_rectangle(VGAScreenSeg, 284, option2Draw, 284 + 28, option2Draw + 15, 0);
+		fill_rectangle_xy(VGAScreenSeg, 284, option2Draw, 284 + 28, option2Draw + 15, 0);
 
 	if (options[option1Item].icongr > 0)
 		blit_sprite(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick HUD icon
@@ -475,9 +475,9 @@ void JE_drawOptions( void )
 		blit_sprite(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick HUD icon
 
 	if (option1Draw > 0)
-		JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);
+		draw_segmented_gauge(VGAScreenSeg, 284, option1Draw + 13, 112, 2, 2, option1AmmoMax, option1Ammo);
 	if (option2Draw > 0)
-		JE_barDrawDirect(284, option2Draw + 13, option2AmmoMax, 112, option2Ammo, 2, 2);
+		draw_segmented_gauge(VGAScreenSeg, 284, option2Draw + 13, 112, 2, 2, option2AmmoMax, option2Ammo);
 
 	if (option1Ammo == 0)
 		option1Ammo = -1;
@@ -502,7 +502,7 @@ void JE_drawOptionLevel( void )
 	{
 		for (temp = 1; temp <= 3; temp++)
 		{
-			filled_rectangle(VGAScreenSeg, 268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((player[1].items.sidekick_level - 100) == temp) * 11);
+			fill_rectangle_xy(VGAScreenSeg, 268, 127 + (temp - 1) * 6, 269, 127 + 3 + (temp - 1) * 6, 193 + ((player[1].items.sidekick_level - 100) == temp) * 11);
 		}
 	}
 }
@@ -1285,21 +1285,21 @@ void JE_wipeShieldArmorBars( void )
 {
 	if (!twoPlayerMode || galagaMode)
 	{
-		filled_rectangle(VGAScreenSeg, 270, 137, 278, 194 - player[0].shield * 2, 0);
+		fill_rectangle_xy(VGAScreenSeg, 270, 137, 278, 194 - player[0].shield * 2, 0);
 	}
 	else
 	{
-		filled_rectangle(VGAScreenSeg, 270, 60 - 44, 278, 60, 0);
-		filled_rectangle(VGAScreenSeg, 270, 194 - 44, 278, 194, 0);
+		fill_rectangle_xy(VGAScreenSeg, 270, 60 - 44, 278, 60, 0);
+		fill_rectangle_xy(VGAScreenSeg, 270, 194 - 44, 278, 194, 0);
 	}
 	if (!twoPlayerMode || galagaMode)
 	{
-		filled_rectangle(VGAScreenSeg, 307, 137, 315, 194 - player[0].armor * 2, 0);
+		fill_rectangle_xy(VGAScreenSeg, 307, 137, 315, 194 - player[0].armor * 2, 0);
 	}
 	else
 	{
-		filled_rectangle(VGAScreenSeg, 307, 60 - 44, 315, 60, 0);
-		filled_rectangle(VGAScreenSeg, 307, 194 - 44, 315, 194, 0);
+		fill_rectangle_xy(VGAScreenSeg, 307, 60 - 44, 315, 60, 0);
+		fill_rectangle_xy(VGAScreenSeg, 307, 194 - 44, 315, 194, 0);
 	}
 }
 

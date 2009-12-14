@@ -2001,10 +2001,10 @@ void DE_RunTickDrawHUD( void )
 		curUnit = &(player[i].unit[player[i].unitSelected]);
 		startX = ((i == PLAYER_LEFT) ? 0 : 320 - 150);
 
-		filled_rectangle(VGAScreen, startX +  5, 3, startX +  14, 8, 241);
+		fill_rectangle_xy(VGAScreen, startX +  5, 3, startX +  14, 8, 241);
 		JE_rectangle(startX +  4, 2, startX +  15, 9, 242);
 		JE_rectangle(startX +  3, 1, startX +  16, 10, 240);
-		filled_rectangle(VGAScreen, startX + 18, 3, startX + 140, 8, 241);
+		fill_rectangle_xy(VGAScreen, startX + 18, 3, startX + 140, 8, 241);
 		JE_rectangle(startX + 17, 2, startX + 143, 9, 242);
 		JE_rectangle(startX + 16, 1, startX + 144, 10, 240);
 
