@@ -299,11 +299,7 @@ JE_byte option1AmmoMax, option2AmmoMax;
 JE_word option1AmmoRechargeWait, option2AmmoRechargeWait,
         option1AmmoRechargeWaitMax, option2AmmoRechargeWaitMax;
 JE_integer option1Ammo, option2Ammo;
-JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait,
-           option1X, option1LastX, option1Y, option1LastY,
-           option2X, option2LastX, option2Y, option2LastY,
-           option1MaxX, option1MinX, option2MaxX, option2MinX,
-           option1MaxY, option1MinY, option2MaxY, option2MinY;
+JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait;
 JE_boolean optionAni1Go, optionAni2Go, option1Stop, option2Stop;
 JE_real optionSatelliteRotate;
 
@@ -425,49 +421,30 @@ void JE_drawOptions( void )
 {
 	SDL_Surface *temp_surface = VGAScreen;
 	VGAScreen = VGAScreenSeg;
-
+	
+	Player *this_player = &player[twoPlayerMode ? 1 : 0];
+	
+	option1Item = this_player->items.sidekick[LEFT_SIDEKICK];
+	option2Item = this_player->items.sidekick[RIGHT_SIDEKICK];
+	
 	if (twoPlayerMode)
 	{
-		option1Item = player[1].items.sidekick[LEFT_SIDEKICK];
-		option2Item = player[1].items.sidekick[RIGHT_SIDEKICK];
 		option1Draw = (option1Item != 0) ? 108 : 0;
 		option2Draw = (option2Item != 0) ? 126 : 0;
-		tempX = player[1].x;
-		tempY = player[1].y;
 	}
 	else
 	{
-		option1Item = player[0].items.sidekick[LEFT_SIDEKICK];
-		option2Item = player[0].items.sidekick[RIGHT_SIDEKICK];
 		option1Draw = (option1Item != 0) ? 64 : 0;
 		option2Draw = (option2Item != 0) ? 82 : 0;
-		tempX = player[0].x;
-		tempY = player[0].y;
 	}
-	option1X = tempX - 8;
-	option1LastX = 0;
-	option1Y = tempY + 2;
-	option1LastY = 0;
-	option2X = tempX + 8;
-	option2LastX = 0;
-	option2Y = tempY + 2;
-	option2LastY = 0;
-
+	
 	option1Ammo = options[option1Item].ammo;
 	option2Ammo = options[option2Item].ammo;
-
+	
 	optionAni1Go = options[option1Item].option == 1;
 	optionAni2Go = options[option2Item].option == 1;
 	option1Stop  = options[option1Item].stop;
-	option1MaxX  = options[option1Item].opspd;
-	option1MinX  = -option1MaxX;
-	option1MaxY  = options[option1Item].opspd;
-	option1MinY  = -option1MaxY;
 	option2Stop  = options[option2Item].stop;
-	option2MaxX  = options[option2Item].opspd;
-	option2MinX  = -option2MaxX;
-	option2MaxY  = options[option2Item].opspd;
-	option2MinY  = -option2MaxY;
 
 	if (option1Ammo > 0)
 		option1AmmoMax = option1Ammo / 10;
@@ -493,9 +470,9 @@ void JE_drawOptions( void )
 		filled_rectangle(VGAScreenSeg, 284, option2Draw, 284 + 28, option2Draw + 15, 0);
 
 	if (options[option1Item].icongr > 0)
-		blit_sprite(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick
+		blit_sprite(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick HUD icon
 	if (options[option2Item].icongr > 0)
-		blit_sprite(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick
+		blit_sprite(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick HUD icon
 
 	if (option1Draw > 0)
 		JE_barDrawDirect(284, option1Draw + 13, option1AmmoMax, 112, option1Ammo, 2, 2);

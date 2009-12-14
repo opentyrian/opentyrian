@@ -324,7 +324,7 @@ extern JE_word option1Draw, option2Draw, option1Item, option2Item;
 extern JE_byte option1AmmoMax, option2AmmoMax;
 extern JE_word option1AmmoRechargeWait, option2AmmoRechargeWait, option1AmmoRechargeWaitMax, option2AmmoRechargeWaitMax;
 extern JE_integer option1Ammo, option2Ammo;
-extern JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait, option1X, option1LastX, option1Y, option1LastY, option2X, option2LastX, option2Y, option2LastY, option1MaxX, option1MinX, option2MaxX, option2MinX, option1MaxY, option1MinY, option2MaxY, option2MinY;
+extern JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait;
 extern JE_boolean optionAni1Go, optionAni2Go, option1Stop, option2Stop;
 extern JE_real optionSatelliteRotate;
 extern JE_integer optionAttachmentMove;

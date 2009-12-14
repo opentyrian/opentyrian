@@ -3460,15 +3460,15 @@ redo:
 	{
 		if (!twoPlayerLinked || playerNum_ < 2)
 		{
-			if (!twoPlayerMode || shipGr2 != 0)
+			if (!twoPlayerMode || shipGr2 != 0)  // if not dragonwing
 			{
-				option1X = *mouseX_ - 14;
-				option1Y = *mouseY_;
+				this_player->sidekick[LEFT_SIDEKICK].x = *mouseX_ - 14;
+				this_player->sidekick[LEFT_SIDEKICK].y = *mouseY_;
 				
 				if (rightOptionIsSpecial == 0)
 				{
-					option2X = *mouseX_ + 16;
-					option2Y = *mouseY_;
+					this_player->sidekick[RIGHT_SIDEKICK].x = *mouseX_ + 16;
+					this_player->sidekick[RIGHT_SIDEKICK].y = *mouseY_;
 				}
 			}
 			
@@ -3735,16 +3735,16 @@ redo:
 	}  // !endLevel
 	
 	/*Options Location*/
-	if (playerNum_ == 2 && shipGr_ == 0)
+	if (playerNum_ == 2 && shipGr_ == 0)  // if dragonwing
 	{
 		if (rightOptionIsSpecial == 0)
 		{
-			option2X = this_player->x + 17 + tempI;
-			option2Y = this_player->y;
+			this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x + 17 + tempI;
+			this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y;
 		}
 		
-		option1X = this_player->x - 14 + tempI;
-		option1Y = this_player->y;
+		this_player->sidekick[LEFT_SIDEKICK].x = this_player->x - 14 + tempI;
+		this_player->sidekick[LEFT_SIDEKICK].y = this_player->y;
 	}
 	
 	if (moveOk)
@@ -3904,44 +3904,39 @@ redo:
 				/*Special option following*/
 				switch (leftOptionIsSpecial)
 				{
-				case 1:
+				case 1:  // trailing
 				case 3:
-					option1X = this_player->old_x[COUNTOF(player->old_x) / 2 - 1];
-					option1Y = this_player->old_y[COUNTOF(player->old_x) / 2 - 1];
+					this_player->sidekick[LEFT_SIDEKICK].x = this_player->old_x[COUNTOF(player->old_x) / 2 - 1];
+					this_player->sidekick[LEFT_SIDEKICK].y = this_player->old_y[COUNTOF(player->old_x) / 2 - 1];
 					break;
-				case 2:
-					option1X = this_player->x;
-					option1Y = this_player->y - 20;
-					if (option1Y < 10)
-						option1Y = 10;
+				case 2:  // front-mounted
+					this_player->sidekick[LEFT_SIDEKICK].x = this_player->x;
+					this_player->sidekick[LEFT_SIDEKICK].y = MAX(10, this_player->y - 20);
 					break;
-				case 4:
-					if (rightOptionIsSpecial == 4)
-						optionSatelliteRotate += 0.2f;
-					else
-						optionSatelliteRotate += 0.15f;
-					option1X = this_player->x + roundf(sinf(optionSatelliteRotate) * 20);
-					option1Y = this_player->y + roundf(cosf(optionSatelliteRotate) * 20);
+				case 4:  // orbitting
+					optionSatelliteRotate += (rightOptionIsSpecial == 4) ? 0.2f : 0.15f;
+					this_player->sidekick[LEFT_SIDEKICK].x = this_player->x + roundf(sinf(optionSatelliteRotate) * 20);
+					this_player->sidekick[LEFT_SIDEKICK].y = this_player->y + roundf(cosf(optionSatelliteRotate) * 20);
 					break;
 				}
 				
 				switch (rightOptionIsSpecial)
 				{
-				case 4:
+				case 4:  // orbitting
 					if (leftOptionIsSpecial != 4)
 						optionSatelliteRotate += 0.15f;
-					option2X = this_player->x - roundf(sinf(optionSatelliteRotate) * 20);
-					option2Y = this_player->y - roundf(cosf(optionSatelliteRotate) * 20);
+					this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x - roundf(sinf(optionSatelliteRotate) * 20);
+					this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y - roundf(cosf(optionSatelliteRotate) * 20);
 					break;
-				case 1:
+				case 1:  // trailing
 				case 3:
-					option2X = this_player->old_x[0];
-					option2Y = this_player->old_y[0];
+					this_player->sidekick[RIGHT_SIDEKICK].x = this_player->old_x[0];
+					this_player->sidekick[RIGHT_SIDEKICK].y = this_player->old_y[0];
 					break;
-				case 2:
+				case 2:  // front-mounted
 					if (!optionAttachmentLinked)
 					{
-						option2Y += optionAttachmentMove / 2;
+						this_player->sidekick[RIGHT_SIDEKICK].y += optionAttachmentMove / 2;
 						if (optionAttachmentMove >= -2)
 						{
 							if (optionAttachmentReturn)
@@ -3949,12 +3944,12 @@ redo:
 							else
 								temp = 0;
 							
-							if (option2Y > (this_player->y - 20) + 5)
+							if (this_player->sidekick[RIGHT_SIDEKICK].y > (this_player->y - 20) + 5)
 							{
 								temp = 2;
 								optionAttachmentMove -= 1 + optionAttachmentReturn;
 							}
-							else if (option2Y > (this_player->y - 20) - 0)
+							else if (this_player->sidekick[RIGHT_SIDEKICK].y > (this_player->y - 20) - 0)
 							{
 								temp = 3;
 								if (optionAttachmentMove > 0)
@@ -3962,7 +3957,7 @@ redo:
 								else
 									optionAttachmentMove++;
 							}
-							else if (option2Y > (this_player->y - 20) - 5)
+							else if (this_player->sidekick[RIGHT_SIDEKICK].y > (this_player->y - 20) - 5)
 							{
 								temp = 2;
 								optionAttachmentMove++;
@@ -3974,15 +3969,15 @@ redo:
 							
 							if (optionAttachmentReturn)
 								temp = temp * 2;
-							if (abs(option2X - this_player->x < temp))
+							if (abs(this_player->sidekick[RIGHT_SIDEKICK].x - this_player->x < temp))
 								temp = 1;
 							
-							if (option2X > this_player->x)
-								option2X -= temp;
-							else if (option2X < this_player->x)
-								option2X += temp;
+							if (this_player->sidekick[RIGHT_SIDEKICK].x > this_player->x)
+								this_player->sidekick[RIGHT_SIDEKICK].x -= temp;
+							else if (this_player->sidekick[RIGHT_SIDEKICK].x < this_player->x)
+								this_player->sidekick[RIGHT_SIDEKICK].x += temp;
 							
-							if (abs(option2Y - (this_player->y - 20)) + abs(option2X - this_player->x) < 8)
+							if (abs(this_player->sidekick[RIGHT_SIDEKICK].y - (this_player->y - 20)) + abs(this_player->sidekick[RIGHT_SIDEKICK].x - this_player->x) < 8)
 							{
 								optionAttachmentLinked = true;
 								soundQueue[2] = S_CLINK;
@@ -3991,16 +3986,16 @@ redo:
 							if (button[3-1])
 								optionAttachmentReturn = true;
 						}
-						else
+						else  // sidekick needs to catch up to player
 						{
 							optionAttachmentMove += 1 + optionAttachmentReturn;
-							JE_setupExplosion(option2X + 1, option2Y + 10, 0, 0, false, false);
+							JE_setupExplosion(this_player->sidekick[RIGHT_SIDEKICK].x + 1, this_player->sidekick[RIGHT_SIDEKICK].y + 10, 0, 0, false, false);
 						}
 					}
 					else
 					{
-						option2X = this_player->x;
-						option2Y = this_player->y - 20;
+						this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x;
+						this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y - 20;
 						if (button[3-1])
 						{
 							optionAttachmentLinked = false;
@@ -4010,13 +4005,14 @@ redo:
 						}
 					}
 					
-					if (option2Y < 10)
-						option2Y = 10;
+					if (this_player->sidekick[RIGHT_SIDEKICK].y < 10)
+						this_player->sidekick[RIGHT_SIDEKICK].y = 10;
 					break;
 				}
 				
 				if (playerNum_ == 2 || !twoPlayerMode)
 				{
+					// fire left sidekick
 					if (options[option1Item].wport > 0)
 					{
 						if (shotRepeat[SHOT_LEFT_SIDEKICK] > 0)
@@ -4044,7 +4040,8 @@ redo:
 							{
 								if (button[2-1])
 								{
-									JE_initPlayerShot(options[option1Item].wport, SHOT_LEFT_SIDEKICK, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
+									JE_initPlayerShot(options[option1Item].wport, SHOT_LEFT_SIDEKICK, this_player->sidekick[LEFT_SIDEKICK].x, this_player->sidekick[LEFT_SIDEKICK].y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
+									
 									if (optionCharge1 > 0)
 										shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
 									optionAni1Go = true;
@@ -4059,7 +4056,8 @@ redo:
 							{
 								if (button[1-1] || button[2-1])
 								{
-									JE_initPlayerShot(options[option1Item].wport, SHOT_LEFT_SIDEKICK, option1X, option1Y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
+									JE_initPlayerShot(options[option1Item].wport, SHOT_LEFT_SIDEKICK, this_player->sidekick[LEFT_SIDEKICK].x, this_player->sidekick[LEFT_SIDEKICK].y, *mouseX_, *mouseY_, options[option1Item].wpnum + optionCharge1, playerNum_);
+									
 									if (optionCharge1 > 0)
 										shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
 									optionCharge1Wait = 20;
@@ -4070,6 +4068,7 @@ redo:
 						}
 					}
 					
+					// fire right sidekick
 					if (options[option2Item].wport > 0)
 					{
 						if (shotRepeat[SHOT_RIGHT_SIDEKICK] > 0)
@@ -4097,7 +4096,8 @@ redo:
 							{
 								if (button[3-1])
 								{
-									JE_initPlayerShot(options[option2Item].wport, SHOT_RIGHT_SIDEKICK, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
+									JE_initPlayerShot(options[option2Item].wport, SHOT_RIGHT_SIDEKICK, this_player->sidekick[RIGHT_SIDEKICK].x, this_player->sidekick[RIGHT_SIDEKICK].y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
+									
 									if (optionCharge2 > 0)
 									{
 										shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
@@ -4115,7 +4115,8 @@ redo:
 							{
 								if (button[1-1] || button[3-1])
 								{
-									JE_initPlayerShot(options[option2Item].wport, SHOT_RIGHT_SIDEKICK, option2X, option2Y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
+									JE_initPlayerShot(options[option2Item].wport, SHOT_RIGHT_SIDEKICK, this_player->sidekick[RIGHT_SIDEKICK].x, this_player->sidekick[RIGHT_SIDEKICK].y, *mouseX_, *mouseY_, options[option2Item].wpnum + optionCharge2, playerNum_);
+									
 									if (optionCharge2 > 0)
 									{
 										shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
@@ -4132,7 +4133,7 @@ redo:
 		} // this_player->is_alive
 	} // moveOK
 	
-	/* Draw Floating Options */
+	// draw sidekicks
 	if ((playerNum_ == 2 || !twoPlayerMode) && !endLevel)
 	{
 		if (options[option1Item].option > 0)
@@ -4147,10 +4148,13 @@ redo:
 				}
 			}
 			
+			const int x = this_player->sidekick[LEFT_SIDEKICK].x,
+			          y = this_player->sidekick[LEFT_SIDEKICK].y;
+			
 			if (leftOptionIsSpecial == 1 || leftOptionIsSpecial == 2)
-				blit_sprite2x2(VGAScreen, option1X - 6, option1Y, eShapes6, options[option1Item].gr[optionAni1-1] + optionCharge1);
+				blit_sprite2x2(VGAScreen, x - 6, y, eShapes6, options[option1Item].gr[optionAni1-1] + optionCharge1);
 			else
-				blit_sprite2(VGAScreen, option1X, option1Y, shapes9, options[option1Item].gr[optionAni1-1] + optionCharge1);
+				blit_sprite2(VGAScreen, x, y, shapes9, options[option1Item].gr[optionAni1-1] + optionCharge1);
 		}
 		
 		if (options[option2Item].option > 0)
@@ -4165,10 +4169,13 @@ redo:
 				}
 			}
 			
+			const int x = this_player->sidekick[RIGHT_SIDEKICK].x,
+			          y = this_player->sidekick[RIGHT_SIDEKICK].y;
+			
 			if (rightOptionIsSpecial == 1 || rightOptionIsSpecial == 2)
-				blit_sprite2x2(VGAScreen, option2X - 6, option2Y, eShapes6, options[option2Item].gr[optionAni2-1] + optionCharge2);
+				blit_sprite2x2(VGAScreen, x - 6, y, eShapes6, options[option2Item].gr[optionAni2-1] + optionCharge2);
 			else
-				blit_sprite2(VGAScreen, option2X, option2Y, shapes9, options[option2Item].gr[optionAni2-1] + optionCharge2);
+				blit_sprite2(VGAScreen, x, y, shapes9, options[option2Item].gr[optionAni2-1] + optionCharge2);
 		}
 		
 		optionCharge1Wait--;

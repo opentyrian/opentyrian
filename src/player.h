@@ -77,6 +77,8 @@ typedef struct
 	uint superbombs;
 	uint purple_balls_needed;
 	
+	struct { int x, y; } sidekick[2];
+	
 	int x, y;
 	int old_x[20], old_y[20];
 	

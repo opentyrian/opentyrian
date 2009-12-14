@@ -2206,12 +2206,12 @@ void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_w
 void JE_initWeaponView( void )
 {
 	filled_rectangle(VGAScreen, 8, 8, 144, 177, 0);
-
-	option1X = 72 - 15;
-	option1Y = 120;
-	option2X = 72 + 15;
-	option2Y = 120;
-
+	
+	player[0].sidekick[LEFT_SIDEKICK].x = 72 - 15;
+	player[0].sidekick[LEFT_SIDEKICK].y = 120;
+	player[0].sidekick[RIGHT_SIDEKICK].x = 72 + 15;
+	player[0].sidekick[RIGHT_SIDEKICK].y = 120;
+	
 	player[0].x = 72;
 	player[0].y = 110;
 	player[0].delta_x_shot_move = 0;
@@ -3157,22 +3157,22 @@ void JE_weaponViewFrame( void )
 		else
 		{
 			const uint item = player[0].items.sidekick[LEFT_SIDEKICK];
+			const int x = player[0].sidekick[LEFT_SIDEKICK].x,
+			          y = player[0].sidekick[LEFT_SIDEKICK].y;
 			
-			JE_initPlayerShot(options[item].wport, SHOT_LEFT_SIDEKICK, option1X, option1Y, mouseX, mouseY, options[item].wpnum, 1);
+			JE_initPlayerShot(options[item].wport, SHOT_LEFT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
 		}
 	}
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].tr == 2)
 	{
-		option2X = player[0].x;
-		option2Y = player[0].y - 20;
-		if (option2Y < 10)
-			option2Y = 10;
+		player[0].sidekick[RIGHT_SIDEKICK].x = player[0].x;
+		player[0].sidekick[RIGHT_SIDEKICK].y = MAX(10, player[0].y - 20);
 	}
 	else
 	{
-		option2X = 72 + 15;
-		option2Y = 120;
+		player[0].sidekick[RIGHT_SIDEKICK].x = 72 + 15;
+		player[0].sidekick[RIGHT_SIDEKICK].y = 120;
 	}
 	
 	if (options[player[0].items.sidekick[RIGHT_SIDEKICK]].wport > 0)
@@ -3184,8 +3184,10 @@ void JE_weaponViewFrame( void )
 		else
 		{
 			const uint item = player[0].items.sidekick[RIGHT_SIDEKICK];
+			const int x = player[0].sidekick[RIGHT_SIDEKICK].x,
+			          y = player[0].sidekick[RIGHT_SIDEKICK].y;
 			
-			JE_initPlayerShot(options[item].wport, SHOT_RIGHT_SIDEKICK, option2X, option2Y, mouseX, mouseY, options[item].wpnum, 1);
+			JE_initPlayerShot(options[item].wport, SHOT_RIGHT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
 		}
 	}
 	
