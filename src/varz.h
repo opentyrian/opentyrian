@@ -320,10 +320,6 @@ extern JE_byte chain;
 extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
 extern const uint shadowYDist;
-extern JE_word option1Draw, option2Draw, option1Item, option2Item;
-extern JE_byte option1AmmoMax, option2AmmoMax;
-extern JE_word option1AmmoRechargeWait, option2AmmoRechargeWait, option1AmmoRechargeWaitMax, option2AmmoRechargeWaitMax;
-extern JE_integer option1Ammo, option2Ammo;
 extern JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait;
 extern JE_boolean optionAni1Go, optionAni2Go, option1Stop, option2Stop;
 extern JE_real optionSatelliteRotate;
@@ -349,6 +345,12 @@ extern JE_word specialWeaponWpn;
 extern JE_boolean linkToPlayer;
 extern JE_word shipGr, shipGr2;
 extern Sprite2_array *shipGrPtr, *shipGr2ptr;
+
+static const int hud_sidekick_y[2][2] =
+{
+	{  64,  82 }, // one player HUD
+	{ 108, 126 }, // two player HUD
+};
 
 void JE_getShipInfo( void );
 JE_word JE_SGr( JE_word ship, Sprite2_array **ptr );

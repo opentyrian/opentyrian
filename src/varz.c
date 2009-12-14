@@ -294,11 +294,6 @@ JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 const uint shadowYDist = 10;
 
-JE_word option1Draw, option2Draw, option1Item, option2Item;
-JE_byte option1AmmoMax, option2AmmoMax;
-JE_word option1AmmoRechargeWait, option2AmmoRechargeWait,
-        option1AmmoRechargeWaitMax, option2AmmoRechargeWaitMax;
-JE_integer option1Ammo, option2Ammo;
 JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait;
 JE_boolean optionAni1Go, optionAni2Go, option1Stop, option2Stop;
 JE_real optionSatelliteRotate;
@@ -424,66 +419,36 @@ void JE_drawOptions( void )
 	
 	Player *this_player = &player[twoPlayerMode ? 1 : 0];
 	
-	option1Item = this_player->items.sidekick[LEFT_SIDEKICK];
-	option2Item = this_player->items.sidekick[RIGHT_SIDEKICK];
-	
-	if (twoPlayerMode)
+	for (uint i = 0; i < COUNTOF(this_player->sidekick); ++i)
 	{
-		option1Draw = (option1Item != 0) ? 108 : 0;
-		option2Draw = (option2Item != 0) ? 126 : 0;
-	}
-	else
-	{
-		option1Draw = (option1Item != 0) ? 64 : 0;
-		option2Draw = (option2Item != 0) ? 82 : 0;
+		this_player->sidekick[i].ammo = 
+		this_player->sidekick[i].ammo_max = options[this_player->items.sidekick[i]].ammo;
+		
+		this_player->sidekick[i].ammo_refill_ticks =
+		this_player->sidekick[i].ammo_refill_ticks_max = (105 - this_player->sidekick[i].ammo) * 4;
 	}
 	
-	option1Ammo = options[option1Item].ammo;
-	option2Ammo = options[option2Item].ammo;
+	optionAni1Go = options[this_player->items.sidekick[LEFT_SIDEKICK]].option == 1;
+	optionAni2Go = options[this_player->items.sidekick[RIGHT_SIDEKICK]].option == 1;
+	option1Stop  = options[this_player->items.sidekick[LEFT_SIDEKICK]].stop;
+	option2Stop  = options[this_player->items.sidekick[RIGHT_SIDEKICK]].stop;
 	
-	optionAni1Go = options[option1Item].option == 1;
-	optionAni2Go = options[option2Item].option == 1;
-	option1Stop  = options[option1Item].stop;
-	option2Stop  = options[option2Item].stop;
-
-	if (option1Ammo > 0)
-		option1AmmoMax = option1Ammo / 10;
-	else
-		option1AmmoMax = 2;
-	if (option1AmmoMax == 0)
-		option1AmmoMax++;
-	option1AmmoRechargeWaitMax = (105 - option1Ammo) * 4;
-	option1AmmoRechargeWait = option1AmmoRechargeWaitMax;
-
-	if (option2Ammo > 0)
-		option2AmmoMax = option2Ammo / 10;
-	else
-		option2AmmoMax = 2;
-	if (option2AmmoMax == 0)
-		option2AmmoMax++;
-	option2AmmoRechargeWaitMax = (105 - option2Ammo) * 4;
-	option2AmmoRechargeWait = option2AmmoRechargeWaitMax;
-
-	if (option1Draw > 0)
-		fill_rectangle_xy(VGAScreenSeg, 284, option1Draw, 284 + 28, option1Draw + 15, 0);
-	if (option2Draw > 0)
-		fill_rectangle_xy(VGAScreenSeg, 284, option2Draw, 284 + 28, option2Draw + 15, 0);
-
-	if (options[option1Item].icongr > 0)
-		blit_sprite(VGAScreenSeg, 284, option1Draw, OPTION_SHAPES, options[option1Item].icongr - 1);  // left sidekick HUD icon
-	if (options[option2Item].icongr > 0)
-		blit_sprite(VGAScreenSeg, 284, option2Draw, OPTION_SHAPES, options[option2Item].icongr - 1);  // right sidekick HUD icon
-
-	if (option1Draw > 0)
-		draw_segmented_gauge(VGAScreenSeg, 284, option1Draw + 13, 112, 2, 2, option1AmmoMax, option1Ammo);
-	if (option2Draw > 0)
-		draw_segmented_gauge(VGAScreenSeg, 284, option2Draw + 13, 112, 2, 2, option2AmmoMax, option2Ammo);
-
-	if (option1Ammo == 0)
-		option1Ammo = -1;
-	if (option2Ammo == 0)
-		option2Ammo = -1;
-
+	// draw initial sidekick HUD
+	for (uint i = 0; i < COUNTOF(this_player->sidekick); ++i)
+	{
+		if (this_player->items.sidekick[i] == 0)
+			continue;
+		
+		JE_OptionType *this_option = &options[this_player->items.sidekick[i]];
+		
+		const int y = hud_sidekick_y[twoPlayerMode ? 1 : 0][i];
+		
+		fill_rectangle_xy(VGAScreenSeg, 284, y, 284 + 28, y + 15, 0);
+		if (this_option->icongr > 0)
+			blit_sprite(VGAScreenSeg, 284, y, OPTION_SHAPES, this_option->icongr - 1);  // sidekick HUD icon
+		draw_segmented_gauge(VGAScreenSeg, 284, y + 13, 112, 2, 2, MAX(1, this_player->sidekick[i].ammo_max / 10), this_player->sidekick[i].ammo);
+	}
+	
 	optionAni1 = 1;
 	optionAni2 = 1;
 	optionCharge1Wait = 20;

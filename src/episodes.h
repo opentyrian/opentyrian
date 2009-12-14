@@ -91,7 +91,7 @@ typedef struct
 	JE_byte     ammo;
 	JE_boolean  stop;
 	JE_byte     icongr;
-} JE_OptionType[OPTION_NUM + 1]; /* [0..optionnum] */
+} JE_OptionType;
 
 typedef struct
 {
@@ -150,7 +150,7 @@ extern JE_WeaponPortType weaponPort;
 extern JE_WeaponType weapons;
 extern JE_PowerType powerSys;
 extern JE_ShipType ships;
-extern JE_OptionType options;
+extern JE_OptionType options[OPTION_NUM + 1]; /* [0..optionnum] */
 extern JE_ShieldType shields;
 extern JE_SpecialType special;
 extern JE_EnemyDatType enemyDat;

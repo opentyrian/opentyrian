@@ -31,7 +31,7 @@ JE_WeaponType     weapons;
 /* Items */
 JE_PowerType   powerSys;
 JE_ShipType    ships;
-JE_OptionType  options;
+JE_OptionType  options[OPTION_NUM + 1]; /* [0..optionnum] */
 JE_ShieldType  shields;
 JE_SpecialType special;
 

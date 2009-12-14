@@ -62,22 +62,20 @@ typedef struct
 	bool is_dragonwing;  // i.e., is player 2
 	uint *lives;
 	
-	// calculatables
+	// calculatable
 	uint shield_max;
 	uint initial_armor;
 	uint shot_hit_area_x, shot_hit_area_y;
 	
 	// state
 	bool is_alive;
-	uint invulnerable_ticks;
-	uint exploding_ticks;
+	uint invulnerable_ticks;  // ticks until ship can be damaged
+	uint exploding_ticks;     // ticks until ship done exploding
 	uint shield;
 	uint armor;
 	uint weapon_mode;
 	uint superbombs;
 	uint purple_balls_needed;
-	
-	struct { int x, y; } sidekick[2];
 	
 	int x, y;
 	int old_x[20], old_y[20];
@@ -89,6 +87,19 @@ typedef struct
 	
 	int last_x_shot_move, last_y_shot_move;
 	int last_x_explosion_follow, last_y_explosion_follow;
+	
+	struct
+	{
+		// calculatable
+		int ammo_max;
+		uint ammo_refill_ticks_max;
+		
+		// state
+		int x, y;
+		int ammo;
+		uint ammo_refill_ticks;
+	}
+	sidekick[2];
 }
 Player;
 
