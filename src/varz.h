@@ -320,8 +320,6 @@ extern JE_byte chain;
 extern JE_boolean allPlayersGone;
 extern JE_byte shotAvail[MAX_PWEAPON];
 extern const uint shadowYDist;
-extern JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait;
-extern JE_boolean optionAni1Go, optionAni2Go, option1Stop, option2Stop;
 extern JE_real optionSatelliteRotate;
 extern JE_integer optionAttachmentMove;
 extern JE_boolean optionAttachmentLinked, optionAttachmentReturn;

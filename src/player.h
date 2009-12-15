@@ -93,11 +93,18 @@ typedef struct
 		// calculatable
 		int ammo_max;
 		uint ammo_refill_ticks_max;
+		uint style;  // affects movement and size
 		
 		// state
 		int x, y;
 		int ammo;
 		uint ammo_refill_ticks;
+		
+		bool animation_enabled;
+		uint animation_frame;
+		
+		uint charge;
+		uint charge_ticks;
 	}
 	sidekick[2];
 }

@@ -294,8 +294,6 @@ JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 const uint shadowYDist = 10;
 
-JE_integer optionAni1, optionAni2, optionCharge1, optionCharge2, optionCharge1Wait, optionCharge2Wait;
-JE_boolean optionAni1Go, optionAni2Go, option1Stop, option2Stop;
 JE_real optionSatelliteRotate;
 
 JE_integer optionAttachmentMove;
@@ -421,26 +419,24 @@ void JE_drawOptions( void )
 	
 	for (uint i = 0; i < COUNTOF(this_player->sidekick); ++i)
 	{
+		JE_OptionType *this_option = &options[this_player->items.sidekick[i]];
+		
 		this_player->sidekick[i].ammo = 
-		this_player->sidekick[i].ammo_max = options[this_player->items.sidekick[i]].ammo;
+		this_player->sidekick[i].ammo_max = this_option->ammo;
 		
 		this_player->sidekick[i].ammo_refill_ticks =
 		this_player->sidekick[i].ammo_refill_ticks_max = (105 - this_player->sidekick[i].ammo) * 4;
-	}
-	
-	optionAni1Go = options[this_player->items.sidekick[LEFT_SIDEKICK]].option == 1;
-	optionAni2Go = options[this_player->items.sidekick[RIGHT_SIDEKICK]].option == 1;
-	option1Stop  = options[this_player->items.sidekick[LEFT_SIDEKICK]].stop;
-	option2Stop  = options[this_player->items.sidekick[RIGHT_SIDEKICK]].stop;
-	
-	// draw initial sidekick HUD
-	for (uint i = 0; i < COUNTOF(this_player->sidekick); ++i)
-	{
-		if (this_player->items.sidekick[i] == 0)
-			continue;
 		
-		JE_OptionType *this_option = &options[this_player->items.sidekick[i]];
+		this_player->sidekick[i].style = this_option->tr;
 		
+		this_player->sidekick[i].animation_enabled = (this_option->option == 1);
+		this_player->sidekick[i].animation_frame = 0;
+		
+		this_player->sidekick[i].charge = 0;
+		this_player->sidekick[i].charge_ticks = 20;
+		
+		
+		// draw initial sidekick HUD
 		const int y = hud_sidekick_y[twoPlayerMode ? 1 : 0][i];
 		
 		fill_rectangle_xy(VGAScreenSeg, 284, y, 284 + 28, y + 15, 0);
@@ -449,15 +445,8 @@ void JE_drawOptions( void )
 		draw_segmented_gauge(VGAScreenSeg, 284, y + 13, 112, 2, 2, MAX(1, this_player->sidekick[i].ammo_max / 10), this_player->sidekick[i].ammo);
 	}
 	
-	optionAni1 = 1;
-	optionAni2 = 1;
-	optionCharge1Wait = 20;
-	optionCharge2Wait = 20;
-	optionCharge1 = 0;
-	optionCharge2 = 0;
-
 	VGAScreen = temp_surface;
-
+	
 	JE_drawOptionLevel();
 }
 
@@ -888,9 +877,10 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			
 			soundQueue[3] = S_POWERUP;
 			break;
-		case 17:
+			
+		case 17:  // spawn left or right sidekick
 			soundQueue[3] = S_POWERUP;
-
+			
 			if (player[0].items.sidekick[LEFT_SIDEKICK] == special[specialType].wpn)
 			{
 				player[0].items.sidekick[RIGHT_SIDEKICK] = special[specialType].wpn;
@@ -905,9 +895,10 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
 			break;
-		case 18:
+			
+		case 18:  // spawn right sidekick
 			player[0].items.sidekick[RIGHT_SIDEKICK] = special[specialType].wpn;
-
+			
 			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
 
