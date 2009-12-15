@@ -3969,7 +3969,7 @@ redo:
 							
 							if (optionAttachmentReturn)
 								temp = temp * 2;
-							if (abs(this_player->sidekick[RIGHT_SIDEKICK].x - this_player->x < temp))
+							if (abs(this_player->sidekick[RIGHT_SIDEKICK].x - this_player->x) < temp)
 								temp = 1;
 							
 							if (this_player->sidekick[RIGHT_SIDEKICK].x > this_player->x)
