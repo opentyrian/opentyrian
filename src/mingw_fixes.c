@@ -18,15 +18,9 @@
  */
 #include "mingw_fixes.h"
 
-extern int main(); // silence "empty translation unit warning"
-
-#if defined(__MINGW32__) || defined(__APPLE__)
-
 char *strchrnul( const char *s, int c )
 {
 	for (; *s != c && *s != '\0'; ++s)
 		;
 	return (char *)s;
 }
-
-#endif // __MINGW32__

@@ -19,18 +19,6 @@
 #ifndef MINGW_FIXES_H
 #define MINGW_FIXES_H
 
-#ifdef __MINGW32__
-
-#undef __STRICT_ANSI__
-
-#define strcasecmp _stricmp
 char *strchrnul( const char *s, int c );
-#define strdup _strdup
-
-#endif // __MINGW32__
-
-#ifdef __APPLE__
-char *strchrnul( const char *s, int c );
-#endif
 
 #endif // MINGW_FIXES_H

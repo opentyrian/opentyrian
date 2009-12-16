@@ -447,20 +447,22 @@ bool save_joystick_assignments( int j )
 	if (root == NULL)
 		root = cJSON_CreateObject();
 	
-	cJSON *config = cJSON_OverwriteObjectItem(root, SDL_JoystickName(j), cJSON_Object);
+	cJSON *config = cJSON_CreateOrGetObjectItem(root, SDL_JoystickName(j));
+	cJSON_ForceType(config, cJSON_Object);
 	
 	cJSON *setting;
 	
-	setting = cJSON_OverwriteObjectItem(config, "analog", cJSON_NULL);
-	setting->type = joystick[j].analog ? cJSON_True : cJSON_False;
+	setting = cJSON_CreateOrGetObjectItem(config, "analog");
+	cJSON_SetBoolean(setting, joystick[j].analog);
 	
-	setting = cJSON_OverwriteObjectItem(config, "sensitivity", cJSON_Number);
-	cJSON_SetInteger(setting, joystick[j].sensitivity);
+	setting = cJSON_CreateOrGetObjectItem(config, "sensitivity");
+	cJSON_SetNumber(setting, joystick[j].sensitivity);
 	
-	setting = cJSON_OverwriteObjectItem(config, "threshold", cJSON_Number);
-	cJSON_SetInteger(setting, joystick[j].threshold);
+	setting = cJSON_CreateOrGetObjectItem(config, "threshold");
+	cJSON_SetNumber(setting, joystick[j].threshold);
 	
-	setting = cJSON_OverwriteObjectItem(config, "assignments", cJSON_Array);
+	setting = cJSON_CreateOrGetObjectItem(config, "assignments");
+	cJSON_ForceType(setting, cJSON_Array);
 	cJSON_ClearArray(setting);
 	
 	for (int i = 0; i < COUNTOF(joystick->assignment); ++i)
