@@ -4418,9 +4418,9 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 					}
 					else
 					{
-						player[0].armor += tempI4 - 20000;
-						if (player[0].armor > 28)
-							player[0].armor = 28;
+						this_player->armor += tempI4 - 20000;
+						if (this_player->armor > 28)
+							this_player->armor = 28;
 					}
 					enemyAvail[z] = 1;
 					VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
