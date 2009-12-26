@@ -68,7 +68,7 @@ const char* tyrian_game_folder()
     return [[[[[NSBundle mainBundle] resourcePath]
                 stringByAppendingPathComponent:@"data"]
                 stringByAppendingString:@"/"]
-                cString];
+            cStringUsingEncoding:NSASCIIStringEncoding];
 }
 
 const char* get_user_directory()
@@ -89,7 +89,7 @@ const char* get_user_directory()
             createDirectoryAtPath:path attributes:nil];
         
         // The return value is expected to end with a /
-        return [[path stringByAppendingString:@"/"] cString];
+        return [[path stringByAppendingString:@"/"] cStringUsingEncoding:NSASCIIStringEncoding];
     }
     
     return "";
