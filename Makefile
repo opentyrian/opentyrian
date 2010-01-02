@@ -33,7 +33,7 @@ endif
 SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
 SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs) -lSDL_net
 
-ALL_CFLAGS += --std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
+ALL_CFLAGS += -std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
 ALL_LDFLAGS += $(LDFLAGS)
 LDLIBS += $(SDL_LDLIBS)
 
