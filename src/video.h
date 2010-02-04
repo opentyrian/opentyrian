@@ -40,7 +40,8 @@ extern SDL_Surface *VGAScreen2;
 extern SDL_Surface *tempScreenSeg; // TODO: get rid of it!
 
 void init_video( void );
-void reinit_video( void );
+bool init_scaler( int new_scaler, bool fullscreen );
+bool init_any_scaler( bool fullscreen );
 void deinit_video( void );
 void JE_clr256( void );
 void JE_showVGA( void );

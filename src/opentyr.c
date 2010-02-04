@@ -186,16 +186,24 @@ void opentyrian_menu( void )
 						case 1: /* Fullscreen */
 							JE_playSampleNum(S_SELECT);
 							
-							fullscreen_enabled = !fullscreen_enabled;
-							reinit_video();
+							if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
+							    !init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
+							    !init_scaler(scaler, fullscreen_enabled))    // revert on fail
+							{
+								exit(EXIT_FAILURE);
+							}
 							break;
 						case 2: /* Scaler */
 							JE_playSampleNum(S_SELECT);
 							
 							if (scaler != temp_scaler)
 							{
-								scaler = temp_scaler;
-								reinit_video();
+								if (!init_scaler(temp_scaler, fullscreen_enabled) &&   // try new scaler
+								    !init_scaler(temp_scaler, !fullscreen_enabled) &&  // try other fullscreen state
+								    !init_scaler(scaler, fullscreen_enabled))          // revert on fail
+								{
+									exit(EXIT_FAILURE);
+								}
 							}
 							break;
 						case 3: /* Jukebox */

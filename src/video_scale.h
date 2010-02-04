@@ -23,14 +23,15 @@
 
 #include "SDL.h"
 
-struct scaler_struct {
-	int scale;
-	void (*scaler16)(SDL_Surface *, SDL_Surface *, int);
-	void (*scaler32)(SDL_Surface *, SDL_Surface *, int);
+struct scaler_struct
+{
+	int width, height, min_bpp;
+	void (*scaler16)( SDL_Surface *dst, SDL_Surface *src );
+	void (*scaler32)( SDL_Surface *dst, SDL_Surface *src );
 	const char *name;
 };
 
-extern int scale, scaler;
+extern int scaler;
 extern const struct scaler_struct scalers[9];
 
 #endif /* VIDEO_SCALE_H */

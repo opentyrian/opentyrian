@@ -26,8 +26,8 @@
 
 #include <assert.h>
 
-void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
-void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
 void interp1(Uint32 *pc, Uint32 c1, Uint32 c2);
 void interp2(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
@@ -41,31 +41,33 @@ void interp9(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 void interp10(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 bool diff(unsigned int w1, unsigned int w2);
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
-void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
-void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
-void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
-void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
-void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
-void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale );
+void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
-int scale, scaler = 2;
+int scaler = 2;  // default is Scale2x
+
 
 const struct scaler_struct scalers[] =
 {
-	{ 1, nn_16,      nn_32,      "None" },
-	{ 2, nn_16,      nn_32,      "2x" },
-	{ 2, scale2x_16, scale2x_32, "Scale2x" },
-	{ 2, NULL,       hq2x_32,    "hq2x" },
-	{ 3, nn_16,      nn_32,      "3x" },
-	{ 3, scale3x_16, scale3x_32, "Scale3x" },
-	{ 3, NULL,       hq3x_32,    "hq3x" },
-	{ 4, nn_16,      nn_32,      "4x" },
-	{ 4, NULL,       hq4x_32,    "hq4x" },
+	{ 1 * vga_width, 1 * vga_height,  8, nn_16,      nn_32,      "None" },
+	{ 2 * vga_width, 2 * vga_height, 16, nn_16,      nn_32,      "2x" },
+	{ 2 * vga_width, 2 * vga_height, 16, scale2x_16, scale2x_32, "Scale2x" },
+	{ 2 * vga_width, 2 * vga_height, 32, NULL,       hq2x_32,    "hq2x" },
+	{ 3 * vga_width, 3 * vga_height, 16, nn_16,      nn_32,      "3x" },
+	{ 3 * vga_width, 3 * vga_height, 16, scale3x_16, scale3x_32, "Scale3x" },
+	{ 3 * vga_width, 3 * vga_height, 32, NULL,       hq3x_32,    "hq3x" },
+	{ 4 * vga_width, 4 * vga_height, 16, nn_16,      nn_32,      "4x" },
+	{ 4 * vga_width, 4 * vga_height, 32, NULL,       hq4x_32,    "hq4x" },
 };
 
-void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+
+void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
@@ -74,7 +76,9 @@ void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
 	
 	const int height = vga_height, // src_surface->h
-	          width = vga_width;   // src_surface->w
+	          width = vga_width,   // src_surface->w
+	          scale = dst_surface->w / width;
+	assert(scale == dst_surface->h / height);
 	
 	for (int y = height; y > 0; y--)
 	{
@@ -102,7 +106,7 @@ void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	}
 }
 
-void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
@@ -111,7 +115,9 @@ void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
 	
 	const int height = vga_height, // src_surface->h
-	          width = vga_width;   // src_surface->w
+	          width = vga_width,   // src_surface->w
+	          scale = dst_surface->w / width;
+	assert(scale == dst_surface->h / height);
 	
 	for (int y = height; y > 0; y--)
 	{
@@ -278,10 +284,8 @@ inline bool diff(unsigned int w1, unsigned int w2)
 #define PIXEL11_90    interp9((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 #define PIXEL11_100   interp10((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
@@ -3073,10 +3077,8 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 #define PIXEL22_5   interp5((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[6], c[8]);
 #define PIXEL22_C   *(Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = c[5];
 
-void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
@@ -6928,10 +6930,8 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 #define PIXEL4_33_81    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
 #define PIXEL4_33_82    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[8]);
 
-void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
@@ -12001,10 +12001,8 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 }
 
 
-void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
@@ -12056,10 +12054,8 @@ void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	}
 }
 
-void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
@@ -12112,10 +12108,8 @@ void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 }
 
 
-void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
@@ -12181,10 +12175,8 @@ void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
 	}
 }
 
-void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface, int scale )
+void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
-	(void)scale;
-	
 	Uint8 *src = src_surface->pixels, *src_temp,
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,

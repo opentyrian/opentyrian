@@ -66,9 +66,8 @@ void set_palette( Palette colors, unsigned int first_color, unsigned int last_co
 #endif // TARGET_GP2X
 	}
 	
-#ifdef TARGET_GP2X
-	SDL_SetColors(display_surface, palette, first_color, last_color - first_color + 1);
-#endif /* TARGET_GP2X */
+	if (display_surface->format->BitsPerPixel == 8)
+		SDL_SetColors(display_surface, palette, first_color, last_color - first_color + 1);
 }
 
 void set_colors( SDL_Color color, unsigned int first_color, unsigned int last_color )
@@ -83,9 +82,8 @@ void set_colors( SDL_Color color, unsigned int first_color, unsigned int last_co
 #endif // TARGET_GP2X
 	}
 	
-#ifdef TARGET_GP2X
-	SDL_SetColors(display_surface, palette, first_color, last_color - first_color + 1);
-#endif /* TARGET_GP2X */
+	if (display_surface->format->BitsPerPixel == 8)
+		SDL_SetColors(display_surface, palette, first_color, last_color - first_color + 1);
 }
 
 void init_step_fade_palette( int diff[256][3], Palette colors, unsigned int first_color, unsigned int last_color )
@@ -130,11 +128,10 @@ void step_fade_palette( int diff[256][3], int steps, unsigned int first_color, u
 #endif // TARGET_GP2X
 	}
 	
-#ifndef TARGET_GP2X
-	JE_showVGA();
-#else // TARGET_GP2X
-	SDL_SetColors(display_surface, palette, 0, 256);
-#endif // TARGET_GP2X
+	if (display_surface->format->BitsPerPixel == 8)
+		SDL_SetColors(display_surface, palette, 0, 256);
+	else
+		JE_showVGA();
 }
 
 

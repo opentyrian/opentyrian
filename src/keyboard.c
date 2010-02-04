@@ -120,7 +120,7 @@ void set_mouse_position( int x, int y )
 {
 	if (input_grabbed)
 	{
-		SDL_WarpMouse(x * scale, y * scale);
+		SDL_WarpMouse(x * scalers[scaler].width / vga_width, y * scalers[scaler].height / vga_height);
 		mouse_x = x;
 		mouse_y = y;
 	}
@@ -138,8 +138,8 @@ void service_SDL_events( JE_boolean clear_new )
 		switch (ev.type)
 		{
 			case SDL_MOUSEMOTION:
-				mouse_x = ev.motion.x / scale;
-				mouse_y = ev.motion.y / scale;
+				mouse_x = ev.motion.x * vga_width / scalers[scaler].width;
+				mouse_y = ev.motion.y * vga_height / scalers[scaler].height;
 				break;
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)
@@ -166,8 +166,12 @@ void service_SDL_events( JE_boolean clear_new )
 					/* <alt><enter> toggle fullscreen */
 					if (ev.key.keysym.sym == SDLK_RETURN)
 					{
-						fullscreen_enabled = !fullscreen_enabled;
-						reinit_video();
+						if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
+						    !init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
+						    !init_scaler(scaler, fullscreen_enabled))    // revert on fail
+						{
+							exit(EXIT_FAILURE);
+						}
 						break;
 					}
 					
@@ -177,8 +181,12 @@ void service_SDL_events( JE_boolean clear_new )
 						input_grab_enabled = false;
 						input_grab();
 						
-						fullscreen_enabled = false;
-						reinit_video();
+						if (!init_scaler(scaler, false) &&             // try windowed
+						    !init_any_scaler(false) &&                 // try any scaler windowed
+						    !init_scaler(scaler, fullscreen_enabled))  // revert on fail
+						{
+							exit(EXIT_FAILURE);
+						}
 						break;
 					}
 				}
@@ -204,8 +212,8 @@ void service_SDL_events( JE_boolean clear_new )
 				{
 					newmouse = true;
 					lastmouse_but = ev.button.button;
-					lastmouse_x = ev.button.x / scale;
-					lastmouse_y = ev.button.y / scale;
+					lastmouse_x = ev.button.x * vga_width / scalers[scaler].width;
+					lastmouse_y = ev.button.y * vga_height / scalers[scaler].height;
 					mousedown = true;
 				}
 				else
