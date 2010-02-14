@@ -338,8 +338,8 @@ void reset_joystick_assignments( int j )
 			{
 				joystick[j].assignment[a][1].type = HAT;
 				joystick[j].assignment[a][1].num = 0;
-				joystick[j].assignment[a][0].x_axis = (a == 1 || a == 3);
-				joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+				joystick[j].assignment[a][1].x_axis = (a == 1 || a == 3);
+				joystick[j].assignment[a][1].negative_axis = (a == 0 || a == 3);
 			}
 		}
 		else
