@@ -970,10 +970,10 @@ void JE_saveConfiguration( void )
 		efwrite(&gammaCorrection, 1, 1, f);
 		efwrite(&difficultyLevel, 1, 1, f);
 		efwrite(joyButtonAssign, 1, 4, f);
-
-		efwrite(&tyrMusicVolume, 1, 2, f);
-		efwrite(&fxVolume, 1, 2, f);
-
+		
+		efwrite(&tyrMusicVolume, 2, 1, f);
+		efwrite(&fxVolume, 2, 1, f);
+		
 		efwrite(&inputDevice[0], 1, 1, f);
 		efwrite(&inputDevice[1], 1, 1, f);
 
