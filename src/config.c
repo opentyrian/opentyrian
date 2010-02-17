@@ -300,6 +300,7 @@ static void pitems_to_playeritems( PlayerItems *items, JE_PItemsType pItems, JE_
 	items->special                  = pItems[10];
 	items->ship                     = pItems[11];
 }
+
 void JE_saveGame( JE_byte slot, const char *name )
 {
 	saveFiles[slot-1].initialDifficulty = initialDifficulty;
@@ -704,9 +705,9 @@ void JE_loadConfiguration( void )
 		
 		efread(&inputDevice_, 1, 1, fi);
 		efread(&jConfigure, 1, 1, fi);
-
+		
 		efread(&versionNum, 1, 1, fi);
-
+		
 		efread(&processorType, 1, 1, fi);
 		efread(&midiPort, 1, 1, fi);
 		efread(&soundEffects, 1, 1, fi);
@@ -714,15 +715,14 @@ void JE_loadConfiguration( void )
 		efread(&difficultyLevel, 1, 1, fi);
 		
 		efread(joyButtonAssign, 1, 4, fi);
-
+		
 		efread(&tyrMusicVolume, 2, 1, fi);
 		efread(&fxVolume, 2, 1, fi);
-
-		efread(&inputDevice[0], 1, 1, fi);
-		efread(&inputDevice[1], 1, 1, fi);
-
+		
+		efread(inputDevice, 1, 2, fi);
+		
 		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
-
+		
 		/* display settings */
 		Uint8 temp;
 		
@@ -974,11 +974,10 @@ void JE_saveConfiguration( void )
 		efwrite(&tyrMusicVolume, 2, 1, f);
 		efwrite(&fxVolume, 2, 1, f);
 		
-		efwrite(&inputDevice[0], 1, 1, f);
-		efwrite(&inputDevice[1], 1, 1, f);
-
+		efwrite(inputDevice, 1, 2, f);
+		
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
-
+		
 		/* display settings */
 		Uint8 temp;
 		

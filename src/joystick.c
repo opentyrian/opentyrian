@@ -507,7 +507,7 @@ void joystick_assignments_to_string( char *buffer, size_t buffer_len, const Joys
 	}
 }
 
-// reverse of assign_code()
+// reverse of assignment_to_code()
 void code_to_assignment( Joystick_assignment *assignment, const char *buffer )
 {
 	memset(assignment, 0, sizeof(*assignment));
