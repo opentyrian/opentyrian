@@ -219,7 +219,102 @@ JE_SaveGameTemp saveTemp;
 
 JE_word editorLevel;   /*Initial value 800*/
 
-const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
+
+cJSON *load_json( const char *filename )
+{
+	FILE *f = dir_fopen_warn(get_user_directory(), filename, "rb");
+	if (f == NULL)
+		return NULL;
+	
+	size_t buffer_len = ftell_eof(f);
+	char *buffer = malloc(buffer_len + 1);
+	
+	fread(buffer, 1, buffer_len, f);
+	buffer[buffer_len] = '\0';
+	
+	fclose(f);
+	
+	cJSON *root = cJSON_Parse(buffer);
+	
+	free(buffer);
+	
+	return root;
+}
+
+void save_json( cJSON *root, const char *filename )
+{
+	FILE *f = dir_fopen_warn(get_user_directory(), filename, "w+");
+	if (f == NULL)
+		return;
+	
+	char *buffer = cJSON_Print(root);
+	
+	if (buffer != NULL)
+	{
+		fputs(buffer, f);
+		free(buffer);
+	}
+	
+	fclose(f);
+}
+
+bool load_opentyrian_config( void )
+{
+	// defaults
+	fullscreen_enabled = false;
+	set_scaler_by_name("Scale2x");
+	
+	cJSON *root = load_json("opentyrian.conf");
+	if (root == NULL)
+		return false;
+	
+	cJSON *section = cJSON_GetObjectItem(root, "video");
+	if (section != NULL)
+	{
+		cJSON *setting;
+		
+		if ((setting = cJSON_GetObjectItem(section, "fullscreen")))
+			fullscreen_enabled = (setting->type == cJSON_True);
+		
+		if ((setting = cJSON_GetObjectItem(section, "scaler")))
+			set_scaler_by_name(setting->valuestring);
+	}
+	
+	cJSON_Delete(root);
+	
+	return true;
+}
+
+bool save_opentyrian_config( void )
+{
+	cJSON *root = load_json("opentyrian.conf");
+	if (root == NULL)
+		root = cJSON_CreateObject();
+	
+	cJSON *section;
+	
+	section = cJSON_CreateOrGetObjectItem(root, "video");
+	cJSON_ForceType(section, cJSON_Object);
+	
+	{
+		cJSON *setting;
+		
+		setting = cJSON_CreateOrGetObjectItem(section, "fullscreen");
+		cJSON_SetBoolean(setting, fullscreen_enabled);
+		
+		setting = cJSON_CreateOrGetObjectItem(section, "scaler");
+		cJSON_SetString(setting, scalers[scaler].name);
+	}
+	
+	save_json(root, "opentyrian.conf");
+	
+	cJSON_Delete(root);
+	
+	return true;
+}
+
+
+static const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
 
 void JE_decryptString( char *s, JE_byte len )
 {
@@ -695,7 +790,7 @@ void JE_loadConfiguration( void )
 	int y;
 	
 	fi = dir_fopen_warn(get_user_directory(), "tyrian.cfg", "rb");
-	if (fi && ftell_eof(fi) == 20 + sizeof(keySettings) + 2)
+	if (fi && ftell_eof(fi) == 20 + sizeof(keySettings))
 	{
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
@@ -723,16 +818,9 @@ void JE_loadConfiguration( void )
 		
 		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 		
-		/* display settings */
-		Uint8 temp;
-		
-		efread(&temp, 1, 1, fi);
-		fullscreen_enabled = (temp == true);
-		
-		efread(&temp, 1, 1, fi);
-		scaler = temp;
-		
 		fclose(fi);
+		
+		load_opentyrian_config();
 	}
 	else
 	{
@@ -745,8 +833,6 @@ void JE_loadConfiguration( void )
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
-		
-		fullscreen_enabled = false;
 	}
 	
 	if (tyrMusicVolume > 255)
@@ -978,16 +1064,10 @@ void JE_saveConfiguration( void )
 		
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 		
-		/* display settings */
-		Uint8 temp;
-		
-		temp = fullscreen_enabled;
-		efwrite(&temp, 1, 1, f);
-		
-		temp = scaler;
-		efwrite(&temp, 1, 1, f);
-		
 		fclose(f);
+		
+		save_opentyrian_config();
+		
 #if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
 		sync();
 #endif

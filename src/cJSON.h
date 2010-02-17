@@ -89,7 +89,7 @@ void cJSON_ForceType( cJSON *, cJSON_Type );
 
 void cJSON_SetBoolean( cJSON *, bool );
 void cJSON_SetNumber( cJSON *, double );
-void cJSON_SetString( cJSON *, char * );
+void cJSON_SetString( cJSON *, const char * );
 
 // These utilities create an Array of count items.
 cJSON *cJSON_CreateIntArray(int *numbers,int count);

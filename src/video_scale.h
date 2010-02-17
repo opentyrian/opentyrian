@@ -34,6 +34,8 @@ struct scaler_struct
 extern int scaler;
 extern const struct scaler_struct scalers[9];
 
+void set_scaler_by_name( const char *name );
+
 #endif /* VIDEO_SCALE_H */
 
 // kate: tab-width 4; vim: set noet:

@@ -666,7 +666,7 @@ void cJSON_SetNumber( cJSON *item, double value )
 	cJSON_ForceType(item, cJSON_Number);
 	item->valueint = item->valuedouble = value;
 }
-void cJSON_SetString( cJSON *item, char *value )
+void cJSON_SetString( cJSON *item, const char *value )
 {
 	cJSON_ForceType(item, cJSON_String);
 	cJSON_free(item->valuestring);

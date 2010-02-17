@@ -19,6 +19,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "cJSON.h"
 #include "opentyr.h"
 
 #include <stdio.h>
@@ -157,6 +158,9 @@ void JE_decryptString( char *s, JE_byte len );
 
 void JE_encryptSaveTemp( void );
 void JE_decryptSaveTemp( void );
+
+cJSON *load_json( const char *filename );
+void save_json( cJSON *root, const char *filename );
 
 #endif /* CONFIG_H */
 

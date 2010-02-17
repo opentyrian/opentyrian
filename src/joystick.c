@@ -357,47 +357,9 @@ void reset_joystick_assignments( int j )
 	joystick[j].threshold = 5;
 }
 
-cJSON *load_config( void )
-{
-	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "rb");
-	if (f == NULL)
-		return NULL;
-	
-	size_t buffer_len = ftell_eof(f);
-	char *buffer = malloc(buffer_len + 1);
-	
-	fread(buffer, 1, buffer_len, f);
-	buffer[buffer_len] = '\0';
-	
-	fclose(f);
-	
-	cJSON *root = cJSON_Parse(buffer);
-	
-	free(buffer);
-	
-	return root;
-}
-
-void save_config( cJSON *root )
-{
-	FILE *f = dir_fopen_warn(get_user_directory(), "joystick.conf", "w+");
-	if (f == NULL)
-		return;
-	
-	char *buffer = cJSON_Print(root);
-	
-	if (buffer != NULL)
-	{
-		fputs(buffer, f);
-		free(buffer);
-	}
-	
-	fclose(f);
-}
-
 bool load_joystick_assignments( int j )
 {
-	cJSON *root = load_config();
+	cJSON *root = load_json("joystick.conf");
 	if (root == NULL)
 		return false;
 	
@@ -443,7 +405,7 @@ bool load_joystick_assignments( int j )
 
 bool save_joystick_assignments( int j )
 {
-	cJSON *root = load_config();
+	cJSON *root = load_json("joystick.conf");
 	if (root == NULL)
 		root = cJSON_CreateObject();
 	
@@ -479,7 +441,7 @@ bool save_joystick_assignments( int j )
 		}
 	}
 	
-	save_config(root);
+	save_json(root, "joystick.conf");
 	
 	cJSON_Delete(root);
 	

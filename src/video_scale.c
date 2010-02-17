@@ -39,8 +39,7 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
-int scaler = 2;  // default is Scale2x
-
+int scaler;
 
 const struct scaler_struct scalers[] =
 {
@@ -55,6 +54,17 @@ const struct scaler_struct scalers[] =
 	{ 4 * vga_width, 4 * vga_height, 32, NULL,       hq4x_32,    "hq4x" },
 };
 
+void set_scaler_by_name( const char *name )
+{
+	for (int i = 0; i < COUNTOF(scalers); ++i)
+	{
+		if (strcmp(name, scalers[i].name) == 0)
+		{
+			scaler = i;
+			break;
+		}
+	}
+}
 
 void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
