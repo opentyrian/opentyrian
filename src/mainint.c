@@ -2016,7 +2016,7 @@ void JE_playCredits( void )
 	while (!feof(f))
 	{
 		maxlen += 20 * 3;
-		JE_readCryptLn(f, credstr[max]);
+		read_encrypted_pascal_string(credstr[max], sizeof(credstr[max]), f);
 		max++;
 	}
 	

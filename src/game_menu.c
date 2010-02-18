@@ -1729,7 +1729,7 @@ bool load_cube( int cube_slot, int cube_index )
 	// seek to the cube
 	while (cube_index > 0)
 	{
-		JE_readCryptLn(f, buf);
+		read_encrypted_pascal_string(buf, sizeof(buf), f);
 		if (buf[0] == '*')
 			--cube_index;
 		
@@ -1744,8 +1744,8 @@ bool load_cube( int cube_slot, int cube_index )
 	str_pop_int(&buf[4], &cube[cube_slot].face_sprite);
 	--cube[cube_slot].face_sprite;
 	
-	JE_readCryptLn(f, cube[cube_slot].title);
-	JE_readCryptLn(f, cube[cube_slot].header);
+	read_encrypted_pascal_string(cube[cube_slot].title, sizeof(cube[cube_slot].title), f);
+	read_encrypted_pascal_string(cube[cube_slot].header, sizeof(cube[cube_slot].header), f);
 	
 	int line = 0, line_chars = 0, line_width = 0;
 	
@@ -1753,7 +1753,7 @@ bool load_cube( int cube_slot, int cube_index )
 	// and add them individually to the lines of wrapped text
 	for (; ; )
 	{
-		JE_readCryptLn(f, buf);
+		read_encrypted_pascal_string(buf, sizeof(buf), f);
 		
 		// end of data
 		if (feof(f) || buf[0] == '*')

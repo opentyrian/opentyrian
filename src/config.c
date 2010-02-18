@@ -314,43 +314,6 @@ bool save_opentyrian_config( void )
 }
 
 
-static const JE_byte StringCryptKey[10] = {99, 204, 129, 63, 255, 71, 19, 25, 62, 1};
-
-void JE_decryptString( char *s, JE_byte len )
-{
-	int i;
-
-	for (i = len-1; i >= 0; i--)
-	{
-		s[i] ^= StringCryptKey[((i+1) % 10)];
-		if (i > 0)
-		{
-			s[i] ^= s[i-1];
-		}
-	}
-}
-
-void JE_readCryptLn( FILE* f, char *s )
-{
-	int size;
-
-	size = getc(f);
-	if (size < 0)
-		size = 0;
-	efread(s, 1, size, f);
-	s[size] = '\0';
-	JE_decryptString(s, size);
-}
-
-void JE_skipCryptLn( FILE* f )
-{
-	int size;
-
-	size = getc(f);
-	fseek(f, size, SEEK_CUR);
-}
-
-
 void JE_setupStars( void )
 {
 	int z;

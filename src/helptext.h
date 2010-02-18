@@ -42,7 +42,7 @@ extern char inGameText[6][21];          /* [1..6] of string [20] */
 extern char detailLevel[6][13];         /* [1..6] of string [12] */
 extern char gameSpeedText[5][13];       /* [1..5] of string [12] */
 extern char inputDevices[3][13];        /* [1..3] of string [12] */
-extern char networkText[4][21];         /* [1..4] of string [20] */
+extern char networkText[4][22];         /* [1..4] of string [20] */
 extern char difficultyNameB[11][21];    /* [0..9] of string [20] */
 extern char joyButtonNames[5][21];      /* [1..5] of string [20] */
 extern char superShips[11][26];         /* [0..10] of string [25] */
@@ -54,7 +54,8 @@ extern char shipInfo[13][2][256];
 extern char menuInt[MAX_MENU+1][11][18]; /* [0..maxmenu, 1..11] of string [17] */
 extern const JE_byte menuHelp[MAX_MENU][11];   /* [1..maxmenu, 1..11] */
 
-/*JE_byte temp, temp2;*/
+void read_encrypted_pascal_string( char *s, int size, FILE *f );
+void skip_pascal_string( FILE *f );
 
 void JE_helpBox( JE_word x, JE_word y, const char *message, JE_byte boxwidth );
 void JE_HBox( JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth );

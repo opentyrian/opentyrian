@@ -2599,7 +2599,7 @@ new_game:
 			int x = 0;
 			while (x < mainLevel)
 			{
-				JE_readCryptLn(ep_f, s);
+				read_encrypted_pascal_string(s, sizeof(s), ep_f);
 				if (s[0] == '*')
 				{
 					x++;
@@ -2622,7 +2622,7 @@ new_game:
 				}
 
 				strcpy(s, " ");
-				JE_readCryptLn(ep_f, s);
+				read_encrypted_pascal_string(s, sizeof(s), ep_f);
 
 				if (s[0] == ']')
 				{
@@ -2764,7 +2764,7 @@ new_game:
 						
 						for (int i = 0; i < 9; ++i)
 						{
-							JE_readCryptLn(ep_f, s);
+							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 							
 							char buf[256];
 							snprintf(buf, sizeof(buf), "%s", (strlen(s) > 8) ? s + 8 : "");
@@ -2818,13 +2818,13 @@ new_game:
 						for (x = 0; x < temp - 1; x++)
 						{
 							do
-								JE_readCryptLn(ep_f, s);
+								read_encrypted_pascal_string(s, sizeof(s), ep_f);
 							while (s[0] != '#');
 						}
 						
 						do
 						{
-							JE_readCryptLn(ep_f, s);
+							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 							strcpy(levelWarningText[levelWarningLines], s);
 							levelWarningLines++;
 						}
@@ -3117,7 +3117,7 @@ new_game:
 								
 								do
 								{
-									JE_readCryptLn(ep_f, s);
+									read_encrypted_pascal_string(s, sizeof(s), ep_f);
 									
 									if (s[0] != '#')
 									{
@@ -3144,7 +3144,7 @@ new_game:
 					case 'h':
 						if (initialDifficulty > 2)
 						{
-							JE_readCryptLn(ep_f, s);
+							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 						}
 						break;
 						
