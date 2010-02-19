@@ -782,8 +782,6 @@ void JE_loadConfiguration( void )
 		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 		
 		fclose(fi);
-		
-		load_opentyrian_config();
 	}
 	else
 	{
@@ -797,6 +795,8 @@ void JE_loadConfiguration( void )
 		processorType = 3;
 		gameSpeed = 4;
 	}
+	
+	load_opentyrian_config();
 	
 	if (tyrMusicVolume > 255)
 		tyrMusicVolume = 255;
@@ -1028,13 +1028,13 @@ void JE_saveConfiguration( void )
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 		
 		fclose(f);
-		
-		save_opentyrian_config();
-		
-#if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
-		sync();
-#endif
 	}
+	
+	save_opentyrian_config();
+	
+#if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
+	sync();
+#endif
 }
 
 // kate: tab-width 4; vim: set noet:
