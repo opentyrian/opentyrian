@@ -1703,91 +1703,74 @@ void JE_highScoreCheck( void )
 	}
 }
 
-void JE_changeDifficulty( void )
+// increases game difficulty based on player's total score / total of players' scores
+void adjust_difficulty( void )
 {
-	JE_byte newDifficultyLevel;
-	JE_longint temp;
-
+	const float score_multiplier[10] =
+	{
+		0,     // Wimp  (doesn't exist)
+		0.4f,  // Easy
+		0.8f,  // Normal
+		1.3f,  // Hard
+		1.6f,  // Impossible
+		2,     // Insanity
+		2,     // Suicide
+		3,     // Maniacal
+		3,     // Zinglon
+		3,     // Nortaneous
+	};
+	
+	assert(initialDifficulty > 0 && initialDifficulty < 10);
+	
+	const ulong score = twoPlayerMode ? (player[0].cash + player[1].cash) : JE_totalScore(&player[0]),
+	            adjusted_score = roundf(score * score_multiplier[initialDifficulty]);
+	
+	uint new_difficulty = 0;
+	
 	if (twoPlayerMode)
-		temp = player[0].cash + player[1].cash;
+	{
+		if (adjusted_score < 10000)
+			new_difficulty = 1;  // Easy
+		else if (adjusted_score < 20000)
+			new_difficulty = 2;  // Normal
+		else if (adjusted_score < 50000)
+			new_difficulty = 3;  // Hard
+		else if (adjusted_score < 80000)
+			new_difficulty = 4;  // Impossible
+		else if (adjusted_score < 125000)
+			new_difficulty = 5;  // Insanity
+		else if (adjusted_score < 200000)
+			new_difficulty = 6;  // Suicide
+		else if (adjusted_score < 400000)
+			new_difficulty = 7;  // Maniacal
+		else if (adjusted_score < 600000)
+			new_difficulty = 8;  // Zinglon
+		else
+			new_difficulty = 9;  // Nortaneous
+	}
 	else
-		temp = JE_totalScore(&player[0]);
-
-	switch (initialDifficulty)
 	{
-		case 1:
-			temp = roundf(temp * 0.4f);
-			break;
-		case 2:
-			temp = roundf(temp * 0.8f);
-			break;
-		case 3:
-			temp = roundf(temp * 1.3f);
-			break;
-		case 4:
-			temp = roundf(temp * 1.6f);
-			break;
-		case 5:
-		case 6:
-			temp = roundf(temp * 2);
-			break;
-		case 7:
-		case 8:
-		case 9:
-			temp = roundf(temp * 3);
-			break;
+		if (adjusted_score < 40000)
+			new_difficulty = 1;  // Easy
+		else if (adjusted_score < 70000)
+			new_difficulty = 2;  // Normal
+		else if (adjusted_score < 150000)
+			new_difficulty = 3;  // Hard
+		else if (adjusted_score < 300000)
+			new_difficulty = 4;  // Impossible
+		else if (adjusted_score < 600000)
+			new_difficulty = 5;  // Insanity
+		else if (adjusted_score < 1000000)
+			new_difficulty = 6;  // Suicide
+		else if (adjusted_score < 2000000)
+			new_difficulty = 7;  // Maniacal
+		else if (adjusted_score < 3000000)
+			new_difficulty = 8;  // Zinglon
+		else
+			new_difficulty = 9;  // Nortaneous
 	}
-
-	if (twoPlayerMode)
-	{
-		if (temp < 10000)
-		{
-			newDifficultyLevel = 1; /* Easy */
-		} else if (temp < 20000) {
-			newDifficultyLevel = 2; /* Normal */
-		} else if (temp < 50000) {
-			newDifficultyLevel = 3; /* Hard */
-		} else if (temp < 80000) {
-			newDifficultyLevel = 4; /* Impossible */
-		} else if (temp < 125000) {
-			newDifficultyLevel = 5; /* Impossible B */
-		} else if (temp < 200000) {
-			newDifficultyLevel = 6; /* Suicide */
-		} else if (temp < 400000) {
-			newDifficultyLevel = 7; /* Maniacal */
-		} else if (temp < 600000) {
-			newDifficultyLevel = 8; /* Zinglon */
-		} else {
-			newDifficultyLevel = 9; /* Nortaneous */
-		}
-	} else {
-		if (temp < 40000)
-		{
-			newDifficultyLevel = 1; /* Easy */
-		} else if (temp < 70000) {
-			newDifficultyLevel = 2; /* Normal */
-		} else if (temp < 150000) {
-			newDifficultyLevel = 3; /* Hard */
-		} else if (temp < 300000) {
-			newDifficultyLevel = 4; /* Impossible */
-		} else if (temp < 600000) {
-			newDifficultyLevel = 5; /* Impossible B */
-		} else if (temp < 1000000) {
-			newDifficultyLevel = 6; /* Suicide */
-		} else if (temp < 2000000) {
-			newDifficultyLevel = 7; /* Maniacal */
-		} else if (temp < 3000000) {
-			newDifficultyLevel = 8; /* Zinglon */
-		} else {
-			newDifficultyLevel = 9; /* Nortaneous */
-		}
-	}
-
-	if (newDifficultyLevel > difficultyLevel)
-	{
-		difficultyLevel = newDifficultyLevel;
-	}
-
+	
+	difficultyLevel = MAX(difficultyLevel, new_difficulty);
 }
 
 bool load_next_demo( void )
@@ -2185,7 +2168,7 @@ void JE_endLevelAni( void )
 		}
 	}
 	
-	JE_changeDifficulty();
+	adjust_difficulty();
 	
 	player[0].last_items = player[0].items;
 	strcpy(lastLevelName, levelName);
