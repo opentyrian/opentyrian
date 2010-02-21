@@ -69,7 +69,6 @@ extern JE_byte soundQueue[8];
 #define UNIT_HEIGHT 12
 #define MAX_WALLS 20
 #define MAX_KEY_OPTIONS 4
-#define MAX_INSTALLATIONS 20
 
 /*** Enums ***/
 enum de_state_t { STATE_INIT, STATE_RELOAD, STATE_CONTINUE };
@@ -116,7 +115,6 @@ struct destruct_config_s {
 	bool alwaysalias;
 	bool jumper_straight[2];
 	bool ai[2];
-
 };
 
 struct destruct_unit_s {
@@ -179,7 +177,7 @@ struct destruct_player_s {
 	bool is_cpu;
 	struct destruct_ai_s aiMemory;
 
-	struct destruct_unit_s unit[MAX_INSTALLATIONS];
+	struct destruct_unit_s * unit;
 	struct destruct_moves_s moves;
 	struct destruct_keys_s  keys;
 
@@ -377,7 +375,7 @@ const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 SDL_Surface *destructTempScreen;
 JE_boolean destructFirstTime;
 
-static struct destruct_config_s config = { 40, 20, 40, 20, false, false, { true, false}, { true, false} };
+static struct destruct_config_s config = { 40, 20, 40, 10, false, false, { true, false}, { true, false} };
 static struct destruct_player_s player[MAX_PLAYERS];
 static struct destruct_world_s  world;
 static struct destruct_shot_s   * shotRec;
@@ -400,8 +398,119 @@ enum de_unit_t string_to_unit_enum(const char * str) {
 
     return(UNIT_NONE);
 }
-void load_destruct_config( void )
-{
+bool write_default_destruct_config( void ) {
+
+	cJSON * root;
+	cJSON * level1, * level2, * level3, * setting;
+
+
+	//If I read the file right, all of these will return NULL on failure.
+	//Well that'll be a little bit tedious to check for each time, but using
+	//gotos can help clear everything up since only one thing is freed.
+	if((root = cJSON_CreateObject()) == NULL) { goto label_failure; }
+
+
+	if((level1 = cJSON_CreateOrGetObjectItem(root, "general")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level1, cJSON_Object);
+
+	//general
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "alwaysalias")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, false);
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "tracerlaser")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, false);
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_shots")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, 40);
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_walls")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, 20);
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_explosions")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, 40);
+
+	//players general
+	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player1")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level2, cJSON_Object);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "ai")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, true);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "jumper_fires_straight")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, true);
+
+	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player2")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level2, cJSON_Object);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "ai")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, false);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "jumper_fires_straight")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, false);
+
+	//custom mode
+	if((level1 = cJSON_CreateOrGetObjectItem(root, "custom")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level1, cJSON_Object);
+
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "enable")) == NULL) { goto label_failure; }
+	cJSON_SetBoolean(setting, false);
+
+	//player 1 (I could but won't bother looping this)
+	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player1")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level2, cJSON_Object);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "num_units")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, 10);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "__comment")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "This handles probability.  Always have 10 entries.");
+
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit1")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_TANK");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit2")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_TANK");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit3")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_NUKE");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit4")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_DIRT");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit5")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_DIRT");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit6")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_SATELLITE");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit7")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_MAGNET");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit8")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_LASER");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit9")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_JUMPER");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit10")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_HELI");
+
+	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player2")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level2, cJSON_Object);
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "num_units")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, 10);
+
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit1")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_TANK");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit2")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_TANK");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit3")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_NUKE");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit4")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_DIRT");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit5")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_DIRT");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit6")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_SATELLITE");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit7")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_MAGNET");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit8")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_LASER");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit9")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_JUMPER");
+	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit10")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "UNIT_HELI");
+
+	save_json(root, "destruct.conf");
+	return(true);
+
+label_failure:
+	cJSON_Delete(root);
+	return(false);
+}
+void load_destruct_config( void ) {
+
 	unsigned int j;
 	enum de_player_t i;
 	enum de_unit_t temp;
@@ -412,7 +521,10 @@ void load_destruct_config( void )
 	// The config file is not modified in game in order to 'keep' with the
 	// original (unconfigurable) feel.  This code was copied from elsewhere.
 	root = load_json("destruct.conf");
-	if (root == NULL) { return; }
+	if (root == NULL) {
+		write_default_destruct_config();
+		return;
+	}
 
 	//load these general config items.  I don't consider sanity checks
 	//necessary; either the game isn't playable or you eat up all your memory
@@ -421,7 +533,7 @@ void load_destruct_config( void )
 	if (level1 != NULL)
 	{
 		if ((setting = cJSON_GetObjectItem(level1, "alwaysalias"))) {
-			weaponSystems[UNIT_LASER][SHOT_LASERTRACER] = (setting->type == cJSON_True);
+			config.alwaysalias = (setting->type == cJSON_True);
 		}
 		if ((setting = cJSON_GetObjectItem(level1, "tracerlaser"))) {
 			weaponSystems[UNIT_LASER][SHOT_LASERTRACER] = (setting->type == cJSON_True);
@@ -435,13 +547,10 @@ void load_destruct_config( void )
 		if ((setting = cJSON_GetObjectItem(level1, "max_explosions")) && setting->type == cJSON_Number) {
 			config.max_explosions = setting->valueint;
 		}
-		if ((setting = cJSON_GetObjectItem(level1, "max_installations")) && setting->type == cJSON_Number) {
-			config.max_installations = setting->valueint;
-		}
 
 		//player configuration
 		for(i = PLAYER_LEFT; i < MAX_PLAYERS; i++) {
-			sprintf(buffer, "player%i", i);
+			sprintf(buffer, "player%i", i+1);
 			level2 = cJSON_GetObjectItem(level1, buffer);
 			if (level2 != NULL)
 			{
@@ -457,11 +566,17 @@ void load_destruct_config( void )
 
 	//Now let's hit the custom mode...
 	level1 = cJSON_GetObjectItem(root, "custom");
+
 	if (level1 != NULL)
 	{
+		//general custom
+		if ((setting = cJSON_GetObjectItem(level1, "enable"))) {
+			config.allow_custom = (setting->type == cJSON_True);
+		}
+
 		//player configuration
 		for(i = PLAYER_LEFT; i < MAX_PLAYERS; i++) {
-			sprintf(buffer, "player%i", i);
+			sprintf(buffer, "player%i", i+1);
 			level2 = cJSON_GetObjectItem(level1, buffer);
 			if (level2 != NULL)
 			{
@@ -484,17 +599,27 @@ void load_destruct_config( void )
 	//wrap up
 	cJSON_Delete(root);
 }
-
 void JE_destructGame( void )
 {
+	unsigned int i;
+
 	/* This is the entry function.  Any one-time actions we need to
 	 * perform can go in here. */
 	JE_clr256();
 	JE_showVGA();
 
 	load_destruct_config();
-	shotRec =  malloc(sizeof(struct destruct_shot_s)  * config.max_shots);
+
+	//malloc things that have customizable sizes
+	shotRec  = malloc(sizeof(struct destruct_shot_s)  * config.max_shots);
 	exploRec = malloc(sizeof(struct destruct_explo_s) * config.max_explosions);
+
+	//Malloc enough structures to cover all of this session's possible needs.
+	for(i = 0; i < 10; i++) {
+		config.max_installations = MAX(config.max_installations, basetypes[i][0]);
+	}
+	player[PLAYER_LEFT ].unit = malloc(sizeof(struct destruct_unit_s) * config.max_installations);
+	player[PLAYER_RIGHT].unit = malloc(sizeof(struct destruct_unit_s) * config.max_installations);
 
 	destructTempScreen = game_screen;
 	world.VGAScreen = VGAScreen;
@@ -503,6 +628,10 @@ void JE_destructGame( void )
 	fade_black(1);
 
 	JE_destructMain();
+
+	//and of course exit actions go here.
+	free(shotRec);
+	free(exploRec);
 }
 
 void JE_destructMain( void )
@@ -880,7 +1009,7 @@ void DE_generateWalls( struct destruct_world_s * gameWorld )
 			 */
 			for (i = 0; i < MAX_PLAYERS; i++)
 			{
-				for (j = 0; j < MAX_INSTALLATIONS; j++)
+				for (j = 0; j < config.max_installations; j++)
 				{
 					if ((wallX > player[i].unit[j].unitX - 12)
 					 && (wallX < player[i].unit[j].unitX + 13))
@@ -1054,10 +1183,10 @@ void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
 					(*temps)--;
 			}
 
-			// This block is for aliasing dirt.  Computers are fast hese days,
+			// This block is for aliasing dirt.  Computers are fast these days,
 			// and it's fun.
-			if (config.alwaysalias == true && *s == PIXEL_BLACK) {
-				*s = __aliasDirtPixel(VGAScreen, x, y, s);
+			if (config.alwaysalias == true && *temps == PIXEL_BLACK) {
+				*temps = __aliasDirtPixel(VGAScreen, x, y, temps);
 			}
 
 			/* This is copying from our temp screen to VGAScreen */
@@ -1262,7 +1391,7 @@ void DE_ResetUnits( void )
 
 
 	for (p = 0; p < MAX_PLAYERS; ++p)
-		for (u = 0; u < MAX_INSTALLATIONS; ++u)
+		for (u = 0; u < config.max_installations; ++u)
 			player[p].unit[u].health = 0;
 }
 void DE_ResetPlayers( void )
@@ -1314,7 +1443,7 @@ void DE_ResetAI( void )
 		if (player[i].is_cpu == false) { continue; }
 		ptr = player[i].unit;
 
-		for( j = 0; j < MAX_INSTALLATIONS; j++, ptr++)
+		for( j = 0; j < config.max_installations; j++, ptr++)
 		{
 			if(DE_isValidUnit(ptr) == false)
 				continue;
@@ -1457,7 +1586,7 @@ void DE_RunTickCycleDeadUnits( void )
 		{
 			player[i].unitSelected++;
 			unit++;
-			if (player[i].unitSelected >= MAX_INSTALLATIONS)
+			if (player[i].unitSelected >= config.max_installations)
 			{
 				player[i].unitSelected = 0;
 				unit = player[i].unit;
@@ -1475,7 +1604,7 @@ void DE_RunTickGravity( void )
 	{
 
 		unit = player[i].unit;
-		for (j = 0; j < MAX_INSTALLATIONS; j++, unit++)
+		for (j = 0; j < config.max_installations; j++, unit++)
 		{
 			if (DE_isValidUnit(unit) == false) /* invalid unit */
 				continue;
@@ -1591,7 +1720,7 @@ void DE_RunTickAnimate( void )
 	for (p = 0; p < MAX_PLAYERS; ++p)
 	{
 		ptr = player[p].unit;
-		for (u = 0; u < MAX_INSTALLATIONS; ++u,  ++ptr)
+		for (u = 0; u < config.max_installations; ++u,  ++ptr)
 		{
 			/* Don't mess with any unit that is unallocated
 			 * or doesn't animate and is set to frame 0 */
@@ -1685,7 +1814,7 @@ void DE_TestExplosionCollision( unsigned int PosX, unsigned int PosY)
 	for (i = PLAYER_LEFT; i < MAX_PLAYERS; i++)
 	{
 		unit = player[i].unit;
-		for (j = 0; j < MAX_INSTALLATIONS; j++, unit++)
+		for (j = 0; j < config.max_installations; j++, unit++)
 		{
 			if (DE_isValidUnit(unit) == true
 			 && PosX > unit->unitX && PosX < unit->unitX + 11
@@ -1781,7 +1910,7 @@ void DE_RunTickShots( void )
 		for(j = 0; j < MAX_PLAYERS; j++)
 		{
 			unit = player[j].unit;
-			for(k = 0; k < MAX_INSTALLATIONS; k++, unit++)
+			for(k = 0; k < config.max_installations; k++, unit++)
 			{
 				if (DE_isValidUnit(unit) == false)
 					continue;
@@ -1965,7 +2094,7 @@ void DE_RunTickAI( void )
 
 		// prefer helicopter
 		ptrUnit = ptrPlayer->unit;
-		for (j = 0; j < MAX_INSTALLATIONS; j++, ptrUnit++)
+		for (j = 0; j < config.max_installations; j++, ptrUnit++)
 		{
 			if (DE_isValidUnit(ptrUnit) && ptrUnit->unitType == UNIT_HELI)
 			{
@@ -2009,13 +2138,12 @@ void DE_RunTickAI( void )
 				}
 				ptrPlayer->aiMemory.c_noDown = (5 - abs(ptrCurUnit->lastMove)) * (5 - abs(ptrCurUnit->lastMove)) + 3;
 				ptrPlayer->aiMemory.c_Power = 1;
-			} else
-			{
+			} else {
 				ptrPlayer->moves.actions[MOVE_FIRE] = false;
 			}
 
 			ptrUnit = ptrTarget->unit;
-			for (j = 0; j < MAX_INSTALLATIONS; j++, ptrUnit++)
+			for (j = 0; j < config.max_installations; j++, ptrUnit++)
 			{
 				if (abs(ptrUnit->unitX - ptrCurUnit->unitX) < 8)
 				{
@@ -2303,7 +2431,7 @@ void DE_ProcessInput( void )
 		if (player[player_index].moves.actions[MOVE_CHANGE] == true)
 		{
 			player[player_index].unitSelected++;
-			if (player[player_index].unitSelected >= MAX_INSTALLATIONS)
+			if (player[player_index].unitSelected >= config.max_installations)
 			{
 				player[player_index].unitSelected = 0;
 			}
@@ -2496,7 +2624,7 @@ void DE_RunMagnet( enum de_player_t curPlayer, struct destruct_unit_s * magnet )
 	}
 
 	enemyUnit = player[curEnemy].unit;
-	for (i = 0; i < MAX_INSTALLATIONS; i++, enemyUnit++) /* magnets push coptors */
+	for (i = 0; i < config.max_installations; i++, enemyUnit++) /* magnets push coptors */
 	{
 		if (DE_isValidUnit(enemyUnit)
 		 && enemyUnit->unitType == UNIT_HELI
