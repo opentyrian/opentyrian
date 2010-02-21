@@ -717,6 +717,9 @@ void JE_destructGame( void )
 	//and of course exit actions go here.
 	free(shotRec);
 	free(exploRec);
+	free(world.mapWalls);
+	free(player[PLAYER_LEFT ].unit);
+	free(player[PLAYER_RIGHT].unit);
 }
 
 void JE_destructMain( void )
@@ -1067,7 +1070,7 @@ void DE_generateWalls( struct destruct_world_s * gameWorld )
 		return;
 	}
 
-	remainWalls = config.max_walls;
+	remainWalls = (rand() % (config.max_walls - config.min_walls + 1)) + config.min_walls;
 
 	do {
 
