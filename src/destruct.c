@@ -348,7 +348,7 @@ const JE_byte ModeScore[MAX_PLAYERS][MAX_MODES] =
 	{1, 0, 5, 0, 1, 1}
 };
 
-const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
+SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 {
 	{	{SDLK_c},
 		{SDLK_v},
@@ -434,12 +434,74 @@ bool write_default_destruct_config( void ) {
 	if((setting = cJSON_CreateOrGetObjectItem(level2, "jumper_fires_straight")) == NULL) { goto label_failure; }
 	cJSON_SetBoolean(setting, true);
 
+	if((level3 = cJSON_CreateOrGetObjectItem(level2, "keys")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level3, cJSON_Object);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "__comment")) == NULL) { goto label_failure; }
+	cJSON_SetString(setting, "You may configure the keys here.  Nums correspond to SDL defines.  It's better than nothing.");
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "left1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_c);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "right1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_v);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "up1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_a);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "down1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_z);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "change1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_LALT);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_x);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_LSHIFT);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_LCTRL);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_SPACE);
+
 	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player2")) == NULL) { goto label_failure; }
 	cJSON_ForceType(level2, cJSON_Object);
 	if((setting = cJSON_CreateOrGetObjectItem(level2, "ai")) == NULL) { goto label_failure; }
 	cJSON_SetBoolean(setting, false);
 	if((setting = cJSON_CreateOrGetObjectItem(level2, "jumper_fires_straight")) == NULL) { goto label_failure; }
 	cJSON_SetBoolean(setting, false);
+
+	if((level3 = cJSON_CreateOrGetObjectItem(level2, "keys")) == NULL) { goto label_failure; }
+	cJSON_ForceType(level3, cJSON_Object);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "left1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_LEFT);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "left2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP4);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "right1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_RIGHT);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "right2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP6);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "up1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_UP);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "up2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP8);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "down1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_DOWN);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "down2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP2);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "change1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_BACKSLASH);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "change2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP5);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_INSERT);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_RETURN);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire3")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP0);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire4")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP_ENTER);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_PAGEUP);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP9);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn1")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_PAGEDOWN);
+	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn2")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, SDLK_KP3);
 
 	//custom mode
 	if((level1 = cJSON_CreateOrGetObjectItem(root, "custom")) == NULL) { goto label_failure; }
@@ -512,10 +574,11 @@ label_failure:
 }
 void load_destruct_config( void ) {
 
-	unsigned int j;
+	unsigned int j, k;
 	enum de_player_t i;
 	enum de_unit_t temp;
 	char buffer[40];
+	const char * key_names[] = { "left", "right", "up", "down", "change", "fire", "cyup", "cydn" };
 	cJSON * root;
 	cJSON * level1, * level2, * level3, * setting;
 
@@ -564,6 +627,22 @@ void load_destruct_config( void ) {
 				}
 				if ((setting = cJSON_GetObjectItem(level2, "ai"))) {
 					config.ai[i] = (setting->type == cJSON_True);
+				}
+				//key configuration
+				level3 = cJSON_GetObjectItem(level2, "keys");
+				if (level3 != NULL)
+				{
+					for (j = 0; j < COUNTOF(key_names); j++) {
+						for (k = 0; k < MAX_KEY_OPTIONS; k++) {
+							sprintf(buffer, "%s%i", key_names[j], k+1);
+							if ((setting = cJSON_GetObjectItem(level3, buffer)) && setting->type == cJSON_Number) {
+								defaultKeyConfig[i][j][k] = setting->valueint;
+							}
+							else { //assume that if we are reading keys the defaults are null and void
+								defaultKeyConfig[i][j][k] = SDLK_UNKNOWN;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1539,7 +1618,11 @@ enum de_state_t DE_RunTick( void )
 		player[PLAYER_LEFT].is_cpu = !player[PLAYER_LEFT].is_cpu;
 		keysactive[SDLK_F10] = false;
 	}
-
+	if (keysactive[SDLK_F11])
+	{
+		player[PLAYER_RIGHT].is_cpu = !player[PLAYER_RIGHT].is_cpu;
+		keysactive[SDLK_F11] = false;
+	}
 	if (keysactive[SDLK_p])
 	{
 		JE_pauseScreen();
