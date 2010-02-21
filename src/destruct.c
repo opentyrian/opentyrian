@@ -67,7 +67,6 @@ extern JE_byte soundQueue[8];
 
 /*** Defines ***/
 #define UNIT_HEIGHT 12
-#define MAX_WALLS 20
 #define MAX_KEY_OPTIONS 4
 
 /*** Enums ***/
@@ -108,6 +107,7 @@ enum de_move_t { MOVE_LEFT = 0, MOVE_RIGHT, MOVE_UP, MOVE_DOWN, MOVE_CHANGE, MOV
 struct destruct_config_s {
 
 	unsigned int max_shots;
+	unsigned int min_walls;
 	unsigned int max_walls;
 	unsigned int max_explosions;
 	unsigned int max_installations;
@@ -197,7 +197,7 @@ struct destruct_world_s {
 	/* Map data & screen pointer */
 	unsigned int baseMap[320];
 	SDL_Surface * VGAScreen;
-	struct destruct_wall_s mapWalls[MAX_WALLS];
+	struct destruct_wall_s * mapWalls;
 
 	/* Map configuration */
 	enum de_mode_t destructMode;
@@ -375,7 +375,7 @@ const SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 SDL_Surface *destructTempScreen;
 JE_boolean destructFirstTime;
 
-static struct destruct_config_s config = { 40, 20, 40, 10, false, false, { true, false}, { true, false} };
+static struct destruct_config_s config = { 40, 20, 20, 40, 10, false, false, {true, false}, {true, false} };
 static struct destruct_player_s player[MAX_PLAYERS];
 static struct destruct_world_s  world;
 static struct destruct_shot_s   * shotRec;
@@ -383,7 +383,6 @@ static struct destruct_explo_s  * exploRec;
 
 
 /*** Startup ***/
-
 enum de_unit_t string_to_unit_enum(const char * str) {
 
 	// A config helper function.  Probably not useful anywhere else.
@@ -420,6 +419,8 @@ bool write_default_destruct_config( void ) {
 	cJSON_SetBoolean(setting, false);
 	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_shots")) == NULL) { goto label_failure; }
 	cJSON_SetNumber(setting, 40);
+	if((setting = cJSON_CreateOrGetObjectItem(level1, "min_walls")) == NULL) { goto label_failure; }
+	cJSON_SetNumber(setting, 20);
 	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_walls")) == NULL) { goto label_failure; }
 	cJSON_SetNumber(setting, 20);
 	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_explosions")) == NULL) { goto label_failure; }
@@ -541,8 +542,12 @@ void load_destruct_config( void ) {
 		if ((setting = cJSON_GetObjectItem(level1, "max_shots")) && setting->type == cJSON_Number) {
 			config.max_shots = setting->valueint;
 		}
+		if ((setting = cJSON_GetObjectItem(level1, "min_walls")) && setting->type == cJSON_Number) {
+			config.min_walls = setting->valueint;
+		}
 		if ((setting = cJSON_GetObjectItem(level1, "max_walls")) && setting->type == cJSON_Number) {
 			config.max_walls = setting->valueint;
+			if(config.min_walls > config.max_walls) { config.min_walls = config.max_walls; }
 		}
 		if ((setting = cJSON_GetObjectItem(level1, "max_explosions")) && setting->type == cJSON_Number) {
 			config.max_explosions = setting->valueint;
@@ -613,6 +618,7 @@ void JE_destructGame( void )
 	//malloc things that have customizable sizes
 	shotRec  = malloc(sizeof(struct destruct_shot_s)  * config.max_shots);
 	exploRec = malloc(sizeof(struct destruct_explo_s) * config.max_explosions);
+	world.mapWalls = malloc(sizeof(struct destruct_wall_s) * config.max_walls);
 
 	//Malloc enough structures to cover all of this session's possible needs.
 	for(i = 0; i < 10; i++) {
@@ -975,14 +981,14 @@ void DE_generateWalls( struct destruct_world_s * gameWorld )
 	if ((world.mapFlags & MAP_WALLS) == false)
 	{
 		/* Just clear them out */
-		for (i = 0; i < MAX_WALLS; i++)
+		for (i = 0; i < config.max_walls; i++)
 		{
 			gameWorld->mapWalls[i].wallExist = false;
 		}
 		return;
 	}
 
-	remainWalls = MAX_WALLS;
+	remainWalls = config.max_walls;
 
 	do {
 
@@ -1739,7 +1745,7 @@ void DE_RunTickDrawWalls( void )
 	unsigned int i;
 
 
-	for (i = 0; i < MAX_WALLS; i++)
+	for (i = 0; i < config.max_walls; i++)
 	{
 		if (world.mapWalls[i].wallExist)
 		{
@@ -1941,7 +1947,7 @@ void DE_RunTickShots( void )
 		}
 
 		/* Bounce off of or destroy walls */
-		for (j = 0; j < MAX_WALLS; j++)
+		for (j = 0; j < config.max_walls; j++)
 		{
 			if (world.mapWalls[j].wallExist == true
 			 && tempPosX >= world.mapWalls[j].wallX && tempPosX <= world.mapWalls[j].wallX + 11
