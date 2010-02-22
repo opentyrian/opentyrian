@@ -2166,8 +2166,7 @@ void JE_drawPlanet( JE_byte planetNum )
 	}
 }
 
-// fixed point image scaler
-void JE_scaleBitmap( SDL_Surface *src_bitmap, SDL_Surface *dst_bitmap,  int x1, int y1, int x2, int y2 )
+void JE_scaleBitmap( SDL_Surface *dst_bitmap, const SDL_Surface *src_bitmap,  int x1, int y1, int x2, int y2 )
 {
 	/* This function scales one screen and writes the result to another.
 	 *  The only code that calls it is the code run when you select 'ship
@@ -2188,7 +2187,7 @@ void JE_scaleBitmap( SDL_Surface *src_bitmap, SDL_Surface *dst_bitmap,  int x1, 
 
 	//Okay, it's time to loop through and add bits of A to a rectangle in B
 	Uint8 *dst = dst_bitmap->pixels;  /* 8-bit specific */
-	Uint8 *src, *src_w;  /* 8-bit specific */
+	const Uint8 *src, *src_w;  /* 8-bit specific */
 
 	dst += y1 * dst_bitmap->pitch + x1;
 	cumulative_skip_h = 0;
@@ -2520,8 +2519,7 @@ void JE_scaleInPicture( void )
 {
 	for (int i = 2; i <= 160; i += 2)
 	{
-		if (JE_anyButton())
-			i = 160;
+		if (JE_anyButton()) { break; }
 
 		JE_scaleBitmap(VGAScreen2, VGAScreen, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
 		JE_showVGA();
