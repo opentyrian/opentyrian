@@ -57,8 +57,8 @@ extern const JE_byte menuHelp[MAX_MENU][11];   /* [1..maxmenu, 1..11] */
 void read_encrypted_pascal_string( char *s, int size, FILE *f );
 void skip_pascal_string( FILE *f );
 
-void JE_helpBox( SDL_Surface *screen, JE_word x, JE_word y, const char *message, JE_byte boxwidth );
-void JE_HBox( SDL_Surface *screen, JE_word x, JE_word y, JE_byte messagenum, JE_byte boxwidth );
+void JE_helpBox( SDL_Surface *screen, int x, int y, const char *message, unsigned int boxwidth );
+void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth );
 void JE_loadHelpText( void );
 
 #endif /* HELPTEXT_H */
