@@ -38,7 +38,7 @@ void JE_drawNavLines( JE_boolean dark );
 void JE_drawLines( SDL_Surface *surface, JE_boolean dark );
 void JE_drawDots( void );
 void JE_drawPlanet( JE_byte planetNum );
-void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 );
+void JE_scaleBitmap( SDL_Surface *src, SDL_Surface *dst, int x1, int y1, int x2, int y2 );
 void JE_initWeaponView( void );
 void JE_computeDots( void );
 JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist );

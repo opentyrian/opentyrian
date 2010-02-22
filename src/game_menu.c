@@ -2167,38 +2167,50 @@ void JE_drawPlanet( JE_byte planetNum )
 }
 
 // fixed point image scaler
-void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 )
+void JE_scaleBitmap( SDL_Surface *src_bitmap, SDL_Surface *dst_bitmap,  int x1, int y1, int x2, int y2 )
 {
-	JE_word w = x2 - x1 + 1,
-	        h = y2 - y1 + 1;
-	JE_longint sx = x * 0x10000 / w,
-	           sy = y * 0x10000 / h,
-	           cx, cy = 0;
+	/* This function scales one screen and writes the result to another.
+	 *  The only code that calls it is the code run when you select 'ship
+	 * specs' from the main menu.
+	 *
+	 * Originally this used fixed point math.  I haven't seen that in ages :).
+	 * But we're well past the point of needing that.*/
 
-	Uint8 *s = VGAScreen->pixels;  /* 8-bit specific */
-	Uint8 *src = bitmap->pixels;  /* 8-bit specific */
+	assert(src_bitmap != NULL && dst_bitmap != NULL);
+	assert(x1 >= 0 && y1 >= 0 && x2 < src_bitmap->pitch && y2 < src_bitmap->h);
 
-	s += y1 * VGAScreen->pitch + x1;
+	int w = x2 - x1 + 1,
+	    h = y2 - y1 + 1;
+	float base_skip_w = src_bitmap->pitch / (float)w,
+	      base_skip_h = src_bitmap->h / (float)h;
+	float cumulative_skip_w, cumulative_skip_h;
 
-	for (; h; h--)
+
+	//Okay, it's time to loop through and add bits of A to a rectangle in B
+	Uint8 *dst = dst_bitmap->pixels;  /* 8-bit specific */
+	Uint8 *src, *src_w;  /* 8-bit specific */
+
+	dst += y1 * dst_bitmap->pitch + x1;
+	cumulative_skip_h = 0;
+
+	for (int i = 0; i < h; i++)
 	{
-		cx = 0;
-		for (int x = w; x; x--)
-		{
-			*s = *src;
-			s++;
+		//this sets src to the beginning of our desired line
+		src = src_w = (Uint8 *)(src_bitmap->pixels) + (src_bitmap->w * ((unsigned int)cumulative_skip_h));
+		cumulative_skip_h += base_skip_h;
+		cumulative_skip_w = 0;
 
-			cx += sx;
-			src += cx >> 16;
-			cx &= 0xffff;
+		for (int j = 0; j < w; j++)
+		{
+			//copy and move pointers
+			*dst = *src;
+			dst++;
+
+			cumulative_skip_w += base_skip_w;
+			src = src_w + ((unsigned int)cumulative_skip_w); //value is floored
 		}
 
-		s += VGAScreen->pitch - w;
-
-		cy += sy;
-		src -= ((sx * w) >> 16);
-		src += (cy >> 16) * bitmap->pitch;
-		cy &= 0xffff;
+		dst += dst_bitmap->pitch - w;
 	}
 }
 
@@ -2275,11 +2287,17 @@ void JE_doFunkyScreen( void )
 	 * drawing before returning control to VGAScreenSeg. */
 
 	if (player[0].items.ship > 90)
+	{
 		temp = 32;
+	}
 	else if (player[0].items.ship > 0)
+	{
 		temp = ships[player[0].items.ship].bigshipgraphic;
+	}
 	else
+	{
 		temp = ships[old_items[0].ship].bigshipgraphic;
+	}
 
 	switch (temp)
 	{
@@ -2306,7 +2324,7 @@ void JE_doFunkyScreen( void )
 	JE_funkyScreen();
 
 	JE_loadPic(1, false);
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	//memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 }
 
 void JE_drawMainMenuHelpText( void )
@@ -2505,7 +2523,7 @@ void JE_scaleInPicture( void )
 		if (JE_anyButton())
 			i = 160;
 
-		JE_scaleBitmap(VGAScreen2, 320, 200, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
+		JE_scaleBitmap(VGAScreen2, VGAScreen, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
 		JE_showVGA();
 
 		SDL_Delay(1);
@@ -2975,11 +2993,11 @@ void JE_funkyScreen( void )
 			int avg = 0;
 			if (y > 0)
 				avg += *(src - VGAScreen->pitch) & 0x0f;
-			if (y < VGAScreen2->h - 1)
+			if (y < VGAScreen->h - 1)
 				avg += *(src + VGAScreen->pitch) & 0x0f;
 			if (x > 0)
 				avg += *(src - 1) & 0x0f;
-			if (x < VGAScreen2->pitch - 1)
+			if (x < VGAScreen->pitch - 1)
 				avg += *(src + 1) & 0x0f;
 			avg /= 4;
 
