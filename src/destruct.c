@@ -987,7 +987,7 @@ void DE_drawBaseTerrain( unsigned int * baseWorld)
 
 	for (i = 1; i <= 318; i++)
 	{
-		JE_rectangle(i, baseWorld[i], i, 199, PIXEL_DIRT);
+		JE_rectangle(VGAScreen, i, baseWorld[i], i, 199, PIXEL_DIRT);
 	}
 }
 
@@ -1212,7 +1212,10 @@ unsigned int JE_placementPosition( unsigned int passed_x, unsigned int width, un
 	/* This is the function responsible for carving out chunks of land.
 	 * There's a bug here, but it's a pretty major gameplay altering one:
 	 * areas can be carved out for units that are aerial or in mountains.
-	 * This can result in huge caverns.  Ergo, it's a feature :) */
+	 * This can result in huge caverns.  Ergo, it's a feature :)
+	 *
+	 * I wondered if it might be better to not carve out land at all.
+	 * On testing I determined that was distracting and added nothing. */
 	new_y = 0;
 	for (i = passed_x; i <= passed_x + width - 1; i++)
 	{
@@ -1221,7 +1224,9 @@ unsigned int JE_placementPosition( unsigned int passed_x, unsigned int width, un
 	}
 
 	for (i = passed_x; i <= passed_x + width - 1; i++)
+	{
 		world[i] = new_y;
+	}
 
 	return new_y;
 }
@@ -2342,15 +2347,15 @@ void DE_RunTickDrawCrosshairs( void )
 				if(tempPosY > 13)
 				{
 					/* Top pixel */
-					JE_pix(tempPosX,     tempPosY - 2,  3);
+					JE_pix(VGAScreen, tempPosX,     tempPosY - 2,  3);
 				}
 				/* Middle three pixels */
-				JE_pix(tempPosX + 3, tempPosY,      3);
-				JE_pix(tempPosX,     tempPosY,     14);
-				JE_pix(tempPosX - 3, tempPosY,      3);
+				JE_pix(VGAScreen, tempPosX + 3, tempPosY,      3);
+				JE_pix(VGAScreen, tempPosX,     tempPosY,     14);
+				JE_pix(VGAScreen, tempPosX - 3, tempPosY,      3);
 			}
 			/* Bottom pixel */
-			JE_pix(tempPosX,     tempPosY + 2,  3);
+			JE_pix(VGAScreen, tempPosX,     tempPosY + 2,  3);
 		}
 	}
 }
@@ -2368,11 +2373,11 @@ void DE_RunTickDrawHUD( void )
 		startX = ((i == PLAYER_LEFT) ? 0 : 320 - 150);
 
 		fill_rectangle_xy(VGAScreen, startX +  5, 3, startX +  14, 8, 241);
-		JE_rectangle(startX +  4, 2, startX +  15, 9, 242);
-		JE_rectangle(startX +  3, 1, startX +  16, 10, 240);
+		JE_rectangle(VGAScreen, startX +  4, 2, startX +  15, 9, 242);
+		JE_rectangle(VGAScreen, startX +  3, 1, startX +  16, 10, 240);
 		fill_rectangle_xy(VGAScreen, startX + 18, 3, startX + 140, 8, 241);
-		JE_rectangle(startX + 17, 2, startX + 143, 9, 242);
-		JE_rectangle(startX + 16, 1, startX + 144, 10, 240);
+		JE_rectangle(VGAScreen, startX + 17, 2, startX + 143, 9, 242);
+		JE_rectangle(VGAScreen, startX + 16, 1, startX + 144, 10, 240);
 
 		blit_sprite2(VGAScreen, startX +  4, 0, eShapes1, 191 + curUnit->shotType);
 
@@ -2819,10 +2824,10 @@ void DE_RunTickPlaySounds( void )
 
 void JE_pixCool( unsigned int x, unsigned int y, Uint8 c )
 {
-	JE_pix(x, y, c);
-	JE_pix(x - 1, y, c - 2);
-	JE_pix(x + 1, y, c - 2);
-	JE_pix(x, y - 1, c - 2);
-	JE_pix(x, y + 1, c - 2);
+	JE_pix(VGAScreen, x, y, c);
+	JE_pix(VGAScreen, x - 1, y, c - 2);
+	JE_pix(VGAScreen, x + 1, y, c - 2);
+	JE_pix(VGAScreen, x, y - 1, c - 2);
+	JE_pix(VGAScreen, x, y + 1, c - 2);
 }
 // kate: tab-width 4; vim: set noet:

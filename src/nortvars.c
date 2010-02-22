@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -45,7 +45,7 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 
 	for (z = 0; z <= num; z++)
 	{
-		JE_rectangle(x, y - 1, x + 8, y, col); /* <MXD> SEGa000 */
+		JE_rectangle(VGAScreen, x, y - 1, x + 8, y, col); /* <MXD> SEGa000 */
 		if (zWait > 0)
 		{
 			zWait--;
@@ -64,10 +64,10 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 
 	for (int z = 1; z <= amt / res; z++)
 	{
-		JE_barShade(x+2, y+2, x+xsize+2, y+ysize+2);
+		JE_barShade(VGAScreen, x+2, y+2, x+xsize+2, y+ysize+2);
 		fill_rectangle_xy(VGAScreen, x, y, x+xsize, y+ysize, col+12);
 		fill_rectangle_xy(VGAScreen, x, y, x+xsize, y, col+13);
-		JE_pix(x, y, col+15);
+		JE_pix(VGAScreen, x, y, col+15);
 		fill_rectangle_xy(VGAScreen, x, y+ysize, x+xsize, y+ysize, col+11);
 		x += xsize + 2;
 	}
@@ -75,7 +75,7 @@ void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word a
 	amt %= res;
 	if (amt > 0)
 	{
-		JE_barShade(x+2, y+2, x+xsize+2, y+ysize+2);
+		JE_barShade(VGAScreen, x+2, y+2, x+xsize+2, y+ysize+2);
 		fill_rectangle_xy(VGAScreen, x,y, x+xsize, y+ysize, col+(12 / res * amt));
 	}
 }

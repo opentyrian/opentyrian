@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -72,7 +72,7 @@ void JE_drawTextWindow( const char *text )
 {
 	if (textErase > 0) // erase current text
 		blit_sprite(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
-	
+
 	textErase = 100;
 	tempScreenSeg = VGAScreenSeg; /*sega000*/
 	JE_outText(20, 190, text, 0, 4);
@@ -85,14 +85,14 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 	JE_shortint glowcolc[60]; /* [1..60] */
 	JE_word textloc[60]; /* [1..60] */
 	JE_byte bank;
-	
+
 	setjasondelay2(1);
-	
+
 	bank = (warningRed) ? 7 : ((useLastBank) ? 15 : 14);
-	
+
 	if (s[0] == '\0')
 		return;
-	
+
 	if (frameCountMax == 0)
 	{
 		JE_textShade(x, y, s, bank, 0, PART_SHADE);
@@ -107,7 +107,7 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 			glowcol[z] = -8;
 			glowcolc[z] = 1;
 		}
-		
+
 		loc = x;
 		for (z = 0; z < maxloc; z++)
 		{
@@ -120,27 +120,27 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 			else if (sprite_id != -1)
 				loc += sprite(TINY_FONT, sprite_id)->width + 1;
 		}
-		
+
 		for (loc = 0; (unsigned)loc < strlen(s) + 28; loc++)
 		{
 			if (!ESCPressed)
 			{
 				setjasondelay(frameCountMax);
-				
+
 				NETWORK_KEEP_ALIVE();
-				
+
 				int sprite_id = -1;
-				
+
 				for (z = loc - 28; z <= loc; z++)
 				{
 					if (z >= 0 && z < maxloc)
 					{
 						sprite_id = font_ascii[(unsigned char)s[z]];
-						
+
 						if (sprite_id != -1)
 						{
 							blit_sprite_hv(VGAScreen, textloc[z], y, TINY_FONT, sprite_id, bank, glowcol[z]);
-							
+
 							glowcol[z] += glowcolc[z];
 							if (glowcol[z] > 9)
 								glowcolc[z] = -1;
@@ -149,19 +149,19 @@ void JE_outCharGlow( JE_word x, JE_word y, const char *s )
 				}
 				if (sprite_id != -1 && --z < maxloc)
 					blit_sprite_dark(tempScreenSeg, textloc[z] + 1, y + 1, TINY_FONT, sprite_id, true);
-				
+
 				if (JE_anyButton())
 					frameCountMax = 0;
-				
+
 				do
 				{
 					if (levelWarningDisplay)
 						JE_updateWarning();
-					
+
 					SDL_Delay(16);
 				}
 				while (!(delaycount() == 0 || ESCPressed));
-				
+
 				JE_showVGA();
 			}
 		}
@@ -172,7 +172,7 @@ void JE_drawPortConfigButtons( void ) // rear weapon pattern indicator
 {
 	if (twoPlayerMode)
 		return;
-	
+
 	if (player[0].weapon_mode == 1)
 	{
 		blit_sprite(VGAScreenSeg, 285, 44, OPTION_SHAPES, 18);  // lit
@@ -194,9 +194,9 @@ void JE_helpSystem( JE_byte startTopic )
 
 	fade_black(10);
 	JE_loadPic(2, false);
-	
+
 	play_song(SONG_MAPVIEW);
-	
+
 	JE_showVGA();
 	fade_palette(colors, 10, 0, 255);
 
@@ -358,12 +358,12 @@ void JE_helpSystem( JE_byte startTopic )
 		{
 			do {
 				setjasondelay(3);
-				
+
 				push_joysticks_as_keyboard();
 				service_SDL_events(true);
-				
+
 				JE_showVGA();
-				
+
 				wait_delay();
 			} while (!newkey && !newmouse);
 
@@ -434,20 +434,20 @@ void JE_helpSystem( JE_byte startTopic )
 long weapon_upgrade_cost( long base_cost, unsigned int power )
 {
 	assert(power <= 11);
-	
+
 	unsigned int temp = 0;
-	
+
 	// 0 1 3 6 10 15 21 29 ...
 	for (; power > 0; power--)
 		temp += power;
-	
+
 	return base_cost * temp;
 }
 
 JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 {
 	long cost = 0;
-	
+
 	switch (itemType)
 	{
 	case 2:
@@ -456,10 +456,10 @@ JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
 	case 3:
 	case 4:
 		cost = weaponPort[itemNum].cost;
-		
+
 		const uint port = itemType - 3,
 		           item_power = player[0].items.weapon[port].power - 1;
-		
+
 		downgradeCost = weapon_upgrade_cost(cost, item_power);
 		upgradeCost = weapon_upgrade_cost(cost, item_power + 1);
 		break;
@@ -686,7 +686,7 @@ void JE_loadScreen( void )
 ulong JE_totalScore( const Player *this_player )
 {
 	ulong temp = this_player->cash;
-	
+
 	temp += JE_getValue(2, this_player->items.ship);
 	temp += JE_getValue(3, this_player->items.weapon[FRONT_WEAPON].id);
 	temp += JE_getValue(4, this_player->items.weapon[REAR_WEAPON].id);
@@ -694,14 +694,14 @@ ulong JE_totalScore( const Player *this_player )
 	temp += JE_getValue(6, this_player->items.generator);
 	temp += JE_getValue(7, this_player->items.sidekick[LEFT_SIDEKICK]);
 	temp += JE_getValue(8, this_player->items.sidekick[RIGHT_SIDEKICK]);
-	
+
 	return temp;
 }
 
 JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 {
 	long value = 0;
-	
+
 	switch (itemType)
 	{
 	case 2:
@@ -710,11 +710,11 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 	case 3:
 	case 4:;
 		const long base_value = weaponPort[itemNum].cost;
-		
+
 		// if two-player, use first player's front and second player's rear weapon
 		const uint port = itemType - 3;
 		const uint item_power = player[twoPlayerMode ? port : 0].items.weapon[port].power - 1;
-		
+
 		value = base_value;
 		for (unsigned int i = 1; i <= item_power; ++i)
 			value += weapon_upgrade_cost(base_value, i);
@@ -730,22 +730,22 @@ JE_longint JE_getValue( JE_byte itemType, JE_word itemNum )
 		value = options[itemNum].cost;
 		break;
 	}
-	
+
 	return value;
 }
 
 void JE_nextEpisode( void )
 {
 	strcpy(lastLevelName, "Completed");
-	
+
 	if (episodeNum == initial_episode_num && !gameHasRepeated && episodeNum != 4 &&
 	    !isNetworkGame && !constantPlay)
 	{
 		JE_highScoreCheck();
 	}
-	
+
 	unsigned int newEpisode = JE_findNextEpisode();
-	
+
 	if (jumpBackToEpisode1)
 	{
 		// shareware version check
@@ -754,68 +754,68 @@ void JE_nextEpisode( void )
 		{
 			// JE_loadOrderingInfo();
 		}
-		
+
 		if (episodeNum > 2 &&
 			!constantPlay)
 		{
 			JE_playCredits();
 		}
-		
+
 		// randomly give player the SuperCarrot
 		if ((mt_rand() % 6) == 0)
 		{
 			player[0].items.ship = 2;
 			player[0].items.weapon[FRONT_WEAPON].id = 23;
 			player[0].items.weapon[REAR_WEAPON].id = 24;
-			
+
 			for (uint i = 0; i < COUNTOF(player[0].items.weapon); ++i)
 				player[0].items.weapon[i].power = 1;
-			
+
 			player[1].items.weapon[REAR_WEAPON].id = 24;
-			
+
 			player[0].last_items = player[0].items;
 		}
 	}
-	
+
 	if (newEpisode != episodeNum)
 		JE_initEpisode(newEpisode);
-		
+
 	gameLoaded = true;
 	mainLevel = FIRST_LEVEL;
 	saveLevel = FIRST_LEVEL;
-	
+
 	play_song(26);
-	
+
 	JE_clr256();
 	memcpy(colors, palettes[6-1], sizeof(colors));
-	
+
 	tempScreenSeg = VGAScreen;
-	
+
 	JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 130, episode_name[episodeNum], SMALL_FONT_SHAPES);
-	
+
 	JE_dString(JE_fontCenter(miscText[5-1], SMALL_FONT_SHAPES), 185, miscText[5-1], SMALL_FONT_SHAPES);
-	
+
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
-	
+
 	JE_wipeKey();
 	if (!constantPlay)
 	{
 		do
 		{
 			NETWORK_KEEP_ALIVE();
-			
+
 			SDL_Delay(16);
 		} while (!JE_anyButton());
 	}
-	
+
 	fade_black(15);
 }
 
 void JE_initPlayerData( void )
 {
 	/* JE: New Game Items/Data */
-	
+
 	player[0].items.ship = 1;                     // USP Talon
 	player[0].items.weapon[FRONT_WEAPON].id = 1;  // Pulse Cannon
 	player[0].items.weapon[REAR_WEAPON].id = 0;   // None
@@ -824,47 +824,47 @@ void JE_initPlayerData( void )
 	for (uint i = 0; i < COUNTOF(player[0].items.sidekick); ++i)
 		player[0].items.sidekick[i] = 0;          // None
 	player[0].items.special = 0;                  // None
-	
+
 	player[0].last_items = player[0].items;
-	
+
 	player[1].items = player[0].items;
 	player[1].items.weapon[REAR_WEAPON].id = 15;  // Vulcan Cannon
 	player[1].items.sidekick_level = 101;         // 101, 102, 103
 	player[1].items.sidekick_series = 0;          // None
-	
+
 	gameHasRepeated = false;
 	onePlayerAction = false;
 	superArcadeMode = SA_NONE;
 	superTyrian = false;
 	twoPlayerMode = false;
-	
+
 	secretHint = (mt_rand() % 3) + 1;
-	
+
 	for (uint p = 0; p < COUNTOF(player); ++p)
 	{
 		for (uint i = 0; i < COUNTOF(player->items.weapon); ++i)
 		{
 			player[p].items.weapon[i].power = 1;
 		}
-		
+
 		player[p].weapon_mode = 1;
 		player[p].armor = ships[player[p].items.ship].dmg;
-		
+
 		player[p].is_dragonwing = (p == 1);
 		player[p].lives = &player[p].items.weapon[p].power;
-		
+
 	}
-	
+
 	mainLevel = FIRST_LEVEL;
 	saveLevel = FIRST_LEVEL;
-	
+
 	strcpy(lastLevelName, miscText[19]);
 }
 
 void JE_sortHighScores( void )
 {
 	JE_byte x;
-	
+
 	temp = 0;
 	for (x = 0; x < 6; x++)
 	{
@@ -882,16 +882,16 @@ void JE_highScoreScreen( void )
 	short int chg;
 	int quit;
 	char scoretemp[32];
-	
+
 	free_sprite2s(&shapes6);
 	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
-	
+
 	fade_black(10);
 	JE_loadPic(2, false);
 	JE_showVGA();
 	fade_palette(colors, 10, 0, 255);
 	tempScreenSeg = VGAScreen;
-	
+
 	quit = false;
 	x = 1;
 	chg = 1;
@@ -1022,7 +1022,7 @@ void JE_gammaCorrect( Palette *colorBuffer, JE_byte gamma )
 {
 	int x;
 	JE_real r = 1 + (JE_real)gamma / 10;
-	
+
 	for (x = 0; x < 256; x++)
 	{
 		JE_gammaCorrect_func(&(*colorBuffer)[x].r, r);
@@ -1049,29 +1049,29 @@ JE_boolean JE_gammaCheck( void )
 void JE_doInGameSetup( void )
 {
 	haltGame = false;
-	
+
 	if (isNetworkGame)
 	{
 		network_prepare(PACKET_GAME_MENU);
 		network_send(4);  // PACKET_GAME_MENU
-		
+
 		while (true)
 		{
 			service_SDL_events(false);
-			
+
 			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_GAME_MENU)
 			{
 				network_update();
 				break;
 			}
-			
+
 			network_update();
 			network_check();
-			
+
 			SDL_Delay(16);
 		}
 	}
-	
+
 	if (yourInGameMenuRequest)
 	{
 		if (JE_inGameSetup())
@@ -1080,9 +1080,9 @@ void JE_doInGameSetup( void )
 			playerEndLevel = true;
 		}
 		quitRequested = false;
-		
+
 		keysactive[SDLK_ESCAPE] = false;
-		
+
 		if (isNetworkGame)
 		{
 			if (!playerEndLevel)
@@ -1095,25 +1095,25 @@ void JE_doInGameSetup( void )
 			}
 		}
 	}
-	
+
 	if (isNetworkGame)
 	{
 		SDL_Surface *temp_surface = VGAScreen;
 		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-		
+
 		if (!yourInGameMenuRequest)
 		{
-			JE_barShade(3, 60, 257, 80); /*Help Box*/
-			JE_barShade(5, 62, 255, 78);
+			JE_barShade(VGAScreen, 3, 60, 257, 80); /*Help Box*/
+			JE_barShade(VGAScreen, 5, 62, 255, 78);
 			tempScreenSeg = VGAScreen;
 			JE_dString(10, 65, "Other player in options menu.", SMALL_FONT_SHAPES);
 			JE_showVGA();
-			
+
 			while (true)
 			{
 				service_SDL_events(false);
 				JE_showVGA();
-				
+
 				if (packet_in[0])
 				{
 					if (SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_WAITING)
@@ -1123,15 +1123,15 @@ void JE_doInGameSetup( void )
 					} else if (SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_GAME_QUIT) {
 						reallyEndLevel = true;
 						playerEndLevel = true;
-						
+
 						network_check();
 						break;
 					}
 				}
-				
+
 				network_update();
 				network_check();
-				
+
 				SDL_Delay(16);
 			}
 		} else {
@@ -1143,21 +1143,21 @@ void JE_doInGameSetup( void )
 			JE_showVGA();
 			*/
 		}
-		
+
 		while (!network_is_sync())
 		{
 			service_SDL_events(false);
 			JE_showVGA();
-			
+
 			network_check();
 			SDL_Delay(16);
 		}
-		
+
 		VGAScreen = temp_surface; /* side-effect of game_screen */
 	}
-	
+
 	yourInGameMenuRequest = false;
-	
+
 	tempScreenSeg = VGAScreen;
 	//skipStarShowVGA = true;
 }
@@ -1166,55 +1166,55 @@ JE_boolean JE_inGameSetup( void )
 {
 	SDL_Surface *temp_surface = VGAScreen;
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-	
+
 	JE_boolean returnvalue = false;
-	
+
 	const JE_byte help[6] /* [1..6] */ = {15, 15, 28, 29, 26, 27};
 	JE_byte  sel;
 	JE_boolean quit;
-	
+
 	bool first = true;
 
 	tempScreenSeg = VGAScreenSeg; /* <MXD> ? */
-	
+
 	quit = false;
 	sel = 1;
-	
-	JE_barShade(3, 13, 217, 137); /*Main Box*/
-	JE_barShade(5, 15, 215, 135);
-	
-	JE_barShade(3, 143, 257, 157); /*Help Box*/
-	JE_barShade(5, 145, 255, 155);
+
+	JE_barShade(VGAScreen, 3, 13, 217, 137); /*Main Box*/
+	JE_barShade(VGAScreen, 5, 15, 215, 135);
+
+	JE_barShade(VGAScreen, 3, 143, 257, 157); /*Help Box*/
+	JE_barShade(VGAScreen, 5, 145, 255, 155);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
-	
+
 	do
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-		
+
 		for (x = 0; x < 6; x++)
 		{
 			JE_outTextAdjust(10, (x + 1) * 20, inGameText[x], 15, ((sel == x+1) << 1) - 4, SMALL_FONT_SHAPES, true);
 		}
-		
+
 		JE_outTextAdjust(120, 3 * 20, detailLevel[processorType-1], 15, ((sel == 3) << 1) - 4, SMALL_FONT_SHAPES, true);
 		JE_outTextAdjust(120, 4 * 20, gameSpeedText[gameSpeed-1],   15, ((sel == 4) << 1) - 4, SMALL_FONT_SHAPES, true);
-		
+
 		JE_outTextAdjust(10, 147, mainMenuHelp[help[sel-1]-1], 14, 6, TINY_FONT, true);
-		
+
 		JE_barDrawShadow(120, 20, 1, 16, tyrMusicVolume / 12, 3, 13);
 		JE_barDrawShadow(120, 40, 1, 16, fxVolume / 12, 3, 13);
-		
+
 		JE_showVGA();
-		
+
 		if (first)
 		{
 			first = false;
 			wait_noinput(false, false, true); // TODO: should up the joystick repeat temporarily instead
 		}
-		
+
 		tempW = 0;
 		JE_textMenuWait(&tempW, true);
-		
+
 		if (inputDetected)
 		{
 			switch (lastkey_sym)
@@ -1239,7 +1239,7 @@ JE_boolean JE_inGameSetup( void )
 							{
 								JE_tyrianHalt(0);
 							}
-							
+
 							if (isNetworkGame)
 							{ /*Tell other computer to exit*/
 								haltGame = true;
@@ -1350,11 +1350,11 @@ JE_boolean JE_inGameSetup( void )
 					break;
 			}
 		}
-		
+
 	} while (!(quit || haltGame));
-	
+
 	VGAScreen = temp_surface; /* side-effect of game_screen */
-	
+
 	return returnvalue;
 }
 
@@ -1362,42 +1362,42 @@ void JE_inGameHelp( void )
 {
 	SDL_Surface *temp_surface = VGAScreen;
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
-	
+
 	tempScreenSeg = VGAScreenSeg;
-	
+
 	JE_clearKeyboard();
 	JE_wipeKey();
-	
-	JE_barShade(1, 1, 262, 182); /*Main Box*/
-	JE_barShade(3, 3, 260, 180);
-	JE_barShade(5, 5, 258, 178);
-	JE_barShade(7, 7, 256, 176);
+
+	JE_barShade(VGAScreen, 1, 1, 262, 182); /*Main Box*/
+	JE_barShade(VGAScreen, 3, 3, 260, 180);
+	JE_barShade(VGAScreen, 5, 5, 258, 178);
+	JE_barShade(VGAScreen, 7, 7, 256, 176);
 	fill_rectangle_xy(VGAScreen, 9, 9, 254, 174, 0);
-	
+
 	if (twoPlayerMode)  // Two-Player Help
 	{
 		helpBoxColor = 3;
 		helpBoxBrightness = 3;
 		JE_HBox(20,  4, 36, 50);
-		
+
 		// weapon help
 		blit_sprite(VGAScreenSeg, 2, 21, OPTION_SHAPES, 43);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(55, 20, 37, 40);
-		
+
 		// sidekick help
 		blit_sprite(VGAScreenSeg, 5, 36, OPTION_SHAPES, 41);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 43, 34, 44);
-		
+
 		// sheild/armor help
 		blit_sprite(VGAScreenSeg, 2, 79, OPTION_SHAPES, 42);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(54, 84, 35, 40);
-		
+
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(5, 126, 38, 55);
@@ -1412,7 +1412,7 @@ void JE_inGameHelp( void )
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 10, 31, 45);
-		
+
 		// weapon help
 		blit_sprite(VGAScreenSeg, 5, 37, OPTION_SHAPES, 39);
 		helpBoxColor = 5;
@@ -1421,35 +1421,35 @@ void JE_inGameHelp( void )
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 60, 33, 44);
-		
+
 		// sidekick help
 		blit_sprite(VGAScreenSeg, 5, 98, OPTION_SHAPES, 41);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(40, 103, 34, 44);
-		
+
 		// shield/armor help
 		blit_sprite(VGAScreenSeg, 2, 138, OPTION_SHAPES, 42);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
 		JE_HBox(54, 143, 35, 40);
 	}
-	
+
 	// "press a key"
 	blit_sprite(VGAScreenSeg, 16, 189, OPTION_SHAPES, 36);  // in-game text area
 	JE_outText(120 - JE_textWidth(miscText[5-1], TINY_FONT) / 2 + 20, 190, miscText[5-1], 0, 4);
-	
+
 	JE_showVGA();
-	
+
 	do
 	{
 		tempW = 0;
 		JE_textMenuWait(&tempW, true);
 	}
 	while (!inputDetected);
-	
+
 	textErase = 1;
-	
+
 	VGAScreen = temp_surface;
 }
 
@@ -1457,21 +1457,21 @@ void JE_highScoreCheck( void )
 {
 	free_sprite2s(&shapes6);
 	JE_loadCompShapes(&shapes6, '1');  // need mouse cursor sprite
-	
+
 	Sint32 temp_score;
-	
+
 	for (int temp_p = 0; temp_p < (twoPlayerMode ? 2 : 1); ++temp_p)
 	{
 		JE_sortHighScores();
-		
+
 		int p = temp_p;
-		
+
 		if (twoPlayerMode)
 		{
 			// ask for the highest scorer first
 			if (player[0].cash < player[1].cash)
 				p = (temp_p == 0) ? 1 : 0;
-			
+
 			temp_score = (p == 0) ? player[0].cash : player[1].cash;
 		}
 		else
@@ -1479,17 +1479,17 @@ void JE_highScoreCheck( void )
 			// single player highscore includes cost of upgrades
 			temp_score = JE_totalScore(&player[0]);
 		}
-		
+
 		int slot;
 		const int first_slot = (initial_episode_num - 1) * 6 + (twoPlayerMode ? 3 : 0),
 		          slot_limit = first_slot + 3;
-		
+
 		for (slot = first_slot; slot < slot_limit; ++slot)
 		{
 			if (temp_score > saveFiles[slot].highScore1)
 				break;
 		}
-		
+
 		// did you get a high score?
 		if (slot < slot_limit)
 		{
@@ -1499,41 +1499,41 @@ void JE_highScoreCheck( void )
 				saveFiles[i].highScore1 = saveFiles[i - 1].highScore1;
 				strcpy(saveFiles[i].highScoreName, saveFiles[i - 1].highScoreName);
 			}
-			
+
 			wait_noinput(false, true, false);
-			
+
 			JE_clr256();
 			JE_showVGA();
 			memcpy(colors, palettes[0], sizeof(colors));
-			
+
 			play_song(33);
-			
+
 			{
 				/* Enter Thy name */
-				
+
 				JE_byte flash = 8 * 16 + 10;
 				JE_boolean fadein = true;
 				JE_boolean quit = false, cancel = false;
 				char stemp[30], tempstr[30];
 				char buffer[256];
-				
+
 				strcpy(stemp, "                             ");
 				temp = 0;
-				
-				JE_barShade(65, 55, 255, 155);
-				
+
+				JE_barShade(VGAScreen, 65, 55, 255, 155);
+
 				do
 				{
 					service_SDL_events(true);
-					
+
 					JE_dString(JE_fontCenter(miscText[51], FONT_SHAPES), 3, miscText[51], FONT_SHAPES);
-					
+
 					temp3 = twoPlayerMode ? 58 + p : 53;
-					
+
 					JE_dString(JE_fontCenter(miscText[temp3-1], SMALL_FONT_SHAPES), 30, miscText[temp3-1], SMALL_FONT_SHAPES);
-					
+
 					blit_sprite(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
-					
+
 					if (twoPlayerMode)
 					{
 						sprintf(buffer, "%s %s", miscText[48 + p], miscText[53]);
@@ -1543,26 +1543,26 @@ void JE_highScoreCheck( void )
 					{
 						JE_textShade(60, 55, miscText[53], 11, 4, FULL_SHADE);
 					}
-					
+
 					sprintf(buffer, "%s %d", miscText[37], temp_score);
 					JE_textShade(70, 70, buffer, 11, 4, FULL_SHADE);
-					
+
 					do
 					{
 						flash = (flash == 8 * 16 + 10) ? 8 * 16 + 2 : 8 * 16 + 10;
 						temp3 = (temp3 == 6) ? 2 : 6;
-						
+
 						strncpy(tempstr, stemp, temp);
 						tempstr[temp] = '\0';
 						JE_outText(65, 89, tempstr, 8, 3);
 						tempW = 65 + JE_textWidth(tempstr, TINY_FONT);
-						JE_barShade(tempW + 2, 90, tempW + 6, 95);
+						JE_barShade(VGAScreen, tempW + 2, 90, tempW + 6, 95);
 						fill_rectangle_xy(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
-						
+
 						for (int i = 0; i < 14; i++)
 						{
 							setjasondelay(1);
-							
+
 							JE_mouseStart();
 							JE_showVGA();
 							if (fadein)
@@ -1571,19 +1571,19 @@ void JE_highScoreCheck( void )
 								fadein = false;
 							}
 							JE_mouseReplace();
-							
+
 							push_joysticks_as_keyboard();
 							service_wait_delay();
-							
+
 							if (newkey || newmouse)
 								break;
 						}
-						
+
 					} while (!newkey && !newmouse);
-					
+
 					if (!playing)
 						play_song(31);
-					
+
 					if (mouseButton > 0)
 					{
 						if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
@@ -1651,20 +1651,20 @@ void JE_highScoreCheck( void )
 					}
 				}
 				while (!quit);
-				
+
 				if (!cancel)
 				{
 					saveFiles[slot].highScore1 = temp_score;
 					strcpy(saveFiles[slot].highScoreName, stemp);
 					saveFiles[slot].highScoreDiff = difficultyLevel;
 				}
-				
+
 				fade_black(15);
 				JE_loadPic(2, false);
-				
+
 				JE_dString(JE_fontCenter(miscText[50], FONT_SHAPES), 10, miscText[50], FONT_SHAPES);
 				JE_dString(JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 35, episode_name[episodeNum], SMALL_FONT_SHAPES);
-				
+
 				for (int i = first_slot; i < slot_limit; ++i)
 				{
 					if (i != slot)
@@ -1674,31 +1674,31 @@ void JE_highScoreCheck( void )
 						JE_textShade(150, ((i - first_slot + 1) * 12) + 65, saveFiles[i].highScoreName, 15, 2, FULL_SHADE);
 					}
 				}
-				
+
 				JE_showVGA();
-				
+
 				fade_palette(colors, 15, 0, 255);
-				
+
 				sprintf(buffer, "~#%d:~  %d", (slot - first_slot + 1), saveFiles[slot].highScore1);
-				
+
 				frameCountMax = 6;
 				textGlowFont = TINY_FONT;
-				
+
 				textGlowBrightness = 10;
 				JE_outTextGlow( 20, (slot - first_slot + 1) * 12 + 65, buffer);
 				textGlowBrightness = 10;
 				JE_outTextGlow(150, (slot - first_slot + 1) * 12 + 65, saveFiles[slot].highScoreName);
 				textGlowBrightness = 10;
 				JE_outTextGlow(JE_fontCenter(miscText[4], TINY_FONT), 180, miscText[4]);
-				
+
 				JE_showVGA();
-				
+
 				if (frameCountMax != 0)
 					wait_input(true, true, true);
-				
+
 				fade_black(15);
 			}
-			
+
 		}
 	}
 }
@@ -1719,14 +1719,14 @@ void adjust_difficulty( void )
 		3,     // Zinglon
 		3,     // Nortaneous
 	};
-	
+
 	assert(initialDifficulty > 0 && initialDifficulty < 10);
-	
+
 	const ulong score = twoPlayerMode ? (player[0].cash + player[1].cash) : JE_totalScore(&player[0]),
 	            adjusted_score = roundf(score * score_multiplier[initialDifficulty]);
-	
+
 	uint new_difficulty = 0;
-	
+
 	if (twoPlayerMode)
 	{
 		if (adjusted_score < 10000)
@@ -1769,7 +1769,7 @@ void adjust_difficulty( void )
 		else
 			new_difficulty = 9;  // Nortaneous
 	}
-	
+
 	difficultyLevel = MAX(difficultyLevel, new_difficulty);
 }
 
@@ -1777,47 +1777,47 @@ bool load_next_demo( void )
 {
 	if (++demo_num > 5)
 		demo_num = 1;
-	
+
 	char demo_filename[9];
 	snprintf(demo_filename, sizeof(demo_filename), "demo.%d", demo_num);
 	demo_file = dir_fopen_die(data_dir(), demo_filename, "rb"); // TODO: only play demos from existing file (instead of dying)
-	
+
 	difficultyLevel = 2;
 	bonusLevelCurrent = false;
-	
+
 	Uint8 temp = fgetc(demo_file);
 	JE_initEpisode(temp);
 	efread(levelName, 1, 10, demo_file); levelName[10] = '\0';
 	lvlFileNum = fgetc(demo_file);
-	
+
 	player[0].items.weapon[FRONT_WEAPON].id  = fgetc(demo_file);
 	player[0].items.weapon[REAR_WEAPON].id   = fgetc(demo_file);
 	player[0].items.super_arcade_mode        = fgetc(demo_file);
 	player[0].items.sidekick[LEFT_SIDEKICK]  = fgetc(demo_file);
 	player[0].items.sidekick[RIGHT_SIDEKICK] = fgetc(demo_file);
 	player[0].items.generator                = fgetc(demo_file);
-	
+
 	player[0].items.sidekick_level           = fgetc(demo_file); // could probably ignore
 	player[0].items.sidekick_series          = fgetc(demo_file); // could probably ignore
-	
+
 	initial_episode_num                      = fgetc(demo_file); // could probably ignore
-	
+
 	player[0].items.shield                   = fgetc(demo_file);
 	player[0].items.special                  = fgetc(demo_file);
 	player[0].items.ship                     = fgetc(demo_file);
-	
+
 	for (uint i = 0; i < 2; ++i)
 		player[0].items.weapon[i].power = fgetc(demo_file);
-	
+
 	fseek(demo_file, 3, SEEK_CUR);
-	
+
 	levelSong = fgetc(demo_file);
-	
+
 	demo_keys_wait = 0;
 	demo_keys = next_demo_keys = 0;
-	
+
 	printf("loaded demo '%s'\n", demo_filename);
-	
+
 	return true;
 }
 
@@ -1826,37 +1826,37 @@ bool replay_demo_keys( void )
 	if (demo_keys_wait == 0)
 		if (read_demo_keys() == false)
 			return false; // no more keys
-	
+
 	if (demo_keys_wait > 0)
 		demo_keys_wait--;
-	
+
 	if (demo_keys & (1 << 0))
 		player[0].y -= CURRENT_KEY_SPEED;
 	if (demo_keys & (1 << 1))
 		player[0].y += CURRENT_KEY_SPEED;
-	
+
 	if (demo_keys & (1 << 2))
 		player[0].x -= CURRENT_KEY_SPEED;
 	if (demo_keys & (1 << 3))
 		player[0].x += CURRENT_KEY_SPEED;
-	
+
 	button[0] = (bool)(demo_keys & (1 << 4));
 	button[3] = (bool)(demo_keys & (1 << 5));
 	button[1] = (bool)(demo_keys & (1 << 6));
 	button[2] = (bool)(demo_keys & (1 << 7));
-	
+
 	return true;
 }
 
 bool read_demo_keys( void )
 {
 	demo_keys = next_demo_keys;
-	
+
 	efread(&demo_keys_wait, sizeof(Uint16), 1, demo_file);
 	demo_keys_wait = SDL_Swap16(demo_keys_wait);
-	
+
 	next_demo_keys = getc(demo_file);
-	
+
 	return !feof(demo_file);
 }
 
@@ -1864,18 +1864,18 @@ bool read_demo_keys( void )
 void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer mouseX_, JE_integer mouseY_ )
 {
 	JE_byte temp, temp2, temp3, temp4, temp5;
-	
+
 	uint ship = player[playerNum_-1].items.ship;
-	
+
 	/*Get direction*/
 	if (playerNum_ == 2 && ship < 15)
 	{
 		ship = 0;
 	}
-	
+
 	if (ship < 15)
 	{
-		
+
 		temp2 = (mouseY_ > PY_) +    /*UP*/
 		        (mouseY_ < PY_) +    /*DOWN*/
 		        (PX_ < mouseX_) +    /*LEFT*/
@@ -1884,7 +1884,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 		       (mouseY_ < PY_) * 2 + /*DOWN*/
 		       (PX_ < mouseX_) * 3 + /*LEFT*/
 		       (PX_ > mouseX_) * 4;  /*RIGHT*/
-		
+
 		if (temp == 0) // no direction being pressed
 		{
 			if (!button[0]) // if fire button is released
@@ -1896,18 +1896,18 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 				temp = 99;
 			}
 		}
-		
+
 		if (temp2 == 1) // if exactly one direction pressed or firebutton is released
 		{
 			temp += button[0] * 4;
-			
+
 			temp3 = superTyrian ? 21 : 3;
 			for (temp2 = 0; temp2 < temp3; temp2++)
 			{
-				
+
 				/*Use SuperTyrian ShipCombos or not?*/
 				temp5 = superTyrian ? shipCombosB[temp2] : shipCombos[ship][temp2];
-				
+
 				// temp5 == selected combo in ship
 				if (temp5 == 0) /* combo doesn't exists */
 				{
@@ -1916,12 +1916,12 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 				} else {
 					// get next combo key
 					temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum_-1][temp2]];
-					
+
 					// correct key
 					if (temp4 == temp)
 					{
 						SFCurrentCode[playerNum_-1][temp2]++;
-						
+
 						temp4 = keyboardCombos[temp5-1][SFCurrentCode[playerNum_-1][temp2]];
 						if (temp4 > 100 && temp4 <= 100 + SPECIAL_NUM)
 						{
@@ -1940,7 +1940,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 				}
 			}
 		}
-		
+
 	}
 }
 
@@ -1978,7 +1978,7 @@ void JE_playCredits( void )
 {
 	const int maxlines = 132;
 	typedef char JE_CreditStringType[maxlines][66];
-	
+
 	JE_CreditStringType credstr;
 	JE_word x, max = 0, maxlen = 0;
 	JE_integer curpos, newpos;
@@ -1988,13 +1988,13 @@ void JE_playCredits( void )
 	JE_byte currentship = 0;
 	JE_integer shipx = 0, shipxwait = 0;
 	JE_shortint shipxc = 0, shipxca = 0;
-	
+
 	load_sprites_file(EXTRA_SHAPES, "estsc.shp");
-	
+
 	setjasondelay2(1000);
-	
+
 	play_song(8);
-	
+
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.cdt", "rb");
 	while (!feof(f))
 	{
@@ -2002,21 +2002,21 @@ void JE_playCredits( void )
 		read_encrypted_pascal_string(credstr[max], sizeof(credstr[max]), f);
 		max++;
 	}
-	
+
 	memcpy(colors, palettes[6-1], sizeof(colors));
 	JE_clr256();
 	JE_showVGA();
 	fade_palette(colors, 2, 0, 255);
-	
+
 	tempScreenSeg = VGAScreenSeg;
-	
+
 	for (x = 0; x < maxlen; x++)
 	{
 		setjasondelay(1);
 		JE_clr256();
-		
+
 		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic-1)->width, 100 - (sprite(EXTRA_SHAPES, currentpic-1)->height / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
-		
+
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
 		{
@@ -2027,16 +2027,16 @@ void JE_playCredits( void )
 		}
 		if (fade == 15)
 			fadechg = 0;
-		
+
 		if (delaycount2() == 0)
 		{
 			fadechg = -1;
 			setjasondelay2(900);
 		}
-		
+
 		curpos = (x / 3) / 20;
 		yloc = 20 - ((x / 3) % 20);
-		
+
 		if (x % 200 == 0)
 		{
 			currentship = (mt_rand() % 11) + 1;
@@ -2054,7 +2054,7 @@ void JE_playCredits( void )
 				shipxca = -1;
 			}
 		}
-		
+
 		shipxwait--;
 		if (shipxwait == 0)
 		{
@@ -2093,7 +2093,7 @@ void JE_playCredits( void )
 		if (shipxc > 20)
 			tempW += 2;
 		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (x % 200), shapes9, tempW);
-		
+
 		for (newpos = curpos - 9; newpos <= curpos; newpos++)
 		{
 			if (newpos > 0 && newpos <= max)
@@ -2104,20 +2104,20 @@ void JE_playCredits( void )
 					JE_outTextAdjust(110 - JE_textWidth(&credstr[newpos-1][1], SMALL_FONT_SHAPES) / 2, yloc, &credstr[newpos-1][1], credstr[newpos-1][0] - 65, -2, SMALL_FONT_SHAPES, false);
 				}
 			}
-			
+
 			yloc += 20;
 		}
-		
+
 		fill_rectangle_xy(VGAScreen, 0,  0, 319, 10, 0);
 		fill_rectangle_xy(VGAScreen, 0, 190, 319, 199, 0);
-		
+
 		if (currentpic == sprite_table[EXTRA_SHAPES].count)
 			JE_outTextAdjust(5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
-		
+
 		NETWORK_KEEP_ALIVE();
-		
+
 		wait_delay();
-		
+
 		JE_showVGA();
 		if (JE_anyButton())
 		{
@@ -2134,9 +2134,9 @@ void JE_playCredits( void )
 			}
 		}
 	}
-	
+
 	fade_black(10);
-	
+
 	free_sprites(EXTRA_SHAPES);
 }
 
@@ -2145,46 +2145,46 @@ void JE_endLevelAni( void )
 	JE_word x, y;
 	JE_byte temp;
 	char tempStr[256];
-	
+
 	Sint8 i;
-	
+
 	if (!constantPlay)
 	{
 		// grant shipedit privileges
-		
+
 		// special
 		if (player[0].items.special < 21)
 			saveTemp[SAVE_FILES_SIZE + 81 + player[0].items.special] = 1;
-		
+
 		for (uint p = 0; p < COUNTOF(player); ++p)
 		{
 			// front, rear
 			for (uint i = 0; i < COUNTOF(player[p].items.weapon); ++i)
 				saveTemp[SAVE_FILES_SIZE + player[p].items.weapon[i].id] = 1;
-			
+
 			// options
 			for (uint i = 0; i < COUNTOF(player[p].items.sidekick); ++i)
 				saveTemp[SAVE_FILES_SIZE + 51 + player[p].items.sidekick[i]] = 1;
 		}
 	}
-	
+
 	adjust_difficulty();
-	
+
 	player[0].last_items = player[0].items;
 	strcpy(lastLevelName, levelName);
-	
+
 	JE_wipeKey();
 	frameCountMax = 4;
 	textGlowFont = SMALL_FONT_SHAPES;
-	
+
 	SDL_Color white = { 255, 255, 255 };
 	set_colors(white, 254, 254);
-	
+
 	if (!levelTimer || levelTimerCountdown > 0 || !(episodeNum == 4))
 		JE_playSampleNum(V_LEVEL_END);
 	else
 		play_song(21);
-	
+
 	if (bonusLevel)
 	{
 		JE_outTextGlow(20, 20, miscText[17-1]);
@@ -2199,7 +2199,7 @@ void JE_endLevelAni( void )
 		sprintf(tempStr, "%s %s", miscText[62-1], levelName); // "Exiting"
 		JE_outTextGlow(20, 20, tempStr);
 	}
-	
+
 	if (twoPlayerMode)
 	{
 		for (uint i = 0; i < 2; ++i)
@@ -2213,60 +2213,60 @@ void JE_endLevelAni( void )
 		sprintf(tempStr, "%s %lu", miscText[28-1], player[0].cash);
 		JE_outTextGlow(30, 50, tempStr);
 	}
-	
+
 	temp = (totalEnemy == 0) ? 0 : roundf(enemyKilled * 100 / totalEnemy);
 	sprintf(tempStr, "%s %d%%", miscText[63-1], temp);
 	JE_outTextGlow(40, 90, tempStr);
-	
+
 	if (!constantPlay)
 		editorLevel += temp / 5;
-	
+
 	if (!onePlayerAction && !twoPlayerMode)
 	{
 		JE_outTextGlow(30, 120, miscText[4-1]);   /*Cubes*/
-		
+
 		if (cubeMax > 0)
 		{
 			if (cubeMax > 4)
 				cubeMax = 4;
-			
+
 			if (frameCountMax != 0)
 				frameCountMax = 1;
-			
+
 			for (temp = 1; temp <= cubeMax; temp++)
 			{
 				NETWORK_KEEP_ALIVE();
-				
+
 				JE_playSampleNum(18);
 				x = 20 + 30 * temp;
 				y = 135;
 				JE_drawCube(x, y, 9, 0);
 				JE_showVGA();
-				
+
 				for (i = -15; i <= 10; i++)
 				{
 					setjasondelay(frameCountMax);
-					
+
 					blit_sprite_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
-					
+
 					if (JE_anyButton())
 						frameCountMax = 0;
-					
+
 					JE_showVGA();
-					
+
 					wait_delay();
 				}
 				for (i = 10; i >= 0; i--)
 				{
 					setjasondelay(frameCountMax);
-					
+
 					blit_sprite_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
-					
+
 					if (JE_anyButton())
 						frameCountMax = 0;
-					
+
 					JE_showVGA();
-					
+
 					wait_delay();
 				}
 			}
@@ -2275,7 +2275,7 @@ void JE_endLevelAni( void )
 		{
 			JE_outTextGlow(50, 135, miscText[15-1]);
 		}
-		
+
 	}
 
 	if (frameCountMax != 0)
@@ -2287,21 +2287,21 @@ void JE_endLevelAni( void )
 	}
 	temp2 = twoPlayerMode ? 150 : 160;
 	JE_outTextGlow(90, temp2, miscText[5-1]);
-	
+
 	if (!constantPlay)
 	{
 		do
 		{
 			setjasondelay(1);
-			
+
 			NETWORK_KEEP_ALIVE();
-			
+
 			wait_delay();
 		} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1)));
 	}
-	
+
 	wait_noinput(false, false, true); // TODO: should up the joystick repeat temporarily instead
-	
+
 	fade_black(15);
 	JE_clr256();
 }
@@ -2321,23 +2321,23 @@ void JE_handleChat( void )
 bool str_pop_int( char *str, int *val )
 {
 	bool success = false;
-	
+
 	char buf[256];
 	assert(strlen(str) < sizeof(buf));
-	
+
 	// grab the value from str
 	char *end;
 	*val = strtol(str, &end, 10);
-	
+
 	if (end != str)
 	{
 		success = true;
-		
+
 		// shift the rest to the beginning
 		strcpy(buf, end);
 		strcpy(str, buf);
 	}
-	
+
 	return success;
 }
 
@@ -2346,7 +2346,7 @@ void JE_operation( JE_byte slot )
 	JE_byte flash;
 	char stemp[21];
 	char tempStr[51];
-	
+
 	if (!performSave)
 	{
 		if (saveFiles[slot-1].level > 0)
@@ -2362,53 +2362,53 @@ void JE_operation( JE_byte slot )
 		memcpy(stemp, saveFiles[slot-1].name, strlen(saveFiles[slot-1].name));
 		temp = strlen(stemp);
 		while (stemp[temp-1] == ' ' && --temp);
-		
+
 		flash = 8 * 16 + 10;
-		
+
 		wait_noinput(false, true, false);
-		
-		JE_barShade(65, 55, 255, 155);
-		
+
+		JE_barShade(VGAScreen, 65, 55, 255, 155);
+
 		bool quit = false;
 		while (!quit)
 		{
 			service_SDL_events(true);
-			
+
 			blit_sprite(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
-			
+
 			JE_textShade(60, 55, miscText[1-1], 11, 4, DARKEN);
 			JE_textShade(70, 70, levelName, 11, 4, DARKEN);
-			
+
 			do
 			{
 				flash = (flash == 8 * 16 + 10) ? 8 * 16 + 2 : 8 * 16 + 10;
 				temp3 = (temp3 == 6) ? 2 : 6;
-				
+
 				strcpy(tempStr, miscText[2-1]);
 				strncat(tempStr, stemp, temp);
 				JE_outText(65, 89, tempStr, 8, 3);
 				tempW = 65 + JE_textWidth(tempStr, TINY_FONT);
-				JE_barShade(tempW + 2, 90, tempW + 6, 95);
+				JE_barShade(VGAScreen, tempW + 2, 90, tempW + 6, 95);
 				fill_rectangle_xy(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
-				
+
 				for (int i = 0; i < 14; i++)
 				{
 					setjasondelay(1);
-					
+
 					JE_mouseStart();
 					JE_showVGA();
 					JE_mouseReplace();
-					
+
 					push_joysticks_as_keyboard();
 					service_wait_delay();
-					
+
 					if (newkey || newmouse)
 						break;
 				}
-				
+
 			}
 			while (!newkey && !newmouse);
-			
+
 			if (mouseButton > 0)
 			{
 				if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
@@ -2479,11 +2479,11 @@ void JE_operation( JE_byte slot )
 						JE_playSampleNum(S_SELECT);
 						break;
 				}
-				
+
 			}
 		}
 	}
-	
+
 	wait_noinput(false, true, false);
 }
 
@@ -2491,13 +2491,13 @@ void JE_inGameDisplays( void )
 {
 	char stemp[21];
 	char tempstr[256];
-	
+
 	for (uint i = 0; i < ((twoPlayerMode && !galagaMode) ? 2 : 1); ++i)
 	{
 		snprintf(tempstr, sizeof(tempstr), "%lu", player[i].cash);
 		JE_textShade(30 + 200 * i, 175, tempstr, 2, 4, FULL_SHADE);
 	}
-	
+
 	/*Special Weapon?*/
 	if (player[0].items.special > 0)
 		blit_sprite2x2(VGAScreen, 25, 1, eShapes6, special[player[0].items.special].itemgraphic);
@@ -2508,10 +2508,10 @@ void JE_inGameDisplays( void )
 		for (int temp = 0; temp < (onePlayerAction ? 1 : 2); temp++)
 		{
 			const uint extra_lives = *player[temp].lives - 1;
-			
+
 			temp5 = (temp == 0 && player[0].items.special > 0) ? 35 : 15;
 			tempW = (temp == 0) ? 30: 270;
-			
+
 			if (extra_lives >= 5)
 			{
 				blit_sprite2(VGAScreen, tempW, temp5, shapes9, 285);
@@ -2524,17 +2524,17 @@ void JE_inGameDisplays( void )
 				for (uint i = 0; i < extra_lives; ++i)
 				{
 					blit_sprite2(VGAScreen, tempW, temp5, shapes9, 285);
-					
+
 					tempW += (temp == 0) ? 12 : -12;
 				}
 			}
-			
+
 			strcpy(stemp, (temp == 0) ? miscText[49-1] : miscText[50-1]);
 			if (isNetworkGame)
 			{
 				strcpy(stemp, JE_getName(temp+1));
 			}
-			
+
 			tempW = (temp == 0) ? 28 : (285 - JE_textWidth(stemp, TINY_FONT));
 			JE_textShade(tempW, temp5 - 7, stemp, 2, 6, FULL_SHADE);
 		}
@@ -2544,7 +2544,7 @@ void JE_inGameDisplays( void )
 	for (uint i = 0; i < COUNTOF(player); ++i)
 	{
 		int x = (i == 0) ? 30 : 270;
-		
+
 		for (uint j = player[i].superbombs; j > 0; --j)
 		{
 			blit_sprite2(VGAScreen, x, 160, shapes9, 304);
@@ -2585,17 +2585,17 @@ void JE_mainKeyboardInput( void )
 					/*Armor*/
 					player[0].items.shield = extraShips[z + 8];
 					memset(shotMultiPos, 0, sizeof(shotMultiPos));
-					
+
 					if (player[0].weapon_mode > JE_portConfigs())
 						player[0].weapon_mode = 1;
-					
+
 					tempW = player[0].armor;
 					JE_getShipInfo();
 					if (player[0].armor > tempW && editShip1)
 						player[0].armor = tempW;
 					else
 						editShip1 = true;
-					
+
 					SDL_Surface *temp_surface = VGAScreen;
 					VGAScreen = VGAScreenSeg;
 					JE_wipeShieldArmorBars();
@@ -2605,7 +2605,7 @@ void JE_mainKeyboardInput( void )
 					tempScreenSeg = VGAScreenSeg; /* sega000 */
 					JE_drawOptions();
 					tempScreenSeg = VGAScreenSeg; /* sega000 */
-					
+
 					keysactive[x] = false;
 				}
 			}
@@ -2630,17 +2630,17 @@ void JE_mainKeyboardInput( void )
 					/*Armor*/
 					player[1].items.shield = extraShips[z + 8];
 					memset(shotMultiPos, 0, sizeof(shotMultiPos));
-					
+
 					if (player[1].weapon_mode > JE_portConfigs())
 						player[1].weapon_mode = 1;
-					
+
 					tempW = player[1].armor;
 					JE_getShipInfo();
 					if (player[1].armor > tempW && editShip2)
 						player[1].armor = tempW;
 					else
 						editShip2 = true;
-					
+
 					SDL_Surface *temp_surface = VGAScreen;
 					VGAScreen = VGAScreenSeg;
 					JE_wipeShieldArmorBars();
@@ -2650,7 +2650,7 @@ void JE_mainKeyboardInput( void )
 					tempScreenSeg = VGAScreenSeg; /* sega000 */
 					JE_drawOptions();
 					tempScreenSeg = VGAScreenSeg; /* sega000 */
-					
+
 					keysactive[x] = false;
 				}
 			}
@@ -2697,7 +2697,7 @@ void JE_mainKeyboardInput( void )
 		{
 			for (uint i = 0; i < COUNTOF(player); ++i)
 				player[i].armor = 0;
-			
+
 			youAreCheating = !youAreCheating;
 			JE_drawTextWindow(miscText[63-1]);
 		}
@@ -2743,35 +2743,35 @@ void JE_mainKeyboardInput( void )
 			levelEnd = 40;
 		}
 	}
-	
+
 	/* pause game */
 	pause_pressed |= keysactive[SDLK_p];
-	
+
 	/* in-game setup */
 	ingamemenu_pressed |= keysactive[SDLK_ESCAPE];
-	
+
 	/* {MUTE SOUND} */
 	if (keysactive[SDLK_s])
 	{
 		keysactive[SDLK_s] = false;
-		
+
 		samples_disabled = !samples_disabled;
-		
+
 		JE_drawTextWindow(samples_disabled ? miscText[17] : miscText[18]);
 	}
-	
+
 	/* {MUTE MUSIC} */
 	if (keysactive[SDLK_m])
 	{
 		keysactive[SDLK_m] = false;
-		
+
 		music_disabled = !music_disabled;
 		if (!music_disabled)
 			restart_song();
-		
+
 		JE_drawTextWindow(music_disabled ? miscText[35] : miscText[36]);
 	}
-	
+
 	if (keysactive[SDLK_BACKSPACE])
 	{
 		/* toggle screenshot pause */
@@ -2835,49 +2835,49 @@ void JE_pauseGame( void )
 {
 	JE_boolean done = false;
 	JE_word mouseX, mouseY;
-	
+
 	tempScreenSeg = VGAScreenSeg; // sega000
 	if (!superPause)
 	{
 		JE_dString(120, 90, miscText[22], FONT_SHAPES);
-		
+
 		VGAScreen = VGAScreenSeg;
 		JE_showVGA();
 	}
-	
+
 	set_volume(tyrMusicVolume / 2, fxVolume);
-	
+
 	if (isNetworkGame)
 	{
 		network_prepare(PACKET_GAME_PAUSE);
 		network_send(4);  // PACKET_GAME_PAUSE
-		
+
 		while (true)
 		{
 			service_SDL_events(false);
-			
+
 			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_GAME_PAUSE)
 			{
 				network_update();
 				break;
 			}
-			
+
 			network_update();
 			network_check();
-			
+
 			SDL_Delay(16);
 		}
 	}
-	
+
 	wait_noinput(false, false, true); // TODO: should up the joystick repeat temporarily instead
-	
+
 	do
 	{
 		setjasondelay(2);
-		
+
 		push_joysticks_as_keyboard();
 		service_SDL_events(true);
-		
+
 		if ((newkey && lastkey_sym != SDLK_LCTRL && lastkey_sym != SDLK_RCTRL && lastkey_sym != SDLK_LALT && lastkey_sym != SDLK_RALT)
 		    || JE_mousePosition(&mouseX, &mouseY) > 0)
 		{
@@ -2888,33 +2888,33 @@ void JE_pauseGame( void )
 			}
 			done = true;
 		}
-		
+
 		if (isNetworkGame)
 		{
 			network_check();
-			
+
 			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_WAITING)
 			{
 				network_check();
-				
+
 				done = true;
 			}
 		}
-		
+
 		wait_delay();
 	} while (!done);
-	
+
 	if (isNetworkGame)
 	{
 		while (!network_is_sync())
 		{
 			service_SDL_events(false);
-			
+
 			network_check();
 			SDL_Delay(16);
 		}
 	}
-	
+
 	set_volume(tyrMusicVolume, fxVolume);
 
 	tempScreenSeg = VGAScreen;
@@ -2930,11 +2930,11 @@ void JE_playerMovement( Player *this_player,
 {
 	JE_integer mouseXC, mouseYC;
 	JE_integer accelXC, accelYC;
-	
+
 	if (playerNum_ == 2 || !twoPlayerMode)
 	{
 		tempW = weaponPort[this_player->items.weapon[REAR_WEAPON].id].opnum;
-		
+
 		if (this_player->weapon_mode > tempW)
 			this_player->weapon_mode = 1;
 	}
@@ -2966,7 +2966,7 @@ redo:
 		if (this_player->exploding_ticks > 0)
 		{
 			--this_player->exploding_ticks;
-			
+
 			if (levelEndFxWait > 0)
 			{
 				levelEndFxWait--;
@@ -2995,7 +2995,7 @@ redo:
 				if (*this_player->lives > 1)  // respawn if any extra lives
 				{
 					--(*this_player->lives);
-					
+
 					reallyEndLevel = false;
 					shotMultiPos[playerNum_-1] = 0;
 					calc_purple_balls_needed(this_player);
@@ -3040,7 +3040,7 @@ redo:
 		if (this_player->exploding_ticks == 0)
 		{
 			this_player->shield = 0;
-			
+
 			if (this_player->armor > 0)
 			{
 				--this_player->armor;
@@ -3056,7 +3056,7 @@ redo:
 			VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 			JE_drawArmor();
 			VGAScreen = game_screen; /* side-effect of game_screen */
-			
+
 			// as if instant death weren't enough, player also gets infinite lives in order to enjoy an infinite number of deaths -_-
 			if (*player[0].lives < 11)
 				++(*player[0].lives);
@@ -3069,7 +3069,7 @@ redo:
 		explosionFollowAmountX = explosionFollowAmountY = 0;
 		return;
 	}
-	
+
 	if (!endLevel)
 	{
 		*mouseX_ = this_player->x;
@@ -3078,20 +3078,20 @@ redo:
 		button[2-1] = false;
 		button[3-1] = false;
 		button[4-1] = false;
-		
+
 		/* --- Movement Routine Beginning --- */
-		
+
 		if (!isNetworkGame || playerNum_ == thisPlayerNum)
 		{
 			if (endLevel)
 			{
 				this_player->y -= 2;
 			}
-			else 
+			else
 			{
 				if (record_demo || play_demo)
 					inputDevice = 1;  // keyboard is required device for demo recording
-				
+
 				// demo playback input
 				if (play_demo)
 				{
@@ -3101,7 +3101,7 @@ redo:
 						levelEnd = 40;
 					}
 				}
-				
+
 				/* joystick input */
 				if ((inputDevice == 0 || inputDevice >= 3) && joysticks > 0)
 				{
@@ -3110,12 +3110,12 @@ redo:
 					for (; j < j_max; j++)
 					{
 						poll_joystick(j);
-						
+
 						if (joystick[j].analog)
 						{
 							mouseXC += joystick_axis_reduce(j, joystick[j].x);
 							mouseYC += joystick_axis_reduce(j, joystick[j].y);
-							
+
 							link_gun_analog = joystick_analog_angle(j, &link_gun_angle);
 						}
 						else
@@ -3123,39 +3123,39 @@ redo:
 							this_player->x += joystick[j].direction[3] ? -CURRENT_KEY_SPEED : 0 + joystick[j].direction[1] ? CURRENT_KEY_SPEED : 0;
 							this_player->y += joystick[j].direction[0] ? -CURRENT_KEY_SPEED : 0 + joystick[j].direction[2] ? CURRENT_KEY_SPEED : 0;
 						}
-						
+
 						button[0] |= joystick[j].action[0];
 						button[1] |= joystick[j].action[2];
 						button[2] |= joystick[j].action[3];
 						button[3] |= joystick[j].action_pressed[1];
-						
+
 						ingamemenu_pressed |= joystick[j].action_pressed[4];
 						pause_pressed |= joystick[j].action_pressed[5];
 					}
 				}
-				
+
 				service_SDL_events(false);
-				
+
 				/* mouse input */
 				if ((inputDevice == 0 || inputDevice == 2) && mouseInstalled)
 				{
 					button[0] |= mouse_pressed[0];
 					button[1] |= mouse_pressed[1];
 					button[2] |= mouse_threeButton ? mouse_pressed[2] : mouse_pressed[1];
-					
+
 					if (input_grabbed)
 					{
 						mouseXC += mouse_x - 159;
 						mouseYC += mouse_y - 100;
 					}
-					
+
 					if ((!isNetworkGame || playerNum_ == thisPlayerNum)
 					    && (!galagaMode || (playerNum_ == 2 || !twoPlayerMode || player[1].exploding_ticks > 0)))
 					{
 						set_mouse_position(159, 100);
 					}
 				}
-				
+
 				/* keyboard input */
 				if ((inputDevice == 0 || inputDevice == 1) && !play_demo)
 				{
@@ -3163,65 +3163,65 @@ redo:
 						this_player->y -= CURRENT_KEY_SPEED;
 					if (keysactive[keySettings[1]])
 						this_player->y += CURRENT_KEY_SPEED;
-					
+
 					if (keysactive[keySettings[2]])
 						this_player->x -= CURRENT_KEY_SPEED;
 					if (keysactive[keySettings[3]])
 						this_player->x += CURRENT_KEY_SPEED;
-					
+
 					button[0] |= keysactive[keySettings[4]];
 					button[3] |= keysactive[keySettings[5]];
 					button[1] |= keysactive[keySettings[6]];
 					button[2] |= keysactive[keySettings[7]];
-					
+
 					if (constantPlay)
 					{
 						for (unsigned int i = 0; i < 4; i++)
 							button[i] = true;
-						
+
 						++this_player->y;
 						this_player->x += constantLastX;
 					}
-					
+
 					// TODO: check if demo recording still works
 					if (record_demo)
 					{
 						bool new_input = false;
-						
+
 						for (unsigned int i = 0; i < 8; i++)
 						{
 							bool temp = demo_keys & (1 << i);
 							if (temp != keysactive[keySettings[i]])
 								new_input = true;
 						}
-						
+
 						demo_keys_wait++;
-						
+
 						if (new_input)
 						{
 							demo_keys_wait = SDL_Swap16(demo_keys_wait);
 							efwrite(&demo_keys_wait, sizeof(Uint16), 1, demo_file);
-							
+
 							demo_keys = 0;
 							for (unsigned int i = 0; i < 8; i++)
 								demo_keys |= keysactive[keySettings[i]] ? (1 << i) : 0;
-							
+
 							fputc(demo_keys, demo_file);
-							
+
 							demo_keys_wait = 0;
 						}
 					}
 				}
-				
+
 				if (smoothies[9-1])
 				{
 					*mouseY_ = this_player->y - (*mouseY_ - this_player->y);
 					mouseYC = -mouseYC;
 				}
-				
+
 				accelXC += this_player->x - *mouseX_;
 				accelYC += this_player->y - *mouseY_;
-				
+
 				if (mouseXC > 30)
 					mouseXC = 30;
 				else if (mouseXC < -30)
@@ -3230,7 +3230,7 @@ redo:
 					mouseYC = 30;
 				else if (mouseYC < -30)
 					mouseYC = -30;
-				
+
 				if (mouseXC > 0)
 					this_player->x += (mouseXC + 3) / 4;
 				else if (mouseXC < 0)
@@ -3239,7 +3239,7 @@ redo:
 					this_player->y += (mouseYC + 3) / 4;
 				else if (mouseYC < 0)
 					this_player->y += (mouseYC - 3) / 4;
-				
+
 				if (mouseXC > 3)
 					accelXC++;
 				else if (mouseXC < -2)
@@ -3248,9 +3248,9 @@ redo:
 					accelYC++;
 				else if (mouseYC < -2)
 					accelYC--;
-				
+
 			}   /*endLevel*/
-			
+
 			if (isNetworkGame && playerNum_ == thisPlayerNum)
 			{
 				Uint16 buttons = 0;
@@ -3259,44 +3259,44 @@ redo:
 					buttons <<= 1;
 					buttons |= button[i];
 				}
-				
+
 				SDLNet_Write16(this_player->x - *mouseX_, &packet_state_out[0]->data[4]);
 				SDLNet_Write16(this_player->y - *mouseY_, &packet_state_out[0]->data[6]);
 				SDLNet_Write16(accelXC,                   &packet_state_out[0]->data[8]);
 				SDLNet_Write16(accelYC,                   &packet_state_out[0]->data[10]);
 				SDLNet_Write16(buttons,                   &packet_state_out[0]->data[12]);
-				
+
 				this_player->x = *mouseX_;
 				this_player->y = *mouseY_;
-				
+
 				button[0] = false;
 				button[1] = false;
 				button[2] = false;
 				button[3] = false;
-			
+
 				accelXC = 0;
 				accelYC = 0;
 			}
 		}  /*isNetworkGame*/
-		
+
 		/* --- Movement Routine Ending --- */
-		
+
 		moveOk = true;
-		
+
 		if (isNetworkGame && !network_state_is_reset())
 		{
 			if (playerNum_ != thisPlayerNum)
 			{
 				if (thisPlayerNum == 2)
 					difficultyLevel = SDLNet_Read16(&packet_state_in[0]->data[16]);
-				
+
 				Uint16 buttons = SDLNet_Read16(&packet_state_in[0]->data[12]);
 				for (int i = 0; i < 4; i++)
 				{
 					button[i] = buttons & 1;
 					buttons >>= 1;
 				}
-				
+
 				this_player->x += (Sint16)SDLNet_Read16(&packet_state_in[0]->data[4]);
 				this_player->y += (Sint16)SDLNet_Read16(&packet_state_in[0]->data[6]);
 				accelXC = (Sint16)SDLNet_Read16(&packet_state_in[0]->data[8]);
@@ -3310,33 +3310,33 @@ redo:
 					button[i] = buttons & 1;
 					buttons >>= 1;
 				}
-				
+
 				this_player->x += (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[4]);
 				this_player->y += (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[6]);
 				accelXC = (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[8]);
 				accelYC = (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[10]);
 			}
 		}
-		
+
 		/*Street-Fighter codes*/
 		JE_SFCodes(playerNum_, this_player->x, this_player->y, *mouseX_, *mouseY_);
-		
+
 		if (moveOk)
 		{
 			/* END OF MOVEMENT ROUTINES */
-			
+
 			/*Linking Routines*/
-			
+
 			if (twoPlayerMode && !twoPlayerLinked && this_player->x == *mouseX_ && this_player->y == *mouseY_
 			    && abs(player[0].x - player[1].x) < 8 && abs(player[0].y - player[1].y) < 8
 			    && player[0].is_alive && player[1].is_alive && !galagaMode)
 			{
 				twoPlayerLinked = true;
 			}
-			
+
 			if (playerNum_ == 1 && (button[3-1] || button[2-1]) && !galagaMode)
 				twoPlayerLinked = false;
-			
+
 			if (twoPlayerMode && twoPlayerLinked && playerNum_ == 2
 			    && (this_player->x != *mouseX_ || this_player->y != *mouseY_))
 			{
@@ -3349,12 +3349,12 @@ redo:
 					else
 					{
 						JE_real tempR;
-						
+
 						if (abs(this_player->x - *mouseX_) > abs(this_player->y - *mouseY_))
 							tempR = (this_player->x - *mouseX_ > 0) ? M_PI_2 : (M_PI + M_PI_2);
 						else
 							tempR = (this_player->y - *mouseY_ > 0) ? 0 : M_PI;
-						
+
 						if (fabsf(linkGunDirec - tempR) < 0.3f)
 							linkGunDirec = tempR;
 						else if (linkGunDirec < tempR && linkGunDirec - tempR > -3.24f)
@@ -3364,7 +3364,7 @@ redo:
 						else
 							linkGunDirec += 0.2f;
 					}
-					
+
 					if (linkGunDirec >= (2 * M_PI))
 						linkGunDirec -= (2 * M_PI);
 					else if (linkGunDirec < 0)
@@ -3377,10 +3377,10 @@ redo:
 			}
 		}
 	}
-	
+
 	if (levelEnd > 0 && all_players_dead())
 		reallyEndLevel = true;
-	
+
 	/* End Level Fade-Out */
 	if (this_player->is_alive && endLevel)
 	{
@@ -3393,19 +3393,19 @@ redo:
 			this_player->y -= levelEndWarp;
 			if (this_player->y < -200)
 				reallyEndLevel = true;
-			
+
 			tempI = 1;
 			tempW2 = this_player->y;
 			tempI2 = abs(41 - levelEnd);
 			if (tempI2 > 20)
 				tempI2 = 20;
-			
+
 			for (int z = 1; z <= tempI2; z++)
 			{
 				tempW2 += tempI;
 				tempI++;
 			}
-			
+
 			for (int z = 1; z <= tempI2; z++)
 			{
 				tempW2 -= tempI;
@@ -3430,10 +3430,10 @@ redo:
 			}
 		}
 	}
-	
+
 	if (play_demo)
 		JE_dString(115, 10, miscText[7], SMALL_FONT_SHAPES); // insert coin
-	
+
 	if (this_player->is_alive && !endLevel)
 	{
 		if (!twoPlayerLinked || playerNum_ < 2)
@@ -3445,14 +3445,14 @@ redo:
 					this_player->sidekick[LEFT_SIDEKICK].x = *mouseX_ - 14;
 					this_player->sidekick[LEFT_SIDEKICK].y = *mouseY_;
 				}
-				
+
 				if (this_player->sidekick[RIGHT_SIDEKICK].style == 0)
 				{
 					this_player->sidekick[RIGHT_SIDEKICK].x = *mouseX_ + 16;
 					this_player->sidekick[RIGHT_SIDEKICK].y = *mouseY_;
 				}
 			}
-			
+
 			if (this_player->x_friction_ticks > 0)
 			{
 				--this_player->x_friction_ticks;
@@ -3460,13 +3460,13 @@ redo:
 			else
 			{
 				this_player->x_friction_ticks = 1;
-				
+
 				if (this_player->x_velocity < 0)
 					++this_player->x_velocity;
 				else if (this_player->x_velocity > 0)
 					--this_player->x_velocity;
 			}
-			
+
 			if (this_player->y_friction_ticks > 0)
 			{
 				--this_player->y_friction_ticks;
@@ -3474,22 +3474,22 @@ redo:
 			else
 			{
 				this_player->y_friction_ticks = 2;
-				
+
 				if (this_player->y_velocity < 0)
 					++this_player->y_velocity;
 				else if (this_player->y_velocity > 0)
 					--this_player->y_velocity;
 			}
-			
+
 			this_player->x_velocity += accelXC;
 			this_player->y_velocity += accelYC;
-			
+
 			this_player->x_velocity = MIN(MAX(-4, this_player->x_velocity), 4);
 			this_player->y_velocity = MIN(MAX(-4, this_player->y_velocity), 4);
-			
+
 			this_player->x += this_player->x_velocity;
 			this_player->y += this_player->y_velocity;
-			
+
 			// if player moved, add new ship x, y history entry
 			if (this_player->x - *mouseX_ != 0 || this_player->y - *mouseY_ != 0)
 			{
@@ -3509,10 +3509,10 @@ redo:
 			else
 				this_player->x = player[0].x;
 			this_player->y = player[0].y + 8;
-			
+
 			this_player->x_velocity = player[0].x_velocity;
 			this_player->y_velocity = 4;
-			
+
 			// turret direction marker/shield
 			shotMultiPos[SHOT_MISC] = 0;
 			JE_initPlayerShot(0, SHOT_MISC, this_player->x + 1 + roundf(sinf(linkGunDirec + 0.2f) * 26), this_player->y + roundf(cosf(linkGunDirec + 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
@@ -3520,7 +3520,7 @@ redo:
 			JE_initPlayerShot(0, SHOT_MISC, this_player->x + 1 + roundf(sinf(linkGunDirec - 0.2f) * 26), this_player->y + roundf(cosf(linkGunDirec - 0.2f) * 26), *mouseX_, *mouseY_, 148, playerNum_);
 			shotMultiPos[SHOT_MISC] = 0;
 			JE_initPlayerShot(0, SHOT_MISC, this_player->x + 1 + roundf(sinf(linkGunDirec) * 26), this_player->y + roundf(cosf(linkGunDirec) * 26), *mouseX_, *mouseY_, 147, playerNum_);
-			
+
 			if (shotRepeat[SHOT_REAR] > 0)
 			{
 				--shotRepeat[SHOT_REAR];
@@ -3531,7 +3531,7 @@ redo:
 				JE_initPlayerShot(0, SHOT_REAR, this_player->x + 1 + roundf(sinf(linkGunDirec) * 20), this_player->y + roundf(cosf(linkGunDirec) * 20), *mouseX_, *mouseY_, linkGunWeapons[this_player->items.weapon[REAR_WEAPON].id-1], playerNum_);
 				playerShotData[b].shotXM = -roundf(sinf(linkGunDirec) * playerShotData[b].shotYM);
 				playerShotData[b].shotYM = -roundf(cosf(linkGunDirec) * playerShotData[b].shotYM);
-				
+
 				switch (this_player->items.weapon[REAR_WEAPON].id)
 				{
 				case 27:
@@ -3563,7 +3563,7 @@ redo:
 			}
 		}
 	}
-	
+
 	if (!endLevel)
 	{
 		if (this_player->x > 256)
@@ -3576,7 +3576,7 @@ redo:
 			this_player->x = 40;
 			constantLastX = -constantLastX;
 		}
-		
+
 		if (isNetworkGame && playerNum_ == 1)
 		{
 			if (this_player->y > 154)
@@ -3587,29 +3587,29 @@ redo:
 			if (this_player->y > 160)
 				this_player->y = 160;
 		}
-		
+
 		if (this_player->y < 10)
 			this_player->y = 10;
-		
+
 		tempI2 = this_player->x_velocity / 2;
 		tempI2 += (this_player->x - *mouseX_) / 6;
-		
+
 		if (tempI2 < -2)
 			tempI2 = -2;
 		else if (tempI2 > 2)
 			tempI2 = 2;
-		
+
 		tempI  = tempI2 * 2 + shipGr_;
-		
+
 		explosionFollowAmountX = this_player->x - this_player->last_x_explosion_follow;
 		explosionFollowAmountY = this_player->y - this_player->last_y_explosion_follow;
-		
+
 		if (explosionFollowAmountY < 0)
 			explosionFollowAmountY = 0;
-		
+
 		this_player->last_x_explosion_follow = this_player->x;
 		this_player->last_y_explosion_follow = this_player->y;
-		
+
 		if (shipGr_ == 0)
 		{
 			if (background2)
@@ -3642,11 +3642,11 @@ redo:
 				}
 			}
 		}
-		
+
 		if (this_player->invulnerable_ticks > 0)
 		{
 			--this_player->invulnerable_ticks;
-			
+
 			if (shipGr_ == 0)
 			{
 				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, tempI + 13);
@@ -3714,7 +3714,7 @@ redo:
 				blit_sprite2x2(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, tempI);
 		}
 	}  // !endLevel
-	
+
 	/*Options Location*/
 	if (playerNum_ == 2 && shipGr_ == 0)  // if dragonwing
 	{
@@ -3723,14 +3723,14 @@ redo:
 			this_player->sidekick[LEFT_SIDEKICK].x = this_player->x - 14 + tempI;
 			this_player->sidekick[LEFT_SIDEKICK].y = this_player->y;
 		}
-		
+
 		if (this_player->sidekick[RIGHT_SIDEKICK].style == 0)
 		{
 			this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x + 17 + tempI;
 			this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y;
 		}
 	}
-	
+
 	if (moveOk)
 	{
 		if (this_player->is_alive)
@@ -3739,7 +3739,7 @@ redo:
 			{
 				this_player->delta_x_shot_move = this_player->x - this_player->last_x_shot_move;
 				this_player->delta_y_shot_move = this_player->y - this_player->last_y_shot_move;
-				
+
 				/* PLAYER SHOT Change */
 				if (button[4-1])
 				{
@@ -3747,7 +3747,7 @@ redo:
 					if (portConfigDone)
 					{
 						shotMultiPos[SHOT_REAR] = 0;
-						
+
 						if (superArcadeMode != SA_NONE && superArcadeMode <= SA_NORTSHIPZ)
 						{
 							shotMultiPos[SHOT_SPECIAL] = 0;
@@ -3765,32 +3765,32 @@ redo:
 						}
 						else if (++this_player->weapon_mode > JE_portConfigs())
 							this_player->weapon_mode = 1;
-						
+
 						JE_drawPortConfigButtons();
 						portConfigDone = false;
 					}
 				}
-				
+
 				/* PLAYER SHOT Creation */
-				
+
 				/*SpecialShot*/
 				if (!galagaMode)
 					JE_doSpecialShot(playerNum_, &this_player->armor, &this_player->shield);
-				
+
 				/*Normal Main Weapons*/
 				if (!(twoPlayerLinked && playerNum_ == 2))
 				{
 					int min, max;
-					
+
 					if (!twoPlayerMode)
 						min = 1, max = 2;
 					else
 						min = max = playerNum_;
-					
+
 					for (temp = min - 1; temp < max; temp++)
 					{
 						const uint item = this_player->items.weapon[temp].id;
-						
+
 						if (item > 0)
 						{
 							if (shotRepeat[temp] > 0)
@@ -3801,20 +3801,20 @@ redo:
 							{
 								const uint item_power = galagaMode ? 0 : this_player->items.weapon[temp].power - 1,
 								           item_mode = (temp == REAR_WEAPON) ? this_player->weapon_mode - 1 : 0;
-								
+
 								JE_initPlayerShot(item, temp, this_player->x, this_player->y, *mouseX_, *mouseY_, weaponPort[item].op[item_mode][item_power], playerNum_);
 							}
 						}
 					}
 				}
-				
+
 				/*Super Charge Weapons*/
 				if (playerNum_ == 2)
 				{
-				
+
 					if (!twoPlayerLinked)
 						blit_sprite2(VGAScreen, this_player->x + (shipGr_ == 0) + 1, this_player->y - 13, eShapes6, 77 + chargeLevel + chargeGr * 19);
-					
+
 					if (chargeGrWait > 0)
 					{
 						chargeGrWait--;
@@ -3826,12 +3826,12 @@ redo:
 							chargeGr = 0;
 						chargeGrWait = 3;
 					}
-					
+
 					if (chargeLevel > 0)
 					{
 						fill_rectangle_xy(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
 					}
-					
+
 					if (chargeWait > 0)
 					{
 						chargeWait--;
@@ -3840,15 +3840,15 @@ redo:
 					{
 						if (chargeLevel < chargeMax)
 							chargeLevel++;
-						
+
 						chargeWait = 28 - this_player->items.weapon[REAR_WEAPON].power * 2;
 						if (difficultyLevel > 3)
 							chargeWait -= 5;
 					}
-					
+
 					if (chargeLevel > 0)
 						fill_rectangle_xy(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 204);
-					
+
 					if (shotRepeat[SHOT_P2_CHARGE] > 0)
 					{
 						--shotRepeat[SHOT_P2_CHARGE];
@@ -3857,20 +3857,20 @@ redo:
 					{
 						shotMultiPos[SHOT_P2_CHARGE] = 0;
 						JE_initPlayerShot(16, SHOT_P2_CHARGE, this_player->x, this_player->y, *mouseX_, *mouseY_, chargeGunWeapons[player[1].items.weapon[REAR_WEAPON].id-1] + chargeLevel, playerNum_);
-						
+
 						if (chargeLevel > 0)
 							fill_rectangle_xy(VGAScreenSeg, 269, 107 + (chargeLevel - 1) * 3, 275, 108 + (chargeLevel - 1) * 3, 193);
-						
+
 						chargeLevel = 0;
 						chargeWait = 30 - this_player->items.weapon[REAR_WEAPON].power * 2;
 					}
 				}
-				
+
 				/*SUPER BOMB*/
 				temp = playerNum_;
 				if (temp == 0)
 					temp = 1;  /*Get whether player 1 or 2*/
-				
+
 				if (player[temp-1].superbombs > 0)
 				{
 					if (shotRepeat[SHOT_P1_SUPERBOMB + temp-1] > 0)
@@ -3884,14 +3884,14 @@ redo:
 						JE_initPlayerShot(16, SHOT_P1_SUPERBOMB + temp-1, this_player->x, this_player->y, *mouseX_, *mouseY_, 535, playerNum_);
 					}
 				}
-				
+
 				// sidekicks
-				
+
 				if (this_player->sidekick[LEFT_SIDEKICK].style == 4 && this_player->sidekick[RIGHT_SIDEKICK].style == 4)
 					optionSatelliteRotate += 0.2f;
 				else if (this_player->sidekick[LEFT_SIDEKICK].style == 4 || this_player->sidekick[RIGHT_SIDEKICK].style == 4)
 					optionSatelliteRotate += 0.15f;
-				
+
 				switch (this_player->sidekick[LEFT_SIDEKICK].style)
 				{
 				case 1:  // trailing
@@ -3908,7 +3908,7 @@ redo:
 					this_player->sidekick[LEFT_SIDEKICK].y = this_player->y + roundf(cosf(optionSatelliteRotate) * 20);
 					break;
 				}
-				
+
 				switch (this_player->sidekick[RIGHT_SIDEKICK].style)
 				{
 				case 4:  // orbitting
@@ -3930,7 +3930,7 @@ redo:
 								temp = 2;
 							else
 								temp = 0;
-							
+
 							if (this_player->sidekick[RIGHT_SIDEKICK].y > (this_player->y - 20) + 5)
 							{
 								temp = 2;
@@ -3953,23 +3953,23 @@ redo:
 							{
 								optionAttachmentMove += 1 + optionAttachmentReturn;
 							}
-							
+
 							if (optionAttachmentReturn)
 								temp = temp * 2;
 							if (abs(this_player->sidekick[RIGHT_SIDEKICK].x - this_player->x) < temp)
 								temp = 1;
-							
+
 							if (this_player->sidekick[RIGHT_SIDEKICK].x > this_player->x)
 								this_player->sidekick[RIGHT_SIDEKICK].x -= temp;
 							else if (this_player->sidekick[RIGHT_SIDEKICK].x < this_player->x)
 								this_player->sidekick[RIGHT_SIDEKICK].x += temp;
-							
+
 							if (abs(this_player->sidekick[RIGHT_SIDEKICK].y - (this_player->y - 20)) + abs(this_player->sidekick[RIGHT_SIDEKICK].x - this_player->x) < 8)
 							{
 								optionAttachmentLinked = true;
 								soundQueue[2] = S_CLINK;
 							}
-							
+
 							if (button[3-1])
 								optionAttachmentReturn = true;
 						}
@@ -3991,20 +3991,20 @@ redo:
 							soundQueue[3] = S_WEAPON_26;
 						}
 					}
-					
+
 					if (this_player->sidekick[RIGHT_SIDEKICK].y < 10)
 						this_player->sidekick[RIGHT_SIDEKICK].y = 10;
 					break;
 				}
-				
+
 				if (playerNum_ == 2 || !twoPlayerMode)  // if player has sidekicks
 				{
 					for (uint i = 0; i < COUNTOF(player->items.sidekick); ++i)
 					{
 						uint shot_i = (i == 0) ? SHOT_LEFT_SIDEKICK : SHOT_RIGHT_SIDEKICK;
-						
+
 						JE_OptionType *this_option = &options[this_player->items.sidekick[i]];
-						
+
 						// fire/refill sidekick
 						if (this_option->wport > 0)
 						{
@@ -4015,7 +4015,7 @@ redo:
 							else
 							{
 								const int ammo_max = this_player->sidekick[i].ammo_max;
-								
+
 								if (ammo_max > 0)  // sidekick has limited ammo
 								{
 									if (this_player->sidekick[i].ammo_refill_ticks > 0)
@@ -4025,19 +4025,19 @@ redo:
 									else  // refill one ammo
 									{
 										this_player->sidekick[i].ammo_refill_ticks = this_player->sidekick[i].ammo_refill_ticks_max;
-										
+
 										if (this_player->sidekick[i].ammo < ammo_max)
 											++this_player->sidekick[i].ammo;
-										
+
 										// draw sidekick refill ammo gauge
 										const int y = hud_sidekick_y[twoPlayerMode ? 1 : 0][i] + 13;
 										draw_segmented_gauge(VGAScreenSeg, 284, y, 112, 2, 2, MAX(1, ammo_max / 10), this_player->sidekick[i].ammo);
 									}
-									
+
 									if (button[1 + i] && this_player->sidekick[i].ammo > 0)
 									{
 										JE_initPlayerShot(this_option->wport, shot_i, this_player->sidekick[i].x, this_player->sidekick[i].y, *mouseX_, *mouseY_, this_option->wpnum + this_player->sidekick[i].charge, playerNum_);
-										
+
 										--this_player->sidekick[i].ammo;
 										if (this_player->sidekick[i].charge > 0)
 										{
@@ -4046,7 +4046,7 @@ redo:
 										}
 										this_player->sidekick[i].charge_ticks = 20;
 										this_player->sidekick[i].animation_enabled = true;
-										
+
 										// draw sidekick discharge ammo gauge
 										const int y = hud_sidekick_y[twoPlayerMode ? 1 : 0][i] + 13;
 										fill_rectangle_xy(VGAScreenSeg, 284, y, 312, y + 2, 0);
@@ -4058,7 +4058,7 @@ redo:
 									if (button[0] || button[1 + i])
 									{
 										JE_initPlayerShot(this_option->wport, shot_i, this_player->sidekick[i].x, this_player->sidekick[i].y, *mouseX_, *mouseY_, this_option->wpnum + this_player->sidekick[i].charge, playerNum_);
-										
+
 										if (this_player->sidekick[i].charge > 0)
 										{
 											shotMultiPos[shot_i] = 0;
@@ -4075,14 +4075,14 @@ redo:
 			}  // !endLevel
 		} // this_player->is_alive
 	} // moveOK
-	
+
 	// draw sidekicks
 	if ((playerNum_ == 2 || !twoPlayerMode) && !endLevel)
 	{
 		for (uint i = 0; i < COUNTOF(this_player->sidekick); ++i)
 		{
 			JE_OptionType *this_option = &options[this_player->items.sidekick[i]];
-			
+
 			if (this_option->option > 0)
 			{
 				if (this_player->sidekick[i].animation_enabled)
@@ -4093,17 +4093,17 @@ redo:
 						this_player->sidekick[i].animation_enabled = (this_option->option == 1);
 					}
 				}
-				
+
 				const int x = this_player->sidekick[i].x,
 				          y = this_player->sidekick[i].y;
 				const uint sprite = this_option->gr[this_player->sidekick[i].animation_frame] + this_player->sidekick[i].charge;
-				
+
 				if (this_player->sidekick[i].style == 1 || this_player->sidekick[i].style == 2)
 					blit_sprite2x2(VGAScreen, x - 6, y, eShapes6, sprite);
 				else
 					blit_sprite2(VGAScreen, x, y, shapes9, sprite);
 			}
-			
+
 			if (--this_player->sidekick[i].charge_ticks == 0)
 			{
 				if (this_player->sidekick[i].charge < this_option->pwr)
@@ -4181,20 +4181,20 @@ const char *JE_getName( JE_byte pnum )
 		return network_player_name;
 	else if (network_opponent_name[0] != '\0')
 		return network_opponent_name;
-	
+
 	return miscText[47 + pnum];
 }
 
 void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 {
 	char tempStr[256];
-	
+
 	for (int z = 0; z < 100; z++)
 	{
 		if (enemyAvail[z] != 1)
 		{
 			tempI3 = enemy[z].ex + enemy[z].mapoffset;
-			
+
 			if (abs(this_player->x - tempI3) < 12 && abs(this_player->y - enemy[z].ey) < 14)
 			{   /*Collide*/
 				tempI4 = enemy[z].evalue;
@@ -4203,7 +4203,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 					if (tempI4 == 30000)  // spawn dragonwing in galaga mode, otherwise just a purple ball
 					{
 						this_player->cash += 100;
-						
+
 						if (!galagaMode)
 						{
 							handle_got_purple_ball(this_player);
@@ -4226,9 +4226,9 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 					{
 						shotMultiPos[SHOT_FRONT] = 0;
 						shotRepeat[SHOT_FRONT] = 10;
-						
+
 						tempW = SAWeapon[superArcadeMode-1][tempI4 - 30000-1];
-						
+
 						// if picked up already-owned weapon, power weapon up
 						if (tempW == player[0].items.weapon[FRONT_WEAPON].id)
 						{
@@ -4240,7 +4240,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 						{
 							handle_got_purple_ball(this_player);
 						}
-						
+
 						player[0].items.weapon[FRONT_WEAPON].id = tempW;
 						this_player->cash += 200;
 						soundQueue[7] = S_POWERUP;
@@ -4256,7 +4256,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							shotRepeat[SHOT_SPECIAL] = 10;
 							shotMultiPos[SHOT_SPECIAL2] = 0;
 							shotRepeat[SHOT_SPECIAL2] = 0;
-							
+
 							if (isNetworkGame)
 								sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], special[tempI4 - 32100].name);
 							else if (twoPlayerMode)
@@ -4278,7 +4278,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							else
 								sprintf(tempStr, "%s %s", miscText[44-1], options[tempI4 - 32000].name);
 							JE_drawTextWindow(tempStr);
-							
+
 							// if picked up a different sidekick than player already has, then reset sidekicks to least powerful, else power them up
 							if (tempI4 - 32000 != player[1].items.sidekick_series)
 							{
@@ -4289,12 +4289,12 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							{
 								++player[1].items.sidekick_level;
 							}
-							
+
 							uint temp = player[1].items.sidekick_level - 100 - 1;
 							for (uint i = 0; i < COUNTOF(player[1].items.sidekick); ++i)
 								player[1].items.sidekick[i] = optionSelect[player[1].items.sidekick_series][temp][i];
-							
-							
+
+
 							shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
 							shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
 							tempScreenSeg = VGAScreenSeg;
@@ -4307,12 +4307,12 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							enemyAvail[z] = 1;
 							sprintf(tempStr, "%s %s", miscText[64-1], options[tempI4 - 32000].name);
 							JE_drawTextWindow(tempStr);
-							
+
 							for (uint i = 0; i < COUNTOF(player[0].items.sidekick); ++i)
 								player[0].items.sidekick[i] = tempI4 - 32000;
 							shotMultiPos[SHOT_LEFT_SIDEKICK] = 0;
 							shotMultiPos[SHOT_RIGHT_SIDEKICK] = 0;
-							
+
 							tempScreenSeg = VGAScreenSeg;
 							JE_drawOptions();
 							soundQueue[7] = S_POWERUP;
@@ -4343,7 +4343,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							shotMultiPos[SHOT_REAR] = 0;
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
-							
+
 							if (player[0].items.weapon[REAR_WEAPON].power == 0)  // does this ever happen?
 								player[0].items.weapon[REAR_WEAPON].power = 1;
 						}
@@ -4371,7 +4371,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							enemyAvail[z] = 1;
 							soundQueue[7] = S_POWERUP;
 						}
-						
+
 						if (enemyAvail[z] == 1)
 						{
 							player[0].items.special = specialArcadeWeapon[tempI4 - 30000-1];
@@ -4384,7 +4384,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							}
 							this_player->cash += 250;
 						}
-						
+
 					}
 				}
 				else if (tempI4 > 20000)
@@ -4440,7 +4440,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 						else
 							strcpy(tempStr, miscText[45-1]);
 						JE_drawTextWindow(tempStr);
-						
+
 						power_up_weapon(&player[0], FRONT_WEAPON);
 						soundQueue[7] = S_POWERUP;
 					}
@@ -4453,7 +4453,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 						else
 							strcpy(tempStr, miscText[46-1]);
 						JE_drawTextWindow(tempStr);
-						
+
 						power_up_weapon(twoPlayerMode ? &player[1] : &player[0], REAR_WEAPON);
 						soundQueue[7] = S_POWERUP;
 					}
@@ -4474,12 +4474,12 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 						player[0].items.weapon[FRONT_WEAPON].id = 25;  // HOT DOG!
 						player[0].items.weapon[REAR_WEAPON].id = 26;
 						player[1].items.weapon[REAR_WEAPON].id = 26;
-						
+
 						player[0].last_items = player[0].items;
-						
+
 						for (uint i = 0; i < COUNTOF(player); ++i)
 							player[i].weapon_mode = 1;
-						
+
 						memset(shotMultiPos, 0, sizeof(shotMultiPos));
 					}
 					else if (twoPlayerLinked)
@@ -4497,30 +4497,30 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 				else if (this_player->invulnerable_ticks == 0 && enemyAvail[z] == 0 &&
 				         enemyDat[enemy[z].enemytype].explosiontype % 2 == 0)
 				{
-					
+
 					tempI3 = enemy[z].armorleft;
 					if (tempI3 > damageRate)
 						tempI3 = damageRate;
-					
+
 					JE_playerDamage(tempI3, this_player);
-					
+
 					// player ship gets push-back from collision
 					if (enemy[z].armorleft > 0)
 					{
 						this_player->x_velocity += (enemy[z].exc * enemy[z].armorleft) / 2;
 						this_player->y_velocity += (enemy[z].eyc * enemy[z].armorleft) / 2;
 					}
-					
+
 					tempI = enemy[z].armorleft;
 					if (tempI == 255)
 						tempI = 30000;
-					
+
 					temp = enemy[z].linknum;
 					if (temp == 0)
 						temp = 255;
-					
+
 					b = z;
-					
+
 					if (tempI > tempI2)
 					{
 						if (enemy[z].armorleft != 255)
@@ -4540,11 +4540,11 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 									  || (temp3 > 40 && temp3 / 20 == temp / 20 && temp3 <= temp))))
 								{
 									tempI3 = enemy[temp2].ex + enemy[temp2].mapoffset;
-									
+
 									enemy[temp2].linknum = 0;
-									
+
 									enemyAvail[temp2] = 1;
-									
+
 									if (enemyDat[enemy[temp2].enemytype].esize == 1)
 									{
 										JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);

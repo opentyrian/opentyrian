@@ -30,48 +30,48 @@
 #include <stdio.h>
 #include <string.h>
 
-void JE_pix( JE_word x, JE_word y, JE_byte c )
+void JE_pix( SDL_Surface *surface, JE_word x, JE_word y, JE_byte c )
 {
 	/* Bad things happen if we don't clip */
-	if (x <  VGAScreen->pitch && y <  VGAScreen->h)
+	if (x <  surface->pitch && y <  surface->h)
 	{
-		Uint8 *vga = VGAScreen->pixels;
-		vga[y * VGAScreen->pitch + x] = c;
+		Uint8 *vga = surface->pixels;
+		vga[y * surface->pitch + x] = c;
 	}
 }
 
-void JE_pix3( JE_word x, JE_word y, JE_byte c )
+void JE_pix3( SDL_Surface *surface, JE_word x, JE_word y, JE_byte c )
 {
 	/* Originally impemented as several direct accesses */
-	JE_pix(x, y, c);
-	JE_pix(x - 1, y, c);
-	JE_pix(x + 1, y, c);
-	JE_pix(x, y - 1, c);
-	JE_pix(x, y + 1, c);
+	JE_pix(surface, x, y, c);
+	JE_pix(surface, x - 1, y, c);
+	JE_pix(surface, x + 1, y, c);
+	JE_pix(surface, x, y - 1, c);
+	JE_pix(surface, x, y + 1, c);
 }
 
-void JE_rectangle( JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
+void JE_rectangle( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
 {
-	if (a < VGAScreen->pitch && b < VGAScreen->h &&
-	    c < VGAScreen->pitch && d < VGAScreen->h)
+	if (a < surface->pitch && b < surface->h &&
+	    c < surface->pitch && d < surface->h)
 	{
-		Uint8 *vga = VGAScreen->pixels;
+		Uint8 *vga = surface->pixels;
 		int i;
 
 		/* Top line */
-		memset(&vga[b * VGAScreen->pitch + a], e, c - a + 1);
+		memset(&vga[b * surface->pitch + a], e, c - a + 1);
 
 		/* Bottom line */
-		memset(&vga[d * VGAScreen->pitch + a], e, c - a + 1);
+		memset(&vga[d * surface->pitch + a], e, c - a + 1);
 
 		/* Left line */
-		for (i = (b + 1) * VGAScreen->pitch + a; i < (d * VGAScreen->pitch + a); i += VGAScreen->pitch)
+		for (i = (b + 1) * surface->pitch + a; i < (d * surface->pitch + a); i += surface->pitch)
 		{
 			vga[i] = e;
 		}
 
 		/* Right line */
-		for (i = (b + 1) * VGAScreen->pitch + c; i < (d * VGAScreen->pitch + c); i += VGAScreen->pitch)
+		for (i = (b + 1) * surface->pitch + c; i < (d * surface->pitch + c); i += surface->pitch)
 		{
 			vga[i] = e;
 		}
@@ -86,17 +86,17 @@ void fill_rectangle_xy( SDL_Surface *surface, int x, int y, int x2, int y2, Uint
 	SDL_FillRect(surface, &rect, color);
 }
 
-void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+void JE_barShade( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
-	if (a < VGAScreen->pitch && b < VGAScreen->h &&
-	    c < VGAScreen->pitch && d < VGAScreen->h)
+	if (a < surface->pitch && b < surface->h &&
+	    c < surface->pitch && d < surface->h)
 	{
-		Uint8 *vga = VGAScreen->pixels;
+		Uint8 *vga = surface->pixels;
 		int i, j, width;
 
 		width = c - a + 1;
 
-		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
+		for (i = b * surface->pitch + a; i <= d * surface->pitch + a; i += surface->pitch)
 		{
 			for (j = 0; j < width; j++)
 			{
@@ -108,17 +108,17 @@ void JE_barShade( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2
 	}
 }
 
-void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+void JE_barBright( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
 {
-	if (a < VGAScreen->pitch && b < VGAScreen->h &&
-	    c < VGAScreen->pitch && d < VGAScreen->h)
+	if (a < surface->pitch && b < surface->h &&
+	    c < surface->pitch && d < surface->h)
 	{
-		Uint8 *vga = VGAScreen->pixels;
+		Uint8 *vga = surface->pixels;
 		int i, j, width;
 
 		width = c-a+1;
 
-		for (i = b * VGAScreen->pitch + a; i <= d * VGAScreen->pitch + a; i += VGAScreen->pitch)
+		for (i = b * surface->pitch + a; i <= d * surface->pitch + a; i += surface->pitch)
 		{
 			for (j = 0; j < width; j++)
 			{
@@ -144,10 +144,10 @@ void JE_barBright( JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y
 void draw_segmented_gauge( SDL_Surface *surface, int x, int y, Uint8 color, uint segment_width, uint segment_height, uint segment_value, uint value )
 {
 	assert(segment_width > 0 && segment_height > 0);
-	
+
 	const uint segments = value / segment_value,
 	           partial_segment = value % segment_value;
-	
+
 	for (uint i = 0; i < segments; ++i)
 	{
 		fill_rectangle_hw(surface, x, y, segment_width, segment_height, color + 12);
