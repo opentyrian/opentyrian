@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -23,6 +23,7 @@
 #include "helptext.h"
 #include "menus.h"
 #include "opentyr.h"
+#include "video.h"
 
 #include <assert.h>
 #include <string.h>
@@ -79,7 +80,7 @@ char menuInt[MAX_MENU + 1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
 void decrypt_pascal_string( char *s, int len )
 {
 	static const unsigned char crypt_key[] = { 204, 129, 63, 255, 71, 19, 25, 62, 1, 99 };
-	
+
 	for (int i = len - 1; i >= 0; --i)
 	{
 		s[i] ^= crypt_key[i % sizeof(crypt_key)];
@@ -95,13 +96,13 @@ void read_encrypted_pascal_string( char *s, int size, FILE *f )
 	{
 		int skip = MAX((len + 1) - size, 0);
 		assert(skip == 0);
-		
+
 		len -= skip;
 		efread(s, 1, len, f);
 		if (size > 0)
 			s[len] = '\0';
 		fseek(f, skip, SEEK_CUR);
-		
+
 		decrypt_pascal_string(s, len);
 	}
 }
@@ -152,7 +153,7 @@ void JE_helpBox( JE_word x, JE_word y, const char *message, JE_byte boxwidth )
 
 		} while (!(pos - startpos > boxwidth || endstring));
 
-		JE_textShade(x, y, strnztcpy(substring, message + startpos - 1, endpos - startpos), helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+		JE_textShade(VGAScreen, x, y, strnztcpy(substring, message + startpos - 1, endpos - startpos), helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 
 		y += verticalHeight;
 
@@ -160,7 +161,7 @@ void JE_helpBox( JE_word x, JE_word y, const char *message, JE_byte boxwidth )
 
 	if (endpos != pos + 1)
 	{
-		JE_textShade(x, y, message + endpos, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+		JE_textShade(VGAScreen, x, y, message + endpos, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 	}
 
 	helpBoxColor = 12;
@@ -176,193 +177,193 @@ void JE_loadHelpText( void )
 {
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
 	efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
-	
+
 	/*Online Help*/
 	skip_pascal_string(f);
 	for (int i = 0; i < MAX_HELP_MESSAGE; ++i)
 		read_encrypted_pascal_string(helpTxt[i], sizeof(helpTxt[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Planet names*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 21; ++i)
 		read_encrypted_pascal_string(pName[i], sizeof(pName[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Miscellaneous text*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 68; ++i)
 		read_encrypted_pascal_string(miscText[i], sizeof(miscText[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Little Miscellaneous text*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 5; ++i)
 		read_encrypted_pascal_string(miscTextB[i], sizeof(miscTextB[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Key names*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 11; ++i)
 		read_encrypted_pascal_string(menuInt[6][i], sizeof(menuInt[6][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Main Menu*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 7; ++i)
 		read_encrypted_pascal_string(menuText[i], sizeof(menuText[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Event text*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 9; ++i)
 		read_encrypted_pascal_string(outputs[i], sizeof(outputs[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Help topics*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 6; ++i)
 		read_encrypted_pascal_string(topicName[i], sizeof(topicName[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Main Menu Help*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 34; ++i)
 		read_encrypted_pascal_string(mainMenuHelp[i], sizeof(mainMenuHelp[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 1 - Main*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 7; ++i)
 		read_encrypted_pascal_string(menuInt[1][i], sizeof(menuInt[1][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 2 - Items*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 9; ++i)
 		read_encrypted_pascal_string(menuInt[2][i], sizeof(menuInt[2][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 3 - Options*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 8; ++i)
 		read_encrypted_pascal_string(menuInt[3][i], sizeof(menuInt[3][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*InGame Menu*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 6; ++i)
 		read_encrypted_pascal_string(inGameText[i], sizeof(inGameText[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Detail Level*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 6; ++i)
 		read_encrypted_pascal_string(detailLevel[i], sizeof(detailLevel[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Game speed text*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 5; ++i)
 		read_encrypted_pascal_string(gameSpeedText[i], sizeof(gameSpeedText[i]), f);
 	skip_pascal_string(f);
-	
+
 	// episode names
 	skip_pascal_string(f);
 	for (int i = 0; i <= 5; ++i)
 		read_encrypted_pascal_string(episode_name[i], sizeof(episode_name[i]), f);
 	skip_pascal_string(f);
-	
+
 	// difficulty names
 	skip_pascal_string(f);
 	for (int i = 0; i <= 6; ++i)
 		read_encrypted_pascal_string(difficulty_name[i], sizeof(difficulty_name[i]), f);
 	skip_pascal_string(f);
-	
+
 	// gameplay mode names
 	skip_pascal_string(f);
 	for (int i = 0; i <= 4; ++i)
 		read_encrypted_pascal_string(gameplay_name[i], sizeof(gameplay_name[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 10 - 2Player Main*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 6; ++i)
 		read_encrypted_pascal_string(menuInt[10][i], sizeof(menuInt[10][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Input Devices*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 3; ++i)
 		read_encrypted_pascal_string(inputDevices[i], sizeof(inputDevices[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Network text*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 4; ++i)
 		read_encrypted_pascal_string(networkText[i], sizeof(networkText[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 11 - 2Player Network*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 4; ++i)
 		read_encrypted_pascal_string(menuInt[11][i], sizeof(menuInt[11][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*HighScore Difficulty Names*/
 	skip_pascal_string(f);
 	for (int i = 0; i <= 10; ++i)
 		read_encrypted_pascal_string(difficultyNameB[i], sizeof(difficultyNameB[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 12 - Network Options*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 6; ++i)
 		read_encrypted_pascal_string(menuInt[12][i], sizeof(menuInt[12][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Menu 13 - Joystick*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 7; ++i)
 		read_encrypted_pascal_string(menuInt[13][i], sizeof(menuInt[13][i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Joystick Button Assignments*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 5; ++i)
 		read_encrypted_pascal_string(joyButtonNames[i], sizeof(joyButtonNames[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*SuperShips - For Super Arcade Mode*/
 	skip_pascal_string(f);
 	for (int i = 0; i <= 10; ++i)
 		read_encrypted_pascal_string(superShips[i], sizeof(superShips[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*SuperShips - For Super Arcade Mode*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 9; ++i)
 		read_encrypted_pascal_string(specialName[i], sizeof(specialName[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Secret DESTRUCT game*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 25; ++i)
 		read_encrypted_pascal_string(destructHelp[i], sizeof(destructHelp[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Secret DESTRUCT weapons*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 17; ++i)
 		read_encrypted_pascal_string(weaponNames[i], sizeof(weaponNames[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*Secret DESTRUCT modes*/
 	skip_pascal_string(f);
 	for (int i = 0; i < DESTRUCT_MODES; ++i)
 		read_encrypted_pascal_string(destructModeName[i], sizeof(destructModeName[i]), f);
 	skip_pascal_string(f);
-	
+
 	/*NEW: Ship Info*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 13; ++i)
@@ -371,12 +372,12 @@ void JE_loadHelpText( void )
 		read_encrypted_pascal_string(shipInfo[i][1], sizeof(shipInfo[i][1]), f);
 	}
 	skip_pascal_string(f);
-	
+
 	/*Menu 12 - Network Options*/
 	skip_pascal_string(f);
 	for (int i = 0; i < 5; ++i)
 		read_encrypted_pascal_string(menuInt[14][i], sizeof(menuInt[14][i]), f);
-	
+
 	fclose(f);
 }
 

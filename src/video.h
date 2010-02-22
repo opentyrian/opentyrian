@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -32,12 +32,10 @@
 
 extern bool fullscreen_enabled;
 
-extern SDL_Surface *display_surface;
+extern SDL_Surface *display_surface; //Do not write to this anywhere except in video.c or we will beat you.
 extern SDL_Surface *VGAScreen, *VGAScreenSeg;
 extern SDL_Surface *game_screen;
 extern SDL_Surface *VGAScreen2;
-
-extern SDL_Surface *tempScreenSeg; // TODO: get rid of it!
 
 void init_video( void );
 bool init_scaler( int new_scaler, bool fullscreen );

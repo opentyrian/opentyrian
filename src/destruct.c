@@ -764,9 +764,9 @@ void JE_destructMain( void )
 void JE_introScreen( void )
 {
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
-	JE_outText(JE_fontCenter(specialName[7], TINY_FONT), 90, specialName[7], 12, 5);
-	JE_outText(JE_fontCenter(miscText[64], TINY_FONT), 180, miscText[64], 15, 2);
-	JE_outText(JE_fontCenter(miscText[65], TINY_FONT), 190, miscText[65], 15, 2);
+	JE_outText(VGAScreen, JE_fontCenter(specialName[7], TINY_FONT), 90, specialName[7], 12, 5);
+	JE_outText(VGAScreen, JE_fontCenter(miscText[64], TINY_FONT), 180, miscText[64], 15, 2);
+	JE_outText(VGAScreen, JE_fontCenter(miscText[65], TINY_FONT), 190, miscText[65], 15, 2);
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
 
@@ -795,11 +795,11 @@ void DrawModeSelectMenu( enum de_mode_t mode ) {
 	/* Helper function of JE_modeSelect.  Do not use elsewhere. */
 	for (i = 0; i < DESTRUCT_MODES; i++)
 	{   /* What a large function call. */
-		JE_textShade(JE_fontCenter(destructModeName[i], TINY_FONT), 82 + i * 12, destructModeName[i], 12, (i == mode) * 4, FULL_SHADE);
+		JE_textShade(VGAScreen, JE_fontCenter(destructModeName[i], TINY_FONT), 82 + i * 12, destructModeName[i], 12, (i == mode) * 4, FULL_SHADE);
 	}
 	if (config.allow_custom == true)
 	{
-		JE_textShade(JE_fontCenter("Custom", TINY_FONT), 82 + i * 12, "Custom", 12, (i == mode) * 4, FULL_SHADE);
+		JE_textShade(VGAScreen, JE_fontCenter("Custom", TINY_FONT), 82 + i * 12, "Custom", 12, (i == mode) * 4, FULL_SHADE);
 	}
 }
 enum de_mode_t JE_modeSelect( void )
@@ -1426,14 +1426,14 @@ void JE_helpScreen( void )
 
 	for(i = 0; i < 2; i++)
 	{
-		JE_outText(100,  5 + i * 90, destructHelp[i * 12 + 0], 2, 4);
-		JE_outText(100, 15 + i * 90, destructHelp[i * 12 + 1], 2, 1);
+		JE_outText(VGAScreen, 100,  5 + i * 90, destructHelp[i * 12 + 0], 2, 4);
+		JE_outText(VGAScreen, 100, 15 + i * 90, destructHelp[i * 12 + 1], 2, 1);
 		for (j = 3; j <= 12; j++)
 		{
-			JE_outText(((j - 1) % 2) * 160 + 10, 15 + ((j - 1) / 2) * 12 + i * 90, destructHelp[i * 12 + j-1], 1, 3);
+			JE_outText(VGAScreen, ((j - 1) % 2) * 160 + 10, 15 + ((j - 1) / 2) * 12 + i * 90, destructHelp[i * 12 + j-1], 1, 3);
 		}
 	}
-	JE_outText(30, 190, destructHelp[24], 3, 4);
+	JE_outText(VGAScreen, 30, 190, destructHelp[24], 3, 4);
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
 
@@ -1457,7 +1457,7 @@ void JE_pauseScreen( void )
 
 	/* Save our current screen/game world.  We don't want to screw it up while paused. */
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
-	JE_outText(JE_fontCenter(miscText[22], TINY_FONT), 90, miscText[22], 12, 5);
+	JE_outText(VGAScreen, JE_fontCenter(miscText[22], TINY_FONT), 90, miscText[22], 12, 5);
 	JE_showVGA();
 
 	do  /* wait until user hits a key */
@@ -2381,11 +2381,11 @@ void DE_RunTickDrawHUD( void )
 
 		blit_sprite2(VGAScreen, startX +  4, 0, eShapes1, 191 + curUnit->shotType);
 
-		JE_outText   (startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
+		JE_outText   (VGAScreen, startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
 		sprintf      (tempstr, "dmg~%d~", curUnit->health);
-		JE_outText   (startX + 75, 3, tempstr, 15, 0);
+		JE_outText   (VGAScreen, startX + 75, 3, tempstr, 15, 0);
 		sprintf      (tempstr, "pts~%d~", player[i].score);
-		JE_outText   (startX + 110, 3, tempstr, 15, 0);
+		JE_outText   (VGAScreen, startX + 110, 3, tempstr, 15, 0);
 	}
 }
 void DE_RunTickGetInput( void )

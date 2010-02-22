@@ -889,14 +889,12 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 				shotMultiPos[LEFT_SIDEKICK] = 0;
 			}
 
-			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
 			break;
 
 		case 18:  // spawn right sidekick
 			player[0].items.sidekick[RIGHT_SIDEKICK] = special[specialType].wpn;
 
-			tempScreenSeg = VGAScreenSeg;
 			JE_drawOptions();
 
 			soundQueue[4] = S_POWERUP;

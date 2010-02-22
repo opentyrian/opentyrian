@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -33,27 +33,25 @@ SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *VGAScreen2;
 SDL_Surface *game_screen;
 
-SDL_Surface *tempScreenSeg = NULL;
-
 void init_video( void )
 {
 	if (SDL_WasInit(SDL_INIT_VIDEO))
 		return;
-	
+
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
 	{
 		fprintf(stderr, "error: failed to initialize SDL video: %s\n", SDL_GetError());
 		exit(1);
 	}
-	
+
 	SDL_WM_SetCaption("OpenTyrian", NULL);
-	
+
 	VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 	VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 	game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
-	
+
 	SDL_FillRect(VGAScreen, NULL, 0);
-	
+
 	if (!init_scaler(scaler, fullscreen_enabled) &&  // try desired scaler and desired fullscreen state
 	    !init_any_scaler(fullscreen_enabled) &&      // try any scaler in desired fullscreen state
 	    !init_any_scaler(!fullscreen_enabled))       // try any scaler in other fullscreen state
@@ -66,14 +64,14 @@ bool init_scaler( int new_scaler, bool fullscreen )
 {
 	if (new_scaler < 0 || new_scaler >= COUNTOF(scalers))
 		return false;
-	
+
 	int w = scalers[new_scaler].width,
 	    h = scalers[new_scaler].height;
 	int bpp = 32;
 	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
-	
+
 	bpp = SDL_VideoModeOK(w, h, bpp, flags);
-	
+
 	if (bpp < scalers[new_scaler].min_bpp)
 	{
 		// we can't get exactly what we want, but SDL will try to find something close
@@ -84,28 +82,28 @@ bool init_scaler( int new_scaler, bool fullscreen )
 		// scalers don't support 24 bpp because it's a pain
 		bpp = 32;
 	}
-	
+
 	display_surface = SDL_SetVideoMode(w, h, bpp, flags);
-	
+
 	if (display_surface == NULL)
 	{
 		fprintf(stderr, "error: failed to initialize video mode %dx%dx%d: %s\n", w, h, bpp, SDL_GetError());
 		return false;
 	}
-	
+
 	w = display_surface->w;
 	h = display_surface->h;
 	bpp = display_surface->format->BitsPerPixel;
-	
+
 	printf("initialized video: %dx%dx%d\n", w, h, bpp);
-	
+
 	scaler = new_scaler;
 	fullscreen_enabled = fullscreen;
-	
+
 	input_grab();
-	
+
 	JE_showVGA();
-	
+
 	return true;
 }
 
@@ -115,7 +113,7 @@ bool init_any_scaler( bool fullscreen )
 	for (int i = COUNTOF(scalers) - 1; i >= 0; --i)
 		if (init_scaler(i, fullscreen))
 			return true;
-	
+
 	return false;
 }
 
@@ -124,7 +122,7 @@ void deinit_video( void )
 	SDL_FreeSurface(VGAScreenSeg);
 	SDL_FreeSurface(VGAScreen2);
 	SDL_FreeSurface(game_screen);
-	
+
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
@@ -155,7 +153,7 @@ void JE_showVGA( void )
 			assert(0);
 			break;
 	}
-	
+
 	SDL_Flip(display_surface);
 }
 

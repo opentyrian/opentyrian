@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -77,40 +77,40 @@ void opentyrian_menu( void )
 	int sel = 0;
 	const int maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	bool quit = false, fade_in = true;
-	
+
 	int temp_scaler = scaler;
-	
+
 	fade_black(10);
 	JE_loadPic(13, false);
-	
+
 	draw_font_hv(VGAScreen, VGAScreen->w / 2, 5, opentyrian_str, large_font, centered, 15, -3);
-	
+
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
-	
+
 	JE_showVGA();
-	
+
 	play_song(36); // A Field for Mag
-	
+
 	do
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-		
+
 		for (int i = 0; i <= maxSel; i++)
 		{
 			const char *text = opentyrian_menu_items[i];
 			char buffer[100];
-			
+
 			if (i == 2) /* Scaler */
 			{
 				snprintf(buffer, sizeof(buffer), "Scaler: %s", scalers[temp_scaler].name);
 				text = buffer;
 			}
-			
+
 			draw_font_hv_shadow(VGAScreen, VGAScreen->w / 2, (i != maxSel) ? i * 16 + 32 : 118, text, normal_font, centered, 15, (i != sel) ? -4 : -2, false, 2);
 		}
-		
+
 		JE_showVGA();
-		
+
 		if (fade_in)
 		{
 			fade_in = false;
@@ -176,16 +176,16 @@ void opentyrian_menu( void )
 					{
 						case 0: /* About */
 							JE_playSampleNum(S_SELECT);
-							
+
 							scroller_sine(about_text);
-							
+
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 							JE_showVGA();
 							fade_in = true;
 							break;
 						case 1: /* Fullscreen */
 							JE_playSampleNum(S_SELECT);
-							
+
 							if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
 							    !init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
 							    !init_scaler(scaler, fullscreen_enabled))    // revert on fail
@@ -195,7 +195,7 @@ void opentyrian_menu( void )
 							break;
 						case 2: /* Scaler */
 							JE_playSampleNum(S_SELECT);
-							
+
 							if (scaler != temp_scaler)
 							{
 								if (!init_scaler(temp_scaler, fullscreen_enabled) &&   // try new scaler
@@ -208,10 +208,10 @@ void opentyrian_menu( void )
 							break;
 						case 3: /* Jukebox */
 							JE_playSampleNum(S_SELECT);
-							
+
 							fade_black(10);
 							jukebox();
-							
+
 							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 							JE_showVGA();
 							fade_in = true;
@@ -244,17 +244,17 @@ int main( int argc, char *argv[] )
 	printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	printf("This is free software, and you are welcome to redistribute it\n");
 	printf("under certain conditions.  See the file GPL.txt for details.\n\n");
-	
+
 	if (SDL_Init(0))
 	{
 		printf("Failed to initialize SDL: %s\n", SDL_GetError());
 		return -1;
 	}
-	
+
 	JE_loadConfiguration();
-	
+
 	xmas = xmas_time();  // arg handler may override
-	
+
 	JE_paramCheck(argc, argv);
 
 	JE_scanForEpisodes();
@@ -263,47 +263,46 @@ int main( int argc, char *argv[] )
 	init_keyboard();
 	init_joysticks();
 	printf("assuming mouse detected\n"); // SDL can't tell us if there isn't one
-	
+
 	if (xmas && (!dir_file_exists(data_dir(), "tyrianc.shp") || !dir_file_exists(data_dir(), "voicesc.snd")))
 	{
 		xmas = false;
-		
+
 		fprintf(stderr, "warning: Christmas is missing.\n");
 	}
-	
+
 	JE_loadPals();
 	JE_loadMainShapeTables(xmas ? "tyrianc.shp" : "tyrian.shp");
-	
-	tempScreenSeg = VGAScreen;
+
 	if (xmas && !xmas_prompt())
 	{
 		xmas = false;
-		
+
 		free_main_shape_tables();
 		JE_loadMainShapeTables("tyrian.shp");
 	}
-	
-	
+
+
 	/* Default Options */
 	youAreCheating = false;
 	smoothScroll = true;
 	loadDestruct = false;
-	
+
 	if (!audio_disabled)
 	{
 		printf("initializing SDL audio...\n");
-		
+
 		init_audio();
-		
+
 		load_music();
-		
+
 		JE_loadSndFile("tyrian.snd", xmas ? "voicesc.snd" : "voices.snd");
 	}
 	else
 	{
 		printf("audio disabled\n");
 	}
-	
+
 	if (record_demo)
 		printf("demo recording enabled (input limited to keyboard)\n");
 
@@ -311,7 +310,7 @@ int main( int argc, char *argv[] )
 
 	JE_loadHelpText();
 	/*debuginfo("Help text complete");*/
-	
+
 	if (isNetworkGame)
 	{
 		if (network_init())
@@ -319,20 +318,20 @@ int main( int argc, char *argv[] )
 			network_tyrian_halt(3, false);
 		}
 	}
-	
+
 #ifdef NDEBUG
 	if (!isNetworkGame)
 		intro_logos();
 #endif
-	
+
 	for (; ; )
 	{
 		JE_initPlayerData();
 		JE_sortHighScores();
-		
+
 		if (JE_titleScreen(true))
 			break;  // user quit from title screen
-		
+
 		if (loadDestruct)
 		{
 			JE_destructGame();
@@ -343,9 +342,9 @@ int main( int argc, char *argv[] )
 			JE_main();
 		}
 	}
-	
+
 	JE_tyrianHalt(0);
-	
+
 	return 0;
 }
 

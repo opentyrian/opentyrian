@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -40,18 +40,18 @@ extern JE_word armorShipDelay;
 extern JE_byte warningCol;
 extern JE_shortint warningColChange;
 
-void JE_dString( JE_word x, JE_word y, const char *s, JE_byte font );
+void JE_dString( SDL_Surface * screen, JE_word x, JE_word y, const char *s, JE_byte font );
 
 JE_word JE_fontCenter( const char *s, JE_byte font );
 JE_word JE_textWidth( const char *s, JE_byte font );
-void JE_textShade( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness, JE_byte shadetype );
-void JE_outText( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness );
-void JE_outTextModify( JE_word x, JE_word y, const char *s, JE_byte filter, JE_byte brightness, JE_byte font );
-void JE_outTextAdjust( JE_word x, JE_word y, const char *s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow );
-void JE_outTextAndDarken( JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_byte brightness, JE_byte font );
+void JE_textShade( SDL_Surface * screen, JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness, JE_byte shadetype );
+void JE_outText( SDL_Surface * screen, JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_shortint brightness );
+void JE_outTextModify( SDL_Surface * screen, JE_word x, JE_word y, const char *s, JE_byte filter, JE_byte brightness, JE_byte font );
+void JE_outTextAdjust( SDL_Surface * screen, JE_word x, JE_word y, const char *s, JE_byte filter, JE_shortint brightness, JE_byte font, JE_boolean shadow );
+void JE_outTextAndDarken( SDL_Surface * screen, JE_word x, JE_word y, const char *s, JE_byte colorbank, JE_byte brightness, JE_byte font );
 
-void JE_updateWarning( void );
-void JE_outTextGlow( JE_word x, JE_word y, const char *s );
+void JE_updateWarning( SDL_Surface * screen );
+void JE_outTextGlow( SDL_Surface * screen, JE_word x, JE_word y, const char *s );
 
 #endif /* FONTHAND_H */
 

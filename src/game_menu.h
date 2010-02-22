@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -35,7 +35,7 @@ void JE_drawMenuHeader( void );
 void JE_drawMenuChoices( void );
 void JE_updateNavScreen( void );
 void JE_drawNavLines( JE_boolean dark );
-void JE_drawLines( JE_boolean dark );
+void JE_drawLines( SDL_Surface *surface, JE_boolean dark );
 void JE_drawDots( void );
 void JE_drawPlanet( JE_byte planetNum );
 void JE_scaleBitmap( SDL_Surface *bitmap, JE_word x, JE_word y, JE_word x1, JE_word y1, JE_word x2, JE_word y2 );

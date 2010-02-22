@@ -152,7 +152,6 @@ void JE_itemScreen( void )
 	load_cubes();
 
 	VGAScreen = VGAScreenSeg;
-	tempScreenSeg = VGAScreen;
 
 	memcpy(menuChoices, menuChoicesDefault, sizeof(menuChoices));
 
@@ -308,8 +307,8 @@ void JE_itemScreen( void )
 		{
 			for (int i = 1; i <= cubeMax; i++)
 			{
-				blit_sprite_dark(VGAScreenSeg, 190 + i * 18 + 2, 37 + 1, OPTION_SHAPES, 34, false);
-				blit_sprite(VGAScreenSeg, 190 + i * 18, 37, OPTION_SHAPES, 34);  // data cube
+				blit_sprite_dark(VGAScreen, 190 + i * 18 + 2, 37 + 1, OPTION_SHAPES, 34, false);
+				blit_sprite(VGAScreen, 190 + i * 18, 37, OPTION_SHAPES, 34);  // data cube
 			}
 		}
 
@@ -344,7 +343,7 @@ void JE_itemScreen( void )
 
 				int tempY = 38 + (x - min)*11;
 
-				JE_textShade(163, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
+				JE_textShade(VGAScreen, 163, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
 
 				/* If selected with keyboard, move mouse pointer to match? Or something. */
 				if (x - min + 2 == curSel[curMenu])
@@ -369,10 +368,10 @@ void JE_itemScreen( void )
 						strcpy(tempStr, saveFiles[x-2].levelName);
 
 						snprintf(buf, sizeof buf, "%s%d", miscTextB[1-1], saveFiles[x-2].episode);
-						JE_textShade(297, tempY, buf, temp2 / 16, temp2 % 16 - 8, DARKEN);
+						JE_textShade(VGAScreen, 297, tempY, buf, temp2 / 16, temp2 % 16 - 8, DARKEN);
 					}
 
-					JE_textShade(245, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
+					JE_textShade(VGAScreen, 245, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
 				}
 
 				JE_drawMenuHeader();
@@ -395,12 +394,12 @@ void JE_itemScreen( void )
 					temp2 = 28;
 				}
 
-				JE_textShade(166, 38 + (x - 2)*12, menuInt[curMenu + 1][x-1], temp2 / 16, temp2 % 16 - 8, DARKEN);
+				JE_textShade(VGAScreen, 166, 38 + (x - 2)*12, menuInt[curMenu + 1][x-1], temp2 / 16, temp2 % 16 - 8, DARKEN);
 
 				if (x < 10) /* 10 = reset to defaults, 11 = done */
 				{
 					temp2 = (x == curSel[curMenu]) ? 252 : 250;
-					JE_textShade(236, 38 + (x - 2)*12, SDL_GetKeyName(keySettings[x-2]), temp2 / 16, temp2 % 16 - 8, DARKEN);
+					JE_textShade(VGAScreen, 236, 38 + (x - 2)*12, SDL_GetKeyName(keySettings[x-2]), temp2 / 16, temp2 % 16 - 8, DARKEN);
 				}
 			}
 
@@ -434,7 +433,7 @@ void JE_itemScreen( void )
 			{
 				int temp = (i == curSel[curMenu] - 2) ? 15 : 28;
 
-				JE_textShade(166, 38 + i * 8, menu_item[i], temp / 16, temp % 16 - 8, DARKEN);
+				JE_textShade(VGAScreen, 166, 38 + i * 8, menu_item[i], temp / 16, temp % 16 - 8, DARKEN);
 
 				temp = (i == curSel[curMenu] - 2) ? 252 : 250;
 
@@ -462,7 +461,7 @@ void JE_itemScreen( void )
 					joystick_assignments_to_string(value, sizeof(value), joystick[joystick_config].assignment[i - 4]);
 				}
 
-				JE_textShade(236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
+				JE_textShade(VGAScreen, 236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
 			}
 
 			menuChoices[curMenu] = COUNTOF(menu_item) + 1;
@@ -515,7 +514,7 @@ void JE_itemScreen( void )
 			}
 
 			/* submenu title  e.g., "Left Sidekick" */
-			JE_dString(74 + JE_fontCenter(menuInt[2][curSel[1]-1], FONT_SHAPES), 10, menuInt[2][curSel[1]-1], FONT_SHAPES);
+			JE_dString(VGAScreen, 74 + JE_fontCenter(menuInt[2][curSel[1]-1], FONT_SHAPES), 10, menuInt[2][curSel[1]-1], FONT_SHAPES);
 
 			/* Iterate through all submenu options */
 			for (tempW = 1; tempW < menuChoices[curMenu]; tempW++)
@@ -588,7 +587,7 @@ void JE_itemScreen( void )
 				{
 					strcpy(tempStr, miscText[13]);
 				}
-				JE_textShade(185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
+				JE_textShade(VGAScreen, 185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
 
 				/* Draw icon if not DONE. NOTE: None is a normal item with a blank icon. */
 				if (tempW < menuChoices[curMenu]-1)
@@ -605,7 +604,7 @@ void JE_itemScreen( void )
 					char buf[20];
 
 					snprintf(buf, sizeof buf, "Cost: %d", temp_cost);
-					JE_textShade(187, tempY+10, buf, temp2 / 16, temp2 % 16 - 8 - temp4, DARKEN);
+					JE_textShade(VGAScreen, 187, tempY+10, buf, temp2 / 16, temp2 % 16 - 8 - temp4, DARKEN);
 				}
 			}
 		} /* /weapon upgrade */
@@ -619,7 +618,7 @@ void JE_itemScreen( void )
 				char buf[20];
 
 				snprintf(buf, sizeof buf, "%lu", player[0].cash);
-				JE_textShade(65, 173, buf, 1, 6, DARKEN);
+				JE_textShade(VGAScreen, 65, 173, buf, 1, 6, DARKEN);
 			}
 			JE_barDrawShadow(42, 152, 3, 14, player[0].armor, 2, 13);
 			JE_barDrawShadow(104, 152, 2, 14, shields[player[0].items.shield].mpwr * 2, 2, 13);
@@ -635,7 +634,7 @@ void JE_itemScreen( void )
 				for (uint i = 0; i < 2; ++i)
 				{
 					snprintf(buf, sizeof(buf), "%s %lu", miscText[40 + i], player[i].cash);
-					JE_textShade(25, 50 + 10 * i, buf, 15, 0, FULL_SHADE);
+					JE_textShade(VGAScreen, 25, 50 + 10 * i, buf, 15, 0, FULL_SHADE);
 				}
 			}
 			else if (superArcadeMode != SA_NONE || superTyrian)
@@ -648,9 +647,9 @@ void JE_itemScreen( void )
 					JE_helpBox(35, 25, superShips[SA+3], 18);
 				helpBoxBrightness = 1;
 
-				JE_textShade(25, 50, superShips[SA+1], 15, 0, FULL_SHADE);
+				JE_textShade(VGAScreen, 25, 50, superShips[SA+1], 15, 0, FULL_SHADE);
 				JE_helpBox(25, 60, weaponPort[player[0].items.weapon[FRONT_WEAPON].id].name, 22);
-				JE_textShade(25, 120, superShips[SA+2], 15, 0, FULL_SHADE);
+				JE_textShade(VGAScreen, 25, 120, superShips[SA+2], 15, 0, FULL_SHADE);
 				JE_helpBox(25, 130, special[player[0].items.special].name, 22);
 			}
 			else
@@ -687,7 +686,7 @@ void JE_itemScreen( void )
 				{
 					for (int x = 1; x <= cubeMax; x++)
 					{
-						JE_drawCube(166, 38 + (x - 1) * 28, 13, 0);
+						JE_drawCube(VGAScreenSeg, 166, 38 + (x - 1) * 28, 13, 0);
 						if (x + 1 == curSel[curMenu])
 						{
 							if (keyboardUsed)
@@ -718,7 +717,7 @@ void JE_itemScreen( void )
 					tempW = 44 + (x - 1) * 28;
 				}
 
-				JE_textShade(172, tempW, miscText[6 - 1], temp2 / 16, (temp2 % 16) - 8, DARKEN);
+				JE_textShade(VGAScreen, 172, tempW, miscText[6 - 1], temp2 / 16, (temp2 % 16) - 8, DARKEN);
 			}
 
 			if (curSel[7] < menuChoices[7])
@@ -756,7 +755,7 @@ void JE_itemScreen( void )
 					sprintf(temp, "%s %d", inputDevices[2], inputDevice[i] - 2);
 				else
 					sprintf(temp, "%s", inputDevices[inputDevice[i] - 1]);
-				JE_dString(186, 38 + 2 * (i + 1) * 16, temp, SMALL_FONT_SHAPES);
+				JE_dString(VGAScreen, 186, 38 + 2 * (i + 1) * 16, temp, SMALL_FONT_SHAPES);
 			}
 		}
 
@@ -781,7 +780,7 @@ void JE_itemScreen( void )
 
 		/* datacube title under face */
 		if ( ( (curMenu == 7) || (curMenu == 8) ) && (curSel[7] < menuChoices[7]) )
-			JE_textShade (75 - JE_textWidth(cube[curSel[7] - 2].header, TINY_FONT) / 2, 173, cube[curSel[7] - 2].header, 14, 3, DARKEN);
+			JE_textShade (VGAScreen, 75 - JE_textWidth(cube[curSel[7] - 2].header, TINY_FONT) / 2, 173, cube[curSel[7] - 2].header, 14, 3, DARKEN);
 
 		/* SYN: Everything above was just drawing the screen. In the rest of it, we process
 		   any user input (and do a few other things) */
@@ -842,7 +841,7 @@ void JE_itemScreen( void )
 					{
 						if (x <= temp3)
 						{
-							JE_outTextAndDarken(161, tempW, cube[curSel[7] - 2].text[x-1], 14, 3, TINY_FONT);
+							JE_outTextAndDarken(VGAScreen, 161, tempW, cube[curSel[7] - 2].text[x-1], 14, 3, TINY_FONT);
 							tempW += 12;
 						}
 					}
@@ -856,9 +855,9 @@ void JE_itemScreen( void )
 
 					char buf[20];
 					snprintf(buf, sizeof(buf), "%s %d%%", miscText[11], percent_read);
-					JE_outTextAndDarken(176, 160, buf, 14, 1, TINY_FONT);
+					JE_outTextAndDarken(VGAScreen, 176, 160, buf, 14, 1, TINY_FONT);
 
-					JE_dString(260, 160, miscText[12], SMALL_FONT_SHAPES);
+					JE_dString(VGAScreen, 260, 160, miscText[12], SMALL_FONT_SHAPES);
 
 					if (temp2 == 0)
 						yChg = 0;
@@ -887,7 +886,7 @@ void JE_itemScreen( void )
 						JE_drawMenuHeader();
 						JE_drawMenuChoices();
 						if (extraGame)
-							JE_dString(170, 140, miscText[68 - 1], FONT_SHAPES);
+							JE_dString(VGAScreen, 170, 140, miscText[68 - 1], FONT_SHAPES);
 					}
 
 					if (curMenu == 7 && curSel[7] < menuChoices[7])
@@ -1575,7 +1574,7 @@ void JE_itemScreen( void )
 	{
 		JE_barShade(VGAScreen, 3, 3, 316, 196);
 		JE_barShade(VGAScreen, 1, 1, 318, 198);
-		JE_dString(10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
+		JE_dString(VGAScreen, 10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
 
 		network_prepare(PACKET_WAITING);
 		network_send(4);  // PACKET_WAITING
@@ -1890,7 +1889,7 @@ void JE_drawMenuHeader( void )
 			strcpy(tempStr, menuInt[curMenu + 1][0]);
 			break;
 	}
-	JE_dString(74 + JE_fontCenter(tempStr, FONT_SHAPES), 10, tempStr, FONT_SHAPES);
+	JE_dString(VGAScreen, 74 + JE_fontCenter(tempStr, FONT_SHAPES), 10, tempStr, FONT_SHAPES);
 }
 
 void JE_drawMenuChoices( void )
@@ -1935,7 +1934,7 @@ void JE_drawMenuChoices( void )
 		} else {
 			strcpy(str, menuInt[curMenu + 1][x-1]);
 		}
-		JE_dString(166, tempY, str, SMALL_FONT_SHAPES);
+		JE_dString(VGAScreen, 166, tempY, str, SMALL_FONT_SHAPES);
 		free(str);
 
 		if (keyboardUsed && curSel[curMenu] == x)
@@ -2023,7 +2022,7 @@ void JE_updateNavScreen( void )
 	}
 }
 
-void JE_drawLines( JE_boolean dark )
+void JE_drawLines( SDL_Surface *surface, JE_boolean dark )
 {
 	JE_byte x, y;
 	JE_integer tempX, tempY;
@@ -2271,6 +2270,10 @@ JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byt
 
 void JE_doFunkyScreen( void )
 {
+	/* This function is called whenever you select 'ship specs' in the
+	 * game menu.  It uses a spare buffer (vgascreen2) for the actual
+	 * drawing before returning control to VGAScreenSeg. */
+
 	if (player[0].items.ship > 90)
 		temp = 32;
 	else if (player[0].items.ship > 0)
@@ -2298,11 +2301,9 @@ void JE_doFunkyScreen( void )
 	VGAScreen = VGAScreen2;
 	JE_clr256();
 
-	blit_sprite(VGAScreen2, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
+	blit_sprite(VGAScreen, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
 
-	tempScreenSeg = VGAScreen2;
 	JE_funkyScreen();
-	tempScreenSeg = VGAScreenSeg;
 
 	JE_loadPic(1, false);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
@@ -2338,7 +2339,7 @@ void JE_drawMainMenuHelpText( void )
 			memcpy(tempStr, mainMenuHelp[17 + curMenu - 3], sizeof(tempStr));
 		}
 	}
-	JE_textShade(10, 187, tempStr, 14, 1, DARKEN);
+	JE_textShade(VGAScreen, 10, 187, tempStr, 14, 1, DARKEN);
 }
 
 JE_boolean JE_quitRequest( void )
@@ -2361,8 +2362,8 @@ JE_boolean JE_quitRequest( void )
 			service_SDL_events(true);
 			setjasondelay(4);
 
-			blit_sprite(VGAScreenSeg, 50, 50, OPTION_SHAPES, 35);  // message box
-			JE_textShade(70, 60, miscText[28], 0, 5, FULL_SHADE);
+			blit_sprite(VGAScreen, 50, 50, OPTION_SHAPES, 35);  // message box
+			JE_textShade(VGAScreen, 70, 60, miscText[28], 0, 5, FULL_SHADE);
 			JE_helpBox(70, 90, miscText[30], 30);
 
 			col += colC;
@@ -2374,12 +2375,12 @@ JE_boolean JE_quitRequest( void )
 			temp_x = 54 + 45 - (JE_textWidth(miscText[9], FONT_SHAPES) / 2);
 			temp_c = quit_selected ? col - 12 : -5;
 
-			JE_outTextAdjust(temp_x, 128, miscText[9], 15, temp_c, FONT_SHAPES, true);
+			JE_outTextAdjust(VGAScreen, temp_x, 128, miscText[9], 15, temp_c, FONT_SHAPES, true);
 
 			temp_x = 149 + 45 - (JE_textWidth(miscText[10], FONT_SHAPES) / 2);
 			temp_c = !quit_selected ? col - 12 : -5;
 
-			JE_outTextAdjust(temp_x, 128, miscText[10], 15, temp_c, FONT_SHAPES, true);
+			JE_outTextAdjust(VGAScreen, temp_x, 128, miscText[10], 15, temp_c, FONT_SHAPES, true);
 
 			if (mouseInstalled)
 			{
@@ -2518,7 +2519,7 @@ void JE_drawScore( void )
 	if (curMenu == 4)
 	{
 		sprintf(cl, "%d", JE_cashLeft());
-		JE_textShade(65, 173, cl, 1, 6, DARKEN);
+		JE_textShade(VGAScreen, 65, 173, cl, 1, 6, DARKEN);
 	}
 }
 
@@ -2666,7 +2667,7 @@ void JE_menuFunction( JE_byte select )
 		{
 			temp2 = 254;
 			int tempY = 38 + (curSelect - 2) * 12;
-			JE_textShade(236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
+			JE_textShade(VGAScreen, 236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
 			JE_showVGA();
 
 			wait_noinput(true, true, true);
@@ -2886,7 +2887,7 @@ void JE_menuFunction( JE_byte select )
 				break;
 
 			// int temp = 254;
-			// JE_textShade(236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
+			// JE_textShade(VGAScreen, 236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
 
 			JE_rectangle(VGAScreen, 235, 21 + select * 8, 310, 30 + select * 8, 248);
 
@@ -2965,7 +2966,7 @@ void JE_funkyScreen( void )
 	wait_noinput(true, true, true);
 
 	Uint8 *s = game_screen->pixels; /* 8-bit specific */
-	Uint8 *src = VGAScreen2->pixels; /* 8-bit specific */
+	Uint8 *src = VGAScreen->pixels; /* 8-bit specific */
 
 	for (int y = 0; y < 200; y++)
 	{
@@ -2973,9 +2974,9 @@ void JE_funkyScreen( void )
 		{
 			int avg = 0;
 			if (y > 0)
-				avg += *(src - VGAScreen2->pitch) & 0x0f;
+				avg += *(src - VGAScreen->pitch) & 0x0f;
 			if (y < VGAScreen2->h - 1)
-				avg += *(src + VGAScreen2->pitch) & 0x0f;
+				avg += *(src + VGAScreen->pitch) & 0x0f;
 			if (x > 0)
 				avg += *(src - 1) & 0x0f;
 			if (x < VGAScreen2->pitch - 1)
@@ -2995,12 +2996,12 @@ void JE_funkyScreen( void )
 	}
 
 	JE_clr256();
-	JE_drawLines(true);
-	JE_drawLines(false);
+	JE_drawLines(VGAScreen, true);
+	JE_drawLines(VGAScreen, false);
 	JE_rectangle(VGAScreen, 0, 0, 319, 199, 37);
 	JE_rectangle(VGAScreen, 1, 1, 318, 198, 35);
 
-	s = VGAScreen2->pixels; /* 8-bit specific */
+	s = VGAScreen->pixels; /* 8-bit specific */
 	src = game_screen->pixels; /* 8-bit specific */
 
 	for (int y = 0; y < 200; y++)
@@ -3016,12 +3017,12 @@ void JE_funkyScreen( void )
 	}
 
 	verticalHeight = 9;
-	JE_outText(10, 2, ships[player[0].items.ship].name, 12, 3);
+	JE_outText(VGAScreen, 10, 2, ships[player[0].items.ship].name, 12, 3);
 	JE_helpBox(100, 20, shipInfo[player[0].items.ship-1][0], 40);
 	JE_helpBox(100, 100, shipInfo[player[0].items.ship-1][1], 40);
 	verticalHeight = 7;
 
-	JE_outText(JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
+	JE_outText(VGAScreen, JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
 
 	JE_playSampleNum(16);
 
@@ -3042,7 +3043,7 @@ void JE_weaponSimUpdate( void )
 		if (leftPower)
 		{
 			sprintf(buf, "%d", downgradeCost);
-			JE_outText(26, 137, buf, 1, 4);
+			JE_outText(VGAScreen, 26, 137, buf, 1, 4);
 		}
 		else
 		{
@@ -3054,13 +3055,13 @@ void JE_weaponSimUpdate( void )
 			if (!rightPowerAfford)
 			{
 				sprintf(buf, "%d", upgradeCost);
-				JE_outText(108, 137, buf, 7, 4);
+				JE_outText(VGAScreen, 108, 137, buf, 7, 4);
 				blit_sprite(VGAScreenSeg, 119, 149, OPTION_SHAPES, 14);  // upgrade disabled
 			}
 			else
 			{
 				sprintf(buf, "%d", upgradeCost);
-				JE_outText(108, 137, buf, 1, 4);
+				JE_outText(VGAScreen, 108, 137, buf, 1, 4);
 			}
 		}
 		else
@@ -3079,7 +3080,7 @@ void JE_weaponSimUpdate( void )
 		}
 
 		sprintf(buf, "POWER: %d", temp);
-		JE_outText(58, 137, buf, 15, 4);
+		JE_outText(VGAScreen, 58, 137, buf, 15, 4);
 	}
 	else
 	{

@@ -767,10 +767,9 @@ start_level_first:
 
 	JE_loadPic(twoPlayerMode ? 6 : 3, false);
 
-	tempScreenSeg = VGAScreen;
 	JE_drawOptions();
 
-	JE_outText(268, twoPlayerMode ? 76 : 118, levelName, 12, 4);
+	JE_outText(VGAScreen, 268, twoPlayerMode ? 76 : 118, levelName, 12, 4);
 
 	JE_showVGA();
 	JE_gammaCorrect(&colors, gammaCorrection);
@@ -1082,7 +1081,7 @@ start_level_first:
 
 level_loop:
 
-	tempScreenSeg = game_screen; /* side-effect of game_screen */
+	//tempScreenSeg = game_screen; /* side-effect of game_screen */
 
 	if (isNetworkGame)
 	{
@@ -2198,7 +2197,7 @@ draw_player_shot_loop_end:
 			fill_rectangle_xy(VGAScreen, 175, 181, 287, 183, warningCol);
 			fill_rectangle_xy(VGAScreen, 24, 0, 287, 3, warningCol);
 
-			JE_outText(140, 178, "WARNING", 7, (warningCol % 16) / 2);
+			JE_outText(VGAScreen, 140, 178, "WARNING", 7, (warningCol % 16) / 2);
 
 		}
 	}
@@ -2252,25 +2251,25 @@ draw_player_shot_loop_end:
 			sprintf(tempStr, "%s%c", tempStr,  smoothies[temp] + 48);
 		}
 		sprintf(buffer, "SM = %s", tempStr);
-		JE_outText(30, 70, buffer, 4, 0);
+		JE_outText(VGAScreen, 30, 70, buffer, 4, 0);
 
 		sprintf(buffer, "Memory left = %d", -1);
-		JE_outText(30, 80, buffer, 4, 0);
+		JE_outText(VGAScreen, 30, 80, buffer, 4, 0);
 		sprintf(buffer, "Enemies onscreen = %d", enemyOnScreen);
-		JE_outText(30, 90, buffer, 6, 0);
+		JE_outText(VGAScreen, 30, 90, buffer, 6, 0);
 
 		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
 		debugHistCount++;
 		sprintf(tempStr, "%2.3f", 1000.0f / roundf(debugHist / debugHistCount));
 		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + player[0].x, curLoc, tempStr, player[0].x_velocity, player[0].y_velocity, player[0].x, player[0].y);
-		JE_outText(45, 175, buffer, 15, 3);
+		JE_outText(VGAScreen, 45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
 	}
 
 	if (displayTime > 0)
 	{
 		displayTime--;
-		JE_outTextAndDarken(90, 10, miscText[59], 15, (JE_byte)flash - 8, FONT_SHAPES);
+		JE_outTextAndDarken(VGAScreen, 90, 10, miscText[59], 15, (JE_byte)flash - 8, FONT_SHAPES);
 		flash += flashChange;
 		if (flash > 4 || flash == 0)
 			flashChange = -flashChange;
@@ -2302,9 +2301,9 @@ draw_player_shot_loop_end:
 			soundQueue[7] = S_WARNING;
 		}
 
-		JE_textShade (140, 6, miscText[66], 7, (levelTimerCountdown % 20) / 3, FULL_SHADE);
+		JE_textShade (VGAScreen, 140, 6, miscText[66], 7, (levelTimerCountdown % 20) / 3, FULL_SHADE);
 		sprintf(buffer, "%.1f", levelTimerCountdown / 100.0f);
-		JE_dString (100, 2, buffer, SMALL_FONT_SHAPES);
+		JE_dString (VGAScreen, 100, 2, buffer, SMALL_FONT_SHAPES);
 	}
 
 	/*GAME OVER*/
@@ -2324,7 +2323,7 @@ draw_player_shot_loop_end:
 				if (play_demo || normalBonusLevelCurrent || bonusLevelCurrent)
 					reallyEndLevel = true;
 				else
-					JE_dString(120, 60, miscText[21], FONT_SHAPES); // game over
+					JE_dString(VGAScreen, 120, 60, miscText[21], FONT_SHAPES); // game over
 
 				set_mouse_position(159, 100);
 				if (firstGameOver)
@@ -2465,9 +2464,7 @@ draw_player_shot_loop_end:
 						char temp[64];
 						sprintf(temp, "Player %d is unsynchronized!", i + 1);
 
-						tempScreenSeg = game_screen;
-						JE_textShade(40, 110 + i * 10, temp, 9, 2, FULL_SHADE);
-						tempScreenSeg = VGAScreen;
+						JE_textShade(game_screen, 40, 110 + i * 10, temp, 9, 2, FULL_SHADE);
 					}
 				}
 			}
@@ -2857,15 +2854,15 @@ new_game:
 								if (SANextShip[superArcadeMode] == SA_ENGAGE)
 								{
 									sprintf(buffer, "%s %s", miscTextB[4], pName[0]);
-									JE_dString(JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
+									JE_dString(VGAScreen, JE_fontCenter(buffer, FONT_SHAPES), 100, buffer, FONT_SHAPES);
 
 									sprintf(buffer, "Or play... %s", specialName[7]);
-									JE_dString(80, 180, buffer, SMALL_FONT_SHAPES);
+									JE_dString(VGAScreen, 80, 180, buffer, SMALL_FONT_SHAPES);
 								}
 								else
 								{
-									JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
-									JE_dString(JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
+									JE_dString(VGAScreen, JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
+									JE_dString(VGAScreen, JE_fontCenter(superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES), 100, superShips[SANextShip[superArcadeMode]], SMALL_FONT_SHAPES);
 								}
 
 								if (SANextShip[superArcadeMode] < SA_NORTSHIPZ)
@@ -2874,7 +2871,7 @@ new_game:
 									trentWin = true;
 
 								sprintf(buffer, "Type %s at Title", specialName[SANextShip[superArcadeMode]-1]);
-								JE_dString(JE_fontCenter(buffer, SMALL_FONT_SHAPES), 160, buffer, SMALL_FONT_SHAPES);
+								JE_dString(VGAScreen, JE_fontCenter(buffer, SMALL_FONT_SHAPES), 160, buffer, SMALL_FONT_SHAPES);
 								JE_showVGA();
 
 								fade_palette(colors, 50, 0, 255);
@@ -3356,8 +3353,6 @@ bool JE_titleScreen( JE_boolean animate )
 
 	JE_word temp; /* JE_byte temp; from varz.h will overflow in for loop */
 
-	tempScreenSeg = VGAScreen;
-
 	play_demo = false;
 	stopped_demo = false;
 
@@ -3371,7 +3366,7 @@ bool JE_titleScreen( JE_boolean animate )
 	{
 		JE_loadPic(2, false);
 		memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
-		JE_dString(JE_fontCenter("Waiting for other player.", SMALL_FONT_SHAPES), 140, "Waiting for other player.", SMALL_FONT_SHAPES);
+		JE_dString(VGAScreen, JE_fontCenter("Waiting for other player.", SMALL_FONT_SHAPES), 140, "Waiting for other player.", SMALL_FONT_SHAPES);
 		JE_showVGA();
 		fade_palette(colors, 10, 0, 255);
 
@@ -3404,7 +3399,7 @@ bool JE_titleScreen( JE_boolean animate )
 		else
 		{
 			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-			JE_dString(JE_fontCenter(networkText[4-1], SMALL_FONT_SHAPES), 140, networkText[4-1], SMALL_FONT_SHAPES);
+			JE_dString(VGAScreen, JE_fontCenter(networkText[4-1], SMALL_FONT_SHAPES), 140, networkText[4-1], SMALL_FONT_SHAPES);
 			JE_showVGA();
 
 			// until opponent sends details packet
@@ -3583,19 +3578,19 @@ bool JE_titleScreen( JE_boolean animate )
 						initialDifficulty = keysactive[SDLK_SCROLLOCK] ? 6 : 8;
 
 						JE_clr256();
-						JE_outText(10, 10, "Cheat codes have been disabled.", 15, 4);
+						JE_outText(VGAScreen, 10, 10, "Cheat codes have been disabled.", 15, 4);
 						if (initialDifficulty == 8)
-							JE_outText(10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
+							JE_outText(VGAScreen, 10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
 						else
-							JE_outText(10, 20, "Difficulty level has been set to Suicide.", 15, 4);
-						JE_outText(10, 30, "It is imperative that you discover the special codes.", 15, 4);
+							JE_outText(VGAScreen, 10, 20, "Difficulty level has been set to Suicide.", 15, 4);
+						JE_outText(VGAScreen, 10, 30, "It is imperative that you discover the special codes.", 15, 4);
 						if (initialDifficulty == 8)
-							JE_outText(10, 40, "(Next time, for an easier challenge hold down SCROLL LOCK.)", 15, 4);
-						JE_outText(10, 60, "Prepare to play...", 15, 4);
+							JE_outText(VGAScreen, 10, 40, "(Next time, for an easier challenge hold down SCROLL LOCK.)", 15, 4);
+						JE_outText(VGAScreen, 10, 60, "Prepare to play...", 15, 4);
 
 						char buf[10+1+15+1];
 						snprintf(buf, sizeof(buf), "%s %s", miscTextB[4], pName[0]);
-						JE_dString(JE_fontCenter(buf, FONT_SHAPES), 110, buf, FONT_SHAPES);
+						JE_dString(VGAScreen, JE_fontCenter(buf, FONT_SHAPES), 110, buf, FONT_SHAPES);
 
 						play_song(16);
 						JE_playSampleNum(V_DANGER);
@@ -3627,8 +3622,8 @@ bool JE_titleScreen( JE_boolean animate )
 							fade_black(10);
 							JE_loadPic(1, false);
 							JE_clr256();
-							JE_dString(JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
-							JE_dString(JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
+							JE_dString(VGAScreen, JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
+							JE_dString(VGAScreen, JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
 							tempW = ships[player[0].items.ship].shipgraphic;
 							if (tempW != 1)
 								blit_sprite2x2(VGAScreen, 148, 70, shapes9, tempW);
@@ -3790,7 +3785,7 @@ void JE_readTextSync( void )
 
 	JE_barShade(VGAScreen, 3, 3, 316, 196);
 	JE_barShade(VGAScreen, 1, 1, 318, 198);
-	JE_dString(10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
+	JE_dString(VGAScreen, 10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
 	JE_showVGA();
 
 	/* TODO: NETWORK */
@@ -3849,7 +3844,7 @@ void JE_displayText( void )
 	{
 		if (levelWarningDisplay)
 		{
-			JE_updateWarning();
+			JE_updateWarning(VGAScreen);
 		}
 
 		setjasondelay(1);

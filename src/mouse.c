@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -42,8 +42,8 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->pitch + x;
 
-	s_limit = (Uint8 *)tempScreenSeg->pixels;
-	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
+	s_limit = (Uint8 *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->pitch;
 
 	for (yloop = 0; yloop < 28; yloop++)
 	{
@@ -68,8 +68,8 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	s = (Uint8 *)VGAScreen->pixels;
 	s += y * VGAScreen->pitch + x;
 
-	s_limit = (Uint8 *)tempScreenSeg->pixels;
-	s_limit += tempScreenSeg->h * tempScreenSeg->pitch;
+	s_limit = (Uint8 *)VGAScreen->pixels;
+	s_limit += VGAScreen->h * VGAScreen->pitch;
 
 	for (yloop = 0; yloop < 28; yloop++)
 	{
