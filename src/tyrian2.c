@@ -1284,7 +1284,7 @@ level_loop:
 	if (astralDuration == 0)
 		draw_background_1(VGAScreen);
 	else
-		JE_clr256();
+		JE_clr256(VGAScreen);
 
 	/*Set Movement of background 1*/
 	if (--map1YDelay == 0)
@@ -2840,7 +2840,7 @@ new_game:
 						if (jumpBackToEpisode1 && !twoPlayerMode)
 						{
 							JE_loadPic(1, false); // huh?
-							JE_clr256();
+							JE_clr256(VGAScreen);
 
 							if (superTyrian)
 							{
@@ -2903,7 +2903,7 @@ new_game:
 							if (tempX > 900)
 							{
 								memcpy(colors, palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
-								JE_clr256();
+								JE_clr256(VGAScreen);
 								JE_showVGA();
 								fade_palette(colors, 1, 0, 255);
 							}
@@ -3074,7 +3074,7 @@ new_game:
 						{
 							fade_black(10);
 						}
-						JE_clr256();
+						JE_clr256(VGAScreen);
 						JE_showVGA();
 						memcpy(colors, palettes[7], sizeof(colors));
 						set_palette(colors, 0, 255);
@@ -3092,7 +3092,7 @@ new_game:
 							fade_white(100);
 							fade_black(30);
 						}
-						JE_clr256();
+						JE_clr256(VGAScreen);
 						JE_showVGA();
 						break;
 
@@ -3577,7 +3577,7 @@ bool JE_titleScreen( JE_boolean animate )
 
 						initialDifficulty = keysactive[SDLK_SCROLLOCK] ? 6 : 8;
 
-						JE_clr256();
+						JE_clr256(VGAScreen);
 						JE_outText(VGAScreen, 10, 10, "Cheat codes have been disabled.", 15, 4);
 						if (initialDifficulty == 8)
 							JE_outText(VGAScreen, 10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
@@ -3621,7 +3621,7 @@ bool JE_titleScreen( JE_boolean animate )
 							/* Start special mode! */
 							fade_black(10);
 							JE_loadPic(1, false);
-							JE_clr256();
+							JE_clr256(VGAScreen);
 							JE_dString(VGAScreen, JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
 							JE_dString(VGAScreen, JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
 							tempW = ships[player[0].items.ship].shipgraphic;
@@ -3779,7 +3779,7 @@ void JE_readTextSync( void )
 {
 	return;  // this function seems to be unnecessary
 
-	JE_clr256();
+	JE_clr256(VGAScreen);
 	JE_showVGA();
 	JE_loadPic(1, true);
 

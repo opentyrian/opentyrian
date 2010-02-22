@@ -126,28 +126,28 @@ void deinit_video( void )
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void JE_clr256( void )
+void JE_clr256( SDL_Surface * screen)
 {
-	memset(VGAScreen->pixels, 0, VGAScreen->pitch * VGAScreen->h);
+	memset(screen->pixels, 0, screen->pitch * screen->h);
 }
-
-void JE_showVGA( void )
+void JE_showVGA( void ) { JE_showScreen(VGAScreen); }
+void JE_showScreen( SDL_Surface * screen)
 {
 	switch (display_surface->format->BitsPerPixel)
 	{
 		case 32:
 			if (scalers[scaler].scaler32 == NULL)
 				scaler = 0;
-			scalers[scaler].scaler32(VGAScreen, display_surface);
+			scalers[scaler].scaler32(screen, display_surface);
 			break;
 		case 16:
 			if (scalers[scaler].scaler16 == NULL)
 				scaler = 0;
-			scalers[scaler].scaler16(VGAScreen, display_surface);
+			scalers[scaler].scaler16(screen, display_surface);
 			break;
 		case 8:
 			// only 8-bit scaler is None
-			memcpy(display_surface->pixels, VGAScreen->pixels, display_surface->pitch * display_surface->h);
+			memcpy(display_surface->pixels, screen->pixels, display_surface->pitch * display_surface->h);
 			break;
 		default:
 			assert(0);

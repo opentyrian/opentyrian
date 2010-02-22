@@ -689,7 +689,7 @@ void JE_destructGame( void )
 
 	/* This is the entry function.  Any one-time actions we need to
 	 * perform can go in here. */
-	JE_clr256();
+	JE_clr256(VGAScreen);
 	JE_showVGA();
 
 	load_destruct_config();
@@ -1422,7 +1422,7 @@ void JE_helpScreen( void )
 	//JE_getVGA();  didn't do anything anyway?
 	fade_black(15);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
-	JE_clr256();
+	JE_clr256(VGAScreen);
 
 	for(i = 0; i < 2; i++)
 	{

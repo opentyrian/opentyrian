@@ -784,7 +784,7 @@ void JE_nextEpisode( void )
 
 	play_song(26);
 
-	JE_clr256();
+	JE_clr256(VGAScreen);
 	memcpy(colors, palettes[6-1], sizeof(colors));
 
 	JE_dString(VGAScreen, JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 130, episode_name[episodeNum], SMALL_FONT_SHAPES);
@@ -1493,7 +1493,7 @@ void JE_highScoreCheck( void )
 
 			wait_noinput(false, true, false);
 
-			JE_clr256();
+			JE_clr256(VGAScreen);
 			JE_showVGA();
 			memcpy(colors, palettes[0], sizeof(colors));
 
@@ -1995,7 +1995,7 @@ void JE_playCredits( void )
 	}
 
 	memcpy(colors, palettes[6-1], sizeof(colors));
-	JE_clr256();
+	JE_clr256(VGAScreen);
 	JE_showVGA();
 	fade_palette(colors, 2, 0, 255);
 
@@ -2004,7 +2004,7 @@ void JE_playCredits( void )
 	for (x = 0; x < maxlen; x++)
 	{
 		setjasondelay(1);
-		JE_clr256();
+		JE_clr256(VGAScreen);
 
 		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic-1)->width, 100 - (sprite(EXTRA_SHAPES, currentpic-1)->height / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
 
@@ -2294,7 +2294,7 @@ void JE_endLevelAni( void )
 	wait_noinput(false, false, true); // TODO: should up the joystick repeat temporarily instead
 
 	fade_black(15);
-	JE_clr256();
+	JE_clr256(VGAScreen);
 }
 
 void JE_drawCube( SDL_Surface * screen, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )

@@ -182,7 +182,7 @@ void JE_playAnim( JE_char *animfile, JE_byte startingframe, JE_byte speed )
 	}
 
 	/* Blank screen */
-	JE_clr256();
+	JE_clr256(VGAScreen);
 	JE_showVGA();
 
 

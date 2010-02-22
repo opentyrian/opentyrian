@@ -2316,7 +2316,7 @@ void JE_doFunkyScreen( void )
 	tempW -= 30;
 
 	VGAScreen = VGAScreen2;
-	JE_clr256();
+	JE_clr256(VGAScreen);
 
 	blit_sprite(VGAScreen, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
 
@@ -3011,7 +3011,7 @@ void JE_funkyScreen( void )
 		}
 	}
 
-	JE_clr256();
+	JE_clr256(VGAScreen);
 	JE_drawLines(VGAScreen, true);
 	JE_drawLines(VGAScreen, false);
 	JE_rectangle(VGAScreen, 0, 0, 319, 199, 37);
