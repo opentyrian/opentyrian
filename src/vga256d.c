@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void JE_pix( SDL_Surface *surface, JE_word x, JE_word y, JE_byte c )
+void JE_pix( SDL_Surface *surface, int x, int y, JE_byte c )
 {
 	/* Bad things happen if we don't clip */
 	if (x <  surface->pitch && y <  surface->h)
@@ -40,7 +40,7 @@ void JE_pix( SDL_Surface *surface, JE_word x, JE_word y, JE_byte c )
 	}
 }
 
-void JE_pix3( SDL_Surface *surface, JE_word x, JE_word y, JE_byte c )
+void JE_pix3( SDL_Surface *surface, int x, int y, JE_byte c )
 {
 	/* Originally impemented as several direct accesses */
 	JE_pix(surface, x, y, c);
@@ -50,7 +50,7 @@ void JE_pix3( SDL_Surface *surface, JE_word x, JE_word y, JE_byte c )
 	JE_pix(surface, x, y + 1, c);
 }
 
-void JE_rectangle( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word d, JE_word e ) /* x1, y1, x2, y2, color */
+void JE_rectangle( SDL_Surface *surface, int a, int b, int c, int d, int e ) /* x1, y1, x2, y2, color */
 {
 	if (a < surface->pitch && b < surface->h &&
 	    c < surface->pitch && d < surface->h)
@@ -86,7 +86,7 @@ void fill_rectangle_xy( SDL_Surface *surface, int x, int y, int x2, int y2, Uint
 	SDL_FillRect(surface, &rect, color);
 }
 
-void JE_barShade( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+void JE_barShade( SDL_Surface *surface, int a, int b, int c, int d ) /* x1, y1, x2, y2 */
 {
 	if (a < surface->pitch && b < surface->h &&
 	    c < surface->pitch && d < surface->h)
@@ -108,7 +108,7 @@ void JE_barShade( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word
 	}
 }
 
-void JE_barBright( SDL_Surface *surface, JE_word a, JE_word b, JE_word c, JE_word d ) /* x1, y1, x2, y2 */
+void JE_barBright( SDL_Surface *surface, int a, int b, int c, int d ) /* x1, y1, x2, y2 */
 {
 	if (a < surface->pitch && b < surface->h &&
 	    c < surface->pitch && d < surface->h)
