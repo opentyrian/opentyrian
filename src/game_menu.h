@@ -46,10 +46,10 @@ void JE_doFunkyScreen( void );
 void JE_drawMainMenuHelpText( void );
 JE_boolean JE_quitRequest( void );
 void JE_genItemMenu( JE_byte itemnum );
-void JE_scaleInPicture( void );
+void JE_scaleInPicture( SDL_Surface *dst, const SDL_Surface *src );
 void JE_drawScore( void );
 void JE_menuFunction( JE_byte select );
-void JE_funkyScreen( void );
+void JE_drawFunkyScreen( SDL_Surface *, SDL_Surface * );
 void JE_weaponSimUpdate( void );
 void JE_weaponViewFrame( void );
 

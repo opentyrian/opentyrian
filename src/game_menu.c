@@ -157,7 +157,7 @@ void JE_itemScreen( void )
 
 	play_song(songBuy);
 
-	JE_loadPic(1, false);
+	JE_loadPic(VGAScreen, 1, false);
 
 	curPal = 1;
 	newPal = 0;
@@ -1287,7 +1287,7 @@ void JE_itemScreen( void )
 
 					play_song(songBuy);
 
-					JE_loadPic(1, false);
+					JE_loadPic(VGAScreen, 1, false);
 					newPal = 1;
 
 					switch (curMenu)
@@ -2042,9 +2042,9 @@ void JE_drawLines( SDL_Surface *surface, JE_boolean dark )
 		{
 			if (dark)
 			{
-				JE_rectangle(VGAScreen, tempX + 1, 0, tempX + 1, 199, 32+3);
+				JE_rectangle(surface, tempX + 1, 0, tempX + 1, 199, 32+3);
 			} else {
-				JE_rectangle(VGAScreen, tempX, 0, tempX, 199, 32+5);
+				JE_rectangle(surface, tempX, 0, tempX, 199, 32+5);
 			}
 		}
 	}
@@ -2059,9 +2059,9 @@ void JE_drawLines( SDL_Surface *surface, JE_boolean dark )
 		{
 			if (dark)
 			{
-				JE_rectangle(VGAScreen, 0, tempY + 1, 319, tempY + 1, 32+3);
+				JE_rectangle(surface, 0, tempY + 1, 319, tempY + 1, 32+3);
 			} else {
-				JE_rectangle(VGAScreen, 0, tempY, 319, tempY, 32+5);
+				JE_rectangle(surface, 0, tempY, 319, tempY, 32+5);
 			}
 
 			tempW2 = 0;
@@ -2072,7 +2072,7 @@ void JE_drawLines( SDL_Surface *surface, JE_boolean dark )
 				tempX = tempW2 - tempX2;
 				if (tempX > 18 && tempX < 135)
 				{
-					JE_pix3(VGAScreen, tempX, tempY, 32+6);
+					JE_pix3(surface, tempX, tempY, 32+6);
 				}
 			}
 		}
@@ -2282,48 +2282,27 @@ JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byt
 void JE_doFunkyScreen( void )
 {
 	/* This function is called whenever you select 'ship specs' in the
-	 * game menu.  It uses a spare buffer (vgascreen2) for the actual
-	 * drawing before returning control to VGAScreenSeg. */
+	 * game menu.  It draws the nice green tech screen and scales it onto
+	 * the main window.  To do this we need two temp buffers, so we're going
+	 * to use VGAScreen and game_screen for the purpose (making things more
+	 * complex than they would be if we just malloc'd, but faster)
+	 *
+	 * Originally the whole system was pretty oddly designed.  So I changed it.
+	 * Currently drawFunkyScreen creates the image, scaleInPicture draws it,
+	 * and doFunkyScreen ties everything together.  Before it was more like
+	 * an oddly designed, unreusable, global sharing hierarchy. */
 
-	if (player[0].items.ship > 90)
-	{
-		temp = 32;
-	}
-	else if (player[0].items.ship > 0)
-	{
-		temp = ships[player[0].items.ship].bigshipgraphic;
-	}
-	else
-	{
-		temp = ships[old_items[0].ship].bigshipgraphic;
-	}
+	//create the image we want
+	wait_noinput(true, true, true);
+	JE_drawFunkyScreen(game_screen, VGAScreen2);
 
-	switch (temp)
-	{
-		case 32:
-			tempW = 35;
-			tempW2 = 33;
-			break;
-		case 28:
-			tempW = 31;
-			tempW2 = 36;
-			break;
-		case 33:
-			tempW = 31;
-			tempW2 = 35;
-			break;
-	}
-	tempW -= 30;
+	//reset VGAScreen2, which we clobbered
+	JE_loadPic(VGAScreen2, 1, false);
 
-	VGAScreen = VGAScreen2;
-	JE_clr256(VGAScreen);
-
-	blit_sprite(VGAScreen, tempW, tempW2, OPTION_SHAPES, temp - 1);  // ship illustration
-
-	JE_funkyScreen();
-
-	JE_loadPic(1, false);
-	//memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	//draw it
+	JE_playSampleNum(16);
+	JE_scaleInPicture(VGAScreen, game_screen);
+	wait_input(true, true, true);
 }
 
 void JE_drawMainMenuHelpText( void )
@@ -2515,13 +2494,13 @@ void JE_genItemMenu( JE_byte itemNum )
 	curSel[4] = temp3;
 }
 
-void JE_scaleInPicture( void )
+void JE_scaleInPicture( SDL_Surface *dst, const SDL_Surface *src )
 {
 	for (int i = 2; i <= 160; i += 2)
 	{
 		if (JE_anyButton()) { break; }
 
-		JE_scaleBitmap(VGAScreen2, VGAScreen, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
+		JE_scaleBitmap(dst, src, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
 		JE_showVGA();
 
 		SDL_Delay(1);
@@ -2977,75 +2956,104 @@ joystick_assign_done:
 	old_items[0] = player[0].items;
 }
 
-void JE_funkyScreen( void )
+void JE_drawFunkyScreen( SDL_Surface * screen, SDL_Surface * temp_screen  )
 {
-	wait_noinput(true, true, true);
+	/* In this function we create our ship description image.
+	 *
+	 * We use a temp screen for convenience.  Bad design maybe,
+	 * but it'll be okay (and it'd be surprisingly hard to work around it) */
 
-	Uint8 *s = game_screen->pixels; /* 8-bit specific */
-	Uint8 *src = VGAScreen->pixels; /* 8-bit specific */
+	int temp_x, temp_y, temp_index;
+	Uint8 *src, *dst;
 
-	for (int y = 0; y < 200; y++)
+
+	//first, draw the text and other assorted flavoring.
+	JE_clr256(screen);
+	JE_drawLines(screen, true);
+	JE_drawLines(screen, false);
+	JE_rectangle(screen, 0, 0, 319, 199, 37);
+	JE_rectangle(screen, 1, 1, 318, 198, 35);
+
+	verticalHeight = 9;
+	JE_outText(screen, 10, 2, ships[player[0].items.ship].name, 12, 3);
+	//JE_helpBox(100, 20, shipInfo[player[0].items.ship-1][0], 40);
+	//JE_helpBox(100, 100, shipInfo[player[0].items.ship-1][1], 40);
+	verticalHeight = 7;
+
+	JE_outText(screen, JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
+
+
+	//now draw the green ship over that.
+	//This hardcoded stuff is for positioning our little ship graphic
+	if (player[0].items.ship > 90)
 	{
-		for (int x = 0; x < 320; x++)
-		{
+		temp_index = 32;
+	}
+	else if (player[0].items.ship > 0)
+	{
+		temp_index = ships[player[0].items.ship].bigshipgraphic;
+	}
+	else
+	{
+		temp_index = ships[old_items[0].ship].bigshipgraphic;
+	}
+
+	switch (temp_index)
+	{
+		case 32:
+			temp_x = 35;
+			temp_y = 33;
+			break;
+		case 28:
+			temp_x = 31;
+			temp_y = 36;
+			break;
+		case 33:
+			temp_x = 31;
+			temp_y = 35;
+			break;
+	}
+	temp_x -= 30;
+
+
+	//draw the ship into our temp buffer.
+	JE_clr256(temp_screen);
+	blit_sprite(temp_screen, temp_x, temp_y, OPTION_SHAPES, temp_index - 1);  // ship illustration
+
+	/* But wait!  Our ship is fully colored, not green!
+	 * With a little work we could get the sprite dimensions and greenify
+	 * the area it resides in.  For now, let's just greenify the (almost
+	 * entirely) black screen.
+
+	 * We can't work in place.  In fact we'll need to overlay the result
+	 * To avoid our temp screen dependence this has been rewritten to
+	 * only write one line at a time.*/
+	dst = screen->pixels;
+	src = temp_screen->pixels;
+	for (int y = 0; y < screen->h; y++) {
+		for (int x = 0; x < screen->pitch; x++) {
 			int avg = 0;
 			if (y > 0)
-				avg += *(src - VGAScreen->pitch) & 0x0f;
-			if (y < VGAScreen->h - 1)
-				avg += *(src + VGAScreen->pitch) & 0x0f;
+				avg += *(src - screen->pitch) & 0x0f;
+			if (y < screen->h - 1)
+				avg += *(src + screen->pitch) & 0x0f;
 			if (x > 0)
 				avg += *(src - 1) & 0x0f;
-			if (x < VGAScreen->pitch - 1)
+			if (x < screen->pitch - 1)
 				avg += *(src + 1) & 0x0f;
 			avg /= 4;
 
 			if ((*src & 0x0f) > avg)
 			{
-				*s = (*src & 0x0f) | 0xc0;
-			} else {
-				*s = 0;
+				*dst = (*src & 0x0f) | 0xc0;
+			//} else {
+			//	*dst = 0;
 			}
 
 			src++;
-			s++;
+			dst++;
 		}
 	}
-
-	JE_clr256(VGAScreen);
-	JE_drawLines(VGAScreen, true);
-	JE_drawLines(VGAScreen, false);
-	JE_rectangle(VGAScreen, 0, 0, 319, 199, 37);
-	JE_rectangle(VGAScreen, 1, 1, 318, 198, 35);
-
-	s = VGAScreen->pixels; /* 8-bit specific */
-	src = game_screen->pixels; /* 8-bit specific */
-
-	for (int y = 0; y < 200; y++)
-	{
-		for (int x = 0; x < 320; x++)
-		{
-			if (*src)
-				*s = *src;
-
-			src++;
-			s++;
-		}
-	}
-
-	verticalHeight = 9;
-	JE_outText(VGAScreen, 10, 2, ships[player[0].items.ship].name, 12, 3);
-	JE_helpBox(100, 20, shipInfo[player[0].items.ship-1][0], 40);
-	JE_helpBox(100, 100, shipInfo[player[0].items.ship-1][1], 40);
-	verticalHeight = 7;
-
-	JE_outText(VGAScreen, JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
-
-	JE_playSampleNum(16);
-
-	VGAScreen = VGAScreenSeg;
-	JE_scaleInPicture();
-
-	wait_input(true, true, true);
 }
 
 void JE_weaponSimUpdate( void )

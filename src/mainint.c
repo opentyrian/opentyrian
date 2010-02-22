@@ -191,7 +191,7 @@ void JE_helpSystem( JE_byte startTopic )
 	page = topicStart[startTopic-1];
 
 	fade_black(10);
-	JE_loadPic(2, false);
+	JE_loadPic(VGAScreen, 2, false);
 
 	play_song(SONG_MAPVIEW);
 
@@ -491,7 +491,7 @@ void JE_loadScreen( void )
 	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
 
 	fade_black(10);
-	JE_loadPic(2, false);
+	JE_loadPic(VGAScreen, 2, false);
 	JE_showVGA();
 	fade_palette(colors, 10, 0, 255);
 
@@ -882,7 +882,7 @@ void JE_highScoreScreen( void )
 	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
 
 	fade_black(10);
-	JE_loadPic(2, false);
+	JE_loadPic(VGAScreen, 2, false);
 	JE_showVGA();
 	fade_palette(colors, 10, 0, 255);
 
@@ -1651,7 +1651,7 @@ void JE_highScoreCheck( void )
 				}
 
 				fade_black(15);
-				JE_loadPic(2, false);
+				JE_loadPic(VGAScreen, 2, false);
 
 				JE_dString(VGAScreen, JE_fontCenter(miscText[50], FONT_SHAPES), 10, miscText[50], FONT_SHAPES);
 				JE_dString(VGAScreen, JE_fontCenter(episode_name[episodeNum], SMALL_FONT_SHAPES), 35, episode_name[episodeNum], SMALL_FONT_SHAPES);

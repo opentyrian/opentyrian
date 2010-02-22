@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -63,6 +63,14 @@ static inline Sprite *sprite( unsigned int table, unsigned int index )
 static inline bool sprite_exists( unsigned int table, unsigned int index )
 {
 	return (sprite(table, index)->data != NULL);
+}
+static inline Uint16 get_sprite_width( unsigned int table, unsigned int index )
+{
+	return (sprite_exists(table, index) ? sprite(table, index)->width : 0);
+}
+static inline Uint16 get_sprite_height( unsigned int table, unsigned int index )
+{
+	return (sprite_exists(table, index) ? sprite(table, index)->height : 0);
 }
 
 void load_sprites_file( unsigned table, const char *filename );

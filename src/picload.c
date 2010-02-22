@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian Classic: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -25,39 +25,39 @@
 
 #include <string.h>
 
-void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
+void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 {
 	PCXnumber--;
-	
+
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.pic", "rb");
-	
+
 	static bool first = true;
 	if (first)
 	{
 		first = false;
-		
+
 		Uint16 temp;
 		efread(&temp, sizeof(Uint16), 1, f);
 		for (int i = 0; i < PCX_NUM; i++)
 		{
 			efread(&pcxpos[i], sizeof(JE_longint), 1, f);
 		}
-		
+
 		pcxpos[PCX_NUM] = ftell_eof(f);
 	}
-	
+
 	unsigned int size = pcxpos[PCXnumber + 1] - pcxpos[PCXnumber];
 	Uint8 *buffer = malloc(size);
-	
+
 	fseek(f, pcxpos[PCXnumber], SEEK_SET);
 	efread(buffer, sizeof(Uint8), size, f);
 	fclose(f);
-	
+
 	Uint8 *p = buffer;
 	Uint8 *s; /* screen pointer, 8-bit specific */
-	
-	s = (Uint8 *)VGAScreen->pixels;
-	
+
+	s = (Uint8 *)screen->pixels;
+
 	for (int i = 0; i < 320 * 200; )
 	{
 		if ((*p & 0xc0) == 0xc0)
@@ -72,14 +72,14 @@ void JE_loadPic( JE_byte PCXnumber, JE_boolean storepal )
 		}
 		if (i && (i % 320 == 0))
 		{
-			s += VGAScreen->pitch - 320;
+			s += screen->pitch - 320;
 		}
 	}
-	
+
 	free(buffer);
-	
+
 	memcpy(colors, palettes[pcxpal[PCXnumber]], sizeof(colors));
-	
+
 	if (storepal)
 		set_palette(colors, 0, 255);
 }

@@ -765,7 +765,7 @@ start_level_first:
 	player[0].last_x_shot_move = player[0].x;
 	player[0].last_y_shot_move = player[0].y;
 
-	JE_loadPic(twoPlayerMode ? 6 : 3, false);
+	JE_loadPic(VGAScreen, twoPlayerMode ? 6 : 3, false);
 
 	JE_drawOptions();
 
@@ -2839,7 +2839,7 @@ new_game:
 
 						if (jumpBackToEpisode1 && !twoPlayerMode)
 						{
-							JE_loadPic(1, false); // huh?
+							JE_loadPic(VGAScreen, 1, false); // huh?
 							JE_clr256(VGAScreen);
 
 							if (superTyrian)
@@ -2912,7 +2912,7 @@ new_game:
 								if (tempX == 0)
 									JE_loadPCX("tshp2.pcx");
 								else
-									JE_loadPic(tempX, false);
+									JE_loadPic(VGAScreen, tempX, false);
 
 								JE_showVGA();
 								fade_palette(colors, 10, 0, 255);
@@ -2926,7 +2926,7 @@ new_game:
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 							tempX = atoi(strnztcpy(buffer, s + 3, 3));
-							JE_loadPic(tempX, false);
+							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
 							service_SDL_events(true);
@@ -2978,7 +2978,7 @@ new_game:
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 							tempX = atoi(strnztcpy(buffer, s + 3, 3));
-							JE_loadPic(tempX, false);
+							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
 							service_SDL_events(true);
@@ -3029,7 +3029,7 @@ new_game:
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 							tempX = atoi(strnztcpy(buffer, s + 3, 3));
-							JE_loadPic(tempX, false);
+							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
 							service_SDL_events(true);
@@ -3364,7 +3364,7 @@ bool JE_titleScreen( JE_boolean animate )
 
 	if (isNetworkGame)
 	{
-		JE_loadPic(2, false);
+		JE_loadPic(VGAScreen, 2, false);
 		memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 		JE_dString(VGAScreen, JE_fontCenter("Waiting for other player.", SMALL_FONT_SHAPES), 140, "Waiting for other player.", SMALL_FONT_SHAPES);
 		JE_showVGA();
@@ -3460,7 +3460,7 @@ bool JE_titleScreen( JE_boolean animate )
 						fadeIn = false;
 					}
 
-					JE_loadPic(4, false);
+					JE_loadPic(VGAScreen, 4, false);
 
 					draw_font_hv_shadow(VGAScreen, 2, 192, opentyrian_version, small_font, left_aligned, 15, 0, false, 1);
 
@@ -3620,7 +3620,7 @@ bool JE_titleScreen( JE_boolean animate )
 						{
 							/* Start special mode! */
 							fade_black(10);
-							JE_loadPic(1, false);
+							JE_loadPic(VGAScreen, 1, false);
 							JE_clr256(VGAScreen);
 							JE_dString(VGAScreen, JE_fontCenter(superShips[0], FONT_SHAPES), 30, superShips[0], FONT_SHAPES);
 							JE_dString(VGAScreen, JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
@@ -3754,7 +3754,7 @@ void intro_logos( void )
 
 	fade_white(50);
 
-	JE_loadPic(10, false);
+	JE_loadPic(VGAScreen, 10, false);
 	JE_showVGA();
 
 	fade_palette(colors, 50, 0, 255);
@@ -3764,7 +3764,7 @@ void intro_logos( void )
 
 	fade_black(10);
 
-	JE_loadPic(12, false);
+	JE_loadPic(VGAScreen, 12, false);
 	JE_showVGA();
 
 	fade_palette(colors, 10, 0, 255);
@@ -3781,7 +3781,7 @@ void JE_readTextSync( void )
 
 	JE_clr256(VGAScreen);
 	JE_showVGA();
-	JE_loadPic(1, true);
+	JE_loadPic(VGAScreen, 1, true);
 
 	JE_barShade(VGAScreen, 3, 3, 316, 196);
 	JE_barShade(VGAScreen, 1, 1, 318, 198);

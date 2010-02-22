@@ -727,7 +727,7 @@ void JE_destructMain( void )
 	enum de_state_t curState;
 
 
-	JE_loadPic(11, false);
+	JE_loadPic(VGAScreen, 11, false);
 	JE_introScreen();
 
 	DE_ResetPlayers();
@@ -747,7 +747,7 @@ void JE_destructMain( void )
 		{
 
 			destructFirstTime = true;
-			JE_loadPic(11, false);
+			JE_loadPic(VGAScreen, 11, false);
 
 			DE_ResetUnits();
 			DE_ResetLevel();

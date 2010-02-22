@@ -33,7 +33,7 @@ char episode_name[6][31], difficulty_name[7][21], gameplay_name[5][26];
 
 bool select_gameplay( void )
 {
-	JE_loadPic(2, false);
+	JE_loadPic(VGAScreen, 2, false);
 	JE_dString(VGAScreen, JE_fontCenter(gameplay_name[0], FONT_SHAPES), 20, gameplay_name[0], FONT_SHAPES);
 
 	int gameplay = 1,
@@ -111,7 +111,7 @@ bool select_gameplay( void )
 
 bool select_episode( void )
 {
-	JE_loadPic(2, false);
+	JE_loadPic(VGAScreen, 2, false);
 	JE_dString(VGAScreen, JE_fontCenter(episode_name[0], FONT_SHAPES), 20, episode_name[0], FONT_SHAPES);
 
 	int episode = 1,
@@ -187,7 +187,7 @@ bool select_episode( void )
 
 bool select_difficulty( void )
 {
-	JE_loadPic(2, false);
+	JE_loadPic(VGAScreen, 2, false);
 	JE_dString(VGAScreen, JE_fontCenter(difficulty_name[0], FONT_SHAPES), 20, difficulty_name[0], FONT_SHAPES);
 
 	difficultyLevel = 2;

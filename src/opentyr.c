@@ -81,7 +81,7 @@ void opentyrian_menu( void )
 	int temp_scaler = scaler;
 
 	fade_black(10);
-	JE_loadPic(13, false);
+	JE_loadPic(VGAScreen, 13, false);
 
 	draw_font_hv(VGAScreen, VGAScreen->w / 2, 5, opentyrian_str, large_font, centered, 15, -3);
 
