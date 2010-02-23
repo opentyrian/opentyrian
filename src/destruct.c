@@ -848,7 +848,7 @@ enum de_mode_t JE_modeSelect( void )
 				{
 					mode = MODE_LAST;
 				} else {
-					mode = DESTRUCT_MODES-1;
+					mode = MODE_LAST-1;
 				}
 			} else {
 				mode--;
@@ -856,9 +856,9 @@ enum de_mode_t JE_modeSelect( void )
 		}
 		if (keysactive[SDLK_DOWN])
 		{
-			if(mode >= DESTRUCT_MODES-1)
+			if(mode >= MODE_LAST-1)
 			{
-				if (config.allow_custom == true)
+				if (config.allow_custom == true && mode == MODE_LAST-1)
 				{
 					mode++;
 				} else {
