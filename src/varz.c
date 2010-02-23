@@ -1330,11 +1330,11 @@ void JE_drawShield( void )
 	if (twoPlayerMode && !galagaMode)
 	{
 		for (uint i = 0; i < COUNTOF(player); ++i)
-			JE_dBar3(270, 60 + 134 * i, roundf(player[i].shield * 0.8f), 144);
+			JE_dBar3(VGAScreen, 270, 60 + 134 * i, roundf(player[i].shield * 0.8f), 144);
 	}
 	else
 	{
-		JE_dBar3(270, 194, player[0].shield, 144);
+		JE_dBar3(VGAScreen, 270, 194, player[0].shield, 144);
 		if (player[0].shield != player[0].shield_max)
 		{
 			const uint y = 193 - (player[0].shield_max * 2);
@@ -1352,11 +1352,11 @@ void JE_drawArmor( void )
 	if (twoPlayerMode && !galagaMode)
 	{
 		for (uint i = 0; i < COUNTOF(player); ++i)
-			JE_dBar3(307, 60 + 134 * i, roundf(player[i].armor * 0.8f), 224);
+			JE_dBar3(VGAScreen, 307, 60 + 134 * i, roundf(player[i].armor * 0.8f), 224);
 	}
 	else
 	{
-		JE_dBar3(307, 194, player[0].armor, 224);
+		JE_dBar3(VGAScreen, 307, 194, player[0].armor, 224);
 	}
 }
 

@@ -36,7 +36,7 @@ JE_boolean JE_anyButton( void )
 	return newkey || mousedown || joydown;
 }
 
-void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
+void JE_dBar3( SDL_Surface *surface, JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 {
 	JE_byte z;
 	JE_byte zWait = 2;
@@ -45,7 +45,7 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 
 	for (z = 0; z <= num; z++)
 	{
-		JE_rectangle(VGAScreen, x, y - 1, x + 8, y, col); /* <MXD> SEGa000 */
+		JE_rectangle(surface, x, y - 1, x + 8, y, col); /* <MXD> SEGa000 */
 		if (zWait > 0)
 		{
 			zWait--;
@@ -57,26 +57,26 @@ void JE_dBar3( JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col )
 	}
 }
 
-void JE_barDrawShadow( JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
+void JE_barDrawShadow( SDL_Surface *surface, JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize )
 {
 	xsize--;
 	ysize--;
 
 	for (int z = 1; z <= amt / res; z++)
 	{
-		JE_barShade(VGAScreen, x+2, y+2, x+xsize+2, y+ysize+2);
-		fill_rectangle_xy(VGAScreen, x, y, x+xsize, y+ysize, col+12);
-		fill_rectangle_xy(VGAScreen, x, y, x+xsize, y, col+13);
-		JE_pix(VGAScreen, x, y, col+15);
-		fill_rectangle_xy(VGAScreen, x, y+ysize, x+xsize, y+ysize, col+11);
+		JE_barShade(surface, x+2, y+2, x+xsize+2, y+ysize+2);
+		fill_rectangle_xy(surface, x, y, x+xsize, y+ysize, col+12);
+		fill_rectangle_xy(surface, x, y, x+xsize, y, col+13);
+		JE_pix(surface, x, y, col+15);
+		fill_rectangle_xy(surface, x, y+ysize, x+xsize, y+ysize, col+11);
 		x += xsize + 2;
 	}
 
 	amt %= res;
 	if (amt > 0)
 	{
-		JE_barShade(VGAScreen, x+2, y+2, x+xsize+2, y+ysize+2);
-		fill_rectangle_xy(VGAScreen, x,y, x+xsize, y+ysize, col+(12 / res * amt));
+		JE_barShade(surface, x+2, y+2, x+xsize+2, y+ysize+2);
+		fill_rectangle_xy(surface, x,y, x+xsize, y+ysize, col+(12 / res * amt));
 	}
 }
 

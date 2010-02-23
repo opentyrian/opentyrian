@@ -619,8 +619,8 @@ void JE_itemScreen( void )
 				snprintf(buf, sizeof buf, "%lu", player[0].cash);
 				JE_textShade(VGAScreen, 65, 173, buf, 1, 6, DARKEN);
 			}
-			JE_barDrawShadow(42, 152, 3, 14, player[0].armor, 2, 13);
-			JE_barDrawShadow(104, 152, 2, 14, shields[player[0].items.shield].mpwr * 2, 2, 13);
+			JE_barDrawShadow(VGAScreen, 42, 152, 3, 14, player[0].armor, 2, 13);
+			JE_barDrawShadow(VGAScreen, 104, 152, 2, 14, shields[player[0].items.shield].mpwr * 2, 2, 13);
 		}
 
 		/* Draw crap on the left side of the screen, i.e. two player scores, ship graphic, etc. */
@@ -660,8 +660,8 @@ void JE_itemScreen( void )
 		/* Changing the volume? */
 		if ((curMenu == 2) || (curMenu == 11))
 		{
-			JE_barDrawShadow(225, 70, 1, 16, tyrMusicVolume / 12, 3, 13);
-			JE_barDrawShadow(225, 86, 1, 16, fxVolume / 12, 3, 13);
+			JE_barDrawShadow(VGAScreen, 225, 70, 1, 16, tyrMusicVolume / 12, 3, 13);
+			JE_barDrawShadow(VGAScreen, 225, 86, 1, 16, fxVolume / 12, 3, 13);
 		}
 
 		/* 7 is data cubes menu, 8 is reading a data cube, "firstmenu9" refers to menu 8 because of reindexing */

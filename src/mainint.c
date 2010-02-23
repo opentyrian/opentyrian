@@ -1192,8 +1192,8 @@ JE_boolean JE_inGameSetup( void )
 
 		JE_outTextAdjust(VGAScreen, 10, 147, mainMenuHelp[help[sel-1]-1], 14, 6, TINY_FONT, true);
 
-		JE_barDrawShadow(120, 20, 1, 16, tyrMusicVolume / 12, 3, 13);
-		JE_barDrawShadow(120, 40, 1, 16, fxVolume / 12, 3, 13);
+		JE_barDrawShadow(VGAScreen, 120, 20, 1, 16, tyrMusicVolume / 12, 3, 13);
+		JE_barDrawShadow(VGAScreen, 120, 40, 1, 16, fxVolume / 12, 3, 13);
 
 		JE_showVGA();
 
