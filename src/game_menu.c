@@ -41,39 +41,7 @@
 
 #include <assert.h>
 
-int joystick_config = 0; // which joystick is being configured in menu
-
-const JE_MenuChoiceType menuChoicesDefault = { 7, 9, 8, 0, 0, 11, (SAVE_FILES_NUM / 2) + 2, 0, 0, 6, 4, 6, 7, 5 };
-const JE_byte menuEsc[MAX_MENU] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 3, 0 };
-
-static uint *playeritem_map( PlayerItems *items, uint i )
-{
-	uint * const map[] = { &items->ship, &items->weapon[FRONT_WEAPON].id, &items->weapon[REAR_WEAPON].id, &items->shield, &items->generator, &items->sidekick[LEFT_SIDEKICK], &items->sidekick[RIGHT_SIDEKICK] };
-	assert(i < COUNTOF(map));
-	return map[i];
-}
-
-const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
-
-const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
-const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120, 150, 220, 200, 80,  50, 160,  10,  55,  55,  90,  90,  40 };
-
-JE_word yLoc;
-JE_shortint yChg;
-int newPal, curPal, oldPal;
-JE_boolean quikSave;
-JE_byte oldMenu;
-JE_boolean backFromHelp;
-JE_integer lastDirection;
-JE_boolean firstMenu9, paletteChanged;
-JE_MenuChoiceType menuChoices;
-JE_integer col, colC;
-JE_byte lastCurSel;
-JE_integer curMenu;
-JE_byte curSel[MAX_MENU]; /* [1..maxmenu] */
-JE_byte curItemType, curItem, cursor;
-JE_boolean leftPower, rightPower, rightPowerAfford;
-
+/*** Structs ***/
 struct cube_struct
 {
 	char title[81];
@@ -82,24 +50,55 @@ struct cube_struct
 	char text[90][36];
 	int last_line;
 };
+
+/*** Globals ***/
+static int joystick_config = 0; // which joystick is being configured in menu
+
+static JE_word yLoc;
+static JE_shortint yChg;
+static int newPal, curPal, oldPal;
+static JE_boolean quikSave;
+static JE_byte oldMenu;
+static JE_boolean backFromHelp;
+static JE_integer lastDirection;
+static JE_boolean firstMenu9, paletteChanged;
+static JE_MenuChoiceType menuChoices;
+static JE_integer col, colC;
+static JE_byte lastCurSel;
+static JE_integer curMenu;
+static JE_byte curSel[MAX_MENU]; /* [1..maxmenu] */
+static JE_byte curItemType, curItem, cursor;
+static JE_boolean leftPower, rightPower, rightPowerAfford;
+static JE_byte currentCube;
+static JE_boolean keyboardUsed;
+
+static JE_byte planetAni, planetAniWait;
+static JE_byte currentDotNum, currentDotWait;
+static JE_real navX, navY, newNavX, newNavY;
+static JE_integer tempNavX, tempNavY;
+static JE_byte planetDots[5]; /* [1..5] */
+static JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
+static PlayerItems old_items[2];  // TODO: should not be global if possible
+
 static struct cube_struct cube[4];
+
+static const JE_MenuChoiceType menuChoicesDefault = { 7, 9, 8, 0, 0, 11, (SAVE_FILES_NUM / 2) + 2, 0, 0, 6, 4, 6, 7, 5 };
+static const JE_byte menuEsc[MAX_MENU] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 3, 0 };
+static const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
+static const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
+static const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120, 150, 220, 200, 80,  50, 160,  10,  55,  55,  90,  90,  40 };
 static const int cube_line_chars = sizeof(*cube->text) - 1;
 static const int cube_line_width = 150;
 
-JE_byte currentCube;
 
-JE_boolean keyboardUsed;
+/*** Functions ***/
+static uint *playeritem_map( PlayerItems *items, uint i )
+{
+	uint * const map[] = { &items->ship, &items->weapon[FRONT_WEAPON].id, &items->weapon[REAR_WEAPON].id, &items->shield, &items->generator, &items->sidekick[LEFT_SIDEKICK], &items->sidekick[RIGHT_SIDEKICK] };
+	assert(i < COUNTOF(map));
+	return map[i];
+}
 
-JE_byte planetAni, planetAniWait;
-JE_byte currentDotNum, currentDotWait;
-JE_real navX, navY, newNavX, newNavY;
-JE_integer tempNavX, tempNavY;
-JE_byte planetDots[5]; /* [1..5] */
-JE_integer planetDotX[5][10], planetDotY[5][10]; /* [1..5, 1..10] */
-
-PlayerItems old_items[2];  // TODO: should not be global if possible
-
-void draw_ship_illustration( void );
 
 JE_longint JE_cashLeft( void )
 {
@@ -2279,7 +2278,7 @@ JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byt
 	return (finish - start) / (dots + 2) * (dist + 1) + start;
 }
 
-void JE_doFunkyScreen( void )
+void JE_doShipSpecs( void )
 {
 	/* This function is called whenever you select 'ship specs' in the
 	 * game menu.  It draws the nice green tech screen and scales it onto
@@ -2294,7 +2293,7 @@ void JE_doFunkyScreen( void )
 
 	//create the image we want
 	wait_noinput(true, true, true);
-	JE_drawFunkyScreen(game_screen, VGAScreen2);
+	JE_drawShipSpecs(game_screen, VGAScreen2);
 
 	//reset VGAScreen2, which we clobbered
 	JE_loadPic(VGAScreen2, 1, false);
@@ -2531,23 +2530,23 @@ void JE_menuFunction( JE_byte select )
 
 	switch (curMenu)
 	{
-	case 0:
+	case 0: //root menu
 		switch (select)
 		{
-		case 2:
+		case 2: //cubes
 			curMenu = 7;
 			curSel[7] = 2;
 			break;
-		case 3:
-			JE_doFunkyScreen();
+		case 3: //shipspecs
+			JE_doShipSpecs();
 			break;
-		case 4:
+		case 4://upgradeship
 			curMenu = 1;
 			break;
-		case 5:
+		case 5: //options
 			curMenu = 2;
 			break;
-		case 6:
+		case 6: //nextlevel
 			curMenu = 3;
 			newPal = 18;
 			JE_computeDots();
@@ -2565,7 +2564,7 @@ void JE_menuFunction( JE_byte select )
 			}
 			strcpy(menuInt[4][x + 1], miscText[5]);
 			break;
-		case 7:
+		case 7: //quit
 			if (JE_quitRequest())
 			{
 				gameLoaded = true;
@@ -2575,8 +2574,8 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 1:
-		if (select == 9)
+	case 1: //upgradeship
+		if (select == 9) //done
 		{
 			curMenu = 0;
 		}
@@ -2593,7 +2592,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 2:
+	case 2: //options
 		switch (select)
 		{
 		case 2:
@@ -2618,8 +2617,8 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 3:
-		if (select == menuChoices[3])
+	case 3: //nextlevel
+		if (select == menuChoices[3]) //exit
 		{
 			curMenu = 0;
 			newPal = 1;
@@ -2629,7 +2628,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 4:
+	case 4: //buying
 		if (curSel[4] < menuChoices[4])
 		{
 			// select done
@@ -2716,7 +2715,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 6:
+	case 6: //save
 		if (curSelect == 13)
 		{
 			if (quikSave)
@@ -2742,7 +2741,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 7:
+	case 7: //cubes
 		if (curSelect == menuChoices[curMenu])
 		{
 			curMenu = 0;
@@ -2762,11 +2761,11 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 8:
+	case 8: //cubes 2
 		curMenu = 7;
 		break;
 
-	case 9:
+	case 9: //2player
 		switch (curSel[curMenu])
 		{
 		case 2:
@@ -2804,7 +2803,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 10:
+	case 10: //arcade
 		switch (curSel[curMenu])
 		{
 		case 2:
@@ -2824,7 +2823,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 11:
+	case 11: //dunno, possibly online multiplayer
 		switch (select)
 		{
 		case 2:
@@ -2839,7 +2838,7 @@ void JE_menuFunction( JE_byte select )
 		}
 		break;
 
-	case 12:
+	case 12: //joy
 		if (joysticks == 0 && select != 17)
 			break;
 
@@ -2926,7 +2925,7 @@ joystick_assign_done:
 		}
 		break;
 
-	case 13:
+	case 13: //engage
 		switch (curSel[curMenu])
 		{
 		case 2:
@@ -2934,7 +2933,7 @@ joystick_assign_done:
 			jumpSection = true;
 			break;
 		case 3:
-			JE_doFunkyScreen();
+			JE_doShipSpecs();
 			break;
 		case 4:
 			curMenu = 2;
@@ -2956,12 +2955,12 @@ joystick_assign_done:
 	old_items[0] = player[0].items;
 }
 
-void JE_drawFunkyScreen( SDL_Surface * screen, SDL_Surface * temp_screen  )
+void JE_drawShipSpecs( SDL_Surface * screen, SDL_Surface * temp_screen  )
 {
 	/* In this function we create our ship description image.
 	 *
-	 * We use a temp screen for convenience.  Bad design maybe,
-	 * but it'll be okay (and it'd be surprisingly hard to work around it) */
+	 * We use a temp screen for convenience.  Bad design maybe (Jason!),
+	 * but it'll be okay (and the alternative is malloc/a large stack) */
 
 	int temp_x, temp_y, temp_index;
 	Uint8 *src, *dst;
@@ -3012,6 +3011,8 @@ void JE_drawFunkyScreen( SDL_Surface * screen, SDL_Surface * temp_screen  )
 			temp_x = 31;
 			temp_y = 35;
 			break;
+		default: //This doubles as a 'shut up compiler' for whining about uninitted temp_x and y
+			assert(0);
 	}
 	temp_x -= 30;
 

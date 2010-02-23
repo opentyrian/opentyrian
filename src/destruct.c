@@ -116,7 +116,6 @@ struct destruct_config_s {
 	bool jumper_straight[2];
 	bool ai[2];
 };
-
 struct destruct_unit_s {
 
 	/* Positioning/movement */

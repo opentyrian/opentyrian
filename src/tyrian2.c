@@ -5168,7 +5168,6 @@ void JE_whoa( void )
 	unsigned int screenSize, topBorder, bottomBorder;
 	Uint8 * TempScreen1, * TempScreen2, * TempScreenSwap;
 
-
 	/* 'whoa' gets us that nifty screen fade used when you type in
 	 * 'engage'.  We need two temporary screen buffers (char arrays can
 	 * work too, but these screens already exist) for our effect.
@@ -5179,9 +5178,9 @@ void JE_whoa( void )
 	TempScreen1  = game_screen->pixels;
 	TempScreen2  = VGAScreen2->pixels;
 
-	screenSize   = VGAScreen->h * VGAScreen->pitch;
-	topBorder    = VGAScreen->pitch * 4; /* Seems an arbitrary number of lines */
-	bottomBorder = VGAScreen->pitch * 7;
+	screenSize   = VGAScreenSeg->h * VGAScreenSeg->pitch;
+	topBorder    = VGAScreenSeg->pitch * 4; /* Seems an arbitrary number of lines */
+	bottomBorder = VGAScreenSeg->pitch * 7;
 
 	/* Okay, one disadvantage to using other screens as temp buffers: they
 	 * need to be the right size.  I doubt they'l ever be anything but 320x200,
@@ -5193,12 +5192,12 @@ void JE_whoa( void )
 
 	/* Clear the top and bottom borders.  We don't want to process
 	 * them and we don't want to draw them. */
-	memset((Uint8 *)VGAScreen->pixels, 0, topBorder);
-	memset((Uint8 *)VGAScreen->pixels + screenSize - bottomBorder, 0, bottomBorder);
+	memset((Uint8 *)VGAScreenSeg->pixels, 0, topBorder);
+	memset((Uint8 *)VGAScreenSeg->pixels + screenSize - bottomBorder, 0, bottomBorder);
 
 	/* Copy our test subject to one of the temporary buffers.  Blank the other */
 	memset(TempScreen1, 0, screenSize);
-	memcpy(TempScreen2, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
+	memcpy(TempScreen2, VGAScreenSeg->pixels, VGAScreenSeg->h * VGAScreenSeg->pitch);
 
 
 	service_SDL_events(true);
@@ -5214,17 +5213,17 @@ void JE_whoa( void )
 		for (i = screenSize - bottomBorder, j = topBorder / 2; i > 0; i--, j++)
 		{
 			offset = j + i/8192 - 4;
-			color = (TempScreen2[offset                 ] * 12 +
-			         TempScreen1[offset-VGAScreen->pitch]      +
-			         TempScreen1[offset-1               ]      +
-			         TempScreen1[offset+1               ]      +
-			         TempScreen1[offset+VGAScreen->pitch]) / 16;
+			color = (TempScreen2[offset                    ] * 12 +
+			         TempScreen1[offset-VGAScreenSeg->pitch]      +
+			         TempScreen1[offset-1                  ]      +
+			         TempScreen1[offset+1                  ]      +
+			         TempScreen1[offset+VGAScreenSeg->pitch]) / 16;
 
 			TempScreen1[j] = color;
 		}
 
 		/* Now copy that mess to the buffer. */
-		memcpy((Uint8 *)VGAScreen->pixels + topBorder, TempScreen1 + topBorder, screenSize - bottomBorder);
+		memcpy((Uint8 *)VGAScreenSeg->pixels + topBorder, TempScreen1 + topBorder, screenSize - bottomBorder);
 
 		JE_showVGA();
 
