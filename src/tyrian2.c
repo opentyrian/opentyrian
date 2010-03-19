@@ -1914,13 +1914,11 @@ draw_player_shot_loop_end:
 	/*=================================*/
 	/*=======Collisions Detection======*/
 	/*=================================*/
-
-	if (player[0].is_alive && !endLevel)
-		JE_playerCollide(&player[0], 1);
-
-	if (twoPlayerMode && player[1].is_alive && !endLevel)
-		JE_playerCollide(&player[1], 2);
-
+	
+	for (uint i = 0; i < (twoPlayerMode ? 2 : 1); ++i)
+		if (player[i].is_alive && !endLevel)
+			JE_playerCollide(&player[i], i + 1);
+	
 	if (firstGameOver)
 		JE_mainGamePlayerFunctions();      /*--------PLAYER DRAW+MOVEMENT---------*/
 
