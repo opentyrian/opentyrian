@@ -760,11 +760,11 @@ start_level_first:
 			player[i].old_x[j] = player[i].x - (19 - j);
 			player[i].old_y[j] = player[i].y - 18;
 		}
+		
+		player[i].last_x_shot_move = player[i].x;
+		player[i].last_y_shot_move = player[i].y;
 	}
-
-	player[0].last_x_shot_move = player[0].x;
-	player[0].last_y_shot_move = player[0].y;
-
+	
 	JE_loadPic(VGAScreen, twoPlayerMode ? 6 : 3, false);
 
 	JE_drawOptions();
@@ -1905,9 +1905,12 @@ draw_player_shot_loop_end:
 	}
 
 	/* Player movement indicators for shots that track your ship */
-	player[0].last_x_shot_move = player[0].x;
-	player[0].last_y_shot_move = player[0].y;
-
+	for (uint i = 0; i < COUNTOF(player); ++i)
+	{
+		player[i].last_x_shot_move = player[i].x;
+		player[i].last_y_shot_move = player[i].y;
+	}
+	
 	/*=================================*/
 	/*=======Collisions Detection======*/
 	/*=================================*/
