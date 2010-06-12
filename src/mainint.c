@@ -1027,7 +1027,7 @@ void JE_gammaCorrect( Palette *colorBuffer, JE_byte gamma )
 
 JE_boolean JE_gammaCheck( void )
 {
-	Uint8 temp = keysactive[SDLK_F11];
+	bool temp = keysactive[SDLK_F11] != 0;
 	if (temp)
 	{
 		keysactive[SDLK_F11] = false;
@@ -2732,10 +2732,10 @@ void JE_mainKeyboardInput( void )
 	}
 
 	/* pause game */
-	pause_pressed |= keysactive[SDLK_p];
+	pause_pressed = pause_pressed || keysactive[SDLK_p];
 
 	/* in-game setup */
-	ingamemenu_pressed |= keysactive[SDLK_ESCAPE];
+	ingamemenu_pressed = ingamemenu_pressed || keysactive[SDLK_ESCAPE];
 
 	/* {MUTE SOUND} */
 	if (keysactive[SDLK_s])
@@ -3155,10 +3155,10 @@ redo:
 					if (keysactive[keySettings[3]])
 						this_player->x += CURRENT_KEY_SPEED;
 
-					button[0] |= keysactive[keySettings[4]];
-					button[3] |= keysactive[keySettings[5]];
-					button[1] |= keysactive[keySettings[6]];
-					button[2] |= keysactive[keySettings[7]];
+					button[0] = button[0] || keysactive[keySettings[4]];
+					button[3] = button[3] || keysactive[keySettings[5]];
+					button[1] = button[1] || keysactive[keySettings[6]];
+					button[2] = button[2] || keysactive[keySettings[7]];
 
 					if (constantPlay)
 					{

@@ -76,7 +76,7 @@ unsigned long mt_rand( void )
 		mt_srand(5489UL);
 	}
 	/* Twisted feedback */
-	y = *p0 = *pm++ ^ (((*p0 & UPPER_MASK) | (*p1 & LOWER_MASK)) >> 1) ^ (-(*p1 & 1) & MATRIX_A);
+	y = *p0 = *pm++ ^ (((*p0 & UPPER_MASK) | (*p1 & LOWER_MASK)) >> 1) ^ ((~(*p1 & 1)+1) & MATRIX_A);
 	p0 = p1++;
 	if (pm == x + N) {
 		pm = x;

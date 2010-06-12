@@ -105,8 +105,6 @@ bool select_gameplay( void )
 			}
 		}
 	}
-
-	return false;
 }
 
 bool select_episode( void )
@@ -181,8 +179,6 @@ bool select_episode( void )
 			}
 		}
 	}
-
-	return false;
 }
 
 bool select_difficulty( void )
@@ -268,8 +264,6 @@ bool select_difficulty( void )
 			}
 		}
 	}
-
-	return false;
 }
 
 // kate: tab-width 4; vim: set noet:
