@@ -431,7 +431,7 @@ enemy_still_exists:
 								if (b == ENEMY_SHOT_MAX)
 									goto draw_enemy_end;
 
-								enemyShotAvail[b]--;
+								enemyShotAvail[b] = !enemyShotAvail[b];
 
 								if (weapons[temp3].sound > 0)
 								{
