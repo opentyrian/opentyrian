@@ -64,7 +64,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 void JE_sort( void );
 
 long weapon_upgrade_cost( long base_cost, unsigned int power );
-JE_longint JE_getCost( JE_byte itemType, JE_word itemNum );
+ulong JE_getCost( JE_byte itemType, JE_word itemNum );
 JE_longint JE_getValue( JE_byte itemType, JE_word itemNum );
 ulong JE_totalScore( const Player * );
 

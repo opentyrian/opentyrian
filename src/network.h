@@ -80,7 +80,7 @@ bool network_state_is_reset( void );
 void network_state_reset( void );
 
 int network_connect( void );
-void network_tyrian_halt( int err, bool attempt_sync );
+void network_tyrian_halt( unsigned int err, bool attempt_sync );
 
 int network_init( void );
 

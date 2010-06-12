@@ -1035,7 +1035,7 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 			}
 		}
 
-		if (mt_rand() % 6 < specialWeaponFreq)
+		if ((signed)(mt_rand() % 6) < specialWeaponFreq)
 		{
 			b = 0;
 
@@ -1388,7 +1388,7 @@ void JE_drawSP( void )
 			superpixels[i].x += superpixels[i].delta_x;
 			superpixels[i].y += superpixels[i].delta_y;
 
-			if (superpixels[i].x < VGAScreen->w && superpixels[i].y < VGAScreen->h)
+			if (superpixels[i].x < (unsigned)VGAScreen->w && superpixels[i].y < (unsigned)VGAScreen->h)
 			{
 				Uint8 *s = (Uint8 *)VGAScreen->pixels; /* screen pointer, 8-bit specific */
 				s += superpixels[i].y * VGAScreen->pitch;
@@ -1397,11 +1397,11 @@ void JE_drawSP( void )
 				*s = (((*s & 0x0f) + superpixels[i].z) >> 1) + superpixels[i].color;
 				if (superpixels[i].x > 0)
 					*(s - 1) = (((*(s - 1) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
-				if (superpixels[i].x < VGAScreen->w - 1)
+				if (superpixels[i].x < VGAScreen->w - 1u)
 					*(s + 1) = (((*(s + 1) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
 				if (superpixels[i].y > 0)
 					*(s - VGAScreen->pitch) = (((*(s - VGAScreen->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
-				if (superpixels[i].y < VGAScreen->h - 1)
+				if (superpixels[i].y < VGAScreen->h - 1u)
 					*(s + VGAScreen->pitch) = (((*(s + VGAScreen->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
 			}
 

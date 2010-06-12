@@ -257,7 +257,7 @@ void scroller_sine( const struct about_text_type text[] )
 				}
 			}
 		} else {
-			for (int i = 0; i < COUNTOF(beer); i++)
+			for (uint i = 0; i < COUNTOF(beer); i++)
 			{
 				while (beer[i].vx == 0)
 				{

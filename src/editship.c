@@ -44,25 +44,25 @@ void JE_decryptShips( void )
 	}  /*  <= Key Decryption Test (Reversed key) */
 	
 	y = 0;
-	for (int x = 0; x < SAS; x++)
+	for (uint x = 0; x < SAS; x++)
 		y += s2[x];
 	if (extraShips[SAS + 0] != y)
 		correct = false;
 	
 	y = 0;
-	for (int x = 0; x < SAS; x++)
+	for (uint x = 0; x < SAS; x++)
 		y -= s2[x];
 	if (extraShips[SAS + 1] != y)
 		correct = false;
 	
 	y = 1;
-	for (int x = 0; x < SAS; x++)
+	for (uint x = 0; x < SAS; x++)
 		y = y * s2[x] + 1;
 	if (extraShips[SAS + 2] != y)
 		correct = false;
 	
 	y = 0;
-	for (int x = 0; x < SAS; x++)
+	for (uint x = 0; x < SAS; x++)
 		y ^= s2[x];
 	if (extraShips[SAS + 3] != y)
 		correct = false;

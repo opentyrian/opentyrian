@@ -673,7 +673,7 @@ void JE_loadMainShapeTables( const char *shpfile )
 	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
 	
 	efread(&shpNumb, sizeof(JE_word), 1, f);
-	assert(shpNumb + 1 <= COUNTOF(shpPos));
+	assert(shpNumb + 1u <= COUNTOF(shpPos));
 	
 	for (int i = 0; i < shpNumb; i++)
 	{
@@ -719,7 +719,7 @@ void JE_loadMainShapeTables( const char *shpfile )
 
 void free_main_shape_tables( void )
 {
-	for (int i = 0; i < COUNTOF(sprite_table); ++i)
+	for (uint i = 0; i < COUNTOF(sprite_table); ++i)
 		free_sprites(i);
 	
 	free_sprite2s(&shapesC1);

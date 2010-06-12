@@ -38,7 +38,7 @@ extern SDL_Surface *game_screen;
 extern SDL_Surface *VGAScreen2;
 
 void init_video( void );
-bool init_scaler( int new_scaler, bool fullscreen );
+bool init_scaler( unsigned int new_scaler, bool fullscreen );
 bool init_any_scaler( bool fullscreen );
 void deinit_video( void );
 void JE_clr256( SDL_Surface * );

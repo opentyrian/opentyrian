@@ -23,7 +23,7 @@ ifneq ($(MAKECMDGOALS), release)
 else
     EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
 endif
-EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-sign-compare -Wno-missing-field-initializers
+EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-missing-field-initializers
 
 HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
 ifneq ($(HG_REV), )

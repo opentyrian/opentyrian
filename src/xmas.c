@@ -50,15 +50,15 @@ bool xmas_prompt( void )
 	
 	set_palette(palettes[0], 0, 255);
 	
-	for (int i = 0; i < COUNTOF(prompt); ++i)
+	for (uint i = 0; i < COUNTOF(prompt); ++i)
 		draw_font_hv(VGAScreen, 320 / 2, 85 + 15 * i, prompt[i], normal_font, centered, (i % 2) ? 2 : 4, -2);
 	
-	int selection = 0;
+	uint selection = 0;
 	
 	bool decided = false, quit = false;
 	while (!decided)
 	{
-		for (int i = 0; i < COUNTOF(choice); ++i)
+		for (uint i = 0; i < COUNTOF(choice); ++i)
 			draw_font_hv(VGAScreen, 320 / 2 - 20 + 40 * i, 120, choice[i], normal_font, centered, 15, (selection == i) ? -2 : -4);
 		
 		JE_showVGA();

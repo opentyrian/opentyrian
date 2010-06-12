@@ -142,7 +142,7 @@ void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsign
 				if (pos == strlen(message))
 				{
 					endstring = true;
-					if (pos - startpos < boxwidth)
+					if ((unsigned)(pos - startpos) < boxwidth)
 					{
 						endpos = pos + 1;
 					}
@@ -150,7 +150,7 @@ void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsign
 
 			} while (!(message[pos-1] == ' ' || endstring));
 
-		} while (!(pos - startpos > boxwidth || endstring));
+		} while (!((unsigned)(pos - startpos) > boxwidth || endstring));
 
 		JE_textShade(screen, x, y, strnztcpy(substring, message + startpos - 1, endpos - startpos), helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 

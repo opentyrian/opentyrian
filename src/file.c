@@ -42,7 +42,7 @@ const char *data_dir( void )
 	if (dir != NULL)
 		return dir;
 	
-	for (int i = 0; i < COUNTOF(dirs); ++i)
+	for (uint i = 0; i < COUNTOF(dirs); ++i)
 	{
 		FILE *f = dir_fopen(dirs[i], "tyrian1.lvl", "rb");
 		if (f)

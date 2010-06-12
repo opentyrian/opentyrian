@@ -60,9 +60,9 @@ void init_video( void )
 	}
 }
 
-bool init_scaler( int new_scaler, bool fullscreen )
+bool init_scaler( unsigned int new_scaler, bool fullscreen )
 {
-	if (new_scaler < 0 || new_scaler >= COUNTOF(scalers))
+	if (new_scaler >= COUNTOF(scalers))
 		return false;
 
 	int w = scalers[new_scaler].width,

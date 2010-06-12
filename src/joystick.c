@@ -167,7 +167,7 @@ void poll_joystick( int j )
 	bool repeat = joystick[j].joystick_delay < SDL_GetTicks();
 	
 	// update direction state
-	for (int d = 0; d < COUNTOF(joystick[j].direction); d++)
+	for (uint d = 0; d < COUNTOF(joystick[j].direction); d++)
 	{
 		bool old = joystick[j].direction[d];
 		
@@ -183,7 +183,7 @@ void poll_joystick( int j )
 	joystick[j].y = -joystick[j].analog_direction[0] + joystick[j].analog_direction[2];
 	
 	// update action state
-	for (int d = 0; d < COUNTOF(joystick[j].action); d++)
+	for (uint d = 0; d < COUNTOF(joystick[j].action); d++)
 	{
 		bool old = joystick[j].action[d];
 		
@@ -248,7 +248,7 @@ void push_joysticks_as_keyboard( void )
 		if (joystick[j].cancel)
 			push_key(cancel);
 		
-		for (int d = 0; d < COUNTOF(joystick[j].direction_pressed); d++)
+		for (uint d = 0; d < COUNTOF(joystick[j].direction_pressed); d++)
 		{
 			if (joystick[j].direction_pressed[d])
 				push_key(direction[d]);
@@ -319,10 +319,10 @@ void reset_joystick_assignments( int j )
 	assert(j < joysticks);
 	
 	// defaults: first 2 axes, first hat, first 6 buttons
-	for (int a = 0; a < COUNTOF(joystick[j].assignment); a++)
+	for (uint a = 0; a < COUNTOF(joystick[j].assignment); a++)
 	{
 		// clear assignments
-		for (int i = 0; i < COUNTOF(joystick[j].assignment[a]); i++)
+		for (uint i = 0; i < COUNTOF(joystick[j].assignment[a]); i++)
 			joystick[j].assignment[a][i].type = NONE;
 		
 		if (a < 4)
@@ -344,7 +344,7 @@ void reset_joystick_assignments( int j )
 		}
 		else
 		{
-			if (a - 4 < SDL_JoystickNumButtons(joystick[j].handle))
+			if (a - 4 < (unsigned)SDL_JoystickNumButtons(joystick[j].handle))
 			{
 				joystick[j].assignment[a][0].type = BUTTON;
 				joystick[j].assignment[a][0].num = a - 4;
@@ -383,13 +383,13 @@ bool load_joystick_assignments( int j )
 	
 	if ((setting = cJSON_GetObjectItem(config, "assignments")))
 	{
-		for (int i = 0; i < COUNTOF(joystick->assignment); ++i)
+		for (uint i = 0; i < COUNTOF(joystick->assignment); ++i)
 		{
 			cJSON *assignments = cJSON_GetArrayItem(setting, i);
 			if (assignments == NULL)
 				break;
 			
-			for (int k = 0; k < COUNTOF(*joystick->assignment); ++k)
+			for (uint k = 0; k < COUNTOF(*joystick->assignment); ++k)
 			{
 				cJSON *assignment = cJSON_GetArrayItem(assignments, k);
 				if (assignment)
@@ -427,12 +427,12 @@ bool save_joystick_assignments( int j )
 	cJSON_ForceType(setting, cJSON_Array);
 	cJSON_ClearArray(setting);
 	
-	for (int i = 0; i < COUNTOF(joystick->assignment); ++i)
+	for (uint i = 0; i < COUNTOF(joystick->assignment); ++i)
 	{
 		cJSON *assignments;
 		cJSON_AddItemToArray(setting, assignments = cJSON_CreateArray());
 		
-		for (int k = 0; k < COUNTOF(*joystick->assignment); ++k)
+		for (uint k = 0; k < COUNTOF(*joystick->assignment); ++k)
 		{
 			if (joystick[j].assignment[i][k].type == NONE)
 				continue;
@@ -454,7 +454,7 @@ void joystick_assignments_to_string( char *buffer, size_t buffer_len, const Joys
 	strncpy(buffer, "", buffer_len);
 	
 	bool comma = false;
-	for (int i = 0; i < COUNTOF(*joystick->assignment); ++i)
+	for (uint i = 0; i < COUNTOF(*joystick->assignment); ++i)
 	{
 		if (assignments[i].type == NONE)
 			continue;

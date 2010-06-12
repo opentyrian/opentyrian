@@ -175,7 +175,7 @@ void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just
 		{
 			enemy[i].mapoffset = tempMapXOfs;
 
-			if (enemy[i].xaccel && enemy[i].xaccel - 89 > mt_rand() % 11)
+			if (enemy[i].xaccel && enemy[i].xaccel - 89u > mt_rand() % 11)
 			{
 				if (player[0].x > enemy[i].ex)
 				{
@@ -189,7 +189,7 @@ void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just
 				}
 			}
 
-			if (enemy[i].yaccel && enemy[i].yaccel - 89 > mt_rand() % 11)
+			if (enemy[i].yaccel && enemy[i].yaccel - 89u > mt_rand() % 11)
 			{
 				if (player[0].y > enemy[i].ey)
 				{
@@ -877,7 +877,7 @@ start_level_first:
 
 	background2notTransparent = false;
 
-	int old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
+	uint old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
 
 	/* Initially erase power bars */
 	lastPower = power / 10;
@@ -1019,7 +1019,7 @@ start_level_first:
 	}
 
 	memset(enemyAvail,       1, sizeof(enemyAvail));
-	for (i = 0; i < COUNTOF(enemyShotAvail); i++)
+	for (uint i = 0; i < COUNTOF(enemyShotAvail); i++)
 		enemyShotAvail[i] = 1;
 
 	/*Initialize Shots*/
@@ -1154,7 +1154,7 @@ level_loop:
 			if (*player[1].lives == 0 || player[1].armor == 0)
 				twoPlayerMode = false;
 
-			if (player[0].cash >= galagaLife)
+			if (player[0].cash >= (unsigned)galagaLife)
 			{
 				soundQueue[6] = S_EXPLOSION_11;
 				soundQueue[7] = S_SOUL_OF_ZINGLON;
@@ -1218,7 +1218,7 @@ level_loop:
 
 				fill_rectangle_xy(VGAScreenSeg, x, y, x + 1 + 10 * 2, y + 2, 0);
 
-				for (int j = 1; j <= item_power; ++j)
+				for (uint j = 1; j <= item_power; ++j)
 				{
 					JE_rectangle(VGAScreen, x, y, x + 1, y + 2, 115 + j); /* SEGa000 */
 					x += 2;
@@ -1977,10 +1977,10 @@ draw_player_shot_loop_end:
 					for (uint i = 0; i < (twoPlayerMode ? 2 : 1); ++i)
 					{
 						if (player[i].is_alive &&
-						    enemyShot[z].sx > player[i].x - player[i].shot_hit_area_x &&
-						    enemyShot[z].sx < player[i].x + player[i].shot_hit_area_x &&
-						    enemyShot[z].sy > player[i].y - player[i].shot_hit_area_y &&
-						    enemyShot[z].sy < player[i].y + player[i].shot_hit_area_y)
+						    enemyShot[z].sx > player[i].x - (signed)player[i].shot_hit_area_x &&
+						    enemyShot[z].sx < player[i].x + (signed)player[i].shot_hit_area_x &&
+						    enemyShot[z].sy > player[i].y - (signed)player[i].shot_hit_area_y &&
+						    enemyShot[z].sy < player[i].y + (signed)player[i].shot_hit_area_y)
 						{
 							tempX = enemyShot[z].sx;
 							tempY = enemyShot[z].sy;
@@ -5036,7 +5036,7 @@ void JE_eventSystem( void )
 		break;
 
 	case 71:
-		if (((((intptr_t)mapYPos - (intptr_t)&megaData1.mainmap) / sizeof(JE_byte *)) * 2) <= eventRec[eventLoc-1].eventdat2)
+		if (((((intptr_t)mapYPos - (intptr_t)&megaData1.mainmap) / sizeof(JE_byte *)) * 2) <= (unsigned)eventRec[eventLoc-1].eventdat2)
 		{
 			JE_eventJump(eventRec[eventLoc-1].eventdat);
 		}
@@ -5187,8 +5187,8 @@ void JE_whoa( void )
 	 * need to be the right size.  I doubt they'l ever be anything but 320x200,
 	 * but just in case, these asserts will clue in whoever stumbles across
 	 * the problem.  You can fix it with the stack or malloc. */
-	assert( VGAScreen2->h *  VGAScreen2->pitch >= screenSize
-	    && game_screen->h * game_screen->pitch >= screenSize);
+	assert( (unsigned)VGAScreen2->h *  VGAScreen2->pitch >= screenSize
+	    && (unsigned)game_screen->h * game_screen->pitch >= screenSize);
 
 
 	/* Clear the top and bottom borders.  We don't want to process

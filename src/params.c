@@ -220,10 +220,10 @@ void JE_paramCheck( int argc, char *argv[] )
 	// legacy parameter support
 	for (int i = option.argn; i < argc; ++i)
 	{
-		for (int j = 0; j < strlen(argv[i]); ++j)
+		for (uint j = 0; j < strlen(argv[i]); ++j)
 			argv[i][j] = toupper((unsigned char)argv[i][j]);
 		
-		for (int j = 0; j < COUNTOF(pars); ++j)
+		for (uint j = 0; j < COUNTOF(pars); ++j)
 		{
 			if (strcmp(argv[i], pars[j]) == 0)
 			{

@@ -56,7 +56,7 @@ const struct scaler_struct scalers[] =
 
 void set_scaler_by_name( const char *name )
 {
-	for (int i = 0; i < COUNTOF(scalers); ++i)
+	for (uint i = 0; i < COUNTOF(scalers); ++i)
 	{
 		if (strcmp(name, scalers[i].name) == 0)
 		{

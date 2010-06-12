@@ -142,8 +142,8 @@ void audio_cb( void *user_data, unsigned char *sdl_buffer, int howmuch )
 			float volume = sample_volume * (channel_vol[ch] / (float)SFX_CHANNELS);
 			
 			/* SYN: Don't copy more data than is in the channel! */
-			int qu = (howmuch > channel_len[ch] ? channel_len[ch] : howmuch) / BYTES_PER_SAMPLE;
-			for (int smp = 0; smp < qu; smp++)
+			unsigned int qu = ((unsigned)howmuch > channel_len[ch] ? channel_len[ch] : (unsigned)howmuch) / BYTES_PER_SAMPLE;
+			for (unsigned int smp = 0; smp < qu; smp++)
 			{
 #if (BYTES_PER_SAMPLE == 2)
 				Sint32 clip = (Sint32)feedme[smp] + (Sint32)(channel_pos[ch][smp] * volume);

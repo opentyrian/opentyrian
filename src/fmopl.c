@@ -410,7 +410,7 @@ static unsigned int sin_tab[SIN_LEN * 4];
 	When AM = 0 data is divided by 4 before being used (loosing precision is important)
 */
 
-#define LFO_AM_TAB_ELEMENTS 210
+#define LFO_AM_TAB_ELEMENTS 210u
 
 static const UINT8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
 0,0,0,0,0,0,0,
@@ -640,7 +640,7 @@ inline void advance(FM_OPL *OPL)
 				{
 					op->volume += eg_inc[op->eg_sel_dr + ((OPL->eg_cnt>>op->eg_sh_dr)&7)];
 
-					if ( op->volume >= op->sl )
+					if ( op->volume >= (signed)op->sl )
 						op->state = EG_SUS;
 
 				}
@@ -1326,7 +1326,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 {
 	OPL_CH *CH;
 	int slot;
-	int block_fnum;
+	uint block_fnum;
 	double interval;
 
 

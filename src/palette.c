@@ -56,7 +56,7 @@ void JE_loadPals( void )
 
 void set_palette( Palette colors, unsigned int first_color, unsigned int last_color )
 {
-	for (int i = first_color; i <= last_color; ++i)
+	for (uint i = first_color; i <= last_color; ++i)
 	{
 		palette[i] = colors[i];
 		
@@ -72,7 +72,7 @@ void set_palette( Palette colors, unsigned int first_color, unsigned int last_co
 
 void set_colors( SDL_Color color, unsigned int first_color, unsigned int last_color )
 {
-	for (int i = first_color; i <= last_color; ++i)
+	for (uint i = first_color; i <= last_color; ++i)
 	{
 		palette[i] = color;
 		

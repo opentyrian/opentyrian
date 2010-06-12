@@ -1164,13 +1164,13 @@ unsigned int __aliasDirtPixel(const SDL_Surface * screen, unsigned int x, unsign
 	if ((y > 0) && (*(s - screen->pitch) == PIXEL_DIRT)) { // look up
 		newColor += 1;
 	}
-	if ((y < screen->h - 1) && (*(s + screen->pitch) == PIXEL_DIRT)) { // look down
+	if ((y < screen->h - 1u) && (*(s + screen->pitch) == PIXEL_DIRT)) { // look down
 		newColor += 3;
 	}
 	if ((x > 0) && (*(s - 1) == PIXEL_DIRT)) { // look left
 		newColor += 2;
 	}
-	if ((x < screen->pitch - 1) && (*(s + 1) == PIXEL_DIRT)) { // look right
+	if ((x < screen->pitch - 1u) && (*(s + 1) == PIXEL_DIRT)) { // look right
 		newColor += 2;
 	}
 	if (newColor != PIXEL_BLACK) {
@@ -1192,7 +1192,7 @@ void JE_aliasDirt( SDL_Surface * screen )
 	Uint8 *s = screen->pixels;
 	s += 12 * screen->pitch;
 
-	for (y = 12; y < screen->h; y++) {
+	for (y = 12; y < (unsigned)screen->h; y++) {
 		for (x = 0; x < screen->pitch; x++) {
 			if (*s == PIXEL_BLACK) {
 				*s = __aliasDirtPixel(screen, x, y, s);

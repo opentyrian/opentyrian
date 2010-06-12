@@ -87,8 +87,8 @@ static const JE_byte menuEsc[MAX_MENU] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 
 static const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
 static const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
 static const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120, 150, 220, 200, 80,  50, 160,  10,  55,  55,  90,  90,  40 };
-static const int cube_line_chars = sizeof(*cube->text) - 1;
-static const int cube_line_width = 150;
+static const uint cube_line_chars = sizeof(*cube->text) - 1;
+static const uint cube_line_width = 150;
 
 
 /*** Functions ***/
@@ -113,7 +113,7 @@ JE_longint JE_cashLeft( void )
 	{
 	case 3:
 	case 4:
-		for (int i = 1; i < player[0].items.weapon[curSel[1]-3].power; ++i)
+		for (uint i = 1; i < player[0].items.weapon[curSel[1]-3].power; ++i)
 		{
 			tempW += weaponPort[itemNum].cost * i;
 			tempL -= tempW;
@@ -428,13 +428,13 @@ void JE_itemScreen( void )
 				menuInt[6][10]
 			};
 
-			for (int i = 0; i < COUNTOF(menu_item); i++)
+			for (uint i = 0; i < COUNTOF(menu_item); i++)
 			{
-				int temp = (i == curSel[curMenu] - 2) ? 15 : 28;
+				int temp = (i == curSel[curMenu] - 2u) ? 15 : 28;
 
 				JE_textShade(VGAScreen, 166, 38 + i * 8, menu_item[i], temp / 16, temp % 16 - 8, DARKEN);
 
-				temp = (i == curSel[curMenu] - 2) ? 252 : 250;
+				temp = (i == curSel[curMenu] - 2u) ? 252 : 250;
 
 				char value[30] = "";
 				if (joysticks == 0 && i < 14) // no joysticks, everything disabled
@@ -744,7 +744,7 @@ void JE_itemScreen( void )
 		/* 2 player input devices */
 		if (curMenu == 9)
 		{
-			for (int i = 0; i < COUNTOF(inputDevice); i++)
+			for (uint i = 0; i < COUNTOF(inputDevice); i++)
 			{
 				if (inputDevice[i] > 2 + joysticks)
 					inputDevice[i] = inputDevice[i == 0 ? 1 : 0] == 1 ? 2 : 1;
@@ -1745,7 +1745,7 @@ bool load_cube( int cube_slot, int cube_index )
 	read_encrypted_pascal_string(cube[cube_slot].title, sizeof(cube[cube_slot].title), f);
 	read_encrypted_pascal_string(cube[cube_slot].header, sizeof(cube[cube_slot].header), f);
 
-	int line = 0, line_chars = 0, line_width = 0;
+	uint line = 0, line_chars = 0, line_width = 0;
 
 	// for each line of decrypted text, split the line into words
 	// and add them individually to the lines of wrapped text
@@ -1770,8 +1770,8 @@ bool load_cube( int cube_slot, int cube_index )
 			continue;
 		}
 
-		int word_start = 0;
-		for (int i = 0; ; ++i)
+		uint word_start = 0;
+		for (uint i = 0; ; ++i)
 		{
 			bool end_of_line = (buf[i] == '\0'),
 			     end_of_word = end_of_line || (buf[i] == ' ');
@@ -1783,8 +1783,8 @@ bool load_cube( int cube_slot, int cube_index )
 				char *word = &buf[word_start];
 				word_start = i + 1;
 
-				int word_chars = strlen(word),
-					word_width = JE_textWidth(word, TINY_FONT);
+				uint word_chars = strlen(word),
+				     word_width = JE_textWidth(word, TINY_FONT);
 
 				// word won't fit; no can do
 				if (word_chars > cube_line_chars || word_width > cube_line_width)
@@ -2889,7 +2889,7 @@ void JE_menuFunction( JE_byte select )
 			if (detect_joystick_assignment(joystick_config, &temp))
 			{
 				// if the detected assignment was already set, unset it
-				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
+				for (uint i = 0; i < COUNTOF(*joystick->assignment); i++)
 				{
 					if (joystick_assignment_cmp(&temp, &joystick[joystick_config].assignment[select - 6][i]))
 					{
@@ -2899,7 +2899,7 @@ void JE_menuFunction( JE_byte select )
 				}
 
 				// if there is an empty assignment, set it
-				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
+				for (uint i = 0; i < COUNTOF(*joystick->assignment); i++)
 				{
 					if (joystick[joystick_config].assignment[select - 6][i].type == NONE)
 					{
@@ -2909,7 +2909,7 @@ void JE_menuFunction( JE_byte select )
 				}
 
 				// if no assignments are empty, shift them all forward and set the last one
-				for (int i = 0; i < COUNTOF(*joystick->assignment); i++)
+				for (uint i = 0; i < COUNTOF(*joystick->assignment); i++)
 				{
 					if (i == COUNTOF(*joystick->assignment) - 1)
 						joystick[joystick_config].assignment[select - 6][i] = temp;

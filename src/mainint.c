@@ -442,7 +442,7 @@ long weapon_upgrade_cost( long base_cost, unsigned int power )
 	return base_cost * temp;
 }
 
-JE_longint JE_getCost( JE_byte itemType, JE_word itemNum )
+ulong JE_getCost( JE_byte itemType, JE_word itemNum )
 {
 	long cost = 0;
 
@@ -1761,7 +1761,7 @@ void adjust_difficulty( void )
 			new_difficulty = 9;  // Nortaneous
 	}
 
-	difficultyLevel = MAX(difficultyLevel, new_difficulty);
+	difficultyLevel = MAX((unsigned)difficultyLevel, new_difficulty);
 }
 
 bool load_next_demo( void )
@@ -4266,7 +4266,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 							JE_drawTextWindow(tempStr);
 
 							// if picked up a different sidekick than player already has, then reset sidekicks to least powerful, else power them up
-							if (tempI4 - 32000 != player[1].items.sidekick_series)
+							if (tempI4 - 32000u != player[1].items.sidekick_series)
 							{
 								player[1].items.sidekick_series = tempI4 - 32000;
 								player[1].items.sidekick_level = 101;

@@ -652,7 +652,7 @@ connect_again:
 }
 
 // something has gone wrong :(
-void network_tyrian_halt( int err, bool attempt_sync )
+void network_tyrian_halt( unsigned int err, bool attempt_sync )
 {
 	const char *err_msg[] = {
 		"Quitting...",
