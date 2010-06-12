@@ -20,7 +20,6 @@
 #include "fm_synth.h"
 #include "lds_play.h"
 #include "loudness.h"
-#include "nortsong.h"
 #include "opentyr.h"
 
 #include <assert.h>
@@ -29,7 +28,7 @@
    Thanks, guys! Adplug is awesome! :D */
 
 /* Note frequency table (16 notes / octave) */
-const Uint16 frequency[(13 * 15) - 3] = {
+static const Uint16 frequency[(13 * 15) - 3] = {
   343, 344, 345, 347, 348, 349, 350, 352, 353, 354, 356, 357, 358,
   359, 361, 362, 363, 365, 366, 367, 369, 370, 371, 373, 374, 375,
   377, 378, 379, 381, 382, 384, 385, 386, 388, 389, 391, 392, 393,
@@ -48,7 +47,7 @@ const Uint16 frequency[(13 * 15) - 3] = {
 };
 
 /* Vibrato (sine) table */
-const Uint8 vibtab[25 + (13 * 3)] = {
+static const Uint8 vibtab[25 + (13 * 3)] = {
   0, 13, 25, 37, 50, 62, 74, 86, 98, 109, 120, 131, 142, 152, 162,
   171, 180, 189, 197, 205, 212, 219, 225, 231, 236, 240, 244, 247,
   250, 252, 254, 255, 255, 255, 254, 252, 250, 247, 244, 240, 236,
@@ -57,7 +56,7 @@ const Uint8 vibtab[25 + (13 * 3)] = {
 };
 
 /* Tremolo (sine * sine) table */
-const Uint8 tremtab[128] = {
+static const Uint8 tremtab[128] = {
   0, 0, 1, 1, 2, 4, 5, 7, 10, 12, 15, 18, 21, 25, 29, 33, 37, 42, 47,
   52, 57, 62, 67, 73, 79, 85, 90, 97, 103, 109, 115, 121, 128, 134,
   140, 146, 152, 158, 165, 170, 176, 182, 188, 193, 198, 203, 208,
@@ -69,18 +68,18 @@ const Uint8 tremtab[128] = {
   25, 21, 18, 15, 12, 10, 7, 5, 4, 2, 1, 1, 0
 };
 
-const Uint16 maxsound = 0x3f, maxpos = 0xff;
+static const Uint16 maxsound = 0x3f, maxpos = 0xff;
 
-SoundBank *soundbank = NULL;
-Channel channel[9];
-Position *positions = NULL;
+static SoundBank *soundbank = NULL;
+static Channel channel[9];
+static Position *positions = NULL;
 
-Uint8 fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
-Uint16 posplay, jumppos, speed;
-Uint16 *patterns = NULL;
+static Uint8 fmchip[0xff], jumping, fadeonoff, allvolume, hardfade, tempo_now, pattplay, tempo, regbd, chandelay[9], mode, pattlen;
+static Uint16 posplay, jumppos, speed;
+static Uint16 *patterns = NULL;
+static Uint16 numpatch, numposi, mainvolume;
+
 bool playing, songlooped;
-Uint16 numpatch, numposi, patterns_size, mainvolume;
-Uint8 *read_pos;
 
 bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 {
