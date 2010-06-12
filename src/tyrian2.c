@@ -2765,7 +2765,7 @@ new_game:
 							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 
 							char buf[256];
-							snprintf(buf, sizeof(buf), "%s", (strlen(s) > 8) ? s + 8 : "");
+							strncpy(buf, (strlen(s) > 8) ? s + 8 : "", sizeof(buf));
 
 							int j = 0, temp;
 							while (str_pop_int(buf, &temp))
