@@ -310,6 +310,8 @@ void deinit_joysticks( void )
 			SDL_JoystickClose(joystick[j].handle);
 		}
 	}
+
+	free(joystick);
 	
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
