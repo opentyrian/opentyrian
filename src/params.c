@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
-#include <inttypes.h>
+#include <stdint.h>
 #include <string.h>
 
 JE_boolean richMode = false, constantPlay = false, constantDie = false;

@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include <inttypes.h>
+#include <stdint.h>
 
 
 extern JE_word backPos, backPos2, backPos3;
