@@ -29,8 +29,8 @@
 
 static void permute( const char *argv[], int *first_nonopt, int *first_opt, int after_opt );
 
-static int parse_short_opt( int argc, const char *argv[], const Options *options, Option *option );
-static int parse_long_opt( int argc, const char *argv[], const Options *options, Option *option );
+static int parse_short_opt( int argc, const char *const argv[], const Options *options, Option *option );
+static int parse_long_opt( int argc, const char *const argv[], const Options *options, Option *option );
 
 Option parse_args( int argc, const char *argv[], const Options *options )
 {
@@ -110,7 +110,7 @@ static void permute( const char *argv[], int *first_nonopt, int *first_opt, int 
 	*first_opt -= nonopts;
 }
 
-static int parse_short_opt( int argc, const char *argv[], const Options *options, Option *option )
+static int parse_short_opt( int argc, const char *const argv[], const Options *options, Option *option )
 {
 	static size_t offset = 1;  // ignore the "-"
 	
@@ -177,7 +177,7 @@ static int parse_short_opt( int argc, const char *argv[], const Options *options
 	return argn;  // which arg in argv that parse_args() should examine when called again
 }
 
-static int parse_long_opt( int argc, const char *argv[], const Options *options, Option *option )
+static int parse_long_opt( int argc, const char *const argv[], const Options *options, Option *option )
 {
 	int argn = option->argn;
 	

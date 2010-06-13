@@ -27,7 +27,7 @@ typedef struct
 {
 	int value;
 	char short_opt;
-	char *long_opt;
+	const char *long_opt;
 	bool has_arg;
 }
 Options;

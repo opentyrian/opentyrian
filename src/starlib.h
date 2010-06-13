@@ -21,16 +21,6 @@
 
 #include "opentyr.h"
 
-
-#define starlib_MAX_STARS 1000
-#define MAX_TYPES 14
-
-struct JE_StarType
-{
-	JE_integer spX, spY, spZ;
-	JE_integer lastX, lastY;
-};
-
 void JE_starlib_main( void );
 void JE_wackyCol( void );
 void JE_starlib_init( void );

@@ -26,7 +26,7 @@ typedef enum
 {
 	large_font = 0,
 	normal_font = 1,
-	small_font = 2,
+	small_font = 2
 }
 Font;
 
@@ -34,7 +34,7 @@ typedef enum
 {
 	left_aligned,
 	centered,
-	right_aligned,
+	right_aligned
 }
 FontAlignment;
 

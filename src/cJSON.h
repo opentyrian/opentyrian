@@ -40,7 +40,7 @@ typedef enum
 	cJSON_Number,
 	cJSON_String,
 	cJSON_Array,
-	cJSON_Object,
+	cJSON_Object
 }
 cJSON_Type;
 

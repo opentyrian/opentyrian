@@ -171,7 +171,7 @@ int JE_renderFrame( unsigned int framenumber )
 	return (JE_playRunSkipDump(CurrentPageBuffer + offset + 4, CurrentPageRecordSizes[destframe] - 4));
 }
 
-void JE_playAnim( JE_char *animfile, JE_byte startingframe, JE_byte speed )
+void JE_playAnim( const char *animfile, JE_byte startingframe, JE_byte speed )
 {
 	unsigned int i;
 	int pageNum;

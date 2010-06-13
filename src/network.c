@@ -62,8 +62,9 @@ char *network_opponent_host = NULL;
 Uint16 network_player_port = NET_PORT,
        network_opponent_port = NET_PORT;
 
-char *network_player_name = "",
-     *network_opponent_name = "";
+static char empty_string[] = "";
+char *network_player_name = empty_string,
+     *network_opponent_name = empty_string;
 
 UDPsocket socket;
 IPaddress ip;

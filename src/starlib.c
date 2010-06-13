@@ -25,30 +25,39 @@
 
 #include <ctype.h>
 
-int tempX, tempY;
-JE_boolean run;
-struct JE_StarType star[starlib_MAX_STARS];
+#define starlib_MAX_STARS 1000
+#define MAX_TYPES 14
 
-JE_byte setup;
-JE_word stepCounter;
+struct JE_StarType
+{
+	JE_integer spX, spY, spZ;
+	JE_integer lastX, lastY;
+};
 
-JE_word nsp2;
-JE_shortint nspVar2Inc;
+static int tempX, tempY;
+static JE_boolean run;
+static struct JE_StarType star[starlib_MAX_STARS];
+
+static JE_byte setup;
+static JE_word stepCounter;
+
+static JE_word nsp2;
+static JE_shortint nspVar2Inc;
 
 /* JE: new sprite pointer */
-JE_real nsp;
-JE_real nspVarInc;
-JE_real nspVarVarInc;
+static JE_real nsp;
+static JE_real nspVarInc;
+static JE_real nspVarVarInc;
 
-JE_word changeTime;
-JE_boolean doChange;
+static JE_word changeTime;
+static JE_boolean doChange;
 
-JE_boolean grayB;
+static JE_boolean grayB;
 
-JE_integer starlib_speed;
-JE_shortint speedChange;
+static JE_integer starlib_speed;
+static JE_shortint speedChange;
 
-JE_byte pColor;
+static JE_byte pColor;
 
 
 void JE_starlib_main( void )

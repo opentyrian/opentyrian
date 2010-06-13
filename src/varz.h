@@ -39,7 +39,7 @@ enum
 	
 	// only used in pItems[P_SUPERARCADE]
 	SA_SUPERTYRIAN = 254,
-	SA_ARCADE = 255,
+	SA_ARCADE = 255
 };
 
 #define MAX_PWEAPON     81 /* 81*/
