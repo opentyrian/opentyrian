@@ -21,6 +21,8 @@
 
 #include "opentyr.h"
 
+#include "SDL.h"
+
 typedef enum
 {
 	NONE,

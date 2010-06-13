@@ -21,6 +21,8 @@
 
 #include "opentyr.h"
 
+#include "SDL.h"
+
 #define PART_SHADE 0
 #define FULL_SHADE 1
 #define DARKEN     2

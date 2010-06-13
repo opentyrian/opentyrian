@@ -23,6 +23,7 @@
 #include "opentyr.h"
 
 #include <stdio.h>
+#include "SDL.h"
 
 
 #define SAVE_FILES_NUM (11 * 2)
