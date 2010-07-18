@@ -1967,14 +1967,14 @@ void JE_sort( void )
 
 void JE_playCredits( void )
 {
-	const int maxlines = 132;
-	typedef char JE_CreditStringType[maxlines][66];
-
-	JE_CreditStringType credstr;
-	JE_word x, max = 0, maxlen = 0;
-	JE_integer curpos, newpos;
-	JE_byte yloc;
-	JE_byte currentpic = 1, fade = 0;
+	const int lines_max = 132;
+	const int line_max_length = 65;
+	
+	char credstr[lines_max][line_max_length + 1];
+	
+	int lines = 0;
+	
+	JE_byte currentpic = 0, fade = 0;
 	JE_shortint fadechg = 1;
 	JE_byte currentship = 0;
 	JE_integer shipx = 0, shipxwait = 0;
@@ -1985,36 +1985,39 @@ void JE_playCredits( void )
 	setjasondelay2(1000);
 
 	play_song(8);
-
+	
+	// load credits text
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.cdt", "rb");
-	while (!feof(f))
+	for (lines = 0; !feof(f) && lines < lines_max; ++lines)
 	{
-		maxlen += 20 * 3;
-		read_encrypted_pascal_string(credstr[max], sizeof(credstr[max]), f);
-		max++;
+		read_encrypted_pascal_string(credstr[lines], sizeof(credstr[lines]), f);
 	}
-
+	if (lines == lines_max)
+		--lines;
+	fclose(f);
+	
 	memcpy(colors, palettes[6-1], sizeof(colors));
 	JE_clr256(VGAScreen);
 	JE_showVGA();
 	fade_palette(colors, 2, 0, 255);
-
+	
 	//tempScreenSeg = VGAScreenSeg;
-
-	for (x = 0; x < maxlen; x++)
+	
+	const int ticks_max = lines * 20 * 3;
+	for (int ticks = 0; ticks < ticks_max; ++ticks)
 	{
 		setjasondelay(1);
 		JE_clr256(VGAScreen);
-
-		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic-1)->width, 100 - (sprite(EXTRA_SHAPES, currentpic-1)->height / 2), EXTRA_SHAPES, currentpic-1, 0x0, fade - 15);
-
+		
+		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic)->width, 100 - (sprite(EXTRA_SHAPES, currentpic)->height / 2), EXTRA_SHAPES, currentpic, 0x0, fade - 15);
+		
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
 		{
 			fadechg = 1;
-			currentpic++;
-			if (currentpic > sprite_table[EXTRA_SHAPES].count)
-				currentpic = 1;
+			++currentpic;
+			if (currentpic >= sprite_table[EXTRA_SHAPES].count)
+				currentpic = 0;
 		}
 		if (fade == 15)
 			fadechg = 0;
@@ -2025,10 +2028,7 @@ void JE_playCredits( void )
 			setjasondelay2(900);
 		}
 
-		curpos = (x / 3) / 20;
-		yloc = 20 - ((x / 3) % 20);
-
-		if (x % 200 == 0)
+		if (ticks % 200 == 0)
 		{
 			currentship = (mt_rand() % 11) + 1;
 			shipxwait = (mt_rand() % 80) + 10;
@@ -2074,60 +2074,64 @@ void JE_playCredits( void )
 			if (shipxca > 0 && shipxc > 0)
 				shipxwait = 1;
 		}
-		tempW = ships[currentship].shipgraphic;
+		
+		uint ship_sprite = ships[currentship].shipgraphic;
 		if (shipxc < -10)
-			tempW -= 2;
-		if (shipxc < -20)
-			tempW -= 2;
-		if (shipxc > 10)
-			tempW += 2;
-		if (shipxc > 20)
-			tempW += 2;
-		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (x % 200), shapes9, tempW);
-
-		for (newpos = curpos - 9; newpos <= curpos; newpos++)
+			ship_sprite -= (shipxc < -20) ? 4 : 2;
+		else if (shipxc > 10)
+			ship_sprite += (shipxc > 20) ? 4 : 2;
+		
+		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (ticks % 200), shapes9, ship_sprite);
+		
+		const int bottom_line = (ticks / 3) / 20;
+		int y = 20 - ((ticks / 3) % 20);
+		
+		for (int line = bottom_line - 10; line < bottom_line; ++line)
 		{
-			if (newpos > 0 && newpos <= max)
+			if (line >= 0 && line < lines_max)
 			{
-				if (strcmp(&credstr[newpos-1][0], ".") && strlen(credstr[newpos-1]))
+				if (strcmp(&credstr[line][0], ".") != 0 && strlen(credstr[line]))
 				{
-					JE_outTextAdjust(VGAScreen, 110 - JE_textWidth(&credstr[newpos-1][1], SMALL_FONT_SHAPES) / 2 + abs((yloc / 18) % 4 - 2) - 1, yloc - 1, &credstr[newpos-1][1], credstr[newpos-1][0] - 65, -8, SMALL_FONT_SHAPES, false);
-					JE_outTextAdjust(VGAScreen, 110 - JE_textWidth(&credstr[newpos-1][1], SMALL_FONT_SHAPES) / 2, yloc, &credstr[newpos-1][1], credstr[newpos-1][0] - 65, -2, SMALL_FONT_SHAPES, false);
+					const Uint8 color = credstr[line][0] - 65;
+					const char *text = &credstr[line][1];
+					
+					const int x = 110 - JE_textWidth(text, SMALL_FONT_SHAPES) / 2;
+					
+					JE_outTextAdjust(VGAScreen, x + abs((y / 18) % 4 - 2) - 1, y - 1, text, color, -8, SMALL_FONT_SHAPES, false);
+					JE_outTextAdjust(VGAScreen, x,                             y,     text, color, -2, SMALL_FONT_SHAPES, false);
 				}
 			}
-
-			yloc += 20;
+			
+			y += 20;
 		}
-
+		
 		fill_rectangle_xy(VGAScreen, 0,  0, 319, 10, 0);
 		fill_rectangle_xy(VGAScreen, 0, 190, 319, 199, 0);
-
-		if (currentpic == sprite_table[EXTRA_SHAPES].count)
-			JE_outTextAdjust(VGAScreen, 5, 180, miscText[55-1], 2, -2, SMALL_FONT_SHAPES, false);
-
+		
+		if (currentpic == sprite_table[EXTRA_SHAPES].count - 1)
+			JE_outTextAdjust(VGAScreen, 5, 180, miscText[54], 2, -2, SMALL_FONT_SHAPES, false);  // levels-in-episode
+		
+		if (bottom_line == lines_max - 8)
+			fade_song();
+		
+		if (ticks == ticks_max - 1)
+		{
+			--ticks;
+			play_song(9);
+		}
+		
 		NETWORK_KEEP_ALIVE();
-
-		wait_delay();
-
+		
 		JE_showVGA();
+		
+		wait_delay();
+		
 		if (JE_anyButton())
-		{
-			x = maxlen - 1;
-		}
-		else
-		{
-			if (newpos == maxlines - 8)
-				fade_song();
-			if (x == maxlen - 1)
-			{
-				x--;
-				play_song(9);
-			}
-		}
+			break;
 	}
-
+	
 	fade_black(10);
-
+	
 	free_sprites(EXTRA_SHAPES);
 }
 
