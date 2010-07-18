@@ -54,7 +54,7 @@ extern UDPpacket *packet_out_temp;
 extern UDPpacket *packet_in[], *packet_out[],
                  *packet_state_in[], *packet_state_out[];
 
-extern JE_integer thisPlayerNum;
+extern uint thisPlayerNum;
 extern JE_boolean haltGame;
 extern JE_boolean moveOk;
 extern JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;

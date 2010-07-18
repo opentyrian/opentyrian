@@ -88,7 +88,7 @@ bool net_initialized = false;
 static bool connected = false, quit = false;
 
 
-JE_integer thisPlayerNum = 0;  /* Player number on this PC (1 or 2) */
+uint thisPlayerNum = 0;  /* Player number on this PC (1 or 2) */
 
 JE_boolean haltGame = false;
 

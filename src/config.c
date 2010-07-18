@@ -158,8 +158,8 @@ JE_shortint difficultyLevel, oldDifficultyLevel,
             initialDifficulty;  // can only get highscore on initial episode
 
 /* Player Stuff */
-JE_integer    power, lastPower, powerAdd;
-JE_byte       shieldWait, shieldT;
+uint    power, lastPower, powerAdd;
+JE_byte shieldWait, shieldT;
 
 JE_byte          shotRepeat[11], shotMultiPos[11];
 JE_boolean       portConfigChange, portConfigDone;

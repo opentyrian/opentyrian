@@ -94,7 +94,7 @@ extern JE_word lastCubeMax, cubeMax;
 extern JE_word cubeList[4];
 extern JE_boolean gameHasRepeated;
 extern JE_shortint difficultyLevel, oldDifficultyLevel, initialDifficulty;
-extern JE_integer power, lastPower, powerAdd;
+extern uint power, lastPower, powerAdd;
 extern JE_byte shieldWait, shieldT;
 
 enum

@@ -1233,7 +1233,7 @@ level_loop:
 		}
 		else
 		{
-			power = power + powerAdd;
+			power += powerAdd;
 			if (power > 900)
 				power = 900;
 
@@ -1245,9 +1245,9 @@ level_loop:
 					fill_rectangle_xy(VGAScreenSeg, 269, 113 - 11 - temp, 276, 114 - 11 - lastPower, 113 + temp / 7);
 				else
 					fill_rectangle_xy(VGAScreenSeg, 269, 113 - 11 - lastPower, 276, 114 - 11 - temp, 0);
+				
+				lastPower = temp;
 			}
-
-			lastPower = temp;
 		}
 
 		oldMapX3Ofs = mapX3Ofs;
@@ -1729,13 +1729,20 @@ level_loop:
 									if (enemyAvail[temp3] != 1)
 									{
 										temp4 = enemy[temp3].linknum;
-										if ((temp3 == b) ||
-										    ((temp != 255) &&
-										    (((enemy[temp3].edlevel > 0) && (temp4 == temp)) ||
-										    ((enemyContinualDamage && (temp - 100 == temp4)) ||
-										    ((temp4 > 40) && (temp4 / 20 == temp / 20) && (temp4 <= temp))))))
+										if (
+										     (temp3 == b) ||
+										     (
+										       (temp != 255) &&
+										       (
+										         ((enemy[temp3].edlevel > 0) && (temp4 == temp)) ||
+										         (
+										           (enemyContinualDamage && (temp - 100 == temp4)) ||
+										           ((temp4 > 40) && (temp4 / 20 == temp / 20) && (temp4 <= temp))
+										         )
+										       )
+										     )
+										   )
 										{
-
 											enemy[temp3].enemycycle = 1;
 
 											enemy[temp3].edamaged = !enemy[temp3].edamaged;
@@ -1765,7 +1772,7 @@ level_loop:
 
 											enemy[temp3].aniwhenfire = 0;
 
-											if (enemy[temp3].armorleft > enemy[temp3].edlevel)
+											if (enemy[temp3].armorleft > (unsigned char)enemy[temp3].edlevel)
 												enemy[temp3].armorleft = enemy[temp3].edlevel;
 
 											tempX = enemy[temp3].ex + enemy[temp3].mapoffset;
@@ -4361,7 +4368,7 @@ void JE_eventSystem( void )
 				enemyShapeTables[2-1] = 0;
 			}
 		}
-		if (enemyShapeTables[3-1] != eventRec[eventLoc-1].eventdat3)
+		if (enemyShapeTables[3-1] != (unsigned char)eventRec[eventLoc-1].eventdat3)
 		{
 			if (eventRec[eventLoc-1].eventdat3 > 0)
 			{

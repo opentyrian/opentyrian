@@ -527,7 +527,6 @@ void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE
 		{
 			if (power >= weaponPort[portNum].poweruse)
 			{
-
 				power -= weaponPort[portNum].poweruse;
 
 				if (weapons[wpNum].sound > 0)

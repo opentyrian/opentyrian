@@ -3300,7 +3300,7 @@ draw_player_shot_loop_end:
 
 	/*========================Power Bar=========================*/
 
-	power = power + powerAdd;
+	power += powerAdd;
 	if (power > 900)
 		power = 900;
 
