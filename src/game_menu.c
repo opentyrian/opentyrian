@@ -2686,32 +2686,32 @@ void JE_menuFunction( JE_byte select )
 
 				wait_delay();
 			} while (!newkey && !mousedown && !joydown);
-
-			bool do_assignment = newkey;
-
-			// already used?
-			for (x = 0; x < 8; x++)
+			
+			if (newkey)
 			{
-				if (keySettings[x] == lastkey_sym)
+				// already used? then swap
+				for (uint i = 0; i < COUNTOF(keySettings); ++i)
 				{
-					do_assignment = false;
-					JE_playSampleNum(false);
+					if (keySettings[i] == lastkey_sym)
+					{
+						keySettings[i] = keySettings[curSelect-2];
+						break;
+					}
 				}
+				
+				if (lastkey_sym != SDLK_ESCAPE && // reserved for menu
+				    lastkey_sym != SDLK_F11 &&    // reserved for gamma
+				    lastkey_sym != SDLK_s &&      // reserved for sample mute
+				    lastkey_sym != SDLK_m &&      // reserved for music mute
+				    lastkey_sym != SDLK_p)        // reserved for pause
+				{
+					JE_playSampleNum(S_CLICK);
+					keySettings[curSelect-2] = lastkey_sym;
+					++curSelect;
+				}
+				
+				JE_wipeKey();
 			}
-
-			if ( lastkey_sym != SDLK_ESCAPE && // reserved for menu
-				 lastkey_sym != SDLK_F11 &&    // reserved for gamma
-				 lastkey_sym != SDLK_s &&      // reserved for sample mute
-				 lastkey_sym != SDLK_m &&      // reserved for music mute
-				 lastkey_sym != SDLK_p &&      // reserved for pause
-				 do_assignment )
-			{
-				JE_playSampleNum(S_CLICK);
-				keySettings[curSelect-2] = lastkey_sym;
-				curSelect++;
-			}
-			JE_wipeKey();
-
 		}
 		break;
 
