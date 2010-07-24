@@ -23,8 +23,8 @@
 
 #include "SDL.h"
 
-extern JE_boolean mouseInstalled;
-extern JE_boolean mouse_threeButton;
+extern bool has_mouse;
+extern bool mouse_has_three_buttons;
 
 extern JE_word lastMouseX, lastMouseY;
 extern JE_byte mouseCursor;

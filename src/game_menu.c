@@ -2377,7 +2377,7 @@ JE_boolean JE_quitRequest( void )
 
 			JE_outTextAdjust(VGAScreen, temp_x, 128, miscText[10], 15, temp_c, FONT_SHAPES, true);
 
-			if (mouseInstalled)
+			if (has_mouse)
 			{
 				JE_mouseStart();
 				JE_showVGA();

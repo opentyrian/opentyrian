@@ -22,8 +22,12 @@
 #include "video.h"
 #include "vga256d.h"
 
-JE_boolean mouseInstalled = true;
-JE_boolean mouse_threeButton = true;
+#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
+bool has_mouse = false;
+#else
+bool has_mouse = true;
+#endif
+bool mouse_has_three_buttons = true;
 
 JE_word lastMouseX, lastMouseY;
 JE_byte mouseCursor;
@@ -87,40 +91,24 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 void JE_mouseStart( void )
 {
 	const JE_word mouseCursorGr[3] /* [1..3] */ = {273, 275, 277};
-
-	JE_word tempW;
-
-	if (mouseInstalled)
+	
+	if (has_mouse)
 	{
-		tempW = mouseCursorGr[mouseCursor];
-
 		service_SDL_events(false);
 		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
-		lastMouseX = mouse_x;
-		lastMouseY = mouse_y;
-
-		if (lastMouseX > 320 - 13)
-		{
-			lastMouseX = 320 - 13;
-		}
-		if (lastMouseY > 200 - 16)
-		{
-			lastMouseY = 200 - 16;
-		}
-
+		lastMouseX = MIN(mouse_x, 320 - 13);
+		lastMouseY = MIN(mouse_y, 200 - 16);
+		
 		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
-
-		/*blit_sprite2x2_darken(VGAScreen, lastmousex+2,lastmousey+2,tempW,shapes6);*/
-		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, shapes6, tempW);
+		
+		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, shapes6, mouseCursorGr[mouseCursor]);
 	 }
 }
 
 void JE_mouseReplace( void )
 {
-	if (mouseInstalled)
-	{
+	if (has_mouse)
 		JE_drawShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
-	}
 }
 
 // kate: tab-width 4; vim: set noet:

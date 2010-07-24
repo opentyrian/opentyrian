@@ -3127,11 +3127,11 @@ redo:
 				service_SDL_events(false);
 
 				/* mouse input */
-				if ((inputDevice == 0 || inputDevice == 2) && mouseInstalled)
+				if ((inputDevice == 0 || inputDevice == 2) && has_mouse)
 				{
 					button[0] |= mouse_pressed[0];
 					button[1] |= mouse_pressed[1];
-					button[2] |= mouse_threeButton ? mouse_pressed[2] : mouse_pressed[1];
+					button[2] |= mouse_has_three_buttons ? mouse_pressed[2] : mouse_pressed[1];
 
 					if (input_grabbed)
 					{
