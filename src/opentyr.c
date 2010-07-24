@@ -77,9 +77,9 @@ void opentyrian_menu( void )
 	int sel = 0;
 	const int maxSel = COUNTOF(opentyrian_menu_items) - 1;
 	bool quit = false, fade_in = true;
-
-	int temp_scaler = scaler;
-
+	
+	uint temp_scaler = scaler;
+	
 	fade_black(10);
 	JE_loadPic(VGAScreen, 13, false);
 
@@ -147,7 +147,7 @@ void opentyrian_menu( void )
 						do
 						{
 							if (temp_scaler == 0)
-								temp_scaler = COUNTOF(scalers);
+								temp_scaler = scalers_count;
 							temp_scaler--;
 						}
 						while (!can_init_scaler(temp_scaler, fullscreen_enabled));
@@ -160,7 +160,7 @@ void opentyrian_menu( void )
 						do
 						{
 							temp_scaler++;
-							if (temp_scaler == COUNTOF(scalers))
+							if (temp_scaler == scalers_count)
 								temp_scaler = 0;
 						}
 						while (!can_init_scaler(temp_scaler, fullscreen_enabled));
@@ -188,6 +188,7 @@ void opentyrian_menu( void )
 							{
 								exit(EXIT_FAILURE);
 							}
+							set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 							break;
 						case 2: /* Scaler */
 							JE_playSampleNum(S_SELECT);
@@ -200,6 +201,7 @@ void opentyrian_menu( void )
 								{
 									exit(EXIT_FAILURE);
 								}
+								set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 							}
 							break;
 						case 3: /* Jukebox */

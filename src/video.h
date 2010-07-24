@@ -24,11 +24,7 @@
 #include "SDL.h"
 
 #define vga_width 320
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-#	define vga_height 240
-#else
-#	define vga_height 200
-#endif
+#define vga_height 200
 
 extern bool fullscreen_enabled;
 

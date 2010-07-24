@@ -27,25 +27,32 @@
 
 #include <assert.h>
 
-void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
-void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
+static void no_scale_center( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+#endif
 
-void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+
+static void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
 void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
-int scaler;
+uint scaler;
 
 const struct Scalers scalers[] =
 {
 	{ 1 * vga_width, 1 * vga_height, no_scale, nn_16,      nn_32,      "None" },
+#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
+	{ 320,           240,            no_scale_center, NULL, NULL,      "Centered" },
+#endif
 	{ 2 * vga_width, 2 * vga_height, NULL,     nn_16,      nn_32,      "2x" },
 	{ 2 * vga_width, 2 * vga_height, NULL,     scale2x_16, scale2x_32, "Scale2x" },
 	{ 2 * vga_width, 2 * vga_height, NULL,     NULL,       hq2x_32,    "hq2x" },
@@ -55,10 +62,11 @@ const struct Scalers scalers[] =
 	{ 4 * vga_width, 4 * vga_height, NULL,     nn_16,      nn_32,      "4x" },
 	{ 4 * vga_width, 4 * vga_height, NULL,     NULL,       hq4x_32,    "hq4x" },
 };
+const uint scalers_count = COUNTOF(scalers);
 
 void set_scaler_by_name( const char *name )
 {
-	for (uint i = 0; i < COUNTOF(scalers); ++i)
+	for (uint i = 0; i < scalers_count; ++i)
 	{
 		if (strcmp(name, scalers[i].name) == 0)
 		{
@@ -73,6 +81,20 @@ void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
 	memcpy(dst_surface->pixels, src_surface->pixels, dst_surface->pitch * dst_surface->h);
 }
+
+#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
+void no_scale_center( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+{
+	Uint8 *src = src_surface->pixels,
+	      *dst = dst_surface->pixels;
+	size_t blank = (dst_surface->h - src_surface->h) / 2 * dst_surface->pitch;
+	memset(dst, 0, blank);
+	dst += blank;
+	memcpy(dst, src, src_surface->pitch * src_surface->h);
+	dst += src_surface->pitch * src_surface->h;
+	memset(dst, 0, blank);
+}
+#endif
 
 
 void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )

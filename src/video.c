@@ -62,7 +62,7 @@ void init_video( void )
 
 int can_init_scaler( unsigned int new_scaler, bool fullscreen )
 {
-	if (new_scaler >= COUNTOF(scalers))
+	if (new_scaler >= scalers_count)
 		return false;
 	
 	int w = scalers[new_scaler].width,
@@ -150,7 +150,7 @@ bool init_scaler( unsigned int new_scaler, bool fullscreen )
 bool init_any_scaler( bool fullscreen )
 {
 	// attempts all scalers from last to first
-	for (int i = COUNTOF(scalers) - 1; i >= 0; --i)
+	for (int i = scalers_count - 1; i >= 0; --i)
 		if (init_scaler(i, fullscreen))
 			return true;
 	
