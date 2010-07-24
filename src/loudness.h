@@ -26,11 +26,11 @@
 
 #define SFX_CHANNELS 8
 
-#ifndef TARGET_GP2X
-#define OUTPUT_QUALITY 4
-#else  /* TARGET_GP2X */
-#define OUTPUT_QUALITY 2
-#endif /* TARGET_GP2X */
+#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
+#define OUTPUT_QUALITY 2  // 22 kHz
+#else
+#define OUTPUT_QUALITY 4  // 44 kHz
+#endif
 
 #define SAMPLE_SCALING OUTPUT_QUALITY
 #define SAMPLE_TYPE OPLSAMPLE

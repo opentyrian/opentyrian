@@ -11,6 +11,11 @@ GP2X_HOST := arm-open2x-linux
 GP2X_EXT := .gpe
 GP2X_CFLAGS := -mcpu=arm920t -mtune=arm920t -msoft-float -ffast-math
 
+DINGUX_PREFIX := /opt/mipsel-linux-uclibc/usr
+DINGUX_EPREFIX := $(DINGUX_PREFIX)
+DINGUX_HOST := mipsel-linux-uclibc
+DINGUX_EXT := .dge
+
 # END SETTINGS #############################################
 
 CC := gcc

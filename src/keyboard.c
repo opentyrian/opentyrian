@@ -96,11 +96,11 @@ void init_keyboard( void )
 
 void input_grab( void )
 {
-#ifdef TARGET_GP2X
+#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
 	input_grabbed = true;
-#else /* TARGET_GP2X */
+#else
 	input_grabbed = input_grab_enabled || fullscreen_enabled;
-#endif /* TARGET_GP2X */
+#endif
 	
 	SDL_ShowCursor(input_grabbed ? SDL_DISABLE : SDL_ENABLE);
 #ifdef NDEBUG
