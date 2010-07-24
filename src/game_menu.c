@@ -2962,7 +2962,7 @@ void JE_drawShipSpecs( SDL_Surface * screen, SDL_Surface * temp_screen  )
 	 * We use a temp screen for convenience.  Bad design maybe (Jason!),
 	 * but it'll be okay (and the alternative is malloc/a large stack) */
 
-	int temp_x, temp_y, temp_index;
+	int temp_x = 0, temp_y = 0, temp_index;
 	Uint8 *src, *dst;
 
 
@@ -3011,7 +3011,7 @@ void JE_drawShipSpecs( SDL_Surface * screen, SDL_Surface * temp_screen  )
 			temp_x = 31;
 			temp_y = 35;
 			break;
-		default: //This doubles as a 'shut up compiler' for whining about uninitted temp_x and y
+		default:
 			assert(0);
 	}
 	temp_x -= 30;
@@ -3031,8 +3031,10 @@ void JE_drawShipSpecs( SDL_Surface * screen, SDL_Surface * temp_screen  )
 	 * only write one line at a time.*/
 	dst = screen->pixels;
 	src = temp_screen->pixels;
-	for (int y = 0; y < screen->h; y++) {
-		for (int x = 0; x < screen->pitch; x++) {
+	for (int y = 0; y < screen->h; y++)
+	{
+		for (int x = 0; x < screen->pitch; x++)
+		{
 			int avg = 0;
 			if (y > 0)
 				avg += *(src - screen->pitch) & 0x0f;
