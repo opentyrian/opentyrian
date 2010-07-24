@@ -23,16 +23,17 @@
 
 #include "SDL.h"
 
-struct scaler_struct
+typedef void (*ScalerFunction)( SDL_Surface *dst, SDL_Surface *src );
+
+struct Scalers
 {
-	int width, height, min_bpp;
-	void (*scaler16)( SDL_Surface *dst, SDL_Surface *src );
-	void (*scaler32)( SDL_Surface *dst, SDL_Surface *src );
+	int width, height;
+	ScalerFunction scaler8, scaler16, scaler32;
 	const char *name;
 };
 
 extern int scaler;
-extern const struct scaler_struct scalers[9];
+extern const struct Scalers scalers[9];
 
 void set_scaler_by_name( const char *name );
 

@@ -32,18 +32,19 @@
 
 extern bool fullscreen_enabled;
 
-extern SDL_Surface *display_surface; //Do not write to this anywhere except in video.c or we will beat you.
 extern SDL_Surface *VGAScreen, *VGAScreenSeg;
 extern SDL_Surface *game_screen;
 extern SDL_Surface *VGAScreen2;
 
 void init_video( void );
+
+int can_init_scaler( unsigned int new_scaler, bool fullscreen );
 bool init_scaler( unsigned int new_scaler, bool fullscreen );
 bool init_any_scaler( bool fullscreen );
 void deinit_video( void );
 void JE_clr256( SDL_Surface * );
 void JE_showVGA( void );
-void JE_showScreen( SDL_Surface * );
+void scale_and_flip( SDL_Surface * );
 
 #endif /* VIDEO_H */
 

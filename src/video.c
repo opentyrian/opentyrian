@@ -27,11 +27,11 @@
 
 bool fullscreen_enabled = false;
 
-SDL_Surface *display_surface;
-
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *VGAScreen2;
 SDL_Surface *game_screen;
+
+static ScalerFunction scaler_function;
 
 void init_video( void )
 {
@@ -60,50 +60,90 @@ void init_video( void )
 	}
 }
 
-bool init_scaler( unsigned int new_scaler, bool fullscreen )
+int can_init_scaler( unsigned int new_scaler, bool fullscreen )
 {
 	if (new_scaler >= COUNTOF(scalers))
 		return false;
-
+	
 	int w = scalers[new_scaler].width,
 	    h = scalers[new_scaler].height;
-	int bpp = 32;
 	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
-
-	bpp = SDL_VideoModeOK(w, h, bpp, flags);
-
-	if (bpp < scalers[new_scaler].min_bpp)
+	
+	// test each bitdepth
+	for (uint bpp = 32; bpp > 0; bpp -= 8)
 	{
-		// we can't get exactly what we want, but SDL will try to find something close
-		bpp = scalers[new_scaler].min_bpp;
+		uint temp_bpp = SDL_VideoModeOK(w, h, bpp, flags);
+		
+		if ((temp_bpp == 32 && scalers[new_scaler].scaler32) ||
+		    (temp_bpp == 16 && scalers[new_scaler].scaler16) ||
+		    (temp_bpp == 8  && scalers[new_scaler].scaler8 ))
+		{
+			return temp_bpp;
+		}
+		else if (temp_bpp == 24 && scalers[new_scaler].scaler32)
+		{
+			// scalers don't support 24 bpp because it's a pain
+			// so let SDL handle the conversion
+			return 32;
+		}
 	}
-	else if (bpp == 24)
-	{
-		// scalers don't support 24 bpp because it's a pain
-		bpp = 32;
-	}
+	
+	return 0;
+}
 
-	display_surface = SDL_SetVideoMode(w, h, bpp, flags);
-
-	if (display_surface == NULL)
+bool init_scaler( unsigned int new_scaler, bool fullscreen )
+{
+	int w = scalers[new_scaler].width,
+	    h = scalers[new_scaler].height;
+	int bpp = can_init_scaler(new_scaler, fullscreen);
+	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
+	
+	if (bpp == 0)
+		return false;
+	
+	SDL_Surface *const surface = SDL_SetVideoMode(w, h, bpp, flags);
+	
+	if (surface == NULL)
 	{
 		fprintf(stderr, "error: failed to initialize video mode %dx%dx%d: %s\n", w, h, bpp, SDL_GetError());
 		return false;
 	}
-
-	w = display_surface->w;
-	h = display_surface->h;
-	bpp = display_surface->format->BitsPerPixel;
-
+	
+	w = surface->w;
+	h = surface->h;
+	bpp = surface->format->BitsPerPixel;
+	
 	printf("initialized video: %dx%dx%d\n", w, h, bpp);
-
+	
 	scaler = new_scaler;
 	fullscreen_enabled = fullscreen;
-
+	
+	switch (bpp)
+	{
+	case 32:
+		scaler_function = scalers[scaler].scaler32;
+		break;
+	case 16:
+		scaler_function = scalers[scaler].scaler16;
+		break;
+	case 8:
+		scaler_function = scalers[scaler].scaler8;
+		break;
+	default:
+		scaler_function = NULL;
+		break;
+	}
+	
+	if (scaler_function == NULL)
+	{
+		assert(false);
+		return false;
+	}
+	
 	input_grab();
-
+	
 	JE_showVGA();
-
+	
 	return true;
 }
 
@@ -113,7 +153,7 @@ bool init_any_scaler( bool fullscreen )
 	for (int i = COUNTOF(scalers) - 1; i >= 0; --i)
 		if (init_scaler(i, fullscreen))
 			return true;
-
+	
 	return false;
 }
 
@@ -122,7 +162,7 @@ void deinit_video( void )
 	SDL_FreeSurface(VGAScreenSeg);
 	SDL_FreeSurface(VGAScreen2);
 	SDL_FreeSurface(game_screen);
-
+	
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
@@ -130,31 +170,18 @@ void JE_clr256( SDL_Surface * screen)
 {
 	memset(screen->pixels, 0, screen->pitch * screen->h);
 }
-void JE_showVGA( void ) { JE_showScreen(VGAScreen); }
-void JE_showScreen( SDL_Surface * screen)
-{
-	switch (display_surface->format->BitsPerPixel)
-	{
-		case 32:
-			if (scalers[scaler].scaler32 == NULL)
-				scaler = 0;
-			scalers[scaler].scaler32(screen, display_surface);
-			break;
-		case 16:
-			if (scalers[scaler].scaler16 == NULL)
-				scaler = 0;
-			scalers[scaler].scaler16(screen, display_surface);
-			break;
-		case 8:
-			// only 8-bit scaler is None
-			memcpy(display_surface->pixels, screen->pixels, display_surface->pitch * display_surface->h);
-			break;
-		default:
-			assert(0);
-			break;
-	}
+void JE_showVGA( void ) { scale_and_flip(VGAScreen); }
 
-	SDL_Flip(display_surface);
+void scale_and_flip( SDL_Surface *src_surface )
+{
+	assert(src_surface->format->BitsPerPixel == 8);
+	
+	SDL_Surface *dst_surface = SDL_GetVideoSurface();
+	
+	assert(scaler_function != NULL);
+	scaler_function(src_surface, dst_surface);
+	
+	SDL_Flip(dst_surface);
 }
 
 // kate: tab-width 4; vim: set noet:

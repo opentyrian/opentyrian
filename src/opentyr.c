@@ -144,31 +144,27 @@ void opentyrian_menu( void )
 				case SDLK_LEFT:
 					if (sel == 2)
 					{
-						do {
+						do
+						{
 							if (temp_scaler == 0)
 								temp_scaler = COUNTOF(scalers);
 							temp_scaler--;
-						} while ((display_surface->format->BitsPerPixel == 32 && scalers[temp_scaler].scaler32 == NULL) ||
-						         (display_surface->format->BitsPerPixel == 16 && scalers[temp_scaler].scaler16 == NULL));
-						if (display_surface->format->BitsPerPixel == 8)
-							temp_scaler = 0;
-						else
-							JE_playSampleNum(S_CURSOR);
+						}
+						while (!can_init_scaler(temp_scaler, fullscreen_enabled));
+						JE_playSampleNum(S_CURSOR);
 					}
 					break;
 				case SDLK_RIGHT:
 					if (sel == 2)
 					{
-						do {
+						do
+						{
 							temp_scaler++;
 							if (temp_scaler == COUNTOF(scalers))
 								temp_scaler = 0;
-						} while ((display_surface->format->BitsPerPixel == 32 && scalers[temp_scaler].scaler32 == NULL) ||
-						         (display_surface->format->BitsPerPixel == 16 && scalers[temp_scaler].scaler16 == NULL));
-						if (display_surface->format->BitsPerPixel == 8)
-							temp_scaler = 0;
-						else
-							JE_playSampleNum(S_CURSOR);
+						}
+						while (!can_init_scaler(temp_scaler, fullscreen_enabled));
+						JE_playSampleNum(S_CURSOR);
 					}
 					break;
 				case SDLK_RETURN:
