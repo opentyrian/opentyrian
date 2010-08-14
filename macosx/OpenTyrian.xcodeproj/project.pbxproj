@@ -14,6 +14,7 @@
 		435DAB2B0E14147A00711E27 /* SDL_net.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 437A38A40E0D2FF90097837C /* SDL_net.framework */; };
 		437A38A50E0D2FF90097837C /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437A38A40E0D2FF90097837C /* SDL_net.framework */; };
 		437A39C50E0D3A770097837C /* data in Resources */ = {isa = PBXBuildFile; fileRef = 437A39590E0D3A770097837C /* data */; };
+		67758565121749BB0035F84E /* video_scale_hqNx.c in Sources */ = {isa = PBXBuildFile; fileRef = 67758564121749BB0035F84E /* video_scale_hqNx.c */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A47314350CEFDF78006AAA03 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A47314340CEFDF78006AAA03 /* SDL.framework */; };
 		A48DFB580CD6C27C0026AE59 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = A4CBD5C90CBB687900048D9F /* MainMenu.nib */; };
@@ -95,6 +96,7 @@
 		433BB7D00E14192A00CCE3BF /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = "<group>"; };
 		437A38A40E0D2FF90097837C /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_net.framework; path = /Library/Frameworks/SDL_net.framework; sourceTree = "<absolute>"; };
 		437A39590E0D3A770097837C /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../src/data; sourceTree = "<group>"; };
+		67758564121749BB0035F84E /* video_scale_hqNx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = video_scale_hqNx.c; path = opentyrian/src/video_scale_hqNx.c; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* OpenTyrian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenTyrian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A47314340CEFDF78006AAA03 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
@@ -387,6 +389,7 @@
 				D055C19710E62BAC007144AC /* vga256d.h */,
 				D055C19810E62BAC007144AC /* video_scale.c */,
 				D055C19910E62BAC007144AC /* video_scale.h */,
+				67758564121749BB0035F84E /* video_scale_hqNx.c */,
 				D055C19A10E62BAC007144AC /* video.c */,
 				D055C19B10E62BAC007144AC /* video.h */,
 				D055C19C10E62BAC007144AC /* xmas.c */,
@@ -515,6 +518,7 @@
 				D055C1D110E62BAC007144AC /* video_scale.c in Sources */,
 				D055C1D210E62BAC007144AC /* video.c in Sources */,
 				D055C1D310E62BAC007144AC /* xmas.c in Sources */,
+				67758565121749BB0035F84E /* video_scale_hqNx.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
