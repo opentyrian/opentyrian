@@ -1161,7 +1161,7 @@ void JE_itemScreen( void )
 						}
 						else
 						{
-							if ((curMenu == 5) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-1]) > player[0].cash))
+							if ((curMenu == 4) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-2]) > player[0].cash))
 							{
 								JE_playSampleNum(S_CLINK);
 							}
