@@ -1192,8 +1192,8 @@ JE_boolean JE_inGameSetup( void )
 
 		JE_outTextAdjust(VGAScreen, 10, 147, mainMenuHelp[help[sel-1]-1], 14, 6, TINY_FONT, true);
 
-		JE_barDrawShadow(VGAScreen, 120, 20, 1, 16, tyrMusicVolume / 12, 3, 13);
-		JE_barDrawShadow(VGAScreen, 120, 40, 1, 16, fxVolume / 12, 3, 13);
+		JE_barDrawShadow(VGAScreen, 120, 20, 1, music_disabled ? 12 : 16, tyrMusicVolume / 12, 3, 13);
+		JE_barDrawShadow(VGAScreen, 120, 40, 1, samples_disabled ? 12 : 16, fxVolume / 12, 3, 13);
 
 		JE_showVGA();
 
@@ -1215,7 +1215,11 @@ JE_boolean JE_inGameSetup( void )
 					switch (sel)
 					{
 						case 1:
+							music_disabled = !music_disabled;
+							break;
 						case 2:
+							samples_disabled = !samples_disabled;
+							break;
 						case 3:
 						case 4:
 							sel = 5;
@@ -2740,28 +2744,6 @@ void JE_mainKeyboardInput( void )
 
 	/* in-game setup */
 	ingamemenu_pressed = ingamemenu_pressed || keysactive[SDLK_ESCAPE];
-
-	/* {MUTE SOUND} */
-	if (keysactive[SDLK_s])
-	{
-		keysactive[SDLK_s] = false;
-
-		samples_disabled = !samples_disabled;
-
-		JE_drawTextWindow(samples_disabled ? miscText[17] : miscText[18]);
-	}
-
-	/* {MUTE MUSIC} */
-	if (keysactive[SDLK_m])
-	{
-		keysactive[SDLK_m] = false;
-
-		music_disabled = !music_disabled;
-		if (!music_disabled)
-			restart_song();
-
-		JE_drawTextWindow(music_disabled ? miscText[35] : miscText[36]);
-	}
 
 	if (keysactive[SDLK_BACKSPACE])
 	{

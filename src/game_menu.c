@@ -660,8 +660,8 @@ void JE_itemScreen( void )
 		/* Changing the volume? */
 		if ((curMenu == 2) || (curMenu == 11))
 		{
-			JE_barDrawShadow(VGAScreen, 225, 70, 1, 16, tyrMusicVolume / 12, 3, 13);
-			JE_barDrawShadow(VGAScreen, 225, 86, 1, 16, fxVolume / 12, 3, 13);
+			JE_barDrawShadow(VGAScreen, 225, 70, 1, music_disabled ? 12 : 16, tyrMusicVolume / 12, 3, 13);
+			JE_barDrawShadow(VGAScreen, 225, 86, 1, samples_disabled ? 12 : 16, fxVolume / 12, 3, 13);
 		}
 
 		/* 7 is data cubes menu, 8 is reading a data cube, "firstmenu9" refers to menu 8 because of reindexing */
@@ -2701,8 +2701,6 @@ void JE_menuFunction( JE_byte select )
 				
 				if (lastkey_sym != SDLK_ESCAPE && // reserved for menu
 				    lastkey_sym != SDLK_F11 &&    // reserved for gamma
-				    lastkey_sym != SDLK_s &&      // reserved for sample mute
-				    lastkey_sym != SDLK_m &&      // reserved for music mute
 				    lastkey_sym != SDLK_p)        // reserved for pause
 				{
 					JE_playSampleNum(S_CLICK);
