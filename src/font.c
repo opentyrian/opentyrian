@@ -20,10 +20,39 @@
 #include "fonthand.h"
 #include "sprite.h"
 
-// like JE_dString()                    if (black == false && shadow_dist == 2 && hue == 15)
-// like JE_textShade() with PART_SHADE  if (black == true && shadow_dist == 1)
-// like JE_outTextAndDarken()           if (black == false && shadow_dist == 1)
-// like JE_outTextAdjust() with shadow  if (black == false && shadow_dist == 2)
+/**
+ * \file font.c
+ * \brief Text drawing routines.
+ */
+
+/**
+ * \brief Draws text in a color specified by hue and value and with a drop
+ *        shadow.
+ * 
+ * A '~' in the text is not drawn but instead toggles highlighting which
+ * increases \c value by 4.
+ * 
+ * \li like JE_dString()                    if (black == false && shadow_dist == 2 && hue == 15)
+ * \li like JE_textShade() with PART_SHADE  if (black == true && shadow_dist == 1)
+ * \li like JE_outTextAndDarken()           if (black == false && shadow_dist == 1)
+ * \li like JE_outTextAdjust() with shadow  if (black == false && shadow_dist == 2)
+ * 
+ * @param surface destination surface
+ * @param x initial x-position in pixels; which direction(s) the text is drawn
+ *        from this position depends on the alignment
+ * @param y initial upper y-position in pixels
+ * @param text text to be drawn
+ * @param font style/size of text
+ * @param alignment left_aligned, centered, or right_aligned
+ * @param hue hue component of text color
+ * @param value value component of text color
+ * @param black if true the shadow is drawn as solid black, if false the shadow
+ *        is drawn by darkening the pixels of the destination surface
+ * @param shadow_dist distance in pixels that the shadow will be drawn away from
+ *        the text. (This is added to both the x and y positions, so a value of
+ *        1 causes the shadow to be drawn 1 pixel right and 1 pixel lower than
+ *        the text.)
+ */
 void draw_font_hv_shadow( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value, bool black, int shadow_dist )
 {
 	draw_font_dark(surface, x + shadow_dist, y + shadow_dist, text, font, alignment, black);
@@ -31,7 +60,32 @@ void draw_font_hv_shadow( SDL_Surface *surface, int x, int y, const char *text, 
 	draw_font_hv(surface, x, y, text, font, alignment, hue, value);
 }
 
-// like JE_textShade() with FULL_SHADE  if (black == true && shadow_dist == 1)
+/**
+ * \brief Draws text in a color specified by hue and value and with a
+ *        surrounding shadow.
+ * 
+ * A '~' in the text is not drawn but instead toggles highlighting which
+ * increases \c value by 4.
+ * 
+ * \li like JE_textShade() with FULL_SHADE  if (black == true && shadow_dist == 1)
+ * 
+ * @param surface destination surface
+ * @param x initial x-position in pixels; which direction(s) the text is drawn
+ *        from this position depends on the alignment
+ * @param y initial upper y-position in pixels
+ * @param text text to be drawn
+ * @param font style/size of text
+ * @param alignment left_aligned, centered, or right_aligned
+ * @param hue hue component of text color
+ * @param value value component of text color
+ * @param black if true the shadow is drawn as solid black, if false the shadow
+ *        is drawn by darkening the pixels of the destination surface
+ * @param shadow_dist distance in pixels that the shadows will be drawn away
+ *        from the text. (This distance is separately added to and subtracted
+ *        from the x position and y position, resulting in four shadows -- one
+ *        in each cardinal direction.  If this shadow distance is small enough,
+ *        this produces a shadow that outlines the text.)
+ */
 void draw_font_hv_full_shadow( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value, bool black, int shadow_dist )
 {
 	draw_font_dark(surface, x,               y - shadow_dist, text, font, alignment, black);
@@ -42,8 +96,25 @@ void draw_font_hv_full_shadow( SDL_Surface *surface, int x, int y, const char *t
 	draw_font_hv(surface, x, y, text, font, alignment, hue, value);
 }
 
-// like JE_outText() with (brightness >= 0)
-// like JE_outTextAdjust() without shadow
+/**
+ * \brief Draws text in a color specified by hue and value.
+ * 
+ * A '~' in the text is not drawn but instead toggles highlighting which
+ * increases \c value by 4.
+ * 
+ * \li like JE_outText() with (brightness >= 0)
+ * \li like JE_outTextAdjust() without shadow
+ * 
+ * @param surface destination surface
+ * @param x initial x-position in pixels; which direction(s) the text is drawn
+ *        from this position depends on the alignment
+ * @param y initial upper y-position in pixels
+ * @param text text to be drawn
+ * @param font style/size of text
+ * @param alignment left_aligned, centered, or right_aligned
+ * @param hue hue component of text color
+ * @param value value component of text color
+ */
 void draw_font_hv( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value )
 {
 	switch (alignment)
@@ -90,7 +161,23 @@ void draw_font_hv( SDL_Surface *surface, int x, int y, const char *text, Font fo
 	}
 }
 
-// like JE_outTextModify()
+/**
+ * \brief Draws blended text in a color specified by hue and value.
+ * 
+ * Corresponds to blit_sprite_hv_blend()
+ * 
+ * \li like JE_outTextModify()
+ * 
+ * @param surface destination surface
+ * @param x initial x-position in pixels; which direction(s) the text is drawn
+ *        from this position depends on the alignment
+ * @param y initial upper y-position in pixels
+ * @param text text to be drawn
+ * @param font style/size of text
+ * @param alignment left_aligned, centered, or right_aligned
+ * @param hue hue component of text color
+ * @param value value component of text color
+ */
 void draw_font_hv_blend( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, Uint8 hue, Sint8 value )
 {
 	switch (alignment)
@@ -130,7 +217,23 @@ void draw_font_hv_blend( SDL_Surface *surface, int x, int y, const char *text, F
 	}
 }
 
-// like JE_outText() with (brightness < 0)  if (black == true)
+/**
+ * \brief Draws darkened text.
+ * 
+ * Corresponds to blit_sprite_dark()
+ * 
+ * \li like JE_outText() with (brightness < 0)  if (black == true)
+ * 
+ * @param surface destination surface
+ * @param x initial x-position in pixels; which direction(s) the text is drawn
+ *        from this position depends on the alignment
+ * @param y initial upper y-position in pixels
+ * @param text text to be drawn
+ * @param font style/size of text
+ * @param alignment left_aligned, centered, or right_aligned
+ * @param black if true text is drawn as solid black, if false text is drawn by
+ *        darkening the pixels of the destination surface
+ */
 void draw_font_dark( SDL_Surface *surface, int x, int y, const char *text, Font font, FontAlignment alignment, bool black )
 {
 	switch (alignment)
