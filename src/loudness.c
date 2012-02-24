@@ -61,7 +61,7 @@ bool init_audio( void )
 	ask.freq = freq;
 	ask.format = (BYTES_PER_SAMPLE == 2) ? AUDIO_S16SYS : AUDIO_S8;
 	ask.channels = 1;
-	ask.samples = 512;
+	ask.samples = 1536;
 	ask.callback = audio_cb;
 	
 	printf("\trequested %d Hz, %d channels, %d samples\n", ask.freq, ask.channels, ask.samples);
