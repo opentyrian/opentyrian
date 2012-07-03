@@ -116,7 +116,8 @@ void JE_paramCheck( int argc, char *argv[] )
 			
 		// set custom Tyrian data directory
 		case 't':
-			custom_data_dir = option.arg;
+			custom_data_dir = malloc(strlen(option.arg) + 1);
+			strcpy(custom_data_dir, option.arg);
 			break;
 			
 		case 'n':
