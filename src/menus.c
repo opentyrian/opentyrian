@@ -44,7 +44,7 @@ bool select_gameplay( void )
 	{
 		for (int i = 1; i <= gameplay_max; i++)
 		{
-			JE_outTextAdjust(VGAScreen, JE_fontCenter(gameplay_name[i], SMALL_FONT_SHAPES), i * 24 + 30, gameplay_name[i], 15, - 4 + (i == gameplay ? 2 : 0) - (i == 4 ? 4 : 0), SMALL_FONT_SHAPES, true);
+			JE_outTextAdjust(VGAScreen, JE_fontCenter(gameplay_name[i], SMALL_FONT_SHAPES), i * 24 + 30, gameplay_name[i], 15, -4 + (i == gameplay ? 2 : 0) - (i == 4 ? 4 : 0), SMALL_FONT_SHAPES, true);
 		}
 		JE_showVGA();
 
@@ -62,19 +62,13 @@ bool select_gameplay( void )
 			switch (lastkey_sym)
 			{
 			case SDLK_UP:
-				gameplay--;
-				if (gameplay < 1)
-				{
+				if (--gameplay < 1)
 					gameplay = gameplay_max;
-				}
 				JE_playSampleNum(S_CURSOR);
 				break;
 			case SDLK_DOWN:
-				gameplay++;
-				if (gameplay > gameplay_max)
-				{
+				if (++gameplay > gameplay_max)
 					gameplay = 1;
-				}
 				JE_playSampleNum(S_CURSOR);
 				break;
 

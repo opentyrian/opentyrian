@@ -36,8 +36,11 @@ void init_video( void );
 
 int can_init_scaler( unsigned int new_scaler, bool fullscreen );
 bool init_scaler( unsigned int new_scaler, bool fullscreen );
+bool can_init_any_scaler( bool fullscreen );
 bool init_any_scaler( bool fullscreen );
+
 void deinit_video( void );
+
 void JE_clr256( SDL_Surface * );
 void JE_showVGA( void );
 void scale_and_flip( SDL_Surface * );

@@ -55,15 +55,6 @@
 
 const char *opentyrian_str = "OpenTyrian",
            *opentyrian_version = "Classic (" HG_REV ")";
-const char *opentyrian_menu_items[] =
-{
-	"About OpenTyrian",
-	"Toggle Fullscreen",
-	"Scaler: None",
-	/* "Play Destruct", */
-	"Jukebox",
-	"Return to Main Menu"
-};
 
 /* zero-terminated strncpy */
 char *strnztcpy( char *to, const char *from, size_t count )
@@ -74,11 +65,24 @@ char *strnztcpy( char *to, const char *from, size_t count )
 
 void opentyrian_menu( void )
 {
-	int sel = 0;
-	const int maxSel = COUNTOF(opentyrian_menu_items) - 1;
-	bool quit = false, fade_in = true;
-	
-	uint temp_scaler = scaler;
+	static const char *menu_items[] =
+	{
+		"About OpenTyrian",
+		"Toggle Fullscreen",
+		"Scaler: None",
+		// "Play Destruct",
+		"Jukebox",
+		"Return to Main Menu",
+	};
+	bool menu_items_disabled[] =
+	{
+		false,
+		!can_init_any_scaler(false) || !can_init_any_scaler(true),
+		false,
+		// false,
+		false,
+		false,
+	};
 	
 	fade_black(10);
 	JE_loadPic(VGAScreen, 13, false);
@@ -91,13 +95,19 @@ void opentyrian_menu( void )
 
 	play_song(36); // A Field for Mag
 
+	int sel = 0;
+	const int maxSel = COUNTOF(menu_items) - 1;
+
+	uint temp_scaler = scaler;
+
+	bool fade_in = true, quit = false;
 	do
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 		for (int i = 0; i <= maxSel; i++)
 		{
-			const char *text = opentyrian_menu_items[i];
+			const char *text = menu_items[i];
 			char buffer[100];
 
 			if (i == 2) /* Scaler */
@@ -106,7 +116,8 @@ void opentyrian_menu( void )
 				text = buffer;
 			}
 
-			draw_font_hv_shadow(VGAScreen, VGAScreen->w / 2, (i != maxSel) ? i * 16 + 32 : 118, text, normal_font, centered, 15, (i != sel) ? -4 : -2, false, 2);
+			int y = i != maxSel ? i * 16 + 32 : 118;
+			draw_font_hv(VGAScreen, VGAScreen->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
 		}
 
 		JE_showVGA();
@@ -125,107 +136,121 @@ void opentyrian_menu( void )
 		{
 			switch (lastkey_sym)
 			{
-				case SDLK_UP:
-					sel--;
-					if (sel < 0)
-					{
+			case SDLK_UP:
+				do
+				{
+					if (--sel < 0)
 						sel = maxSel;
-					}
-					JE_playSampleNum(S_CURSOR);
-					break;
-				case SDLK_DOWN:
-					sel++;
-					if (sel > maxSel)
-					{
+				}
+				while (menu_items_disabled[sel]);
+				
+				JE_playSampleNum(S_CURSOR);
+				break;
+			case SDLK_DOWN:
+				do
+				{
+					if (++sel > maxSel)
 						sel = 0;
+				}
+				while (menu_items_disabled[sel]);
+				
+				JE_playSampleNum(S_CURSOR);
+				break;
+				
+			case SDLK_LEFT:
+				if (sel == 2)
+				{
+					do
+					{
+						if (temp_scaler == 0)
+							temp_scaler = scalers_count;
+						temp_scaler--;
 					}
+					while (!can_init_scaler(temp_scaler, fullscreen_enabled));
+					
 					JE_playSampleNum(S_CURSOR);
-					break;
-				case SDLK_LEFT:
-					if (sel == 2)
+				}
+				break;
+			case SDLK_RIGHT:
+				if (sel == 2)
+				{
+					do
 					{
-						do
+						temp_scaler++;
+						if (temp_scaler == scalers_count)
+							temp_scaler = 0;
+					}
+					while (!can_init_scaler(temp_scaler, fullscreen_enabled));
+					
+					JE_playSampleNum(S_CURSOR);
+				}
+				break;
+				
+			case SDLK_RETURN:
+				switch (sel)
+				{
+				case 0: /* About */
+					JE_playSampleNum(S_SELECT);
+
+					scroller_sine(about_text);
+
+					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+					JE_showVGA();
+					fade_in = true;
+					break;
+					
+				case 1: /* Fullscreen */
+					JE_playSampleNum(S_SELECT);
+
+					if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
+						!init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
+						!init_scaler(scaler, fullscreen_enabled))    // revert on fail
+					{
+						exit(EXIT_FAILURE);
+					}
+					set_palette(colors, 0, 255); // for switching between 8 bpp scalers
+					break;
+					
+				case 2: /* Scaler */
+					JE_playSampleNum(S_SELECT);
+
+					if (scaler != temp_scaler)
+					{
+						if (!init_scaler(temp_scaler, fullscreen_enabled) &&   // try new scaler
+							!init_scaler(temp_scaler, !fullscreen_enabled) &&  // try other fullscreen state
+							!init_scaler(scaler, fullscreen_enabled))          // revert on fail
 						{
-							if (temp_scaler == 0)
-								temp_scaler = scalers_count;
-							temp_scaler--;
+							exit(EXIT_FAILURE);
 						}
-						while (!can_init_scaler(temp_scaler, fullscreen_enabled));
-						JE_playSampleNum(S_CURSOR);
+						set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 					}
 					break;
-				case SDLK_RIGHT:
-					if (sel == 2)
-					{
-						do
-						{
-							temp_scaler++;
-							if (temp_scaler == scalers_count)
-								temp_scaler = 0;
-						}
-						while (!can_init_scaler(temp_scaler, fullscreen_enabled));
-						JE_playSampleNum(S_CURSOR);
-					}
+					
+				case 3: /* Jukebox */
+					JE_playSampleNum(S_SELECT);
+
+					fade_black(10);
+					jukebox();
+
+					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+					JE_showVGA();
+					fade_in = true;
 					break;
-				case SDLK_RETURN:
-					switch (sel)
-					{
-						case 0: /* About */
-							JE_playSampleNum(S_SELECT);
-
-							scroller_sine(about_text);
-
-							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-							JE_showVGA();
-							fade_in = true;
-							break;
-						case 1: /* Fullscreen */
-							JE_playSampleNum(S_SELECT);
-
-							if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
-							    !init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
-							    !init_scaler(scaler, fullscreen_enabled))    // revert on fail
-							{
-								exit(EXIT_FAILURE);
-							}
-							set_palette(colors, 0, 255); // for switching between 8 bpp scalers
-							break;
-						case 2: /* Scaler */
-							JE_playSampleNum(S_SELECT);
-
-							if (scaler != temp_scaler)
-							{
-								if (!init_scaler(temp_scaler, fullscreen_enabled) &&   // try new scaler
-								    !init_scaler(temp_scaler, !fullscreen_enabled) &&  // try other fullscreen state
-								    !init_scaler(scaler, fullscreen_enabled))          // revert on fail
-								{
-									exit(EXIT_FAILURE);
-								}
-								set_palette(colors, 0, 255); // for switching between 8 bpp scalers
-							}
-							break;
-						case 3: /* Jukebox */
-							JE_playSampleNum(S_SELECT);
-
-							fade_black(10);
-							jukebox();
-
-							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-							JE_showVGA();
-							fade_in = true;
-							break;
-						default: /* Return to main menu */
-							quit = true;
-							JE_playSampleNum(S_SPRING);
-							break;
-					}
-					break;
-				case SDLK_ESCAPE:
+					
+				case 4: /* Return to main menu */
 					quit = true;
 					JE_playSampleNum(S_SPRING);
 					break;
-				default:
-					break;
+				}
+				break;
+				
+			case SDLK_ESCAPE:
+				quit = true;
+				JE_playSampleNum(S_SPRING);
+				break;
+				
+			default:
+				break;
 			}
 		}
 	} while (!quit);
