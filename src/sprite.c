@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -729,4 +729,3 @@ void free_main_shape_tables( void )
 	free_sprite2s(&shapesW2);
 }
 
-// kate: tab-width 4; vim: set noet:

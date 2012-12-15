@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -50,4 +50,3 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream );
 
 #endif // FILE_H
 
-// kate: tab-width 4; vim: set noet:

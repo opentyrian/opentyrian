@@ -105,4 +105,3 @@ float mt_rand_lt1( void )
 	return ((float)mt_rand() / ((float)MT_RAND_MAX + 1.0f));
 }
 
-// kate: tab-width 4; vim: set noet:

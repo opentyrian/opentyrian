@@ -1,5 +1,5 @@
 /*
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -54,7 +54,7 @@
 #include <time.h>
 
 const char *opentyrian_str = "OpenTyrian",
-           *opentyrian_version = "Classic (" HG_REV ")";
+           *opentyrian_version = HG_REV;
 
 /* zero-terminated strncpy */
 char *strnztcpy( char *to, const char *from, size_t count )
@@ -371,4 +371,3 @@ int main( int argc, char *argv[] )
 	return 0;
 }
 
-// kate: tab-width 4; vim: set noet:

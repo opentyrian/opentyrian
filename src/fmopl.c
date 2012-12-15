@@ -2397,4 +2397,3 @@ void Y8950SetKeyboardHandler(int which,OPL_PORTHANDLER_W KeyboardHandler_w,OPL_P
 
 #endif
 
-// kate: tab-width 4; vim: set noet:

@@ -1,5 +1,5 @@
 /*
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -2829,4 +2829,3 @@ void JE_pixCool( unsigned int x, unsigned int y, Uint8 c )
 	JE_pix(VGAScreen, x, y - 1, c - 2);
 	JE_pix(VGAScreen, x, y + 1, c - 2);
 }
-// kate: tab-width 4; vim: set noet:

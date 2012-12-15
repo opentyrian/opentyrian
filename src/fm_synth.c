@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -51,4 +51,3 @@ void opl_write(int reg, int val)
   YM3812Write(opl, 1, val);
 }
 
-// kate: tab-width 4; vim: set noet:

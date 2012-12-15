@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -211,4 +211,3 @@ static Uint32 rgb_to_yuv( int r, int g, int b )
 	return (y << 16) + (u << 8) + v;
 }
 
-// kate: tab-width 4; vim: set noet:

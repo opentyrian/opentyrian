@@ -1,5 +1,5 @@
 /*
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -157,4 +157,3 @@ void draw_segmented_gauge( SDL_Surface *surface, int x, int y, Uint8 color, uint
 		fill_rectangle_hw(surface, x, y, segment_width, segment_height, color + (12 * partial_segment / segment_value));
 }
 
-// kate: tab-width 4; vim: set noet:

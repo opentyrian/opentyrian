@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -114,4 +114,3 @@ const char musicTitle[MUSIC_NUM][48] =
 
 JE_boolean musicFade;
 
-// kate: tab-width 4; vim: set noet:

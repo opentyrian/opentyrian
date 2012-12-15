@@ -1,5 +1,5 @@
 /*
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -194,4 +194,3 @@ void scale_and_flip( SDL_Surface *src_surface )
 	SDL_Flip(dst_surface);
 }
 
-// kate: tab-width 4; vim: set noet:

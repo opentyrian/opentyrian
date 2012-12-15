@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2010  The OpenTyrian Development Team
  * 
  * Scale2x, Scale3x
@@ -436,4 +436,3 @@ void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 	}
 }
 
-// kate: tab-width 4; vim: set noet:
