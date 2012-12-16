@@ -2688,7 +2688,7 @@ void JE_mainKeyboardInput( void )
 			keysactive[SDLK_F2] = false;
 		}
 
-		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && (keysactive[SDLK_F4] || keysactive[SDLK_F5]) && !superTyrian)
+		if (keysactive[SDLK_F2] && keysactive[SDLK_F3] && (keysactive[SDLK_F4] || keysactive[SDLK_F5]))
 		{
 			for (uint i = 0; i < COUNTOF(player); ++i)
 				player[i].armor = 0;
@@ -2697,7 +2697,7 @@ void JE_mainKeyboardInput( void )
 			JE_drawTextWindow(miscText[63-1]);
 		}
 
-		if (constantPlay && keysactive[SDLK_c] && !superTyrian && superArcadeMode == SA_NONE)
+		if (constantPlay && keysactive[SDLK_c])
 		{
 			youAreCheating = !youAreCheating;
 			keysactive[SDLK_c] = false;

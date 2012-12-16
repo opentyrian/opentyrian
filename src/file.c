@@ -76,11 +76,9 @@ FILE *dir_fopen( const char *dir, const char *file, const char *mode )
 // warn when dir_fopen fails
 FILE *dir_fopen_warn(  const char *dir, const char *file, const char *mode )
 {
-	errno = 0;
-	
 	FILE *f = dir_fopen(dir, file, mode);
 	
-	if (!f)
+	if (f == NULL)
 		fprintf(stderr, "warning: failed to open '%s': %s\n", file, strerror(errno));
 	
 	return f;
@@ -89,8 +87,6 @@ FILE *dir_fopen_warn(  const char *dir, const char *file, const char *mode )
 // die when dir_fopen fails
 FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
 {
-	errno = 0;
-	
 	FILE *f = dir_fopen(dir, file, mode);
 	
 	if (f == NULL)
@@ -188,4 +184,3 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
 	return f;
 }
 #endif
-
