@@ -298,7 +298,6 @@ extern JE_EnemyAvailType enemyAvail;
 extern JE_word enemyOffset;
 extern JE_word enemyOnScreen;
 extern JE_byte enemyShapeTables[6];
-extern JE_boolean uniqueEnemy;
 extern JE_word superEnemy254Jump;
 extern explosion_type explosions[MAX_EXPLOSIONS];
 extern JE_integer explosionFollowAmountX, explosionFollowAmountY;

@@ -260,11 +260,10 @@ JE_boolean skipStarShowVGA;
 
 /*EnemyData*/
 JE_EnemyType enemy;
-JE_EnemyAvailType enemyAvail;
+JE_EnemyAvailType enemyAvail;  /* values: 0: used, 1: free, 2: secret pick-up */
 JE_word enemyOffset;
 JE_word enemyOnScreen;
 JE_byte enemyShapeTables[6]; /* [1..6] */
-JE_boolean uniqueEnemy;
 JE_word superEnemy254Jump;
 
 /*EnemyShotData*/
