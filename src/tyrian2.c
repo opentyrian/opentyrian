@@ -654,10 +654,10 @@ start_level:
 
 	JE_clearKeyboard();
 
-	free_sprite2s(&eShapes1);
-	free_sprite2s(&eShapes2);
-	free_sprite2s(&eShapes3);
-	free_sprite2s(&eShapes4);
+	free_sprite2s(&eShapes[0]);
+	free_sprite2s(&eShapes[1]);
+	free_sprite2s(&eShapes[2]);
+	free_sprite2s(&eShapes[3]);
 
 	/* Normal speed */
 	if (fastPlay != 0)
@@ -3906,30 +3906,9 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy ) // tempW, uniqueEnemy, tem
 	for (uint i = 0; i < 6; ++i)
 	{
 		if (temp == enemyShapeTables[i])
-		{
-			switch (i)
-			{
-			case 0:
-				enemy->sprite2s = &eShapes1;
-				break;
-			case 1:
-				enemy->sprite2s = &eShapes2;
-				break;
-			case 2:
-				enemy->sprite2s = &eShapes3;
-				break;
-			case 3:
-				enemy->sprite2s = &eShapes4;
-				break;
-			case 4:
-				enemy->sprite2s = &eShapes5;
-				break;
-			case 5:
-				enemy->sprite2s = &eShapes6;
-				break;
-			}
-		}
+			enemy->sprite2s = &eShapes[i];
 	}
+	assert(enemy->sprite2s != NULL);
 
 	enemy->enemydatofs = &enemyDat[tempW];
 
@@ -4341,58 +4320,27 @@ void JE_eventSystem( void )
 		}
 		break;
 
-	case 5:
-		if (enemyShapeTables[1-1] != eventRec[eventLoc-1].eventdat)
+	case 5:  // load enemy shape banks
 		{
-			if (eventRec[eventLoc-1].eventdat > 0)
+			Uint8 newEnemyShapeTables[] =
 			{
-				JE_loadCompShapes(&eShapes1, shapeFile[eventRec[eventLoc-1].eventdat -1]);      /* Enemy Bank 1 */
-				enemyShapeTables[1-1] = eventRec[eventLoc-1].eventdat;
-			}
-			else
+				eventRec[eventLoc-1].eventdat > 0 ? eventRec[eventLoc-1].eventdat : 0,
+				eventRec[eventLoc-1].eventdat2 > 0 ? eventRec[eventLoc-1].eventdat2 : 0,
+				eventRec[eventLoc-1].eventdat3 > 0 ? eventRec[eventLoc-1].eventdat3 : 0,
+				eventRec[eventLoc-1].eventdat4 > 0 ? eventRec[eventLoc-1].eventdat4 : 0,
+			};
+			
+			for (unsigned int i = 0; i < COUNTOF(newEnemyShapeTables); ++i)
 			{
-				free_sprite2s(&eShapes1);
-				enemyShapeTables[1-1] = 0;
-			}
-		}
-		if (enemyShapeTables[2-1] != eventRec[eventLoc-1].eventdat2)
-		{
-			if (eventRec[eventLoc-1].eventdat2 > 0)
-			{
-				JE_loadCompShapes(&eShapes2, shapeFile[eventRec[eventLoc-1].eventdat2-1]);      /* Enemy Bank 2 */
-				enemyShapeTables[2-1] = eventRec[eventLoc-1].eventdat2;
-			}
-			else
-			{
-				free_sprite2s(&eShapes2);
-				enemyShapeTables[2-1] = 0;
-			}
-		}
-		if (enemyShapeTables[3-1] != (unsigned char)eventRec[eventLoc-1].eventdat3)
-		{
-			if (eventRec[eventLoc-1].eventdat3 > 0)
-			{
-				JE_loadCompShapes(&eShapes3, shapeFile[eventRec[eventLoc-1].eventdat3-1]);      /* Enemy Bank 3 */
-				enemyShapeTables[3-1] = eventRec[eventLoc-1].eventdat3;
-			}
-			else
-			{
-				free_sprite2s(&eShapes3);
-				enemyShapeTables[3-1] = 0;
-			}
-		}
-		if (enemyShapeTables[4-1] != eventRec[eventLoc-1].eventdat4)
-		{
-			if (eventRec[eventLoc-1].eventdat4 > 0)
-			{
-				JE_loadCompShapes(&eShapes4, shapeFile[eventRec[eventLoc-1].eventdat4-1]);      /* Enemy Bank 4 */
-				enemyShapeTables[4-1] = eventRec[eventLoc-1].eventdat4;
-				enemyShapeTables[5-1] = 21;
-			}
-			else
-			{
-				free_sprite2s(&eShapes4);
-				enemyShapeTables[4-1] = 0;
+				if (enemyShapeTables[i] != newEnemyShapeTables[i])
+				{
+					if (newEnemyShapeTables[i] > 0)
+						JE_loadCompShapes(&eShapes[i], shapeFile[newEnemyShapeTables[i] - 1]);
+					else
+						free_sprite2s(&eShapes[i]);
+
+					enemyShapeTables[i] = newEnemyShapeTables[i];
+				}
 			}
 		}
 		break;

@@ -154,7 +154,7 @@ void scroller_sine( const struct about_text_type text[] )
 			for (int i = 0; i < MAX_COINS/2; i++)
 			{
 				struct coin_type *coin = &coins[i];
-				blit_sprite2(VGAScreen, coin->x, coin->y, eShapes5, coin_defs[coin->type].shape_num + coin->cur_frame);
+				blit_sprite2(VGAScreen, coin->x, coin->y, eShapes[4], coin_defs[coin->type].shape_num + coin->cur_frame);
 			}
 		}
 
@@ -210,7 +210,7 @@ void scroller_sine( const struct about_text_type text[] )
 			for (int i = MAX_COINS/2; i < MAX_COINS; i++)
 			{
 				struct coin_type *coin = &coins[i];
-				blit_sprite2(VGAScreen, coin->x, coin->y, eShapes5, coin_defs[coin->type].shape_num + coin->cur_frame);
+				blit_sprite2(VGAScreen, coin->x, coin->y, eShapes[4], coin_defs[coin->type].shape_num + coin->cur_frame);
 			}
 		}
 
@@ -289,7 +289,7 @@ void scroller_sine( const struct about_text_type text[] )
 				}
 				beer[i].y += beer[i].vy;
 
-				blit_sprite2x2(VGAScreen, beer[i].x, beer[i].y, eShapes5, BEER_SHAPE);
+				blit_sprite2x2(VGAScreen, beer[i].x, beer[i].y, eShapes[4], BEER_SHAPE);
 			}
 		}
 

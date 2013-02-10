@@ -91,7 +91,7 @@ typedef struct
 }
 Sprite2_array;
 
-extern Sprite2_array eShapes1, eShapes2, eShapes3, eShapes4, eShapes5, eShapes6;
+extern Sprite2_array eShapes[6];
 extern Sprite2_array shapesC1, shapes6, shapes9, shapesW2;
 
 void JE_loadCompShapes( Sprite2_array *, JE_char s );

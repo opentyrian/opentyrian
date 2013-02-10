@@ -2499,7 +2499,7 @@ void JE_inGameDisplays( void )
 
 	/*Special Weapon?*/
 	if (player[0].items.special > 0)
-		blit_sprite2x2(VGAScreen, 25, 1, eShapes6, special[player[0].items.special].itemgraphic);
+		blit_sprite2x2(VGAScreen, 25, 1, eShapes[5], special[player[0].items.special].itemgraphic);
 
 	/*Lives Left*/
 	if (onePlayerAction || twoPlayerMode)
@@ -3785,7 +3785,7 @@ redo:
 				{
 
 					if (!twoPlayerLinked)
-						blit_sprite2(VGAScreen, this_player->x + (shipGr_ == 0) + 1, this_player->y - 13, eShapes6, 77 + chargeLevel + chargeGr * 19);
+						blit_sprite2(VGAScreen, this_player->x + (shipGr_ == 0) + 1, this_player->y - 13, eShapes[5], 77 + chargeLevel + chargeGr * 19);
 
 					if (chargeGrWait > 0)
 					{
@@ -4071,7 +4071,7 @@ redo:
 				const uint sprite = this_option->gr[this_player->sidekick[i].animation_frame] + this_player->sidekick[i].charge;
 
 				if (this_player->sidekick[i].style == 1 || this_player->sidekick[i].style == 2)
-					blit_sprite2x2(VGAScreen, x - 6, y, eShapes6, sprite);
+					blit_sprite2x2(VGAScreen, x - 6, y, eShapes[5], sprite);
 				else
 					blit_sprite2(VGAScreen, x, y, shapes9, sprite);
 			}
