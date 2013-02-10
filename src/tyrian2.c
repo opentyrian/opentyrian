@@ -1804,7 +1804,10 @@ level_loop:
 										tempI3 = enemy[temp2].ex + enemy[temp2].mapoffset;
 
 										if (enemy[temp2].special)
-											globalFlags[enemy[temp2].flagnum] = enemy[temp2].setto;
+										{
+											assert((unsigned int) enemy[temp2].flagnum-1 < COUNTOF(globalFlags));
+											globalFlags[enemy[temp2].flagnum-1] = enemy[temp2].setto;
+										}
 
 										if ((enemy[temp2].enemydie > 0) &&
 										    !((superArcadeMode != SA_NONE) &&
@@ -3898,6 +3901,7 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 		shapeTableI = enemyDat[eDatI].shapebank;
 	}
 
+	enemy->sprite2s = NULL;
 	for (uint i = 0; i < 6; ++i)
 	{
 		if (shapeTableI == enemyShapeTables[i])
@@ -4917,7 +4921,7 @@ void JE_eventSystem( void )
 		break;
 
 	case 61:  // if specific flag set to specific value, skip events
-		if (globalFlags[eventRec[eventLoc-1].eventdat] == eventRec[eventLoc-1].eventdat2)
+		if (globalFlags[eventRec[eventLoc-1].eventdat-1] == eventRec[eventLoc-1].eventdat2)
 			eventLoc += eventRec[eventLoc-1].eventdat3;
 		break;
 
