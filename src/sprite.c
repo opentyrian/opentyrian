@@ -673,14 +673,14 @@ void JE_loadMainShapeTables( const char *shpfile )
 	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
 	
 	efread(&shpNumb, sizeof(JE_word), 1, f);
-	assert(shpNumb + 1u <= COUNTOF(shpPos));
+	assert(shpNumb + 1u == COUNTOF(shpPos));
 	
-	for (int i = 0; i < shpNumb; i++)
-	{
+	for (unsigned int i = 0; i < shpNumb; ++i)
 		efread(&shpPos[i], sizeof(JE_longint), 1, f);
-	}
+	
 	fseek(f, 0, SEEK_END);
-	shpPos[shpNumb] = ftell(f);
+	for (unsigned int i = shpNumb; i < COUNTOF(shpPos); ++i)
+		shpPos[i] = ftell(f);
 	
 	int i;
 	// fonts, interface, option sprites

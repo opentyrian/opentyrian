@@ -65,7 +65,8 @@ void JE_paramCheck( int argc, char *argv[] )
 		
 		{ 0, 0, NULL, false}
 	};
-	Option option = { 0, NULL, 0 };
+	
+	Option option;
 	
 	for (; ; )
 	{

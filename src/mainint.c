@@ -3092,8 +3092,8 @@ redo:
 						}
 						else
 						{
-							this_player->x += joystick[j].direction[3] ? -CURRENT_KEY_SPEED : 0 + joystick[j].direction[1] ? CURRENT_KEY_SPEED : 0;
-							this_player->y += joystick[j].direction[0] ? -CURRENT_KEY_SPEED : 0 + joystick[j].direction[2] ? CURRENT_KEY_SPEED : 0;
+							this_player->x += (joystick[j].direction[3] ? -CURRENT_KEY_SPEED : 0) + (joystick[j].direction[1] ? CURRENT_KEY_SPEED : 0);
+							this_player->y += (joystick[j].direction[0] ? -CURRENT_KEY_SPEED : 0) + (joystick[j].direction[2] ? CURRENT_KEY_SPEED : 0);
 						}
 
 						button[0] |= joystick[j].action[0];
