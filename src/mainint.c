@@ -4490,14 +4490,16 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 
 					b = z;
 
-					if (tempI > tempI2)
+					if (tempI > tempI3)
 					{
+						// damage enemy
 						if (enemy[z].armorleft != 255)
 							enemy[z].armorleft -= tempI3;
 						soundQueue[5] = S_ENEMY_HIT;
 					}
 					else
 					{
+						// kill enemy
 						for (temp2 = 0; temp2 < 100; temp2++)
 						{
 							if (enemyAvail[temp2] != 1)
