@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "file.h"
-#include "fm_synth.h"
 #include "lds_play.h"
 #include "loudness.h"
 #include "nortsong.h"
@@ -185,8 +184,6 @@ void deinit_audio( void )
 		channel_buffer[i] = channel_pos[i] = NULL;
 		channel_len[i] = 0;
 	}
-	
-	opl_deinit();
 	
 	lds_free();
 }

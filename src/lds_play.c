@@ -17,12 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "file.h"
-#include "fm_synth.h"
 #include "lds_play.h"
 #include "loudness.h"
 #include "opentyr.h"
 
 #include <assert.h>
+
+const unsigned char op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
 /* A substantial amount of this code has been copied and adapted from adplug.
    Thanks, guys! Adplug is awesome! :D */
@@ -207,7 +208,7 @@ void lds_rewind( void )
 	memset(fmchip, 0, sizeof(fmchip));
 
 	/* OPL2 init */
-	opl_reset();				/* Reset OPL chip */
+	opl_init();				/* Reset OPL chip */
 	opl_write(1, 0x20);
 	opl_write(8, 0);
 	opl_write(0xbd, regbd);
