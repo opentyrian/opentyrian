@@ -3900,14 +3900,17 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 	{
 		shapeTableI = enemyDat[eDatI].shapebank;
 	}
-
-	enemy->sprite2s = NULL;
+	
+	Sprite2_array *sprite2s = NULL;
 	for (uint i = 0; i < 6; ++i)
-	{
 		if (shapeTableI == enemyShapeTables[i])
-			enemy->sprite2s = &eShapes[i];
-	}
-	assert(enemy->sprite2s != NULL);
+			sprite2s = &eShapes[i];
+	
+	if (sprite2s != NULL)
+		enemy->sprite2s = sprite2s;
+	else
+		// maintain buggy Tyrian behavior (use shape table value from previous enemy that occupied this index in the enemy array)
+		fprintf(stderr, "warning: ignoring sprite from unloaded shape table %d\n", shapeTableI);
 
 	enemy->enemydatofs = &enemyDat[eDatI];
 
@@ -5109,7 +5112,7 @@ void JE_eventSystem( void )
 		break;
 
 	default:
-		fprintf(stderr, "warning: event %d: unhandled event\n", eventRec[eventLoc-1].eventtype);
+		fprintf(stderr, "warning: ignoring unknown event %d\n", eventRec[eventLoc-1].eventtype);
 		break;
 	}
 
