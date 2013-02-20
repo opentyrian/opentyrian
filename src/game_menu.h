@@ -22,7 +22,7 @@
 #include "helptext.h"
 #include "opentyr.h"
 
-typedef JE_byte JE_MenuChoiceType[MAX_MENU];
+typedef JE_byte JE_MenuChoiceType[MENU_MAX];
 
 JE_longint JE_cashLeft( void );
 void JE_itemScreen( void );

@@ -66,7 +66,7 @@ static JE_MenuChoiceType menuChoices;
 static JE_integer col, colC;
 static JE_byte lastCurSel;
 static JE_integer curMenu;
-static JE_byte curSel[MAX_MENU]; /* [1..maxmenu] */
+static JE_byte curSel[MENU_MAX]; /* [1..maxmenu] */
 static JE_byte curItemType, curItem, cursor;
 static JE_boolean leftPower, rightPower, rightPowerAfford;
 static JE_byte currentCube;
@@ -83,7 +83,7 @@ static PlayerItems old_items[2];  // TODO: should not be global if possible
 static struct cube_struct cube[4];
 
 static const JE_MenuChoiceType menuChoicesDefault = { 7, 9, 8, 0, 0, 11, (SAVE_FILES_NUM / 2) + 2, 0, 0, 6, 4, 6, 7, 5 };
-static const JE_byte menuEsc[MAX_MENU] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 3, 0 };
+static const JE_byte menuEsc[MENU_MAX] = { 0, 1, 1, 1, 2, 3, 3, 1, 8, 0, 0, 11, 3, 0 };
 static const JE_byte itemAvailMap[7] = { 1, 2, 3, 9, 4, 6, 7 };
 static const JE_word planetX[21] = { 200, 150, 240, 300, 270, 280, 320, 260, 220, 150, 160, 210, 80, 240, 220, 180, 310, 330, 150, 240, 200 };
 static const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120, 150, 220, 200, 80,  50, 160,  10,  55,  55,  90,  90,  40 };
@@ -171,10 +171,8 @@ void JE_itemScreen( void )
 	cursor = 1;
 	curItem = 0;
 
-	for (int x = 0; x < MAX_MENU; x++)
-	{
-		curSel[x] = 2;
-	}
+	for (unsigned int i = 0; i < COUNTOF(curSel); ++i)
+		curSel[i] = 2;
 
 	curMenu = 0;
 
@@ -1119,7 +1117,7 @@ void JE_itemScreen( void )
 
 			if ((mouseY > 20) && (mouseX > 170) && (mouseX < 308) && (curMenu != 8))
 			{
-				const JE_byte mouseSelectionY[MAX_MENU] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 8, 16 };
+				const JE_byte mouseSelectionY[MENU_MAX] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 8, 16 };
 
 				tempI = (mouseY - 38) / mouseSelectionY[curMenu]+2;
 

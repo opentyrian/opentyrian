@@ -29,7 +29,7 @@
 #include <string.h>
 
 
-const JE_byte menuHelp[MAX_MENU][11] = /* [1..maxmenu, 1..11] */
+const JE_byte menuHelp[MENU_MAX][11] = /* [1..maxmenu, 1..11] */
 {
 	{  1, 34,  2,  3,  4,  5,                  0, 0, 0, 0, 0 },
 	{  6,  7,  8,  9, 10, 11, 11, 12,                0, 0, 0 },
@@ -52,7 +52,7 @@ JE_byte helpBoxColor = 12;
 JE_byte helpBoxBrightness = 1;
 JE_byte helpBoxShadeType = FULL_SHADE;
 
-char helpTxt[MAX_HELP_MESSAGE][231]; /* [1..maxhelpmessage] of string [230]; */
+char helpTxt[39][231];             /* [1..39] of string [230]; */
 char pName[21][16];                /* [1..21] of string [15] */
 char miscText[68][42];             /* [1..68] of string [41] */
 char miscTextB[5][11];             /* [1..5] of string [10] */
@@ -60,7 +60,7 @@ char keyName[8][18];               /* [1..8] of string [17] */
 char menuText[7][21];              /* [1..7] of string [20] */
 char outputs[9][31];               /* [1..9] of string [30] */
 char topicName[6][21];             /* [1..6] of string [20] */
-char mainMenuHelp[34][66];
+char mainMenuHelp[34][66];         /* [1..34] of string [65] */
 char inGameText[6][21];            /* [1..6] of string [20] */
 char detailLevel[6][13];           /* [1..6] of string [12] */
 char gameSpeedText[5][13];         /* [1..5] of string [12] */
@@ -70,11 +70,11 @@ char difficultyNameB[11][21];      /* [0..9] of string [20] */
 char joyButtonNames[5][21];        /* [1..5] of string [20] */
 char superShips[11][26];           /* [0..10] of string [25] */
 char specialName[9][10];           /* [1..9] of string [9] */
-char destructHelp[25][22];
+char destructHelp[25][22];         /* [1..25] of string [21] */
 char weaponNames[17][17];          /* [1..17] of string [16] */
 char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] */
-char shipInfo[13][2][256];
-char menuInt[MAX_MENU + 1][11][18];   /* [0..maxmenu, 1..11] of string [17] */
+char shipInfo[13][2][256];         /* [1..13, 1..2] of string */
+char menuInt[MENU_MAX+1][11][18];  /* [0..maxmenu, 1..11] of string [17] */
 
 
 void decrypt_pascal_string( char *s, int len )
@@ -174,198 +174,200 @@ void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsig
 
 void JE_loadHelpText( void )
 {
+	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 8, -1, -1, 11, -1, -1, -1, 6, 4, 6, 7, 5 };
+	
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
 	efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
 
 	/*Online Help*/
 	skip_pascal_string(f);
-	for (int i = 0; i < MAX_HELP_MESSAGE; ++i)
+	for (unsigned int i = 0; i < COUNTOF(helpTxt); ++i)
 		read_encrypted_pascal_string(helpTxt[i], sizeof(helpTxt[i]), f);
 	skip_pascal_string(f);
 
 	/*Planet names*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 21; ++i)
+	for (unsigned int i = 0; i < COUNTOF(pName); ++i)
 		read_encrypted_pascal_string(pName[i], sizeof(pName[i]), f);
 	skip_pascal_string(f);
 
 	/*Miscellaneous text*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 68; ++i)
+	for (unsigned int i = 0; i < COUNTOF(miscText); ++i)
 		read_encrypted_pascal_string(miscText[i], sizeof(miscText[i]), f);
 	skip_pascal_string(f);
 
 	/*Little Miscellaneous text*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 5; ++i)
+	for (unsigned int i = 0; i < COUNTOF(miscTextB); ++i)
 		read_encrypted_pascal_string(miscTextB[i], sizeof(miscTextB[i]), f);
 	skip_pascal_string(f);
 
 	/*Key names*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 11; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[6]; ++i)
 		read_encrypted_pascal_string(menuInt[6][i], sizeof(menuInt[6][i]), f);
 	skip_pascal_string(f);
 
 	/*Main Menu*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 7; ++i)
+	for (unsigned int i = 0; i < COUNTOF(menuText); ++i)
 		read_encrypted_pascal_string(menuText[i], sizeof(menuText[i]), f);
 	skip_pascal_string(f);
 
 	/*Event text*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 9; ++i)
+	for (unsigned int i = 0; i < COUNTOF(outputs); ++i)
 		read_encrypted_pascal_string(outputs[i], sizeof(outputs[i]), f);
 	skip_pascal_string(f);
 
 	/*Help topics*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 6; ++i)
+	for (unsigned int i = 0; i < COUNTOF(topicName); ++i)
 		read_encrypted_pascal_string(topicName[i], sizeof(topicName[i]), f);
 	skip_pascal_string(f);
 
 	/*Main Menu Help*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 34; ++i)
+	for (unsigned int i = 0; i < COUNTOF(mainMenuHelp); ++i)
 		read_encrypted_pascal_string(mainMenuHelp[i], sizeof(mainMenuHelp[i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 1 - Main*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 7; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[1]; ++i)
 		read_encrypted_pascal_string(menuInt[1][i], sizeof(menuInt[1][i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 2 - Items*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 9; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[2]; ++i)
 		read_encrypted_pascal_string(menuInt[2][i], sizeof(menuInt[2][i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 3 - Options*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 8; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[3]; ++i)
 		read_encrypted_pascal_string(menuInt[3][i], sizeof(menuInt[3][i]), f);
 	skip_pascal_string(f);
 
 	/*InGame Menu*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 6; ++i)
+	for (unsigned int i = 0; i < COUNTOF(inGameText); ++i)
 		read_encrypted_pascal_string(inGameText[i], sizeof(inGameText[i]), f);
 	skip_pascal_string(f);
 
 	/*Detail Level*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 6; ++i)
+	for (unsigned int i = 0; i < COUNTOF(detailLevel); ++i)
 		read_encrypted_pascal_string(detailLevel[i], sizeof(detailLevel[i]), f);
 	skip_pascal_string(f);
 
 	/*Game speed text*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 5; ++i)
+	for (unsigned int i = 0; i < COUNTOF(gameSpeedText); ++i)
 		read_encrypted_pascal_string(gameSpeedText[i], sizeof(gameSpeedText[i]), f);
 	skip_pascal_string(f);
 
 	// episode names
 	skip_pascal_string(f);
-	for (int i = 0; i <= 5; ++i)
+	for (unsigned int i = 0; i < COUNTOF(episode_name); ++i)
 		read_encrypted_pascal_string(episode_name[i], sizeof(episode_name[i]), f);
 	skip_pascal_string(f);
 
 	// difficulty names
 	skip_pascal_string(f);
-	for (int i = 0; i <= 6; ++i)
+	for (unsigned int i = 0; i < COUNTOF(difficulty_name); ++i)
 		read_encrypted_pascal_string(difficulty_name[i], sizeof(difficulty_name[i]), f);
 	skip_pascal_string(f);
 
 	// gameplay mode names
 	skip_pascal_string(f);
-	for (int i = 0; i <= 4; ++i)
+	for (unsigned int i = 0; i < COUNTOF(gameplay_name); ++i)
 		read_encrypted_pascal_string(gameplay_name[i], sizeof(gameplay_name[i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 10 - 2Player Main*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 6; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[10]; ++i)
 		read_encrypted_pascal_string(menuInt[10][i], sizeof(menuInt[10][i]), f);
 	skip_pascal_string(f);
 
 	/*Input Devices*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < COUNTOF(inputDevices); ++i)
 		read_encrypted_pascal_string(inputDevices[i], sizeof(inputDevices[i]), f);
 	skip_pascal_string(f);
 
 	/*Network text*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 4; ++i)
+	for (unsigned int i = 0; i < COUNTOF(networkText); ++i)
 		read_encrypted_pascal_string(networkText[i], sizeof(networkText[i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 11 - 2Player Network*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 4; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[11]; ++i)
 		read_encrypted_pascal_string(menuInt[11][i], sizeof(menuInt[11][i]), f);
 	skip_pascal_string(f);
 
 	/*HighScore Difficulty Names*/
 	skip_pascal_string(f);
-	for (int i = 0; i <= 10; ++i)
+	for (unsigned int i = 0; i < COUNTOF(difficultyNameB); ++i)
 		read_encrypted_pascal_string(difficultyNameB[i], sizeof(difficultyNameB[i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 12 - Network Options*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 6; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[12]; ++i)
 		read_encrypted_pascal_string(menuInt[12][i], sizeof(menuInt[12][i]), f);
 	skip_pascal_string(f);
 
 	/*Menu 13 - Joystick*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 7; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[13]; ++i)
 		read_encrypted_pascal_string(menuInt[13][i], sizeof(menuInt[13][i]), f);
 	skip_pascal_string(f);
 
 	/*Joystick Button Assignments*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 5; ++i)
+	for (unsigned int i = 0; i < COUNTOF(joyButtonNames); ++i)
 		read_encrypted_pascal_string(joyButtonNames[i], sizeof(joyButtonNames[i]), f);
 	skip_pascal_string(f);
 
 	/*SuperShips - For Super Arcade Mode*/
 	skip_pascal_string(f);
-	for (int i = 0; i <= 10; ++i)
+	for (unsigned int i = 0; i < COUNTOF(superShips); ++i)
 		read_encrypted_pascal_string(superShips[i], sizeof(superShips[i]), f);
 	skip_pascal_string(f);
 
 	/*SuperShips - For Super Arcade Mode*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 9; ++i)
+	for (unsigned int i = 0; i < COUNTOF(specialName); ++i)
 		read_encrypted_pascal_string(specialName[i], sizeof(specialName[i]), f);
 	skip_pascal_string(f);
 
 	/*Secret DESTRUCT game*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 25; ++i)
+	for (unsigned int i = 0; i < COUNTOF(destructHelp); ++i)
 		read_encrypted_pascal_string(destructHelp[i], sizeof(destructHelp[i]), f);
 	skip_pascal_string(f);
 
 	/*Secret DESTRUCT weapons*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 17; ++i)
+	for (unsigned int i = 0; i < COUNTOF(weaponNames); ++i)
 		read_encrypted_pascal_string(weaponNames[i], sizeof(weaponNames[i]), f);
 	skip_pascal_string(f);
 
 	/*Secret DESTRUCT modes*/
 	skip_pascal_string(f);
-	for (int i = 0; i < DESTRUCT_MODES; ++i)
+	for (unsigned int i = 0; i < COUNTOF(destructModeName); ++i)
 		read_encrypted_pascal_string(destructModeName[i], sizeof(destructModeName[i]), f);
 	skip_pascal_string(f);
 
 	/*NEW: Ship Info*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 13; ++i)
+	for (unsigned int i = 0; i < COUNTOF(shipInfo); ++i)
 	{
 		read_encrypted_pascal_string(shipInfo[i][0], sizeof(shipInfo[i][0]), f);
 		read_encrypted_pascal_string(shipInfo[i][1], sizeof(shipInfo[i][1]), f);
@@ -374,7 +376,7 @@ void JE_loadHelpText( void )
 
 	/*Menu 12 - Network Options*/
 	skip_pascal_string(f);
-	for (int i = 0; i < 5; ++i)
+	for (unsigned int i = 0; i < menuInt_entries[14]; ++i)
 		read_encrypted_pascal_string(menuInt[14][i], sizeof(menuInt[14][i]), f);
 
 	fclose(f);
