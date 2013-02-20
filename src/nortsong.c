@@ -117,7 +117,7 @@ void JE_loadSndFile( const char *effects_sndfile, const char *voices_sndfile )
 		efread(&sndPos[0][x], sizeof(sndPos[0][x]), 1, fi);
 	}
 	fseek(fi, 0, SEEK_END);
-	sndPos[1][sndNum] = ftell(fi); /* Store file size */
+	sndPos[0][sndNum] = ftell(fi); /* Store file size */
 
 	for (z = 0; z < sndNum; z++)
 	{
