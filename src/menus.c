@@ -29,7 +29,7 @@
 #include "sprite.h"
 #include "video.h"
 
-char episode_name[6][31], difficulty_name[7][21], gameplay_name[5][26];
+char episode_name[6][31], difficulty_name[7][21], gameplay_name[GAMEPLAY_NAME_COUNT][26];
 
 bool select_gameplay( void )
 {
@@ -37,14 +37,14 @@ bool select_gameplay( void )
 	JE_dString(VGAScreen, JE_fontCenter(gameplay_name[0], FONT_SHAPES), 20, gameplay_name[0], FONT_SHAPES);
 
 	int gameplay = 1,
-	    gameplay_max = 4;
+	    gameplay_max = GAMEPLAY_NAME_COUNT - 1;
 
 	bool fade_in = true;
 	for (; ; )
 	{
 		for (int i = 1; i <= gameplay_max; i++)
 		{
-			JE_outTextAdjust(VGAScreen, JE_fontCenter(gameplay_name[i], SMALL_FONT_SHAPES), i * 24 + 30, gameplay_name[i], 15, -4 + (i == gameplay ? 2 : 0) - (i == 4 ? 4 : 0), SMALL_FONT_SHAPES, true);
+			JE_outTextAdjust(VGAScreen, JE_fontCenter(gameplay_name[i], SMALL_FONT_SHAPES), i * 24 + 30, gameplay_name[i], 15, -4 + (i == gameplay ? 2 : 0) - (i == (GAMEPLAY_NAME_COUNT - 1) ? 4 : 0), SMALL_FONT_SHAPES, true);
 		}
 		JE_showVGA();
 
@@ -73,7 +73,7 @@ bool select_gameplay( void )
 				break;
 
 			case SDLK_RETURN:
-				if (gameplay == 4)
+				if (gameplay == GAMEPLAY_NAME_COUNT - 1)
 				{
 					JE_playSampleNum(S_SPRING);
 					/* TODO: NETWORK */
@@ -84,7 +84,7 @@ bool select_gameplay( void )
 				fade_black(10);
 
 				onePlayerAction = (gameplay == 2);
-				twoPlayerMode = (gameplay == 3);
+				twoPlayerMode = (gameplay == GAMEPLAY_NAME_COUNT - 2);
 				return true;
 
 			case SDLK_ESCAPE:
@@ -106,8 +106,7 @@ bool select_episode( void )
 	JE_loadPic(VGAScreen, 2, false);
 	JE_dString(VGAScreen, JE_fontCenter(episode_name[0], FONT_SHAPES), 20, episode_name[0], FONT_SHAPES);
 
-	int episode = 1,
-	    episode_max = EPISODE_MAX - 1;
+	int episode = 1, episode_max = EPISODE_AVAILABLE;
 
 	bool fade_in = true;
 	for (; ; )

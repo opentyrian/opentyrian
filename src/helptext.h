@@ -30,29 +30,55 @@ extern const JE_byte menuHelp[MENU_MAX][11];   /* [1..14, 1..11] */
 extern JE_byte verticalHeight;
 extern JE_byte helpBoxColor, helpBoxBrightness, helpBoxShadeType;
 
-extern char helpTxt[39][231];           /* [1..39] of string [230] */
-extern char pName[21][16];              /* [1..21] of string [15] */
-extern char miscText[68][42];           /* [1..68] of string [41] */
-extern char miscTextB[5][11];           /* [1..5] of string [10] */
-extern char keyName[8][18];             /* [1..8] of string [17] */
-extern char menuText[7][21];            /* [1..7] of string [20] */
-extern char outputs[9][31];             /* [1..9] of string [30] */
-extern char topicName[6][21];           /* [1..6] of string [20] */
-extern char mainMenuHelp[34][66];       /* [1..34] of string [65] */
-extern char inGameText[6][21];          /* [1..6] of string [20] */
-extern char detailLevel[6][13];         /* [1..6] of string [12] */
-extern char gameSpeedText[5][13];       /* [1..5] of string [12] */
-extern char inputDevices[3][13];        /* [1..3] of string [12] */
-extern char networkText[4][22];         /* [1..4] of string [20] */
-extern char difficultyNameB[11][21];    /* [0..9] of string [20] */
-extern char joyButtonNames[5][21];      /* [1..5] of string [20] */
-extern char superShips[11][26];         /* [0..10] of string [25] */
-extern char specialName[9][10];         /* [1..9] of string [9] */
-extern char destructHelp[25][22];       /* [1..25] of string [21] */
-extern char weaponNames[17][17];        /* [1..17] of string [16] */
-extern char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] */
-extern char shipInfo[13][2][256];       /* [1..13, 1..2] of string */
-extern char menuInt[MENU_MAX+1][11][18];       /* [0..14, 1..11] of string [17] */
+#ifdef TYRIAN2000
+#define HELPTEXT_MISCTEXT_COUNT 72
+#define HELPTEXT_MISCTEXTB_COUNT 8
+#define HELPTEXT_MISCTEXTB_SIZE 12
+#define HELPTEXT_MENUTEXT_SIZE 29
+#define HELPTEXT_MAINMENUHELP_COUNT 37
+#define HELPTEXT_NETWORKTEXT_COUNT 5
+#define HELPTEXT_NETWORKTEXT_SIZE 33
+#define HELPTEXT_SUPERSHIPS_COUNT 13
+#define HELPTEXT_SPECIALNAME_COUNT 11
+#define HELPTEXT_SHIPINFO_COUNT 20
+#define HELPTEXT_MENUINT3_COUNT 9
+#define HELPTEXT_MENUINT12_COUNT 7
+#else
+#define HELPTEXT_MISCTEXT_COUNT 68
+#define HELPTEXT_MISCTEXTB_COUNT 5
+#define HELPTEXT_MISCTEXTB_SIZE 11
+#define HELPTEXT_MENUTEXT_SIZE 21
+#define HELPTEXT_MAINMENUHELP_COUNT 34
+#define HELPTEXT_NETWORKTEXT_COUNT 4
+#define HELPTEXT_NETWORKTEXT_SIZE 22
+#define HELPTEXT_SUPERSHIPS_COUNT 11
+#define HELPTEXT_SPECIALNAME_COUNT 9
+#define HELPTEXT_SHIPINFO_COUNT 13
+#endif
+
+extern char helpTxt[39][231];
+extern char pName[21][16];
+extern char miscText[HELPTEXT_MISCTEXT_COUNT][42];
+extern char miscTextB[HELPTEXT_MISCTEXTB_COUNT][HELPTEXT_MISCTEXTB_SIZE];
+extern char keyName[8][18];
+extern char menuText[7][HELPTEXT_MENUTEXT_SIZE];
+extern char outputs[9][31];
+extern char topicName[6][21];
+extern char mainMenuHelp[HELPTEXT_MAINMENUHELP_COUNT][66];
+extern char inGameText[6][21];
+extern char detailLevel[6][13];
+extern char gameSpeedText[5][13];
+extern char inputDevices[3][13];
+extern char networkText[HELPTEXT_NETWORKTEXT_COUNT][HELPTEXT_NETWORKTEXT_SIZE];
+extern char difficultyNameB[11][21];
+extern char joyButtonNames[5][21];
+extern char superShips[HELPTEXT_SUPERSHIPS_COUNT][26];
+extern char specialName[HELPTEXT_SPECIALNAME_COUNT][10];
+extern char destructHelp[25][22];
+extern char weaponNames[17][17];
+extern char destructModeName[DESTRUCT_MODES][13];
+extern char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];
+extern char menuInt[MENU_MAX+1][11][18];
 
 void read_encrypted_pascal_string( char *s, int size, FILE *f );
 void skip_pascal_string( FILE *f );

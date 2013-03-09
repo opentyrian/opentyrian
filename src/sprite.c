@@ -48,6 +48,8 @@ void load_sprites( unsigned int table, FILE *f )
 	
 	sprite_table[table].count = temp;
 	
+	assert(sprite_table[table].count <= SPRITES_PER_TABLE_MAX);
+	
 	for (unsigned int i = 0; i < sprite_table[table].count; ++i)
 	{
 		Sprite * const cur_sprite = sprite(table, i);
@@ -665,7 +667,11 @@ void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sp
 
 void JE_loadMainShapeTables( const char *shpfile )
 {
+#ifdef TYRIAN2000
+	const int SHP_NUM = 13;
+#else
 	const int SHP_NUM = 12;
+#endif
 	
 	FILE *f = dir_fopen_die(data_dir(), shpfile, "rb");
 	

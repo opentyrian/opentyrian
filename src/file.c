@@ -92,7 +92,7 @@ FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
 	if (f == NULL)
 	{
 		fprintf(stderr, "error: failed to open '%s': %s\n", file, strerror(errno));
-		fprintf(stderr, "error: One or more of the required Tyrian 2.1 data files could not be found.\n"
+		fprintf(stderr, "error: One or more of the required Tyrian " TYRIAN_VERSION " data files could not be found.\n"
 		                "       Please read the README file.\n");
 		exit(1);
 	}

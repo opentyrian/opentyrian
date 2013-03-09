@@ -52,29 +52,29 @@ JE_byte helpBoxColor = 12;
 JE_byte helpBoxBrightness = 1;
 JE_byte helpBoxShadeType = FULL_SHADE;
 
-char helpTxt[39][231];             /* [1..39] of string [230]; */
-char pName[21][16];                /* [1..21] of string [15] */
-char miscText[68][42];             /* [1..68] of string [41] */
-char miscTextB[5][11];             /* [1..5] of string [10] */
-char keyName[8][18];               /* [1..8] of string [17] */
-char menuText[7][21];              /* [1..7] of string [20] */
-char outputs[9][31];               /* [1..9] of string [30] */
-char topicName[6][21];             /* [1..6] of string [20] */
-char mainMenuHelp[34][66];         /* [1..34] of string [65] */
-char inGameText[6][21];            /* [1..6] of string [20] */
-char detailLevel[6][13];           /* [1..6] of string [12] */
-char gameSpeedText[5][13];         /* [1..5] of string [12] */
-char inputDevices[3][13];          /* [1..3] of string [12] */
-char networkText[4][22];           /* [1..4] of string [20] */
-char difficultyNameB[11][21];      /* [0..9] of string [20] */
-char joyButtonNames[5][21];        /* [1..5] of string [20] */
-char superShips[11][26];           /* [0..10] of string [25] */
-char specialName[9][10];           /* [1..9] of string [9] */
-char destructHelp[25][22];         /* [1..25] of string [21] */
-char weaponNames[17][17];          /* [1..17] of string [16] */
-char destructModeName[DESTRUCT_MODES][13]; /* [1..destructmodes] of string [12] */
-char shipInfo[13][2][256];         /* [1..13, 1..2] of string */
-char menuInt[MENU_MAX+1][11][18];  /* [0..maxmenu, 1..11] of string [17] */
+char helpTxt[39][231];                                                   /* [1..39] of string [230] */
+char pName[21][16];                                                      /* [1..21] of string [15] */
+char miscText[HELPTEXT_MISCTEXT_COUNT][42];                              /* [1..68] of string [41] */
+char miscTextB[HELPTEXT_MISCTEXTB_COUNT][HELPTEXT_MISCTEXTB_SIZE];       /* [1..5] of string [10] */
+char keyName[8][18];                                                     /* [1..8] of string [17] */
+char menuText[7][HELPTEXT_MENUTEXT_SIZE];                                /* [1..7] of string [20] */
+char outputs[9][31];                                                     /* [1..9] of string [30] */
+char topicName[6][21];                                                   /* [1..6] of string [20] */
+char mainMenuHelp[HELPTEXT_MAINMENUHELP_COUNT][66];                      /* [1..34] of string [65] */
+char inGameText[6][21];                                                  /* [1..6] of string [20] */
+char detailLevel[6][13];                                                 /* [1..6] of string [12] */
+char gameSpeedText[5][13];                                               /* [1..5] of string [12] */
+char inputDevices[3][13];                                                /* [1..3] of string [12] */
+char networkText[HELPTEXT_NETWORKTEXT_COUNT][HELPTEXT_NETWORKTEXT_SIZE]; /* [1..4] of string [20] */
+char difficultyNameB[11][21];                                            /* [0..9] of string [20] */
+char joyButtonNames[5][21];                                              /* [1..5] of string [20] */
+char superShips[HELPTEXT_SUPERSHIPS_COUNT][26];                          /* [0..10] of string [25] */
+char specialName[HELPTEXT_SPECIALNAME_COUNT][10];                        /* [1..9] of string [9] */
+char destructHelp[25][22];                                               /* [1..25] of string [21] */
+char weaponNames[17][17];                                                /* [1..17] of string [16] */
+char destructModeName[DESTRUCT_MODES][13];                               /* [1..destructmodes] of string [12] */
+char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];                          /* [1..13, 1..2] of string */
+char menuInt[MENU_MAX+1][11][18];                                        /* [0..14, 1..11] of string [17] */
 
 
 void decrypt_pascal_string( char *s, int len )
@@ -174,7 +174,11 @@ void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsig
 
 void JE_loadHelpText( void )
 {
+#ifdef TYRIAN2000
+	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 9, -1, -1, 11, -1, -1, -1, 7, 4, 6, 7, 5 };
+#else
 	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 8, -1, -1, 11, -1, -1, -1, 6, 4, 6, 7, 5 };
+#endif
 	
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
 	efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
@@ -373,12 +377,14 @@ void JE_loadHelpText( void )
 		read_encrypted_pascal_string(shipInfo[i][1], sizeof(shipInfo[i][1]), f);
 	}
 	skip_pascal_string(f);
-
+	
+#ifndef TYRIAN2000
 	/*Menu 12 - Network Options*/
 	skip_pascal_string(f);
 	for (unsigned int i = 0; i < menuInt_entries[14]; ++i)
 		read_encrypted_pascal_string(menuInt[14][i], sizeof(menuInt[14][i]), f);
-
+#endif
+	
 	fclose(f);
 }
 

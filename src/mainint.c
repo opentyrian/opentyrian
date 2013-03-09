@@ -736,7 +736,7 @@ void JE_nextEpisode( void )
 {
 	strcpy(lastLevelName, "Completed");
 
-	if (episodeNum == initial_episode_num && !gameHasRepeated && episodeNum != 4 &&
+	if (episodeNum == initial_episode_num && !gameHasRepeated && episodeNum != EPISODE_AVAILABLE &&
 	    !isNetworkGame && !constantPlay)
 	{
 		JE_highScoreCheck();

@@ -34,7 +34,11 @@
 #define EXTRA_SHAPES      7 /*Used for Ending pics*/
 
 #define SPRITE_TABLES_MAX        8
+#ifdef TYRIAN2000
+#define SPRITES_PER_TABLE_MAX  152
+#else
 #define SPRITES_PER_TABLE_MAX  151
+#endif
 
 typedef struct
 {

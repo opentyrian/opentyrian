@@ -26,7 +26,13 @@
 
 static Uint32 rgb_to_yuv( int r, int g, int b );
 
-Palette palettes[23];
+#ifdef TYRIAN2000
+#define PALETTE_COUNT 24
+#else
+#define PALETTE_COUNT 23
+#endif
+
+Palette palettes[PALETTE_COUNT];
 int palette_count;
 
 static Palette palette;
@@ -39,7 +45,7 @@ void JE_loadPals( void )
 	FILE *f = dir_fopen_die(data_dir(), "palette.dat", "rb");
 	
 	palette_count = ftell_eof(f) / (256 * 3);
-	assert(palette_count == 23); // game assumes 23 palettes
+	assert(palette_count == PALETTE_COUNT);
 	
 	for (int p = 0; p < palette_count; ++p)
 	{

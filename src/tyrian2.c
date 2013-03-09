@@ -155,6 +155,12 @@ void JE_starShowVGA( void )
 
 inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
 {
+	if (enemy[i].sprite2s == NULL)
+	{
+		fprintf(stderr, "warning: enemy %d sprite missing\n", i);
+		return;
+	}
+	
 	const int x = enemy[i].ex + x_offset + tempMapXOfs,
 	          y = enemy[i].ey + y_offset;
 	const unsigned int index = enemy[i].egr[enemy[i].enemycycle - 1] + sprite_offset;
@@ -740,7 +746,7 @@ start_level_first:
 		player[i].is_alive = true;
 
 	oldDifficultyLevel = difficultyLevel;
-	if (episodeNum == 4)
+	if (episodeNum == EPISODE_AVAILABLE)
 		difficultyLevel--;
 	if (difficultyLevel < 1)
 		difficultyLevel = 1;
@@ -3169,6 +3175,18 @@ new_game:
 						temp = atoi(strnztcpy(buffer, s + 3, 3));
 						play_song(temp - 1);
 						break;
+						
+#ifdef TYRIAN2000
+					case 'T':
+						/* TODO: Timed Battle ]T[ 43 44 45 46 47 */
+						printf("]T[ 43 44 45 46 47 handle timed battle!");
+						break;
+
+					case 'q':
+						/* TODO: Timed Battle end */
+						printf("handle timed battle end flag!");
+						break;
+#endif
 					}
 				}
 
@@ -3351,7 +3369,11 @@ bool JE_titleScreen( JE_boolean animate )
 {
 	bool quit = false;
 
+#ifdef TYRIAN2000
+	const int menunum = 6;
+#else
 	const int menunum = 7;
+#endif
 
 	unsigned int arcade_code_i[SA_ENGAGE] = { 0 };
 
@@ -3710,9 +3732,9 @@ bool JE_titleScreen( JE_boolean animate )
 							}
 							else
 							{
-								ulong initial_cash[] = { 10000, 15000, 20000, 30000 };
+								ulong initial_cash[] = { 10000, 15000, 20000, 30000, 35000 };
 
-								assert(episodeNum >= 1 && episodeNum <= 4);
+								assert(episodeNum >= 1 && episodeNum <= EPISODE_AVAILABLE);
 								player[0].cash = initial_cash[episodeNum-1];
 							}
 						}
@@ -3734,12 +3756,18 @@ bool JE_titleScreen( JE_boolean animate )
 						opentyrian_menu();
 						fadeIn = true;
 						break;
+#ifdef TYRIAN2000
+					case 5: /* Quit */
+						quit = true;
+						break;
+#else
 					case 5: /* Demo */
 						play_demo = true;
 						break;
 					case 6: /* Quit */
 						quit = true;
 						break;
+#endif
 					}
 					redraw = true;
 					break;
@@ -4338,7 +4366,10 @@ void JE_eventSystem( void )
 				if (enemyShapeTables[i] != newEnemyShapeTables[i])
 				{
 					if (newEnemyShapeTables[i] > 0)
+					{
+						assert(newEnemyShapeTables[i] <= COUNTOF(shapeFile));
 						JE_loadCompShapes(&eShapes[i], shapeFile[newEnemyShapeTables[i] - 1]);
+					}
 					else
 						free_sprite2s(&eShapes[i]);
 
