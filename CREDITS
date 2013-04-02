@@ -24,8 +24,9 @@ Jan "heftig" Steffens  clean-up patches
 Jason Emery
  * Tyrian source code
 
-MAME and DOSBox
- * FM emulator code
+DOSBox
+ * FM Sythesis emulator code
 
 AdPlug
- * Loudness player
+ * Loudness player code
+
