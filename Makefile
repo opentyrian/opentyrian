@@ -1,6 +1,12 @@
 # BUILD SETTINGS ###########################################
 
-PLATFORM := UNIX
+ifndef PLATFORM
+    ifeq ($(shell uname -o),Msys)
+        PLATFORM := WIN32
+    else
+        PLATFORM := UNIX
+    endif
+endif
 
 TARGET := opentyrian
 
@@ -9,9 +15,7 @@ TARGET := opentyrian
 STRIP := strip
 SDL_CONFIG := sdl-config
 
-ifneq ($(PLATFORM), UNIX)
-    include crosscompile.mk
-endif
+include crosscompile.mk
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
