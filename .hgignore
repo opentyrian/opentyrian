@@ -1,6 +1,7 @@
 syntax: glob
 
 *~
+*.swp
 
 obj/*
 src/*.gch
@@ -9,6 +10,15 @@ opentyrian
 opentyrian.exe
 opentyrian.gpe
 
+SDL.dll
+SDL_net.dll
+
 data/*
+
+opentyrian.conf
+tyrian.cfg
+tyrian.sav
+stderr.txt
+stdout.txt
 
 doc/doxygen/
