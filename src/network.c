@@ -66,25 +66,26 @@ static char empty_string[] = "";
 char *network_player_name = empty_string,
      *network_opponent_name = empty_string;
 
-UDPsocket socket;
-IPaddress ip;
+static UDPsocket socket;
+static IPaddress ip;
 
-UDPpacket *packet_out_temp, *packet_temp;
+UDPpacket *packet_out_temp;
+static UDPpacket *packet_temp;
 
 UDPpacket *packet_in[NET_PACKET_QUEUE] = { NULL },
           *packet_out[NET_PACKET_QUEUE] = { NULL };
 
-Uint16 last_out_sync = 0, queue_in_sync = 0, queue_out_sync = 0, last_ack_sync = 0;
-Uint32 last_in_tick = 0, last_out_tick = 0;
+static Uint16 last_out_sync = 0, queue_in_sync = 0, queue_out_sync = 0, last_ack_sync = 0;
+static Uint32 last_in_tick = 0, last_out_tick = 0;
 
-UDPpacket *packet_state_in[NET_PACKET_QUEUE] = { NULL },
-          *packet_state_in_xor[NET_PACKET_QUEUE] = { NULL },
-          *packet_state_out[NET_PACKET_QUEUE] = { NULL };
+UDPpacket *packet_state_in[NET_PACKET_QUEUE] = { NULL };
+static UDPpacket *packet_state_in_xor[NET_PACKET_QUEUE] = { NULL };
+UDPpacket *packet_state_out[NET_PACKET_QUEUE] = { NULL };
 
-Uint16 last_state_in_sync = 0, last_state_out_sync = 0;
-Uint32 last_state_in_tick = 0;
+static Uint16 last_state_in_sync = 0, last_state_out_sync = 0;
+static Uint32 last_state_in_tick = 0;
 
-bool net_initialized = false;
+static bool net_initialized = false;
 static bool connected = false, quit = false;
 
 

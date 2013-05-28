@@ -59,7 +59,6 @@ extern JE_boolean haltGame;
 extern JE_boolean moveOk;
 extern JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 extern JE_boolean yourInGameMenuRequest, inGameMenuRequest;
-extern JE_boolean portConfigChange, portConfigDone;
 
 
 void network_prepare( Uint16 type );
