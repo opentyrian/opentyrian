@@ -64,14 +64,11 @@ extern JE_boolean portConfigChange, portConfigDone;
 
 void network_prepare( Uint16 type );
 bool network_send( int len );
-bool network_send_no_ack( int len );
 
 int network_check( void );
-int network_acknowledge( Uint16 sync );
 bool network_update( void );
 
 bool network_is_sync( void );
-bool network_is_alive( void );
 
 void network_state_prepare( void );
 int network_state_send( void );
@@ -83,10 +80,6 @@ int network_connect( void );
 void network_tyrian_halt( unsigned int err, bool attempt_sync );
 
 int network_init( void );
-
-void packet_copy( UDPpacket *dst, UDPpacket *src );
-void packets_shift_up( UDPpacket **packet, int max_packets );
-void packets_shift_down( UDPpacket **packet, int max_packets );
 
 void JE_clearSpecialRequests( void );
 

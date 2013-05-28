@@ -98,11 +98,60 @@ JE_boolean moveOk;
 JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 
+static void packet_copy( UDPpacket *dst, UDPpacket *src )
+{
+	void *temp = dst->data;
+	memcpy(dst, src, sizeof(*dst));
+	dst->data = temp;
+	memcpy(dst->data, src->data, src->len);
+}
+
+static void packets_shift_up( UDPpacket **packet, int max_packets )
+{
+		if (packet[0])
+		{
+			SDLNet_FreePacket(packet[0]);
+		}
+		for (int i = 0; i < max_packets - 1; i++)
+		{
+			packet[i] = packet[i + 1];
+		}
+		packet[max_packets - 1] = NULL;
+}
+
+static void packets_shift_down( UDPpacket **packet, int max_packets )
+{
+	if (packet[max_packets - 1])
+	{
+		SDLNet_FreePacket(packet[max_packets - 1]);
+	}
+	for (int i = max_packets - 1; i > 0; i--)
+	{
+		packet[i] = packet[i - 1];
+	}
+	packet[0] = NULL;
+}
+
+
 // prepare new packet for sending
 void network_prepare( Uint16 type )
 {
 	SDLNet_Write16(type,          &packet_out_temp->data[0]);
 	SDLNet_Write16(last_out_sync, &packet_out_temp->data[2]);
+}
+
+// send packet but don't expect acknoledgment of delivery
+static bool network_send_no_ack( int len )
+{
+	packet_out_temp->len = len;
+
+	if (!SDLNet_UDP_Send(socket, 0, packet_out_temp))
+	{
+		printf("SDLNet_UDP_Send: %s\n", SDL_GetError());
+		return false;
+	}
+
+	return true;
 }
 
 // send packet and place it in queue to be acknowledged
@@ -129,18 +178,20 @@ bool network_send( int len )
 	return temp;
 }
 
-// send packet but don't expect acknoledgment of delivery
-bool network_send_no_ack( int len )
+// send acknowledgement packet
+static int network_acknowledge( Uint16 sync )
 {
-	packet_out_temp->len = len;
+	SDLNet_Write16(PACKET_ACKNOWLEDGE, &packet_out_temp->data[0]);
+	SDLNet_Write16(sync,               &packet_out_temp->data[2]);
+	network_send_no_ack(4);
 
-	if (!SDLNet_UDP_Send(socket, 0, packet_out_temp))
-	{
-		printf("SDLNet_UDP_Send: %s\n", SDL_GetError());
-		return false;
-	}
+	return 0;
+}
 
-	return true;
+// activity lately?
+static bool network_is_alive( void )
+{
+	return (SDL_GetTicks() - last_in_tick < NET_TIME_OUT || SDL_GetTicks() - last_state_in_tick < NET_TIME_OUT);
 }
 
 // poll for new packets received, check that connection is alive, resend queued packets if necessary
@@ -337,16 +388,6 @@ int network_check( void )
 	return 0;
 }
 
-// send acknowledgement packet
-int network_acknowledge( Uint16 sync )
-{
-	SDLNet_Write16(PACKET_ACKNOWLEDGE, &packet_out_temp->data[0]);
-	SDLNet_Write16(sync,               &packet_out_temp->data[2]);
-	network_send_no_ack(4);
-
-	return 0;
-}
-
 // discard working packet, now processing next packet in queue
 bool network_update( void )
 {
@@ -366,12 +407,6 @@ bool network_update( void )
 bool network_is_sync( void )
 {
 	return (queue_out_sync - last_ack_sync == 1);
-}
-
-// activity lately?
-bool network_is_alive( void )
-{
-	return (SDL_GetTicks() - last_in_tick < NET_TIME_OUT || SDL_GetTicks() - last_state_in_tick < NET_TIME_OUT);
 }
 
 
@@ -740,41 +775,6 @@ int network_init( void )
 
 	return 0;
 }
-
-void packet_copy( UDPpacket *dst, UDPpacket *src )
-{
-	void *temp = dst->data;
-	memcpy(dst, src, sizeof(*dst));
-	dst->data = temp;
-	memcpy(dst->data, src->data, src->len);
-}
-
-void packets_shift_up( UDPpacket **packet, int max_packets )
-{
-		if (packet[0])
-		{
-			SDLNet_FreePacket(packet[0]);
-		}
-		for (int i = 0; i < max_packets - 1; i++)
-		{
-			packet[i] = packet[i + 1];
-		}
-		packet[max_packets - 1] = NULL;
-}
-
-void packets_shift_down( UDPpacket **packet, int max_packets )
-{
-	if (packet[max_packets - 1])
-	{
-		SDLNet_FreePacket(packet[max_packets - 1]);
-	}
-	for (int i = max_packets - 1; i > 0; i--)
-	{
-		packet[i] = packet[i - 1];
-	}
-	packet[0] = NULL;
-}
-
 
 void JE_clearSpecialRequests( void )
 {
