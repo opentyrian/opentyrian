@@ -1567,6 +1567,7 @@ void JE_itemScreen( void )
 
 	} while (!(quit || gameLoaded || jumpSection));
 
+#ifdef WITH_NETWORK
 	if (!quit && isNetworkGame)
 	{
 		JE_barShade(VGAScreen, 3, 3, 316, 196);
@@ -1607,6 +1608,7 @@ void JE_itemScreen( void )
 			SDL_Delay(16);
 		}
 	}
+#endif
 
 	if (gameLoaded)
 		fade_black(10);
@@ -2438,6 +2440,7 @@ JE_boolean JE_quitRequest( void )
 
 	JE_playSampleNum(quit_selected ? S_SPRING : S_CLICK);
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame && quit_selected)
 	{
 		network_prepare(PACKET_QUIT);
@@ -2445,6 +2448,7 @@ JE_boolean JE_quitRequest( void )
 
 		network_tyrian_halt(0, true);
 	}
+#endif
 
 	return quit_selected;
 }

@@ -22,7 +22,9 @@
 #include "opentyr.h"
 
 #include "SDL.h"
-#include "SDL_net.h"
+#ifdef WITH_NETWORK
+#	include "SDL_net.h"
+#endif
 
 
 #define PACKET_ACKNOWLEDGE   0x00    // 
@@ -50,9 +52,11 @@ extern char *network_opponent_host;
 extern Uint16 network_player_port, network_opponent_port;
 extern char *network_player_name, *network_opponent_name;
 
+#ifdef WITH_NETWORK
 extern UDPpacket *packet_out_temp;
 extern UDPpacket *packet_in[], *packet_out[],
                  *packet_state_in[], *packet_state_out[];
+#endif
 
 extern uint thisPlayerNum;
 extern JE_boolean haltGame;
@@ -60,7 +64,7 @@ extern JE_boolean moveOk;
 extern JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 extern JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 
-
+#ifdef WITH_NETWORK
 void network_prepare( Uint16 type );
 bool network_send( int len );
 
@@ -85,6 +89,12 @@ void JE_clearSpecialRequests( void );
 #define NETWORK_KEEP_ALIVE() \
 		if (isNetworkGame) \
 			network_check();
+
+#else
+
+#define NETWORK_KEEP_ALIVE()
+
+#endif
 
 
 #endif /* NETWORK_H */

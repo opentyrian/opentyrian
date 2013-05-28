@@ -9,6 +9,9 @@ ifndef PLATFORM
 endif
 
 TARGET := opentyrian
+ifndef WITH_NETWORK
+    WITH_NETWORK := 1
+endif
 
 ############################################################
 
@@ -28,6 +31,9 @@ else
     EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
 endif
 EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-missing-field-initializers
+ifeq ($(WITH_NETWORK),1)
+    EXTRA_CFLAGS += -DWITH_NETWORK
+endif
 
 HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
 ifneq ($(HG_REV), )
@@ -37,7 +43,10 @@ endif
 EXTRA_LDLIBS += -lm
 
 SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
-SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs) -lSDL_net
+SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs)
+ifeq ($(WITH_NETWORK),1)
+    SDL_LDLIBS += -lSDL_net
+endif
 
 ALL_CFLAGS += -std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
 ALL_LDFLAGS += $(LDFLAGS)

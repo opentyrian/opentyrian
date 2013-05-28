@@ -921,11 +921,13 @@ start_level_first:
 
 	newkey = false;
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		JE_clearSpecialRequests();
 		mt_srand(32402394);
 	}
+#endif
 
 	JE_setupStars();
 
@@ -2420,6 +2422,7 @@ draw_player_shot_loop_end:
 	}
 
 	/*Network Update*/
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		if (!reallyEndLevel)
@@ -2487,6 +2490,7 @@ draw_player_shot_loop_end:
 
 		JE_clearSpecialRequests();
 	}
+#endif
 
 	/** Test **/
 	JE_drawSP();
@@ -3393,6 +3397,7 @@ bool JE_titleScreen( JE_boolean animate )
 	gameLoaded = false;
 	jumpSection = false;
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		JE_loadPic(VGAScreen, 2, false);
@@ -3471,6 +3476,7 @@ bool JE_titleScreen( JE_boolean animate )
 		}
 	}
 	else
+#endif
 	{
 		do
 		{

@@ -336,10 +336,15 @@ int main( int argc, char *argv[] )
 
 	if (isNetworkGame)
 	{
+#ifdef WITH_NETWORK
 		if (network_init())
 		{
 			network_tyrian_halt(3, false);
 		}
+#else
+		fprintf(stderr, "OpenTyrian was compiled without networking support.");
+		JE_tyrianHalt(5);
+#endif
 	}
 
 #ifdef NDEBUG

@@ -64,8 +64,10 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 		
+#ifdef WITH_NETWORK
 		if (isNetworkGame)
 			network_check();
+#endif
 	}
 }
 
@@ -78,8 +80,10 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 		poll_joysticks();
 		service_SDL_events(false);
 		
+#ifdef WITH_NETWORK
 		if (isNetworkGame)
 			network_check();
+#endif
 	}
 }
 

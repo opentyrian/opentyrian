@@ -30,9 +30,6 @@
 #include "varz.h"
 #include "video.h"
 
-#include "SDL.h"
-#include "SDL_net.h"
-
 #include <assert.h>
 
 /*                              HERE BE DRAGONS!
@@ -66,6 +63,7 @@ static char empty_string[] = "";
 char *network_player_name = empty_string,
      *network_opponent_name = empty_string;
 
+#ifdef WITH_NETWORK
 static UDPsocket socket;
 static IPaddress ip;
 
@@ -87,7 +85,7 @@ static Uint32 last_state_in_tick = 0;
 
 static bool net_initialized = false;
 static bool connected = false, quit = false;
-
+#endif
 
 uint thisPlayerNum = 0;  /* Player number on this PC (1 or 2) */
 
@@ -99,6 +97,7 @@ JE_boolean moveOk;
 JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 
+#ifdef WITH_NETWORK
 static void packet_copy( UDPpacket *dst, UDPpacket *src )
 {
 	void *temp = dst->data;
@@ -132,7 +131,6 @@ static void packets_shift_down( UDPpacket **packet, int max_packets )
 	}
 	packet[0] = NULL;
 }
-
 
 // prepare new packet for sending
 void network_prepare( Uint16 type )
@@ -776,6 +774,8 @@ int network_init( void )
 
 	return 0;
 }
+
+#endif
 
 void JE_clearSpecialRequests( void )
 {

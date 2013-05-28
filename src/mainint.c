@@ -1044,6 +1044,7 @@ void JE_doInGameSetup( void )
 {
 	haltGame = false;
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		network_prepare(PACKET_GAME_MENU);
@@ -1065,6 +1066,7 @@ void JE_doInGameSetup( void )
 			SDL_Delay(16);
 		}
 	}
+#endif
 
 	if (yourInGameMenuRequest)
 	{
@@ -1077,6 +1079,7 @@ void JE_doInGameSetup( void )
 
 		keysactive[SDLK_ESCAPE] = false;
 
+#ifdef WITH_NETWORK
 		if (isNetworkGame)
 		{
 			if (!playerEndLevel)
@@ -1088,8 +1091,10 @@ void JE_doInGameSetup( void )
 				network_send(4);  // PACKET_GAMEQUIT
 			}
 		}
+#endif
 	}
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		SDL_Surface *temp_surface = VGAScreen;
@@ -1147,6 +1152,7 @@ void JE_doInGameSetup( void )
 
 		VGAScreen = temp_surface; /* side-effect of game_screen */
 	}
+#endif
 
 	yourInGameMenuRequest = false;
 
@@ -2820,6 +2826,7 @@ void JE_pauseGame( void )
 
 	set_volume(tyrMusicVolume / 2, fxVolume);
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		network_prepare(PACKET_GAME_PAUSE);
@@ -2841,6 +2848,7 @@ void JE_pauseGame( void )
 			SDL_Delay(16);
 		}
 	}
+#endif
 
 	wait_noinput(false, false, true); // TODO: should up the joystick repeat temporarily instead
 
@@ -2854,14 +2862,17 @@ void JE_pauseGame( void )
 		if ((newkey && lastkey_sym != SDLK_LCTRL && lastkey_sym != SDLK_RCTRL && lastkey_sym != SDLK_LALT && lastkey_sym != SDLK_RALT)
 		    || JE_mousePosition(&mouseX, &mouseY) > 0)
 		{
+#ifdef WITH_NETWORK
 			if (isNetworkGame)
 			{
 				network_prepare(PACKET_WAITING);
 				network_send(4);  // PACKET_WAITING
 			}
+#endif
 			done = true;
 		}
 
+#ifdef WITH_NETWORK
 		if (isNetworkGame)
 		{
 			network_check();
@@ -2873,10 +2884,12 @@ void JE_pauseGame( void )
 				done = true;
 			}
 		}
+#endif
 
 		wait_delay();
 	} while (!done);
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
 		while (!network_is_sync())
@@ -2887,6 +2900,7 @@ void JE_pauseGame( void )
 			SDL_Delay(16);
 		}
 	}
+#endif
 
 	set_volume(tyrMusicVolume, fxVolume);
 
@@ -2911,11 +2925,13 @@ void JE_playerMovement( Player *this_player,
 			this_player->weapon_mode = 1;
 	}
 
+#ifdef WITH_NETWORK
 	if (isNetworkGame && thisPlayerNum == playerNum_)
 	{
 		network_state_prepare();
 		memset(&packet_state_out[0]->data[4], 0, 10);
 	}
+#endif
 
 redo:
 
@@ -3223,6 +3239,7 @@ redo:
 
 			}   /*endLevel*/
 
+#ifdef WITH_NETWORK
 			if (isNetworkGame && playerNum_ == thisPlayerNum)
 			{
 				Uint16 buttons = 0;
@@ -3249,12 +3266,14 @@ redo:
 				accelXC = 0;
 				accelYC = 0;
 			}
+#endif
 		}  /*isNetworkGame*/
 
 		/* --- Movement Routine Ending --- */
 
 		moveOk = true;
 
+#ifdef WITH_NETWORK
 		if (isNetworkGame && !network_state_is_reset())
 		{
 			if (playerNum_ != thisPlayerNum)
@@ -3289,6 +3308,7 @@ redo:
 				accelYC = (Sint16)SDLNet_Read16(&packet_state_out[network_delay]->data[10]);
 			}
 		}
+#endif
 
 		/*Street-Fighter codes*/
 		JE_SFCodes(playerNum_, this_player->x, this_player->y, *mouseX_, *mouseY_);
