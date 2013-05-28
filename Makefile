@@ -1,7 +1,7 @@
 # BUILD SETTINGS ###########################################
 
 ifndef PLATFORM
-    ifeq ($(shell uname -o),Msys)
+    ifneq ($(filter Msys Cygwin,$(shell uname -o)),)
         PLATFORM := WIN32
     else
         PLATFORM := UNIX

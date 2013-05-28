@@ -24,9 +24,15 @@ TARGET := $(TARGET)$($(PLATFORM)_EXT)
 
 ifdef CROSS
 
-PREFIX := $($(PLATFORM)_PREFIX)
-EPREFIX := $($(PLATFORM)_EPREFIX)
-HOST := $($(PLATFORM)_HOST)
+ifndef PREFIX
+    PREFIX := $($(PLATFORM)_PREFIX)
+endif
+ifndef EPREFIX
+    EPREFIX := $($(PLATFORM)_EPREFIX)
+endif
+ifndef HOST
+    HOST := $($(PLATFORM)_HOST)
+endif
 
 BINDIR := $(EPREFIX)/bin
 LIBDIR := $(PREFIX)/lib
