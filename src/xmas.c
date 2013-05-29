@@ -68,22 +68,22 @@ bool xmas_prompt( void )
 		
 		if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-				case SDLK_LEFT:
+				case SDL_SCANCODE_LEFT:
 					if (selection == 0)
 						selection = 2;
 					selection--;
 					break;
-				case SDLK_RIGHT:
+				case SDL_SCANCODE_RIGHT:
 					selection++;
 					selection %= 2;
 					break;
 					
-				case SDLK_RETURN:
+				case SDL_SCANCODE_RETURN:
 					decided = true;
 					break;
-				case SDLK_ESCAPE:
+				case SDL_SCANCODE_ESCAPE:
 					decided = true;
 					quit = true;
 					break;

@@ -27,7 +27,7 @@
 #include "setup.h"
 #include "video.h"
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
@@ -45,15 +45,15 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		
 		inputDetected = newkey | mousedown;
 		
-		if (lastkey_sym == SDLK_SPACE)
+		if (lastkey_scan == SDL_SCANCODE_SPACE)
 		{
-			lastkey_sym = SDLK_RETURN;
+			lastkey_scan = SDL_SCANCODE_RETURN;
 		}
 		
 		if (mousedown)
 		{
 			newkey = true;
-			lastkey_sym = SDLK_RETURN;
+			lastkey_scan = SDL_SCANCODE_RETURN;
 		}
 		
 		if (has_mouse && input_grabbed)
@@ -63,9 +63,9 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 				inputDetected = true;
 				if (mouse_y - 100 < 0)
 				{
-					lastkey_sym = SDLK_UP;
+					lastkey_scan = SDL_SCANCODE_UP;
 				} else {
-					lastkey_sym = SDLK_DOWN;
+					lastkey_scan = SDL_SCANCODE_DOWN;
 				}
 				newkey = true;
 			}
@@ -74,9 +74,9 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 				inputDetected = true;
 				if (mouse_x - 160 < 0)
 				{
-					lastkey_sym = SDLK_LEFT;
+					lastkey_scan = SDL_SCANCODE_LEFT;
 				} else {
-					lastkey_sym = SDLK_RIGHT;
+					lastkey_scan = SDL_SCANCODE_RIGHT;
 				}
 				newkey = true;
 			}

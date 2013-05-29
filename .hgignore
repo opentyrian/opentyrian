@@ -12,10 +12,12 @@ opentyrian.gpe
 
 SDL.dll
 SDL_net.dll
+SDL2.dll
 
 data/*
 
 opentyrian.conf
+joystick.conf
 tyrian.cfg
 tyrian.sav
 stderr.txt

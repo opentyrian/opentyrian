@@ -59,20 +59,20 @@ bool select_gameplay( void )
 
 		if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-			case SDLK_UP:
+			case SDL_SCANCODE_UP:
 				if (--gameplay < 1)
 					gameplay = gameplay_max;
 				JE_playSampleNum(S_CURSOR);
 				break;
-			case SDLK_DOWN:
+			case SDL_SCANCODE_DOWN:
 				if (++gameplay > gameplay_max)
 					gameplay = 1;
 				JE_playSampleNum(S_CURSOR);
 				break;
 
-			case SDLK_RETURN:
+			case SDL_SCANCODE_RETURN:
 				if (gameplay == GAMEPLAY_NAME_COUNT - 1)
 				{
 					JE_playSampleNum(S_SPRING);
@@ -87,7 +87,7 @@ bool select_gameplay( void )
 				twoPlayerMode = (gameplay == GAMEPLAY_NAME_COUNT - 2);
 				return true;
 
-			case SDLK_ESCAPE:
+			case SDL_SCANCODE_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -128,9 +128,9 @@ bool select_episode( void )
 
 		if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-			case SDLK_UP:
+			case SDL_SCANCODE_UP:
 				episode--;
 				if (episode < 1)
 				{
@@ -138,7 +138,7 @@ bool select_episode( void )
 				}
 				JE_playSampleNum(S_CURSOR);
 				break;
-			case SDLK_DOWN:
+			case SDL_SCANCODE_DOWN:
 				episode++;
 				if (episode > episode_max)
 				{
@@ -147,7 +147,7 @@ bool select_episode( void )
 				JE_playSampleNum(S_CURSOR);
 				break;
 
-			case SDLK_RETURN:
+			case SDL_SCANCODE_RETURN:
 				if (!episodeAvail[episode - 1])
 				{
 					JE_playSampleNum(S_SPRING);
@@ -160,7 +160,7 @@ bool select_episode( void )
 				initial_episode_num = episodeNum;
 				return true;
 
-			case SDLK_ESCAPE:
+			case SDL_SCANCODE_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -202,20 +202,20 @@ bool select_difficulty( void )
 
 		if (SDL_GetModState() & KMOD_SHIFT)
 		{
-			if ((difficulty_max < 4 && keysactive[SDLK_g]) ||
-			    (difficulty_max == 4 && keysactive[SDLK_RIGHTBRACKET]))
+			if ((difficulty_max < 4 && keysactive[SDL_SCANCODE_G]) ||
+			    (difficulty_max == 4 && keysactive[SDL_SCANCODE_RIGHTBRACKET]))
 			{
 				difficulty_max++;
 			}
-		} else if (difficulty_max == 5 && keysactive[SDLK_l] && keysactive[SDLK_o] && keysactive[SDLK_r] && keysactive[SDLK_d]) {
+		} else if (difficulty_max == 5 && keysactive[SDL_SCANCODE_L] && keysactive[SDL_SCANCODE_O] && keysactive[SDL_SCANCODE_R] && keysactive[SDL_SCANCODE_D]) {
 			difficulty_max++;
 		}
 
 		if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-			case SDLK_UP:
+			case SDL_SCANCODE_UP:
 				difficultyLevel--;
 				if (difficultyLevel < 1)
 				{
@@ -223,7 +223,7 @@ bool select_difficulty( void )
 				}
 				JE_playSampleNum(S_CURSOR);
 				break;
-			case SDLK_DOWN:
+			case SDL_SCANCODE_DOWN:
 				difficultyLevel++;
 				if (difficultyLevel > difficulty_max)
 				{
@@ -232,7 +232,7 @@ bool select_difficulty( void )
 				JE_playSampleNum(S_CURSOR);
 				break;
 
-			case SDLK_RETURN:
+			case SDL_SCANCODE_RETURN:
 				JE_playSampleNum(S_SELECT);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -245,7 +245,7 @@ bool select_difficulty( void )
 				}
 				return true;
 
-			case SDLK_ESCAPE:
+			case SDL_SCANCODE_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
 				fade_black(10); */

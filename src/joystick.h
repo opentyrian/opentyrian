@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 typedef enum
 {
@@ -78,7 +78,7 @@ bool joystick_analog_angle( int j, float *angle );
 void poll_joystick( int j );
 void poll_joysticks( void );
 
-void push_key( SDLKey key );
+void push_key( SDL_Scancode key );
 void push_joysticks_as_keyboard( void );
 
 void init_joysticks( void );

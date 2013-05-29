@@ -164,7 +164,7 @@ struct destruct_moves_s {
 	bool actions[MAX_MOVE];
 };
 struct destruct_keys_s {
-	SDLKey Config[MAX_KEY][MAX_KEY_OPTIONS];
+	SDL_Scancode Config[MAX_KEY][MAX_KEY_OPTIONS];
 };
 struct destruct_ai_s {
 
@@ -347,25 +347,25 @@ const JE_byte ModeScore[MAX_PLAYERS][MAX_MODES] =
 	{1, 0, 5, 0, 1, 1}
 };
 
-SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
+SDL_Scancode defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 {
-	{	{SDLK_c},
-		{SDLK_v},
-		{SDLK_a},
-		{SDLK_z},
-		{SDLK_LALT},
-		{SDLK_x, SDLK_LSHIFT},
-		{SDLK_LCTRL},
-		{SDLK_SPACE}
+	{	{SDL_SCANCODE_C},
+		{SDL_SCANCODE_V},
+		{SDL_SCANCODE_A},
+		{SDL_SCANCODE_Z},
+		{SDL_SCANCODE_LALT},
+		{SDL_SCANCODE_X, SDL_SCANCODE_LSHIFT},
+		{SDL_SCANCODE_LCTRL},
+		{SDL_SCANCODE_SPACE}
 	},
-	{	{SDLK_LEFT, SDLK_KP4},
-		{SDLK_RIGHT, SDLK_KP6},
-		{SDLK_UP, SDLK_KP8},
-		{SDLK_DOWN, SDLK_KP2},
-		{SDLK_BACKSLASH, SDLK_KP5},
-		{SDLK_INSERT, SDLK_RETURN, SDLK_KP0, SDLK_KP_ENTER},
-		{SDLK_PAGEUP, SDLK_KP9},
-		{SDLK_PAGEDOWN, SDLK_KP3}
+	{	{SDL_SCANCODE_LEFT, SDL_SCANCODE_KP_4},
+		{SDL_SCANCODE_RIGHT, SDL_SCANCODE_KP_6},
+		{SDL_SCANCODE_UP, SDL_SCANCODE_KP_8},
+		{SDL_SCANCODE_DOWN, SDL_SCANCODE_KP_2},
+		{SDL_SCANCODE_BACKSLASH, SDL_SCANCODE_KP_5},
+		{SDL_SCANCODE_INSERT, SDL_SCANCODE_RETURN, SDL_SCANCODE_KP_0, SDL_SCANCODE_KP_ENTER},
+		{SDL_SCANCODE_PAGEUP, SDL_SCANCODE_KP_9},
+		{SDL_SCANCODE_PAGEDOWN, SDL_SCANCODE_KP_3}
 	}
 };
 
@@ -438,23 +438,23 @@ bool write_default_destruct_config( void ) {
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "__comment")) == NULL) { goto label_failure; }
 	cJSON_SetString(setting, "You may configure the keys here.  Nums correspond to SDL defines.  It's better than nothing.");
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "left1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_c);
+	cJSON_SetNumber(setting, SDL_SCANCODE_C);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "right1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_v);
+	cJSON_SetNumber(setting, SDL_SCANCODE_V);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "up1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_a);
+	cJSON_SetNumber(setting, SDL_SCANCODE_A);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "down1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_z);
+	cJSON_SetNumber(setting, SDL_SCANCODE_Z);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "change1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LALT);
+	cJSON_SetNumber(setting, SDL_SCANCODE_LALT);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_x);
+	cJSON_SetNumber(setting, SDL_SCANCODE_X);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LSHIFT);
+	cJSON_SetNumber(setting, SDL_SCANCODE_LSHIFT);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LCTRL);
+	cJSON_SetNumber(setting, SDL_SCANCODE_LCTRL);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_SPACE);
+	cJSON_SetNumber(setting, SDL_SCANCODE_SPACE);
 
 	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player2")) == NULL) { goto label_failure; }
 	cJSON_ForceType(level2, cJSON_Object);
@@ -466,41 +466,41 @@ bool write_default_destruct_config( void ) {
 	if((level3 = cJSON_CreateOrGetObjectItem(level2, "keys")) == NULL) { goto label_failure; }
 	cJSON_ForceType(level3, cJSON_Object);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "left1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LEFT);
+	cJSON_SetNumber(setting, SDL_SCANCODE_LEFT);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "left2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP4);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_4);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "right1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_RIGHT);
+	cJSON_SetNumber(setting, SDL_SCANCODE_RIGHT);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "right2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP6);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_6);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "up1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_UP);
+	cJSON_SetNumber(setting, SDL_SCANCODE_UP);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "up2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP8);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_8);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "down1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_DOWN);
+	cJSON_SetNumber(setting, SDL_SCANCODE_DOWN);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "down2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP2);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_2);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "change1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_BACKSLASH);
+	cJSON_SetNumber(setting, SDL_SCANCODE_BACKSLASH);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "change2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP5);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_5);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_INSERT);
+	cJSON_SetNumber(setting, SDL_SCANCODE_INSERT);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_RETURN);
+	cJSON_SetNumber(setting, SDL_SCANCODE_RETURN);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire3")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP0);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_0);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire4")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP_ENTER);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_ENTER);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_PAGEUP);
+	cJSON_SetNumber(setting, SDL_SCANCODE_PAGEUP);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP9);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_9);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_PAGEDOWN);
+	cJSON_SetNumber(setting, SDL_SCANCODE_PAGEDOWN);
 	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP3);
+	cJSON_SetNumber(setting, SDL_SCANCODE_KP_3);
 
 	//custom mode
 	if((level1 = cJSON_CreateOrGetObjectItem(root, "custom")) == NULL) { goto label_failure; }
@@ -638,7 +638,7 @@ void load_destruct_config( void ) {
 								defaultKeyConfig[i][j][k] = setting->valueint;
 							}
 							else { //assume that if we are reading keys the defaults are null and void
-								defaultKeyConfig[i][j][k] = SDLK_UNKNOWN;
+								defaultKeyConfig[i][j][k] = SDL_SCANCODE_UNKNOWN;
 							}
 						}
 					}
@@ -830,16 +830,16 @@ enum de_mode_t JE_modeSelect( void )
 		} while(!newkey);
 
 		/* See what was pressed */
-		if (keysactive[SDLK_ESCAPE])
+		if (keysactive[SDL_SCANCODE_ESCAPE])
 		{
 			mode = MODE_NONE; /* User is quitting, return failure */
 			break;
 		}
-		if (keysactive[SDLK_RETURN])
+		if (keysactive[SDL_SCANCODE_RETURN])
 		{
 			break; /* User has selected, return choice */
 		}
-		if (keysactive[SDLK_UP])
+		if (keysactive[SDL_SCANCODE_UP])
 		{
 			if(mode == MODE_FIRST)
 			{
@@ -853,7 +853,7 @@ enum de_mode_t JE_modeSelect( void )
 				mode--;
 			}
 		}
-		if (keysactive[SDLK_DOWN])
+		if (keysactive[SDL_SCANCODE_DOWN])
 		{
 			if(mode >= MODE_LAST-1)
 			{
@@ -1184,7 +1184,7 @@ void JE_aliasDirt( SDL_Surface * screen )
 	/* This complicated looking function goes through the whole screen
 	 * looking for brown pixels which just happen to be next to non-brown
 	 * pixels.  It's an aliaser, just like it says. */
-	unsigned int x, y;
+	int x, y;
 
 
 	/* This is a pointer to a screen.  If you don't like pointer arithmetic,
@@ -1192,7 +1192,7 @@ void JE_aliasDirt( SDL_Surface * screen )
 	Uint8 *s = screen->pixels;
 	s += 12 * screen->pitch;
 
-	for (y = 12; y < (unsigned)screen->h; y++) {
+	for (y = 12; y < screen->h; y++) {
 		for (x = 0; x < screen->pitch; x++) {
 			if (*s == PIXEL_BLACK) {
 				*s = __aliasDirtPixel(screen, x, y, s);
@@ -1620,39 +1620,39 @@ enum de_state_t DE_RunTick( void )
 	DE_RunTickPlaySounds();
 
 	/* The rest of this cruft needs to be put in appropriate sections */
-	if (keysactive[SDLK_F10])
+	if (keysactive[SDL_SCANCODE_F10])
 	{
 		player[PLAYER_LEFT].is_cpu = !player[PLAYER_LEFT].is_cpu;
-		keysactive[SDLK_F10] = false;
+		keysactive[SDL_SCANCODE_F10] = false;
 	}
-	if (keysactive[SDLK_F11])
+	if (keysactive[SDL_SCANCODE_F11])
 	{
 		player[PLAYER_RIGHT].is_cpu = !player[PLAYER_RIGHT].is_cpu;
-		keysactive[SDLK_F11] = false;
+		keysactive[SDL_SCANCODE_F11] = false;
 	}
-	if (keysactive[SDLK_p])
+	if (keysactive[SDL_SCANCODE_P])
 	{
 		JE_pauseScreen();
-		keysactive[lastkey_sym] = false;
+		keysactive[lastkey_scan] = false;
 	}
 
-	if (keysactive[SDLK_F1])
+	if (keysactive[SDL_SCANCODE_F1])
 	{
 		JE_helpScreen();
-		keysactive[lastkey_sym] = false;
+		keysactive[lastkey_scan] = false;
 	}
 
 	wait_delay();
 
-	if (keysactive[SDLK_ESCAPE])
+	if (keysactive[SDL_SCANCODE_ESCAPE])
 	{
-		keysactive[SDLK_ESCAPE] = false;
+		keysactive[SDL_SCANCODE_ESCAPE] = false;
 		return(STATE_INIT); /* STATE_INIT drops us to the mode select */
 	}
 
-	if (keysactive[SDLK_BACKSPACE])
+	if (keysactive[SDL_SCANCODE_BACKSPACE])
 	{
-		keysactive[SDLK_BACKSPACE] = false;
+		keysactive[SDL_SCANCODE_BACKSPACE] = false;
 		return(STATE_RELOAD); /* STATE_RELOAD creates a new map */
 	}
 
@@ -2390,7 +2390,7 @@ void DE_RunTickDrawHUD( void )
 void DE_RunTickGetInput( void )
 {
 	unsigned int player_index, key_index, slot_index;
-	SDLKey key;
+	SDL_Scancode key;
 
 	/* player.keys holds our key config.  Players will eventually be allowed
 	 * to can change their key mappings.  player.moves and player.keys
@@ -2405,7 +2405,7 @@ void DE_RunTickGetInput( void )
 			for(slot_index = 0; slot_index < MAX_KEY_OPTIONS; slot_index++)
 			{
 				key = player[player_index].keys.Config[key_index][slot_index];
-				if(key == SDLK_UNKNOWN) { break; }
+				if(key == SDL_SCANCODE_UNKNOWN) { break; }
 				if(keysactive[key] == true)
 				{
 					/* The right key was clearly pressed */

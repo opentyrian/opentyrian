@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #define vga_width 320
 #define vga_height 200
@@ -32,12 +32,12 @@ extern SDL_Surface *VGAScreen, *VGAScreenSeg;
 extern SDL_Surface *game_screen;
 extern SDL_Surface *VGAScreen2;
 
+extern SDL_Window* main_window;
+extern SDL_PixelFormat* main_window_tex_format;
+
 void init_video( void );
 
-int can_init_scaler( unsigned int new_scaler, bool fullscreen );
-bool init_scaler( unsigned int new_scaler, bool fullscreen );
-bool can_init_any_scaler( bool fullscreen );
-bool init_any_scaler( bool fullscreen );
+bool init_scaler( unsigned int new_scaler );
 
 void deinit_video( void );
 

@@ -35,9 +35,9 @@ void interp9(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 void interp10(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 bool diff(unsigned int w1, unsigned int w2);
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void hq2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+void hq3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+void hq4x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
 
 static int   YUV1, YUV2;
 const  int   Ymask = 0x00FF0000;
@@ -177,17 +177,22 @@ inline bool diff(unsigned int w1, unsigned int w2)
 #define PIXEL11_90    interp9((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 #define PIXEL11_100   interp10((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void hq2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 4,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
-	
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
+
 	int prevline, nextline;
 	
 	Uint32 w[10];
@@ -2913,6 +2918,8 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 2 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 
 
@@ -2970,16 +2977,21 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 #define PIXEL22_5   interp5((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[6], c[8]);
 #define PIXEL22_C   *(Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = c[5];
 
-void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void hq3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 4,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	int prevline, nextline;
 	
@@ -6679,6 +6691,8 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 3 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 
 
@@ -6823,16 +6837,21 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 #define PIXEL4_33_81    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
 #define PIXEL4_33_82    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[8]);
 
-void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void hq4x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 4,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	int prevline, nextline;
 	
@@ -11891,6 +11910,8 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 4 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 
 // kate: tab-width 4; vim: set noet:

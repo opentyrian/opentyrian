@@ -23,7 +23,7 @@
 #include "opentyr.h"
 
 #include <stdio.h>
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 
 #define SAVE_FILES_NUM (11 * 2)
@@ -39,7 +39,7 @@
 /*#define SAVE_FILES_SIZE (2502 - 4)
 #define SAVE_FILE_SIZE (SAVE_FILES_SIZE)*/
 
-typedef SDLKey JE_KeySettingType[8]; /* [1..8] */
+typedef SDL_Scancode JE_KeySettingType[8]; /* [1..8] */
 typedef JE_byte JE_PItemsType[12]; /* [1..12] */
 
 typedef JE_byte JE_EditorItemAvailType[100]; /* [1..100] */

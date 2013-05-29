@@ -46,7 +46,7 @@
 #include "video.h"
 #include "video_scale.h"
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include <assert.h>
 #include <stdio.h>
@@ -77,7 +77,7 @@ void opentyrian_menu( void )
 	bool menu_items_disabled[] =
 	{
 		false,
-		!can_init_any_scaler(false) || !can_init_any_scaler(true),
+		false,
 		false,
 		// false,
 		false,
@@ -134,9 +134,9 @@ void opentyrian_menu( void )
 
 		if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-			case SDLK_UP:
+			case SDL_SCANCODE_UP:
 				do
 				{
 					if (--sel < 0)
@@ -146,7 +146,7 @@ void opentyrian_menu( void )
 				
 				JE_playSampleNum(S_CURSOR);
 				break;
-			case SDLK_DOWN:
+			case SDL_SCANCODE_DOWN:
 				do
 				{
 					if (++sel > maxSel)
@@ -157,36 +157,28 @@ void opentyrian_menu( void )
 				JE_playSampleNum(S_CURSOR);
 				break;
 				
-			case SDLK_LEFT:
+			case SDL_SCANCODE_LEFT:
 				if (sel == 2)
 				{
-					do
-					{
-						if (temp_scaler == 0)
-							temp_scaler = scalers_count;
-						temp_scaler--;
-					}
-					while (!can_init_scaler(temp_scaler, fullscreen_enabled));
+					if (temp_scaler == 0)
+						temp_scaler = scalers_count;
+					temp_scaler--;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
 				break;
-			case SDLK_RIGHT:
+			case SDL_SCANCODE_RIGHT:
 				if (sel == 2)
 				{
-					do
-					{
-						temp_scaler++;
-						if (temp_scaler == scalers_count)
-							temp_scaler = 0;
-					}
-					while (!can_init_scaler(temp_scaler, fullscreen_enabled));
+					temp_scaler++;
+					if (temp_scaler == scalers_count)
+						temp_scaler = 0;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
 				break;
 				
-			case SDLK_RETURN:
+			case SDL_SCANCODE_RETURN:
 				switch (sel)
 				{
 				case 0: /* About */
@@ -202,6 +194,7 @@ void opentyrian_menu( void )
 				case 1: /* Fullscreen */
 					JE_playSampleNum(S_SELECT);
 
+					/* TODOSDL2
 					if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
 						!init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
 						!init_scaler(scaler, fullscreen_enabled))    // revert on fail
@@ -209,6 +202,7 @@ void opentyrian_menu( void )
 						exit(EXIT_FAILURE);
 					}
 					set_palette(colors, 0, 255); // for switching between 8 bpp scalers
+					*/
 					break;
 					
 				case 2: /* Scaler */
@@ -216,13 +210,12 @@ void opentyrian_menu( void )
 
 					if (scaler != temp_scaler)
 					{
-						if (!init_scaler(temp_scaler, fullscreen_enabled) &&   // try new scaler
-							!init_scaler(temp_scaler, !fullscreen_enabled) &&  // try other fullscreen state
-							!init_scaler(scaler, fullscreen_enabled))          // revert on fail
+						if (!init_scaler(temp_scaler) &&   // try new scaler
+							!init_scaler(scaler))          // revert on fail
 						{
 							exit(EXIT_FAILURE);
 						}
-						set_palette(colors, 0, 255); // for switching between 8 bpp scalers
+						// TODOSDL2 set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 					}
 					break;
 					
@@ -244,7 +237,7 @@ void opentyrian_menu( void )
 				}
 				break;
 				
-			case SDLK_ESCAPE:
+			case SDL_SCANCODE_ESCAPE:
 				quit = true;
 				JE_playSampleNum(S_SPRING);
 				break;

@@ -120,56 +120,56 @@ void jukebox( void )
 
 		if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-			case SDLK_ESCAPE: // quit jukebox
-			case SDLK_q:
+			case SDL_SCANCODE_ESCAPE: // quit jukebox
+			case SDL_SCANCODE_Q:
 				trigger_quit = true;
 				break;
 
-			case SDLK_SPACE:
+			case SDL_SCANCODE_SPACE:
 				hide_text = !hide_text;
 				break;
 
-			case SDLK_f:
+			case SDL_SCANCODE_F:
 				fading_song = !fading_song;
 				break;
-			case SDLK_n:
+			case SDL_SCANCODE_N:
 				fade_looped_songs = !fade_looped_songs;
 				break;
 
-			case SDLK_SLASH: // switch to sfx mode
+			case SDL_SCANCODE_SLASH: // switch to sfx mode
 				fx = !fx;
 				break;
-			case SDLK_COMMA:
+			case SDL_SCANCODE_COMMA:
 				if (fx && --fx_num < 0)
 					fx_num = SAMPLE_COUNT - 1;
 				break;
-			case SDLK_PERIOD:
+			case SDL_SCANCODE_PERIOD:
 				if (fx && ++fx_num >= SAMPLE_COUNT)
 					fx_num = 0;
 				break;
-			case SDLK_SEMICOLON:
+			case SDL_SCANCODE_SEMICOLON:
 				if (fx)
 					JE_playSampleNum(fx_num + 1);
 				break;
 
-			case SDLK_LEFT:
-			case SDLK_UP:
+			case SDL_SCANCODE_LEFT:
+			case SDL_SCANCODE_UP:
 				play_song((song_playing > 0 ? song_playing : MUSIC_NUM) - 1);
 				stopped = false;
 				break;
-			case SDLK_RETURN:
-			case SDLK_RIGHT:
-			case SDLK_DOWN:
+			case SDL_SCANCODE_RETURN:
+			case SDL_SCANCODE_RIGHT:
+			case SDL_SCANCODE_DOWN:
 				play_song((song_playing + 1) % MUSIC_NUM);
 				stopped = false;
 				break;
-			case SDLK_s: // stop song
+			case SDL_SCANCODE_S: // stop song
 				stop_song();
 				stopped = true;
 				break;
-			case SDLK_r: // restart song
+			case SDL_SCANCODE_R: // restart song
 				restart_song();
 				stopped = false;
 				break;

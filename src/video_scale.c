@@ -27,36 +27,31 @@
 
 #include <assert.h>
 
-static void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void nn_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+static void nn_16( SDL_Surface *src_surface, SDL_Texture *dst_texture );
 
-static void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void scale2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+static void scale2x_16( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+static void scale3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+static void scale3x_16( SDL_Surface *src_surface, SDL_Texture *dst_texture );
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-void hq4x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+void hq2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+void hq3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+void hq4x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
 
 uint scaler;
 
 const struct Scalers scalers[] =
 {
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-	{ 320,           240,            no_scale, nn_16,      nn_32,      "None" },
-#else
-	{ 1 * vga_width, 1 * vga_height, no_scale, nn_16,      nn_32,      "None" },
-	{ 2 * vga_width, 2 * vga_height, NULL,     nn_16,      nn_32,      "2x" },
-	{ 2 * vga_width, 2 * vga_height, NULL,     scale2x_16, scale2x_32, "Scale2x" },
-	{ 2 * vga_width, 2 * vga_height, NULL,     NULL,       hq2x_32,    "hq2x" },
-	{ 3 * vga_width, 3 * vga_height, NULL,     nn_16,      nn_32,      "3x" },
-	{ 3 * vga_width, 3 * vga_height, NULL,     scale3x_16, scale3x_32, "Scale3x" },
-	{ 3 * vga_width, 3 * vga_height, NULL,     NULL,       hq3x_32,    "hq3x" },
-	{ 4 * vga_width, 4 * vga_height, NULL,     nn_16,      nn_32,      "4x" },
-	{ 4 * vga_width, 4 * vga_height, NULL,     NULL,       hq4x_32,    "hq4x" },
-#endif
+	{ 1 * vga_width, 1 * vga_height, nn_16,      nn_32,      "None" },
+	{ 2 * vga_width, 2 * vga_height, nn_16,      nn_32,      "2x" },
+	{ 2 * vga_width, 2 * vga_height, scale2x_16, scale2x_32, "Scale2x" },
+	{ 2 * vga_width, 2 * vga_height, NULL,       hq2x_32,    "hq2x" },
+	{ 3 * vga_width, 3 * vga_height, nn_16,      nn_32,      "3x" },
+	{ 3 * vga_width, 3 * vga_height, scale3x_16, scale3x_32, "Scale3x" },
+	{ 3 * vga_width, 3 * vga_height, NULL,       hq3x_32,    "hq3x" },
+	{ 4 * vga_width, 4 * vga_height, nn_16,      nn_32,      "4x" },
+	{ 4 * vga_width, 4 * vga_height, NULL,       hq4x_32,    "hq4x" },
 };
 const uint scalers_count = COUNTOF(scalers);
 
@@ -72,48 +67,26 @@ void set_scaler_by_name( const char *name )
 	}
 }
 
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-#define VGA_CENTERED
-#endif
-
-void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void nn_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels,
-	      *dst = dst_surface->pixels;
-	
-#ifdef VGA_CENTERED
-	size_t blank = (dst_surface->h - src_surface->h) / 2 * dst_surface->pitch;
-	memset(dst, 0, blank);
-	dst += blank;
-#endif
-	
-	memcpy(dst, src, src_surface->pitch * src_surface->h);
-	
-#ifdef VGA_CENTERED
-	dst += src_surface->pitch * src_surface->h;
-	memset(dst, 0, blank);
-#endif
-}
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
 
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
 
-void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
 	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
+	int dst_width, dst_height;
+	SDL_QueryTexture(dst_texture, NULL, NULL, &dst_width, &dst_height);
 	
 	const int height = vga_height, // src_surface->h
 	          width = vga_width,   // src_surface->w
-	          scale = dst_surface->w / width;
-	assert(scale == dst_surface->h / height);
-	
-#ifdef VGA_CENTERED
-	size_t blank = (dst_surface->h - src_surface->h) / 2 * dst_surface->pitch;
-	memset(dst, 0, blank);
-	dst += blank;
-#endif
+	          scale = dst_width / width;
+	assert(scale == dst_height / height);
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	for (int y = height; y > 0; y--)
 	{
@@ -135,34 +108,34 @@ void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		
 		for (int z = scale; z > 1; z--)
 		{
-			memcpy(dst, dst_temp, dst_pitch);
+			memcpy(dst, dst_temp, dst_width * dst_Bpp);
 			dst += dst_pitch;
 		}
 	}
-	
-#ifdef VGA_CENTERED
-	memset(dst, 0, blank);
-#endif
+
+	SDL_UnlockTexture(dst_texture);
 }
 
-void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void nn_16( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
 	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
+	int dst_width, dst_height;
+	SDL_QueryTexture(dst_texture, NULL, NULL, &dst_width, &dst_height);
 	
 	const int height = vga_height, // src_surface->h
 	          width = vga_width,   // src_surface->w
-	          scale = dst_surface->w / width;
-	assert(scale == dst_surface->h / height);
-	
-#ifdef VGA_CENTERED
-	size_t blank = (dst_surface->h - src_surface->h) / 2 * dst_surface->pitch;
-	memset(dst, 0, blank);
-	dst += blank;
-#endif
+	          scale = dst_width / width;
+	assert(scale == dst_height / height);
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	for (int y = height; y > 0; y--)
 	{
@@ -184,27 +157,30 @@ void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		
 		for (int z = scale; z > 1; z--)
 		{
-			memcpy(dst, dst_temp, dst_pitch);
+			memcpy(dst, dst_temp, dst_width * dst_Bpp);
 			dst += dst_pitch;
 		}
 	}
-	
-#ifdef VGA_CENTERED
-	memset(dst, 0, blank);
-#endif
+
+	SDL_UnlockTexture(dst_texture);
 }
 
 
-void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void scale2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 4,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	int prevline, nextline;
 	
@@ -246,18 +222,25 @@ void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 2 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 
-void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void scale2x_16( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 2,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	int prevline, nextline;
 	
@@ -299,19 +282,26 @@ void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 2 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 
 
-void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void scale3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 4;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 4,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	int prevline, nextline;
 	
@@ -367,18 +357,25 @@ void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 3 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 
-void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void scale3x_16( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
-	
-	const int height = vga_height, // src_surface->h
+	Uint8 *src = src_surface->pixels, *src_temp;
+	Uint8 *dst, *dst_temp;
+
+	int src_pitch = src_surface->pitch;
+	int dst_pitch;
+
+	const int dst_Bpp = 2,         // dst_surface->format->BytesPerPixel
+	          height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
+
+	void* tmp_ptr;
+	SDL_LockTexture(dst_texture, NULL, &tmp_ptr, &dst_pitch);
+	dst = tmp_ptr;
 	
 	int prevline, nextline;
 	
@@ -434,5 +431,7 @@ void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		src = src_temp + src_pitch;
 		dst = dst_temp + 3 * dst_pitch;
 	}
+
+	SDL_UnlockTexture(dst_texture);
 }
 

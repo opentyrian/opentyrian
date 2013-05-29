@@ -9,14 +9,12 @@ ifndef PLATFORM
 endif
 
 TARGET := opentyrian
-ifndef WITH_NETWORK
-    WITH_NETWORK := 1
-endif
+WITH_NETWORK := 0
 
 ############################################################
 
 STRIP := strip
-SDL_CONFIG := sdl-config
+SDL_CONFIG := sdl2-config
 
 include crosscompile.mk
 

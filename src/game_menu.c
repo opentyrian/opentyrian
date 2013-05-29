@@ -396,7 +396,7 @@ void JE_itemScreen( void )
 				if (x < 10) /* 10 = reset to defaults, 11 = done */
 				{
 					temp2 = (x == curSel[curMenu]) ? 252 : 250;
-					JE_textShade(VGAScreen, 236, 38 + (x - 2)*12, SDL_GetKeyName(keySettings[x-2]), temp2 / 16, temp2 % 16 - 8, DARKEN);
+					JE_textShade(VGAScreen, 236, 38 + (x - 2)*12, SDL_GetScancodeName(keySettings[x-2]), temp2 / 16, temp2 % 16 - 8, DARKEN);
 				}
 			}
 
@@ -969,7 +969,7 @@ void JE_itemScreen( void )
 
 				if (curMenu != 6)
 				{
-					if (keysactive[SDLK_s] && (keysactive[SDLK_LALT] || keysactive[SDLK_RALT]) )
+					if (keysactive[SDL_SCANCODE_S] && (keysactive[SDL_SCANCODE_LALT] || keysactive[SDL_SCANCODE_RALT]) )
 					{
 						if (curMenu == 8 || curMenu == 7)
 						{
@@ -982,7 +982,7 @@ void JE_itemScreen( void )
 						newPal = 1;
 						oldPal = curPal;
 					}
-					if (keysactive[SDLK_l] && (keysactive[SDLK_LALT] || keysactive[SDLK_RALT]) )
+					if (keysactive[SDL_SCANCODE_L] && (keysactive[SDL_SCANCODE_LALT] || keysactive[SDL_SCANCODE_RALT]) )
 					{
 						if (curMenu == 8 || curMenu == 7)
 						{
@@ -1010,12 +1010,12 @@ void JE_itemScreen( void )
 						}
 					}
 
-					if (keysactive[SDLK_PAGEUP])
+					if (keysactive[SDL_SCANCODE_PAGEUP])
 					{
 						yChg = -2;
 						inputDetected = false;
 					}
-					if (keysactive[SDLK_PAGEDOWN])
+					if (keysactive[SDL_SCANCODE_PAGEDOWN])
 					{
 						yChg = 2;
 						inputDetected = false;
@@ -1028,13 +1028,13 @@ void JE_itemScreen( void )
 						joystick_down |= joystick[j].direction[2];
 					}
 
-					if (keysactive[SDLK_UP] || joystick_up)
+					if (keysactive[SDL_SCANCODE_UP] || joystick_up)
 					{
 						yChg = -1;
 						inputDetected = false;
 					}
 
-					if (keysactive[SDLK_DOWN] || joystick_down)
+					if (keysactive[SDL_SCANCODE_DOWN] || joystick_down)
 					{
 						yChg = 1;
 						inputDetected = false;
@@ -1220,9 +1220,9 @@ void JE_itemScreen( void )
 		}
 		else if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-			case SDLK_SLASH:
+			case SDL_SCANCODE_SLASH:
 				// if in rear weapon upgrade screen
 				if ( (curMenu == 4) && (curSel[1] == 4))
 				{
@@ -1232,8 +1232,8 @@ void JE_itemScreen( void )
 				}
 				break;
 
-			case SDLK_SPACE:
-			case SDLK_RETURN:
+			case SDL_SCANCODE_SPACE:
+			case SDL_SCANCODE_RETURN:
 				keyboardUsed = true;
 
 				// if front or rear weapon, update "Done" power level
@@ -1243,7 +1243,7 @@ void JE_itemScreen( void )
 				JE_menuFunction(curSel[curMenu]);
 				break;
 
-			case SDLK_ESCAPE:
+			case SDL_SCANCODE_ESCAPE:
 				keyboardUsed = true;
 
 				JE_playSampleNum(S_SPRING);
@@ -1276,7 +1276,7 @@ void JE_itemScreen( void )
 				}
 				break;
 
-			case SDLK_F1:
+			case SDL_SCANCODE_F1:
 				if (!isNetworkGame)
 				{
 					JE_helpSystem(2);
@@ -1307,7 +1307,7 @@ void JE_itemScreen( void )
 				}
 				break;
 
-			case SDLK_UP:
+			case SDL_SCANCODE_UP:
 				keyboardUsed = true;
 				lastDirection = -1;
 
@@ -1332,7 +1332,7 @@ void JE_itemScreen( void )
 
 				break;
 
-			case SDLK_DOWN:
+			case SDL_SCANCODE_DOWN:
 				keyboardUsed = true;
 				lastDirection = 1;
 
@@ -1357,17 +1357,17 @@ void JE_itemScreen( void )
 
 				break;
 
-			case SDLK_HOME:
+			case SDL_SCANCODE_HOME:
 				if (curMenu == 8) // data cube
 					yLoc = 0;
 				break;
 
-			case SDLK_END:
+			case SDL_SCANCODE_END:
 				if (curMenu == 8) // data cube
 					yLoc = (cube[currentCube].last_line - 9) * 12;
 				break;
 
-			case SDLK_LEFT:
+			case SDL_SCANCODE_LEFT:
 				if (curMenu == 12) // joystick settings menu
 				{
 					if (joysticks > 0)
@@ -1466,7 +1466,7 @@ void JE_itemScreen( void )
 				}
 				break;
 
-			case SDLK_RIGHT:
+			case SDL_SCANCODE_RIGHT:
 				if (curMenu == 12) // joystick settings menu
 				{
 					if (joysticks > 0)
@@ -2416,19 +2416,19 @@ JE_boolean JE_quitRequest( void )
 		}
 		else if (newkey)
 		{
-			switch (lastkey_sym)
+			switch (lastkey_scan)
 			{
-				case SDLK_LEFT:
-				case SDLK_RIGHT:
-				case SDLK_TAB:
+				case SDL_SCANCODE_LEFT:
+				case SDL_SCANCODE_RIGHT:
+				case SDL_SCANCODE_TAB:
 					quit_selected = !quit_selected;
 					JE_playSampleNum(S_CURSOR);
 					break;
-				case SDLK_RETURN:
-				case SDLK_SPACE:
+				case SDL_SCANCODE_RETURN:
+				case SDL_SCANCODE_SPACE:
 					done = true;
 					break;
-				case SDLK_ESCAPE:
+				case SDL_SCANCODE_ESCAPE:
 					quit_selected = false;
 					done = true;
 					break;
@@ -2665,7 +2665,7 @@ void JE_menuFunction( JE_byte select )
 		{
 			temp2 = 254;
 			int tempY = 38 + (curSelect - 2) * 12;
-			JE_textShade(VGAScreen, 236, tempY, SDL_GetKeyName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
+			JE_textShade(VGAScreen, 236, tempY, SDL_GetScancodeName(keySettings[curSelect-2]), (temp2 / 16), (temp2 % 16) - 8, DARKEN);
 			JE_showVGA();
 
 			wait_noinput(true, true, true);
@@ -2696,19 +2696,19 @@ void JE_menuFunction( JE_byte select )
 				// already used? then swap
 				for (uint i = 0; i < COUNTOF(keySettings); ++i)
 				{
-					if (keySettings[i] == lastkey_sym)
+					if (keySettings[i] == lastkey_scan)
 					{
 						keySettings[i] = keySettings[curSelect-2];
 						break;
 					}
 				}
 				
-				if (lastkey_sym != SDLK_ESCAPE && // reserved for menu
-				    lastkey_sym != SDLK_F11 &&    // reserved for gamma
-				    lastkey_sym != SDLK_p)        // reserved for pause
+				if (lastkey_scan != SDL_SCANCODE_ESCAPE && // reserved for menu
+				    lastkey_scan != SDL_SCANCODE_F11 &&    // reserved for gamma
+				    lastkey_scan != SDL_SCANCODE_P)        // reserved for pause
 				{
 					JE_playSampleNum(S_CLICK);
-					keySettings[curSelect-2] = lastkey_sym;
+					keySettings[curSelect-2] = lastkey_scan;
 					++curSelect;
 				}
 				
