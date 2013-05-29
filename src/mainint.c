@@ -2574,11 +2574,11 @@ void JE_mainKeyboardInput( void )
 		/* { Edited Ships } for Player 1 */
 		if (extraAvail && keysactive[SDL_SCANCODE_TAB] && !isNetworkGame && !superTyrian)
 		{
-			for (x = SDL_SCANCODE_0; x <= SDL_SCANCODE_9; x++)
+			for (x = SDL_SCANCODE_1; x <= SDL_SCANCODE_0; x++)
 			{
 				if (keysactive[x])
 				{
-					int z = x == SDL_SCANCODE_0 ? 10 : x - SDL_SCANCODE_0;
+					int z = x - SDL_SCANCODE_1 + 1;
 					player[0].items.ship = 90 + z;                     /*Ships*/
 					z = (z - 1) * 15;
 					player[0].items.weapon[FRONT_WEAPON].id = extraShips[z + 1];
@@ -2617,11 +2617,11 @@ void JE_mainKeyboardInput( void )
 		/* for Player 2 */
 		if (extraAvail && keysactive[SDL_SCANCODE_CAPSLOCK] && !isNetworkGame && !superTyrian)
 		{
-			for (x = SDL_SCANCODE_0; x <= SDL_SCANCODE_9; x++)
+			for (x = SDL_SCANCODE_1; x <= SDL_SCANCODE_0; x++)
 			{
 				if (keysactive[x])
 				{
-					int z = x == SDL_SCANCODE_0 ? 10 : x - SDL_SCANCODE_0;
+					int z = x - SDL_SCANCODE_1 + 1;
 					player[1].items.ship = 90 + z;
 					z = (z - 1) * 15;
 					player[1].items.weapon[FRONT_WEAPON].id = extraShips[z + 1];

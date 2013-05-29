@@ -218,7 +218,7 @@ void push_key( SDL_Scancode key )
 	
 	memset(&e.key.keysym, 0, sizeof(e.key.keysym));
 	
-	e.key.keysym.sym = key;
+	e.key.keysym.scancode = key;
 	e.key.keysym.unicode = key;
 	
 	e.key.state = SDL_RELEASED;

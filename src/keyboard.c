@@ -106,7 +106,7 @@ void input_grab( void )
 	
 	SDL_ShowCursor(input_grabbed ? SDL_DISABLE : SDL_ENABLE);
 #ifdef NDEBUG
-	SDL_WM_GrabInput(input_grabbed ? SDL_GRAB_ON : SDL_GRAB_OFF);
+	SDL_SetWindowGrab(main_window, input_grabbed ? SDL_TRUE : SDL_FALSE);
 #endif
 }
 
@@ -149,7 +149,7 @@ void service_SDL_events( JE_boolean clear_new )
 				if (ev.key.keysym.mod & KMOD_CTRL)
 				{
 					/* <ctrl><bksp> emergency kill */
-					if (ev.key.keysym.sym == SDL_SCANCODE_BACKSPACE)
+					if (ev.key.keysym.scancode == SDL_SCANCODE_BACKSPACE)
 					{
 						puts("\n\n\nCtrl+Backspace pressed. Doing emergency quit.\n");
 						SDL_Quit();
@@ -157,7 +157,7 @@ void service_SDL_events( JE_boolean clear_new )
 					}
 					
 					/* <ctrl><f10> toggle input grab */
-					if (ev.key.keysym.sym == SDL_SCANCODE_F10)
+					if (ev.key.keysym.scancode == SDL_SCANCODE_F10)
 					{
 						input_grab_enabled = !input_grab_enabled;
 						input_grab();
@@ -168,7 +168,7 @@ void service_SDL_events( JE_boolean clear_new )
 				if (ev.key.keysym.mod & KMOD_ALT)
 				{
 					/* <alt><enter> toggle fullscreen */
-					if (ev.key.keysym.sym == SDL_SCANCODE_RETURN)
+					if (ev.key.keysym.scancode == SDL_SCANCODE_RETURN)
 					{
 						/* TODOSDL2
 						if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
@@ -182,7 +182,7 @@ void service_SDL_events( JE_boolean clear_new )
 					}
 					
 					/* <alt><tab> disable input grab and fullscreen */
-					if (ev.key.keysym.sym == SDL_SCANCODE_TAB)
+					if (ev.key.keysym.scancode == SDL_SCANCODE_TAB)
 					{
 						input_grab_enabled = false;
 						input_grab();
