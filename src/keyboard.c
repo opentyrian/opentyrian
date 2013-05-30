@@ -37,8 +37,7 @@ Uint16 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {false, false, false};
 Uint16 mouse_x, mouse_y;
 
-int numkeys;
-Uint8 *keysactive;
+Uint8 keysactive[SDLK_LAST];
 
 #ifdef NDEBUG
 bool input_grab_enabled = true,
@@ -89,7 +88,6 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 
 void init_keyboard( void )
 {
-	keysactive = SDL_GetKeyState(&numkeys);
 	SDL_EnableKeyRepeat(500, 60);
 
 	newkey = newmouse = false;
@@ -194,6 +192,8 @@ void service_SDL_events( JE_boolean clear_new )
 						break;
 					}
 				}
+
+				keysactive[ev.key.keysym.sym] = 1;
 				
 				newkey = true;
 				lastkey_sym = ev.key.keysym.sym;
@@ -202,6 +202,7 @@ void service_SDL_events( JE_boolean clear_new )
 				keydown = true;
 				return;
 			case SDL_KEYUP:
+				keysactive[ev.key.keysym.sym] = 0;
 				keydown = false;
 				return;
 			case SDL_MOUSEBUTTONDOWN:

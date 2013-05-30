@@ -35,8 +35,7 @@ extern Uint8 lastmouse_but;
 extern Uint16 lastmouse_x, lastmouse_y;
 extern JE_boolean mouse_pressed[3];
 extern Uint16 mouse_x, mouse_y;
-extern int numkeys;
-extern Uint8 *keysactive;
+extern Uint8 keysactive[SDLK_LAST];
 
 extern bool input_grab_enabled, input_grabbed;
 
