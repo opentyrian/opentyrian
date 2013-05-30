@@ -25,7 +25,15 @@
 #include <assert.h>
 #include <stdbool.h>
 
+const char* scaling_mode_names[ScalingMode_MAX] = {
+	"Center",
+	"Integer",
+	"Fit 8:5",
+	"Fit 4:3",
+};
+
 bool fullscreen_enabled = false;
+ScalingMode scaling_mode = SCALE_INTEGER;
 
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *VGAScreen2;
@@ -89,6 +97,8 @@ bool init_scaler( unsigned int new_scaler )
 	main_window_tex_format = NULL;
 	SDL_DestroyTexture(main_window_texture);
 	
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+
 	main_window_texture = SDL_CreateTexture(main_window_renderer,
 			format, SDL_TEXTUREACCESS_STREAMING, w, h);
 	
@@ -100,6 +110,9 @@ bool init_scaler( unsigned int new_scaler )
 	}
 
 	main_window_tex_format = SDL_AllocFormat(format);
+
+	// TODOSDL2 fullscreen
+	SDL_SetWindowSize(main_window, w, h);
 	
 	// TODOSDL2 printf("initialized video: %dx%dx%d %s\n", w, h, bpp, fullscreen ? "fullscreen" : "windowed");
 	
@@ -131,6 +144,19 @@ bool init_scaler( unsigned int new_scaler )
 	return true;
 }
 
+bool set_scaling_mode_by_name( const char* name )
+{
+	for (int i = 0; i < ScalingMode_MAX; ++i)
+	{
+		 if (strcmp(name, scaling_mode_names[i]) == 0)
+		 {
+			 scaling_mode = i;
+			 return true;
+		 }
+	}
+	return false;
+}
+
 void deinit_video( void )
 {
 	SDL_FreeFormat(main_window_tex_format);
@@ -159,11 +185,60 @@ void scale_and_flip( SDL_Surface *src_surface )
 	assert(scaler_function != NULL);
 	scaler_function(src_surface, main_window_texture);
 
-	SDL_SetRenderDrawColor(main_window_renderer, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(main_window_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(main_window_renderer);
 
-	// TODO More centering modes
-	SDL_RenderCopy(main_window_renderer, main_window_texture, NULL, NULL);
+	SDL_Rect dst_rect;
+	int win_w, win_h;
+	SDL_GetWindowSize(main_window, &win_w, &win_h);
+
+	int maxh_width, maxw_height;
+
+	switch (scaling_mode) {
+		case SCALE_CENTER:
+			SDL_QueryTexture(main_window_texture, NULL, NULL, &dst_rect.w, &dst_rect.h);
+			break;
+		case SCALE_INTEGER:
+			SDL_QueryTexture(main_window_texture, NULL, NULL, &dst_rect.w, &dst_rect.h);
+			while (dst_rect.w + src_surface->w < win_w && dst_rect.h + src_surface->h < win_h) {
+				dst_rect.w += src_surface->w;
+				dst_rect.h += src_surface->h;
+			}
+			break;
+		case SCALE_ASPECT_8_5:
+			maxh_width = win_h * (8.f/5.f);
+			maxw_height = win_w * (5.f/8.f);
+
+			if (maxh_width > win_w) {
+				dst_rect.w = win_w;
+				dst_rect.h = maxw_height;
+			} else {
+				dst_rect.w = maxh_width;
+				dst_rect.h = win_h;
+			}
+			break;
+		case SCALE_ASPECT_4_3:
+			maxh_width = win_h * (4.f/3.f);
+			maxw_height = win_w * (3.f/4.f);
+
+			if (maxh_width > win_w) {
+				dst_rect.w = win_w;
+				dst_rect.h = maxw_height;
+			} else {
+				dst_rect.w = maxh_width;
+				dst_rect.h = win_h;
+			}
+			break;
+		case ScalingMode_MAX:
+			assert(false);
+			break;
+	}
+
+	dst_rect.x = (win_w - dst_rect.w) / 2;
+	dst_rect.y = (win_h - dst_rect.h) / 2;
+
+	SDL_RenderSetViewport(main_window_renderer, NULL);
+	SDL_RenderCopy(main_window_renderer, main_window_texture, NULL, &dst_rect);
 	
 	SDL_RenderPresent(main_window_renderer);
 }

@@ -278,6 +278,9 @@ bool load_opentyrian_config( void )
 		
 		if ((setting = cJSON_GetObjectItem(section, "scaler")))
 			set_scaler_by_name(setting->valuestring);
+
+		if ((setting = cJSON_GetObjectItem(section, "hwscaler")))
+			set_scaling_mode_by_name(setting->valuestring);
 	}
 	
 	cJSON_Delete(root);
@@ -304,6 +307,9 @@ bool save_opentyrian_config( void )
 		
 		setting = cJSON_CreateOrGetObjectItem(section, "scaler");
 		cJSON_SetString(setting, scalers[scaler].name);
+
+		setting = cJSON_CreateOrGetObjectItem(section, "hwscaler");
+		cJSON_SetString(setting, scaling_mode_names[scaling_mode]);
 	}
 	
 	save_json(root, "opentyrian.conf");

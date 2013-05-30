@@ -26,7 +26,18 @@
 #define vga_width 320
 #define vga_height 200
 
+typedef enum {
+	SCALE_CENTER,
+	SCALE_INTEGER,
+	SCALE_ASPECT_8_5,
+	SCALE_ASPECT_4_3,
+	ScalingMode_MAX
+} ScalingMode;
+
+extern const char* scaling_mode_names[ScalingMode_MAX];
+
 extern bool fullscreen_enabled;
+extern ScalingMode scaling_mode;
 
 extern SDL_Surface *VGAScreen, *VGAScreenSeg;
 extern SDL_Surface *game_screen;
@@ -38,6 +49,7 @@ extern SDL_PixelFormat* main_window_tex_format;
 void init_video( void );
 
 bool init_scaler( unsigned int new_scaler );
+bool set_scaling_mode_by_name( const char* name );
 
 void deinit_video( void );
 

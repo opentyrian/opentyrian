@@ -70,6 +70,7 @@ void opentyrian_menu( void )
 		MENU_ABOUT,
 		MENU_FULLSCREEN,
 		MENU_SCALER,
+		MENU_HWSCALER,
 		// MENU_DESTRUCT,
 		MENU_JUKEBOX,
 		MENU_RETURN,
@@ -81,12 +82,14 @@ void opentyrian_menu( void )
 		"About OpenTyrian",
 		"Toggle Fullscreen",
 		"Scaler: None",
+		"HW Scaler: %s",
 		// "Play Destruct",
 		"Jukebox",
 		"Return to Main Menu",
 	};
 	bool menu_items_disabled[] =
 	{
+		false,
 		false,
 		false,
 		false,
@@ -126,6 +129,11 @@ void opentyrian_menu( void )
 			if (i == MENU_SCALER)
 			{
 				snprintf(buffer, sizeof(buffer), "Scaler: %s", scalers[temp_scaler].name);
+				text = buffer;
+			}
+			else if (i == MENU_HWSCALER)
+			{
+				snprintf(buffer, sizeof(buffer), menu_items[i], scaling_mode_names[scaling_mode]);
 				text = buffer;
 			}
 
@@ -179,6 +187,14 @@ void opentyrian_menu( void )
 					
 					JE_playSampleNum(S_CURSOR);
 				}
+				else if (sel == MENU_HWSCALER)
+				{
+					if (scaling_mode == 0)
+						scaling_mode = ScalingMode_MAX;
+					scaling_mode--;
+					
+					JE_playSampleNum(S_CURSOR);
+				}
 				break;
 			case SDL_SCANCODE_RIGHT:
 				if (sel == MENU_SCALER)
@@ -186,6 +202,14 @@ void opentyrian_menu( void )
 					temp_scaler++;
 					if (temp_scaler == scalers_count)
 						temp_scaler = 0;
+					
+					JE_playSampleNum(S_CURSOR);
+				}
+				else if (sel == MENU_HWSCALER)
+				{
+					scaling_mode++;
+					if (scaling_mode == ScalingMode_MAX)
+						scaling_mode = 0;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -231,7 +255,7 @@ void opentyrian_menu( void )
 						// TODOSDL2 set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 					}
 					break;
-					
+
 				case MENU_JUKEBOX:
 					JE_playSampleNum(S_SELECT);
 
