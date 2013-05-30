@@ -58,12 +58,11 @@
 #include "palette.h"
 #include "picload.h"
 #include "sprite.h"
+#include "varz.h"
 #include "vga256d.h"
 #include "video.h"
 
 #include <assert.h>
-
-extern JE_byte soundQueue[8];
 
 /*** Defines ***/
 #define UNIT_HEIGHT 12
@@ -375,7 +374,7 @@ SDL_Surface *destructTempScreen;
 JE_boolean destructFirstTime;
 
 static struct destruct_config_s config = { 40, 20, 20, 40, 10, false, false, {true, false}, {true, false} };
-static struct destruct_player_s player[MAX_PLAYERS];
+static struct destruct_player_s destruct_player[MAX_PLAYERS];
 static struct destruct_world_s  world;
 static struct destruct_shot_s   * shotRec;
 static struct destruct_explo_s  * exploRec;
@@ -702,8 +701,8 @@ void JE_destructGame( void )
 	for(i = 0; i < 10; i++) {
 		config.max_installations = MAX(config.max_installations, basetypes[i][0]);
 	}
-	player[PLAYER_LEFT ].unit = malloc(sizeof(struct destruct_unit_s) * config.max_installations);
-	player[PLAYER_RIGHT].unit = malloc(sizeof(struct destruct_unit_s) * config.max_installations);
+	destruct_player[PLAYER_LEFT ].unit = malloc(sizeof(struct destruct_unit_s) * config.max_installations);
+	destruct_player[PLAYER_RIGHT].unit = malloc(sizeof(struct destruct_unit_s) * config.max_installations);
 
 	destructTempScreen = game_screen;
 	world.VGAScreen = VGAScreen;
@@ -717,8 +716,8 @@ void JE_destructGame( void )
 	free(shotRec);
 	free(exploRec);
 	free(world.mapWalls);
-	free(player[PLAYER_LEFT ].unit);
-	free(player[PLAYER_RIGHT].unit);
+	free(destruct_player[PLAYER_LEFT ].unit);
+	free(destruct_player[PLAYER_RIGHT].unit);
 }
 
 void JE_destructMain( void )
@@ -731,8 +730,8 @@ void JE_destructMain( void )
 
 	DE_ResetPlayers();
 
-	player[PLAYER_LEFT ].is_cpu = config.ai[PLAYER_LEFT];
-	player[PLAYER_RIGHT].is_cpu = config.ai[PLAYER_RIGHT];
+	destruct_player[PLAYER_LEFT ].is_cpu = config.ai[PLAYER_LEFT];
+	destruct_player[PLAYER_RIGHT].is_cpu = config.ai[PLAYER_RIGHT];
 
 	while(1)
 	{
@@ -998,31 +997,31 @@ void DE_generateUnits( unsigned int * baseWorld )
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
 		numSatellites = 0;
-		player[i].unitsRemaining = 0;
+		destruct_player[i].unitsRemaining = 0;
 
 		for (j = 0; j < basetypes[baseLookup[i][world.destructMode]][0]; j++)
 		{
 			/* Not everything is the same between players */
 			if(i == PLAYER_LEFT)
 			{
-				player[i].unit[j].unitX = (mt_rand() % 120) + 10;
+				destruct_player[i].unit[j].unitX = (mt_rand() % 120) + 10;
 			}
 			else
 			{
-				player[i].unit[j].unitX = 320 - ((mt_rand() % 120) + 22);
+				destruct_player[i].unit[j].unitX = 320 - ((mt_rand() % 120) + 22);
 			}
 
-			player[i].unit[j].unitY = JE_placementPosition(player[i].unit[j].unitX - 1, 14, baseWorld);
-			player[i].unit[j].unitType = basetypes[baseLookup[i][world.destructMode]][(mt_rand() % 10) + 1];
+			destruct_player[i].unit[j].unitY = JE_placementPosition(destruct_player[i].unit[j].unitX - 1, 14, baseWorld);
+			destruct_player[i].unit[j].unitType = basetypes[baseLookup[i][world.destructMode]][(mt_rand() % 10) + 1];
 
 			/* Sats are special cases since they are useless.  They don't count
 			 * as active units and we can't have a team of all sats */
-			if (player[i].unit[j].unitType == UNIT_SATELLITE)
+			if (destruct_player[i].unit[j].unitType == UNIT_SATELLITE)
 			{
 				if (numSatellites == basetypes[baseLookup[i][world.destructMode]][0])
 				{
-					player[i].unit[j].unitType = UNIT_TANK;
-					player[i].unitsRemaining++;
+					destruct_player[i].unit[j].unitType = UNIT_TANK;
+					destruct_player[i].unitsRemaining++;
 				} else {
 					/* Place the satellite. Note: Earlier we cleared
 					 * space with JE_placementPosition.  Now we are randomly
@@ -1030,24 +1029,24 @@ void DE_generateUnits( unsigned int * baseWorld )
 					 * and there is a clearing underneath it.  This CAN
 					 * be fixed but won't be for classic.
 					 */
-					player[i].unit[j].unitY = 30 + (mt_rand() % 40);
+					destruct_player[i].unit[j].unitY = 30 + (mt_rand() % 40);
 					numSatellites++;
 				}
 			}
 			else
 			{
-				player[i].unitsRemaining++;
+				destruct_player[i].unitsRemaining++;
 			}
 
 			/* Now just fill in the rest of the unit's values. */
-			player[i].unit[j].lastMove = 0;
-			player[i].unit[j].unitYMov = 0;
-			player[i].unit[j].isYInAir = false;
-			player[i].unit[j].angle = 0;
-			player[i].unit[j].power = (player[i].unit[j].unitType == UNIT_LASER) ? 6 : 3;
-			player[i].unit[j].shotType = defaultWeapon[player[i].unit[j].unitType];
-			player[i].unit[j].health = baseDamage[player[i].unit[j].unitType];
-			player[i].unit[j].ani_frame = 0;
+			destruct_player[i].unit[j].lastMove = 0;
+			destruct_player[i].unit[j].unitYMov = 0;
+			destruct_player[i].unit[j].isYInAir = false;
+			destruct_player[i].unit[j].angle = 0;
+			destruct_player[i].unit[j].power = (destruct_player[i].unit[j].unitType == UNIT_LASER) ? 6 : 3;
+			destruct_player[i].unit[j].shotType = defaultWeapon[destruct_player[i].unit[j].unitType];
+			destruct_player[i].unit[j].health = baseDamage[destruct_player[i].unit[j].unitType];
+			destruct_player[i].unit[j].ani_frame = 0;
 		}
 	}
 }
@@ -1098,8 +1097,8 @@ void DE_generateWalls( struct destruct_world_s * gameWorld )
 			{
 				for (j = 0; j < config.max_installations; j++)
 				{
-					if ((wallX > player[i].unit[j].unitX - 12)
-					 && (wallX < player[i].unit[j].unitX + 13))
+					if ((wallX > destruct_player[i].unit[j].unitX - 12)
+					 && (wallX < destruct_player[i].unit[j].unitX + 13))
 					{
 						isGood = false;
 						goto label_outer_break; /* I do feel that outer breaking is a legitimate goto use. */
@@ -1484,7 +1483,7 @@ void DE_ResetUnits( void )
 
 	for (p = 0; p < MAX_PLAYERS; ++p)
 		for (u = 0; u < config.max_installations; ++u)
-			player[p].unit[u].health = 0;
+			destruct_player[p].unit[u].health = 0;
 }
 void DE_ResetPlayers( void )
 {
@@ -1493,15 +1492,15 @@ void DE_ResetPlayers( void )
 
 	for (i = 0; i < MAX_PLAYERS; ++i)
 	{
-		player[i].is_cpu = false;
-		player[i].unitSelected = 0;
-		player[i].shotDelay = 0;
-		player[i].score = 0;
-		player[i].aiMemory.c_Angle = 0;
-		player[i].aiMemory.c_Power = 0;
-		player[i].aiMemory.c_Fire = 0;
-		player[i].aiMemory.c_noDown = 0;
-		memcpy(player[i].keys.Config, defaultKeyConfig[i], sizeof(player[i].keys.Config));
+		destruct_player[i].is_cpu = false;
+		destruct_player[i].unitSelected = 0;
+		destruct_player[i].shotDelay = 0;
+		destruct_player[i].score = 0;
+		destruct_player[i].aiMemory.c_Angle = 0;
+		destruct_player[i].aiMemory.c_Power = 0;
+		destruct_player[i].aiMemory.c_Fire = 0;
+		destruct_player[i].aiMemory.c_noDown = 0;
+		memcpy(destruct_player[i].keys.Config, defaultKeyConfig[i], sizeof(destruct_player[i].keys.Config));
 	}
 }
 void DE_ResetWeapons( void )
@@ -1532,8 +1531,8 @@ void DE_ResetAI( void )
 
 	for (i = PLAYER_LEFT; i < MAX_PLAYERS; i++)
 	{
-		if (player[i].is_cpu == false) { continue; }
-		ptr = player[i].unit;
+		if (destruct_player[i].is_cpu == false) { continue; }
+		ptr = destruct_player[i].unit;
 
 		for( j = 0; j < config.max_installations; j++, ptr++)
 		{
@@ -1561,7 +1560,7 @@ void DE_ResetActions( void )
 
 	for(i = 0; i < MAX_PLAYERS; i++)
 	{	/* Zero it all.  A memset would do the trick */
-		memset(&(player[i].moves), 0, sizeof(player[i].moves));
+		memset(&(destruct_player[i].moves), 0, sizeof(destruct_player[i].moves));
 	}
 }
 /* DE_RunTick
@@ -1622,12 +1621,12 @@ enum de_state_t DE_RunTick( void )
 	/* The rest of this cruft needs to be put in appropriate sections */
 	if (keysactive[SDLK_F10])
 	{
-		player[PLAYER_LEFT].is_cpu = !player[PLAYER_LEFT].is_cpu;
+		destruct_player[PLAYER_LEFT].is_cpu = !destruct_player[PLAYER_LEFT].is_cpu;
 		keysactive[SDLK_F10] = false;
 	}
 	if (keysactive[SDLK_F11])
 	{
-		player[PLAYER_RIGHT].is_cpu = !player[PLAYER_RIGHT].is_cpu;
+		destruct_player[PLAYER_RIGHT].is_cpu = !destruct_player[PLAYER_RIGHT].is_cpu;
 		keysactive[SDLK_F11] = false;
 	}
 	if (keysactive[SDLK_p])
@@ -1674,18 +1673,18 @@ void DE_RunTickCycleDeadUnits( void )
 	 * and skips over the useless satellite */
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (player[i].unitsRemaining == 0) { continue; }
+		if (destruct_player[i].unitsRemaining == 0) { continue; }
 
-		unit = &(player[i].unit[player[i].unitSelected]);
+		unit = &(destruct_player[i].unit[destruct_player[i].unitSelected]);
 		while(DE_isValidUnit(unit) == false
 		   || unit->shotType == SHOT_INVALID)
 		{
-			player[i].unitSelected++;
+			destruct_player[i].unitSelected++;
 			unit++;
-			if (player[i].unitSelected >= config.max_installations)
+			if (destruct_player[i].unitSelected >= config.max_installations)
 			{
-				player[i].unitSelected = 0;
-				unit = player[i].unit;
+				destruct_player[i].unitSelected = 0;
+				unit = destruct_player[i].unit;
 			}
 		}
 	}
@@ -1699,7 +1698,7 @@ void DE_RunTickGravity( void )
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
 
-		unit = player[i].unit;
+		unit = destruct_player[i].unit;
 		for (j = 0; j < config.max_installations; j++, unit++)
 		{
 			if (DE_isValidUnit(unit) == false) /* invalid unit */
@@ -1815,7 +1814,7 @@ void DE_RunTickAnimate( void )
 
 	for (p = 0; p < MAX_PLAYERS; ++p)
 	{
-		ptr = player[p].unit;
+		ptr = destruct_player[p].unit;
 		for (u = 0; u < config.max_installations; ++u,  ++ptr)
 		{
 			/* Don't mess with any unit that is unallocated
@@ -1909,7 +1908,7 @@ void DE_TestExplosionCollision( unsigned int PosX, unsigned int PosY)
 
 	for (i = PLAYER_LEFT; i < MAX_PLAYERS; i++)
 	{
-		unit = player[i].unit;
+		unit = destruct_player[i].unit;
 		for (j = 0; j < config.max_installations; j++, unit++)
 		{
 			if (DE_isValidUnit(unit) == true
@@ -1934,8 +1933,8 @@ void DE_DestroyUnit( enum de_player_t playerID, struct destruct_unit_s * unit )
 
 	if (unit->unitType != UNIT_SATELLITE) /* increment score */
 	{ /* todo: change when teams are created. Hacky kludge for now.*/
-		player[playerID].unitsRemaining--;
-		player[((playerID == PLAYER_LEFT) ? PLAYER_RIGHT : PLAYER_LEFT)].score++;
+		destruct_player[playerID].unitsRemaining--;
+		destruct_player[((playerID == PLAYER_LEFT) ? PLAYER_RIGHT : PLAYER_LEFT)].score++;
 	}
 }
 
@@ -2005,7 +2004,7 @@ void DE_RunTickShots( void )
 		/*Check building hits*/
 		for(j = 0; j < MAX_PLAYERS; j++)
 		{
-			unit = player[j].unit;
+			unit = destruct_player[j].unit;
 			for(k = 0; k < config.max_installations; k++, unit++)
 			{
 				if (DE_isValidUnit(unit) == false)
@@ -2121,7 +2120,7 @@ void DE_RunTickAI( void )
 
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		ptrPlayer = &(player[i]);
+		ptrPlayer = &(destruct_player[i]);
 		if (ptrPlayer->is_cpu == false)
 		{
 			continue;
@@ -2130,14 +2129,14 @@ void DE_RunTickAI( void )
 
 		/* I've been thinking, purely hypothetically, about what it would take
 		 * to have multiple computer opponents.  The answer?  A lot of crap
-		 * and a 'target' variable in the player struct. */
+		 * and a 'target' variable in the destruct_player struct. */
 		j = i + 1;
 		if (j >= MAX_PLAYERS)
 		{
 			j = 0;
 		}
 
-		ptrTarget  = &(player[j]);
+		ptrTarget  = &(destruct_player[j]);
 		ptrCurUnit = &(ptrPlayer->unit[ptrPlayer->unitSelected]);
 
 
@@ -2327,7 +2326,7 @@ void DE_RunTickDrawCrosshairs( void )
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
 		direction = (i == PLAYER_LEFT) ? -1 : 1;
-		curUnit = &(player[i].unit[player[i].unitSelected]);
+		curUnit = &(destruct_player[i].unit[destruct_player[i].unitSelected]);
 
 		if (curUnit->unitType == UNIT_HELI)
 		{
@@ -2368,7 +2367,7 @@ void DE_RunTickDrawHUD( void )
 
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
-		curUnit = &(player[i].unit[player[i].unitSelected]);
+		curUnit = &(destruct_player[i].unit[destruct_player[i].unitSelected]);
 		startX = ((i == PLAYER_LEFT) ? 0 : 320 - 150);
 
 		fill_rectangle_xy(VGAScreen, startX +  5, 3, startX +  14, 8, 241);
@@ -2383,7 +2382,7 @@ void DE_RunTickDrawHUD( void )
 		JE_outText   (VGAScreen, startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
 		sprintf      (tempstr, "dmg~%d~", curUnit->health);
 		JE_outText   (VGAScreen, startX + 75, 3, tempstr, 15, 0);
-		sprintf      (tempstr, "pts~%d~", player[i].score);
+		sprintf      (tempstr, "pts~%d~", destruct_player[i].score);
 		JE_outText   (VGAScreen, startX + 110, 3, tempstr, 15, 0);
 	}
 }
@@ -2392,10 +2391,11 @@ void DE_RunTickGetInput( void )
 	unsigned int player_index, key_index, slot_index;
 	SDLKey key;
 
-	/* player.keys holds our key config.  Players will eventually be allowed
-	 * to can change their key mappings.  player.moves and player.keys
-	 * line up; rather than manually checking left and right we can
-	 * just loop through the indexes and set the actions as needed. */
+	/* destruct_player.keys holds our key config.  Players will eventually be
+	 * allowed to can change their key mappings.  destruct_player.moves and
+	 * destruct_player.keys line up; rather than manually checking left and
+	 * right we can just loop through the indexes and set the actions as
+	 * needed. */
 	service_SDL_events(true);
 
 	for(player_index = 0; player_index < MAX_PLAYERS; player_index++)
@@ -2404,12 +2404,12 @@ void DE_RunTickGetInput( void )
 		{
 			for(slot_index = 0; slot_index < MAX_KEY_OPTIONS; slot_index++)
 			{
-				key = player[player_index].keys.Config[key_index][slot_index];
+				key = destruct_player[player_index].keys.Config[key_index][slot_index];
 				if(key == SDLK_UNKNOWN) { break; }
 				if(keysactive[key] == true)
 				{
 					/* The right key was clearly pressed */
-					player[player_index].moves.actions[key_index] = true;
+					destruct_player[player_index].moves.actions[key_index] = true;
 
 					/* Some keys we want to toggle afterwards */
 					if(key_index == KEY_CHANGE ||
@@ -2434,24 +2434,24 @@ void DE_ProcessInput( void )
 
 	for (player_index = 0; player_index < MAX_PLAYERS; player_index++)
 	{
-		if (player[player_index].unitsRemaining <= 0) { continue; }
+		if (destruct_player[player_index].unitsRemaining <= 0) { continue; }
 
 		direction = (player_index == PLAYER_LEFT) ? -1 : 1;
-		curUnit = &(player[player_index].unit[player[player_index].unitSelected]);
+		curUnit = &(destruct_player[player_index].unit[destruct_player[player_index].unitSelected]);
 
 		if (systemAngle[curUnit->unitType] == true) /* selected unit may change shot angle */
 		{
-			if (player[player_index].moves.actions[MOVE_LEFT] == true)
+			if (destruct_player[player_index].moves.actions[MOVE_LEFT] == true)
 			{
 				(player_index == PLAYER_LEFT) ? DE_RaiseAngle(curUnit) : DE_LowerAngle(curUnit);
 			}
-			if (player[player_index].moves.actions[MOVE_RIGHT] == true)
+			if (destruct_player[player_index].moves.actions[MOVE_RIGHT] == true)
 			{
 				(player_index == PLAYER_LEFT) ? DE_LowerAngle(curUnit) : DE_RaiseAngle(curUnit);
 
 			}
 		} else if (curUnit->unitType == UNIT_HELI) {
-			if (player[player_index].moves.actions[MOVE_LEFT] == true && curUnit->unitX > 5)
+			if (destruct_player[player_index].moves.actions[MOVE_LEFT] == true && curUnit->unitX > 5)
 				if (JE_stabilityCheck(curUnit->unitX - 5, roundf(curUnit->unitY)))
 				{
 					if (curUnit->lastMove > -5)
@@ -2464,7 +2464,7 @@ void DE_ProcessInput( void )
 						curUnit->isYInAir = true;
 					}
 				}
-			if (player[player_index].moves.actions[MOVE_RIGHT] == true && curUnit->unitX < 305)
+			if (destruct_player[player_index].moves.actions[MOVE_RIGHT] == true && curUnit->unitX < 305)
 			{
 				if (JE_stabilityCheck(curUnit->unitX + 5, roundf(curUnit->unitY)))
 				{
@@ -2484,7 +2484,7 @@ void DE_ProcessInput( void )
 		if (curUnit->unitType != UNIT_LASER)
 
 		{	/*increasepower*/
-			if (player[player_index].moves.actions[MOVE_UP] == true)
+			if (destruct_player[player_index].moves.actions[MOVE_UP] == true)
 			{
 				if (curUnit->unitType == UNIT_HELI)
 				{
@@ -2501,7 +2501,7 @@ void DE_ProcessInput( void )
 				}
 			}
 			/*decreasepower*/
-			if (player[player_index].moves.actions[MOVE_DOWN] == true)
+			if (destruct_player[player_index].moves.actions[MOVE_DOWN] == true)
 			{
 				if (curUnit->unitType == UNIT_HELI && curUnit->isYInAir == true)
 				{
@@ -2513,35 +2513,35 @@ void DE_ProcessInput( void )
 		}
 
 		/*up/down weapon.  These just cycle until a valid weapon is found */
-		if (player[player_index].moves.actions[MOVE_CYUP] == true)
+		if (destruct_player[player_index].moves.actions[MOVE_CYUP] == true)
 		{
 			DE_CycleWeaponUp(curUnit);
 		}
-		if (player[player_index].moves.actions[MOVE_CYDN] == true)
+		if (destruct_player[player_index].moves.actions[MOVE_CYDN] == true)
 		{
 			DE_CycleWeaponDown(curUnit);
 		}
 
 		/* Change.  Since change would change out curUnit pointer, let's just do it last.
 		 * Validity checking is performed at the beginning of the tick. */
-		if (player[player_index].moves.actions[MOVE_CHANGE] == true)
+		if (destruct_player[player_index].moves.actions[MOVE_CHANGE] == true)
 		{
-			player[player_index].unitSelected++;
-			if (player[player_index].unitSelected >= config.max_installations)
+			destruct_player[player_index].unitSelected++;
+			if (destruct_player[player_index].unitSelected >= config.max_installations)
 			{
-				player[player_index].unitSelected = 0;
+				destruct_player[player_index].unitSelected = 0;
 			}
 		}
 
 		/*Newshot*/
-		if (player[player_index].shotDelay > 0)
+		if (destruct_player[player_index].shotDelay > 0)
 		{
-			player[player_index].shotDelay--;
+			destruct_player[player_index].shotDelay--;
 		}
-		if (player[player_index].moves.actions[MOVE_FIRE] == true
-		&& (player[player_index].shotDelay == 0))
+		if (destruct_player[player_index].moves.actions[MOVE_FIRE] == true
+		&& (destruct_player[player_index].shotDelay == 0))
 		{
-			player[player_index].shotDelay = shotDelay[curUnit->shotType];
+			destruct_player[player_index].shotDelay = shotDelay[curUnit->shotType];
 
 			switch(shotDirt[curUnit->shotType])
 			{
@@ -2622,7 +2622,7 @@ void DE_MakeShot( enum de_player_t curPlayer, const struct destruct_unit_s * cur
 			shotRec[shotIndex].xmov = 0.02f * curUnit->lastMove * curUnit->lastMove * curUnit->lastMove;
 
 			/* If we are trying in vain to move up off the screen, act differently.*/
-			if (player[curPlayer].moves.actions[MOVE_UP] && curUnit->unitY < 30)
+			if (destruct_player[curPlayer].moves.actions[MOVE_UP] && curUnit->unitY < 30)
 			{
 				shotRec[shotIndex].y = curUnit->unitY;
 				shotRec[shotIndex].ymov = 0.1f;
@@ -2719,15 +2719,15 @@ void DE_RunMagnet( enum de_player_t curPlayer, struct destruct_unit_s * magnet )
 		}
 	}
 
-	enemyUnit = player[curEnemy].unit;
+	enemyUnit = destruct_player[curEnemy].unit;
 	for (i = 0; i < config.max_installations; i++, enemyUnit++) /* magnets push coptors */
 	{
 		if (DE_isValidUnit(enemyUnit)
 		 && enemyUnit->unitType == UNIT_HELI
 		 && enemyUnit->isYInAir == true)
 		{
-			if ((curEnemy == PLAYER_RIGHT && player[curEnemy].unit[i].unitX + 11 < 318)
-			 || (curEnemy == PLAYER_LEFT  && player[curEnemy].unit[i].unitX > 1))
+			if ((curEnemy == PLAYER_RIGHT && destruct_player[curEnemy].unit[i].unitX + 11 < 318)
+			 || (curEnemy == PLAYER_LEFT  && destruct_player[curEnemy].unit[i].unitX > 1))
 			{
 				enemyUnit->unitX -= 2 * direction;
 			}
@@ -2782,15 +2782,15 @@ static inline bool DE_isValidUnit( struct destruct_unit_s * unit )
 
 bool DE_RunTickCheckEndgame( void )
 {
-	if (player[PLAYER_LEFT].unitsRemaining == 0)
+	if (destruct_player[PLAYER_LEFT].unitsRemaining == 0)
 	{
-		player[PLAYER_RIGHT].score += ModeScore[PLAYER_LEFT][world.destructMode];
+		destruct_player[PLAYER_RIGHT].score += ModeScore[PLAYER_LEFT][world.destructMode];
 		soundQueue[7] = V_CLEARED_PLATFORM;
 		return(true);
 	}
-	if (player[PLAYER_RIGHT].unitsRemaining == 0)
+	if (destruct_player[PLAYER_RIGHT].unitsRemaining == 0)
 	{
-		player[PLAYER_LEFT].score += ModeScore[PLAYER_RIGHT][world.destructMode];
+		destruct_player[PLAYER_LEFT].score += ModeScore[PLAYER_RIGHT][world.destructMode];
 		soundQueue[7] = V_CLEARED_PLATFORM;
 		return(true);
 	}
