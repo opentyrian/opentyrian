@@ -138,13 +138,7 @@ const JE_EditorItemAvailType initialItemAvail =
 JE_boolean smoothies[9] = /* [1..9] */
 { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-
 JE_byte starShowVGASpecialCode;
-
-/* Stars */
-StarDatType starDat[MAX_STARS]; /* [1..Maxstars] */
-JE_word starY;
-
 
 /* CubeData */
 JE_word lastCubeMax, cubeMax;
@@ -311,19 +305,6 @@ bool save_opentyrian_config( void )
 	cJSON_Delete(root);
 	
 	return true;
-}
-
-
-void JE_setupStars( void )
-{
-	int z;
-
-	for (z = MAX_STARS; z--; )
-	{
-		starDat[z].sLoc = (mt_rand() % 320) + (mt_rand() % 200) * VGAScreen->pitch;
-		starDat[z].sMov = ((mt_rand() % 3) + 2) * VGAScreen->pitch;
-		starDat[z].sC = (mt_rand() % 16) + (9 * 16);
-	}
 }
 
 static void playeritems_to_pitems( JE_PItemsType pItems, PlayerItems *items, JE_byte initial_episode_num )

@@ -629,10 +629,6 @@ draw_enemy_end:
 
 void JE_main( void )
 {
-	int i;
-
-	Uint8 *s; /* screen pointer, 8-bit specific */
-
 	char buffer[256];
 
 	int lastEnemyOnScreen;
@@ -811,7 +807,7 @@ start_level_first:
 	backPos2 = 0;
 	backPos3 = 0;
 	power = 0;
-	starY = VGAScreen->pitch;
+	starfield_speed = 1;
 
 	/* Setup player ship graphics */
 	JE_getShipInfo();
@@ -929,7 +925,7 @@ start_level_first:
 	}
 #endif
 
-	JE_setupStars();
+	initialize_starfield();
 
 	JE_setNewGameSpeed();
 
@@ -1309,42 +1305,9 @@ level_loop:
 		}
 	}
 
-	/*---------------------------STARS--------------------------*/
-	/* DRAWSTARS */
 	if (starActive || astralDuration > 0)
 	{
-		s = (Uint8 *)VGAScreen->pixels;
-
-		for (i = MAX_STARS; i--; )
-		{
-			starDat[i].sLoc += starDat[i].sMov + starY;
-			if (starDat[i].sLoc < 177 * VGAScreen->pitch)
-			{
-				if (*(s + starDat[i].sLoc) == 0)
-				{
-					*(s + starDat[i].sLoc) = starDat[i].sC;
-				}
-				if (starDat[i].sC - 4 >= 9 * 16)
-				{
-					if (*(s + starDat[i].sLoc + 1) == 0)
-					{
-						*(s + starDat[i].sLoc + 1) = starDat[i].sC - 4;
-					}
-					if (starDat[i].sLoc > 0 && *(s + starDat[i].sLoc - 1) == 0)
-					{
-						*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
-					}
-					if (*(s + starDat[i].sLoc + VGAScreen->pitch) == 0)
-					{
-						*(s + starDat[i].sLoc + VGAScreen->pitch) = starDat[i].sC - 4;
-					}
-					if (starDat[i].sLoc >= VGAScreen->pitch && *(s + starDat[i].sLoc - VGAScreen->pitch) == 0)
-					{
-						*(s + starDat[i].sLoc - VGAScreen->pitch) = starDat[i].sC - 4;
-					}
-				}
-			}
-		}
+		update_and_draw_starfield(VGAScreen, starfield_speed);
 	}
 
 	if (processorType > 1 && smoothies[5-1])
@@ -4307,7 +4270,7 @@ void JE_eventSystem( void )
 	switch (eventRec[eventLoc-1].eventtype)
 	{
 	case 1:
-		starY = eventRec[eventLoc-1].eventdat * VGAScreen->pitch;
+		starfield_speed = eventRec[eventLoc-1].eventdat;
 		break;
 
 	case 2:
