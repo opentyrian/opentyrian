@@ -65,6 +65,17 @@ char *strnztcpy( char *to, const char *from, size_t count )
 
 void opentyrian_menu( void )
 {
+	typedef enum
+	{
+		MENU_ABOUT,
+		MENU_FULLSCREEN,
+		MENU_SCALER,
+		// MENU_DESTRUCT,
+		MENU_JUKEBOX,
+		MENU_RETURN,
+		MenuOptions_MAX
+	} MenuOptions;
+
 	static const char *menu_items[] =
 	{
 		"About OpenTyrian",
@@ -84,6 +95,9 @@ void opentyrian_menu( void )
 		false,
 	};
 	
+	assert(COUNTOF(menu_items) == MenuOptions_MAX);
+	assert(COUNTOF(menu_items_disabled) == MenuOptions_MAX);
+
 	fade_black(10);
 	JE_loadPic(VGAScreen, 13, false);
 
@@ -96,7 +110,6 @@ void opentyrian_menu( void )
 	play_song(36); // A Field for Mag
 
 	int sel = 0;
-	const int maxSel = COUNTOF(menu_items) - 1;
 
 	uint temp_scaler = scaler;
 
@@ -105,18 +118,18 @@ void opentyrian_menu( void )
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
-		for (int i = 0; i <= maxSel; i++)
+		for (int i = 0; i < MenuOptions_MAX; i++)
 		{
 			const char *text = menu_items[i];
 			char buffer[100];
 
-			if (i == 2) /* Scaler */
+			if (i == MENU_SCALER)
 			{
 				snprintf(buffer, sizeof(buffer), "Scaler: %s", scalers[temp_scaler].name);
 				text = buffer;
 			}
 
-			int y = i != maxSel ? i * 16 + 32 : 118;
+			int y = i != MENU_RETURN ? i * 16 + 32 : 118;
 			draw_font_hv(VGAScreen, VGAScreen->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
 		}
 
@@ -140,7 +153,7 @@ void opentyrian_menu( void )
 				do
 				{
 					if (--sel < 0)
-						sel = maxSel;
+						sel = MenuOptions_MAX - 1;
 				}
 				while (menu_items_disabled[sel]);
 				
@@ -149,7 +162,7 @@ void opentyrian_menu( void )
 			case SDL_SCANCODE_DOWN:
 				do
 				{
-					if (++sel > maxSel)
+					if (++sel >= MenuOptions_MAX)
 						sel = 0;
 				}
 				while (menu_items_disabled[sel]);
@@ -158,7 +171,7 @@ void opentyrian_menu( void )
 				break;
 				
 			case SDL_SCANCODE_LEFT:
-				if (sel == 2)
+				if (sel == MENU_SCALER)
 				{
 					if (temp_scaler == 0)
 						temp_scaler = scalers_count;
@@ -168,7 +181,7 @@ void opentyrian_menu( void )
 				}
 				break;
 			case SDL_SCANCODE_RIGHT:
-				if (sel == 2)
+				if (sel == MENU_SCALER)
 				{
 					temp_scaler++;
 					if (temp_scaler == scalers_count)
@@ -181,7 +194,7 @@ void opentyrian_menu( void )
 			case SDL_SCANCODE_RETURN:
 				switch (sel)
 				{
-				case 0: /* About */
+				case MENU_ABOUT:
 					JE_playSampleNum(S_SELECT);
 
 					scroller_sine(about_text);
@@ -191,7 +204,7 @@ void opentyrian_menu( void )
 					fade_in = true;
 					break;
 					
-				case 1: /* Fullscreen */
+				case MENU_FULLSCREEN:
 					JE_playSampleNum(S_SELECT);
 
 					/* TODOSDL2
@@ -205,7 +218,7 @@ void opentyrian_menu( void )
 					*/
 					break;
 					
-				case 2: /* Scaler */
+				case MENU_SCALER:
 					JE_playSampleNum(S_SELECT);
 
 					if (scaler != temp_scaler)
@@ -219,7 +232,7 @@ void opentyrian_menu( void )
 					}
 					break;
 					
-				case 3: /* Jukebox */
+				case MENU_JUKEBOX:
 					JE_playSampleNum(S_SELECT);
 
 					fade_black(10);
@@ -230,7 +243,7 @@ void opentyrian_menu( void )
 					fade_in = true;
 					break;
 					
-				case 4: /* Return to main menu */
+				case MENU_RETURN:
 					quit = true;
 					JE_playSampleNum(S_SPRING);
 					break;
