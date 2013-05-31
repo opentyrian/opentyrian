@@ -36,7 +36,7 @@ typedef enum {
 
 extern const char* scaling_mode_names[ScalingMode_MAX];
 
-extern bool fullscreen_enabled;
+extern int fullscreen_display; // -1 means windowed
 extern ScalingMode scaling_mode;
 
 extern SDL_Surface *VGAScreen, *VGAScreenSeg;
@@ -48,6 +48,8 @@ extern SDL_PixelFormat* main_window_tex_format;
 
 void init_video( void );
 
+void reinit_fullscreen( int new_display );
+void toggle_fullscreen( void );
 bool init_scaler( unsigned int new_scaler );
 bool set_scaling_mode_by_name( const char* name );
 

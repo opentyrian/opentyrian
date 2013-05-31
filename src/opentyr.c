@@ -80,7 +80,7 @@ void opentyrian_menu( void )
 	static const char *menu_items[] =
 	{
 		"About OpenTyrian",
-		"Toggle Fullscreen",
+		"Fullscreen: Display %d",
 		"Scaler: None",
 		"HW Scaler: %s",
 		// "Play Destruct",
@@ -114,6 +114,7 @@ void opentyrian_menu( void )
 
 	int sel = 0;
 
+	int temp_fullscreen = fullscreen_display;
 	uint temp_scaler = scaler;
 
 	bool fade_in = true, quit = false;
@@ -126,7 +127,19 @@ void opentyrian_menu( void )
 			const char *text = menu_items[i];
 			char buffer[100];
 
-			if (i == MENU_SCALER)
+			if (i == MENU_FULLSCREEN)
+			{
+				if (temp_fullscreen == -1)
+				{
+					text = "Fullscreen: Window";
+				}
+				else
+				{
+					snprintf(buffer, sizeof(buffer), menu_items[i], temp_fullscreen);
+					text = buffer;
+				}
+			}
+			else if (i == MENU_SCALER)
 			{
 				snprintf(buffer, sizeof(buffer), "Scaler: %s", scalers[temp_scaler].name);
 				text = buffer;
@@ -179,7 +192,15 @@ void opentyrian_menu( void )
 				break;
 				
 			case SDL_SCANCODE_LEFT:
-				if (sel == MENU_SCALER)
+				if (sel == MENU_FULLSCREEN)
+				{
+					if (temp_fullscreen == -1)
+						temp_fullscreen = SDL_GetNumVideoDisplays();
+					temp_fullscreen--;
+
+					JE_playSampleNum(S_CURSOR);
+				}
+				else if (sel == MENU_SCALER)
 				{
 					if (temp_scaler == 0)
 						temp_scaler = scalers_count;
@@ -197,7 +218,15 @@ void opentyrian_menu( void )
 				}
 				break;
 			case SDL_SCANCODE_RIGHT:
-				if (sel == MENU_SCALER)
+				if (sel == MENU_FULLSCREEN)
+				{
+					temp_fullscreen++;
+					if (temp_fullscreen == SDL_GetNumVideoDisplays())
+						temp_fullscreen = -1;
+
+					JE_playSampleNum(S_CURSOR);
+				}
+				else if (sel == MENU_SCALER)
 				{
 					temp_scaler++;
 					if (temp_scaler == scalers_count)
@@ -231,15 +260,7 @@ void opentyrian_menu( void )
 				case MENU_FULLSCREEN:
 					JE_playSampleNum(S_SELECT);
 
-					/* TODOSDL2
-					if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
-						!init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
-						!init_scaler(scaler, fullscreen_enabled))    // revert on fail
-					{
-						exit(EXIT_FAILURE);
-					}
-					set_palette(colors, 0, 255); // for switching between 8 bpp scalers
-					*/
+					reinit_fullscreen(temp_fullscreen);
 					break;
 					
 				case MENU_SCALER:
@@ -252,7 +273,6 @@ void opentyrian_menu( void )
 						{
 							exit(EXIT_FAILURE);
 						}
-						// TODOSDL2 set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 					}
 					break;
 

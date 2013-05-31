@@ -32,7 +32,7 @@ const char* scaling_mode_names[ScalingMode_MAX] = {
 	"Fit 4:3",
 };
 
-bool fullscreen_enabled = false;
+int fullscreen_display;
 ScalingMode scaling_mode = SCALE_INTEGER;
 
 SDL_Surface *VGAScreen, *VGAScreenSeg;
@@ -67,12 +67,14 @@ void init_video( void )
 
 	SDL_FillRect(VGAScreen, NULL, 0);
 
-	if (SDL_CreateWindowAndRenderer(scalers[scaler].width, scalers[scaler].height,
-			SDL_WINDOW_RESIZABLE | (fullscreen_enabled ? SDL_WINDOW_FULLSCREEN : 0),
+	if (SDL_CreateWindowAndRenderer(vga_width, vga_height,
+			SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE,
 			&main_window, &main_window_renderer) == -1)
 	{
 		fprintf(stderr, "error: failed to open window: %s\n", SDL_GetError());
 	}
+
+	reinit_fullscreen(fullscreen_display);
 
 	SDL_SetWindowTitle(main_window, "OpenTyrian");
 
@@ -81,6 +83,39 @@ void init_video( void )
 		exit(EXIT_FAILURE);
 	}
 	SDL_ShowWindow(main_window);
+}
+
+void reinit_fullscreen( int new_display )
+{
+	fullscreen_display = new_display;
+
+	if (fullscreen_display >= SDL_GetNumVideoDisplays())
+	{
+		fullscreen_display = 0;
+	}
+
+	if (fullscreen_display == -1)
+	{
+		SDL_SetWindowFullscreen(main_window, SDL_FALSE);
+		SDL_SetWindowSize(main_window, scalers[scaler].width, scalers[scaler].height);
+	}
+	else
+	{
+		SDL_SetWindowPosition(main_window, SDL_WINDOWPOS_UNDEFINED_DISPLAY(fullscreen_display), SDL_WINDOWPOS_UNDEFINED_DISPLAY(fullscreen_display));
+		if (SDL_SetWindowFullscreen(main_window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+		{
+			reinit_fullscreen(-1);
+		}
+	}
+}
+
+void toggle_fullscreen( void )
+{
+	if (fullscreen_display != -1) {
+		reinit_fullscreen(-1);
+	} else {
+		reinit_fullscreen(SDL_GetWindowDisplayIndex(main_window));
+	}
 }
 
 bool init_scaler( unsigned int new_scaler )
@@ -111,10 +146,9 @@ bool init_scaler( unsigned int new_scaler )
 
 	main_window_tex_format = SDL_AllocFormat(format);
 
-	// TODOSDL2 fullscreen
-	SDL_SetWindowSize(main_window, w, h);
-	
-	// TODOSDL2 printf("initialized video: %dx%dx%d %s\n", w, h, bpp, fullscreen ? "fullscreen" : "windowed");
+	if (fullscreen_display == -1) {
+		SDL_SetWindowSize(main_window, w, h);
+	}
 	
 	scaler = new_scaler;
 	

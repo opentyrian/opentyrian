@@ -255,7 +255,7 @@ void save_json( cJSON *root, const char *filename )
 bool load_opentyrian_config( void )
 {
 	// defaults
-	fullscreen_enabled = false;
+	fullscreen_display = -1;
 	set_scaler_by_name("Scale2x");
 	
 	cJSON *root = load_json("opentyrian.conf");
@@ -268,7 +268,7 @@ bool load_opentyrian_config( void )
 		cJSON *setting;
 		
 		if ((setting = cJSON_GetObjectItem(section, "fullscreen")))
-			fullscreen_enabled = (setting->type == cJSON_True);
+			fullscreen_display = setting->valueint;
 		
 		if ((setting = cJSON_GetObjectItem(section, "scaler")))
 			set_scaler_by_name(setting->valuestring);
@@ -297,7 +297,7 @@ bool save_opentyrian_config( void )
 		cJSON *setting;
 		
 		setting = cJSON_CreateOrGetObjectItem(section, "fullscreen");
-		cJSON_SetBoolean(setting, fullscreen_enabled);
+		cJSON_SetNumber(setting, fullscreen_display);
 		
 		setting = cJSON_CreateOrGetObjectItem(section, "scaler");
 		cJSON_SetString(setting, scalers[scaler].name);

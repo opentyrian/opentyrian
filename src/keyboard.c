@@ -99,7 +99,7 @@ void input_grab( void )
 #if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
 	input_grabbed = true;
 #else
-	input_grabbed = input_grab_enabled || fullscreen_enabled;
+	input_grabbed = input_grab_enabled || fullscreen_display != -1;
 #endif
 	
 	SDL_ShowCursor(input_grabbed ? SDL_DISABLE : SDL_ENABLE);
@@ -163,38 +163,12 @@ void service_SDL_events( JE_boolean clear_new )
 					}
 				}
 				
-				if (ev.key.keysym.mod & KMOD_ALT)
+				/* <alt><enter> toggle fullscreen */
+				if (ev.key.keysym.mod & KMOD_ALT && ev.key.keysym.scancode == SDL_SCANCODE_RETURN)
 				{
-					/* <alt><enter> toggle fullscreen */
-					if (ev.key.keysym.scancode == SDL_SCANCODE_RETURN)
-					{
-						/* TODOSDL2
-						if (!init_scaler(scaler, !fullscreen_enabled) && // try new fullscreen state
-						    !init_any_scaler(!fullscreen_enabled) &&     // try any scaler in new fullscreen state
-						    !init_scaler(scaler, fullscreen_enabled))    // revert on fail
-						{
-							exit(EXIT_FAILURE);
-						}
-						*/
-						break;
-					}
-					
-					/* <alt><tab> disable input grab and fullscreen */
-					if (ev.key.keysym.scancode == SDL_SCANCODE_TAB)
-					{
-						input_grab_enabled = false;
-						input_grab();
-						
-						/* TODOSDL2
-						if (!init_scaler(scaler, false) &&             // try windowed
-						    !init_any_scaler(false) &&                 // try any scaler windowed
-						    !init_scaler(scaler, fullscreen_enabled))  // revert on fail
-						{
-							exit(EXIT_FAILURE);
-						}
-						*/
-						break;
-					}
+					toggle_fullscreen();
+					input_grab();
+					break;
 				}
 
 				keysactive[ev.key.keysym.scancode] = 1;
