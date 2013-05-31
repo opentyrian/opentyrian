@@ -67,7 +67,7 @@ void opentyrian_menu( void )
 {
 	typedef enum
 	{
-		MENU_ABOUT,
+		MENU_ABOUT = 0,
 		MENU_FULLSCREEN,
 		MENU_SCALER,
 		MENU_HWSCALER,
@@ -112,7 +112,7 @@ void opentyrian_menu( void )
 
 	play_song(36); // A Field for Mag
 
-	int sel = 0;
+	MenuOptions sel = 0;
 
 	int temp_fullscreen = fullscreen_display;
 	uint temp_scaler = scaler;
@@ -122,7 +122,7 @@ void opentyrian_menu( void )
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
-		for (int i = 0; i < MenuOptions_MAX; i++)
+		for (MenuOptions i = 0; i < MenuOptions_MAX; i++)
 		{
 			const char *text = menu_items[i];
 			char buffer[100];
@@ -135,7 +135,7 @@ void opentyrian_menu( void )
 				}
 				else
 				{
-					snprintf(buffer, sizeof(buffer), menu_items[i], temp_fullscreen);
+					snprintf(buffer, sizeof(buffer), menu_items[i], temp_fullscreen + 1);
 					text = buffer;
 				}
 			}
@@ -173,7 +173,7 @@ void opentyrian_menu( void )
 			case SDL_SCANCODE_UP:
 				do
 				{
-					if (--sel < 0)
+					if (sel-- == 0)
 						sel = MenuOptions_MAX - 1;
 				}
 				while (menu_items_disabled[sel]);
@@ -275,6 +275,9 @@ void opentyrian_menu( void )
 						}
 					}
 					break;
+					
+				case MENU_HWSCALER:
+					break;
 
 				case MENU_JUKEBOX:
 					JE_playSampleNum(S_SELECT);
@@ -290,6 +293,10 @@ void opentyrian_menu( void )
 				case MENU_RETURN:
 					quit = true;
 					JE_playSampleNum(S_SPRING);
+					break;
+					
+				case MenuOptions_MAX:
+					assert(false);
 					break;
 				}
 				break;
