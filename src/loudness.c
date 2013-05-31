@@ -132,6 +132,14 @@ void audio_cb( void *user_data, unsigned char *sdl_buffer, int howmuch )
 			feedme[smp] *= music_volume;
 		}
 	}
+	else
+	{
+		int qu = howmuch / BYTES_PER_SAMPLE;
+		for (int smp = 0; smp < qu; smp++)
+		{
+			feedme[smp] = 0;
+		}
+	}
 	
 	if (!samples_disabled)
 	{
