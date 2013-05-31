@@ -267,7 +267,7 @@ bool load_opentyrian_config( void )
 	{
 		cJSON *setting;
 		
-		if ((setting = cJSON_GetObjectItem(section, "fullscreen")))
+		if ((setting = cJSON_GetObjectItem(section, "fullscreen_display")))
 			fullscreen_display = setting->valueint;
 		
 		if ((setting = cJSON_GetObjectItem(section, "scaler")))
@@ -296,7 +296,7 @@ bool save_opentyrian_config( void )
 	{
 		cJSON *setting;
 		
-		setting = cJSON_CreateOrGetObjectItem(section, "fullscreen");
+		setting = cJSON_CreateOrGetObjectItem(section, "fullscreen_display");
 		cJSON_SetNumber(setting, fullscreen_display);
 		
 		setting = cJSON_CreateOrGetObjectItem(section, "scaler");
