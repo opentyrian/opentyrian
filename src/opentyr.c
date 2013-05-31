@@ -67,7 +67,7 @@ void opentyrian_menu( void )
 {
 	typedef enum
 	{
-		MENU_ABOUT,
+		MENU_ABOUT = 0,
 		MENU_FULLSCREEN,
 		MENU_SCALER,
 		// MENU_DESTRUCT,
@@ -109,7 +109,7 @@ void opentyrian_menu( void )
 
 	play_song(36); // A Field for Mag
 
-	int sel = 0;
+	MenuOptions sel = 0;
 
 	uint temp_scaler = scaler;
 
@@ -118,7 +118,7 @@ void opentyrian_menu( void )
 	{
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
-		for (int i = 0; i < MenuOptions_MAX; i++)
+		for (MenuOptions i = 0; i < MenuOptions_MAX; i++)
 		{
 			const char *text = menu_items[i];
 			char buffer[100];
@@ -152,7 +152,7 @@ void opentyrian_menu( void )
 			case SDLK_UP:
 				do
 				{
-					if (--sel < 0)
+					if (sel-- == 0)
 						sel = MenuOptions_MAX - 1;
 				}
 				while (menu_items_disabled[sel]);
@@ -253,6 +253,10 @@ void opentyrian_menu( void )
 				case MENU_RETURN:
 					quit = true;
 					JE_playSampleNum(S_SPRING);
+					break;
+					
+				case MenuOptions_MAX:
+					assert(false);
 					break;
 				}
 				break;
