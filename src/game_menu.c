@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "backgrnd.h"
 #include "config.h"
 #include "file.h"
 #include "fonthand.h"
@@ -2235,7 +2236,7 @@ void JE_initWeaponView( void )
 	memset(shotRepeat, 1, sizeof(shotRepeat));
 	memset(shotMultiPos, 0, sizeof(shotMultiPos));
 
-	JE_setupStars();
+	initialize_starfield();
 }
 
 void JE_computeDots( void )
@@ -3123,40 +3124,12 @@ void JE_weaponSimUpdate( void )
 
 void JE_weaponViewFrame( void )
 {
-	Uint8 *s; /* screen pointer, 8-bit specific */
-	int i;
-
 	fill_rectangle_xy(VGAScreen, 8, 8, 143, 182, 0);
 
 	/* JE: (* Port Configuration Display *)
 	(*    drawportconfigbuttons;*/
 
-	/*===========================STARS==========================*/
-	/*DRAWSTARS*/
-
-	for (i = MAX_STARS; i--;)
-	{
-		s = (Uint8 *)VGAScreen->pixels;
-
-		starDat[i].sLoc += starDat[i].sMov + VGAScreen->pitch;
-
-		if (starDat[i].sLoc < 177 * VGAScreen->pitch)
-		{
-			if (*(s + starDat[i].sLoc) == 0)
-				*(s + starDat[i].sLoc) = starDat[i].sC;
-			if (starDat[i].sC - 4 >= 9 * 16)
-			{
-				if (*(s + starDat[i].sLoc + 1) == 0)
-					*(s + starDat[i].sLoc + 1) = starDat[i].sC - 4;
-				if (starDat[i].sLoc > 0 && *(s + starDat[i].sLoc - 1) == 0)
-					*(s + starDat[i].sLoc - 1) = starDat[i].sC - 4;
-				if (*(s + starDat[i].sLoc + VGAScreen->pitch) == 0)
-					*(s + starDat[i].sLoc + VGAScreen->pitch) = starDat[i].sC - 4;
-				if (starDat[i].sLoc >= VGAScreen->pitch && *(s + starDat[i].sLoc - VGAScreen->pitch) == 0)
-					*(s + starDat[i].sLoc - VGAScreen->pitch) = starDat[i].sC - 4;
-			}
-		}
-	}
+	update_and_draw_starfield(VGAScreen, 1);
 
 	mouseX = player[0].x;
 	mouseY = player[0].y;

@@ -20,6 +20,7 @@
 #include "backgrnd.h"
 
 #include "config.h"
+#include "mtrand.h"
 #include "varz.h"
 #include "video.h"
 
@@ -465,3 +466,62 @@ void blur_filter( SDL_Surface *dst, SDL_Surface *src )
 	}
 }
 
+
+/* Background Starfield */
+typedef struct
+{
+	Uint8 color;
+	JE_word position; // relies on overflow wrap-around
+	int speed;
+} StarfieldStar;
+
+#define MAX_STARS 100
+#define STARFIELD_HUE 0x90
+static StarfieldStar starfield_stars[MAX_STARS];
+int starfield_speed;
+
+void initialize_starfield( void )
+{
+	for (int i = MAX_STARS-1; i >= 0; --i)
+	{
+		starfield_stars[i].position = mt_rand() % 320 + mt_rand() % 200 * VGAScreen->pitch;
+		starfield_stars[i].speed = mt_rand() % 3 + 2;
+		starfield_stars[i].color = mt_rand() % 16 + STARFIELD_HUE;
+	}
+}
+
+void update_and_draw_starfield( SDL_Surface* surface, int move_speed )
+{
+	Uint8* p = (Uint8*)surface->pixels;
+
+	for (int i = MAX_STARS-1; i >= 0; --i)
+	{
+		StarfieldStar* star = &starfield_stars[i];
+
+		star->position += (star->speed + move_speed) * surface->pitch;
+
+		if (star->position < 177 * surface->pitch)
+		{
+			if (p[star->position] == 0)
+			{
+				p[star->position] = star->color;
+			}
+
+			// If star is bright enough, draw surrounding pixels
+			if (star->color - 4 >= STARFIELD_HUE)
+			{
+				if (p[star->position + 1] == 0)
+					p[star->position + 1] = star->color - 4;
+
+				if (star->position > 0 && p[star->position - 1] == 0)
+					p[star->position - 1] = star->color - 4;
+
+				if (p[star->position + surface->pitch] == 0)
+					p[star->position + surface->pitch] = star->color - 4;
+
+				if (star->position >= surface->pitch && p[star->position - surface->pitch] == 0)
+					p[star->position - surface->pitch] = star->color - 4;
+			}
+		}
+	}
+}
