@@ -85,8 +85,25 @@ void init_video( void )
 	SDL_ShowWindow(main_window);
 }
 
+static void move_window_to_display( SDL_Window* window, int display )
+{
+	if (SDL_GetWindowDisplayIndex(window) == display)
+		return;
+
+	int win_w, win_h;
+	SDL_GetWindowSize(window, &win_w, &win_h);
+
+	SDL_Rect bounds;
+	SDL_GetDisplayBounds(display, &bounds);
+
+	SDL_SetWindowPosition(window, bounds.x + (bounds.w - win_w)/2, bounds.y + (bounds.h - win_h)/2);
+}
+
 void reinit_fullscreen( int new_display )
 {
+	if (new_display == fullscreen_display)
+		return;
+
 	fullscreen_display = new_display;
 
 	if (fullscreen_display >= SDL_GetNumVideoDisplays())
@@ -101,7 +118,8 @@ void reinit_fullscreen( int new_display )
 	}
 	else
 	{
-		SDL_SetWindowPosition(main_window, SDL_WINDOWPOS_UNDEFINED_DISPLAY(fullscreen_display), SDL_WINDOWPOS_UNDEFINED_DISPLAY(fullscreen_display));
+		SDL_SetWindowFullscreen(main_window, SDL_FALSE);
+		move_window_to_display(main_window, fullscreen_display);
 		if (SDL_SetWindowFullscreen(main_window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 		{
 			reinit_fullscreen(-1);
