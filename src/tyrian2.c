@@ -448,51 +448,49 @@ enemy_still_exists:
 									soundQueue[temp] = weapons[temp3].sound;
 								}
 
-								tempPos = weapons[temp3].max;
-
 								if (enemy[i].aniactive == 2)
 									enemy[i].aniactive = 1;
 
-								if (++enemy[i].eshotmultipos[j-1] > tempPos)
+								if (++enemy[i].eshotmultipos[j-1] > weapons[temp3].max)
 									enemy[i].eshotmultipos[j-1] = 1;
 
-								tempPos = enemy[i].eshotmultipos[j-1];
+								int tempPos = enemy[i].eshotmultipos[j-1] - 1;
 
 								if (j == 1)
 									temp2 = 4;
 
-								enemyShot[b].sx = tempX + weapons[temp3].bx[tempPos-1] + tempMapXOfs;
-								enemyShot[b].sy = tempY + weapons[temp3].by[tempPos-1];
-								enemyShot[b].sdmg = weapons[temp3].attack[tempPos-1];
+								enemyShot[b].sx = tempX + weapons[temp3].bx[tempPos] + tempMapXOfs;
+								enemyShot[b].sy = tempY + weapons[temp3].by[tempPos];
+								enemyShot[b].sdmg = weapons[temp3].attack[tempPos];
 								enemyShot[b].tx = weapons[temp3].tx;
 								enemyShot[b].ty = weapons[temp3].ty;
-								enemyShot[b].duration = weapons[temp3].del[tempPos-1];
+								enemyShot[b].duration = weapons[temp3].del[tempPos];
 								enemyShot[b].animate = 0;
 								enemyShot[b].animax = weapons[temp3].weapani;
 
-								enemyShot[b].sgr = weapons[temp3].sg[tempPos-1];
+								enemyShot[b].sgr = weapons[temp3].sg[tempPos];
 								switch (j)
 								{
 								case 1:
 									enemyShot[b].syc = weapons[temp3].acceleration;
 									enemyShot[b].sxc = weapons[temp3].accelerationx;
 
-									enemyShot[b].sxm = weapons[temp3].sx[tempPos-1];
-									enemyShot[b].sym = weapons[temp3].sy[tempPos-1];
+									enemyShot[b].sxm = weapons[temp3].sx[tempPos];
+									enemyShot[b].sym = weapons[temp3].sy[tempPos];
 									break;
 								case 3:
 									enemyShot[b].sxc = -weapons[temp3].acceleration;
 									enemyShot[b].syc = weapons[temp3].accelerationx;
 
-									enemyShot[b].sxm = -weapons[temp3].sy[tempPos-1];
-									enemyShot[b].sym = -weapons[temp3].sx[tempPos-1];
+									enemyShot[b].sxm = -weapons[temp3].sy[tempPos];
+									enemyShot[b].sym = -weapons[temp3].sx[tempPos];
 									break;
 								case 2:
 									enemyShot[b].sxc = weapons[temp3].acceleration;
 									enemyShot[b].syc = -weapons[temp3].acceleration;
 
-									enemyShot[b].sxm = weapons[temp3].sy[tempPos-1];
-									enemyShot[b].sym = -weapons[temp3].sx[tempPos-1];
+									enemyShot[b].sxm = weapons[temp3].sy[tempPos];
+									enemyShot[b].sym = -weapons[temp3].sx[tempPos];
 									break;
 								}
 
@@ -4118,24 +4116,30 @@ void JE_eventJump( JE_word jump )
 	eventLoc = tempW - 1;
 }
 
-JE_boolean JE_searchFor/*enemy*/( JE_byte PLType )
+bool JE_searchFor/*enemy*/( JE_byte PLType, JE_byte* out_index )
 {
-	JE_boolean tempb = false;
-	JE_byte temp;
+	int found_id = -1;
 
-	for (temp = 0; temp < 100; temp++)
+	for (int i = 0; i < 100; i++)
 	{
-		if (enemyAvail[temp] == 0 && enemy[temp].linknum == PLType)
+		if (enemyAvail[i] == 0 && enemy[i].linknum == PLType)
 		{
-			temp5 = temp + 1;
+			found_id = i;
 			if (galagaMode)
 			{
-				enemy[temp].evalue += enemy[temp].evalue;
+				enemy[i].evalue += enemy[i].evalue;
 			}
-			tempb = true;
 		}
 	}
-	return tempb;
+
+	if (found_id != -1) {
+		if (out_index) {
+			*out_index = found_id;
+		}
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void JE_eventSystem( void )
@@ -4851,14 +4855,14 @@ void JE_eventSystem( void )
 			bool found = false;
 
 			for (temp = 1; temp <= 19; temp++)
-				found |= JE_searchFor(temp);
+				found = found || JE_searchFor(temp, NULL);
 
 			if (!found)
 				JE_eventJump(eventRec[eventLoc-1].eventdat);
 		}
-		else if (!JE_searchFor(eventRec[eventLoc-1].eventdat2)
-		         && (eventRec[eventLoc-1].eventdat3 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat3))
-		         && (eventRec[eventLoc-1].eventdat4 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat4)))
+		else if (!JE_searchFor(eventRec[eventLoc-1].eventdat2, NULL)
+		         && (eventRec[eventLoc-1].eventdat3 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat3, NULL))
+		         && (eventRec[eventLoc-1].eventdat4 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat4, NULL)))
 		{
 			JE_eventJump(eventRec[eventLoc-1].eventdat);
 		}
@@ -4915,11 +4919,12 @@ void JE_eventSystem( void )
 
 		if (temp_no_clue)
 		{
+			JE_byte enemy_i;
 			do
 			{
 				temp = (mt_rand() % (eventRec[eventLoc-1].eventdat2 + 1 - eventRec[eventLoc-1].eventdat)) + eventRec[eventLoc-1].eventdat;
 			}
-			while (!(JE_searchFor(temp) && enemy[temp5-1].eyc == 0));
+			while (!(JE_searchFor(temp, &enemy_i) && enemy[enemy_i].eyc == 0));
 
 			newPL[eventRec[eventLoc-1].eventdat3 - 80] = temp;
 		}

@@ -909,14 +909,14 @@ void JE_highScoreScreen( void )
 
 			for (z = 0; z < 3; z++)
 			{
-				temp5 = saveFiles[temp + z].highScoreDiff;
-				if (temp5 > 9)
+				int difficulty = saveFiles[temp + z].highScoreDiff;
+				if (difficulty > 9)
 				{
 					saveFiles[temp + z].highScoreDiff = 0;
-					temp5 = 0;
+					difficulty = 0;
 				}
 				sprintf(scoretemp, "~#%d:~ %d", z + 1, saveFiles[temp+z].highScore1);
-				JE_textShade(VGAScreen, 250, ((z+1) * 10) + 65 , difficultyNameB[temp5], 15, temp5 + ((JE_byte) (temp5 == 0)) - 1, FULL_SHADE);
+				JE_textShade(VGAScreen, 250, ((z+1) * 10) + 65 , difficultyNameB[difficulty], 15, difficulty + (difficulty == 0 ? 0 : -1), FULL_SHADE);
 				JE_textShade(VGAScreen, 20, ((z+1) * 10) + 65 , scoretemp, 15, 0, FULL_SHADE);
 				JE_textShade(VGAScreen, 110, ((z+1) * 10) + 65 , saveFiles[temp + z].highScoreName, 15, 2, FULL_SHADE);
 			}
@@ -931,14 +931,14 @@ void JE_highScoreScreen( void )
 
 			for (z = 0; z < 3; z++)
 			{
-				temp5 = saveFiles[temp + z].highScoreDiff;
-				if (temp5 > 9)
+				int difficulty = saveFiles[temp + z].highScoreDiff;
+				if (difficulty > 9)
 				{
 					saveFiles[temp + z].highScoreDiff = 0;
-					temp5 = 0;
+					difficulty = 0;
 				}
 				sprintf(scoretemp, "~#%d:~ %d", z + 1, saveFiles[temp+z].highScore1); /* Not .highScore2 for some reason */
-				JE_textShade(VGAScreen, 250, ((z+1) * 10) + 125 , difficultyNameB[temp5], 15, temp5 + ((JE_byte) (temp5 == 0)) - 1, FULL_SHADE);
+				JE_textShade(VGAScreen, 250, ((z+1) * 10) + 125 , difficultyNameB[difficulty], 15, difficulty + (difficulty == 0 ? 0 : -1), FULL_SHADE);
 				JE_textShade(VGAScreen, 20, ((z+1) * 10) + 125 , scoretemp, 15, 0, FULL_SHADE);
 				JE_textShade(VGAScreen, 110, ((z+1) * 10) + 125 , saveFiles[temp + z].highScoreName, 15, 2, FULL_SHADE);
 			}
@@ -2515,21 +2515,21 @@ void JE_inGameDisplays( void )
 		{
 			const uint extra_lives = *player[temp].lives - 1;
 
-			temp5 = (temp == 0 && player[0].items.special > 0) ? 35 : 15;
+			int y = (temp == 0 && player[0].items.special > 0) ? 35 : 15;
 			tempW = (temp == 0) ? 30: 270;
 
 			if (extra_lives >= 5)
 			{
-				blit_sprite2(VGAScreen, tempW, temp5, shapes9, 285);
+				blit_sprite2(VGAScreen, tempW, y, shapes9, 285);
 				tempW = (temp == 0) ? 45 : 250;
 				sprintf(tempstr, "%d", extra_lives);
-				JE_textShade(VGAScreen, tempW, temp5 + 3, tempstr, 15, 1, FULL_SHADE);
+				JE_textShade(VGAScreen, tempW, y + 3, tempstr, 15, 1, FULL_SHADE);
 			}
 			else if (extra_lives >= 1)
 			{
 				for (uint i = 0; i < extra_lives; ++i)
 				{
-					blit_sprite2(VGAScreen, tempW, temp5, shapes9, 285);
+					blit_sprite2(VGAScreen, tempW, y, shapes9, 285);
 
 					tempW += (temp == 0) ? 12 : -12;
 				}
@@ -2542,7 +2542,7 @@ void JE_inGameDisplays( void )
 			}
 
 			tempW = (temp == 0) ? 28 : (285 - JE_textWidth(stemp, TINY_FONT));
-			JE_textShade(VGAScreen, tempW, temp5 - 7, stemp, 2, 6, FULL_SHADE);
+			JE_textShade(VGAScreen, tempW, y - 7, stemp, 2, 6, FULL_SHADE);
 		}
 	}
 

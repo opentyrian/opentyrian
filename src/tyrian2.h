@@ -61,7 +61,7 @@ bool JE_titleScreen( JE_boolean animate );
 void JE_readTextSync( void );
 void JE_displayText( void );
 
-JE_boolean JE_searchFor( JE_byte PLType );
+bool JE_searchFor( JE_byte PLType, JE_byte* out_index );
 void JE_eventSystem( void );
 
 void draw_boss_bar( void );
