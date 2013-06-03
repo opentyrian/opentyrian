@@ -41,6 +41,7 @@
 #include "pcxmast.h"
 #include "picload.h"
 #include "setup.h"
+#include "shots.h"
 #include "sprite.h"
 #include "tyrian2.h"
 #include "vga256d.h"
@@ -1449,140 +1450,12 @@ level_loop:
 		{
 			bool is_special = false;
 			int tempShotX = 0, tempShotY = 0;
-
-			shotAvail[z]--;
-			if (z != MAX_PWEAPON - 1)
+			JE_byte chain;
+			JE_byte playerNum;
+			
+			if (!player_shot_move_and_draw(z, &is_special, &tempShotX, &tempShotY, &tempI2, &temp2, &chain, &playerNum, &tempX2, &tempY2))
 			{
-
-				playerShotData[z].shotXM += playerShotData[z].shotXC;
-				playerShotData[z].shotX += playerShotData[z].shotXM;
-				tempI4 = playerShotData[z].shotXM;
-
-				if (playerShotData[z].shotXM > 100)
-				{
-					if (playerShotData[z].shotXM == 101)
-					{
-						playerShotData[z].shotX -= 101;
-						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x_shot_move;
-						playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y_shot_move;
-					}
-					else
-					{
-						playerShotData[z].shotX -= 120;
-						playerShotData[z].shotX += player[playerShotData[z].playerNumber-1].delta_x_shot_move;
-					}
-				}
-
-				playerShotData[z].shotYM += playerShotData[z].shotYC;
-				playerShotData[z].shotY += playerShotData[z].shotYM;
-
-				if (playerShotData[z].shotYM > 100)
-				{
-					playerShotData[z].shotY -= 120;
-					playerShotData[z].shotY += player[playerShotData[z].playerNumber-1].delta_y_shot_move;
-				}
-
-				if (playerShotData[z].shotComplicated != 0)
-				{
-					playerShotData[z].shotDevX += playerShotData[z].shotDirX;
-					playerShotData[z].shotX += playerShotData[z].shotDevX;
-
-					if (abs(playerShotData[z].shotDevX) == playerShotData[z].shotCirSizeX)
-						playerShotData[z].shotDirX = -playerShotData[z].shotDirX;
-
-					playerShotData[z].shotDevY += playerShotData[z].shotDirY;
-					playerShotData[z].shotY += playerShotData[z].shotDevY;
-
-					if (abs(playerShotData[z].shotDevY) == playerShotData[z].shotCirSizeY)
-						playerShotData[z].shotDirY = -playerShotData[z].shotDirY;
-
-					/*Double Speed Circle Shots - add a second copy of above loop*/
-				}
-
-				tempShotX = playerShotData[z].shotX;
-				tempShotY = playerShotData[z].shotY;
-
-				if (playerShotData[z].shotX < -34 || playerShotData[z].shotX > 290 ||
-				    playerShotData[z].shotY < -15 || playerShotData[z].shotY > 190)
-				{
-					shotAvail[z] = 0;
-					goto draw_player_shot_loop_end;
-				}
-
-				if (playerShotData[z].shotTrail != 255)
-				{
-					if (playerShotData[z].shotTrail == 98)
-						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, 0, playerShotData[z].shotTrail, false, false);
-					else
-						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, 0, playerShotData[z].shotTrail, false, false);
-				}
-
-				if (playerShotData[z].aimAtEnemy != 0)
-				{
-					if (--playerShotData[z].aimDelay == 0)
-					{
-						playerShotData[z].aimDelay = playerShotData[z].aimDelayMax;
-
-						if (enemyAvail[playerShotData[z].aimAtEnemy] != 1)
-						{
-							if (playerShotData[z].shotX < enemy[playerShotData[z].aimAtEnemy].ex)
-								playerShotData[z].shotXM++;
-							else
-								playerShotData[z].shotXM--;
-
-							if (playerShotData[z].shotY < enemy[playerShotData[z].aimAtEnemy].ey)
-								playerShotData[z].shotYM++;
-							else
-								playerShotData[z].shotYM--;
-						}
-						else
-						{
-							if (playerShotData[z].shotXM > 0)
-								playerShotData[z].shotXM++;
-							else
-								playerShotData[z].shotXM--;
-						}
-					}
-				}
-
-				tempW = playerShotData[z].shotGr + playerShotData[z].shotAni;
-				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
-					playerShotData[z].shotAni = 0;
-
-				tempI2 = playerShotData[z].shotDmg;
-				temp2 = playerShotData[z].shotBlastFilter;
-				chain = playerShotData[z].chainReaction;
-				playerNum = playerShotData[z].playerNumber;
-
-				is_special = tempW > 60000;
-
-				if (is_special)
-				{
-					blit_sprite_blend(VGAScreen, tempShotX+1, tempShotY, OPTION_SHAPES, tempW - 60001);
-
-					tempX2 = sprite(OPTION_SHAPES, tempW - 60001)->width / 2;
-					tempY2 = sprite(OPTION_SHAPES, tempW - 60001)->height / 2;
-				}
-				else
-				{
-					if (tempW > 1000)
-					{
-						JE_doSP(tempShotX+1 + 6, tempShotY + 6, 5, 3, (tempW / 1000) << 4);
-						tempW = tempW % 1000;
-					}
-					if (tempW > 500)
-					{
-						if (background2 && tempShotY + shadowYDist < 190 && tempI4 < 100)
-							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowYDist, shapesW2, tempW - 500);
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, tempW - 500);
-					}
-					else
-					{
-						if (background2 && tempShotY + shadowYDist < 190 && tempI4 < 100)
-							blit_sprite2_darken(VGAScreen, tempShotX+1, tempShotY + shadowYDist, shapesC1, tempW);
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, tempW);
-					}
-				}
+				goto draw_player_shot_loop_end;
 			}
 
 			for (b = 0; b < 100; b++)
@@ -1621,7 +1494,7 @@ level_loop:
 						if (chain > 0)
 						{
 							shotMultiPos[SHOT_MISC] = 0;
-							JE_initPlayerShot(0, SHOT_MISC, tempShotX, tempShotY, mouseX, mouseY, chain, playerNum);
+							b = player_shot_create(0, SHOT_MISC, tempShotX, tempShotY, mouseX, mouseY, chain, playerNum);
 							shotAvail[z] = 0;
 							goto draw_player_shot_loop_end;
 						}

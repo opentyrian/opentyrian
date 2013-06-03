@@ -26,7 +26,7 @@
 
 /* MAIN Weapons Data */
 JE_WeaponPortType weaponPort;
-JE_WeaponType     weapons;
+JE_WeaponType     weapons[WEAP_NUM + 1]; /* [0..weapnum] */
 
 /* Items */
 JE_PowerType   powerSys;

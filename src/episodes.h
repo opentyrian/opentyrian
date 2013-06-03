@@ -51,7 +51,7 @@ typedef struct
 	JE_byte     sound;
 	JE_byte     trail;
 	JE_byte     shipblastfilter;
-} JE_WeaponType[WEAP_NUM + 1]; /* [0..weapnum] */
+} JE_WeaponType;
 
 typedef struct
 {
@@ -152,7 +152,7 @@ typedef struct
 } JE_EnemyDatType[ENEMY_NUM + 1]; /* [0..enemynum] */
 
 extern JE_WeaponPortType weaponPort;
-extern JE_WeaponType weapons;
+extern JE_WeaponType weapons[WEAP_NUM + 1]; /* [0..weapnum] */
 extern JE_PowerType powerSys;
 extern JE_ShipType ships;
 extern JE_OptionType options[OPTION_NUM + 1]; /* [0..optionnum] */

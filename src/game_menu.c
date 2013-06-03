@@ -34,6 +34,7 @@
 #include "pcxmast.h"
 #include "picload.h"
 #include "player.h"
+#include "shots.h"
 #include "sprite.h"
 #include "tyrian2.h"
 #include "varz.h"
@@ -3147,7 +3148,7 @@ void JE_weaponViewFrame( void )
 			           item_power = player[0].items.weapon[i].power - 1,
 			           item_mode = (i == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
 
-			JE_initPlayerShot(item, i, player[0].x, player[0].y, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
+			b = player_shot_create(item, i, player[0].x, player[0].y, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
 		}
 	}
 
@@ -3163,7 +3164,7 @@ void JE_weaponViewFrame( void )
 			const int x = player[0].sidekick[LEFT_SIDEKICK].x,
 			          y = player[0].sidekick[LEFT_SIDEKICK].y;
 
-			JE_initPlayerShot(options[item].wport, SHOT_LEFT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
+			b = player_shot_create(options[item].wport, SHOT_LEFT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
 		}
 	}
 
@@ -3190,87 +3191,11 @@ void JE_weaponViewFrame( void )
 			const int x = player[0].sidekick[RIGHT_SIDEKICK].x,
 			          y = player[0].sidekick[RIGHT_SIDEKICK].y;
 
-			JE_initPlayerShot(options[item].wport, SHOT_RIGHT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
+			b = player_shot_create(options[item].wport, SHOT_RIGHT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
 		}
 	}
 
-	/* Player Shot Images */
-	for (int z = 0; z < MAX_PWEAPON; z++)
-	{
-		if (shotAvail[z] != 0)
-		{
-			shotAvail[z]--;
-			if (z != MAX_PWEAPON - 1)
-			{
-				playerShotData[z].shotXM += playerShotData[z].shotXC;
-
-				if (playerShotData[z].shotXM <= 100)
-					playerShotData[z].shotX += playerShotData[z].shotXM;
-
-				playerShotData[z].shotYM += playerShotData[z].shotYC;
-				playerShotData[z].shotY += playerShotData[z].shotYM;
-
-				if (playerShotData[z].shotYM > 100)
-				{
-					playerShotData[z].shotY -= 120;
-					playerShotData[z].shotY += player[0].delta_y_shot_move;
-				}
-
-				if (playerShotData[z].shotComplicated != 0)
-				{
-					playerShotData[z].shotDevX += playerShotData[z].shotDirX;
-					playerShotData[z].shotX += playerShotData[z].shotDevX;
-
-					if (abs(playerShotData[z].shotDevX) == playerShotData[z].shotCirSizeX)
-						playerShotData[z].shotDirX = -playerShotData[z].shotDirX;
-
-					playerShotData[z].shotDevY += playerShotData[z].shotDirY;
-					playerShotData[z].shotY += playerShotData[z].shotDevY;
-
-					if (abs(playerShotData[z].shotDevY) == playerShotData[z].shotCirSizeY)
-						playerShotData[z].shotDirY = -playerShotData[z].shotDirY;
-					/*Double Speed Circle Shots - add a second copy of above loop*/
-				}
-
-				int tempShotX = playerShotData[z].shotX;
-				int tempShotY = playerShotData[z].shotY;
-
-				if (playerShotData[z].shotX < 0 || playerShotData[z].shotX > 140 ||
-				    playerShotData[z].shotY < 0 || playerShotData[z].shotY > 170)
-				{
-					shotAvail[z] = 0;
-					goto draw_player_shot_loop_end;
-				}
-
-/*				if (playerShotData[z].shotTrail != 255)
-				{
-					if (playerShotData[z].shotTrail == 98)
-					{
-						JE_setupExplosion(playerShotData[z].shotX - playerShotData[z].shotXM, playerShotData[z].shotY - playerShotData[z].shotYM, playerShotData[z].shotTrail);
-					} else {
-						JE_setupExplosion(playerShotData[z].shotX, playerShotData[z].shotY, playerShotData[z].shotTrail);
-					}
-				}*/
-
-				tempW = playerShotData[z].shotGr + playerShotData[z].shotAni;
-				if (++playerShotData[z].shotAni == playerShotData[z].shotAniMax)
-					playerShotData[z].shotAni = 0;
-
-				if (tempW < 6000)
-				{
-					if (tempW > 1000)
-						tempW = tempW % 1000;
-					if (tempW > 500)
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, tempW - 500);
-					else
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, tempW);
-				}
-			}
-
-draw_player_shot_loop_end:
-			;
-		}
-	}
+	simulate_player_shots();
 
 	blit_sprite(VGAScreenSeg, 0, 0, OPTION_SHAPES, 12); // upgrade interface
 
