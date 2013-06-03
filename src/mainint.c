@@ -2968,10 +2968,10 @@ redo:
 				else
 					soundQueue[5] = S_EXPLOSION_11;
 			}
-			tempW = this_player->x + (mt_rand() % 32) - 16;
-			tempW2 = this_player->y + (mt_rand() % 32) - 16;
 
-			JE_setupExplosionLarge(false, 0, this_player->x + (mt_rand() % 32) - 16, this_player->y + (mt_rand() % 32) - 16 + 7);
+			int explosion_x = this_player->x + (mt_rand() % 32) - 16;
+			int explosion_y = this_player->y + (mt_rand() % 32) - 16;
+			JE_setupExplosionLarge(false, 0, explosion_x, explosion_y + 7);
 			JE_setupExplosionLarge(false, 0, this_player->x, this_player->y + 7);
 
 			if (levelEnd > 0)
@@ -3388,36 +3388,36 @@ redo:
 				reallyEndLevel = true;
 
 			tempI = 1;
-			tempW2 = this_player->y;
+			int trail_y = this_player->y;
 			tempI2 = abs(41 - levelEnd);
 			if (tempI2 > 20)
 				tempI2 = 20;
 
 			for (int z = 1; z <= tempI2; z++)
 			{
-				tempW2 += tempI;
+				trail_y += tempI;
 				tempI++;
 			}
 
 			for (int z = 1; z <= tempI2; z++)
 			{
-				tempW2 -= tempI;
+				trail_y -= tempI;
 				tempI--;
-				if (tempW2 > 0 && tempW2 < 170)
+				if (trail_y > 0 && trail_y < 170)
 				{
 					if (shipGr_ == 0)
 					{
-						blit_sprite2x2(VGAScreen, this_player->x - 17, tempW2 - 7, *shapes9ptr_, 13);
-						blit_sprite2x2(VGAScreen, this_player->x + 7 , tempW2 - 7, *shapes9ptr_, 51);
+						blit_sprite2x2(VGAScreen, this_player->x - 17, trail_y - 7, *shapes9ptr_, 13);
+						blit_sprite2x2(VGAScreen, this_player->x + 7 , trail_y - 7, *shapes9ptr_, 51);
 					}
 					else if (shipGr_ == 1)
 					{
-						blit_sprite2x2(VGAScreen, this_player->x - 17, tempW2 - 7, *shapes9ptr_, 220);
-						blit_sprite2x2(VGAScreen, this_player->x + 7 , tempW2 - 7, *shapes9ptr_, 222);
+						blit_sprite2x2(VGAScreen, this_player->x - 17, trail_y - 7, *shapes9ptr_, 220);
+						blit_sprite2x2(VGAScreen, this_player->x + 7 , trail_y - 7, *shapes9ptr_, 222);
 					}
 					else
 					{
-						blit_sprite2x2(VGAScreen, this_player->x - 5, tempW2 - 7, *shapes9ptr_, shipGr_);
+						blit_sprite2x2(VGAScreen, this_player->x - 5, trail_y - 7, *shapes9ptr_, shipGr_);
 					}
 				}
 			}

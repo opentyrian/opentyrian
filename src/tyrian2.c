@@ -1658,12 +1658,12 @@ level_loop:
 										{
 											int temp_b = b;
 											tempW = enemy[temp2].enemydie;
-											tempW2 = temp2 - (temp2 % 25);
+											int enemy_offset = temp2 - (temp2 % 25);
 											if (enemyDat[tempW].value > 30000)
 											{
-												tempW2 = 0;
+												enemy_offset = 0;
 											}
-											b = JE_newEnemy(tempW2, tempW, 0);
+											b = JE_newEnemy(enemy_offset, tempW, 0);
 											if (b != 0) {
 												if ((superArcadeMode != SA_NONE) && (enemy[b-1].evalue > 30000))
 												{
@@ -1998,7 +1998,7 @@ draw_player_shot_loop_end:
 	if ((player[0].is_alive && player[0].armor < 6) ||
 	    (twoPlayerMode && !galagaMode && player[1].is_alive && player[1].armor < 6))
 	{
-		tempW2 = (player[0].is_alive && player[0].armor < 6) ? player[0].armor : player[1].armor;
+		int armor_amount = (player[0].is_alive && player[0].armor < 6) ? player[0].armor : player[1].armor;
 
 		if (armorShipDelay > 0)
 		{
@@ -2021,7 +2021,7 @@ draw_player_shot_loop_end:
 		    (twoPlayerMode && player[1].is_alive && player[1].armor < 6 && (!isNetworkGame || thisPlayerNum == 2)))
 		{
 
-			tempW = tempW2 * 4 + 8;
+			tempW = armor_amount * 4 + 8;
 			if (warningSoundDelay > tempW)
 				warningSoundDelay = tempW;
 
@@ -2036,10 +2036,10 @@ draw_player_shot_loop_end:
 			}
 
 			warningCol += warningColChange;
-			if (warningCol > 113 + (14 - (tempW2 * 2)))
+			if (warningCol > 113 + (14 - (armor_amount * 2)))
 			{
 				warningColChange = -warningColChange;
-				warningCol = 113 + (14 - (tempW2 * 2));
+				warningCol = 113 + (14 - (armor_amount * 2));
 			}
 			else if (warningCol < 113)
 			{
@@ -4626,15 +4626,15 @@ void JE_eventSystem( void )
 
 	case 38:
 		curLoc = eventRec[eventLoc-1].eventdat;
-		tempW2 = 1;
+		int new_event_loc = 1;
 		for (tempW = 0; tempW < maxEvent; tempW++)
 		{
 			if (eventRec[tempW].eventtime <= curLoc)
 			{
-				tempW2 = tempW+1 - 1;
+				new_event_loc = tempW+1 - 1;
 			}
 		}
-		eventLoc = tempW2;
+		eventLoc = new_event_loc;
 		break;
 
 	case 39: /* Enemy Global Linknum Change */
