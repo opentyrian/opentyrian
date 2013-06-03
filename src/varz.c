@@ -307,7 +307,7 @@ unsigned int last_superpixel;
 /*Temporary Numbers*/
 JE_integer tempI, tempI2, tempI3, tempI4;
 
-JE_byte temp, temp2, temp3, temp4;
+JE_byte temp, temp2, temp3;
 JE_word tempX, tempY, tempX2, tempY2;
 JE_word tempW, tempW2;
 

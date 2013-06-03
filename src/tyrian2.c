@@ -496,12 +496,12 @@ enemy_still_exists:
 
 								if (weapons[temp3].aim > 0)
 								{
-									temp4 = weapons[temp3].aim;
+									int aim = weapons[temp3].aim;
 
 									/*DIF*/
 									if (difficultyLevel > 2)
 									{
-										temp4 += difficultyLevel - 2;
+										aim += difficultyLevel - 2;
 									}
 
 									tempX2 = player[0].x;
@@ -534,8 +534,8 @@ enemy_still_exists:
 										tempI3 = abs(tempI);
 									else
 										tempI3 = abs(tempI2);
-									enemyShot[b].sxm = roundf(((float)tempI / tempI3) * temp4);
-									enemyShot[b].sym = roundf(((float)tempI2 / tempI3) * temp4);
+									enemyShot[b].sxm = roundf(((float)tempI / tempI3) * aim);
+									enemyShot[b].sym = roundf(((float)tempI2 / tempI3) * aim);
 								}
 							}
 							break;
@@ -1568,16 +1568,16 @@ level_loop:
 								{
 									if (enemyAvail[temp3] != 1)
 									{
-										temp4 = enemy[temp3].linknum;
+										int linknum = enemy[temp3].linknum;
 										if (
 										     (temp3 == b) ||
 										     (
 										       (temp != 255) &&
 										       (
-										         ((enemy[temp3].edlevel > 0) && (temp4 == temp)) ||
+										         ((enemy[temp3].edlevel > 0) && (linknum == temp)) ||
 										         (
-										           (enemyContinualDamage && (temp - 100 == temp4)) ||
-										           ((temp4 > 40) && (temp4 / 20 == temp / 20) && (temp4 <= temp))
+										           (enemyContinualDamage && (temp - 100 == linknum)) ||
+										           ((linknum > 40) && (linknum / 20 == temp / 20) && (linknum <= temp))
 										         )
 										       )
 										     )
@@ -3789,9 +3789,8 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 		enemy->eshotmultipos[i] = 0;
 	}
 
-	temp4 = enemyDat[eDatI].explosiontype;
-	enemy->enemyground = ((temp4 & 0x01) == 0);
-	enemy->explonum = temp4 / 2;
+	enemy->enemyground = (enemyDat[eDatI].explosiontype & 1) == 0;
+	enemy->explonum = enemyDat[eDatI].explosiontype >> 1;
 
 	enemy->launchfreq = enemyDat[eDatI].elaunchfreq;
 	enemy->launchwait = enemyDat[eDatI].elaunchfreq;
@@ -4328,11 +4327,15 @@ void JE_eventSystem( void )
 		break;
 
 	case 19: /* Enemy Global Move */
+	{
+		int initial_i, max_i;
+		bool all_enemies;
+
 		if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)
 		{
-			temp2 = 1;
-			temp3 = 100;
-			temp4 = 0;
+			initial_i = 0;
+			max_i = 100;
+			all_enemies = false;
 			eventRec[eventLoc-1].eventdat4 = newPL[eventRec[eventLoc-1].eventdat3 - 80];
 		}
 		else
@@ -4340,54 +4343,55 @@ void JE_eventSystem( void )
 			switch (eventRec[eventLoc-1].eventdat3)
 			{
 			case 0:
-				temp2 = 1;
-				temp3 = 100;
-				temp4 = 0;
+				initial_i = 0;
+				max_i = 100;
+				all_enemies = false;
 				break;
 			case 2:
-				temp2 = 1;
-				temp3 = 25;
-				temp4 = 1;
+				initial_i = 0;
+				max_i = 25;
+				all_enemies = true;
 				break;
 			case 1:
-				temp2 = 26;
-				temp3 = 50;
-				temp4 = 1;
+				initial_i = 25;
+				max_i = 50;
+				all_enemies = true;
 				break;
 			case 3:
-				temp2 = 51;
-				temp3 = 75;
-				temp4 = 1;
+				initial_i = 50;
+				max_i = 75;
+				all_enemies = true;
 				break;
 			case 99:
-				temp2 = 1;
-				temp3 = 100;
-				temp4 = 1;
+				initial_i = 0;
+				max_i = 100;
+				all_enemies = true;
 				break;
 			}
 		}
 
-		for (temp = temp2-1; temp < temp3; temp++)
+		for (int i = initial_i; i < max_i; i++)
 		{
-			if (temp4 == 1 || enemy[temp].linknum == eventRec[eventLoc-1].eventdat4)
+			if (all_enemies || enemy[i].linknum == eventRec[eventLoc-1].eventdat4)
 			{
 				if (eventRec[eventLoc-1].eventdat != -99)
-					enemy[temp].exc = eventRec[eventLoc-1].eventdat;
+					enemy[i].exc = eventRec[eventLoc-1].eventdat;
 
 				if (eventRec[eventLoc-1].eventdat2 != -99)
-					enemy[temp].eyc = eventRec[eventLoc-1].eventdat2;
+					enemy[i].eyc = eventRec[eventLoc-1].eventdat2;
 
 				if (eventRec[eventLoc-1].eventdat6 != 0)
-					enemy[temp].fixedmovey = eventRec[eventLoc-1].eventdat6;
+					enemy[i].fixedmovey = eventRec[eventLoc-1].eventdat6;
 
 				if (eventRec[eventLoc-1].eventdat6 == -99)
-					enemy[temp].fixedmovey = 0;
+					enemy[i].fixedmovey = 0;
 
 				if (eventRec[eventLoc-1].eventdat5 > 0)
-					enemy[temp].enemycycle = eventRec[eventLoc-1].eventdat5;
+					enemy[i].enemycycle = eventRec[eventLoc-1].eventdat5;
 			}
 		}
 		break;
+	}
 
 	case 20: /* Enemy Global Accel */
 		if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)

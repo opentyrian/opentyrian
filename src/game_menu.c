@@ -533,7 +533,7 @@ void JE_itemScreen( void )
 					temp_cost = 0;
 				}
 
-				temp4 = (temp_cost > player[0].cash) ? 4 : 0;  // can player afford current weapon at all
+				int afford_shade = (temp_cost > player[0].cash) ? 4 : 0;  // can player afford current weapon at all
 
 				temp = itemAvail[itemAvailMap[curSel[1]-2]-1][tempW-1]; /* Item ID */
 				switch (curSel[1]-1)
@@ -586,7 +586,7 @@ void JE_itemScreen( void )
 				{
 					strcpy(tempStr, miscText[13]);
 				}
-				JE_textShade(VGAScreen, 185, tempY, tempStr, temp2 / 16, temp2 % 16 -8-temp4, DARKEN);
+				JE_textShade(VGAScreen, 185, tempY, tempStr, temp2 / 16, temp2 % 16 - 8 - afford_shade, DARKEN);
 
 				/* Draw icon if not DONE. NOTE: None is a normal item with a blank icon. */
 				if (tempW < menuChoices[curMenu]-1)
@@ -603,7 +603,7 @@ void JE_itemScreen( void )
 					char buf[20];
 
 					snprintf(buf, sizeof buf, "Cost: %d", temp_cost);
-					JE_textShade(VGAScreen, 187, tempY+10, buf, temp2 / 16, temp2 % 16 - 8 - temp4, DARKEN);
+					JE_textShade(VGAScreen, 187, tempY+10, buf, temp2 / 16, temp2 % 16 - 8 - afford_shade, DARKEN);
 				}
 			}
 		} /* /weapon upgrade */
