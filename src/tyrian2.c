@@ -504,8 +504,8 @@ enemy_still_exists:
 										aim += difficultyLevel - 2;
 									}
 
-									JE_word tempX2 = player[0].x;
-									JE_word tempY2 = player[0].y;
+									JE_word target_x = player[0].x;
+									JE_word target_y = player[0].y;
 
 									if (twoPlayerMode)
 									{
@@ -519,23 +519,20 @@ enemy_still_exists:
 
 										if (temp == 1)
 										{
-											tempX2 = player[1].x - 25;
-											tempY2 = player[1].y;
+											target_x = player[1].x - 25;
+											target_y = player[1].y;
 										}
 									}
 
-									tempI = (tempX2 + 25) - tempX - tempMapXOfs - 4;
+									tempI = (target_x + 25) - tempX - tempMapXOfs - 4;
 									if (tempI == 0)
-										tempI++;
-									tempI2 = tempY2 - tempY;
+										tempI = 1;
+									tempI2 = target_y - tempY;
 									if (tempI2 == 0)
-										tempI2++;
-									if (abs(tempI) > abs(tempI2))
-										tempI3 = abs(tempI);
-									else
-										tempI3 = abs(tempI2);
-									enemyShot[b].sxm = roundf(((float)tempI / tempI3) * aim);
-									enemyShot[b].sym = roundf(((float)tempI2 / tempI3) * aim);
+										tempI2 = 1;
+									const int longest_side = (abs(tempI) > abs(tempI2)) ? abs(tempI) : abs(tempI2);
+									enemyShot[b].sxm = roundf(((float)tempI / longest_side) * aim);
+									enemyShot[b].sym = roundf(((float)tempI2 / longest_side) * aim);
 								}
 							}
 							break;
@@ -587,18 +584,15 @@ enemy_still_exists:
 							}
 							else
 							{
-								tempI4 = (player[0].x + 25) - tempX - tempMapXOfs - 4;
-								if (tempI4 == 0)
-									tempI4++;
+								int target_x = (player[0].x + 25) - tempX - tempMapXOfs - 4;
+								if (target_x == 0)
+									target_x = 1;
 								int tempI5 = player[0].y - tempY;
 								if (tempI5 == 0)
-									tempI5++;
-								if (abs(tempI4) > abs(tempI5))
-									tempI3 = abs(tempI4);
-								else
-									tempI3 = abs(tempI5);
-								enemy[b-1].exc = roundf(((float)tempI4 / tempI3) * enemy[b-1].launchtype);
-								enemy[b-1].eyc = roundf(((float)tempI5 / tempI3) * enemy[b-1].launchtype);
+									tempI5 = 1;
+								const int longest_side = (abs(target_x) > abs(tempI5)) ? abs(target_x) : abs(tempI5);
+								enemy[b-1].exc = roundf(((float)target_x / longest_side) * enemy[b-1].launchtype);
+								enemy[b-1].eyc = roundf(((float)tempI5 / longest_side) * enemy[b-1].launchtype);
 							}
 						}
 
@@ -1644,7 +1638,7 @@ level_loop:
 									    || ((temp3 > 40) && (temp3 / 20 == temp / 20) && (temp3 <= temp)))))
 									{
 
-										tempI3 = enemy[temp2].ex + enemy[temp2].mapoffset;
+										int enemy_screen_x = enemy[temp2].ex + enemy[temp2].mapoffset;
 
 										if (enemy[temp2].special)
 										{
@@ -1716,12 +1710,12 @@ level_loop:
 
 										if (enemyDat[enemy[temp2].enemytype].esize == 1)
 										{
-											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, tempI3, enemy[temp2].ey);
+											JE_setupExplosionLarge(enemy[temp2].enemyground, enemy[temp2].explonum, enemy_screen_x, enemy[temp2].ey);
 											soundQueue[6] = S_EXPLOSION_9;
 										}
 										else
 										{
-											JE_setupExplosion(tempI3, enemy[temp2].ey, 0, 1, false, false);
+											JE_setupExplosion(enemy_screen_x, enemy[temp2].ey, 0, 1, false, false);
 											soundQueue[6] = S_SELECT; // S_EXPLOSION_8
 										}
 									}
