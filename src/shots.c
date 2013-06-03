@@ -237,14 +237,14 @@ bool player_shot_move_and_draw(
 			{
 				shot->aimDelay = shot->aimDelayMax;
 
-				if (enemyAvail[shot->aimAtEnemy] != 1)
+				if (enemyAvail[shot->aimAtEnemy - 1] != 1)
 				{
-					if (shot->shotX < enemy[shot->aimAtEnemy].ex)
+					if (shot->shotX < enemy[shot->aimAtEnemy - 1].ex)
 						shot->shotXM++;
 					else
 						shot->shotXM--;
 
-					if (shot->shotY < enemy[shot->aimAtEnemy].ey)
+					if (shot->shotY < enemy[shot->aimAtEnemy - 1].ey)
 						shot->shotYM++;
 					else
 						shot->shotYM--;
