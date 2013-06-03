@@ -504,8 +504,8 @@ enemy_still_exists:
 										aim += difficultyLevel - 2;
 									}
 
-									tempX2 = player[0].x;
-									tempY2 = player[0].y;
+									JE_word tempX2 = player[0].x;
+									JE_word tempY2 = player[0].y;
 
 									if (twoPlayerMode)
 									{
@@ -1450,6 +1450,7 @@ level_loop:
 			int tempShotX = 0, tempShotY = 0;
 			JE_byte chain;
 			JE_byte playerNum;
+			JE_word tempX2, tempY2;
 			
 			if (!player_shot_move_and_draw(z, &is_special, &tempShotX, &tempShotY, &tempI2, &temp2, &chain, &playerNum, &tempX2, &tempY2))
 			{
