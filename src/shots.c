@@ -308,45 +308,31 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 
 	// Bounds check
 	if (portNum > PORT_NUM || wpNum <= 0 || wpNum > WEAP_NUM)
-	{
 		return MAX_PWEAPON;
-	}
 
 	const JE_WeaponType* weapon = &weapons[wpNum];
 
 	if (power < weaponPort[portNum].poweruse)
-	{
 		return MAX_PWEAPON;
-	}
 	power -= weaponPort[portNum].poweruse;
 
 	if (weapon->sound > 0)
-	{
 		soundQueue[soundChannel[bay_i]] = weapon->sound;
-	}
 
 	int shot_id;
 	/*Rot*/
 	for (int multi_i = 1; multi_i <= weapon->multi; multi_i++)
 	{
 		for (shot_id = 0; shot_id < MAX_PWEAPON; shot_id++)
-		{
 			if (shotAvail[shot_id] == 0)
-			{
 				break;
-			}
-		}
 		if (shot_id == MAX_PWEAPON)
-		{
 			return MAX_PWEAPON;
-		}
 
 		if (shotMultiPos[bay_i] == weapon->max || shotMultiPos[bay_i] > 8)
-		{
 			shotMultiPos[bay_i] = 1;
-		} else {
+		else
 			shotMultiPos[bay_i]++;
-		}
 
 		PlayerShotDataType* shot = &playerShotData[shot_id];
 		shot->chainReaction = 0;
@@ -365,7 +351,9 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 			shot->shotDirY = 0;
 			shot->shotCirSizeX = 0;
 			shot->shotCirSizeY = 0;
-		} else {
+		}
+		else
+		{
 			JE_byte circsize = weapon->circlesize;
 
 			if (circsize > 19)
@@ -377,7 +365,9 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 				circsize = circsize / 20;
 				shot->shotCirSizeY = circsize;
 				shot->shotDevY = circsize >> 1;
-			} else {
+			}
+			else
+			{
 				shot->shotCirSizeX = circsize;
 				shot->shotCirSizeY = circsize;
 				shot->shotDevX = circsize >> 1;
@@ -393,7 +383,9 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 		{
 			shot->chainReaction = weapon->attack[shotMultiPos[bay_i]-1] - 100;
 			shot->shotDmg = 1;
-		} else {
+		}
+		else
+		{
 			shot->shotDmg = weapon->attack[shotMultiPos[bay_i]-1];
 		}
 
@@ -422,59 +414,47 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 
 		shot->shotGr = weapon->sg[shotMultiPos[bay_i]-1];
 		if (shot->shotGr == 0)
-		{
 			shotAvail[shot_id] = 0;
-		} else {
+		else
 			shotAvail[shot_id] = del;
-		}
+
 		if (del > 100 && del < 120)
-		{
 			shot->shotAniMax = (del - 100 + 1);
-		} else {
+		else
 			shot->shotAniMax = weapon->weapani + 1;
-		}
 
 		if (del == 99 || del == 98)
 		{
 			tmp_by = PX - mouseX;
 			if (tmp_by < -5)
-			{
 				tmp_by = -5;
-			}
-			if (tmp_by > 5)
-			{
+			else if (tmp_by > 5)
 				tmp_by = 5;
-			}
 			shot->shotXM += tmp_by;
 		}
-
 
 		if (del == 99 || del == 100)
 		{
 			tmp_by = PY - mouseY - weapon->sy[shotMultiPos[bay_i]-1];
 			if (tmp_by < -4)
-			{
 				tmp_by = -4;
-			}
-			if (tmp_by > 4)
-			{
+			else if (tmp_by > 4)
 				tmp_by = 4;
-			}
 			shot->shotYM = tmp_by;
-		} else {
-			if (weapon->sy[shotMultiPos[bay_i]-1] == 98)
-			{
-				shot->shotYM = 0;
-				shot->shotYC = -1;
-			} else {
-				if (weapon->sy[shotMultiPos[bay_i]-1] > 100)
-				{
-					shot->shotYM = weapon->sy[shotMultiPos[bay_i]-1];
-					shot->shotY -= player[shot->playerNumber-1].delta_y_shot_move;
-				} else {
-					shot->shotYM = -weapon->sy[shotMultiPos[bay_i]-1];
-				}
-			}
+		}
+		else if (weapon->sy[shotMultiPos[bay_i]-1] == 98)
+		{
+			shot->shotYM = 0;
+			shot->shotYC = -1;
+		}
+		else if (weapon->sy[shotMultiPos[bay_i]-1] > 100)
+		{
+			shot->shotYM = weapon->sy[shotMultiPos[bay_i]-1];
+			shot->shotY -= player[shot->playerNumber-1].delta_y_shot_move;
+		}
+		else
+		{
+			shot->shotYM = -weapon->sy[shotMultiPos[bay_i]-1];
 		}
 
 		if (weapon->sx[shotMultiPos[bay_i]-1] > 100)
@@ -482,9 +462,7 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 			shot->shotXM = weapon->sx[shotMultiPos[bay_i]-1];
 			shot->shotX -= player[shot->playerNumber-1].delta_x_shot_move;
 			if (shot->shotXM == 101)
-			{
 				shot->shotY -= player[shot->playerNumber-1].delta_y_shot_move;
-			}
 		}
 
 
