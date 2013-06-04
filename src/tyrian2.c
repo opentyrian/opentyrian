@@ -530,7 +530,7 @@ enemy_still_exists:
 									tempI2 = target_y - tempY;
 									if (tempI2 == 0)
 										tempI2 = 1;
-									const int longest_side = (abs(tempI) > abs(tempI2)) ? abs(tempI) : abs(tempI2);
+									const int longest_side = MAX(abs(tempI), abs(tempI2));
 									enemyShot[b].sxm = roundf(((float)tempI / longest_side) * aim);
 									enemyShot[b].sym = roundf(((float)tempI2 / longest_side) * aim);
 								}
@@ -590,7 +590,7 @@ enemy_still_exists:
 								int tempI5 = player[0].y - tempY;
 								if (tempI5 == 0)
 									tempI5 = 1;
-								const int longest_side = (abs(target_x) > abs(tempI5)) ? abs(target_x) : abs(tempI5);
+								const int longest_side = MAX(abs(target_x), abs(tempI5));
 								enemy[b-1].exc = roundf(((float)target_x / longest_side) * enemy[b-1].launchtype);
 								enemy[b-1].eyc = roundf(((float)tempI5 / longest_side) * enemy[b-1].launchtype);
 							}
