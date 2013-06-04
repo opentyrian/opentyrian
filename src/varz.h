@@ -167,7 +167,6 @@ struct JE_MegaDataType3
 	JE_byte tempdat3;
 };
 
-typedef JE_MultiEnemyType JE_EnemyType;
 typedef JE_byte JE_EnemyAvailType[100]; /* [1..100] */
 
 typedef struct {
@@ -279,7 +278,7 @@ extern JE_word mapOrigin, mapPNum;
 extern JE_byte mapPlanet[5], mapSection[5];
 extern JE_boolean moveTyrianLogoUp;
 extern JE_boolean skipStarShowVGA;
-extern JE_EnemyType enemy;
+extern JE_MultiEnemyType enemy;
 extern JE_EnemyAvailType enemyAvail;
 extern JE_word enemyOffset;
 extern JE_word enemyOnScreen;
@@ -310,7 +309,7 @@ extern JE_word neat;
 extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
-extern JE_integer tempI, tempI2;
+extern JE_integer tempI;
 extern JE_byte temp, temp2, temp3;
 extern JE_word tempX, tempY;
 extern JE_word tempW;

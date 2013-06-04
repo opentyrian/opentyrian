@@ -3389,17 +3389,17 @@ redo:
 
 			tempI = 1;
 			int trail_y = this_player->y;
-			tempI2 = abs(41 - levelEnd);
-			if (tempI2 > 20)
-				tempI2 = 20;
+			int num_trails = abs(41 - levelEnd);
+			if (num_trails > 20)
+				num_trails = 20;
 
-			for (int z = 1; z <= tempI2; z++)
+			for (int i = 0; i < num_trails; i++)
 			{
 				trail_y += tempI;
 				tempI++;
 			}
 
-			for (int z = 1; z <= tempI2; z++)
+			for (int i = 1; i < num_trails; i++)
 			{
 				trail_y -= tempI;
 				tempI--;
@@ -3554,15 +3554,11 @@ redo:
 		if (this_player->y < 10)
 			this_player->y = 10;
 
-		tempI2 = this_player->x_velocity / 2;
-		tempI2 += (this_player->x - *mouseX_) / 6;
+		// Determines the ship banking sprite to display, depending on horizontal velocity and acceleration
+		int ship_banking = this_player->x_velocity / 2 + (this_player->x - *mouseX_) / 6;
+		ship_banking = MAX(-2, MIN(ship_banking, 2));
 
-		if (tempI2 < -2)
-			tempI2 = -2;
-		else if (tempI2 > 2)
-			tempI2 = 2;
-
-		tempI  = tempI2 * 2 + shipGr_;
+		tempI = ship_banking * 2 + shipGr_;
 
 		explosionFollowAmountX = this_player->x - this_player->last_x_explosion_follow;
 		explosionFollowAmountY = this_player->y - this_player->last_y_explosion_follow;
@@ -3634,33 +3630,35 @@ redo:
 			{
 				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, 220);
 				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, 222);
+
+				int ship_banking;
 				switch (tempI)
 				{
 				case 5:
 					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shapes9ptr_, 40);
 					tempW = this_player->x - 7;
-					tempI2 = -2;
+					ship_banking = -2;
 					break;
 				case 3:
 					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shapes9ptr_, 39);
 					tempW = this_player->x - 7;
-					tempI2 = -1;
+					ship_banking = -1;
 					break;
 				case 1:
-					tempI2 = 0;
+					ship_banking = 0;
 					break;
 				case -1:
 					blit_sprite2(VGAScreen, this_player->x + 19, this_player->y + 7, *shapes9ptr_, 58);
 					tempW = this_player->x + 9;
-					tempI2 = 1;
+					ship_banking = 1;
 					break;
 				case -3:
 					blit_sprite2(VGAScreen, this_player->x + 19, this_player->y + 7, *shapes9ptr_, 59);
 					tempW = this_player->x + 9;
-					tempI2 = 2;
+					ship_banking = 2;
 					break;
 				}
-				if (tempI2 != 0)  // NortSparks
+				if (ship_banking != 0)  // NortSparks
 				{
 					if (shotRepeat[SHOT_NORTSPARKS] > 0)
 					{
@@ -3669,7 +3667,7 @@ redo:
 					else
 					{
 						b = player_shot_create(0, SHOT_NORTSPARKS, tempW + (mt_rand() % 8) - 4, this_player->y + (mt_rand() % 8) - 4, *mouseX_, *mouseY_, 671, 1);
-						shotRepeat[SHOT_NORTSPARKS] = abs(tempI2) - 1;
+						shotRepeat[SHOT_NORTSPARKS] = abs(ship_banking) - 1;
 					}
 				}
 			}

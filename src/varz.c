@@ -253,7 +253,7 @@ JE_boolean moveTyrianLogoUp;
 JE_boolean skipStarShowVGA;
 
 /*EnemyData*/
-JE_EnemyType enemy;
+JE_MultiEnemyType enemy;
 JE_EnemyAvailType enemyAvail;  /* values: 0: used, 1: free, 2: secret pick-up */
 JE_word enemyOffset;
 JE_word enemyOnScreen;
@@ -305,7 +305,7 @@ superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
 unsigned int last_superpixel;
 
 /*Temporary Numbers*/
-JE_integer tempI, tempI2;
+JE_integer tempI;
 
 JE_byte temp, temp2, temp3;
 JE_word tempX, tempY;
