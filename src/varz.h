@@ -42,7 +42,6 @@ enum
 	SA_ARCADE = 255
 };
 
-#define MAX_PWEAPON     81 /* 81*/
 #define ENEMY_SHOT_MAX  60 /* 60*/
 
 #define CURRENT_KEY_SPEED 1  /*Keyboard/Joystick movement rate*/
@@ -168,7 +167,6 @@ struct JE_MegaDataType3
 	JE_byte tempdat3;
 };
 
-typedef JE_MultiEnemyType JE_EnemyType;
 typedef JE_byte JE_EnemyAvailType[100]; /* [1..100] */
 
 typedef struct {
@@ -183,16 +181,6 @@ typedef struct {
 	JE_word animax;
 	JE_byte fill[12];
 } EnemyShotType;
-
-typedef struct {
-	JE_integer shotX, shotY, shotXM, shotYM, shotXC, shotYC;
-	JE_boolean shotComplicated;
-	JE_integer shotDevX, shotDirX, shotDevY, shotDirY, shotCirSizeX, shotCirSizeY;
-	JE_byte shotTrail;
-	JE_word shotGr, shotAni, shotAniMax;
-	Uint8 shotDmg;
-	JE_byte shotBlastFilter, chainReaction, playerNumber, aimAtEnemy, aimDelay, aimDelayMax;
-} PlayerShotDataType;
 
 typedef struct {
 	unsigned int ttl;
@@ -228,9 +216,6 @@ extern const JE_word PGR[21];
 extern const JE_byte PAni[21];
 extern const JE_word linkGunWeapons[38];
 extern const JE_word chargeGunWeapons[38];
-extern const JE_word linkMultiGr[17];
-extern const JE_word linkSonicGr[17];
-extern const JE_word linkMult2Gr[17];
 extern const JE_byte randomEnemyLaunchSounds[3];
 extern const JE_byte keyboardCombos[26][8];
 extern const JE_byte shipCombosB[21];
@@ -293,7 +278,7 @@ extern JE_word mapOrigin, mapPNum;
 extern JE_byte mapPlanet[5], mapSection[5];
 extern JE_boolean moveTyrianLogoUp;
 extern JE_boolean skipStarShowVGA;
-extern JE_EnemyType enemy;
+extern JE_MultiEnemyType enemy;
 extern JE_EnemyAvailType enemyAvail;
 extern JE_word enemyOffset;
 extern JE_word enemyOnScreen;
@@ -314,10 +299,7 @@ extern JE_byte nextSpecialWait;
 extern JE_boolean spraySpecial;
 extern JE_byte doIced;
 extern JE_boolean infiniteShot;
-extern PlayerShotDataType playerShotData[MAX_PWEAPON + 1];
-extern JE_byte chain;
 extern JE_boolean allPlayersGone;
-extern JE_byte shotAvail[MAX_PWEAPON];
 extern const uint shadowYDist;
 extern JE_real optionSatelliteRotate;
 extern JE_integer optionAttachmentMove;
@@ -327,15 +309,12 @@ extern JE_word neat;
 extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
-extern JE_integer tempI, tempI2, tempI3, tempI4;
-extern JE_longint tempL;
-extern JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
-extern JE_word tempX, tempY, tempX2, tempY2;
-extern JE_word tempW, tempW2;
+extern JE_byte temp, temp2, temp3;
+extern JE_word tempX, tempY;
+extern JE_word tempW;
 extern JE_boolean doNotSaveBackup;
 extern JE_word x, y;
 extern JE_integer b;
-extern JE_byte playerNum;
 extern JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to, **BKwrap1, **BKwrap2, **BKwrap3;
 extern JE_shortint specialWeaponFilter, specialWeaponFreq;
 extern JE_word specialWeaponWpn;
@@ -355,9 +334,6 @@ JE_word JE_SGr( JE_word ship, Sprite2_array **ptr );
 void JE_drawOptions( void );
 
 void JE_tyrianHalt( JE_byte code ); /* This ends the game */
-void JE_initPlayerShot( JE_word portnum, uint shot_i, JE_word px, JE_word py,
-                        JE_word mousex, JE_word mousey,
-                        JE_word wpnum, JE_byte playernum );
 void JE_specialComplete( JE_byte playernum, JE_byte specialType );
 void JE_doSpecialShot( JE_byte playernum, uint *armor, uint *shield );
 

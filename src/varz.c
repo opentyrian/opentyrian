@@ -29,6 +29,7 @@
 #include "nortsong.h"
 #include "nortvars.h"
 #include "opentyr.h"
+#include "shots.h"
 #include "sprite.h"
 #include "varz.h"
 #include "vga256d.h"
@@ -98,13 +99,6 @@ const JE_word chargeGunWeapons[38] /* [1..38] */ =
 	0,0,0,0,0,0,0,0,476,458,464,482,0,488,470,0,0,0,0,0,494,500,0,528,0,558,
 	  458,458,458,458,458,458,458,458,458,458,458,458
 };
-const JE_word linkMultiGr[17] /* [0..16] */ =
-	{77,221,183,301,1,282,164,202,58,201,163,281,39,300,182,220,77};
-const JE_word linkSonicGr[17] /* [0..16] */ =
-	{85,242,131,303,47,284,150,223,66,224,149,283,9,302,130,243,85};
-const JE_word linkMult2Gr[17] /* [0..16] */ =
-	{78,299,295,297,2,278,276,280,59,279,275,277,40,296,294,298,78};
-
 const JE_byte randomEnemyLaunchSounds[3] /* [1..3] */ = {13,6,26};
 
 /* YKS: Twiddle cheat sheet:
@@ -259,7 +253,7 @@ JE_boolean moveTyrianLogoUp;
 JE_boolean skipStarShowVGA;
 
 /*EnemyData*/
-JE_EnemyType enemy;
+JE_MultiEnemyType enemy;
 JE_EnemyAvailType enemyAvail;  /* values: 0: used, 1: free, 2: secret pick-up */
 JE_word enemyOffset;
 JE_word enemyOnScreen;
@@ -283,14 +277,9 @@ JE_boolean  spraySpecial;
 JE_byte     doIced;
 JE_boolean  infiniteShot;
 
-PlayerShotDataType playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
-
-JE_byte chain;
-
 /*PlayerData*/
 JE_boolean allPlayersGone; /*Both players dead and finished exploding*/
 
-JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 const uint shadowYDist = 10;
 
 JE_real optionSatelliteRotate;
@@ -316,18 +305,14 @@ superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
 unsigned int last_superpixel;
 
 /*Temporary Numbers*/
-JE_integer tempI, tempI2, tempI3, tempI4;
-JE_longint tempL;
-
-JE_byte temp, temp2, temp3, temp4, temp5, tempPos;
-JE_word tempX, tempY, tempX2, tempY2;
-JE_word tempW, tempW2;
+JE_byte temp, temp2, temp3;
+JE_word tempX, tempY;
+JE_word tempW;
 
 JE_boolean doNotSaveBackup;
 
 JE_word x, y;
 JE_integer b;
-JE_byte playerNum;
 
 JE_byte **BKwrap1to, **BKwrap2to, **BKwrap3to,
         **BKwrap1, **BKwrap2, **BKwrap3;
@@ -516,217 +501,6 @@ void JE_tyrianHalt( JE_byte code )
 	exit(code);
 }
 
-void JE_initPlayerShot( JE_word portNum, uint shot_i, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum )
-{
-	const JE_byte soundChannel[11] /* [1..11] */ = {0, 2, 4, 4, 2, 2, 5, 5, 1, 4, 1};
-
-	if (portNum <= PORT_NUM)
-	{
-		if (wpNum > 0 && wpNum <= WEAP_NUM)
-		{
-			if (power >= weaponPort[portNum].poweruse)
-			{
-				power -= weaponPort[portNum].poweruse;
-
-				if (weapons[wpNum].sound > 0)
-				{
-					soundQueue[soundChannel[shot_i]] = weapons[wpNum].sound;
-				}
-
-				/*Rot*/
-				for (tempW = 1; tempW <= weapons[wpNum].multi; tempW++)
-				{
-
-					for (b = 0; b < MAX_PWEAPON; b++)
-					{
-						if (shotAvail[b] == 0)
-						{
-							break;
-						}
-					}
-					if (b == MAX_PWEAPON)
-					{
-						return;
-					}
-
-					if (shotMultiPos[shot_i] == weapons[wpNum].max || shotMultiPos[shot_i] > 8)
-					{
-						shotMultiPos[shot_i] = 1;
-					} else {
-						shotMultiPos[shot_i]++;
-					}
-
-					playerShotData[b].chainReaction = 0;
-
-					playerShotData[b].playerNumber = playerNum;
-
-					playerShotData[b].shotAni = 0;
-
-					playerShotData[b].shotComplicated = weapons[wpNum].circlesize != 0;
-
-					if (weapons[wpNum].circlesize == 0)
-					{
-						playerShotData[b].shotDevX = 0;
-						playerShotData[b].shotDirX = 0;
-						playerShotData[b].shotDevY = 0;
-						playerShotData[b].shotDirY = 0;
-						playerShotData[b].shotCirSizeX = 0;
-						playerShotData[b].shotCirSizeY = 0;
-					} else {
-						temp2 = weapons[wpNum].circlesize;
-
-						if (temp2 > 19)
-						{
-							temp3 = temp2 % 20;
-							playerShotData[b].shotCirSizeX = temp3;
-							playerShotData[b].shotDevX = temp3 >> 1;
-
-							temp2 = temp2 / 20;
-							playerShotData[b].shotCirSizeY = temp2;
-							playerShotData[b].shotDevY = temp2 >> 1;
-						} else {
-							playerShotData[b].shotCirSizeX = temp2;
-							playerShotData[b].shotCirSizeY = temp2;
-							playerShotData[b].shotDevX = temp2 >> 1;
-							playerShotData[b].shotDevY = temp2 >> 1;
-						}
-						playerShotData[b].shotDirX = 1;
-						playerShotData[b].shotDirY = -1;
-					}
-
-					playerShotData[b].shotTrail = weapons[wpNum].trail;
-
-					if (weapons[wpNum].attack[shotMultiPos[shot_i]-1] > 99 && weapons[wpNum].attack[shotMultiPos[shot_i]-1] < 250)
-					{
-						playerShotData[b].chainReaction = weapons[wpNum].attack[shotMultiPos[shot_i]-1] - 100;
-						playerShotData[b].shotDmg = 1;
-					} else {
-						playerShotData[b].shotDmg = weapons[wpNum].attack[shotMultiPos[shot_i]-1];
-					}
-
-					playerShotData[b].shotBlastFilter = weapons[wpNum].shipblastfilter;
-
-					tempI = weapons[wpNum].by[shotMultiPos[shot_i]-1];
-
-					/*Note: Only front selection used for player shots...*/
-
-					playerShotData[b].shotX = PX + weapons[wpNum].bx[shotMultiPos[shot_i]-1];
-
-					playerShotData[b].shotY = PY + tempI;
-					playerShotData[b].shotYC = -weapons[wpNum].acceleration;
-					playerShotData[b].shotXC = weapons[wpNum].accelerationx;
-
-					playerShotData[b].shotXM = weapons[wpNum].sx[shotMultiPos[shot_i]-1];
-
-					temp2 = weapons[wpNum].del[shotMultiPos[shot_i]-1];
-
-					if (temp2 == 121)
-					{
-						playerShotData[b].shotTrail = 0;
-						temp2 = 255;
-					}
-
-					playerShotData[b].shotGr = weapons[wpNum].sg[shotMultiPos[shot_i]-1];
-					if (playerShotData[b].shotGr == 0)
-					{
-						shotAvail[b] = 0;
-					} else {
-						shotAvail[b] = temp2;
-					}
-					if (temp2 > 100 && temp2 < 120)
-					{
-						playerShotData[b].shotAniMax = (temp2 - 100 + 1);
-					} else {
-						playerShotData[b].shotAniMax = weapons[wpNum].weapani + 1;
-					}
-
-					if (temp2 == 99 || temp2 == 98)
-					{
-						tempI = PX - mouseX;
-						if (tempI < -5)
-						{
-							tempI = -5;
-						}
-						if (tempI > 5)
-						{
-							tempI = 5;
-						}
-						playerShotData[b].shotXM += tempI;
-					}
-
-
-					if (temp2 == 99 || temp2 == 100)
-					{
-						tempI = PY - mouseY - weapons[wpNum].sy[shotMultiPos[shot_i]-1];
-						if (tempI < -4)
-						{
-							tempI = -4;
-						}
-						if (tempI > 4)
-						{
-							tempI = 4;
-						}
-						playerShotData[b].shotYM = tempI;
-					} else {
-						if (weapons[wpNum].sy[shotMultiPos[shot_i]-1] == 98)
-						{
-							playerShotData[b].shotYM = 0;
-							playerShotData[b].shotYC = -1;
-						} else {
-							if (weapons[wpNum].sy[shotMultiPos[shot_i]-1] > 100)
-							{
-								playerShotData[b].shotYM = weapons[wpNum].sy[shotMultiPos[shot_i]-1];
-								playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y_shot_move;
-							} else {
-								playerShotData[b].shotYM = -weapons[wpNum].sy[shotMultiPos[shot_i]-1];
-							}
-						}
-					}
-
-					if (weapons[wpNum].sx[shotMultiPos[shot_i]-1] > 100)
-					{
-						playerShotData[b].shotXM = weapons[wpNum].sx[shotMultiPos[shot_i]-1];
-						playerShotData[b].shotX -= player[playerShotData[b].playerNumber-1].delta_x_shot_move;
-						if (playerShotData[b].shotXM == 101)
-						{
-							playerShotData[b].shotY -= player[playerShotData[b].playerNumber-1].delta_y_shot_move;
-						}
-					}
-
-
-					if (weapons[wpNum].aim > 5)  /*Guided Shot*/
-					{
-						uint best_dist = 65000;
-						temp3 = 0;
-						/*Find Closest Enemy*/
-						for (x = 0; x < 100; x++)
-						{
-							if (enemyAvail[x] != 1 && !enemy[x].scoreitem)
-							{
-								y = abs(enemy[x].ex - playerShotData[b].shotX) + abs(enemy[x].ey - playerShotData[b].shotY);
-								if (y < best_dist)
-								{
-									best_dist = y;
-									temp3 = x + 1;
-								}
-							}
-						}
-						playerShotData[b].aimAtEnemy = temp3;
-						playerShotData[b].aimDelay = 5;
-						playerShotData[b].aimDelayMax = weapons[wpNum].aim - 5;
-					}
-					else
-					{
-						playerShotData[b].aimAtEnemy = 0;
-					}
-
-					shotRepeat[shot_i] = weapons[wpNum].shotrepeat;
-				}
-			}
-		}
-	}
-}
-
 void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 {
 	nextSpecialWait = 0;
@@ -735,9 +509,9 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 		/*Weapon*/
 		case 1:
 			if (playerNum == 1)
-				JE_initPlayerShot(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, special[specialType].wpn, playerNum);
+				b = player_shot_create(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, special[specialType].wpn, playerNum);
 			else
-				JE_initPlayerShot(0, SHOT_SPECIAL2, player[1].x, player[1].y, mouseX, mouseY, special[specialType].wpn, playerNum);
+				b = player_shot_create(0, SHOT_SPECIAL2, player[1].x, player[1].y, mouseX, mouseY, special[specialType].wpn, playerNum);
 
 			shotRepeat[SHOT_SPECIAL] = shotRepeat[SHOT_SPECIAL2];
 			break;
@@ -858,7 +632,7 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 			if (superArcadeMode > 0 && superArcadeMode <= SA)
 			{
 				shotRepeat[SHOT_SPECIAL] = 250;
-				JE_initPlayerShot(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, 707, 1);
+				b = player_shot_create(0, SHOT_SPECIAL2, player[0].x, player[0].y, mouseX, mouseY, 707, 1);
 				player[0].invulnerable_ticks = 100;
 			}
 			break;
@@ -1035,21 +809,21 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 
 		if ((signed)(mt_rand() % 6) < specialWeaponFreq)
 		{
-			b = 0;
+			b = MAX_PWEAPON;
 
 			if (linkToPlayer)
 			{
 				if (shotRepeat[SHOT_SPECIAL] == 0)
 				{
-					JE_initPlayerShot(0, SHOT_SPECIAL, player[0].x, player[0].y, mouseX, mouseY, specialWeaponWpn, playerNum);
+					b = player_shot_create(0, SHOT_SPECIAL, player[0].x, player[0].y, mouseX, mouseY, specialWeaponWpn, playerNum);
 				}
 			}
 			else
 			{
-				JE_initPlayerShot(0, SHOT_SPECIAL, mt_rand() % 280, mt_rand() % 180, mouseX, mouseY, specialWeaponWpn, playerNum);
+				b = player_shot_create(0, SHOT_SPECIAL, mt_rand() % 280, mt_rand() % 180, mouseX, mouseY, specialWeaponWpn, playerNum);
 			}
 
-			if (spraySpecial && b > 0)
+			if (spraySpecial && b != MAX_PWEAPON)
 			{
 				playerShotData[b].shotXM = (mt_rand() % 5) - 2;
 				playerShotData[b].shotYM = (mt_rand() % 5) - 2;

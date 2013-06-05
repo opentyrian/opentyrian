@@ -404,8 +404,6 @@ void JE_saveGame( JE_byte slot, const char *name )
 
 void JE_loadGame( JE_byte slot )
 {
-	JE_byte temp5;
-
 	superTyrian = false;
 	onePlayerAction = false;
 	twoPlayerMode = false;
@@ -463,22 +461,22 @@ void JE_loadGame( JE_byte slot )
 		player[twoPlayerMode ? port : 0].items.weapon[port].power = saveFiles[slot-1].power[port];
 	}
 	
-	temp5 = saveFiles[slot-1].episode;
+	int episode = saveFiles[slot-1].episode;
 
 	memcpy(&levelName, &saveFiles[slot-1].levelName, sizeof(levelName));
 
 	if (strcmp(levelName, "Completed") == 0)
 	{
-		if (temp5 == EPISODE_AVAILABLE)
+		if (episode == EPISODE_AVAILABLE)
 		{
-			temp5 = 1;
-		} else if (temp5 < EPISODE_AVAILABLE) {
-			temp5++;
+			episode = 1;
+		} else if (episode < EPISODE_AVAILABLE) {
+			episode++;
 		}
 		/* Increment episode.  Episode EPISODE_AVAILABLE goes to 1. */
 	}
 
-	JE_initEpisode(temp5);
+	JE_initEpisode(episode);
 	saveLevel = mainLevel;
 	memcpy(&lastLevelName, &levelName, sizeof(levelName));
 }
