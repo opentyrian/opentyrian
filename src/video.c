@@ -74,15 +74,17 @@ void init_video( void )
 		fprintf(stderr, "error: failed to open window: %s\n", SDL_GetError());
 	}
 
-	reinit_fullscreen(fullscreen_display);
-
 	SDL_SetWindowTitle(main_window, "OpenTyrian");
 
 	if (!init_scaler(scaler)) {
 		fprintf(stderr, "error: failed to initialize any supported video mode\n");
 		exit(EXIT_FAILURE);
 	}
+
 	SDL_ShowWindow(main_window);
+	int requested_fullscreen_display = fullscreen_display;
+	fullscreen_display = -1;
+	reinit_fullscreen(requested_fullscreen_display);
 }
 
 static void move_window_to_display( SDL_Window* window, int display )
