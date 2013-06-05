@@ -1121,32 +1121,32 @@ void JE_itemScreen( void )
 			{
 				const JE_byte mouseSelectionY[MENU_MAX] = { 16, 16, 16, 16, 26, 12, 11, 28, 0, 16, 16, 16, 8, 16 };
 
-				tempI = (mouseY - 38) / mouseSelectionY[curMenu]+2;
+				int selection = (mouseY - 38) / mouseSelectionY[curMenu]+2;
 
 				if (curMenu == 9)
 				{
-					if (tempI > 5)
-						tempI--;
-					if (tempI > 3)
-						tempI--;
+					if (selection > 5)
+						selection--;
+					if (selection > 3)
+						selection--;
 				}
 
 				if (curMenu == 0)
 				{
-					if (tempI > 7)
-						tempI = 7;
+					if (selection > 7)
+						selection = 7;
 				}
 
 				// is play next level screen?
 				if (curMenu == 3)
 				{
-					if (tempI == menuChoices[curMenu] + 1)
-						tempI = menuChoices[curMenu];
+					if (selection == menuChoices[curMenu] + 1)
+						selection = menuChoices[curMenu];
 				}
 
-				if (tempI <= menuChoices[curMenu])
+				if (selection <= menuChoices[curMenu])
 				{
-					if ((curMenu == 4) && (tempI == menuChoices[4]))
+					if ((curMenu == 4) && (selection == menuChoices[4]))
 					{
 						player[0].cash = JE_cashLeft();
 						curMenu = 1;
@@ -1155,13 +1155,13 @@ void JE_itemScreen( void )
 					else
 					{
 						JE_playSampleNum(S_CLICK);
-						if (curSel[curMenu] == tempI)
+						if (curSel[curMenu] == selection)
 						{
 							JE_menuFunction(curSel[curMenu]);
 						}
 						else
 						{
-							if ((curMenu == 4) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][tempI-2]) > player[0].cash))
+							if ((curMenu == 4) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][selection-2]) > player[0].cash))
 							{
 								JE_playSampleNum(S_CLINK);
 							}
@@ -1170,7 +1170,7 @@ void JE_itemScreen( void )
 								if (curSel[1] == 4)
 									player[0].weapon_mode = 1;
 
-								curSel[curMenu] = tempI;
+								curSel[curMenu] = selection;
 							}
 
 							// in front or rear weapon upgrade screen?

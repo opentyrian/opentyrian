@@ -305,8 +305,6 @@ superpixel_type superpixels[MAX_SUPERPIXELS]; /* [0..MaxSP] */
 unsigned int last_superpixel;
 
 /*Temporary Numbers*/
-JE_integer tempI;
-
 JE_byte temp, temp2, temp3;
 JE_word tempX, tempY;
 JE_word tempW;

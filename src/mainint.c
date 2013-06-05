@@ -2077,8 +2077,8 @@ void JE_playCredits( void )
 			shipx = 900;
 			shipxwait = 1;
 		}
-      	tempI = shipxc * shipxc;
-		if (450 + tempI < 0 || 450 + tempI > 900)
+      	int tmp_unknown = shipxc * shipxc;
+		if (450 + tmp_unknown < 0 || 450 + tmp_unknown > 900)
 		{
 			if (shipxca < 0 && shipxc < 0)
 				shipxwait = 1;
@@ -3387,7 +3387,7 @@ redo:
 			if (this_player->y < -200)
 				reallyEndLevel = true;
 
-			tempI = 1;
+			int trail_spacing = 1;
 			int trail_y = this_player->y;
 			int num_trails = abs(41 - levelEnd);
 			if (num_trails > 20)
@@ -3395,14 +3395,15 @@ redo:
 
 			for (int i = 0; i < num_trails; i++)
 			{
-				trail_y += tempI;
-				tempI++;
+				trail_y += trail_spacing;
+				trail_spacing++;
 			}
 
 			for (int i = 1; i < num_trails; i++)
 			{
-				trail_y -= tempI;
-				tempI--;
+				trail_y -= trail_spacing;
+				trail_spacing--;
+
 				if (trail_y > 0 && trail_y < 170)
 				{
 					if (shipGr_ == 0)
@@ -3558,7 +3559,7 @@ redo:
 		int ship_banking = this_player->x_velocity / 2 + (this_player->x - *mouseX_) / 6;
 		ship_banking = MAX(-2, MIN(ship_banking, 2));
 
-		tempI = ship_banking * 2 + shipGr_;
+		int ship_sprite = ship_banking * 2 + shipGr_;
 
 		explosionFollowAmountX = this_player->x - this_player->last_x_explosion_follow;
 		explosionFollowAmountY = this_player->y - this_player->last_y_explosion_follow;
@@ -3573,12 +3574,12 @@ redo:
 		{
 			if (background2)
 			{
-				blit_sprite2x2_darken(VGAScreen, this_player->x - 17 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, tempI + 13);
-				blit_sprite2x2_darken(VGAScreen, this_player->x + 7 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, tempI + 51);
+				blit_sprite2x2_darken(VGAScreen, this_player->x - 17 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 13);
+				blit_sprite2x2_darken(VGAScreen, this_player->x + 7 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 51);
 				if (superWild)
 				{
-					blit_sprite2x2_darken(VGAScreen, this_player->x - 16 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, tempI + 13);
-					blit_sprite2x2_darken(VGAScreen, this_player->x + 6 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, tempI + 51);
+					blit_sprite2x2_darken(VGAScreen, this_player->x - 16 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 13);
+					blit_sprite2x2_darken(VGAScreen, this_player->x + 6 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 51);
 				}
 			}
 		}
@@ -3594,10 +3595,10 @@ redo:
 		{
 			if (background2)
 			{
-				blit_sprite2x2_darken(VGAScreen, this_player->x - 5 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, tempI);
+				blit_sprite2x2_darken(VGAScreen, this_player->x - 5 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite);
 				if (superWild)
 				{
-					blit_sprite2x2_darken(VGAScreen, this_player->x - 4 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, tempI);
+					blit_sprite2x2_darken(VGAScreen, this_player->x - 4 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite);
 				}
 			}
 		}
@@ -3608,8 +3609,8 @@ redo:
 
 			if (shipGr_ == 0)
 			{
-				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, tempI + 13);
-				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shapes9ptr_, tempI + 51);
+				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, ship_sprite + 13);
+				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shapes9ptr_, ship_sprite + 51);
 			}
 			else if (shipGr_ == 1)
 			{
@@ -3617,14 +3618,14 @@ redo:
 				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shapes9ptr_, 222);
 			}
 			else
-				blit_sprite2x2_blend(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, tempI);
+				blit_sprite2x2_blend(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, ship_sprite);
 		}
 		else
 		{
 			if (shipGr_ == 0)
 			{
-				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, tempI + 13);
-				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, tempI + 51);
+				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, ship_sprite + 13);
+				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, ship_sprite + 51);
 			}
 			else if (shipGr_ == 1)
 			{
@@ -3632,7 +3633,7 @@ redo:
 				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, 222);
 
 				int ship_banking;
-				switch (tempI)
+				switch (ship_sprite)
 				{
 				case 5:
 					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shapes9ptr_, 40);
@@ -3672,25 +3673,27 @@ redo:
 				}
 			}
 			else
-				blit_sprite2x2(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, tempI);
+			{
+				blit_sprite2x2(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, ship_sprite);
+			}
+		}
+
+		/*Options Location*/
+		if (playerNum_ == 2 && shipGr_ == 0)  // if dragonwing
+		{
+			if (this_player->sidekick[LEFT_SIDEKICK].style == 0)
+			{
+				this_player->sidekick[LEFT_SIDEKICK].x = this_player->x - 14 + ship_banking * 2;
+				this_player->sidekick[LEFT_SIDEKICK].y = this_player->y;
+			}
+
+			if (this_player->sidekick[RIGHT_SIDEKICK].style == 0)
+			{
+				this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x + 17 + ship_banking * 2;
+				this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y;
+			}
 		}
 	}  // !endLevel
-
-	/*Options Location*/
-	if (playerNum_ == 2 && shipGr_ == 0)  // if dragonwing
-	{
-		if (this_player->sidekick[LEFT_SIDEKICK].style == 0)
-		{
-			this_player->sidekick[LEFT_SIDEKICK].x = this_player->x - 14 + tempI;
-			this_player->sidekick[LEFT_SIDEKICK].y = this_player->y;
-		}
-
-		if (this_player->sidekick[RIGHT_SIDEKICK].style == 0)
-		{
-			this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x + 17 + tempI;
-			this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y;
-		}
-	}
 
 	if (moveOk)
 	{
@@ -4453,7 +4456,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 					JE_setupExplosion(enemy_screen_x, enemy[z].ey, 0, enemyDat[enemy[z].enemytype].explosiontype, true, false);
 				}
 				else if (this_player->invulnerable_ticks == 0 && enemyAvail[z] == 0 &&
-				         enemyDat[enemy[z].enemytype].explosiontype % 2 == 0)
+				         (enemyDat[enemy[z].enemytype].explosiontype & 1) == 0) // explosiontype & 1 == 0: not ground enemy
 				{
 					int armorleft = enemy[z].armorleft;
 					if (armorleft > damageRate)
@@ -4468,9 +4471,9 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 						this_player->y_velocity += (enemy[z].eyc * enemy[z].armorleft) / 2;
 					}
 
-					tempI = enemy[z].armorleft;
-					if (tempI == 255)
-						tempI = 30000;
+					int armorleft2 = enemy[z].armorleft;
+					if (armorleft2 == 255)
+						armorleft2 = 30000;
 
 					temp = enemy[z].linknum;
 					if (temp == 0)
@@ -4478,7 +4481,7 @@ void JE_playerCollide( Player *this_player, JE_byte playerNum_ )
 
 					b = z;
 
-					if (tempI > armorleft)
+					if (armorleft2 > armorleft)
 					{
 						// damage enemy
 						if (enemy[z].armorleft != 255)

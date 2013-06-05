@@ -309,7 +309,6 @@ extern JE_word neat;
 extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
-extern JE_integer tempI;
 extern JE_byte temp, temp2, temp3;
 extern JE_word tempX, tempY;
 extern JE_word tempW;

@@ -801,7 +801,6 @@ start_level_first:
 
 	/* Setup player ship graphics */
 	JE_getShipInfo();
-	tempI = (((player[0].x - mouseX) / 2) * 2) * 168; // is this used for anything?
 
 	for (uint i = 0; i < COUNTOF(player); ++i)
 	{
@@ -1508,7 +1507,7 @@ level_loop:
 							}
 						}
 
-						tempI = enemy[b].armorleft;
+						int armorleft = enemy[b].armorleft;
 
 						temp = enemy[b].linknum;
 						if (temp == 0)
@@ -1536,7 +1535,7 @@ level_loop:
 							}
 						}
 
-						if (tempI > damage)
+						if (armorleft > damage)
 						{
 							if (z != MAX_PWEAPON - 1)
 							{
@@ -1553,7 +1552,7 @@ level_loop:
 
 							soundQueue[5] = S_ENEMY_HIT;
 
-							if ((tempI - damage <= enemy[b].edlevel) &&
+							if ((armorleft - damage <= enemy[b].edlevel) &&
 							    ((!enemy[b].edamaged) ^ (enemy[b].edani < 0)))
 							{
 
@@ -1727,14 +1726,14 @@ level_loop:
 						}
 						else if (z != MAX_PWEAPON - 1)
 						{
-							if (damage <= tempI)
+							if (damage <= armorleft)
 							{
 								shotAvail[z] = 0;
 								goto draw_player_shot_loop_end;
 							}
 							else
 							{
-								playerShotData[z].shotDmg -= tempI;
+								playerShotData[z].shotDmg -= armorleft;
 							}
 						}
 					}
