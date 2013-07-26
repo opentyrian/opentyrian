@@ -176,7 +176,11 @@ void service_SDL_events( JE_boolean clear_new )
 				newkey = true;
 				lastkey_scan = ev.key.keysym.scancode;
 				lastkey_mod = ev.key.keysym.mod;
-				lastkey_char = ev.key.keysym.unicode;
+				if (ev.key.keysym.sym & SDLK_SCANCODE_MASK) {
+					lastkey_char = 0;
+				} else {
+					lastkey_char = ev.key.keysym.sym & ~SDLK_SCANCODE_MASK;
+				}
 				keydown = true;
 				return;
 			case SDL_KEYUP:
