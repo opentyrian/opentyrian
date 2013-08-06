@@ -2293,10 +2293,10 @@ draw_player_shot_loop_end:
 				}
 				if (requests & 8) // nortship
 				{
-					player[0].items.ship = 12;
-					player[0].items.special = 13;
-					player[0].items.weapon[FRONT_WEAPON].id = 36;
-					player[0].items.weapon[REAR_WEAPON].id = 37;
+					player[0].items.ship = 12;                     // Nort Ship
+					player[0].items.special = 13;                  // Astral Zone
+					player[0].items.weapon[FRONT_WEAPON].id = 36;  // NortShip Super Pulse
+					player[0].items.weapon[REAR_WEAPON].id = 37;   // NortShip Spreader
 					shipGr = 1;
 				}
 
@@ -3289,7 +3289,7 @@ bool JE_titleScreen( JE_boolean animate )
 		for (uint i = 0; i < COUNTOF(player); ++i)
 			player[i].cash = 0;
 
-		player[0].items.ship = 11;
+		player[0].items.ship = 11;  // Silver Ship
 
 		while (!network_is_sync())
 		{
@@ -3545,14 +3545,14 @@ bool JE_titleScreen( JE_boolean animate )
 							{
 								player[0].cash = 0;
 
-								player[0].items.ship = 8;
+								player[0].items.ship = 8;  // Stalker
 							}
 							else if (twoPlayerMode)
 							{
 								for (uint i = 0; i < COUNTOF(player); ++i)
 									player[i].cash = 0;
 
-								player[0].items.ship = 11;
+								player[0].items.ship = 11;  // Silver Ship
 								difficultyLevel++;
 								inputDevice[0] = 1;
 								inputDevice[1] = 2;
