@@ -3135,7 +3135,7 @@ redo:
 					button[1] |= mouse_pressed[1];
 					button[2] |= mouse_has_three_buttons ? mouse_pressed[2] : mouse_pressed[1];
 
-					if (input_grabbed)
+					if (input_grab_enabled)
 					{
 						mouseXC += mouse_x - 159;
 						mouseYC += mouse_y - 100;
