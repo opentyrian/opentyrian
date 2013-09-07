@@ -1,5 +1,5 @@
 /* 
- * OpenTyrian Classic: A modern cross-platform port of Tyrian
+ * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2010  The OpenTyrian Development Team
  * 
  * hq2x, hq3x, hq4x
