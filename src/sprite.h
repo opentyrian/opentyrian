@@ -23,6 +23,7 @@
 
 #include <SDL2/SDL.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define FONT_SHAPES       0
 #define SMALL_FONT_SHAPES 1

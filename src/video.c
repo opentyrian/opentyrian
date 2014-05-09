@@ -24,6 +24,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 const char* scaling_mode_names[ScalingMode_MAX] = {
 	"Center",
@@ -191,7 +192,7 @@ bool init_scaler( unsigned int new_scaler )
 		return false;
 	}
 	
-	input_grab();
+	input_grab(input_grab_enabled);
 	
 	JE_showVGA();
 	

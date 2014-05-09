@@ -24,6 +24,7 @@
 #include "video_scale.h"
 
 #include <SDL2/SDL.h>
+#include <stdio.h>
 
 
 JE_boolean ESCPressed;
@@ -40,11 +41,10 @@ Uint16 mouse_x, mouse_y;
 Uint8 keysactive[SDL_NUM_SCANCODES];
 
 #ifdef NDEBUG
-bool input_grab_enabled = true,
+bool input_grab_enabled = true;
 #else
-bool input_grab_enabled = false,
+bool input_grab_enabled = false;
 #endif
-     input_grabbed = false;
 
 
 void flush_events_buffer( void )
@@ -94,15 +94,15 @@ void init_keyboard( void )
 	keydown = mousedown = false;
 }
 
-void input_grab( void )
+void input_grab( bool enable )
 {
 #if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-	input_grabbed = true;
-#else
-	input_grabbed = input_grab_enabled || fullscreen_display != -1;
+	enable = true;
 #endif
 	
-	SDL_ShowCursor(input_grabbed ? SDL_DISABLE : SDL_ENABLE);
+	input_grab_enabled = enable || fullscreen_display != -1;
+	
+	SDL_ShowCursor(input_grab_enabled ? SDL_DISABLE : SDL_ENABLE);
 #ifdef NDEBUG
 	SDL_SetWindowGrab(main_window, input_grabbed ? SDL_TRUE : SDL_FALSE);
 #endif
@@ -118,7 +118,7 @@ JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 
 void set_mouse_position( int x, int y )
 {
-	if (input_grabbed)
+	if (input_grab_enabled)
 	{
 		SDL_WarpMouseInWindow(main_window,
 				x * scalers[scaler].width / vga_width,
@@ -139,6 +139,11 @@ void service_SDL_events( JE_boolean clear_new )
 	{
 		switch (ev.type)
 		{
+			case SDL_WINDOWEVENT:
+				if (ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST)
+					input_grab(false);
+				break;
+			
 			case SDL_MOUSEMOTION:
 				mouse_x = ev.motion.x * vga_width / scalers[scaler].width;
 				mouse_y = ev.motion.y * vga_height / scalers[scaler].height;
@@ -157,8 +162,7 @@ void service_SDL_events( JE_boolean clear_new )
 					/* <ctrl><f10> toggle input grab */
 					if (ev.key.keysym.scancode == SDL_SCANCODE_F10)
 					{
-						input_grab_enabled = !input_grab_enabled;
-						input_grab();
+						input_grab(!input_grab_enabled);
 						break;
 					}
 				}
@@ -167,7 +171,7 @@ void service_SDL_events( JE_boolean clear_new )
 				if (ev.key.keysym.mod & KMOD_ALT && ev.key.keysym.scancode == SDL_SCANCODE_RETURN)
 				{
 					toggle_fullscreen();
-					input_grab();
+					input_grab(false);
 					break;
 				}
 
@@ -188,12 +192,12 @@ void service_SDL_events( JE_boolean clear_new )
 				keydown = false;
 				return;
 			case SDL_MOUSEBUTTONDOWN:
-				if (!input_grabbed)
+				if (!input_grab_enabled)
 				{
-					input_grab_enabled = !input_grab_enabled;
-					input_grab();
+					input_grab(true);
 					break;
 				}
+				// intentional fall-though
 			case SDL_MOUSEBUTTONUP:
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
 				{

@@ -31,6 +31,8 @@
 #include "vga_palette.h"
 #include "video.h"
 
+#include <stdio.h>
+
 void jukebox( void )
 {
 	bool trigger_quit = false,  // true when user wants to quit

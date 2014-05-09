@@ -51,6 +51,7 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
 
 bool button[4];
 
@@ -763,14 +764,14 @@ void JE_nextEpisode( void )
 		// randomly give player the SuperCarrot
 		if ((mt_rand() % 6) == 0)
 		{
-			player[0].items.ship = 2;
-			player[0].items.weapon[FRONT_WEAPON].id = 23;
-			player[0].items.weapon[REAR_WEAPON].id = 24;
+			player[0].items.ship = 2;                      // SuperCarrot
+			player[0].items.weapon[FRONT_WEAPON].id = 23;  // Banana Blast
+			player[0].items.weapon[REAR_WEAPON].id = 24;   // Banana Blast Rear
 
 			for (uint i = 0; i < COUNTOF(player[0].items.weapon); ++i)
 				player[0].items.weapon[i].power = 1;
 
-			player[1].items.weapon[REAR_WEAPON].id = 24;
+			player[1].items.weapon[REAR_WEAPON].id = 24;   // Banana Blast Rear
 
 			player[0].last_items = player[0].items;
 		}
@@ -2678,10 +2679,13 @@ void JE_mainKeyboardInput( void )
 		if (isNetworkGame)
 		{
 			nortShipRequest = true;
-		} else {
-			player[0].items.ship = 12;
-			player[0].items.special = 13;
-			player[0].items.weapon[REAR_WEAPON].id = 36;
+		}
+		else
+		{
+			player[0].items.ship = 12;                     // Nort Ship
+			player[0].items.special = 13;                  // Astral Zone
+			player[0].items.weapon[FRONT_WEAPON].id = 36;  // NortShip Super Pulse
+			player[0].items.weapon[REAR_WEAPON].id = 37;   // NortShip Spreader
 			shipGr = 1;
 		}
 	}
@@ -3132,7 +3136,7 @@ redo:
 					button[1] |= mouse_pressed[1];
 					button[2] |= mouse_has_three_buttons ? mouse_pressed[2] : mouse_pressed[1];
 
-					if (input_grabbed)
+					if (input_grab_enabled)
 					{
 						mouseXC += mouse_x - 159;
 						mouseYC += mouse_y - 100;

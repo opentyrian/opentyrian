@@ -1,22 +1,18 @@
 # BUILD SETTINGS ###########################################
 
-ifndef PLATFORM
-    ifneq ($(filter Msys Cygwin,$(shell uname -o)),)
-        PLATFORM := WIN32
-    else
-        PLATFORM := UNIX
-    endif
+ifneq ($(filter Msys Cygwin, $(shell uname -o)), )
+    PLATFORM := WIN32
+else
+    PLATFORM := UNIX
 endif
 
 TARGET := opentyrian
-WITH_NETWORK := 0
+WITH_NETWORK := false
 
 ############################################################
 
 STRIP := strip
 SDL_CONFIG := sdl2-config
-
-include crosscompile.mk
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
@@ -29,7 +25,7 @@ else
     EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
 endif
 EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-missing-field-initializers
-ifeq ($(WITH_NETWORK),1)
+ifeq ($(WITH_NETWORK), true)
     EXTRA_CFLAGS += -DWITH_NETWORK
 endif
 
@@ -42,7 +38,7 @@ EXTRA_LDLIBS += -lm
 
 SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
 SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs)
-ifeq ($(WITH_NETWORK),1)
+ifeq ($(WITH_NETWORK), true)
     SDL_LDLIBS += -lSDL_net
 endif
 

@@ -257,7 +257,7 @@ void stop_song( void )
 
 void fade_song( void )
 {
-	printf("TODO: %s\n", __FUNCTION__);
+	/* STUB: we have no implementation of this to port */
 }
 
 void set_volume( unsigned int music, unsigned int sample )

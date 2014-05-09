@@ -32,6 +32,8 @@
 #include "vga256d.h"
 #include "video.h"
 
+#include <string.h>
+
 const struct about_text_type about_text[] =
 {
 	{0x30, "----- ~OpenTyrian~ -----"},

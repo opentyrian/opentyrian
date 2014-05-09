@@ -2293,10 +2293,10 @@ draw_player_shot_loop_end:
 				}
 				if (requests & 8) // nortship
 				{
-					player[0].items.ship = 12;
-					player[0].items.special = 13;
-					player[0].items.weapon[FRONT_WEAPON].id = 36;
-					player[0].items.weapon[REAR_WEAPON].id = 37;
+					player[0].items.ship = 12;                     // Nort Ship
+					player[0].items.special = 13;                  // Astral Zone
+					player[0].items.weapon[FRONT_WEAPON].id = 36;  // NortShip Super Pulse
+					player[0].items.weapon[REAR_WEAPON].id = 37;   // NortShip Spreader
 					shipGr = 1;
 				}
 
@@ -3289,7 +3289,7 @@ bool JE_titleScreen( JE_boolean animate )
 		for (uint i = 0; i < COUNTOF(player); ++i)
 			player[i].cash = 0;
 
-		player[0].items.ship = 11;
+		player[0].items.ship = 11;  // Silver Ship
 
 		while (!network_is_sync())
 		{
@@ -3535,9 +3535,11 @@ bool JE_titleScreen( JE_boolean animate )
 					{
 					case 0: /* New game */
 						fade_black(10);
-						if (select_gameplay() && select_episode() && select_difficulty())
+						
+						if (select_gameplay())
 						{
-							gameLoaded = true;
+							if (select_episode() && select_difficulty())
+								gameLoaded = true;
 
 							initialDifficulty = difficultyLevel;
 
@@ -3545,15 +3547,17 @@ bool JE_titleScreen( JE_boolean animate )
 							{
 								player[0].cash = 0;
 
-								player[0].items.ship = 8;
+								player[0].items.ship = 8;  // Stalker
 							}
 							else if (twoPlayerMode)
 							{
 								for (uint i = 0; i < COUNTOF(player); ++i)
 									player[i].cash = 0;
-
-								player[0].items.ship = 11;
+								
+								player[0].items.ship = 11;  // Silver Ship
+								
 								difficultyLevel++;
+								
 								inputDevice[0] = 1;
 								inputDevice[1] = 2;
 							}
@@ -3563,6 +3567,8 @@ bool JE_titleScreen( JE_boolean animate )
 							}
 							else
 							{
+								// allows player to smuggle arcade/super-arcade ships into full game
+								
 								ulong initial_cash[] = { 10000, 15000, 20000, 30000, 35000 };
 
 								assert(episodeNum >= 1 && episodeNum <= EPISODE_AVAILABLE);

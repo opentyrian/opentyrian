@@ -56,7 +56,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 			lastkey_scan = SDL_SCANCODE_RETURN;
 		}
 		
-		if (has_mouse && input_grabbed)
+		if (has_mouse && input_grab_enabled)
 		{
 			if (abs(mouse_y - 100) > 10)
 			{

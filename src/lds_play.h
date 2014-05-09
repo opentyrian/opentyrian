@@ -21,6 +21,8 @@
 
 #include "opentyr.h"
 
+#include <stdio.h>
+
 extern bool playing, songlooped;
 
 int lds_update( void );
