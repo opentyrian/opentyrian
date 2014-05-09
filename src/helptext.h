@@ -21,6 +21,8 @@
 
 #include "opentyr.h"
 
+#include <stdio.h>
+
 #define MENU_MAX 14
 
 #define DESTRUCT_MODES 5

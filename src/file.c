@@ -21,6 +21,8 @@
 
 #include "SDL.h"
 #include <errno.h>
+#include <stdio.h>
+#include <string.h>
 
 const char *custom_data_dir = ".";
 

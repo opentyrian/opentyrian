@@ -24,6 +24,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 bool fullscreen_enabled = false;
 

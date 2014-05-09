@@ -39,6 +39,8 @@
 #include <assert.h>
 
 #include "SDL_endian.h"
+#include <stdio.h>
+#include <string.h>
 
 /* Construct buffer with the passed array and size */
 void SZ_Init(sizebuf_t * sz, Uint8 * buf, unsigned int size)

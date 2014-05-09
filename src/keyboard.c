@@ -24,6 +24,7 @@
 #include "video_scale.h"
 
 #include "SDL.h"
+#include <stdio.h>
 
 
 JE_boolean ESCPressed;

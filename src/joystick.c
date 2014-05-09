@@ -28,6 +28,8 @@
 #include "video.h"
 
 #include <assert.h>
+#include <ctype.h>
+#include <string.h>
 
 int joystick_axis_threshold( int j, int value );
 int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2] );

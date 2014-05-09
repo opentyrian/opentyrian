@@ -22,6 +22,7 @@
 #include "video.h"
 
 #include <assert.h>
+#include <ctype.h>
 
 Sprite_array sprite_table[SPRITE_TABLES_MAX];
 
