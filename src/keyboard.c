@@ -120,11 +120,10 @@ void set_mouse_position( int x, int y )
 {
 	if (input_grab_enabled)
 	{
-		SDL_WarpMouseInWindow(main_window,
-				x * scalers[scaler].width / vga_width,
-				y * scalers[scaler].height / vga_height);
 		mouse_x = x;
 		mouse_y = y;
+		map_screen_to_window_pos(&x, &y);
+		SDL_WarpMouseInWindow(main_window, x, y);
 	}
 }
 
@@ -145,8 +144,20 @@ void service_SDL_events( JE_boolean clear_new )
 				break;
 			
 			case SDL_MOUSEMOTION:
-				mouse_x = ev.motion.x * vga_width / scalers[scaler].width;
-				mouse_y = ev.motion.y * vga_height / scalers[scaler].height;
+				map_window_to_screen_pos(&ev.motion.x, &ev.motion.y);
+				if (ev.motion.x < 0) {
+					ev.motion.x = 0;
+				} else if (ev.motion.x >= vga_width) {
+					ev.motion.x = vga_width - 1;
+				}
+
+				if (ev.motion.y < 0) {
+					ev.motion.y = 0;
+				} else if (ev.motion.y >= vga_width) {
+					ev.motion.y = vga_width - 1;
+				}
+				mouse_x = ev.motion.x;
+				mouse_y = ev.motion.y;
 				break;
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)

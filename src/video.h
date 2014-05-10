@@ -59,5 +59,8 @@ void JE_clr256( SDL_Surface * );
 void JE_showVGA( void );
 void scale_and_flip( SDL_Surface * );
 
+void map_screen_to_window_pos(int* inout_x, int* inout_y);
+void map_window_to_screen_pos(int* inout_x, int* inout_y);
+
 #endif /* VIDEO_H */
 

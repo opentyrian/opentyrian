@@ -35,6 +35,7 @@ const char* scaling_mode_names[ScalingMode_MAX] = {
 
 int fullscreen_display;
 ScalingMode scaling_mode = SCALE_INTEGER;
+static SDL_Rect last_output_rect = { 0, 0, vga_width, vga_height };
 
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *VGAScreen2;
@@ -297,5 +298,21 @@ void scale_and_flip( SDL_Surface *src_surface )
 	SDL_RenderCopy(main_window_renderer, main_window_texture, NULL, &dst_rect);
 	
 	SDL_RenderPresent(main_window_renderer);
+
+	// Save output rect to be used by mouse functions
+	last_output_rect = dst_rect;
 }
 
+/** Converts the given point from the game screen coordinates to the window
+ * coordinates, after scaling. */
+void map_screen_to_window_pos(int* inout_x, int* inout_y) {
+	*inout_x = (*inout_x * last_output_rect.w / VGAScreen->w) + last_output_rect.x;
+	*inout_y = (*inout_y * last_output_rect.h / VGAScreen->h) + last_output_rect.y;
+}
+
+/** Converts the given point from window coordinates (after scaling) to game
+ * screen coordinates. */
+void map_window_to_screen_pos(int* inout_x, int* inout_y) {
+	*inout_x = (*inout_x - last_output_rect.x) * VGAScreen->w / last_output_rect.w;
+	*inout_y = (*inout_y - last_output_rect.y) * VGAScreen->h / last_output_rect.h;
+}
