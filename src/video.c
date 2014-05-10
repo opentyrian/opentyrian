@@ -254,8 +254,9 @@ void scale_and_flip( SDL_Surface *src_surface )
 			SDL_QueryTexture(main_window_texture, NULL, NULL, &dst_rect.w, &dst_rect.h);
 			break;
 		case SCALE_INTEGER:
-			SDL_QueryTexture(main_window_texture, NULL, NULL, &dst_rect.w, &dst_rect.h);
-			while (dst_rect.w + src_surface->w < win_w && dst_rect.h + src_surface->h < win_h) {
+			dst_rect.w = src_surface->w;
+			dst_rect.h = src_surface->h;
+			while (dst_rect.w + src_surface->w <= win_w && dst_rect.h + src_surface->h <= win_h) {
 				dst_rect.w += src_surface->w;
 				dst_rect.h += src_surface->h;
 			}
