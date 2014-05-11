@@ -4325,8 +4325,8 @@ void JE_eventSystem( void )
 
 	case 19: /* Enemy Global Move */
 	{
-		int initial_i, max_i;
-		bool all_enemies;
+		int initial_i = 0, max_i = 0;
+		bool all_enemies = false;
 
 		if (eventRec[eventLoc-1].eventdat3 > 79 && eventRec[eventLoc-1].eventdat3 < 90)
 		{
