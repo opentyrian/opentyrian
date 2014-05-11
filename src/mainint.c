@@ -3636,7 +3636,7 @@ redo:
 				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, 220);
 				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, 222);
 
-				int ship_banking;
+				int ship_banking = 0;
 				switch (ship_sprite)
 				{
 				case 5:
