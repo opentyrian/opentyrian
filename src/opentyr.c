@@ -117,6 +117,7 @@ void opentyrian_menu( void )
 
 	int temp_fullscreen = fullscreen_display;
 	uint temp_scaler = scaler;
+	int temp_hwscaler = scaling_mode;
 
 	bool fade_in = true, quit = false;
 	do
@@ -147,7 +148,7 @@ void opentyrian_menu( void )
 			}
 			else if (i == MENU_HWSCALER)
 			{
-				snprintf(buffer, sizeof(buffer), menu_items[i], scaling_mode_names[scaling_mode]);
+				snprintf(buffer, sizeof(buffer), menu_items[i], scaling_mode_names[temp_hwscaler]);
 				text = buffer;
 			}
 
@@ -216,9 +217,9 @@ void opentyrian_menu( void )
 				}
 				else if (sel == MENU_HWSCALER)
 				{
-					if (scaling_mode == 0)
-						scaling_mode = ScalingMode_MAX;
-					scaling_mode--;
+					if (temp_hwscaler == 0)
+						temp_hwscaler = ScalingMode_MAX;
+					temp_hwscaler--;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -242,9 +243,9 @@ void opentyrian_menu( void )
 				}
 				else if (sel == MENU_HWSCALER)
 				{
-					scaling_mode++;
-					if (scaling_mode == ScalingMode_MAX)
-						scaling_mode = 0;
+					temp_hwscaler++;
+					if (temp_hwscaler == ScalingMode_MAX)
+						temp_hwscaler = 0;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -283,6 +284,8 @@ void opentyrian_menu( void )
 					break;
 					
 				case MENU_HWSCALER:
+					JE_playSampleNum(S_SELECT);
+					scaling_mode = temp_hwscaler;
 					break;
 
 				case MENU_JUKEBOX:
