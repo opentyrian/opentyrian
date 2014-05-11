@@ -104,7 +104,7 @@ void input_grab( bool enable )
 	
 	SDL_ShowCursor(input_grab_enabled ? SDL_DISABLE : SDL_ENABLE);
 #ifdef NDEBUG
-	SDL_SetWindowGrab(main_window, input_grabbed ? SDL_TRUE : SDL_FALSE);
+	SDL_SetWindowGrab(main_window, input_grab_enabled ? SDL_TRUE : SDL_FALSE);
 #endif
 }
 
