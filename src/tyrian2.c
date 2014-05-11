@@ -5075,7 +5075,7 @@ void JE_whoa( void )
 	levelWarningLines = 4;
 }
 
-void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
+static void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
 {
 	fill_rectangle_xy(VGAScreen, x1, y1,     x2, y1,     col + 1);
 	fill_rectangle_xy(VGAScreen, x1, y1 + 1, x2, y2 - 1, col    );
