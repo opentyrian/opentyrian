@@ -132,7 +132,7 @@ void opentyrian_menu( void )
 			{
 				if (temp_fullscreen == -1)
 				{
-					text = "Fullscreen: Window";
+					text = "Windowed";
 				}
 				else
 				{
@@ -153,6 +153,11 @@ void opentyrian_menu( void )
 
 			int y = i != MENU_RETURN ? i * 16 + 32 : 118;
 			draw_font_hv(VGAScreen, VGAScreen->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
+		}
+
+		if (sel == MENU_FULLSCREEN || sel == MENU_SCALER || sel == MENU_HWSCALER) {
+			draw_font_hv_shadow(VGAScreen, VGAScreen->w / 2, 190, "Change option with Left/Right keys then press Enter.",
+					small_font, centered, 15, 2, true, 1);
 		}
 
 		JE_showVGA();
