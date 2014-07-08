@@ -138,7 +138,7 @@ void JE_paramCheck( int argc, char *argv[] )
 				}
 				
 				network_opponent_host = malloc(temp + 1);
-				strnztcpy(network_opponent_host, option.arg, temp);
+				SDL_strlcpy(network_opponent_host, option.arg, temp + 1);
 			}
 			else
 			{

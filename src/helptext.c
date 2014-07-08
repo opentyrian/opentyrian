@@ -152,7 +152,8 @@ void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsign
 
 		} while (!((unsigned)(pos - startpos) > boxwidth || endstring));
 
-		JE_textShade(screen, x, y, strnztcpy(substring, message + startpos - 1, endpos - startpos), helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+		SDL_strlcpy(substring, message + startpos - 1, MIN((size_t)(endpos - startpos + 1), sizeof(substring)));
+		JE_textShade(screen, x, y, substring, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
 
 		y += verticalHeight;
 

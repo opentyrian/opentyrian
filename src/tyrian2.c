@@ -2474,31 +2474,31 @@ new_game:
 						break;
 
 					case 'G':
-						mapOrigin = atoi(strnztcpy(buffer, s + 4, 2));
-						mapPNum   = atoi(strnztcpy(buffer, s + 7, 1));
+						mapOrigin = atoi(s + 4);
+						mapPNum   = atoi(s + 7);
 						for (i = 0; i < mapPNum; i++)
 						{
-							mapPlanet[i] = atoi(strnztcpy(buffer, s + 1 + (i + 1) * 8, 2));
-							mapSection[i] = atoi(strnztcpy(buffer, s + 4 + (i + 1) * 8, 3));
+							mapPlanet[i] = atoi(s + 1 + (i + 1) * 8);
+							mapSection[i] = atoi(s + 4 + (i + 1) * 8);
 						}
 						break;
 
 					case '?':
-						temp = atoi(strnztcpy(buffer, s + 4, 2));
+						temp = atoi(s + 4);
 						for (i = 0; i < temp; i++)
 						{
-							cubeList[i] = atoi(strnztcpy(buffer, s + 3 + (i + 1) * 4, 3));
+							cubeList[i] = atoi(s + 3 + (i + 1) * 4);
 						}
 						if (cubeMax > temp)
 							cubeMax = temp;
 						break;
 
 					case '!':
-						cubeMax = atoi(strnztcpy(buffer, s + 4, 2));    /*Auto set CubeMax*/
+						cubeMax = atoi(s + 4);    /*Auto set CubeMax*/
 						break;
 
 					case '+':
-						temp = atoi(strnztcpy(buffer, s + 4, 2));
+						temp = atoi(s + 4);
 						cubeMax += temp;
 						if (cubeMax > 4)
 							cubeMax = 4;
@@ -2540,13 +2540,13 @@ new_game:
 						break;
 
 					case 'J':  // section jump
-						temp = atoi(strnztcpy(buffer, s + 3, 3));
+						temp = atoi(s + 3);
 						mainLevel = temp;
 						jumpSection = true;
 						break;
 
 					case '2':  // two-player section jump
-						temp = atoi(strnztcpy(buffer, s + 3, 3));
+						temp = atoi(s + 3);
 						if (twoPlayerMode || onePlayerAction)
 						{
 							mainLevel = temp;
@@ -2555,7 +2555,7 @@ new_game:
 						break;
 
 					case 'w':  // Stalker 21.126 section jump
-						temp = atoi(strnztcpy(buffer, s + 3, 3));   /*Allowed to go to Time War?*/
+						temp = atoi(s + 3);   /*Allowed to go to Time War?*/
 						if (player[0].items.ship == 13)
 						{
 							mainLevel = temp;
@@ -2564,7 +2564,7 @@ new_game:
 						break;
 
 					case 't':
-						temp = atoi(strnztcpy(buffer, s + 3, 3));
+						temp = atoi(s + 3);
 						if (levelTimer && levelTimerCountdown == 0)
 						{
 							mainLevel = temp;
@@ -2573,7 +2573,7 @@ new_game:
 						break;
 
 					case 'l':
-						temp = atoi(strnztcpy(buffer, s + 3, 3));
+						temp = atoi(s + 3);
 						if (!all_players_alive())
 						{
 							mainLevel = temp;
@@ -2596,7 +2596,7 @@ new_game:
 						break;
 
 					case 'i':
-						temp = atoi(strnztcpy(buffer, s + 3, 3));
+						temp = atoi(s + 3);
 						songBuy = temp - 1;
 						break;
 
@@ -2620,14 +2620,14 @@ new_game:
 						break;
 
 					case 'L':
-						nextLevel = atoi(strnztcpy(buffer, s + 9, 3));
-						strnztcpy(levelName, s + 13, 9);
-						levelSong = atoi(strnztcpy(buffer, s + 22, 2));
+						nextLevel = atoi(s + 9);
+						SDL_strlcpy(levelName, s + 13, 10);
+						levelSong = atoi(s + 22);
 						if (nextLevel == 0)
 						{
 							nextLevel = mainLevel + 1;
 						}
-						lvlFileNum = atoi(strnztcpy(buffer, s + 25, 2));
+						lvlFileNum = atoi(s + 25);
 						loadLevelOk = true;
 						bonusLevelCurrent = (strlen(s) > 28) & (s[28] == '$');
 						normalBonusLevelCurrent = (strlen(s) > 27) & (s[27] == '$');
@@ -2743,7 +2743,7 @@ new_game:
 					case 'P':
 						if (!constantPlay)
 						{
-							tempX = atoi(strnztcpy(buffer, s + 3, 3));
+							tempX = atoi(s + 3);
 							if (tempX > 900)
 							{
 								memcpy(colors, palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
@@ -2769,7 +2769,7 @@ new_game:
 						{
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
-							tempX = atoi(strnztcpy(buffer, s + 3, 3));
+							tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
@@ -2821,7 +2821,7 @@ new_game:
 							/* TODO: NETWORK */
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
-							tempX = atoi(strnztcpy(buffer, s + 3, 3));
+							tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
@@ -2872,7 +2872,7 @@ new_game:
 							/* TODO: NETWORK */
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
-							tempX = atoi(strnztcpy(buffer, s + 3, 3));
+							tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
@@ -2951,7 +2951,7 @@ new_game:
 								warningSoundDelay = 0;
 								levelWarningDisplay = (s[2] == 'y');
 								levelWarningLines = 0;
-								frameCountMax = atoi(strnztcpy(buffer, s + 4, 2));
+								frameCountMax = atoi(s + 4);
 								setjasondelay2(6);
 								warningRed = frameCountMax / 10;
 								frameCountMax = frameCountMax % 10;
@@ -2977,7 +2977,7 @@ new_game:
 					case 'H':
 						if (initialDifficulty < 3)
 						{
-							mainLevel = atoi(strnztcpy(buffer, s + 4, 3));
+							mainLevel = atoi(s + 4);
 							jumpSection = true;
 						}
 						break;
@@ -3001,7 +3001,7 @@ new_game:
 						break;
 
 					case 'M':
-						temp = atoi(strnztcpy(buffer, s + 3, 3));
+						temp = atoi(s + 3);
 						play_song(temp - 1);
 						break;
 						

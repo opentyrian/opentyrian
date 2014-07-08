@@ -57,13 +57,6 @@
 const char *opentyrian_str = "OpenTyrian",
            *opentyrian_version = HG_REV;
 
-/* zero-terminated strncpy */
-char *strnztcpy( char *to, const char *from, size_t count )
-{
-	to[count] = '\0';
-	return strncpy(to, from, count);
-}
-
 void opentyrian_menu( void )
 {
 	typedef enum
