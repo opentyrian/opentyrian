@@ -51,9 +51,18 @@ void JE_loadPals( void )
 	{
 		for (int i = 0; i < 256; ++i)
 		{
-			palettes[p][i].r = getc(f) << 2;
-			palettes[p][i].g = getc(f) << 2;
-			palettes[p][i].b = getc(f) << 2;
+			// The VGA hardware palette used only 6 bits per component, so the values need to be rescaled to
+			// 8 bits. The naive way to do this is to simply do (c << 2), padding it with 0's, however this
+			// makes the maximum value 252 instead of the proper 255. A trick to fix this is to use the upper 2
+			// bits of the original value instead. This ensures that the value goes to 255 as the original goes
+			// to 63.
+
+			int c = getc(f);
+			palettes[p][i].r = (c << 2) | (c >> 4);
+			c = getc(f);
+			palettes[p][i].g = (c << 2) | (c >> 4);
+			c = getc(f);
+			palettes[p][i].b = (c << 2) | (c >> 4);
 		}
 	}
 	
