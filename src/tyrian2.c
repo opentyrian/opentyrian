@@ -3565,7 +3565,7 @@ bool JE_titleScreen( JE_boolean animate )
 							{
 								player[0].cash = 1000000;
 							}
-							else
+							else if (gameLoaded)
 							{
 								// allows player to smuggle arcade/super-arcade ships into full game
 								
