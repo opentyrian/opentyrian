@@ -19,8 +19,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "cJSON.h"
 #include "opentyr.h"
+#include "config_file.h"
 
 #include <stdio.h>
 #include "SDL.h"
@@ -130,6 +130,8 @@ extern JE_SaveFilesType saveFiles;
 extern JE_SaveGameTemp saveTemp;
 extern JE_word editorLevel;
 
+extern config_t opentyrian_config;
+
 void JE_initProcessorType( void );
 void JE_setNewGameSpeed( void );
 const char *get_user_directory( void );
@@ -141,9 +143,6 @@ void JE_loadGame( JE_byte slot );
 
 void JE_encryptSaveTemp( void );
 void JE_decryptSaveTemp( void );
-
-cJSON *load_json( const char *filename );
-void save_json( cJSON *root, const char *filename );
 
 #endif /* CONFIG_H */
 

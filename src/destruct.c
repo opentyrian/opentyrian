@@ -49,6 +49,7 @@
 #include "destruct.h"
 
 #include "config.h"
+#include "config_file.h"
 #include "fonthand.h"
 #include "helptext.h"
 #include "keyboard.h"
@@ -323,9 +324,9 @@ static JE_byte basetypes[10][11] /*[1..8, 1..11]*/ = /* [0] is amount of units*/
 	{8, UNIT_HELI, UNIT_HELI, UNIT_HELI, UNIT_HELI,      UNIT_HELI,   UNIT_HELI,      UNIT_HELI,   UNIT_HELI,   UNIT_HELI,   UNIT_HELI},   /*Strong Heli attack fleet*/
 	{4, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_NUKE,   UNIT_NUKE,      UNIT_DIRT,   UNIT_MAGNET, UNIT_JUMPER, UNIT_JUMPER}, /*Weak   Heli defense fleet*/
 	{8, UNIT_TANK, UNIT_NUKE, UNIT_DIRT, UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_TANK,   UNIT_NUKE},   /*Overpowering fleet*/
-	{4, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_TANK,   UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_NUKE,   UNIT_JUMPER},  /*Weak fleet*/
-	{1, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_TANK,   UNIT_TANK,      UNIT_TANK,   UNIT_TANK,   UNIT_TANK,   UNIT_TANK},   /*Custom1, to be edited*/
-	{1, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_TANK,   UNIT_TANK,      UNIT_TANK,   UNIT_TANK,   UNIT_TANK,   UNIT_TANK}   /*Custom2, to be edited*/
+	{4, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_TANK,   UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_NUKE,   UNIT_JUMPER}, /*Weak fleet*/
+	{5, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_DIRT,   UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER, UNIT_HELI},   /*Left custom*/
+	{5, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_DIRT,   UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER, UNIT_HELI},   /*Right custom*/
 };
 static const unsigned int baseLookup[MAX_PLAYERS][MAX_MODES] =
 {
@@ -380,307 +381,165 @@ static struct destruct_shot_s   * shotRec;
 static struct destruct_explo_s  * exploRec;
 
 
-/*** Startup ***/
-static enum de_unit_t string_to_unit_enum(const char * str) {
+static const char *player_names[] =
+{
+	"left", "right",
+};
 
-	// A config helper function.  Probably not useful anywhere else.
-	enum de_unit_t i;
-	static const char * unit_names[] =
-	{ "UNIT_TANK", "UNIT_NUKE", "UNIT_DIRT", "UNIT_SATELLITE",
-      "UNIT_MAGNET", "UNIT_LASER", "UNIT_JUMPER", "UNIT_HELI" };
+static const char *key_names[] =
+{
+	"left", "right", "up", "down",
+	"change", "fire", "previous weapon", "next weapon",
+};
 
-	for (i = UNIT_FIRST; i < MAX_UNITS; i++) {
-		if(strcmp(unit_names[i], str) == 0) { return(i); }
-	}
+static const char *unit_names[] =
+{
+	"tank", "nuke", "dirt", "satellite",
+	"magnet", "laser", "jumper", "heli",
+};
 
-    return(UNIT_NONE);
+static enum de_unit_t get_unit_by_name( const char *unit_name )
+{
+	for (enum de_unit_t unit = UNIT_FIRST; unit < MAX_UNITS; ++unit)
+		if (strcmp(unit_name, unit_names[unit]) == 0)
+			return unit;
+	
+	return UNIT_NONE;
 }
-static bool write_default_destruct_config( void ) {
 
-	cJSON * root;
-	cJSON * level1, * level2, * level3, * setting;
-
-
-	//If I read the file right, all of these will return NULL on failure.
-	//Well that'll be a little bit tedious to check for each time, but using
-	//gotos can help clear everything up since only one thing is freed.
-	if((root = cJSON_CreateObject()) == NULL) { goto label_failure; }
-
-
-	if((level1 = cJSON_CreateOrGetObjectItem(root, "general")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level1, cJSON_Object);
-
-	//general
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "alwaysalias")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, false);
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "tracerlaser")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, false);
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_shots")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, 40);
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "min_walls")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, 20);
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_walls")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, 20);
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "max_explosions")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, 40);
-
-	//players general
-	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player1")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level2, cJSON_Object);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "ai")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, true);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "jumper_fires_straight")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, true);
-
-	if((level3 = cJSON_CreateOrGetObjectItem(level2, "keys")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level3, cJSON_Object);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "__comment")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "You may configure the keys here.  Nums correspond to SDL defines.  It's better than nothing.");
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "left1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_c);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "right1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_v);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "up1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_a);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "down1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_z);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "change1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LALT);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_x);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LSHIFT);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LCTRL);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_SPACE);
-
-	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player2")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level2, cJSON_Object);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "ai")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, false);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "jumper_fires_straight")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, false);
-
-	if((level3 = cJSON_CreateOrGetObjectItem(level2, "keys")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level3, cJSON_Object);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "left1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_LEFT);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "left2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP4);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "right1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_RIGHT);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "right2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP6);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "up1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_UP);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "up2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP8);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "down1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_DOWN);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "down2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP2);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "change1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_BACKSLASH);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "change2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP5);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_INSERT);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_RETURN);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire3")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP0);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "fire4")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP_ENTER);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_PAGEUP);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "cyup2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP9);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn1")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_PAGEDOWN);
-	if((setting = cJSON_CreateOrGetObjectItem(level3, "cydn2")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, SDLK_KP3);
-
-	//custom mode
-	if((level1 = cJSON_CreateOrGetObjectItem(root, "custom")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level1, cJSON_Object);
-
-	if((setting = cJSON_CreateOrGetObjectItem(level1, "enable")) == NULL) { goto label_failure; }
-	cJSON_SetBoolean(setting, false);
-
-	//player 1 (I could but won't bother looping this)
-	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player1")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level2, cJSON_Object);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "num_units")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, 10);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "__comment")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "This handles probability.  Always have 10 entries.");
-
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit1")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_TANK");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit2")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_TANK");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit3")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_NUKE");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit4")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_DIRT");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit5")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_DIRT");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit6")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_SATELLITE");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit7")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_MAGNET");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit8")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_LASER");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit9")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_JUMPER");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit10")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_HELI");
-
-	if((level2 = cJSON_CreateOrGetObjectItem(level1, "player2")) == NULL) { goto label_failure; }
-	cJSON_ForceType(level2, cJSON_Object);
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "num_units")) == NULL) { goto label_failure; }
-	cJSON_SetNumber(setting, 10);
-
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit1")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_TANK");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit2")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_TANK");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit3")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_NUKE");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit4")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_DIRT");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit5")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_DIRT");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit6")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_SATELLITE");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit7")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_MAGNET");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit8")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_LASER");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit9")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_JUMPER");
-	if((setting = cJSON_CreateOrGetObjectItem(level2, "unit10")) == NULL) { goto label_failure; }
-	cJSON_SetString(setting, "UNIT_HELI");
-
-	save_json(root, "destruct.conf");
-	return(true);
-
-label_failure:
-	cJSON_Delete(root);
-	return(false);
+static SDLKey get_SDLKey_by_name( const char *key_name )
+{
+	for (SDLKey key = SDLK_FIRST; key < SDLK_LAST; ++key)
+		if (strcmp(key_name, SDL_GetKeyName(key)) == 0)
+			return key;
+	
+	return SDLK_UNKNOWN;
 }
-static void load_destruct_config( void ) {
 
-	unsigned int j, k;
-	enum de_player_t i;
-	enum de_unit_t temp;
-	char buffer[40];
-	const char * key_names[] = { "left", "right", "up", "down", "change", "fire", "cyup", "cydn" };
-	cJSON * root;
-	cJSON * level1, * level2, * level3, * setting;
-
-	// The config file is not modified in game in order to 'keep' with the
-	// original (unconfigurable) feel.  This code was copied from elsewhere.
-	root = load_json("destruct.conf");
-	if (root == NULL) {
-		write_default_destruct_config();
-		return;
-	}
-
-	//load these general config items.  I don't consider sanity checks
-	//necessary; either the game isn't playable or you eat up all your memory
-	//when using unreasonable values.  Either way, no exploit here.
-	level1 = cJSON_GetObjectItem(root, "general");
-	if (level1 != NULL)
+static void load_destruct_config( config_t *config_ )
+{
+	config_section_t *section;
+	
+	section = config_find_or_add_section(config_, "destruct", NULL);
+	if (section == NULL)
+		exit(EXIT_FAILURE);  // out of memory
+	
+	config.alwaysalias = config_get_or_set_bool_option(section, "antialias craters", false, NO_YES);
+	
+	weaponSystems[UNIT_LASER][SHOT_LASERTRACER] = config_get_or_set_bool_option(section, "tracer laser", false, OFF_ON);
+	
+	config.max_shots = config_get_or_set_int_option(section, "max shots", 40);
+	config.max_explosions = config_get_or_set_int_option(section, "max explosions", 40);
+	config.min_walls = config_get_or_set_int_option(section, "min walls", 20);
+	config.max_walls = config_get_or_set_int_option(section, "max walls", 20);
+	
+	config.ai[0] = config_get_or_set_bool_option(section, "left ai", true, NO_YES);
+	config.jumper_straight[0] = config_get_or_set_bool_option(section, "left jumper fires straight", true, NO_YES);
+	config.ai[1] = config_get_or_set_bool_option(section, "right ai", false, NO_YES);
+	config.jumper_straight[1] = config_get_or_set_bool_option(section, "right jumper fires straight", false, NO_YES);
+	
+	// keyboard controls
+	
+	for (int p = 0; p < MAX_PLAYERS; ++p)
 	{
-		if ((setting = cJSON_GetObjectItem(level1, "alwaysalias"))) {
-			config.alwaysalias = (setting->type == cJSON_True);
-		}
-		if ((setting = cJSON_GetObjectItem(level1, "tracerlaser"))) {
-			weaponSystems[UNIT_LASER][SHOT_LASERTRACER] = (setting->type == cJSON_True);
-		}
-		if ((setting = cJSON_GetObjectItem(level1, "max_shots")) && setting->type == cJSON_Number) {
-			config.max_shots = setting->valueint;
-		}
-		if ((setting = cJSON_GetObjectItem(level1, "min_walls")) && setting->type == cJSON_Number) {
-			config.min_walls = setting->valueint;
-		}
-		if ((setting = cJSON_GetObjectItem(level1, "max_walls")) && setting->type == cJSON_Number) {
-			config.max_walls = setting->valueint;
-			if(config.min_walls > config.max_walls) { config.min_walls = config.max_walls; }
-		}
-		if ((setting = cJSON_GetObjectItem(level1, "max_explosions")) && setting->type == cJSON_Number) {
-			config.max_explosions = setting->valueint;
-		}
-
-		//player configuration
-		for(i = PLAYER_LEFT; i < MAX_PLAYERS; i++) {
-			sprintf(buffer, "player%i", i+1);
-			level2 = cJSON_GetObjectItem(level1, buffer);
-			if (level2 != NULL)
+		section = config_find_section(config_, "destruct keyboard", player_names[p]);
+		if (section == NULL)
+			if ((section = config_add_section(config_, "destruct keyboard", player_names[p])) == NULL)
+				exit(-1);
+		
+		config_option_t *option;
+		
+		for (int k = 0; k < MAX_KEY; ++k)
+		{
+			if ((option = config_get_or_set_option(section, key_names[k], NULL)) == NULL)
+				exit(-1);
+			
+			foreach_option_i_value(i, value, option)
 			{
-				if ((setting = cJSON_GetObjectItem(level2, "jumper_fires_straight"))) {
-					config.jumper_straight[i] = (setting->type == cJSON_True);
-				}
-				if ((setting = cJSON_GetObjectItem(level2, "ai"))) {
-					config.ai[i] = (setting->type == cJSON_True);
-				}
-				//key configuration
-				level3 = cJSON_GetObjectItem(level2, "keys");
-				if (level3 != NULL)
+				SDLKey key = get_SDLKey_by_name(value);
+				if (key != SDLK_LAST && i < COUNTOF(defaultKeyConfig[p][k]))
 				{
-					for (j = 0; j < COUNTOF(key_names); j++) {
-						for (k = 0; k < MAX_KEY_OPTIONS; k++) {
-							sprintf(buffer, "%s%i", key_names[j], k+1);
-							if ((setting = cJSON_GetObjectItem(level3, buffer)) && setting->type == cJSON_Number) {
-								defaultKeyConfig[i][j][k] = setting->valueint;
-							}
-							else { //assume that if we are reading keys the defaults are null and void
-								defaultKeyConfig[i][j][k] = SDLK_UNKNOWN;
-							}
-						}
-					}
+					defaultKeyConfig[p][k][i] = key;
+				}
+				else  // invalid or excess
+				{
+					foreach_remove_option_value();
+					continue;
 				}
 			}
-		}
-	}
-
-	//Now let's hit the custom mode...
-	level1 = cJSON_GetObjectItem(root, "custom");
-
-	if (level1 != NULL)
-	{
-		//general custom
-		if ((setting = cJSON_GetObjectItem(level1, "enable"))) {
-			config.allow_custom = (setting->type == cJSON_True);
-		}
-
-		//player configuration
-		for(i = PLAYER_LEFT; i < MAX_PLAYERS; i++) {
-			sprintf(buffer, "player%i", i+1);
-			level2 = cJSON_GetObjectItem(level1, buffer);
-			if (level2 != NULL)
+			
+			if (config_get_value_count(option) > 0)
 			{
-				if ((setting = cJSON_GetObjectItem(level2, "num_units"))) {
-					basetypes[8 + i][0] = setting->valueint;
-				}
-				for(j = 1; j < 11; j++) {
-					sprintf(buffer, "unit%i", j);
-					if ((setting = cJSON_GetObjectItem(level2, buffer)) && setting->type == cJSON_String) {
-						temp = string_to_unit_enum(setting->valuestring);
-						if(temp != UNIT_NONE) {
-							basetypes[8 + i][j] = temp;
-						}
-					}
-				}
+				// unset remaining defaults
+				for (unsigned int i = config_get_value_count(option); i < COUNTOF(defaultKeyConfig[p][k]); ++i)
+					defaultKeyConfig[p][k][i] = SDLK_UNKNOWN;
+			}
+			else
+			{
+				// set defaults
+				for (unsigned int i = 0; i < COUNTOF(defaultKeyConfig[p][k]); ++i)
+					if (defaultKeyConfig[p][k][i] != SDLK_UNKNOWN)
+						config_add_value(option, SDL_GetKeyName(defaultKeyConfig[p][k][i]));
 			}
 		}
 	}
-
-	//wrap up
-	cJSON_Delete(root);
+	
+	// custom destruct mode
+	
+	section = config_find_section(config_, "destruct custom", NULL);
+	if (section == NULL)
+		if ((section = config_add_section(config_, "destruct custom", NULL)) == NULL)
+			exit(-1);
+	
+	config.allow_custom = config_get_or_set_bool_option(section, "enable", false, NO_YES);
+	
+	char buffer[15 + 1];
+	
+	for (int p = 0; p < MAX_PLAYERS; ++p)
+	{
+		snprintf(buffer, sizeof(buffer), "%s num units", player_names[p]);
+		basetypes[8 + p][0] = config_get_or_set_int_option(section, buffer, basetypes[8 + p][0]);
+		
+		config_option_t *option;
+		
+		snprintf(buffer, sizeof(buffer), "%s unit", player_names[p]);
+		if ((option = config_get_or_set_option(section, buffer, NULL)) == NULL)
+			exit(-1);
+		
+		foreach_option_i_value(i, value, option)
+		{
+			enum de_unit_t unit = get_unit_by_name(value);
+			if (unit != UNIT_NONE && 1 + i < COUNTOF(basetypes[8 + p]))
+			{
+				basetypes[8 + p][1 + i] = unit;
+			}
+			else  // invalid or excess
+			{
+				foreach_remove_option_value();
+				continue;
+			}
+		}
+		
+		if (config_get_value_count(option) > 0)
+		{
+			// set remaining units to tank
+			for (unsigned int i = config_get_value_count(option); 1 + i < COUNTOF(basetypes[8 + p]); ++i)
+			{
+				basetypes[8 + p][1 + i] = UNIT_TANK;
+				config_add_value(option, unit_names[UNIT_TANK]);
+			}
+		}
+		else
+		{
+			// set defaults
+			for (unsigned int i = 0; 1 + i < COUNTOF(basetypes[8 + p]); ++i)
+				config_add_value(option, unit_names[basetypes[8 + p][1 + i]]);
+		}
+	}
 }
+
+/*** Startup ***/
+
 void JE_destructGame( void )
 {
 	unsigned int i;
@@ -690,7 +549,7 @@ void JE_destructGame( void )
 	JE_clr256(VGAScreen);
 	JE_showVGA();
 
-	load_destruct_config();
+	load_destruct_config(&opentyrian_config);
 
 	//malloc things that have customizable sizes
 	shotRec  = malloc(sizeof(struct destruct_shot_s)  * config.max_shots);

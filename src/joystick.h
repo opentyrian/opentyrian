@@ -20,6 +20,7 @@
 #define JOYSTICK_H
 
 #include "opentyr.h"
+#include "config_file.h"
 
 #include "SDL.h"
 
@@ -85,8 +86,8 @@ void init_joysticks( void );
 void deinit_joysticks( void );
 
 void reset_joystick_assignments( int j );
-bool load_joystick_assignments( int j );
-bool save_joystick_assignments( int j );
+bool load_joystick_assignments( config_t* config, int j );
+bool save_joystick_assignments( config_t* config, int j );
 
 void joystick_assignments_to_string( char *buffer, size_t buffer_len, const Joystick_assignment *assignments );
 

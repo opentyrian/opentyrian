@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "cJSON.h"
 #include "config.h"
+#include "config_file.h"
 #include "file.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -289,7 +289,7 @@ void init_joysticks( void )
 			       SDL_JoystickNumButtons(joystick[j].handle),
 			       SDL_JoystickNumHats(joystick[j].handle));
 			
-			if (!load_joystick_assignments(j))
+			if (!load_joystick_assignments(&opentyrian_config, j))
 				reset_joystick_assignments(j);
 		}
 	}
@@ -308,7 +308,7 @@ void deinit_joysticks( void )
 	{
 		if (joystick[j].handle != NULL)
 		{
-			save_joystick_assignments(j);
+			save_joystick_assignments(&opentyrian_config, j);
 			SDL_JoystickClose(joystick[j].handle);
 		}
 	}
@@ -361,93 +361,86 @@ void reset_joystick_assignments( int j )
 	joystick[j].threshold = 5;
 }
 
-bool load_joystick_assignments( int j )
+static const char* const assignment_names[] =
 {
-	cJSON *root = load_json("joystick.conf");
-	if (root == NULL)
+	"up",
+	"right",
+	"down",
+	"left",
+	"fire",
+	"change fire",
+	"left sidekick",
+	"right sidekick",
+	"menu",
+	"pause",
+};
+
+bool load_joystick_assignments( config_t *config, int j )
+{
+	config_section_t *section = config_find_section(config, "joystick", SDL_JoystickName(j));
+	if (section == NULL)
 		return false;
 	
-	cJSON *config = cJSON_GetObjectItem(root, SDL_JoystickName(j));
-	if (config == NULL)
+	if (!config_get_bool_option(section, "analog", &joystick[j].analog))
+		joystick[j].analog = false;
+	
+	joystick[j].sensitivity = config_get_or_set_int_option(section, "sensitivity", 5);
+
+	joystick[j].threshold = config_get_or_set_int_option(section, "threshold", 5);
+	
+	for (size_t a = 0; a < COUNTOF(assignment_names); ++a)
 	{
-		cJSON_Delete(root);
-		return false;
-	}
-	
-	cJSON *setting;
-	
-	if ((setting = cJSON_GetObjectItem(config, "analog")))
-		joystick[j].analog = (setting->type == cJSON_True);
-	
-	if ((setting = cJSON_GetObjectItem(config, "sensitivity")))
-		joystick[j].sensitivity = setting->valueint;
-	
-	if ((setting = cJSON_GetObjectItem(config, "threshold")))
-		joystick[j].threshold = setting->valueint;
-	
-	if ((setting = cJSON_GetObjectItem(config, "assignments")))
-	{
-		for (uint i = 0; i < COUNTOF(joystick->assignment); ++i)
+		for (unsigned int i = 0; i < COUNTOF(joystick[j].assignment[a]); ++i)
+			joystick[j].assignment[a][i].type = NONE;
+		
+		config_option_t *option = config_get_option(section, assignment_names[a]);
+		if (option == NULL)
+			continue;
+		
+		foreach_option_i_value(i, value, option)
 		{
-			cJSON *assignments = cJSON_GetArrayItem(setting, i);
-			if (assignments == NULL)
+			if (i >= COUNTOF(joystick[j].assignment[a]))
 				break;
 			
-			for (uint k = 0; k < COUNTOF(*joystick->assignment); ++k)
-			{
-				cJSON *assignment = cJSON_GetArrayItem(assignments, k);
-				if (assignment)
-					code_to_assignment(&joystick[j].assignment[i][k], assignment->valuestring);
-			}
+			code_to_assignment(&joystick[j].assignment[a][i], value);
 		}
 	}
-	
-	cJSON_Delete(root);
 	
 	return true;
 }
 
-bool save_joystick_assignments( int j )
+bool save_joystick_assignments( config_t *config, int j )
 {
-	cJSON *root = load_json("joystick.conf");
-	if (root == NULL)
-		root = cJSON_CreateObject();
+	config_section_t *section = config_find_or_add_section(config, "joystick", SDL_JoystickName(j));
+	if (section == NULL)
+		exit(EXIT_FAILURE);  // out of memory
 	
-	cJSON *config = cJSON_CreateOrGetObjectItem(root, SDL_JoystickName(j));
-	cJSON_ForceType(config, cJSON_Object);
+	config_set_bool_option(section, "analog", joystick[j].analog, NO_YES);
 	
-	cJSON *setting;
+	config_set_int_option(section, "sensitivity", joystick[j].sensitivity);
 	
-	setting = cJSON_CreateOrGetObjectItem(config, "analog");
-	cJSON_SetBoolean(setting, joystick[j].analog);
+	config_set_int_option(section, "threshold", joystick[j].threshold);
 	
-	setting = cJSON_CreateOrGetObjectItem(config, "sensitivity");
-	cJSON_SetNumber(setting, joystick[j].sensitivity);
-	
-	setting = cJSON_CreateOrGetObjectItem(config, "threshold");
-	cJSON_SetNumber(setting, joystick[j].threshold);
-	
-	setting = cJSON_CreateOrGetObjectItem(config, "assignments");
-	cJSON_ForceType(setting, cJSON_Array);
-	cJSON_ClearArray(setting);
-	
-	for (uint i = 0; i < COUNTOF(joystick->assignment); ++i)
+	for (size_t a = 0; a < COUNTOF(assignment_names); ++a)
 	{
-		cJSON *assignments;
-		cJSON_AddItemToArray(setting, assignments = cJSON_CreateArray());
+		config_option_t *option = config_set_option(section, assignment_names[a], NULL);
+		if (option == NULL)
+			exit(EXIT_FAILURE);  // out of memory
 		
-		for (uint k = 0; k < COUNTOF(*joystick->assignment); ++k)
+		option = config_set_value(option, NULL);
+		if (option == NULL)
+			exit(EXIT_FAILURE);  // out of memory
+
+		for (size_t i = 0; i < COUNTOF(joystick[j].assignment[a]); ++i)
 		{
-			if (joystick[j].assignment[i][k].type == NONE)
+			if (joystick[j].assignment[a][i].type == NONE)
 				continue;
 			
-			cJSON_AddItemToArray(assignments, cJSON_CreateString(assignment_to_code(&joystick[j].assignment[i][k])));
+			option = config_add_value(option, assignment_to_code(&joystick[j].assignment[a][i]));
+			if (option == NULL)
+				exit(EXIT_FAILURE);  // out of memory
 		}
 	}
-	
-	save_json(root, "joystick.conf");
-	
-	cJSON_Delete(root);
 	
 	return true;
 }
