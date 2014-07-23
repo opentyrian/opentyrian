@@ -708,12 +708,27 @@ const char *get_user_directory( void )
 	
 	if (strlen(user_dir) == 0)
 	{
-#ifdef TARGET_UNIX
-		if (getenv("HOME"))
-			snprintf(user_dir, sizeof(user_dir), "%s/.opentyrian", getenv("HOME"));
+#ifndef TARGET_WIN32
+		char *xdg_config_home = getenv("XDG_CONFIG_HOME");
+		if (xdg_config_home != NULL)
+		{
+			snprintf(user_dir, sizeof(user_dir), "%s/opentyrian", xdg_config_home);
+		}
+		else
+		{
+			char *home = getenv("HOME");
+			if (home != NULL)
+			{
+				snprintf(user_dir, sizeof(user_dir), "%s/.config/opentyrian", home);
+			}
+			else
+			{
+				strcpy(user_dir, ".");
+			}
+		}
 #else
 		strcpy(user_dir, ".");
-#endif // TARGET_UNIX
+#endif
 	}
 	
 	return user_dir;
@@ -894,15 +909,6 @@ void JE_loadConfiguration( void )
 
 void JE_saveConfiguration( void )
 {
-#ifdef TARGET_UNIX
-	if (getenv("HOME"))
-	{
-		char dir[1000];
-		snprintf(dir, sizeof(dir), "%s/.opentyrian", getenv("HOME"));
-		mkdir(dir, 0755);
-	}
-#endif /* HOME */
-	
 	FILE *f;
 	JE_byte *p;
 	int z;
