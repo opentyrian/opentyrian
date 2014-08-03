@@ -16,9 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef MINGW_FIXES_H
-#define MINGW_FIXES_H
+#ifndef STD_SUPPORT_H
+#define STD_SUPPORT_H
 
+/*!
+ * \file std_support.h
+ * \brief Standard library support functions
+ */
+
+/*!
+ * \brief Locate a character in a a string.
+ * 
+ * \param[in] s the string
+ * \param[in] c the character
+ * \return the pointer to the first occurrence of \p c in \p s if there is an occurrences;
+ *         otherwise the pointer to the terminating null character of \p s
+ */
 char *strchrnul( const char *s, int c );
 
-#endif // MINGW_FIXES_H
+#endif // STD_SUPPORT_H

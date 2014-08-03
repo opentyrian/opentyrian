@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "arg_parse.h"
-#include "mingw_fixes.h"
+#include "std_support.h"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
