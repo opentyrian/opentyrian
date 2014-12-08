@@ -594,9 +594,9 @@ static inline unsigned int config_get_value_count( const config_option_t *option
  * \param[in] option the option
  */
 #define foreach_option_value( string_value, option ) \
-	for (config_option_t *_option = option; _option != NULL; _option = NULL) \
-	for (string_t *_values_begin = (option)->values_count == 0 ? &(option)->v.value : &(option)->v.values[0], \
-	              *_values_end = (option)->values_count == 0 ? _values_begin + 1 : &(option)->v.values[(option)->values_count], \
+	for (config_option_t *_option = (option); _option != NULL; _option = NULL) \
+	for (string_t *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
+	              *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
 	              *_value = _values_begin; _value < _values_end; ++_value) \
 	for (const char *(string_value) = to_const_cstr(_value); (string_value) != NULL; (string_value) = NULL)
 
@@ -609,9 +609,9 @@ static inline unsigned int config_get_value_count( const config_option_t *option
  */
 #define foreach_option_i_value( i, string_value, option ) \
 	for (unsigned int (i) = 0; (i) == 0; (i) = ~0) \
-	for (config_option_t *_option = option; _option != NULL; _option = NULL) \
-	for (string_t *_values_begin = (option)->values_count == 0 ? &(option)->v.value : &(option)->v.values[0], \
-	              *_values_end = (option)->values_count == 0 ? _values_begin + 1 : &(option)->v.values[(option)->values_count], \
+	for (config_option_t *_option = (option); _option != NULL; _option = NULL) \
+	for (string_t *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
+	              *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
 	              *_value = _values_begin; _value < _values_end; ++_value, (i) = _value - _values_begin) \
 	for (const char *(string_value) = to_const_cstr(_value); (string_value) != NULL; (string_value) = NULL)
 
@@ -624,8 +624,8 @@ static inline unsigned int config_get_value_count( const config_option_t *option
 		unsigned int _value_i = _value - _values_begin; \
 		if (config_remove_value(_option, _value_i) == NULL) \
 			config_oom(); \
-		_values_begin = (option)->values_count == 0 ? &(option)->v.value : &(option)->v.values[0]; \
-		_values_end = (option)->values_count == 0 ? _values_begin + 1 : &(option)->v.values[(option)->values_count]; \
+		_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0]; \
+		_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count]; \
 		_value = _values_begin + _value_i - 1; \
 	}
 
