@@ -57,13 +57,6 @@
 const char *opentyrian_str = "OpenTyrian",
            *opentyrian_version = HG_REV;
 
-/* zero-terminated strncpy */
-char *strnztcpy( char *to, const char *from, size_t count )
-{
-	to[count] = '\0';
-	return strncpy(to, from, count);
-}
-
 void opentyrian_menu( void )
 {
 	typedef enum
@@ -71,7 +64,7 @@ void opentyrian_menu( void )
 		MENU_ABOUT = 0,
 		MENU_FULLSCREEN,
 		MENU_SCALER,
-		MENU_HWSCALER,
+		MENU_SCALING_MODE,
 		// MENU_DESTRUCT,
 		MENU_JUKEBOX,
 		MENU_RETURN,
@@ -83,7 +76,7 @@ void opentyrian_menu( void )
 		"About OpenTyrian",
 		"Fullscreen: Display %d",
 		"Scaler: None",
-		"HW Scaler: %s",
+		"Scaling Mode: %s",
 		// "Play Destruct",
 		"Jukebox",
 		"Return to Main Menu",
@@ -115,9 +108,9 @@ void opentyrian_menu( void )
 
 	MenuOptions sel = 0;
 
-	int temp_fullscreen = fullscreen_display;
+	int temp_fullscreen_display = fullscreen_display;
 	uint temp_scaler = scaler;
-	int temp_hwscaler = scaling_mode;
+	int temp_scaling_mode = scaling_mode;
 
 	bool fade_in = true, quit = false;
 	do
@@ -131,13 +124,13 @@ void opentyrian_menu( void )
 
 			if (i == MENU_FULLSCREEN)
 			{
-				if (temp_fullscreen == -1)
+				if (temp_fullscreen_display == -1)
 				{
 					text = "Windowed";
 				}
 				else
 				{
-					snprintf(buffer, sizeof(buffer), menu_items[i], temp_fullscreen + 1);
+					snprintf(buffer, sizeof(buffer), menu_items[i], temp_fullscreen_display + 1);
 					text = buffer;
 				}
 			}
@@ -146,9 +139,9 @@ void opentyrian_menu( void )
 				snprintf(buffer, sizeof(buffer), "Scaler: %s", scalers[temp_scaler].name);
 				text = buffer;
 			}
-			else if (i == MENU_HWSCALER)
+			else if (i == MENU_SCALING_MODE)
 			{
-				snprintf(buffer, sizeof(buffer), menu_items[i], scaling_mode_names[temp_hwscaler]);
+				snprintf(buffer, sizeof(buffer), menu_items[i], scaling_mode_names[temp_scaling_mode]);
 				text = buffer;
 			}
 
@@ -156,7 +149,7 @@ void opentyrian_menu( void )
 			draw_font_hv(VGAScreen, VGAScreen->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
 		}
 
-		if (sel == MENU_FULLSCREEN || sel == MENU_SCALER || sel == MENU_HWSCALER) {
+		if (sel == MENU_FULLSCREEN || sel == MENU_SCALER || sel == MENU_SCALING_MODE) {
 			draw_font_hv_shadow(VGAScreen, VGAScreen->w / 2, 190, "Change option with Left/Right keys then press Enter.",
 					small_font, centered, 15, 2, true, 1);
 		}
@@ -201,9 +194,9 @@ void opentyrian_menu( void )
 			case SDL_SCANCODE_LEFT:
 				if (sel == MENU_FULLSCREEN)
 				{
-					if (temp_fullscreen == -1)
-						temp_fullscreen = SDL_GetNumVideoDisplays();
-					temp_fullscreen--;
+					if (temp_fullscreen_display == -1)
+						temp_fullscreen_display = SDL_GetNumVideoDisplays();
+					temp_fullscreen_display--;
 
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -215,11 +208,11 @@ void opentyrian_menu( void )
 					
 					JE_playSampleNum(S_CURSOR);
 				}
-				else if (sel == MENU_HWSCALER)
+				else if (sel == MENU_SCALING_MODE)
 				{
-					if (temp_hwscaler == 0)
-						temp_hwscaler = ScalingMode_MAX;
-					temp_hwscaler--;
+					if (temp_scaling_mode == 0)
+						temp_scaling_mode = ScalingMode_MAX;
+					temp_scaling_mode--;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -227,9 +220,9 @@ void opentyrian_menu( void )
 			case SDL_SCANCODE_RIGHT:
 				if (sel == MENU_FULLSCREEN)
 				{
-					temp_fullscreen++;
-					if (temp_fullscreen == SDL_GetNumVideoDisplays())
-						temp_fullscreen = -1;
+					temp_fullscreen_display++;
+					if (temp_fullscreen_display == SDL_GetNumVideoDisplays())
+						temp_fullscreen_display = -1;
 
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -241,11 +234,11 @@ void opentyrian_menu( void )
 					
 					JE_playSampleNum(S_CURSOR);
 				}
-				else if (sel == MENU_HWSCALER)
+				else if (sel == MENU_SCALING_MODE)
 				{
-					temp_hwscaler++;
-					if (temp_hwscaler == ScalingMode_MAX)
-						temp_hwscaler = 0;
+					temp_scaling_mode++;
+					if (temp_scaling_mode == ScalingMode_MAX)
+						temp_scaling_mode = 0;
 					
 					JE_playSampleNum(S_CURSOR);
 				}
@@ -267,7 +260,7 @@ void opentyrian_menu( void )
 				case MENU_FULLSCREEN:
 					JE_playSampleNum(S_SELECT);
 
-					reinit_fullscreen(temp_fullscreen);
+					reinit_fullscreen(temp_fullscreen_display);
 					break;
 					
 				case MENU_SCALER:
@@ -283,9 +276,9 @@ void opentyrian_menu( void )
 					}
 					break;
 					
-				case MENU_HWSCALER:
+				case MENU_SCALING_MODE:
 					JE_playSampleNum(S_SELECT);
-					scaling_mode = temp_hwscaler;
+					scaling_mode = temp_scaling_mode;
 					break;
 
 				case MENU_JUKEBOX:

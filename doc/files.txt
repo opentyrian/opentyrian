@@ -1,0 +1,58 @@
+Files used by Tyrian and what they contain:
+
+cubetxt?.dat:
+Contains all the datacube text for each episode.
+
+demo.?:
+Recorded player input used for demo playback.
+
+levels?.dat:
+Episode script. This is interpreted by the game and determines the flow of each episode, including everything that happens between levels:
+- Shop contents
+- Planets visited
+- Datacubes shown
+- Text intermissions
+- Levels played
+- etc.
+
+music.mus:
+All the sequenced music tracks and instrument data.
+
+newsh?.shp:
+Enemy graphics.
+
+palette.dat:
+Palettes for tyrian.pic
+
+shapes?.dat:
+Level tileset graphics.
+
+tyrend.anm:
+FMV at the end of episode 3.
+
+tyrian.cdt:
+Credits text.
+
+tyrian.hdt:
+Contains game text, mostly interface strings, as well as the definitions for items, weapons and enemies used in episode 1-3.
+
+tyrian.pic:
+Fullscreen interface backgrounds. Uses palettes from palette.dat
+
+tyrian.shp:
+Interface sprites, fonts, powerups and player shots and ships.
+
+tyrian.snd:
+All sound effects excluding voice samples.
+
+tyrian?.lvl:
+Contains all level tilemaps and level scripts/event data for each episode. tyrian4.lvl also contains item definitions used for that episode instead of the ones in tyrian.hdt.
+
+tyrianc.shp:
+Christmas version of tyrian.shp
+
+voices.snd:
+Voice samples.
+
+voicesc.snd:
+Christmas version of voices.snd

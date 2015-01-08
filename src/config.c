@@ -31,6 +31,7 @@
 #include "video_scale.h"
 
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/stat.h>
 
 
@@ -213,44 +214,7 @@ JE_SaveGameTemp saveTemp;
 
 JE_word editorLevel;   /*Initial value 800*/
 
-
-cJSON *load_json( const char *filename )
-{
-	FILE *f = dir_fopen_warn(get_user_directory(), filename, "rb");
-	if (f == NULL)
-		return NULL;
-	
-	size_t buffer_len = ftell_eof(f);
-	char *buffer = malloc(buffer_len + 1);
-	
-	fread(buffer, 1, buffer_len, f);
-	buffer[buffer_len] = '\0';
-	
-	fclose(f);
-	
-	cJSON *root = cJSON_Parse(buffer);
-	
-	free(buffer);
-	
-	return root;
-}
-
-void save_json( cJSON *root, const char *filename )
-{
-	FILE *f = dir_fopen_warn(get_user_directory(), filename, "w+");
-	if (f == NULL)
-		return;
-	
-	char *buffer = cJSON_Print(root);
-	
-	if (buffer != NULL)
-	{
-		fputs(buffer, f);
-		free(buffer);
-	}
-	
-	fclose(f);
-}
+config_t opentyrian_config;  // implicitly initialized
 
 bool load_opentyrian_config( void )
 {
@@ -258,57 +222,72 @@ bool load_opentyrian_config( void )
 	fullscreen_display = -1;
 	set_scaler_by_name("Scale2x");
 	
-	cJSON *root = load_json("opentyrian.conf");
-	if (root == NULL)
+	config_t *config = &opentyrian_config;
+	
+	FILE *file = dir_fopen_warn(get_user_directory(), "opentyrian.cfg", "r");
+	if (file == NULL)
 		return false;
 	
-	cJSON *section = cJSON_GetObjectItem(root, "video");
-	if (section != NULL)
+	if (!config_parse(config, file))
 	{
-		cJSON *setting;
+		fclose(file);
 		
-		if ((setting = cJSON_GetObjectItem(section, "fullscreen_display")))
-			fullscreen_display = setting->valueint;
-		
-		if ((setting = cJSON_GetObjectItem(section, "scaler")))
-			set_scaler_by_name(setting->valuestring);
-
-		if ((setting = cJSON_GetObjectItem(section, "hwscaler")))
-			set_scaling_mode_by_name(setting->valuestring);
+		return false;
 	}
 	
-	cJSON_Delete(root);
+	config_section_t *section;
+	
+	section = config_find_section(config, "video", NULL);
+	if (section != NULL)
+	{
+		config_get_int_option(section, "fullscreen", &fullscreen_display);
+		
+		const char *scaler;
+		if (config_get_string_option(section, "scaler", &scaler))
+			set_scaler_by_name(scaler);
+		
+		const char *scaling_mode;
+		if (config_get_string_option(section, "scaling_mode", &scaling_mode))
+			set_scaling_mode_by_name(scaling_mode);
+	}
+	
+	fclose(file);
 	
 	return true;
 }
 
 bool save_opentyrian_config( void )
 {
-	cJSON *root = load_json("opentyrian.conf");
-	if (root == NULL)
-		root = cJSON_CreateObject();
+	config_t *config = &opentyrian_config;
 	
-	cJSON *section;
+	config_section_t *section;
 	
-	section = cJSON_CreateOrGetObjectItem(root, "video");
-	cJSON_ForceType(section, cJSON_Object);
+	section = config_find_or_add_section(config, "video", NULL);
+	if (section == NULL)
+		exit(EXIT_FAILURE);  // out of memory
 	
-	{
-		cJSON *setting;
-		
-		setting = cJSON_CreateOrGetObjectItem(section, "fullscreen_display");
-		cJSON_SetNumber(setting, fullscreen_display);
-		
-		setting = cJSON_CreateOrGetObjectItem(section, "scaler");
-		cJSON_SetString(setting, scalers[scaler].name);
-
-		setting = cJSON_CreateOrGetObjectItem(section, "hwscaler");
-		cJSON_SetString(setting, scaling_mode_names[scaling_mode]);
-	}
+	config_set_int_option(section, "fullscreen", fullscreen_display);
 	
-	save_json(root, "opentyrian.conf");
+	config_set_string_option(section, "scaler", scalers[scaler].name);
 	
-	cJSON_Delete(root);
+	config_set_string_option(section, "scaling_mode", scaling_mode_names[scaling_mode]);
+	
+#ifndef TARGET_WIN32
+	mkdir(get_user_directory(), 0700);
+#else
+	mkdir(get_user_directory());
+#endif
+	
+	FILE *file = dir_fopen(get_user_directory(), "opentyrian.cfg", "w");
+	if (file == NULL)
+		return false;
+	
+	config_write(config, file);
+	
+#if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
+	fsync(fileno(file));
+#endif
+	fclose(file);
 	
 	return true;
 }
@@ -714,12 +693,27 @@ const char *get_user_directory( void )
 	
 	if (strlen(user_dir) == 0)
 	{
-#ifdef TARGET_UNIX
-		if (getenv("HOME"))
-			snprintf(user_dir, sizeof(user_dir), "%s/.opentyrian", getenv("HOME"));
+#ifndef TARGET_WIN32
+		char *xdg_config_home = getenv("XDG_CONFIG_HOME");
+		if (xdg_config_home != NULL)
+		{
+			snprintf(user_dir, sizeof(user_dir), "%s/opentyrian", xdg_config_home);
+		}
+		else
+		{
+			char *home = getenv("HOME");
+			if (home != NULL)
+			{
+				snprintf(user_dir, sizeof(user_dir), "%s/.config/opentyrian", home);
+			}
+			else
+			{
+				strcpy(user_dir, ".");
+			}
+		}
 #else
 		strcpy(user_dir, ".");
-#endif // TARGET_UNIX
+#endif
 	}
 	
 	return user_dir;
@@ -900,15 +894,6 @@ void JE_loadConfiguration( void )
 
 void JE_saveConfiguration( void )
 {
-#ifdef TARGET_UNIX
-	if (getenv("HOME"))
-	{
-		char dir[1000];
-		snprintf(dir, sizeof(dir), "%s/.opentyrian", getenv("HOME"));
-		mkdir(dir, 0755);
-	}
-#endif /* HOME */
-	
 	FILE *f;
 	JE_byte *p;
 	int z;
@@ -977,19 +962,27 @@ void JE_saveConfiguration( void )
 	
 	JE_encryptSaveTemp();
 	
+#ifndef TARGET_WIN32
+	mkdir(get_user_directory(), 0700);
+#else
+	mkdir(get_user_directory());
+#endif
+	
 	f = dir_fopen_warn(get_user_directory(), "tyrian.sav", "wb");
-	if (f)
+	if (f != NULL)
 	{
 		efwrite(saveTemp, 1, sizeof(saveTemp), f);
-		fclose(f);
-#if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
-		sync();
+
+#if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
+		fsync(fileno(f));
 #endif
+		fclose(f);
 	}
+	
 	JE_decryptSaveTemp();
 	
 	f = dir_fopen_warn(get_user_directory(), "tyrian.cfg", "wb");
-	if (f)
+	if (f != NULL)
 	{
 		efwrite(&background2, 1, 1, f);
 		efwrite(&gameSpeed, 1, 1, f);
@@ -1012,13 +1005,12 @@ void JE_saveConfiguration( void )
 		
 		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 		
+#if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
+		fsync(fileno(f));
+#endif
 		fclose(f);
 	}
 	
 	save_opentyrian_config();
-	
-#if (_BSD_SOURCE || _XOPEN_SOURCE >= 500)
-	sync();
-#endif
 }
 
