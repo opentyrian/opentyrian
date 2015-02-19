@@ -18,7 +18,7 @@
  */
 #include "std_support.h"
 
-char *strchrnul( const char *s, int c )
+char *ot_strchrnul( const char *s, int c )
 {
 	for (; *s != c && *s != '\0'; ++s)
 		;

@@ -32,6 +32,6 @@
  * \return the pointer to the first occurrence of \p c in \p s if there is an occurrences;
  *         otherwise the pointer to the terminating null character of \p s
  */
-char *strchrnul( const char *s, int c );
+char *ot_strchrnul( const char *s, int c );
 
 #endif // STD_SUPPORT_H
