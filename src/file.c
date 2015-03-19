@@ -36,6 +36,7 @@ const char *data_dir( void )
 #ifdef TARGET_MACOSX
 		tyrian_game_folder(),
 #endif
+		"/usr/share/games/tyrian",
 		"/usr/share/opentyrian/data"
 	};
 	
