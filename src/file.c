@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const char *custom_data_dir = ".";
+const char *custom_data_dir = NULL;
 
 // finds the Tyrian data directory
 const char *data_dir( void )
@@ -32,12 +32,9 @@ const char *data_dir( void )
 	const char *dirs[] =
 	{
 		custom_data_dir,
+		TYRIAN_DIR,
 		"data",
-#ifdef TARGET_MACOSX
-		tyrian_game_folder(),
-#endif
-		"/usr/share/games/tyrian",
-		"/usr/share/opentyrian/data"
+		".",
 	};
 	
 	static const char *dir = NULL;
@@ -47,6 +44,9 @@ const char *data_dir( void )
 	
 	for (uint i = 0; i < COUNTOF(dirs); ++i)
 	{
+		if (dirs[i] == NULL)
+			continue;
+		
 		FILE *f = dir_fopen(dirs[i], "tyrian1.lvl", "rb");
 		if (f)
 		{
