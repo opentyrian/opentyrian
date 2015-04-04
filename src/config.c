@@ -213,7 +213,7 @@ JE_SaveGameTemp saveTemp;
 
 JE_word editorLevel;   /*Initial value 800*/
 
-config_t opentyrian_config;  // implicitly initialized
+Config opentyrian_config;  // implicitly initialized
 
 bool load_opentyrian_config( void )
 {
@@ -221,7 +221,7 @@ bool load_opentyrian_config( void )
 	fullscreen_enabled = false;
 	set_scaler_by_name("Scale2x");
 	
-	config_t *config = &opentyrian_config;
+	Config *config = &opentyrian_config;
 	
 	FILE *file = dir_fopen_warn(get_user_directory(), "opentyrian.cfg", "r");
 	if (file == NULL)
@@ -234,7 +234,7 @@ bool load_opentyrian_config( void )
 		return false;
 	}
 	
-	config_section_t *section;
+	ConfigSection *section;
 	
 	section = config_find_section(config, "video", NULL);
 	if (section != NULL)
@@ -253,9 +253,9 @@ bool load_opentyrian_config( void )
 
 bool save_opentyrian_config( void )
 {
-	config_t *config = &opentyrian_config;
+	Config *config = &opentyrian_config;
 	
-	config_section_t *section;
+	ConfigSection *section;
 	
 	section = config_find_or_add_section(config, "video", NULL);
 	if (section == NULL)

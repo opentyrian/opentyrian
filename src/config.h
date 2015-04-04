@@ -130,7 +130,7 @@ extern JE_SaveFilesType saveFiles;
 extern JE_SaveGameTemp saveTemp;
 extern JE_word editorLevel;
 
-extern config_t opentyrian_config;
+extern Config opentyrian_config;
 
 void JE_initProcessorType( void );
 void JE_setNewGameSpeed( void );

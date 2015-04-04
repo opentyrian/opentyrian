@@ -1,6 +1,6 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2014  The OpenTyrian Development Team
+ * Copyright (C) 2015  The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,6 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/*!
+ * \file config_file.h
+ * \author Carl Reinke
+ * \date 2015
+ * \copyright GNU General Public License v2+ or Mozilla Public License 2.0
+ */
 #ifndef CONFIG_FILE_H
 #define CONFIG_FILE_H
 
@@ -24,8 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/*! \file */
 
 #ifndef COMPILE_TIME_ASSERT
 /*!
@@ -72,37 +76,14 @@ typedef union
 	 * May be \c NULL.
 	 */
 	char *long_buf;
-} string_t;
+} ConfigString;
 
-/*! \cond suppress doxygen */
-COMPILE_TIME_ASSERT(string_short_buf_sufficient, sizeof(char *) + 1 <= COUNTOF(((string_t *)NULL)->short_buf));
+/*! \cond suppress_doxygen */
+COMPILE_TIME_ASSERT(string_short_buf_sufficient, sizeof(char *) + 1 <= COUNTOF(((ConfigString *)NULL)->short_buf));
 /*! \endcond */
 
-/*! \sa string_init */
-extern string_t string_init_len( const char *s, size_t n );
-
-/*!
- * \brief Initialize a string from a C-string.
- * 
- * \param[in] s the C-string
- * \return the string
- */
-static inline string_t string_init( const char *s )
-{
-	assert(s != NULL);
-	return string_init_len(s, strlen(s));
-}
-
-/*!
- * \brief Release any memory allocated inside a string.
- * 
- * \param[in] string the string
- * \return void
- */
-extern void string_deinit( string_t *string );
-
-/*! \cond suppress doxygen */
-#define STRING_LONG_TAG(s) ((s).short_buf[COUNTOF((s).short_buf) - 1])
+/*! \cond suppress_doxygen */
+#define CONFIG_STRING_LONG_TAG(s) ((s).short_buf[COUNTOF((s).short_buf) - 1])
 /*! \endcond */
 
 /*!
@@ -111,31 +92,14 @@ extern void string_deinit( string_t *string );
  * \param[in] string the string
  * \return the C-string
  */
-static inline char *to_cstr( string_t *string )
+static inline const char *config_string_to_cstr( const ConfigString *string )
 {
 	assert(string != NULL);
-	char is_long = STRING_LONG_TAG(*string);
+	char is_long = CONFIG_STRING_LONG_TAG(*string);
 	return is_long ?
 		string->long_buf :
 		string->short_buf;
 }
-
-/*!
- * \brief Return a C-string backed by a string.
- * 
- * \param[in] string the string
- * \return the C-string
- */
-static inline const char *to_const_cstr( const string_t *string )
-{
-	assert(string != NULL);
-	char is_long = STRING_LONG_TAG(*string);
-	return is_long ?
-		string->long_buf :
-		string->short_buf;
-}
-
-#undef STRING_LOG_TAG
 
 /* config types */
 
@@ -147,14 +111,14 @@ typedef struct
 	/*!
 	 * \brief The key of the option.
 	 */
-	string_t key;
+	ConfigString key;
 	
 	/*!
 	 * \brief The number of values in the option if it is a 'list' option.
 	 *
 	 * If \c 0 then the option \e may be an 'item' option.
 	 * 
-	 * \see config_option_t::value
+	 * \see ::ConfigOption::value
 	 */
 	unsigned int values_count;
 	
@@ -172,14 +136,14 @@ typedef struct
 		 * 
 		 * If this field is \c NULL then the option is an empty 'list' option.
 		 */
-		string_t value;
+		ConfigString value;
 		
 		/*!
 		 * \brief The values of a non-empty 'list' option.
 		 */
-		string_t *values;
+		ConfigString *values;
 	} v;
-} config_option_t;
+} ConfigOption;
 
 /*!
  * \brief A section consisting of options.
@@ -189,14 +153,14 @@ typedef struct
 	/*!
 	 * \brief The type of the section.
 	 */
-	string_t type;
+	ConfigString type;
 	
 	/*!
 	 * \brief The optional name of the section.
 	 *
 	 * May be \c NULL.
 	 */
-	string_t name;
+	ConfigString name;
 	
 	/*!
 	 * \brief The number of options in the section.
@@ -208,8 +172,8 @@ typedef struct
 	 *
 	 * \c NULL if \p options_count is \c 0.
 	 */
-	config_option_t *options;
-} config_section_t;
+	ConfigOption *options;
+} ConfigSection;
 
 /*!
  * \brief A configuration consisting of sections.
@@ -226,8 +190,8 @@ typedef struct
 	 *
 	 * \c NULL if \p sections_count is \c 0.
 	 */
-	config_section_t *sections;
-} config_t;
+	ConfigSection *sections;
+} Config;
 
 /* config manipulators */
 
@@ -237,7 +201,7 @@ typedef struct
  * \param[in] config the configuration
  * \return void
  */
-extern void config_init( config_t *config );
+extern void config_init( Config *config );
 
 /*!
  * \brief Release any memory allocated inside a configuration.
@@ -245,7 +209,7 @@ extern void config_init( config_t *config );
  * \param[in] config the configuration
  * \return void
  */
-extern void config_deinit( config_t *config );
+extern void config_deinit( Config *config );
 
 /*!
  * \brief Parse a configuration from a file.
@@ -254,7 +218,7 @@ extern void config_deinit( config_t *config );
  * \param[in] file the file handle
  * \return whether parsing succeeded
  */
-extern bool config_parse( config_t *config, FILE *file );
+extern bool config_parse( Config *config, FILE *file );
 
 /*!
  * \brief Write a configuration to a file.
@@ -263,12 +227,12 @@ extern bool config_parse( config_t *config, FILE *file );
  * \param[in] file the file handle
  * \return void
  */
-extern void config_write( const config_t *config, FILE *file );
+extern void config_write( const Config *config, FILE *file );
 
 /* config section accessors/manipulators -- by type, name */
 
-/*! \sa config_add_section */
-extern config_section_t *config_add_section_len( config_t *config, const char *type, size_t type_len, const char *name, size_t name_len );
+/*! \see ::config_add_section() */
+extern ConfigSection *config_add_section_len( Config *config, const char *type, size_t type_len, const char *name, size_t name_len );
 
 /*!
  * \brief Add a section to a configuration.
@@ -278,13 +242,13 @@ extern config_section_t *config_add_section_len( config_t *config, const char *t
  * \param[in] name the name of the section; may be \c NULL
  * \return the added section; \c NULL if out of memory
  */
-static inline config_section_t *config_add_section( config_t *config, const char *type, const char *name)
+static inline ConfigSection *config_add_section( Config *config, const char *type, const char *name)
 {
 	assert(type != NULL);
 	return config_add_section_len(config, type, strlen(type), name, name == NULL ? 0 : strlen(name));
 }
 
-// TODO: extern config_t *config_remove_section( config_t *config, unsigned int i );
+// TODO: extern Config *config_remove_section( Config *config, unsigned int i );
 
 /*!
  * \brief Iterate sections by type.
@@ -295,7 +259,7 @@ static inline config_section_t *config_add_section( config_t *config, const char
  *                     iteration
  * \return the section; \c NULL if iteration finished
  */
-extern config_section_t *config_find_sections( config_t *config, const char *type, config_section_t **save );
+extern ConfigSection *config_find_sections( Config *config, const char *type, ConfigSection **save );
 
 /*!
  * \brief Find a section by type and name.
@@ -305,7 +269,7 @@ extern config_section_t *config_find_sections( config_t *config, const char *typ
  * \param[in] name the name of the section
  * \return the section; \c NULL if it does not exist
  */
-extern config_section_t *config_find_section( config_t *config, const char *type, const char *name );
+extern ConfigSection *config_find_section( Config *config, const char *type, const char *name );
 
 /*!
  * \brief Find a section by type and name, creating the section if it did not exist.
@@ -315,12 +279,12 @@ extern config_section_t *config_find_section( config_t *config, const char *type
  * \param[in] name the name of the section; may be \c NULL
  * \return the section; \c NULL if out of memory
  */
-extern config_section_t *config_find_or_add_section( config_t *config, const char *type, const char *name );
+extern ConfigSection *config_find_or_add_section( Config *config, const char *type, const char *name );
 
 /* config option accessors/manipulators -- by key */
 
-/*! \sa config_set_option */
-extern config_option_t *config_set_option_len( config_section_t *section, const char *key, size_t key_len, const char *value, size_t value_len );
+/*! \see ::config_set_option() */
+extern ConfigOption *config_set_option_len( ConfigSection *section, const char *key, size_t key_len, const char *value, size_t value_len );
 
 /*!
  * \brief Set a value of an 'item' option by key, creating the option if necessary.
@@ -331,7 +295,7 @@ extern config_option_t *config_set_option_len( config_section_t *section, const 
  *                  option (can be used to delete an 'item' option)
  * \return the option; \c NULL if out of memory
  */
-static inline config_option_t *config_set_option( config_section_t *section, const char *key, const char *value)
+static inline ConfigOption *config_set_option( ConfigSection *section, const char *key, const char *value)
 {
 	assert(key != NULL);
 	return config_set_option_len(section, key, strlen(key), value, value == NULL ? 0 : strlen(value));
@@ -344,10 +308,10 @@ static inline config_option_t *config_set_option( config_section_t *section, con
  * \param[in] key the option key
  * \return the option; \c NULL if it does not exist
  */
-extern config_option_t *config_get_option( const config_section_t *section, const char *key );
+extern ConfigOption *config_get_option( const ConfigSection *section, const char *key );
 
-/*! \sa config_get_or_set_option */
-extern config_option_t *config_get_or_set_option_len( config_section_t *section, const char *key, size_t key_len, const char *value, size_t value_len );
+/*! \see ::config_get_or_set_option() */
+extern ConfigOption *config_get_or_set_option_len( ConfigSection *section, const char *key, size_t key_len, const char *value, size_t value_len );
 
 /*!
  * \brief Get an option by key, creating an 'item' option if the option did not exist.
@@ -358,14 +322,14 @@ extern config_option_t *config_get_or_set_option_len( config_section_t *section,
  *                  'item' option
  * \return the option; \c NULL if out of memory
  */
-static inline config_option_t *config_get_or_set_option( config_section_t *section, const char *key, const char *value )
+static inline ConfigOption *config_get_or_set_option( ConfigSection *section, const char *key, const char *value )
 {
 	assert(key != NULL);
 	return config_get_or_set_option_len(section, key, strlen(key), value, value == NULL ? 0 : strlen(value));
 }
 
-/*! \sa config_set_string_option */
-extern void config_set_string_option_len( config_section_t *section, const char *key, size_t key_len, const char *value, size_t value_len );
+/*! \see ::config_set_string_option() */
+extern void config_set_string_option_len( ConfigSection *section, const char *key, size_t key_len, const char *value, size_t value_len );
 
 /*!
  * \brief Set a string value of an 'item' option by key, creating the option if necessary.
@@ -375,7 +339,7 @@ extern void config_set_string_option_len( config_section_t *section, const char 
  * \param[in] value the item value
  * \return void
  */
-static inline void config_set_string_option( config_section_t *section, const char *key, const char *value )
+static inline void config_set_string_option( ConfigSection *section, const char *key, const char *value )
 {
 	assert(key != NULL);
 	config_set_string_option_len(section, key, strlen(key), value, value == NULL ? 0 : strlen(value));
@@ -389,7 +353,7 @@ static inline void config_set_string_option( config_section_t *section, const ch
  * \param[out] out_value the item value if a valid option exists; otherwise unset
  * \return whether \p out_value was set
  */
-extern bool config_get_string_option( const config_section_t *section, const char *key, const char **out_value );
+extern bool config_get_string_option( const ConfigSection *section, const char *key, const char **out_value );
 
 /*!
  * \brief Get a string value of an 'item' option by key, setting the option if it was invalid or
@@ -400,7 +364,7 @@ extern bool config_get_string_option( const config_section_t *section, const cha
  * \param[in] value the default item value
  * \return the value
  */
-extern const char *config_get_or_set_string_option( config_section_t *section, const char *key, const char *value );
+extern const char *config_get_or_set_string_option( ConfigSection *section, const char *key, const char *value );
 
 /*!
  * \brief The styles of boolean values.
@@ -411,7 +375,7 @@ typedef enum
 	NO_YES = 1,
 	OFF_ON = 2,
 	FALSE_TRUE = 3,
-} bool_style_t;
+} ConfigBoolStyle;
 
 /*!
  * \brief Set a boolean value of an 'item' option by key, creating the option if necessary.
@@ -422,7 +386,7 @@ typedef enum
  * \param[in] style the style of boolean value
  * \return void
  */
-extern void config_set_bool_option( config_section_t *section, const char *key, bool value, bool_style_t style );
+extern void config_set_bool_option( ConfigSection *section, const char *key, bool value, ConfigBoolStyle style );
 
 /*!
  * \brief Get a boolean value of an 'item' option by key.
@@ -432,7 +396,7 @@ extern void config_set_bool_option( config_section_t *section, const char *key, 
  * \param[out] out_value the item value if a valid option exists; otherwise unset
  * \return whether \p out_value was set
  */
-extern bool config_get_bool_option( const config_section_t *section, const char *key, bool *out_value );
+extern bool config_get_bool_option( const ConfigSection *section, const char *key, bool *out_value );
 
 /*!
  * \brief Get a boolean value of an 'item' option by key, setting the option if it was invalid or
@@ -444,7 +408,7 @@ extern bool config_get_bool_option( const config_section_t *section, const char 
  * \param[in] style the style of boolean value
  * \return the value
  */
-extern bool config_get_or_set_bool_option( config_section_t *section, const char *key, bool value, bool_style_t style );
+extern bool config_get_or_set_bool_option( ConfigSection *section, const char *key, bool value, ConfigBoolStyle style );
 
 /*!
  * \brief Set an integer value of an 'item' option by key, creating the option if necessary.
@@ -454,7 +418,7 @@ extern bool config_get_or_set_bool_option( config_section_t *section, const char
  * \param[in] value the item value
  * \return void
  */
-extern void config_set_int_option( config_section_t *section, const char *key, int value );
+extern void config_set_int_option( ConfigSection *section, const char *key, int value );
 
 /*!
  * \brief Get an integer value of an 'item' option by key.
@@ -464,7 +428,7 @@ extern void config_set_int_option( config_section_t *section, const char *key, i
  * \param[out] out_value the item value if a valid option exists; otherwise unset
  * \return whether \p out_value was set
  */
-extern bool config_get_int_option( const config_section_t *section, const char *key, int *out_value );
+extern bool config_get_int_option( const ConfigSection *section, const char *key, int *out_value );
 
 /*!
  * \brief Get an integer value of an 'item' option by key, setting the option if it was invalid or
@@ -475,7 +439,7 @@ extern bool config_get_int_option( const config_section_t *section, const char *
  * \param[in] value the default item value
  * \return the value
  */
-extern int config_get_or_set_int_option( config_section_t *section, const char *key, int value );
+extern int config_get_or_set_int_option( ConfigSection *section, const char *key, int value );
 
 /*!
  * \brief Set an unsigned integer value of an 'item' option by key, creating the option if
@@ -486,7 +450,7 @@ extern int config_get_or_set_int_option( config_section_t *section, const char *
  * \param[in] value the item value
  * \return void
  */
-extern void config_set_uint_option( config_section_t *section, const char *key, unsigned int value );
+extern void config_set_uint_option( ConfigSection *section, const char *key, unsigned int value );
 
 /*!
  * \brief Get an unsigned integer value of an 'item' option by key.
@@ -496,7 +460,7 @@ extern void config_set_uint_option( config_section_t *section, const char *key, 
  * \param[out] out_value the item value if a valid option exists; otherwise unset
  * \return whether \p out_value was set
  */
-extern bool config_get_uint_option( const config_section_t *section, const char *key, unsigned int *out_value );
+extern bool config_get_uint_option( const ConfigSection *section, const char *key, unsigned int *out_value );
 
 /*!
  * \brief Get an unsigned integer value of an 'item' option by key, setting the option if it was
@@ -507,12 +471,12 @@ extern bool config_get_uint_option( const config_section_t *section, const char 
  * \param[in] value the default item value
  * \return the value
  */
-extern unsigned int config_get_or_set_uint_option( config_section_t *section, const char *key, unsigned int value );
+extern unsigned int config_get_or_set_uint_option( ConfigSection *section, const char *key, unsigned int value );
 
 /* config option accessors/manipulators -- by reference */
 
-/*! \sa config_set_value */
-extern config_option_t *config_set_value_len( config_option_t *option, const char *value, size_t value_len );
+/*! \see ::config_set_value() */
+extern ConfigOption *config_set_value_len( ConfigOption *option, const char *value, size_t value_len );
 
 /*!
  * \brief Set the value of an 'item' option.
@@ -521,13 +485,13 @@ extern config_option_t *config_set_value_len( config_option_t *option, const cha
  * \param[in] value the value
  * \return the option; \c NULL if out of memory
  */
-static inline config_option_t *config_set_value( config_option_t *option, const char *value )
+static inline ConfigOption *config_set_value( ConfigOption *option, const char *value )
 {
 	return config_set_value_len(option, value, value == NULL ? 0 : strlen(value));
 }
 
-/*! \sa config_add_value */
-extern config_option_t *config_add_value_len( config_option_t *option, const char *value, size_t value_len );
+/*! \see ::config_add_value() */
+extern ConfigOption *config_add_value_len( ConfigOption *option, const char *value, size_t value_len );
 
 /*!
  * \brief Add a value to a 'list' option.
@@ -536,7 +500,7 @@ extern config_option_t *config_add_value_len( config_option_t *option, const cha
  * \param[in] value the value
  * \return the option; \c NULL if out of memory
  */
-static inline config_option_t *config_add_value( config_option_t *option, const char *value )
+static inline ConfigOption *config_add_value( ConfigOption *option, const char *value )
 {
 	assert(value != NULL);
 	return config_add_value_len(option, value, strlen(value));
@@ -549,7 +513,7 @@ static inline config_option_t *config_add_value( config_option_t *option, const 
  * \param[in] i the index of the value
  * \return the option; \c NULL if out of memory or invalid \p index
  */
-extern config_option_t *config_remove_value( config_option_t *option, unsigned int i );
+extern ConfigOption *config_remove_value( ConfigOption *option, unsigned int i );
 
 /*!
  * \brief Get the value of an 'item' option.
@@ -557,7 +521,7 @@ extern config_option_t *config_remove_value( config_option_t *option, unsigned i
  * \param[in] option the option
  * \return the value; \c NULL if \p option was \c NULL or was a 'list' option
  */
-extern const char *config_get_value( const config_option_t *option );
+extern const char *config_get_value( const ConfigOption *option );
 
 /*!
  * \brief Get the value that indicates whether the option is a 'list' option.
@@ -565,11 +529,11 @@ extern const char *config_get_value( const config_option_t *option );
  * \param[in] option the option
  * \return whether the option is a 'list' option
  */
-static inline bool config_is_value_list( const config_option_t *option )
+static inline bool config_is_value_list( const ConfigOption *option )
 {
 	assert(option != NULL);
 	return option->values_count > 0 ||
-		to_const_cstr(&option->v.value) == NULL;
+		config_string_to_cstr(&option->v.value) == NULL;
 }
 
 /*!
@@ -579,11 +543,11 @@ static inline bool config_is_value_list( const config_option_t *option )
  * \return \c 1 if the option is an 'item' option; the number of elements if the option is a 'list'
  *         option
  */
-static inline unsigned int config_get_value_count( const config_option_t *option )
+static inline unsigned int config_get_value_count( const ConfigOption *option )
 {
 	assert(option != NULL);
 	return option->values_count == 0 ?
-		(to_const_cstr(&option->v.value) == NULL ? 0 : 1) :
+		(config_string_to_cstr(&option->v.value) == NULL ? 0 : 1) :
 		option->values_count;
 }
 
@@ -594,11 +558,11 @@ static inline unsigned int config_get_value_count( const config_option_t *option
  * \param[in] option the option
  */
 #define foreach_option_value( string_value, option ) \
-	for (config_option_t *_option = (option); _option != NULL; _option = NULL) \
-	for (string_t *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
-	              *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
-	              *_value = _values_begin; _value < _values_end; ++_value) \
-	for (const char *(string_value) = to_const_cstr(_value); (string_value) != NULL; (string_value) = NULL)
+	for (ConfigOption *_option = (option); _option != NULL; _option = NULL) \
+	for (ConfigString *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
+	                  *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
+	                  *_value = _values_begin; _value < _values_end; ++_value) \
+	for (const char *(string_value) = config_string_to_cstr(_value); (string_value) != NULL; (string_value) = NULL)
 
 /*!
  * \brief Iterate over the values assigned to the option.
@@ -609,11 +573,11 @@ static inline unsigned int config_get_value_count( const config_option_t *option
  */
 #define foreach_option_i_value( i, string_value, option ) \
 	for (unsigned int (i) = 0; (i) == 0; (i) = ~0) \
-	for (config_option_t *_option = (option); _option != NULL; _option = NULL) \
-	for (string_t *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
-	              *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
-	              *_value = _values_begin; _value < _values_end; ++_value, (i) = _value - _values_begin) \
-	for (const char *(string_value) = to_const_cstr(_value); (string_value) != NULL; (string_value) = NULL)
+	for (ConfigOption *_option = (option); _option != NULL; _option = NULL) \
+	for (ConfigString *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
+	                  *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
+	                  *_value = _values_begin; _value < _values_end; ++_value, (i) = _value - _values_begin) \
+	for (const char *(string_value) = config_string_to_cstr(_value); (string_value) != NULL; (string_value) = NULL)
 
 /*!
  * \brief Remove a value from an option during iteration.  Should be followed by \c continue.

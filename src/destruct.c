@@ -416,9 +416,9 @@ static SDLKey get_SDLKey_by_name( const char *key_name )
 	return SDLK_UNKNOWN;
 }
 
-static void load_destruct_config( config_t *config_ )
+static void load_destruct_config( Config *config_ )
 {
-	config_section_t *section;
+	ConfigSection *section;
 	
 	section = config_find_or_add_section(config_, "destruct", NULL);
 	if (section == NULL)
@@ -447,7 +447,7 @@ static void load_destruct_config( config_t *config_ )
 			if ((section = config_add_section(config_, "destruct keyboard", player_names[p])) == NULL)
 				exit(-1);
 		
-		config_option_t *option;
+		ConfigOption *option;
 		
 		for (int k = 0; k < MAX_KEY; ++k)
 		{
@@ -500,7 +500,7 @@ static void load_destruct_config( config_t *config_ )
 		snprintf(buffer, sizeof(buffer), "%s num units", player_names[p]);
 		basetypes[8 + p][0] = config_get_or_set_int_option(section, buffer, basetypes[8 + p][0]);
 		
-		config_option_t *option;
+		ConfigOption *option;
 		
 		snprintf(buffer, sizeof(buffer), "%s unit", player_names[p]);
 		if ((option = config_get_or_set_option(section, buffer, NULL)) == NULL)
