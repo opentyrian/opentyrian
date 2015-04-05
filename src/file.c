@@ -18,6 +18,7 @@
  */
 #include "file.h"
 #include "opentyr.h"
+#include "varz.h"
 
 #include "SDL.h"
 #include <errno.h>
@@ -97,7 +98,7 @@ FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
 		fprintf(stderr, "error: failed to open '%s': %s\n", file, strerror(errno));
 		fprintf(stderr, "error: One or more of the required Tyrian " TYRIAN_VERSION " data files could not be found.\n"
 		                "       Please read the README file.\n");
-		exit(1);
+		JE_tyrianHalt(1);
 	}
 	
 	return f;
