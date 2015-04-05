@@ -57,6 +57,7 @@ ifneq ($(HG_REV), )
     EXTRA_CFLAGS += -DHG_REV='"$(HG_REV)"'
 endif
 
+CPPFLAGS := 
 CFLAGS := -pedantic
 CFLAGS += -MMD
 CLFAGS += -Wall \
@@ -64,22 +65,30 @@ CLFAGS += -Wall \
           -Wno-missing-field-initializers
 CFLAGS += -O2
 CFLAGS += -DNDEBUG
+LDFLAGS := 
+LDLIBS := 
 
-SDL_CFLAGS := $(shell $(PKG_CONFIG) sdl --cflags)
-SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl --libs)
+SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl --cflags-only-I)
+SDL_CFLAGS := $(shell $(PKG_CONFIG) sdl --cflags-only-other)
+SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl --libs-only-L --libs-only-other)
+SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl --libs-only-l)
 ifeq ($(WITH_NETWORK), true)
     SDL_LDLIBS += -lSDL_net
 endif
 
+ALL_CPPFLAGS = $(SDL_CPPFLAGS) \
+               $(CPPFLAGS)
 ALL_CFLAGS = -std=iso9899:1999 \
              -DTARGET_$(PLATFORM) \
              -DTYRIAN_DIR='"$(TYRIAN_DIR)"' \
              $(EXTRA_CFLAGS) \
              $(SDL_CFLAGS) \
              $(CFLAGS)
-ALL_LDFLAGS = $(LDFLAGS)
-LDLIBS += $(SDL_LDLIBS) \
-          -lm
+ALL_LDFLAGS = $(SDL_LDFLAGS) \
+              $(LDFLAGS)
+ALL_LDLIBS = -lm \
+             $(SDL_LDLIBS) \
+             $(LDLIBS)
 
 ###
 
@@ -118,10 +127,10 @@ clean :
 	rm -f $(TARGET)
 
 $(TARGET) : $(OBJS)
-	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(LDLIBS)
+	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(ALL_LDLIBS)
 
 -include $(DEPS)
 
 obj/%.o : src/%.c
 	@mkdir -p "$(dir $@)"
-	$(CC) $(ALL_CFLAGS) -c -o $@ $<
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $<
