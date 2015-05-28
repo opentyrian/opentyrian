@@ -35,14 +35,9 @@ bool dir_file_exists( const char *dir, const char *file );
 
 long ftell_eof( FILE *f );
 
-// endian-swapping fread/fwrite
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+// endian-swapping fread/fwrite that die if the expected amount cannot be read/written
 size_t efread( void *buffer, size_t size, size_t num, FILE *stream );
-size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream );
-#else
-#define efread fread
-#define efwrite fwrite
-#endif
+size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream );
 
 #endif // FILE_H
 

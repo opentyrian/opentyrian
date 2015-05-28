@@ -126,14 +126,14 @@ long ftell_eof( FILE *f )
 	return size;
 }
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-// endian-swapping fread
+// endian-swapping fread that dies if the expected amount cannot be read
 size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 {
-	size_t f = fread(buffer, size, num, stream);
+	size_t num_read = fread(buffer, size, num, stream);
 	
 	switch (size)
 	{
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		case 2:
 			for (size_t i = 0; i < num; i++)
 				((Uint16 *)buffer)[i] = SDL_Swap16(((Uint16 *)buffer)[i]);
@@ -146,45 +146,61 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 			for (size_t i = 0; i < num; i++)
 				((Uint64 *)buffer)[i] = SDL_Swap64(((Uint64 *)buffer)[i]);
 			break;
+#endif
 		default:
 			break;
 	}
 	
-	return f;
+	if (num_read != num)
+	{
+		fprintf(stderr, "error: An unexpected problem occurred while reading from a file.\n");
+		JE_tyrianHalt(1);
+	}
+
+	return num_read;
 }
 
-// endian-swapping fwrite
-size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
+// endian-swapping fwrite that dies if the expected amount cannot be written
+size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream )
 {
-	void *swap_buffer;
+	void *swap_buffer = NULL;
 	
 	switch (size)
 	{
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		case 2:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
 				((Uint16 *)swap_buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
+			buffer = swap_buffer;
 			break;
 		case 4:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
 				((Uint32 *)swap_buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
+			buffer = swap_buffer;
 			break;
 		case 8:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
 				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
+			buffer = swap_buffer;
 			break;
+#endif
 		default:
-			swap_buffer = buffer;
 			break;
 	}
 	
-	size_t f = fwrite(swap_buffer, size, num, stream);
+	size_t num_written = fwrite(buffer, size, num, stream);
 	
-	if (swap_buffer != buffer)
+	if (swap_buffer != NULL)
 		free(swap_buffer);
 	
-	return f;
+	if (num_written != num)
+	{
+		fprintf(stderr, "error: An unexpected problem occurred while writing to a file.\n");
+		JE_tyrianHalt(1);
+	}
+	
+	return num_written;
 }
-#endif
