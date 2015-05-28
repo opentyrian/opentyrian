@@ -49,40 +49,37 @@ DEPS := $(SRCS:src/%.c=obj/%.d)
 ###
 
 ifeq ($(WITH_NETWORK), true)
-    EXTRA_CFLAGS += -DWITH_NETWORK
+    EXTRA_CPPFLAGS += -DWITH_NETWORK
 endif
 
 HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
 ifneq ($(HG_REV), )
-    EXTRA_CFLAGS += -DHG_REV='"$(HG_REV)"'
+    EXTRA_CPPFLAGS += -DHG_REV='"$(HG_REV)"'
 endif
 
-CPPFLAGS := 
+CPPFLAGS := -DNDEBUG
 CFLAGS := -pedantic
 CFLAGS += -MMD
 CLFAGS += -Wall \
           -Wextra \
           -Wno-missing-field-initializers
 CFLAGS += -O2
-CFLAGS += -DNDEBUG
 LDFLAGS := 
 LDLIBS := 
 
-SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl --cflags-only-I)
-SDL_CFLAGS := $(shell $(PKG_CONFIG) sdl --cflags-only-other)
+SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl --cflags)
 SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl --libs-only-L --libs-only-other)
 SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl --libs-only-l)
 ifeq ($(WITH_NETWORK), true)
     SDL_LDLIBS += -lSDL_net
 endif
 
-ALL_CPPFLAGS = $(SDL_CPPFLAGS) \
+ALL_CPPFLAGS = -DTARGET_$(PLATFORM) \
+               -DTYRIAN_DIR='"$(TYRIAN_DIR)"' \
+               $(EXTRA_CPPFLAGS) \
+               $(SDL_CPPFLAGS) \
                $(CPPFLAGS)
 ALL_CFLAGS = -std=iso9899:1999 \
-             -DTARGET_$(PLATFORM) \
-             -DTYRIAN_DIR='"$(TYRIAN_DIR)"' \
-             $(EXTRA_CFLAGS) \
-             $(SDL_CFLAGS) \
              $(CFLAGS)
 ALL_LDFLAGS = $(SDL_LDFLAGS) \
               $(LDFLAGS)
@@ -96,10 +93,10 @@ ALL_LDLIBS = -lm \
 all : $(TARGET)
 
 .PHONY : debug
+debug : CPPFLAGS += -UNDEBUG
 debug : CFLAGS += -Werror
 debug : CFLAGS += -O0
-debug : CFLAGS += -g3 \
-                  -UNDEBUG
+debug : CFLAGS += -g3
 debug : all
 
 .PHONY : installdirs
