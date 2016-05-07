@@ -141,6 +141,8 @@ void service_SDL_events( JE_boolean clear_new )
 			case SDL_WINDOWEVENT:
 				if (ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST)
 					input_grab(false);
+				else if (ev.window.event == SDL_WINDOWEVENT_RESIZED)
+					video_on_win_resize();
 				break;
 			
 			case SDL_MOUSEMOTION:

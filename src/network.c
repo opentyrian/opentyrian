@@ -610,7 +610,7 @@ connect_reset:
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 
-		if (newkey && lastkey_sym == SDL_SCANCODE_ESCAPE)
+		if (newkey && lastkey_scan == SDL_SCANCODE_ESCAPE)
 			network_tyrian_halt(0, false);
 
 		// never timeout
