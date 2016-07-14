@@ -23,6 +23,8 @@
 #include "opentyr.h"
 #include "params.h"
 
+#include <stdlib.h>
+
 float music_volume = 0, sample_volume = 0;
 
 bool music_stopped = true;

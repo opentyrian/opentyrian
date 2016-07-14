@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 const char *custom_data_dir = ".";
 

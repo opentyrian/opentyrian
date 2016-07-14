@@ -26,6 +26,7 @@
 #include "video.h"
 
 #include <assert.h>
+#include <string.h>
 
 static void nn_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
 static void nn_16( SDL_Surface *src_surface, SDL_Texture *dst_texture );

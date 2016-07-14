@@ -26,6 +26,7 @@
 #include "video.h"
 
 #include <assert.h>
+#include <string.h>
 
 /*** Structs ***/
 /* The actual header has a lot of fields that are basically useless to us since

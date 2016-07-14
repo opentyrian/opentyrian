@@ -22,6 +22,8 @@
 #include "pcxload.h"
 #include "video.h"
 
+#include <string.h>
+
 void JE_loadPCX( const char *file ) // this is only meant to load tshp2.pcx
 {
 	Uint8 *s = VGAScreen->pixels; /* 8-bit specific */

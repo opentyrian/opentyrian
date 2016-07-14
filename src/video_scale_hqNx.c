@@ -23,6 +23,8 @@
 #include "palette.h"
 #include "video.h"
 
+#include <stdlib.h>
+
 void interp1(Uint32 *pc, Uint32 c1, Uint32 c2);
 void interp2(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 void interp3(Uint32 *pc, Uint32 c1, Uint32 c2);
