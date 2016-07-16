@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" InitialTargets="CheckSDL" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{1CD2070D-F0DF-4C14-896F-D13FEE0DE47E}</ProjectGuid>
+    <RootNamespace>opentyrian</RootNamespace>
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <DebugSuffix>-d</DebugSuffix>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <DebugSuffix />
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
+    <BaseDir>$(SolutionDir)..</BaseDir>
+    <SrcDir>$(BaseDir)/src</SrcDir>
+    <IntDir>$(ProjectDir)$(Configuration)$(PlatformArchitecture)\</IntDir>
+    <OutDir>$(BaseDir)/</OutDir>
+    <PlatformToolset>v140</PlatformToolset>
+    <SDLPlat Condition="'$(Platform)'=='Win32'">x86</SDLPlat>
+    <SDLPlat Condition="'$(Platform)'=='x64'">x64</SDLPlat>
+  </PropertyGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  
+  <Import Project="sdl_paths.props" Condition="$(SDL2BASE)=='' and exists('sdl_paths.props')"/>
+  
+  <PropertyGroup>
+    <ExtlibHeaders>$(BaseDir)/extlibs/include</ExtlibHeaders>
+    <LibraryPath>$(SDL2BASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="$(WITH_NETWORK)=='true'">$(SDL2NETBASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ExtlibHeaders);$(ExtlibHeaders)/SDL2;$(IncludePath)</IncludePath>
+    <IncludePath Condition="$(WITH_NETWORK)=='true'">$(SDL2NETBASE)/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>TARGET_WIN32;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="$(WITH_NETWORK)=='true'">WITH_NETWORK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet Condition="$(Platform)=='Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ObjectFileName>$(IntDir)/obj/%(RecursiveDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="$(WITH_NETWORK)=='true'">SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  
+  <ItemGroup>
+    <ClInclude Include="..\src\**\*.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\**\*.c" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <CopyDLL Include="$(SDL2BASE)/lib/$(SDLPlat)/*.dll" />
+    <CopyDLL Include="$(SDL2NETBASE)/lib/$(SDLPlat)/*.dll" Condition="$(WITH_NETWORK)=='true'" />
+    <CopySDLHeaders Include="$(SDL2BASE)/include/*.h" />
+  </ItemGroup>
+  
+  <Target Name="CopyDLLs" AfterTargets="Link">
+    <Copy SourceFiles="@(CopyDLL)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+  
+  <Target Name="CopyHeaders" BeforeTargets="ClCompile">
+    <Copy SourceFiles="@(CopySDLHeaders)" DestinationFolder="$(ExtlibHeaders)/SDL2" SkipUnchangedFiles="true" />
+  </Target>
+  
+  <Target Name="CopyTemplate" BeforeTargets="CheckSDL">
+    
+  </Target>
+  
+  <Target Name="CheckSDL">
+    <Copy SourceFiles="sdl_paths.props.template" DestinationFiles="sdl_paths.props" Condition="!exists('sdl_paths.props')"/>
+    <Error Condition="'$(SDL2BASE)'==''" Text="SDL2BASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable."/>
+    <Error Condition="!Exists($(SDL2BASE))" Text="SDL2BASE dir $(SDL2BASE) does not exist"/>
+  
+    <Error Condition="$(WITH_NETWORK)=='true' AND '$(SDL2NETBASE)'==''" Text="SDL2NETBASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable."/>
+    <Error Condition="$(WITH_NETWORK)=='true' AND !Exists($(SDL2NETBASE))" Text="SDL2NETBASE dir $(SDL2NETBASE) does not exist"/>
+  </Target>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
