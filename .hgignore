@@ -8,14 +8,16 @@ src/*.gch
 
 opentyrian
 opentyrian.exe
+opentyrian-d.exe
 opentyrian.gpe
 
-SDL.dll
-SDL_net.dll
 SDL2.dll
+SDL2_net.dll
 
 data/*
+extlibs/*
 
+opentyrian.cfg
 opentyrian.conf
 joystick.conf
 tyrian.cfg
@@ -24,3 +26,12 @@ stderr.txt
 stdout.txt
 
 doc/doxygen/
+
+*.ilk
+*.pdb
+visualc/sdl_paths.props
+visualc/.vs/*
+visualc/*.db
+visualc/*.opendb
+visualc/*32/*
+visualc/*64/*
