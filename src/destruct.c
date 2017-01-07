@@ -324,7 +324,7 @@ static JE_byte basetypes[10][11] /*[1..8, 1..11]*/ = /* [0] is amount of units*/
 	{8, UNIT_HELI, UNIT_HELI, UNIT_HELI, UNIT_HELI,      UNIT_HELI,   UNIT_HELI,      UNIT_HELI,   UNIT_HELI,   UNIT_HELI,   UNIT_HELI},   /*Strong Heli attack fleet*/
 	{4, UNIT_TANK, UNIT_TANK, UNIT_TANK, UNIT_TANK,      UNIT_NUKE,   UNIT_NUKE,      UNIT_DIRT,   UNIT_MAGNET, UNIT_JUMPER, UNIT_JUMPER}, /*Weak   Heli defense fleet*/
 	{8, UNIT_TANK, UNIT_NUKE, UNIT_DIRT, UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_TANK,   UNIT_NUKE},   /*Overpowering fleet*/
-	{4, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_TANK,   UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_NUKE,   UNIT_JUMPER},  /*Weak fleet*/
+	{4, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_TANK,   UNIT_LASER,     UNIT_JUMPER, UNIT_HELI,   UNIT_NUKE,   UNIT_JUMPER}, /*Weak fleet*/
 	{5, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_DIRT,   UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER, UNIT_HELI},   /*Left custom*/
 	{5, UNIT_TANK, UNIT_TANK, UNIT_NUKE, UNIT_DIRT,      UNIT_DIRT,   UNIT_SATELLITE, UNIT_MAGNET, UNIT_LASER,  UNIT_JUMPER, UNIT_HELI},   /*Right custom*/
 };
@@ -407,9 +407,9 @@ static enum de_unit_t get_unit_by_name( const char *unit_name )
 	return UNIT_NONE;
 }
 
-static void load_destruct_config( config_t *config_ )
+static void load_destruct_config( Config *config_ )
 {
-	config_section_t *section;
+	ConfigSection *section;
 	
 	section = config_find_or_add_section(config_, "destruct", NULL);
 	if (section == NULL)
@@ -438,7 +438,7 @@ static void load_destruct_config( config_t *config_ )
 			if ((section = config_add_section(config_, "destruct keyboard", player_names[p])) == NULL)
 				exit(-1);
 		
-		config_option_t *option;
+		ConfigOption *option;
 		
 		for (int k = 0; k < MAX_KEY; ++k)
 		{
@@ -491,7 +491,7 @@ static void load_destruct_config( config_t *config_ )
 		snprintf(buffer, sizeof(buffer), "%s num units", player_names[p]);
 		basetypes[8 + p][0] = config_get_or_set_int_option(section, buffer, basetypes[8 + p][0]);
 		
-		config_option_t *option;
+		ConfigOption *option;
 		
 		snprintf(buffer, sizeof(buffer), "%s unit", player_names[p]);
 		if ((option = config_get_or_set_option(section, buffer, NULL)) == NULL)

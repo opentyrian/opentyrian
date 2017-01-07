@@ -373,9 +373,9 @@ static const char* const assignment_names[] =
 	"pause",
 };
 
-bool load_joystick_assignments( config_t *config, int j )
+bool load_joystick_assignments( Config *config, int j )
 {
-	config_section_t *section = config_find_section(config, "joystick", SDL_JoystickName(joystick[j].handle));
+	ConfigSection *section = config_find_section(config, "joystick", SDL_JoystickName(joystick[j].handle));
 	if (section == NULL)
 		return false;
 	
@@ -391,7 +391,7 @@ bool load_joystick_assignments( config_t *config, int j )
 		for (unsigned int i = 0; i < COUNTOF(joystick[j].assignment[a]); ++i)
 			joystick[j].assignment[a][i].type = NONE;
 		
-		config_option_t *option = config_get_option(section, assignment_names[a]);
+		ConfigOption *option = config_get_option(section, assignment_names[a]);
 		if (option == NULL)
 			continue;
 		
@@ -407,9 +407,9 @@ bool load_joystick_assignments( config_t *config, int j )
 	return true;
 }
 
-bool save_joystick_assignments( config_t *config, int j )
+bool save_joystick_assignments( Config *config, int j )
 {
-	config_section_t *section = config_find_or_add_section(config, "joystick", SDL_JoystickName(joystick[j].handle));
+	ConfigSection *section = config_find_or_add_section(config, "joystick", SDL_JoystickName(joystick[j].handle));
 	if (section == NULL)
 		exit(EXIT_FAILURE);  // out of memory
 	
@@ -421,7 +421,7 @@ bool save_joystick_assignments( config_t *config, int j )
 	
 	for (size_t a = 0; a < COUNTOF(assignment_names); ++a)
 	{
-		config_option_t *option = config_set_option(section, assignment_names[a], NULL);
+		ConfigOption *option = config_set_option(section, assignment_names[a], NULL);
 		if (option == NULL)
 			exit(EXIT_FAILURE);  // out of memory
 		

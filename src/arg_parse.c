@@ -184,7 +184,7 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
 	const char *arg = argv[argn] + 2;  // ignore the "--"
 	
 	const size_t arg_len = strlen(arg),
-	             arg_opt_len = strchrnul(arg, '=') - arg;  // length before "="
+	             arg_opt_len = ot_strchrnul(arg, '=') - arg;  // length before "="
 	
 	const bool arg_attached = (arg_opt_len < arg_len),  // argument attached using "="?
 	           last_in_argv = (argn == argc - 1);

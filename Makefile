@@ -1,72 +1,134 @@
-# BUILD SETTINGS ###########################################
+# BUILD SETTINGS ###############################################################
 
 ifneq ($(filter Msys Cygwin, $(shell uname -o)), )
     PLATFORM := WIN32
+    TYRIAN_DIR = C:\\TYRIAN
 else
     PLATFORM := UNIX
+    TYRIAN_DIR = $(gamesdir)/tyrian
 endif
 
+WITH_NETWORK := true
+
+################################################################################
+
+# see https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
+
+SHELL = /bin/sh
+
+CC ?= gcc
+INSTALL ?= install
+PKG_CONFIG ?= pkg-config
+
+INSTALL_PROGRAM ?= $(INSTALL)
+INSTALL_DATA ?= ${INSTALL} -m 644
+
+prefix ?= /usr/local
+exec_prefix ?= $(prefix)
+
+bindir ?= $(exec_prefix)/bin
+datarootdir ?= $(prefix)/share
+datadir ?= $(datarootdir)
+docdir ?= $(datarootdir)/doc/opentyrian
+mandir ?= $(datarootdir)/man
+man6dir ?= $(mandir)/man6
+man6ext ?= .6
+
+# see http://www.pathname.com/fhs/pub/fhs-2.3.html
+
+gamesdir ?= $(datadir)/games
+
+###
+
 TARGET := opentyrian
-WITH_NETWORK := false
-
-############################################################
-
-STRIP := strip
-SDL_CONFIG := sdl2-config
 
 SRCS := $(wildcard src/*.c)
 OBJS := $(SRCS:src/%.c=obj/%.o)
+DEPS := $(SRCS:src/%.c=obj/%.d)
 
-# FLAGS ####################################################
+###
 
-ifneq ($(MAKECMDGOALS), release)
-    EXTRA_CFLAGS += -g3 -O0 -Werror
-else
-    EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
-endif
-EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-missing-field-initializers
 ifeq ($(WITH_NETWORK), true)
-    EXTRA_CFLAGS += -DWITH_NETWORK
+    EXTRA_CPPFLAGS += -DWITH_NETWORK
 endif
 
-HG_REV := $(shell hg id -ib && touch src/hg_revision.h)
+HG_REV := $(shell hg id -ib 2>/dev/null && \
+                  touch src/hg_revision.h)
 ifneq ($(HG_REV), )
-    EXTRA_CFLAGS += '-DHG_REV="$(HG_REV)"'
+    EXTRA_CPPFLAGS += -DHG_REV='"$(HG_REV)"'
 endif
 
-EXTRA_LDLIBS += -lm
+CPPFLAGS := -DNDEBUG
+CFLAGS := -pedantic
+CFLAGS += -MMD
+CLFAGS += -Wall \
+          -Wextra \
+          -Wno-missing-field-initializers
+CFLAGS += -O2
+LDFLAGS := 
+LDLIBS := 
 
-SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
-SDL_LDLIBS := $(shell $(SDL_CONFIG) --libs)
+SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 --cflags)
+SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl2 --libs-only-L --libs-only-other)
+SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl2 --libs-only-l)
 ifeq ($(WITH_NETWORK), true)
-    SDL_LDLIBS += -lSDL_net
+    SDL_LDLIBS += -lSDL2_net
 endif
 
-ALL_CFLAGS += -std=c99 -I./src -DTARGET_$(PLATFORM) $(EXTRA_CFLAGS) $(SDL_CFLAGS) $(CFLAGS)
-ALL_LDFLAGS += $(LDFLAGS)
-LDLIBS += $(EXTRA_LDLIBS) $(SDL_LDLIBS)
+ALL_CPPFLAGS = -DTARGET_$(PLATFORM) \
+               -DTYRIAN_DIR='"$(TYRIAN_DIR)"' \
+               $(EXTRA_CPPFLAGS) \
+               $(SDL_CPPFLAGS) \
+               $(CPPFLAGS)
+ALL_CFLAGS = -std=iso9899:1999 \
+             $(CFLAGS)
+ALL_LDFLAGS = $(SDL_LDFLAGS) \
+              $(LDFLAGS)
+ALL_LDLIBS = -lm \
+             $(SDL_LDLIBS) \
+             $(LDLIBS)
 
-# RULES ####################################################
+###
 
-.PHONY : all release clean
-
+.PHONY : all
 all : $(TARGET)
 
-release : all
-	$(STRIP) $(TARGET)
+.PHONY : debug
+debug : CPPFLAGS += -UNDEBUG
+debug : CFLAGS += -Werror
+debug : CFLAGS += -O0
+debug : CFLAGS += -g3
+debug : all
 
+.PHONY : installdirs
+installdirs :
+	mkdir -p $(DESTDIR)$(bindir)
+	mkdir -p $(DESTDIR)$(docdir)
+	mkdir -p $(DESTDIR)$(man6dir)
+
+.PHONY : install
+install : $(TARGET) installdirs
+	$(INSTALL_PROGRAM) $(TARGET) $(DESTDIR)$(bindir)/
+	$(INSTALL_DATA) CREDITS NEWS README $(DESTDIR)$(docdir)/
+	$(INSTALL_DATA) linux/man/opentyrian.6 $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
+
+.PHONY : uninstall
+uninstall :
+	rm -f $(DESTDIR)$(bindir)/$(TARGET)
+	rm -f $(DESTDIR)$(docdir)/{CREDITS,NEWS,README}
+	rm -f $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
+
+.PHONY : clean
 clean :
-	rm -rf obj/*
+	rm -f $(OBJS)
+	rm -f $(DEPS)
 	rm -f $(TARGET)
 
-ifneq ($(MAKECMDGOALS), clean)
-    -include $(OBJS:.o=.d)
-endif
-
 $(TARGET) : $(OBJS)
-	$(CC) -o $@ $(ALL_LDFLAGS) $^ $(LDLIBS)
+	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(ALL_LDLIBS)
+
+-include $(DEPS)
 
 obj/%.o : src/%.c
 	@mkdir -p "$(dir $@)"
-	$(CC) -c -o $@ $(ALL_CFLAGS) $<
-
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $<
