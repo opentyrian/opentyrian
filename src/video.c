@@ -52,7 +52,8 @@ static bool renderer_needs_reinit;
 static ScalerFunction scaler_function;
 
 static void reinit_renderer();
-static void recenter_window_in_display();
+static int window_get_display_index( void );
+static void window_center_in_display( int display_index );
 static void calc_dst_render_rect(SDL_Surface* src_surface, SDL_Rect* dst_rect);
 
 
@@ -140,19 +141,20 @@ static void reinit_renderer()
 	}
 }
 
-static void recenter_window_in_display()
+static int window_get_display_index( void )
 {
-	int display; 
-	int win_w, win_h;
+	return SDL_GetWindowDisplayIndex(main_window);
+}
 
-	display = SDL_GetWindowDisplayIndex(main_window);
+static void window_center_in_display( int display_index )
+{
+	int win_w, win_h;
 	SDL_GetWindowSize(main_window, &win_w, &win_h);
 
 	SDL_Rect bounds;
-	SDL_GetDisplayBounds(display, &bounds);
+	SDL_GetDisplayBounds(display_index, &bounds);
 
-	SDL_SetWindowPosition(main_window, 
-		bounds.x + (bounds.w - win_w)/2, bounds.y + (bounds.h - win_h)/2);
+	SDL_SetWindowPosition(main_window, bounds.x + (bounds.w - win_w) / 2, bounds.y + (bounds.h - win_h) / 2);
 }
 
 void reinit_fullscreen( int new_display )
@@ -164,16 +166,17 @@ void reinit_fullscreen( int new_display )
 		fullscreen_display = 0;
 	}
 
+	SDL_SetWindowFullscreen(main_window, SDL_FALSE);
+	SDL_SetWindowSize(main_window, scalers[scaler].width, scalers[scaler].height);
+
 	if (fullscreen_display == -1)
 	{
-		SDL_SetWindowFullscreen(main_window, SDL_FALSE);
-		SDL_SetWindowSize(main_window, scalers[scaler].width, scalers[scaler].height);
-		recenter_window_in_display();
+		window_center_in_display(window_get_display_index());
 	}
 	else
 	{
-		SDL_SetWindowFullscreen(main_window, SDL_FALSE);
-		recenter_window_in_display();
+		window_center_in_display(fullscreen_display);
+
 		if (SDL_SetWindowFullscreen(main_window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 		{
 			reinit_fullscreen(-1);
@@ -229,7 +232,7 @@ bool init_scaler( unsigned int new_scaler )
 		// Changing scalers, when not in fullscreen mode, forces the window
 		// to resize to exactly match the scaler's output dimensions.
 		SDL_SetWindowSize(main_window, w, h);
-		recenter_window_in_display();
+		window_center_in_display(window_get_display_index());
 	}
 
 	renderer_needs_reinit = true;
