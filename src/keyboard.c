@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "joystick.h"
 #include "keyboard.h"
+#include "joystick.h"
 #include "network.h"
 #include "opentyr.h"
 #include "video.h"
@@ -26,13 +26,11 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-
 JE_boolean ESCPressed;
 
 JE_boolean newkey, newmouse, keydown, mousedown;
 SDL_Scancode lastkey_scan;
 SDL_Keymod lastkey_mod;
-unsigned char lastkey_char;
 Uint8 lastmouse_but;
 Uint16 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {false, false, false};
@@ -40,12 +38,14 @@ Uint16 mouse_x, mouse_y;
 
 Uint8 keysactive[SDL_NUM_SCANCODES];
 
+bool new_text;
+char last_text[SDL_TEXTINPUTEVENT_TEXT_SIZE];
+
 #ifdef NDEBUG
 bool input_grab_enabled = true;
 #else
 bool input_grab_enabled = false;
 #endif
-
 
 void flush_events_buffer( void )
 {
@@ -132,7 +132,11 @@ void service_SDL_events( JE_boolean clear_new )
 	SDL_Event ev;
 	
 	if (clear_new)
-		newkey = newmouse = false;
+	{
+		newkey = false;
+		newmouse = false;
+		new_text = false;
+	}
 	
 	while (SDL_PollEvent(&ev))
 	{
@@ -161,6 +165,7 @@ void service_SDL_events( JE_boolean clear_new )
 				mouse_x = ev.motion.x;
 				mouse_y = ev.motion.y;
 				break;
+
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)
 				{
@@ -193,17 +198,13 @@ void service_SDL_events( JE_boolean clear_new )
 				newkey = true;
 				lastkey_scan = ev.key.keysym.scancode;
 				lastkey_mod = ev.key.keysym.mod;
-				if (ev.key.keysym.sym & SDLK_SCANCODE_MASK) {
-					lastkey_char = 0;
-				} else {
-					lastkey_char = ev.key.keysym.sym & ~SDLK_SCANCODE_MASK;
-				}
 				keydown = true;
 				return;
 			case SDL_KEYUP:
 				keysactive[ev.key.keysym.scancode] = 0;
 				keydown = false;
 				return;
+
 			case SDL_MOUSEBUTTONDOWN:
 				if (!input_grab_enabled)
 				{
@@ -234,6 +235,14 @@ void service_SDL_events( JE_boolean clear_new )
 						mouse_pressed[2] = mousedown; break;
 				}
 				break;
+
+			case SDL_TEXTINPUT:
+				SDL_strlcpy(last_text, ev.text.text, COUNTOF(last_text));
+				new_text = true;
+				break;
+			case SDL_TEXTEDITING:
+				break;
+
 			case SDL_QUIT:
 				/* TODO: Call the cleanup code here. */
 				exit(0);

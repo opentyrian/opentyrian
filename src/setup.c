@@ -43,7 +43,7 @@ void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 		if (doGamma)
 			JE_gammaCheck();
 		
-		inputDetected = newkey | mousedown;
+		inputDetected = newkey | mousedown | new_text;
 		
 		if (lastkey_scan == SDL_SCANCODE_SPACE)
 		{

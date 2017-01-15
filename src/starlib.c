@@ -157,7 +157,67 @@ void JE_starlib_main( void )
 
 	if (newkey)
 	{
-		switch (toupper(lastkey_char))
+		char key = 0;
+
+		if ((lastkey_mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI)) == KMOD_NONE)
+		{
+			switch (lastkey_scan)
+			{
+			case SDL_SCANCODE_C: key = 'c'; break;
+			case SDL_SCANCODE_P: key = 'p'; break;
+			case SDL_SCANCODE_S: key = 's'; break;
+			case SDL_SCANCODE_X: key = 'x'; break;
+			case SDL_SCANCODE_1: key = '1'; break;
+			case SDL_SCANCODE_2: key = '2'; break;
+			case SDL_SCANCODE_3: key = '3'; break;
+			case SDL_SCANCODE_4: key = '4'; break;
+			case SDL_SCANCODE_5: key = '5'; break;
+			case SDL_SCANCODE_6: key = '6'; break;
+			case SDL_SCANCODE_7: key = '7'; break;
+			case SDL_SCANCODE_8: key = '8'; break;
+			case SDL_SCANCODE_9: key = '9'; break;
+			case SDL_SCANCODE_0: key = '0'; break;
+			case SDL_SCANCODE_ESCAPE: key = 27; break;
+			case SDL_SCANCODE_MINUS: key = '-'; break;
+			case SDL_SCANCODE_LEFTBRACKET: key = '['; break;
+			case SDL_SCANCODE_RIGHTBRACKET: key = ']'; break;
+			case SDL_SCANCODE_GRAVE: key = '`'; break;
+			case SDL_SCANCODE_KP_MINUS: key = '-'; break;
+			case SDL_SCANCODE_KP_PLUS: key = '+'; break;
+			case SDL_SCANCODE_KP_1: key = '1'; break;
+			case SDL_SCANCODE_KP_2: key = '2'; break;
+			case SDL_SCANCODE_KP_3: key = '3'; break;
+			case SDL_SCANCODE_KP_4: key = '4'; break;
+			case SDL_SCANCODE_KP_5: key = '5'; break;
+			case SDL_SCANCODE_KP_6: key = '6'; break;
+			case SDL_SCANCODE_KP_7: key = '7'; break;
+			case SDL_SCANCODE_KP_8: key = '8'; break;
+			case SDL_SCANCODE_KP_9: key = '9'; break;
+			case SDL_SCANCODE_KP_0: key = '0'; break;
+			default: break;
+			}
+		}
+		else if ((lastkey_mod & KMOD_SHIFT) != KMOD_NONE &&
+		         (lastkey_mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI)) == KMOD_NONE)
+		{
+			switch (lastkey_scan)
+			{
+			case SDL_SCANCODE_C: key = 'C'; break;
+			case SDL_SCANCODE_P: key = 'P'; break;
+			case SDL_SCANCODE_S: key = 'S'; break;
+			case SDL_SCANCODE_X: key = 'X'; break;
+			case SDL_SCANCODE_1: key = '!'; break;
+			case SDL_SCANCODE_2: key = '@'; break;
+			case SDL_SCANCODE_3: key = '#'; break;
+			case SDL_SCANCODE_4: key = '$'; break;
+			case SDL_SCANCODE_EQUALS: key = '+'; break;
+			case SDL_SCANCODE_LEFTBRACKET: key = '{'; break;
+			case SDL_SCANCODE_RIGHTBRACKET: key = '}'; break;
+			default: break;
+			}
+		}
+
+		switch (toupper(key))
 		{
 			case '+':
 				starlib_speed++;
@@ -232,7 +292,7 @@ void JE_starlib_main( void )
 			case '}':
 				pColor += 72;
 				break;
-			case '`': /* ` */
+			case '`':
 				doChange = !doChange;
 				break;
 			case 'P':

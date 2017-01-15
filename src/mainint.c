@@ -1582,7 +1582,7 @@ void JE_highScoreCheck( void )
 								break;
 						}
 
-					} while (!newkey && !newmouse);
+					} while (!newkey && !newmouse && !new_text);
 
 					if (!playing)
 						play_song(31);
@@ -1599,56 +1599,39 @@ void JE_highScoreCheck( void )
 							cancel = true;
 						}
 					}
+					else if (new_text)
+					{
+						for (size_t ti = 0U; last_text[ti] != '\0'; ++ti)
+						{
+							const char c = (unsigned char)last_text[ti] <= 127U ? toupper(last_text[ti]) : 0;
+							if ((c == ' ' || font_ascii[(unsigned char)c] != -1) &&
+							    temp < 28)
+							{
+								stemp[temp] = c;
+								temp += 1;
+							}
+						}
+					}
 					else if (newkey)
 					{
-						bool validkey = false;
-						lastkey_char = toupper(lastkey_char);
-						switch(lastkey_char)
+						switch (lastkey_scan)
 						{
-							case ' ':
-							case '-':
-							case '.':
-							case ',':
-							case ':':
-							case '!':
-							case '?':
-							case '#':
-							case '@':
-							case '$':
-							case '%':
-							case '*':
-							case '(':
-							case ')':
-							case '/':
-							case '=':
-							case '+':
-							case '<':
-							case '>':
-							case ';':
-							case '"':
-							case '\'':
-								validkey = true;
-							default:
-								if (temp < 28 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
-								{
-									stemp[temp] = lastkey_char;
-									temp++;
-								}
-								break;
-							case SDLK_BACKSPACE:
-							case SDLK_DELETE:
+							case SDL_SCANCODE_BACKSPACE:
+							case SDL_SCANCODE_DELETE:
 								if (temp)
 								{
 									temp--;
 									stemp[temp] = ' ';
 								}
 								break;
-							case SDLK_ESCAPE:
+							case SDL_SCANCODE_ESCAPE:
 								quit = true;
 								cancel = true;
 								break;
-							case SDLK_RETURN:
+							case SDL_SCANCODE_RETURN:
 								quit = true;
+								break;
+							default:
 								break;
 						}
 					}
@@ -2409,12 +2392,11 @@ void JE_operation( JE_byte slot )
 					push_joysticks_as_keyboard();
 					service_wait_delay();
 
-					if (newkey || newmouse)
+					if (newkey || newmouse || new_text)
 						break;
 				}
-
 			}
-			while (!newkey && !newmouse);
+			while (!newkey && !newmouse && !new_text);
 
 			if (mouseButton > 0)
 			{
@@ -2430,45 +2412,26 @@ void JE_operation( JE_byte slot )
 					JE_playSampleNum(S_SPRING);
 				}
 			}
+			else if (new_text)
+			{
+				for (size_t ti = 0U; last_text[ti] != '\0'; ++ti)
+				{
+					const char c = (unsigned char)last_text[ti] <= 127U ? toupper(last_text[ti]) : 0;
+					if ((c == ' ' || font_ascii[(unsigned char)c] != -1) &&
+					    temp < 14)
+					{
+						JE_playSampleNum(S_CURSOR);
+						stemp[temp] = c;
+						temp += 1;
+					}
+				}
+			}
 			else if (newkey)
 			{
-				bool validkey = false;
-				lastkey_char = toupper(lastkey_char);
-				switch (lastkey_char)
+				switch (lastkey_scan)
 				{
-					case ' ':
-					case '-':
-					case '.':
-					case ',':
-					case ':':
-					case '!':
-					case '?':
-					case '#':
-					case '@':
-					case '$':
-					case '%':
-					case '*':
-					case '(':
-					case ')':
-					case '/':
-					case '=':
-					case '+':
-					case '<':
-					case '>':
-					case ';':
-					case '"':
-					case '\'':
-						validkey = true;
-					default:
-						if (temp < 14 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
-						{
-							JE_playSampleNum(S_CURSOR);
-							stemp[temp] = lastkey_char;
-							temp++;
-						}
-						break;
-					case SDLK_BACKSPACE:
-					case SDLK_DELETE:
+					case SDL_SCANCODE_BACKSPACE:
+					case SDL_SCANCODE_DELETE:
 						if (temp)
 						{
 							temp--;
@@ -2476,17 +2439,18 @@ void JE_operation( JE_byte slot )
 							JE_playSampleNum(S_CLICK);
 						}
 						break;
-					case SDLK_ESCAPE:
+					case SDL_SCANCODE_ESCAPE:
 						quit = true;
 						JE_playSampleNum(S_SPRING);
 						break;
-					case SDLK_RETURN:
+					case SDL_SCANCODE_RETURN:
 						quit = true;
 						JE_saveGame(slot, stemp);
 						JE_playSampleNum(S_SELECT);
 						break;
+					default:
+						break;
 				}
-
 			}
 		}
 	}
