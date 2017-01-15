@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #define vga_width 320
 #define vga_height 200

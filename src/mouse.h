@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 extern bool has_mouse;
 extern bool mouse_has_three_buttons;

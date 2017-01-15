@@ -24,7 +24,7 @@
 #include "musmast.h"
 #include "sndmast.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 extern Uint32 target, target2;
 

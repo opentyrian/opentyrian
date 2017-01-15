@@ -32,7 +32,6 @@ stdout.txt
 # MSVC build output and project
 *.ilk
 *.pdb
-extlibs/
 visualc/.vs/
 visualc/*32/
 visualc/*64/

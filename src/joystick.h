@@ -22,7 +22,7 @@
 #include "opentyr.h"
 #include "config_file.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 typedef enum
 {

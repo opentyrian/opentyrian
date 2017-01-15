@@ -27,7 +27,7 @@
 #include "sndmast.h"
 #include "vga256d.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 Uint32 target, target2;
 

@@ -53,10 +53,9 @@
   <Import Project="sdl_paths.props" Condition="$(SDL2BASE)=='' and exists('sdl_paths.props')"/>
   
   <PropertyGroup>
-    <ExtlibHeaders>$(BaseDir)/extlibs/include</ExtlibHeaders>
     <LibraryPath>$(SDL2BASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="$(WITH_NETWORK)=='true'">$(SDL2NETBASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ExtlibHeaders);$(ExtlibHeaders)/SDL2;$(IncludePath)</IncludePath>
+    <IncludePath>$(SDL2BASE)/include;$(IncludePath)</IncludePath>
     <IncludePath Condition="$(WITH_NETWORK)=='true'">$(SDL2NETBASE)/include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   
@@ -109,19 +108,10 @@
   <ItemGroup>
     <CopyDLL Include="$(SDL2BASE)/lib/$(SDLPlat)/*.dll" />
     <CopyDLL Include="$(SDL2NETBASE)/lib/$(SDLPlat)/*.dll" Condition="$(WITH_NETWORK)=='true'" />
-    <CopySDLHeaders Include="$(SDL2BASE)/include/*.h" />
   </ItemGroup>
   
   <Target Name="CopyDLLs" AfterTargets="Link">
     <Copy SourceFiles="@(CopyDLL)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-  </Target>
-  
-  <Target Name="CopyHeaders" BeforeTargets="ClCompile">
-    <Copy SourceFiles="@(CopySDLHeaders)" DestinationFolder="$(ExtlibHeaders)/SDL2" SkipUnchangedFiles="true" />
-  </Target>
-  
-  <Target Name="CopyTemplate" BeforeTargets="CheckSDL">
-    
   </Target>
   
   <Target Name="CheckSDL">

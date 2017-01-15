@@ -19,7 +19,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include <SDL2/SDL_endian.h>
+#include <SDL_endian.h>
 #include <stdbool.h>
 #include <stdio.h>
 

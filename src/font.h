@@ -19,7 +19,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdbool.h>
 
 typedef enum

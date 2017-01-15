@@ -20,7 +20,7 @@
 #include "opentyr.h"
 #include "varz.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>

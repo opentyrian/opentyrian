@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 typedef SDL_Color Palette[256];
 

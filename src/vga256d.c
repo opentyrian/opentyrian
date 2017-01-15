@@ -23,7 +23,7 @@
 #include "vga256d.h"
 #include "video.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>
