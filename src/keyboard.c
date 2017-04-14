@@ -159,8 +159,8 @@ void service_SDL_events( JE_boolean clear_new )
 
 				if (ev.motion.y < 0) {
 					ev.motion.y = 0;
-				} else if (ev.motion.y >= vga_width) {
-					ev.motion.y = vga_width - 1;
+				} else if (ev.motion.y >= vga_height) {
+					ev.motion.y = vga_height - 1;
 				}
 				mouse_x = ev.motion.x;
 				mouse_y = ev.motion.y;
