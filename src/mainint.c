@@ -2381,16 +2381,22 @@ void JE_operation( JE_byte slot )
 				JE_barShade(VGAScreen, tempW + 2, 90, tempW + 6, 95);
 				fill_rectangle_xy(VGAScreen, tempW + 1, 89, tempW + 5, 94, flash);
 
+				int text_x = 54 + 45 - (JE_textWidth(miscText[9], FONT_SHAPES) / 2);
+				JE_outTextAdjust(VGAScreen, text_x, 128, miscText[9], 15, -5, FONT_SHAPES, true);
+
+				text_x = 149 + 45 - (JE_textWidth(miscText[10], FONT_SHAPES) / 2);
+				JE_outTextAdjust(VGAScreen, text_x, 128, miscText[10], 15, -5, FONT_SHAPES, true);
+
 				for (int i = 0; i < 14; i++)
 				{
 					setjasondelay(1);
 
+					push_joysticks_as_keyboard();
+					service_wait_delay();
+
 					JE_mouseStart();
 					JE_showVGA();
 					JE_mouseReplace();
-
-					push_joysticks_as_keyboard();
-					service_wait_delay();
 
 					if (newkey || newmouse || new_text)
 						break;
@@ -2400,13 +2406,13 @@ void JE_operation( JE_byte slot )
 
 			if (mouseButton > 0)
 			{
-				if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
+				if (lastMouseX > 56 && lastMouseX < 142 && lastMouseY > 123 && lastMouseY < 149)
 				{
 					quit = true;
 					JE_saveGame(slot, stemp);
 					JE_playSampleNum(S_SELECT);
 				}
-				else if (mouseX > 151 && mouseX < 237 && mouseY > 123 && mouseY < 149)
+				else if (lastMouseX > 151 && lastMouseX < 237 && lastMouseY > 123 && lastMouseY < 149)
 				{
 					quit = true;
 					JE_playSampleNum(S_SPRING);
