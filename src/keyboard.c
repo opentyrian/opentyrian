@@ -213,12 +213,13 @@ void service_SDL_events( JE_boolean clear_new )
 				}
 				// intentional fall-though
 			case SDL_MOUSEBUTTONUP:
+				map_window_to_screen_pos(&ev.button.x, &ev.button.y);
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
 				{
 					newmouse = true;
 					lastmouse_but = ev.button.button;
-					lastmouse_x = ev.button.x * vga_width / scalers[scaler].width;
-					lastmouse_y = ev.button.y * vga_height / scalers[scaler].height;
+					lastmouse_x = ev.button.x;
+					lastmouse_y = ev.button.y;
 					mousedown = true;
 				}
 				else
