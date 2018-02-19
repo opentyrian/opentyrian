@@ -1713,7 +1713,7 @@ level_loop:
 										else
 										{
 											JE_setupExplosion(enemy_screen_x, enemy[temp2].ey, 0, 1, false, false);
-											soundQueue[6] = S_SELECT; // S_EXPLOSION_8
+											soundQueue[6] = S_EXPLOSION_8;
 										}
 									}
 								}

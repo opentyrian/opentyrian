@@ -1161,7 +1161,7 @@ void JE_itemScreen( void )
 						}
 						else
 						{
-							if ((curMenu == 4) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[2]-1]][selection-2]) > player[0].cash))
+							if ((curMenu == 4) && (JE_getCost(curSel[1], itemAvail[itemAvailMap[curSel[1]-2]-1][selection-2]) > player[0].cash))
 							{
 								JE_playSampleNum(S_CLINK);
 							}
@@ -2301,7 +2301,7 @@ void JE_doShipSpecs( void )
 	JE_loadPic(VGAScreen2, 1, false);
 
 	//draw it
-	JE_playSampleNum(16);
+	JE_playSampleNum(S_SPRING);
 	JE_scaleInPicture(VGAScreen, game_screen);
 	wait_input(true, true, true);
 }
