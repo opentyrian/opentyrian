@@ -43,14 +43,14 @@
     <SrcDir>$(BaseDir)/src</SrcDir>
     <IntDir>$(ProjectDir)$(Configuration)$(PlatformArchitecture)\</IntDir>
     <OutDir>$(BaseDir)/</OutDir>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <SDLPlat Condition="'$(Platform)'=='Win32'">x86</SDLPlat>
     <SDLPlat Condition="'$(Platform)'=='x64'">x64</SDLPlat>
   </PropertyGroup>
   
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   
-  <Import Project="sdl_paths.props" Condition="$(SDL2BASE)=='' and exists('sdl_paths.props')"/>
+  <Import Project="sdl_paths.props" Condition="$(SDL2BASE)=='' and exists('sdl_paths.props')" />
   
   <PropertyGroup>
     <LibraryPath>$(SDL2BASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
@@ -115,12 +115,12 @@
   </Target>
   
   <Target Name="CheckSDL">
-    <Copy SourceFiles="sdl_paths.props.template" DestinationFiles="sdl_paths.props" Condition="!exists('sdl_paths.props')"/>
-    <Error Condition="'$(SDL2BASE)'==''" Text="SDL2BASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable."/>
-    <Error Condition="!Exists($(SDL2BASE))" Text="SDL2BASE dir $(SDL2BASE) does not exist"/>
-  
-    <Error Condition="$(WITH_NETWORK)=='true' AND '$(SDL2NETBASE)'==''" Text="SDL2NETBASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable."/>
-    <Error Condition="$(WITH_NETWORK)=='true' AND !Exists($(SDL2NETBASE))" Text="SDL2NETBASE dir $(SDL2NETBASE) does not exist"/>
+    <Copy SourceFiles="sdl_paths.props.template" DestinationFiles="sdl_paths.props" Condition="!exists('sdl_paths.props')" />
+    <Error Condition="'$(SDL2BASE)'==''" Text="SDL2BASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable." />
+    <Error Condition="!Exists($(SDL2BASE))" Text="SDL2BASE dir $(SDL2BASE) does not exist" />
+    
+    <Error Condition="$(WITH_NETWORK)=='true' AND '$(SDL2NETBASE)'==''" Text="SDL2NETBASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable." />
+    <Error Condition="$(WITH_NETWORK)=='true' AND !Exists($(SDL2NETBASE))" Text="SDL2NETBASE dir $(SDL2NETBASE) does not exist" />
   </Target>
   
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
