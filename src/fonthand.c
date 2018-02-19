@@ -277,7 +277,7 @@ void JE_updateWarning( SDL_Surface * screen )
 		else
 		{
 			warningSoundDelay = 14;
-			JE_playSampleNum(17);
+			JE_playSampleNum(S_WARNING);
 		}
 	}
 }

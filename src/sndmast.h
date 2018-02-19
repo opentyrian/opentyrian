@@ -23,49 +23,48 @@
 
 #define SAMPLE_COUNT 38
 
-
-
 enum
 {
-	S_NONE = 0,
-	S_WEAPON_1,
-	S_WEAPON_2,
-	S_ENEMY_HIT,
-	S_EXPLOSION_4,
-	S_WEAPON_5,
-	S_WEAPON_6,
-	S_WEAPON_7,
-	S_SELECT, // S_EXPLOSION_8
-	S_EXPLOSION_9,
-	S_WEAPON_10,
-	S_EXPLOSION_11,
-	S_EXPLOSION_12,
-	S_WEAPON_13,
-	S_WEAPON_14,
-	S_WEAPON_15,
-	S_SPRING,
-	S_WARNING,
-	S_ITEM,
-	S_HULL_HIT,
-	S_MACHINE_GUN,
-	S_SOUL_OF_ZINGLON,
-	S_EXPLOSION_22,
-	S_CLINK,
-	S_CLICK,
-	S_WEAPON_25,
-	S_WEAPON_26,
-	S_SHIELD_HIT,
-	S_CURSOR,
-	S_POWERUP,
-	V_CLEARED_PLATFORM, // 30
-	V_BOSS,
-	V_ENEMIES,
-	V_GOOD_LUCK,
-	V_LEVEL_END,
-	V_DANGER,
-	V_SPIKES,
-	V_DATA_CUBE,
-	V_ACCELERATE
+	S_NONE             =  0,
+	S_WEAPON_1         =  1,
+	S_WEAPON_2         =  2,
+	S_ENEMY_HIT        =  3,
+	S_EXPLOSION_4      =  4,
+	S_WEAPON_5         =  5,
+	S_WEAPON_6         =  6,
+	S_WEAPON_7         =  7,
+	S_SELECT           =  8,
+	S_EXPLOSION_8      =  8,
+	S_EXPLOSION_9      =  9,
+	S_WEAPON_10        = 10,
+	S_EXPLOSION_11     = 11,
+	S_EXPLOSION_12     = 12,
+	S_WEAPON_13        = 13,
+	S_WEAPON_14        = 14,
+	S_WEAPON_15        = 15,
+	S_SPRING           = 16,
+	S_WARNING          = 17,
+	S_ITEM             = 18,
+	S_HULL_HIT         = 19,
+	S_MACHINE_GUN      = 20,
+	S_SOUL_OF_ZINGLON  = 21,
+	S_EXPLOSION_22     = 22,
+	S_CLINK            = 23,
+	S_CLICK            = 24,
+	S_WEAPON_25        = 25,
+	S_WEAPON_26        = 26,
+	S_SHIELD_HIT       = 27,
+	S_CURSOR           = 28,
+	S_POWERUP          = 29,
+	V_CLEARED_PLATFORM = 30,  // "Cleared enemy platform."
+	V_BOSS             = 31,  // "Large enemy approaching."
+	V_ENEMIES          = 32,  // "Enemies ahead."
+	V_GOOD_LUCK        = 33,  // "Good luck."
+	V_LEVEL_END        = 34,  // "Level completed."
+	V_DANGER           = 35,  // "Danger."
+	V_SPIKES           = 36,  // "Warning: spikes ahead."
+	V_DATA_CUBE        = 37,  // "Data acquired."
+	V_ACCELERATE       = 38,  // "Unexplained speed increase."
 };
 
 extern const char soundTitle[SAMPLE_COUNT][9];

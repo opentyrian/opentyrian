@@ -659,12 +659,12 @@ void JE_loadScreen( void )
 				{
 					if (saveFiles[sel - 1].level > 0)
 					{
-						JE_playSampleNum (S_SELECT);
+						JE_playSampleNum(S_SELECT);
 						performSave = false;
 						JE_operation(sel);
 						quit = true;
 					} else {
-						JE_playSampleNum (S_CLINK);
+						JE_playSampleNum(S_CLINK);
 					}
 				} else {
 					quit = true;
@@ -2244,7 +2244,7 @@ void JE_endLevelAni( void )
 			{
 				NETWORK_KEEP_ALIVE();
 
-				JE_playSampleNum(18);
+				JE_playSampleNum(S_ITEM);
 				x = 20 + 30 * temp;
 				y = 135;
 				JE_drawCube(VGAScreenSeg, x, y, 9, 0);

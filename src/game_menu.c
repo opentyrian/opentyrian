@@ -2301,7 +2301,7 @@ void JE_doShipSpecs( void )
 	JE_loadPic(VGAScreen2, 1, false);
 
 	//draw it
-	JE_playSampleNum(16);
+	JE_playSampleNum(S_SPRING);
 	JE_scaleInPicture(VGAScreen, game_screen);
 	wait_input(true, true, true);
 }
