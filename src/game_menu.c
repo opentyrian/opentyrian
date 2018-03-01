@@ -256,8 +256,6 @@ void JE_itemScreen( void )
 			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 		}
 
-		defaultBrightness = -3;
-
 		if (curMenu == 1 && (curSel[curMenu] == 3 || curSel[curMenu] == 4))
 		{
 			// reset temp_weapon_power[] every time we select upgrading front or back

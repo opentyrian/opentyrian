@@ -3305,8 +3305,6 @@ bool JE_titleScreen( JE_boolean animate )
 	{
 		do
 		{
-			defaultBrightness = -3;
-
 			/* Animate instead of quickly fading in */
 			if (redraw)
 			{
