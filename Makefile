@@ -21,7 +21,7 @@ INSTALL ?= install
 PKG_CONFIG ?= pkg-config
 
 INSTALL_PROGRAM ?= $(INSTALL)
-INSTALL_DATA ?= ${INSTALL} -m 644
+INSTALL_DATA ?= $(INSTALL) -m 644
 
 prefix ?= /usr/local
 exec_prefix ?= $(prefix)
