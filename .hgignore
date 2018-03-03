@@ -8,17 +8,24 @@ src/*.gch
 
 opentyrian
 opentyrian.exe
-opentyrian.gpe
+opentyrian-*.exe
+opentyrian-*.ilk
+opentyrian-*.pdb
+opentyrian-*.iobj
+opentyrian-*.ipdb
 
 SDL.dll
 SDL_net.dll
 
 data/*
 
-opentyrian.conf
+opentyrian.cfg
 tyrian.cfg
 tyrian.sav
 stderr.txt
 stdout.txt
+
+visualc/*.props
+visualc/*.user
 
 doc/doxygen/
