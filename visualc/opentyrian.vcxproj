@@ -1,13 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" InitialTargets="CheckSDL" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectGuid>{1CD2070D-F0DF-4C14-896F-D13FEE0DE47E}</ProjectGuid>
-    <RootNamespace>opentyrian</RootNamespace>
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  
-  <ItemGroup>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -25,53 +18,54 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <DebugSuffix>-d</DebugSuffix>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{F0FF290F-887C-4E70-8BF0-F5F45ADA8432}</ProjectGuid>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <OutDir>$(SolutionDir)..\</OutDir>
+    <IntDir>$(SolutionDir)..\obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <DebugSuffix />
   </PropertyGroup>
-  <PropertyGroup>
-    <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
-    <BaseDir>$(SolutionDir)..</BaseDir>
-    <SrcDir>$(BaseDir)/src</SrcDir>
-    <IntDir>$(ProjectDir)$(Configuration)$(PlatformArchitecture)\</IntDir>
-    <OutDir>$(BaseDir)/</OutDir>
-    <PlatformToolset>v141</PlatformToolset>
-    <SDLPlat Condition="'$(Platform)'=='Win32'">x86</SDLPlat>
-    <SDLPlat Condition="'$(Platform)'=='x64'">x64</SDLPlat>
-  </PropertyGroup>
-  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  
-  <Import Project="sdl_paths.props" Condition="$(SDL2BASE)=='' and exists('sdl_paths.props')" />
-  
-  <PropertyGroup>
-    <LibraryPath>$(SDL2BASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="$(WITH_NETWORK)=='true'">$(SDL2NETBASE)/lib/$(SDLPlat);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SDL2BASE)/include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="$(WITH_NETWORK)=='true'">$(SDL2NETBASE)/include;$(IncludePath)</IncludePath>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="Exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <Import Project="opentyrian.props" Condition="Exists('opentyrian.props')" />
+  <Import Project="opentyrian.props.template" Condition="!Exists('opentyrian.props')" />
+  <Import Project="sdl_paths.props" Condition="Exists('sdl_paths.props')" />
+  <Import Project="sdl_paths.props.template" Condition="!Exists('sdl_paths.props')" />
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
-  
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
+      <AdditionalIncludeDirectories>$(SDL2BaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(WITH_NETWORK)'=='true'">$(SDL2netBaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>TARGET_WIN32;TYRIAN_DIR="C:\TYRIAN";_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="$(WITH_NETWORK)=='true'">WITH_NETWORK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <EnableEnhancedInstructionSet Condition="$(Platform)=='Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <ObjectFileName>$(IntDir)/obj/%(RecursiveDir)</ObjectFileName>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>TARGET_WIN32;TYRIAN_DIR="$(TYRIAN_DIR)";_CRT_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(WITH_NETWORK)'=='true'">WITH_NETWORK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies Condition="$(WITH_NETWORK)=='true'">SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(WITH_NETWORK)'=='true'">SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
@@ -80,48 +74,66 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
-  
+  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+    <ClCompile>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SDL2BaseDir)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(WITH_NETWORK)'=='true'">$(SDL2netBaseDir)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SDL2BaseDir)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(WITH_NETWORK)'=='true'">$(SDL2netBaseDir)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\**\*.h" />
+    <ClCompile Include="..\src\*.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\**\*.c" />
+    <ClInclude Include="..\src\*.h" />
   </ItemGroup>
-  
   <ItemGroup>
-    <CopyDLL Include="$(SDL2BASE)/lib/$(SDLPlat)/*.dll" />
-    <CopyDLL Include="$(SDL2NETBASE)/lib/$(SDLPlat)/*.dll" Condition="$(WITH_NETWORK)=='true'" />
+    <ResourceCompile Include="resources.rc" />
   </ItemGroup>
-  
-  <Target Name="CopyDLLs" AfterTargets="Link">
-    <Copy SourceFiles="@(CopyDLL)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-  </Target>
-  
-  <Target Name="CheckSDL">
-    <Copy SourceFiles="sdl_paths.props.template" DestinationFiles="sdl_paths.props" Condition="!exists('sdl_paths.props')" />
-    <Error Condition="'$(SDL2BASE)'==''" Text="SDL2BASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable." />
-    <Error Condition="!Exists($(SDL2BASE))" Text="SDL2BASE dir $(SDL2BASE) does not exist" />
-    
-    <Error Condition="$(WITH_NETWORK)=='true' AND '$(SDL2NETBASE)'==''" Text="SDL2NETBASE is undefined, and needs to be set in the sdl_paths.props file or as an environment variable." />
-    <Error Condition="$(WITH_NETWORK)=='true' AND !Exists($(SDL2NETBASE))" Text="SDL2NETBASE dir $(SDL2NETBASE) does not exist" />
-  </Target>
-  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup Condition="'$(Platform)'=='Win32'">
+    <Dependency Include="$(SDL2BaseDir)\lib\x86\*.dll" />
+    <Dependency Condition="$(WITH_NETWORK)=='true'" Include="$(SDL2netBaseDir)\lib\x86\*.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='x64'">
+    <Dependency Include="$(SDL2BaseDir)\lib\x64\*.dll" />
+    <Dependency Condition="$(WITH_NETWORK)=='true'" Include="$(SDL2netBaseDir)\lib\x64\*.dll" />
+  </ItemGroup>
+  <PropertyGroup>
+    <BuildDependsOn>CopyPropsTemplates;EnsureSDLExists;$(BuildDependsOn)</BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="CopyPropsTemplates">
+    <Copy SourceFiles="opentyrian.props.template" DestinationFiles="opentyrian.props" Condition="!Exists('opentyrian.props')" />
+    <Copy SourceFiles="sdl_paths.props.template" DestinationFiles="sdl_paths.props" Condition="!Exists('sdl_paths.props')" />
+  </Target>
+  <Target Name="EnsureSDLExists">
+    <Error Condition="!Exists($(SDL2BaseDir))" Text="Set 'SDL2BaseDir' in 'sdl_paths.props' to the directory where SDL2 is located." />
+    <Error Condition="'$(WITH_NETWORK)'=='true' AND !Exists($(SDL2netBaseDir))" Text="Set 'SDL2netBaseDir' in 'sdl_paths.props' to the directory where SDL2_net is located." />
+  </Target>
+  <Target Name="CopyDependencies" AfterTargets="Build">
+    <Copy SourceFiles="@(Dependency)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

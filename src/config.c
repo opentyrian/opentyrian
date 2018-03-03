@@ -274,9 +274,10 @@ bool save_opentyrian_config( void )
 	
 	config_set_string_option(section, "scaling_mode", scaling_mode_names[scaling_mode]);
 	
-	// The user directory is '.' on WIN32 and doesn't need to be created.
 #ifndef TARGET_WIN32
 	mkdir(get_user_directory(), 0700);
+#else
+	mkdir(get_user_directory());
 #endif
 	
 	FILE *file = dir_fopen(get_user_directory(), "opentyrian.cfg", "w");
@@ -961,9 +962,10 @@ void JE_saveConfiguration( void )
 	
 	JE_encryptSaveTemp();
 	
-	// The user directory is '.' on WIN32 and doesn't need to be created.
 #ifndef TARGET_WIN32
 	mkdir(get_user_directory(), 0700);
+#else
+	mkdir(get_user_directory());
 #endif
 	
 	f = dir_fopen_warn(get_user_directory(), "tyrian.sav", "wb");
