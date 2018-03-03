@@ -3649,8 +3649,7 @@ void intro_logos( void )
 
 void JE_readTextSync( void )
 {
-	return;  // this function seems to be unnecessary
-
+#if 0  // this function seems to be unnecessary
 	JE_clr256(VGAScreen);
 	JE_showVGA();
 	JE_loadPic(VGAScreen, 1, true);
@@ -3671,6 +3670,7 @@ void JE_readTextSync( void )
 		wait_delay();
 
 	} while (0 /* TODO: NETWORK */);
+#endif
 }
 
 

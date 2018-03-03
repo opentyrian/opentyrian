@@ -32,7 +32,10 @@
 
 #include <sys/stat.h>
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+#include <direct.h>
+#define mkdir _mkdir
+#else
 #include <unistd.h>
 #endif
 

@@ -2,6 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <WITH_NETWORK Condition="$(WITH_NETWORK)==''">false</WITH_NETWORK>
-    <TYRIAN_DIR Condition="$(TYRIAN_DIR)==''">C:\TYRIAN</TYRIAN_DIR>
+    <TYRIAN_DIR Condition="$(TYRIAN_DIR)==''">"C:\\TYRIAN"</TYRIAN_DIR>
   </PropertyGroup>
 </Project>
