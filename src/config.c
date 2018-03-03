@@ -30,9 +30,11 @@
 #include "video.h"
 #include "video_scale.h"
 
-#include <unistd.h>
 #include <sys/stat.h>
 
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
 
 /* Configuration Load/Save handler */
 
