@@ -26,11 +26,7 @@
 
 static Uint32 rgb_to_yuv( int r, int g, int b );
 
-#ifdef TYRIAN2000
-#define PALETTE_COUNT 24
-#else
 #define PALETTE_COUNT 23
-#endif
 
 Palette palettes[PALETTE_COUNT];
 int palette_count;

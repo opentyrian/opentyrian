@@ -50,11 +50,7 @@ typedef bool   JE_boolean;
 typedef char   JE_char;
 typedef float  JE_real;
 
-#ifdef TYRIAN2000
-#define TYRIAN_VERSION "2000"
-#else
 #define TYRIAN_VERSION "2.1"
-#endif
 
 extern const char *opentyrian_str, *opentyrian_version;
 

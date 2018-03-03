@@ -175,11 +175,7 @@ void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsig
 
 void JE_loadHelpText( void )
 {
-#ifdef TYRIAN2000
-	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 9, -1, -1, 11, -1, -1, -1, 7, 4, 6, 7, 5 };
-#else
 	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 8, -1, -1, 11, -1, -1, -1, 6, 4, 6, 7, 5 };
-#endif
 	
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
 	efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
@@ -378,13 +374,6 @@ void JE_loadHelpText( void )
 		read_encrypted_pascal_string(shipInfo[i][1], sizeof(shipInfo[i][1]), f);
 	}
 	skip_pascal_string(f);
-	
-#ifndef TYRIAN2000
-	/*Menu 12 - Network Options*/
-	skip_pascal_string(f);
-	for (unsigned int i = 0; i < menuInt_entries[14]; ++i)
-		read_encrypted_pascal_string(menuInt[14][i], sizeof(menuInt[14][i]), f);
-#endif
 	
 	fclose(f);
 }

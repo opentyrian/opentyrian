@@ -668,11 +668,7 @@ void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sp
 
 void JE_loadMainShapeTables( const char *shpfile )
 {
-#ifdef TYRIAN2000
-	enum { SHP_NUM = 13 };
-#else
 	enum { SHP_NUM = 12 };
-#endif
 	
 	FILE *f = dir_fopen_die(data_dir(), shpfile, "rb");
 	

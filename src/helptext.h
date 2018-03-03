@@ -32,20 +32,6 @@ extern const JE_byte menuHelp[MENU_MAX][11];   /* [1..14, 1..11] */
 extern JE_byte verticalHeight;
 extern JE_byte helpBoxColor, helpBoxBrightness, helpBoxShadeType;
 
-#ifdef TYRIAN2000
-#define HELPTEXT_MISCTEXT_COUNT 72
-#define HELPTEXT_MISCTEXTB_COUNT 8
-#define HELPTEXT_MISCTEXTB_SIZE 12
-#define HELPTEXT_MENUTEXT_SIZE 29
-#define HELPTEXT_MAINMENUHELP_COUNT 37
-#define HELPTEXT_NETWORKTEXT_COUNT 5
-#define HELPTEXT_NETWORKTEXT_SIZE 33
-#define HELPTEXT_SUPERSHIPS_COUNT 13
-#define HELPTEXT_SPECIALNAME_COUNT 11
-#define HELPTEXT_SHIPINFO_COUNT 20
-#define HELPTEXT_MENUINT3_COUNT 9
-#define HELPTEXT_MENUINT12_COUNT 7
-#else
 #define HELPTEXT_MISCTEXT_COUNT 68
 #define HELPTEXT_MISCTEXTB_COUNT 5
 #define HELPTEXT_MISCTEXTB_SIZE 11
@@ -56,7 +42,6 @@ extern JE_byte helpBoxColor, helpBoxBrightness, helpBoxShadeType;
 #define HELPTEXT_SUPERSHIPS_COUNT 11
 #define HELPTEXT_SPECIALNAME_COUNT 9
 #define HELPTEXT_SHIPINFO_COUNT 13
-#endif
 
 extern char helpTxt[39][231];
 extern char pName[21][16];
