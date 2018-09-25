@@ -44,7 +44,6 @@ bool ignore_joystick = false;
 int joysticks = 0;
 Joystick *joystick = NULL;
 
-static const char joystick_cfg_version = 1;
 static const int joystick_analog_max = 32767;
 
 // eliminates axis movement below the threshold

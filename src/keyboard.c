@@ -214,7 +214,7 @@ void service_SDL_events( JE_boolean clear_new )
 					input_grab(true);
 					break;
 				}
-				// intentional fall-though
+				// fall through
 			case SDL_MOUSEBUTTONUP:
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
 				{

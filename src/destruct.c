@@ -1575,8 +1575,8 @@ static void DE_RunTickGravity( void )
 					DE_GravityFlyUnit(unit);
 					break;
 				}
-				/* else fall through and treat as a normal unit */
-
+				/* else treat as a normal unit */
+				/* fall through */
 			default:
 				DE_GravityLowerUnit(unit);
 			}

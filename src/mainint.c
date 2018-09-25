@@ -1628,6 +1628,7 @@ void JE_highScoreCheck( void )
 							case '"':
 							case '\'':
 								validkey = true;
+								// fall through
 							default:
 								if (temp < 28 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
 								{
@@ -2459,6 +2460,7 @@ void JE_operation( JE_byte slot )
 					case '"':
 					case '\'':
 						validkey = true;
+						// fall through
 					default:
 						if (temp < 14 && (validkey || (lastkey_char >= 'A' && lastkey_char <= 'Z') || (lastkey_char >= '0' && lastkey_char <= '9')))
 						{
