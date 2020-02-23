@@ -188,7 +188,7 @@ void poll_joystick( int j )
 	{
 		bool old = joystick[j].action[d];
 		
-		joystick[j].action[d] = check_assigned(joystick[j].handle, joystick[j].assignment[d + COUNTOF(joystick[j].direction)]);
+		joystick[j].action[d] = check_assigned(joystick[j].handle, joystick[j].assignment[d + COUNTOF(joystick[j].direction)]) > (joystick_analog_max / 2);
 		joydown |= joystick[j].action[d];
 		
 		joystick[j].action_pressed[d] = joystick[j].action[d] && (!old || repeat);
