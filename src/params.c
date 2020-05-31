@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "params.h"
+
 #include "arg_parse.h"
 #include "file.h"
 #include "joystick.h"
 #include "loudness.h"
 #include "network.h"
 #include "opentyr.h"
-#include "params.h"
 #include "varz.h"
 #include "xmas.h"
 

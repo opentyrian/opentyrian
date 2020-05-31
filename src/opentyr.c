@@ -16,6 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "opentyr.h"
+
 #include "config.h"
 #include "destruct.h"
 #include "editship.h"
@@ -33,7 +35,6 @@
 #include "musmast.h"
 #include "network.h"
 #include "nortsong.h"
-#include "opentyr.h"
 #include "params.h"
 #include "picload.h"
 #include "scroller.h"

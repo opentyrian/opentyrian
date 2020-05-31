@@ -21,8 +21,9 @@
 
 #include "opentyr.h"
 
-#include <stdint.h>
 #include "SDL.h"
+
+#include <stdint.h>
 
 extern JE_word backPos, backPos2, backPos3;
 extern JE_word backMove, backMove2, backMove3;

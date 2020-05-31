@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "setup.h"
 
 #include "joystick.h"
 #include "keyboard.h"
@@ -24,7 +25,6 @@
 #include "opentyr.h"
 #include "mainint.h"
 #include "mouse.h"
-#include "setup.h"
 #include "video.h"
 
 #include "SDL.h"

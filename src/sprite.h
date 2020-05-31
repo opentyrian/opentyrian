@@ -22,6 +22,7 @@
 #include "opentyr.h"
 
 #include "SDL.h"
+
 #include <assert.h>
 #include <stdio.h>
 

@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "xmas.h"
+
 #include "font.h"
 #include "keyboard.h"
 #include "palette.h"
 #include "setup.h"
 #include "sprite.h"
 #include "video.h"
-#include "xmas.h"
 
 #include <stdio.h>
 #include <time.h>

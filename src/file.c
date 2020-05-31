@@ -17,10 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "file.h"
+
 #include "opentyr.h"
 #include "varz.h"
 
 #include "SDL.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>

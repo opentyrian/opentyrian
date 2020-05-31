@@ -21,6 +21,8 @@
 
 #include "opentyr.h"
 
+#include "SDL.h"
+
 #include <stdio.h>
 
 #define MENU_MAX 14

@@ -20,6 +20,7 @@
 #define OPENTYR_H
 
 #include "SDL_types.h"
+
 #include <math.h>
 #include <stdbool.h>
 

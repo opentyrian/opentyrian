@@ -16,6 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "tyrian2.h"
+
 #include "animlib.h"
 #include "backgrnd.h"
 #include "episodes.h"
@@ -43,7 +45,6 @@
 #include "setup.h"
 #include "shots.h"
 #include "sprite.h"
-#include "tyrian2.h"
 #include "vga256d.h"
 #include "video.h"
 

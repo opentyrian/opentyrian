@@ -16,14 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "joystick.h"
 #include "keyboard.h"
+
+#include "joystick.h"
 #include "network.h"
 #include "opentyr.h"
 #include "video.h"
 #include "video_scale.h"
 
 #include "SDL.h"
+
 #include <stdio.h>
 
 

@@ -16,6 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "mainint.h"
+
 #include "backgrnd.h"
 #include "config.h"
 #include "editship.h"
@@ -28,7 +30,6 @@
 #include "keyboard.h"
 #include "lds_play.h"
 #include "loudness.h"
-#include "mainint.h"
 #include "menus.h"
 #include "mouse.h"
 #include "mtrand.h"

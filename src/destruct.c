@@ -45,7 +45,6 @@
  */
 
 /*** Headers ***/
-#include "opentyr.h"
 #include "destruct.h"
 
 #include "config.h"
@@ -56,6 +55,7 @@
 #include "loudness.h"
 #include "mtrand.h"
 #include "nortsong.h"
+#include "opentyr.h"
 #include "palette.h"
 #include "picload.h"
 #include "sprite.h"
