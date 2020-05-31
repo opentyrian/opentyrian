@@ -131,9 +131,9 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 {
 	size_t num_read = fread(buffer, size, num, stream);
 	
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	switch (size)
 	{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		case 2:
 			for (size_t i = 0; i < num; i++)
 				((Uint16 *)buffer)[i] = SDL_Swap16(((Uint16 *)buffer)[i]);
@@ -146,10 +146,10 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 			for (size_t i = 0; i < num; i++)
 				((Uint64 *)buffer)[i] = SDL_Swap64(((Uint64 *)buffer)[i]);
 			break;
-#endif
 		default:
 			break;
 	}
+#endif
 	
 	if (num_read != num)
 	{
@@ -165,9 +165,9 @@ size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream )
 {
 	void *swap_buffer = NULL;
 	
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	switch (size)
 	{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		case 2:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
@@ -186,10 +186,10 @@ size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream )
 				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
 			buffer = swap_buffer;
 			break;
-#endif
 		default:
 			break;
 	}
+#endif
 	
 	size_t num_written = fwrite(buffer, size, num, stream);
 	
