@@ -2088,11 +2088,11 @@ draw_player_shot_loop_end:
 
 	if (debug)
 	{
-		strcpy(tempStr, "");
-		for (temp = 0; temp < 9; temp++)
+		for (size_t i = 0; i < 9; i++)
 		{
-			sprintf(tempStr, "%s%c", tempStr,  smoothies[temp] + 48);
+			tempStr[i] = '0' + smoothies[i];
 		}
+		tempStr[9] = '\0';
 		sprintf(buffer, "SM = %s", tempStr);
 		JE_outText(VGAScreen, 30, 70, buffer, 4, 0);
 
