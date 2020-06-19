@@ -25,7 +25,6 @@
 #include "file.h"
 #include "font.h"
 #include "helptext.h"
-#include "hg_revision.h"
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
@@ -35,6 +34,7 @@
 #include "musmast.h"
 #include "network.h"
 #include "nortsong.h"
+#include "opentyrian_version.h"
 #include "params.h"
 #include "picload.h"
 #include "scroller.h"
@@ -55,8 +55,8 @@
 #include <string.h>
 #include <time.h>
 
-const char *opentyrian_str = "OpenTyrian",
-           *opentyrian_version = HG_REV;
+const char *opentyrian_str = "OpenTyrian";
+const char *opentyrian_version = OPENTYRIAN_VERSION;
 
 void opentyrian_menu( void )
 {
