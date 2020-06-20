@@ -31,14 +31,14 @@ bool has_mouse = true;
 #endif
 bool mouse_has_three_buttons = true;
 
-JE_word lastMouseX, lastMouseY;
 JE_byte mouseCursor;
 JE_word mouseX, mouseY, mouseButton;
 JE_word mouseXB, mouseYB;
 
-JE_byte mouseGrabShape[24 * 28];                 /* [1..24*28] */
+static JE_word mouseGrabX, mouseGrabY;
+static JE_byte mouseGrabShape[24 * 28];
 
-void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
+static void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p = shape; /* shape pointer */
@@ -64,7 +64,7 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	}
 }
 
-void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
+static void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 {
 	JE_word xloop = 0, yloop = 0;
 	JE_byte *p = shape; /* shape pointer */
@@ -120,12 +120,14 @@ void JE_mouseStart( void )
 
 		const MousePointerSpriteInfo *spriteInfo = &mousePointerSprites[mouseCursor];
 
-		lastMouseX = MIN(MAX(spriteInfo->fx, mouse_x), 320 - (spriteInfo->w - spriteInfo->fx)) - spriteInfo->fx;
-		lastMouseY = MIN(MAX(spriteInfo->fy, mouse_y), 200 - (spriteInfo->h - spriteInfo->fy)) - spriteInfo->fy;
+		mouseGrabX = MIN(MAX(spriteInfo->fx, mouse_x), 320 - (spriteInfo->w - spriteInfo->fx)) - spriteInfo->fx;
+		mouseGrabY = MIN(MAX(spriteInfo->fy, mouse_y), 200 - (spriteInfo->h - spriteInfo->fy)) - spriteInfo->fy;
 
-		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
-		
-		blit_sprite2x2(VGAScreen, lastMouseX - spriteInfo->x, lastMouseY - spriteInfo->y, shopSpriteSheet, spriteInfo->index);
+		JE_grabShapeTypeOne(mouseGrabX, mouseGrabY, mouseGrabShape);
+
+		const Sint32 x = mouse_x - spriteInfo->x - spriteInfo->fx;
+		const Sint32 y = mouse_y - spriteInfo->y - spriteInfo->fy;
+		blit_sprite2x2_clip(VGAScreen, x, y, shopSpriteSheet, spriteInfo->index);
 	 }
 }
 
@@ -137,18 +139,20 @@ void JE_mouseStartFilter( Uint8 filter )
 
 		const MousePointerSpriteInfo *spriteInfo = &mousePointerSprites[mouseCursor];
 
-		lastMouseX = MIN(MAX(spriteInfo->fx, mouse_x), 320 - (spriteInfo->w - spriteInfo->fx)) - spriteInfo->fx;
-		lastMouseY = MIN(MAX(spriteInfo->fy, mouse_y), 200 - (spriteInfo->h - spriteInfo->fy)) - spriteInfo->fy;
+		mouseGrabX = MIN(MAX(spriteInfo->fx, mouse_x), 320 - (spriteInfo->w - spriteInfo->fx)) - spriteInfo->fx;
+		mouseGrabY = MIN(MAX(spriteInfo->fy, mouse_y), 200 - (spriteInfo->h - spriteInfo->fy)) - spriteInfo->fy;
 
-		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
+		JE_grabShapeTypeOne(mouseGrabX, mouseGrabY, mouseGrabShape);
 
-		blit_sprite2x2_filter(VGAScreen, lastMouseX - spriteInfo->x, lastMouseY - spriteInfo->y, shopSpriteSheet, spriteInfo->index, filter);
+		const Sint32 x = mouse_x - spriteInfo->x - spriteInfo->fx;
+		const Sint32 y = mouse_y - spriteInfo->y - spriteInfo->fy;
+		blit_sprite2x2_filter_clip(VGAScreen, x, y, shopSpriteSheet, spriteInfo->index, filter);
 	}
 }
 
 void JE_mouseReplace( void )
 {
 	if (has_mouse)
-		JE_drawShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
+		JE_drawShapeTypeOne(mouseGrabX, mouseGrabY, mouseGrabShape);
 }
 

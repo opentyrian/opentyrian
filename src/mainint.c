@@ -2934,13 +2934,13 @@ void JE_operation( JE_byte slot )
 
 			if (mouseButton > 0)
 			{
-				if (lastMouseX > 56 && lastMouseX < 142 && lastMouseY > 123 && lastMouseY < 149)
+				if (lastmouse_x > 56 && lastmouse_x < 142 && lastmouse_y > 123 && lastmouse_y < 149)
 				{
 					quit = true;
 					JE_saveGame(slot, stemp);
 					JE_playSampleNum(S_SELECT);
 				}
-				else if (lastMouseX > 151 && lastMouseX < 237 && lastMouseY > 123 && lastMouseY < 149)
+				else if (lastmouse_x > 151 && lastmouse_x < 237 && lastmouse_y > 123 && lastmouse_y < 149)
 				{
 					quit = true;
 					JE_playSampleNum(S_SPRING);

@@ -34,9 +34,9 @@ JE_boolean newkey, newmouse, keydown, mousedown;
 SDL_Scancode lastkey_scan;
 SDL_Keymod lastkey_mod;
 Uint8 lastmouse_but;
-Uint16 lastmouse_x, lastmouse_y;
+Sint32 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {false, false, false};
-Uint16 mouse_x, mouse_y;
+Sint32 mouse_x, mouse_y;
 
 Uint8 keysactive[SDL_NUM_SCANCODES];
 
@@ -155,17 +155,6 @@ void service_SDL_events( JE_boolean clear_new )
 
 			case SDL_MOUSEMOTION:
 				map_window_to_screen_pos(&ev.motion.x, &ev.motion.y);
-				if (ev.motion.x < 0) {
-					ev.motion.x = 0;
-				} else if (ev.motion.x >= vga_width) {
-					ev.motion.x = vga_width - 1;
-				}
-
-				if (ev.motion.y < 0) {
-					ev.motion.y = 0;
-				} else if (ev.motion.y >= vga_height) {
-					ev.motion.y = vga_height - 1;
-				}
 				mouse_x = ev.motion.x;
 				mouse_y = ev.motion.y;
 				break;

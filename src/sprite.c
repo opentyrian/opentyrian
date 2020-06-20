@@ -550,6 +550,47 @@ void blit_sprite2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, u
 	}
 }
 
+void blit_sprite2_clip( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+{
+	assert(surface->format->BitsPerPixel == 8);
+
+	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+
+	for (; *data != 0x0f; ++data)
+	{
+		if (y >= surface->h)
+			return;
+
+		Uint8 skip_count = *data & 0x0f;
+		Uint8 fill_count = (*data >> 4) & 0x0f;
+
+		x += skip_count;
+
+		if (fill_count == 0) // move to next pixel row
+		{
+			y += 1;
+			x -= 12;
+		}
+		else if (y >= 0)
+		{
+			Uint8 *const pixel_row = (Uint8 *)surface->pixels + (y * surface->pitch);
+			do
+			{
+				++data;
+
+				if (x >= 0 && x < surface->pitch)
+					pixel_row[x] = *data;
+				x += 1;
+			}
+			while (--fill_count);
+		}
+		else
+		{
+			data += fill_count;
+		}
+	}
+}
+
 // does not clip on left or right edges of surface
 void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
@@ -658,6 +699,47 @@ void blit_sprite2_filter( SDL_Surface *surface, int x, int y, Sprite2_array spri
 	}
 }
 
+void blit_sprite2_filter_clip( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index, Uint8 filter )
+{
+	assert(surface->format->BitsPerPixel == 8);
+
+	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+
+	for (; *data != 0x0f; ++data)
+	{
+		if (y >= surface->h)
+			return;
+
+		Uint8 skip_count = *data & 0x0f;
+		Uint8 fill_count = (*data >> 4) & 0x0f;
+
+		x += skip_count;
+
+		if (fill_count == 0) // move to next pixel row
+		{
+			y += 1;
+			x -= 12;
+		}
+		else if (y >= 0)
+		{
+			Uint8 *const pixel_row = (Uint8 *)surface->pixels + (y * surface->pitch);
+			do
+			{
+				++data;
+
+				if (x >= 0 && x < surface->pitch)
+					pixel_row[x] = filter | (*data & 0x0f);;
+				x += 1;
+			}
+			while (--fill_count);
+		}
+		else
+		{
+			data += fill_count;
+		}
+	}
+}
+
 // does not clip on left or right edges of surface
 void blit_sprite2x2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
@@ -665,6 +747,14 @@ void blit_sprite2x2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s,
 	blit_sprite2(surface, x + 12, y,      sprite2s, index + 1);
 	blit_sprite2(surface, x,      y + 14, sprite2s, index + 19);
 	blit_sprite2(surface, x + 12, y + 14, sprite2s, index + 20);
+}
+
+void blit_sprite2x2_clip( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+{
+	blit_sprite2_clip(surface, x,      y,      sprite2s, index);
+	blit_sprite2_clip(surface, x + 12, y,      sprite2s, index + 1);
+	blit_sprite2_clip(surface, x,      y + 14, sprite2s, index + 19);
+	blit_sprite2_clip(surface, x + 12, y + 14, sprite2s, index + 20);
 }
 
 // does not clip on left or right edges of surface
@@ -692,6 +782,14 @@ void blit_sprite2x2_filter( SDL_Surface *surface, int x, int y, Sprite2_array sp
 	blit_sprite2_filter(surface, x + 12, y,      sprite2s, index + 1, filter);
 	blit_sprite2_filter(surface, x,      y + 14, sprite2s, index + 19, filter);
 	blit_sprite2_filter(surface, x + 12, y + 14, sprite2s, index + 20, filter);
+}
+
+void blit_sprite2x2_filter_clip( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index, Uint8 filter )
+{
+	blit_sprite2_filter_clip(surface, x,      y,      sprite2s, index, filter);
+	blit_sprite2_filter_clip(surface, x + 12, y,      sprite2s, index + 1, filter);
+	blit_sprite2_filter_clip(surface, x,      y + 14, sprite2s, index + 19, filter);
+	blit_sprite2_filter_clip(surface, x + 12, y + 14, sprite2s, index + 20, filter);
 }
 
 

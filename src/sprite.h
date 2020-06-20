@@ -118,14 +118,18 @@ void JE_loadCompShapesB( Sprite2_array *, FILE *f );
 void free_sprite2s( Sprite2_array * );
 
 void blit_sprite2( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2_clip( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2_blend( SDL_Surface *,  int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2_darken( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2_filter( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index, Uint8 filter );
+void blit_sprite2_filter_clip( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index, Uint8 filter );
 
 void blit_sprite2x2( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2x2_clip( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2x2_blend( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2x2_darken( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2x2_filter( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index, Uint8 filter );
+void blit_sprite2x2_filter_clip( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index, Uint8 filter );
 
 void JE_loadMainShapeTables( const char *shpfile );
 void free_main_shape_tables( void );
