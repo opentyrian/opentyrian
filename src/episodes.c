@@ -16,8 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "config.h"
 #include "episodes.h"
+
+#include "config.h"
 #include "file.h"
 #include "lvllib.h"
 #include "lvlmast.h"
@@ -95,12 +96,6 @@ void JE_loadItemDat( void )
 		efread(&weapons[i].trail,           sizeof(JE_byte), 1, f);
 		efread(&weapons[i].shipblastfilter, sizeof(JE_byte), 1, f);
 	}
-
-#ifdef TYRIAN2000
-	if (episodeNum <= 3) fseek(f, 0x252A4, SEEK_SET);
-	if (episodeNum == 4) fseek(f, 0xC1F5E, SEEK_SET);
-	if (episodeNum == 5) fseek(f, 0x5C5B8, SEEK_SET);
-#endif
 	
 	for (int i = 0; i < PORT_NUM + 1; ++i)
 	{
@@ -117,15 +112,7 @@ void JE_loadItemDat( void )
 		efread(&weaponPort[i].poweruse,    sizeof(JE_word), 1, f);
 	}
 
-	int specials_count = SPECIAL_NUM;
-#ifdef TYRIAN2000
-	if (episodeNum <= 3) fseek(f, 0x2662E, SEEK_SET);
-	if (episodeNum == 4) fseek(f, 0xC32E8, SEEK_SET);
-	if (episodeNum == 5) fseek(f, 0x5D942, SEEK_SET);
-	if (episodeNum >= 4) specials_count = SPECIAL_NUM + 8; /*this ugly hack will need a fix*/
-#endif
-	
-	for (int i = 0; i < specials_count + 1; ++i)
+	for (int i = 0; i < SPECIAL_NUM + 1; ++i)
 	{
 		fseek(f, 1, SEEK_CUR); /* skip string length */
 		efread(&special[i].name,        1, 30, f);
@@ -136,12 +123,6 @@ void JE_loadItemDat( void )
 		efread(&special[i].wpn,         sizeof(JE_word), 1, f);
 	}
 
-#ifdef TYRIAN2000
-	if (episodeNum <= 3) fseek(f, 0x26E21, SEEK_SET);
-	if (episodeNum == 4) fseek(f, 0xC3ADB, SEEK_SET);
-	if (episodeNum == 5) fseek(f, 0x5E135, SEEK_SET);
-#endif
-		
 	for (int i = 0; i < POWER_NUM + 1; ++i)
 	{
 		fseek(f, 1, SEEK_CUR); /* skip string length */
@@ -153,12 +134,6 @@ void JE_loadItemDat( void )
 		efread(&powerSys[i].cost,        sizeof(JE_word), 1, f);
 	}
 
-#ifdef TYRIAN2000
-	if (episodeNum <= 3) fseek(f, 0x26F24, SEEK_SET);
-	if (episodeNum == 4) fseek(f, 0xC3BDE, SEEK_SET);
-	if (episodeNum == 5) fseek(f, 0x5E238, SEEK_SET);
-#endif
-	
 	for (int i = 0; i < SHIP_NUM + 1; ++i)
 	{
 		fseek(f, 1, SEEK_CUR); /* skip string length */
@@ -173,12 +148,6 @@ void JE_loadItemDat( void )
 		efread(&ships[i].bigshipgraphic, sizeof(JE_byte), 1, f);
 	}
 
-#ifdef TYRIAN2000
-	if (episodeNum <= 3) fseek(f, 0x2722F, SEEK_SET);
-	if (episodeNum == 4) fseek(f, 0xC3EE9, SEEK_SET);
-	if (episodeNum == 5) fseek(f, 0x5E543, SEEK_SET); 
-#endif
-	
 	for (int i = 0; i < OPTION_NUM + 1; ++i)
 	{
 		fseek(f, 1, SEEK_CUR); /* skip string length */
@@ -199,12 +168,6 @@ void JE_loadItemDat( void )
 		efread(&options[i].icongr,      sizeof(JE_byte), 1, f);
 	}
 
-#ifdef TYRIAN2000
-	if (episodeNum <= 3) fseek(f, 0x27EF3, SEEK_SET);
-	if (episodeNum == 4) fseek(f, 0xC4BAD, SEEK_SET);
-	if (episodeNum == 5) fseek(f, 0x5F207, SEEK_SET);
-#endif
-		
 	for (int i = 0; i < SHIELD_NUM + 1; ++i)
 	{
 		fseek(f, 1, SEEK_CUR); /* skip string length */

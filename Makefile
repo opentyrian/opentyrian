@@ -20,6 +20,8 @@ CC ?= gcc
 INSTALL ?= install
 PKG_CONFIG ?= pkg-config
 
+VCS_IDREV ?= (git describe --tags || git rev-parse --short HEAD)
+
 INSTALL_PROGRAM ?= $(INSTALL)
 INSTALL_DATA ?= $(INSTALL) -m 644
 
@@ -52,10 +54,10 @@ ifeq ($(WITH_NETWORK), true)
     EXTRA_CPPFLAGS += -DWITH_NETWORK
 endif
 
-HG_REV := $(shell hg id -ib 2>/dev/null && \
-                  touch src/hg_revision.h)
-ifneq ($(HG_REV), )
-    EXTRA_CPPFLAGS += -DHG_REV='"$(HG_REV)"'
+OPENTYRIAN_VERSION := $(shell $(VCS_IDREV) 2>/dev/null && \
+                              touch src/opentyrian_version.h)
+ifneq ($(OPENTYRIAN_VERSION), )
+    EXTRA_CPPFLAGS += -DOPENTYRIAN_VERSION='"$(OPENTYRIAN_VERSION)"'
 endif
 
 CPPFLAGS := -DNDEBUG
@@ -65,14 +67,17 @@ CFLAGS += -Wall \
           -Wextra \
           -Wno-missing-field-initializers
 CFLAGS += -O2
-LDFLAGS := 
-LDLIBS := 
+LDFLAGS :=
+LDLIBS :=
 
-SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 --cflags)
-SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl2 --libs-only-L --libs-only-other)
-SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl2 --libs-only-l)
 ifeq ($(WITH_NETWORK), true)
-    SDL_LDLIBS += -lSDL2_net
+    SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --cflags)
+    SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --libs-only-L --libs-only-other)
+    SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --libs-only-l)
+else
+    SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 --cflags)
+    SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl2 --libs-only-L --libs-only-other)
+    SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl2 --libs-only-l)
 endif
 
 ALL_CPPFLAGS = -DTARGET_$(PLATFORM) \

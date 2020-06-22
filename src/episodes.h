@@ -28,11 +28,7 @@
 
 #define FIRST_LEVEL 1
 #define EPISODE_MAX 5
-#ifdef TYRIAN2000
-#define EPISODE_AVAILABLE 5
-#else
 #define EPISODE_AVAILABLE 4
-#endif
 
 typedef struct
 {

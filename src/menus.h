@@ -21,11 +21,7 @@
 
 #include "opentyr.h"
 
-#ifdef TYRIAN2000
-#define GAMEPLAY_NAME_COUNT 6
-#else
 #define GAMEPLAY_NAME_COUNT 5
-#endif
 extern char episode_name[6][31], difficulty_name[7][21], gameplay_name[GAMEPLAY_NAME_COUNT][26];
 
 bool select_gameplay( void );

@@ -16,6 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "scroller.h"
+
 #include "font.h"
 #include "joystick.h"
 #include "jukebox.h"
@@ -26,7 +28,6 @@
 #include "nortvars.h"
 #include "opentyr.h"
 #include "palette.h"
-#include "scroller.h"
 #include "sprite.h"
 #include "varz.h"
 #include "vga256d.h"

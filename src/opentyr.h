@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -20,6 +20,7 @@
 #define OPENTYR_H
 
 #include <SDL_types.h>
+
 #include <math.h>
 #include <stdbool.h>
 
@@ -50,13 +51,10 @@ typedef bool   JE_boolean;
 typedef char   JE_char;
 typedef float  JE_real;
 
-#ifdef TYRIAN2000
-#define TYRIAN_VERSION "2000"
-#else
 #define TYRIAN_VERSION "2.1"
-#endif
 
-extern const char *opentyrian_str, *opentyrian_version;
+extern const char *opentyrian_str;
+extern const char *opentyrian_version;
 
 void opentyrian_menu( void );
 

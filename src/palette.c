@@ -16,21 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "palette.h"
+
 #include "file.h"
 #include "nortsong.h"
 #include "opentyr.h"
-#include "palette.h"
 #include "video.h"
 
 #include <assert.h>
 
 static Uint32 rgb_to_yuv( int r, int g, int b );
 
-#ifdef TYRIAN2000
-#define PALETTE_COUNT 24
-#else
 #define PALETTE_COUNT 23
-#endif
 
 Palette palettes[PALETTE_COUNT];
 int palette_count;

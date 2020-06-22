@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -20,6 +20,7 @@
 #define FILE_H
 
 #include <SDL_endian.h>
+
 #include <stdbool.h>
 #include <stdio.h>
 

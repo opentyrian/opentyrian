@@ -28,11 +28,11 @@
     <IntDir>$(SolutionDir)..\obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -56,10 +56,13 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SDL2BaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(WITH_NETWORK)'=='true'">$(SDL2netBaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>TARGET_WIN32;TYRIAN_DIR="$(TYRIAN_DIR)";_CRT_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TARGET_WIN32;_CRT_SECURE_NO_WARNINGS;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(OPENTYRIAN_VERSION)'!=''">OPENTYRIAN_VERSION="$(OPENTYRIAN_VERSION)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(WITH_NETWORK)'=='true'">WITH_NETWORK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(TYRIAN_DIR)'!=''">TYRIAN_DIR=$(TYRIAN_DIR);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4018;4061;4204;4210;4242;4244;4245;4267;4305;4456;4457;4459;4710;4711;4738;4820;5045;26451</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -70,6 +73,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -105,10 +109,112 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\*.c" />
+    <ClCompile Include="..\src\animlib.c" />
+    <ClCompile Include="..\src\arg_parse.c" />
+    <ClCompile Include="..\src\backgrnd.c" />
+    <ClCompile Include="..\src\config.c" />
+    <ClCompile Include="..\src\config_file.c" />
+    <ClCompile Include="..\src\destruct.c" />
+    <ClCompile Include="..\src\editship.c" />
+    <ClCompile Include="..\src\episodes.c" />
+    <ClCompile Include="..\src\file.c" />
+    <ClCompile Include="..\src\font.c" />
+    <ClCompile Include="..\src\fonthand.c" />
+    <ClCompile Include="..\src\game_menu.c" />
+    <ClCompile Include="..\src\helptext.c" />
+    <ClCompile Include="..\src\joystick.c" />
+    <ClCompile Include="..\src\jukebox.c" />
+    <ClCompile Include="..\src\keyboard.c" />
+    <ClCompile Include="..\src\lds_play.c" />
+    <ClCompile Include="..\src\loudness.c" />
+    <ClCompile Include="..\src\lvllib.c" />
+    <ClCompile Include="..\src\lvlmast.c" />
+    <ClCompile Include="..\src\mainint.c" />
+    <ClCompile Include="..\src\menus.c" />
+    <ClCompile Include="..\src\mouse.c" />
+    <ClCompile Include="..\src\mtrand.c" />
+    <ClCompile Include="..\src\musmast.c" />
+    <ClCompile Include="..\src\network.c" />
+    <ClCompile Include="..\src\nortsong.c" />
+    <ClCompile Include="..\src\nortvars.c" />
+    <ClCompile Include="..\src\opentyr.c" />
+    <ClCompile Include="..\src\opl.c" />
+    <ClCompile Include="..\src\palette.c" />
+    <ClCompile Include="..\src\params.c" />
+    <ClCompile Include="..\src\pcxload.c" />
+    <ClCompile Include="..\src\pcxmast.c" />
+    <ClCompile Include="..\src\picload.c" />
+    <ClCompile Include="..\src\player.c" />
+    <ClCompile Include="..\src\scroller.c" />
+    <ClCompile Include="..\src\setup.c" />
+    <ClCompile Include="..\src\shots.c" />
+    <ClCompile Include="..\src\sizebuf.c" />
+    <ClCompile Include="..\src\sndmast.c" />
+    <ClCompile Include="..\src\sprite.c" />
+    <ClCompile Include="..\src\starlib.c" />
+    <ClCompile Include="..\src\std_support.c" />
+    <ClCompile Include="..\src\tyrian2.c" />
+    <ClCompile Include="..\src\varz.c" />
+    <ClCompile Include="..\src\vga256d.c" />
+    <ClCompile Include="..\src\vga_palette.c" />
+    <ClCompile Include="..\src\video.c" />
+    <ClCompile Include="..\src\video_scale.c" />
+    <ClCompile Include="..\src\video_scale_hqNx.c" />
+    <ClCompile Include="..\src\xmas.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\*.h" />
+    <ClInclude Include="..\src\animlib.h" />
+    <ClInclude Include="..\src\arg_parse.h" />
+    <ClInclude Include="..\src\backgrnd.h" />
+    <ClInclude Include="..\src\config.h" />
+    <ClInclude Include="..\src\config_file.h" />
+    <ClInclude Include="..\src\destruct.h" />
+    <ClInclude Include="..\src\editship.h" />
+    <ClInclude Include="..\src\episodes.h" />
+    <ClInclude Include="..\src\file.h" />
+    <ClInclude Include="..\src\font.h" />
+    <ClInclude Include="..\src\fonthand.h" />
+    <ClInclude Include="..\src\game_menu.h" />
+    <ClInclude Include="..\src\helptext.h" />
+    <ClInclude Include="..\src\joystick.h" />
+    <ClInclude Include="..\src\jukebox.h" />
+    <ClInclude Include="..\src\keyboard.h" />
+    <ClInclude Include="..\src\lds_play.h" />
+    <ClInclude Include="..\src\loudness.h" />
+    <ClInclude Include="..\src\lvllib.h" />
+    <ClInclude Include="..\src\lvlmast.h" />
+    <ClInclude Include="..\src\mainint.h" />
+    <ClInclude Include="..\src\menus.h" />
+    <ClInclude Include="..\src\mouse.h" />
+    <ClInclude Include="..\src\mtrand.h" />
+    <ClInclude Include="..\src\musmast.h" />
+    <ClInclude Include="..\src\network.h" />
+    <ClInclude Include="..\src\nortsong.h" />
+    <ClInclude Include="..\src\nortvars.h" />
+    <ClInclude Include="..\src\opentyr.h" />
+    <ClInclude Include="..\src\opentyrian_version.h" />
+    <ClInclude Include="..\src\opl.h" />
+    <ClInclude Include="..\src\palette.h" />
+    <ClInclude Include="..\src\params.h" />
+    <ClInclude Include="..\src\pcxload.h" />
+    <ClInclude Include="..\src\pcxmast.h" />
+    <ClInclude Include="..\src\picload.h" />
+    <ClInclude Include="..\src\player.h" />
+    <ClInclude Include="..\src\scroller.h" />
+    <ClInclude Include="..\src\setup.h" />
+    <ClInclude Include="..\src\shots.h" />
+    <ClInclude Include="..\src\sizebuf.h" />
+    <ClInclude Include="..\src\sndmast.h" />
+    <ClInclude Include="..\src\sprite.h" />
+    <ClInclude Include="..\src\starlib.h" />
+    <ClInclude Include="..\src\std_support.h" />
+    <ClInclude Include="..\src\tyrian2.h" />
+    <ClInclude Include="..\src\varz.h" />
+    <ClInclude Include="..\src\vga256d.h" />
+    <ClInclude Include="..\src\vga_palette.h" />
+    <ClInclude Include="..\src\video.h" />
+    <ClInclude Include="..\src\video_scale.h" />
+    <ClInclude Include="..\src\xmas.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources.rc" />

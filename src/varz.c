@@ -16,6 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "varz.h"
+
 #include "config.h"
 #include "editship.h"
 #include "episodes.h"
@@ -31,7 +33,6 @@
 #include "opentyr.h"
 #include "shots.h"
 #include "sprite.h"
-#include "varz.h"
 #include "vga256d.h"
 #include "video.h"
 

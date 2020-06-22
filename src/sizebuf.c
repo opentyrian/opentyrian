@@ -34,11 +34,11 @@
  * and in normal Quake IIRC it is.  But our MO is to bail on failure, not
  * figure out what went wrong (making throws perfect).
  */
-
 #include "sizebuf.h"
-#include <assert.h>
 
 #include <SDL_endian.h>
+
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 

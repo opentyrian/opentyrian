@@ -16,6 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "mainint.h"
+
 #include "backgrnd.h"
 #include "config.h"
 #include "editship.h"
@@ -28,7 +30,6 @@
 #include "keyboard.h"
 #include "lds_play.h"
 #include "loudness.h"
-#include "mainint.h"
 #include "menus.h"
 #include "mouse.h"
 #include "mtrand.h"
@@ -1964,11 +1965,11 @@ void JE_playCredits( void )
 {
 	enum { lines_max = 132 };
 	enum { line_max_length = 65 };
-	
+
 	char credstr[lines_max][line_max_length + 1];
-	
+
 	int lines = 0;
-	
+
 	JE_byte currentpic = 0, fade = 0;
 	JE_shortint fadechg = 1;
 	JE_byte currentship = 0;
@@ -1980,7 +1981,7 @@ void JE_playCredits( void )
 	setjasondelay2(1000);
 
 	play_song(8);
-	
+
 	// load credits text
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.cdt", "rb");
 	for (lines = 0; !feof(f) && lines < lines_max; ++lines)
@@ -1990,22 +1991,22 @@ void JE_playCredits( void )
 	if (lines == lines_max)
 		--lines;
 	fclose(f);
-	
+
 	memcpy(colors, palettes[6-1], sizeof(colors));
 	JE_clr256(VGAScreen);
 	JE_showVGA();
 	fade_palette(colors, 2, 0, 255);
-	
+
 	//tempScreenSeg = VGAScreenSeg;
-	
+
 	const int ticks_max = lines * 20 * 3;
 	for (int ticks = 0; ticks < ticks_max; ++ticks)
 	{
 		setjasondelay(1);
 		JE_clr256(VGAScreen);
-		
+
 		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic)->width, 100 - (sprite(EXTRA_SHAPES, currentpic)->height / 2), EXTRA_SHAPES, currentpic, 0x0, fade - 15);
-		
+
 		fade += fadechg;
 		if (fade == 0 && fadechg == -1)
 		{
@@ -2069,18 +2070,18 @@ void JE_playCredits( void )
 			if (shipxca > 0 && shipxc > 0)
 				shipxwait = 1;
 		}
-		
+
 		uint ship_sprite = ships[currentship].shipgraphic;
 		if (shipxc < -10)
 			ship_sprite -= (shipxc < -20) ? 4 : 2;
 		else if (shipxc > 10)
 			ship_sprite += (shipxc > 20) ? 4 : 2;
-		
+
 		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (ticks % 200), shapes9, ship_sprite);
-		
+
 		const int bottom_line = (ticks / 3) / 20;
 		int y = 20 - ((ticks / 3) % 20);
-		
+
 		for (int line = bottom_line - 10; line < bottom_line; ++line)
 		{
 			if (line >= 0 && line < lines_max)
@@ -2089,44 +2090,44 @@ void JE_playCredits( void )
 				{
 					const Uint8 color = credstr[line][0] - 65;
 					const char *text = &credstr[line][1];
-					
+
 					const int x = 110 - JE_textWidth(text, SMALL_FONT_SHAPES) / 2;
-					
+
 					JE_outTextAdjust(VGAScreen, x + abs((y / 18) % 4 - 2) - 1, y - 1, text, color, -8, SMALL_FONT_SHAPES, false);
 					JE_outTextAdjust(VGAScreen, x,                             y,     text, color, -2, SMALL_FONT_SHAPES, false);
 				}
 			}
-			
+
 			y += 20;
 		}
-		
+
 		fill_rectangle_xy(VGAScreen, 0,  0, 319, 10, 0);
 		fill_rectangle_xy(VGAScreen, 0, 190, 319, 199, 0);
-		
+
 		if (currentpic == sprite_table[EXTRA_SHAPES].count - 1)
 			JE_outTextAdjust(VGAScreen, 5, 180, miscText[54], 2, -2, SMALL_FONT_SHAPES, false);  // levels-in-episode
-		
+
 		if (bottom_line == lines_max - 8)
 			fade_song();
-		
+
 		if (ticks == ticks_max - 1)
 		{
 			--ticks;
 			play_song(9);
 		}
-		
+
 		NETWORK_KEEP_ALIVE();
-		
+
 		JE_showVGA();
-		
+
 		wait_delay();
-		
+
 		if (JE_anyButton())
 			break;
 	}
-	
+
 	fade_black(10);
-	
+
 	free_sprites(EXTRA_SHAPES);
 }
 

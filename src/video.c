@@ -16,10 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "video.h"
+
 #include "keyboard.h"
 #include "opentyr.h"
 #include "palette.h"
-#include "video.h"
 #include "video_scale.h"
 
 #include <assert.h>

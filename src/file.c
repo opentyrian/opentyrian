@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -17,10 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "file.h"
+
 #include "opentyr.h"
 #include "varz.h"
 
 #include <SDL.h>
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,30 +40,30 @@ const char *data_dir( void )
 		"data",
 		".",
 	};
-	
+
 	static const char *dir = NULL;
-	
+
 	if (dir != NULL)
 		return dir;
-	
+
 	for (uint i = 0; i < COUNTOF(dirs); ++i)
 	{
 		if (dirs[i] == NULL)
 			continue;
-		
+
 		FILE *f = dir_fopen(dirs[i], "tyrian1.lvl", "rb");
 		if (f)
 		{
 			fclose(f);
-			
+
 			dir = dirs[i];
 			break;
 		}
 	}
-	
+
 	if (dir == NULL) // data not found
 		dir = "";
-	
+
 	return dir;
 }
 
@@ -70,11 +72,11 @@ FILE *dir_fopen( const char *dir, const char *file, const char *mode )
 {
 	char *path = malloc(strlen(dir) + 1 + strlen(file) + 1);
 	sprintf(path, "%s/%s", dir, file);
-	
+
 	FILE *f = fopen(path, mode);
-	
+
 	free(path);
-	
+
 	return f;
 }
 
@@ -82,10 +84,10 @@ FILE *dir_fopen( const char *dir, const char *file, const char *mode )
 FILE *dir_fopen_warn(  const char *dir, const char *file, const char *mode )
 {
 	FILE *f = dir_fopen(dir, file, mode);
-	
+
 	if (f == NULL)
 		fprintf(stderr, "warning: failed to open '%s': %s\n", file, strerror(errno));
-	
+
 	return f;
 }
 
@@ -93,7 +95,7 @@ FILE *dir_fopen_warn(  const char *dir, const char *file, const char *mode )
 FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
 {
 	FILE *f = dir_fopen(dir, file, mode);
-	
+
 	if (f == NULL)
 	{
 		fprintf(stderr, "error: failed to open '%s': %s\n", file, strerror(errno));
@@ -101,7 +103,7 @@ FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
 		                "       Please read the README file.\n");
 		JE_tyrianHalt(1);
 	}
-	
+
 	return f;
 }
 
@@ -118,12 +120,12 @@ bool dir_file_exists( const char *dir, const char *file )
 long ftell_eof( FILE *f )
 {
 	long pos = ftell(f);
-	
+
 	fseek(f, 0, SEEK_END);
 	long size = ftell(f);
-	
+
 	fseek(f, pos, SEEK_SET);
-	
+
 	return size;
 }
 
@@ -131,10 +133,10 @@ long ftell_eof( FILE *f )
 size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 {
 	size_t num_read = fread(buffer, size, num, stream);
-	
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	switch (size)
 	{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		case 2:
 			for (size_t i = 0; i < num; i++)
 				((Uint16 *)buffer)[i] = SDL_Swap16(((Uint16 *)buffer)[i]);
@@ -147,11 +149,11 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 			for (size_t i = 0; i < num; i++)
 				((Uint64 *)buffer)[i] = SDL_Swap64(((Uint64 *)buffer)[i]);
 			break;
-#endif
 		default:
 			break;
 	}
-	
+#endif
+
 	if (num_read != num)
 	{
 		fprintf(stderr, "error: An unexpected problem occurred while reading from a file.\n");
@@ -165,10 +167,10 @@ size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream )
 {
 	void *swap_buffer = NULL;
-	
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	switch (size)
 	{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		case 2:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
@@ -187,21 +189,21 @@ size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream )
 				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
 			buffer = swap_buffer;
 			break;
-#endif
 		default:
 			break;
 	}
-	
+#endif
+
 	size_t num_written = fwrite(buffer, size, num, stream);
-	
+
 	if (swap_buffer != NULL)
 		free(swap_buffer);
-	
+
 	if (num_written != num)
 	{
 		fprintf(stderr, "error: An unexpected problem occurred while writing to a file.\n");
 		JE_tyrianHalt(1);
 	}
-	
+
 	return num_written;
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "keyboard.h"
+
 #include "joystick.h"
 #include "network.h"
 #include "opentyr.h"
@@ -24,6 +25,7 @@
 #include "video_scale.h"
 
 #include <SDL.h>
+
 #include <stdio.h>
 
 JE_boolean ESCPressed;
@@ -62,7 +64,7 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 		SDL_Delay(SDL_POLL_INTERVAL);
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
-		
+
 #ifdef WITH_NETWORK
 		if (isNetworkGame)
 			network_check();
@@ -78,7 +80,7 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 		SDL_Delay(SDL_POLL_INTERVAL);
 		poll_joysticks();
 		service_SDL_events(false);
-		
+
 #ifdef WITH_NETWORK
 		if (isNetworkGame)
 			network_check();
@@ -99,9 +101,9 @@ void input_grab( bool enable )
 #if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
 	enable = true;
 #endif
-	
+
 	input_grab_enabled = enable || fullscreen_display != -1;
-	
+
 	SDL_ShowCursor(input_grab_enabled ? SDL_DISABLE : SDL_ENABLE);
 #ifdef NDEBUG
 	SDL_SetWindowGrab(main_window, input_grab_enabled ? SDL_TRUE : SDL_FALSE);
@@ -130,14 +132,14 @@ void set_mouse_position( int x, int y )
 void service_SDL_events( JE_boolean clear_new )
 {
 	SDL_Event ev;
-	
+
 	if (clear_new)
 	{
 		newkey = false;
 		newmouse = false;
 		new_text = false;
 	}
-	
+
 	while (SDL_PollEvent(&ev))
 	{
 		switch (ev.type)
@@ -148,7 +150,7 @@ void service_SDL_events( JE_boolean clear_new )
 				else if (ev.window.event == SDL_WINDOWEVENT_RESIZED)
 					video_on_win_resize();
 				break;
-			
+
 			case SDL_MOUSEMOTION:
 				map_window_to_screen_pos(&ev.motion.x, &ev.motion.y);
 				if (ev.motion.x < 0) {
@@ -176,7 +178,7 @@ void service_SDL_events( JE_boolean clear_new )
 						SDL_Quit();
 						exit(1);
 					}
-					
+
 					/* <ctrl><f10> toggle input grab */
 					if (ev.key.keysym.scancode == SDL_SCANCODE_F10)
 					{
@@ -184,7 +186,7 @@ void service_SDL_events( JE_boolean clear_new )
 						break;
 					}
 				}
-				
+
 				/* <alt><enter> toggle fullscreen */
 				if (ev.key.keysym.mod & KMOD_ALT && ev.key.keysym.scancode == SDL_SCANCODE_RETURN)
 				{
@@ -194,7 +196,7 @@ void service_SDL_events( JE_boolean clear_new )
 				}
 
 				keysactive[ev.key.keysym.scancode] = 1;
-				
+
 				newkey = true;
 				lastkey_scan = ev.key.keysym.scancode;
 				lastkey_mod = ev.key.keysym.mod;
@@ -211,7 +213,7 @@ void service_SDL_events( JE_boolean clear_new )
 					input_grab(true);
 					break;
 				}
-				// intentional fall-though
+				// fall through
 			case SDL_MOUSEBUTTONUP:
 				map_window_to_screen_pos(&ev.button.x, &ev.button.y);
 				if (ev.type == SDL_MOUSEBUTTONDOWN)

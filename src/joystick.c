@@ -16,10 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "joystick.h"
+
 #include "config.h"
 #include "config_file.h"
 #include "file.h"
-#include "joystick.h"
 #include "keyboard.h"
 #include "nortsong.h"
 #include "opentyr.h"
@@ -44,7 +45,6 @@ bool ignore_joystick = false;
 int joysticks = 0;
 Joystick *joystick = NULL;
 
-static const char joystick_cfg_version = 1;
 static const int joystick_analog_max = 32767;
 
 // eliminates axis movement below the threshold
@@ -189,7 +189,7 @@ void poll_joystick( int j )
 	{
 		bool old = joystick[j].action[d];
 		
-		joystick[j].action[d] = check_assigned(joystick[j].handle, joystick[j].assignment[d + COUNTOF(joystick[j].direction)]);
+		joystick[j].action[d] = check_assigned(joystick[j].handle, joystick[j].assignment[d + COUNTOF(joystick[j].direction)]) > (joystick_analog_max / 2);
 		joydown |= joystick[j].action[d];
 		
 		joystick[j].action_pressed[d] = joystick[j].action[d] && (!old || repeat);

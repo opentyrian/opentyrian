@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "animlib.h"
+
 #include "file.h"
 #include "keyboard.h"
 #include "network.h"

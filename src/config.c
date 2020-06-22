@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "config.h"
+
 #include "episodes.h"
 #include "file.h"
 #include "joystick.h"
@@ -33,7 +34,10 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+#include <direct.h>
+#define mkdir _mkdir
+#else
 #include <unistd.h>
 #endif
 

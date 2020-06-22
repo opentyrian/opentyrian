@@ -1,4 +1,4 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
  * Copyright (C) 2007-2009  The OpenTyrian Development Team
  *
@@ -22,9 +22,9 @@
 #include "opentyr.h"
 #include "config_file.h"
 
-#include <stdio.h>
 #include <SDL.h>
 
+#include <stdio.h>
 
 #define SAVE_FILES_NUM (11 * 2)
 

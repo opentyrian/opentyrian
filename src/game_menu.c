@@ -16,11 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "game_menu.h"
+
 #include "backgrnd.h"
 #include "config.h"
 #include "file.h"
 #include "fonthand.h"
-#include "game_menu.h"
 #include "joystick.h"
 #include "keyboard.h"
 #include "loudness.h"
@@ -1990,9 +1991,9 @@ void JE_updateNavScreen( void )
 	navX = navX + (newNavX - navX) / 2.0f;
 	navY = navY + (newNavY - navY) / 2.0f;
 
-	if (abs(newNavX - navX) < 1)
+	if (fabsf(newNavX - navX) < 1)
 		navX = newNavX;
-	if (abs(newNavY - navY) < 1)
+	if (fabsf(newNavY - navY) < 1)
 		navY = newNavY;
 
 	fill_rectangle_xy(VGAScreen, 314, 0, 319, 199, 230);
