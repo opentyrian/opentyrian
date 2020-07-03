@@ -75,9 +75,9 @@ void opentyrian_menu( void )
 	static const char *menu_items[] =
 	{
 		"About OpenTyrian",
-		"Fullscreen: Display %d",
-		"Scaler: None",
-		"Scaling Mode: %s",
+		NULL,  // "Windowed" or "Fullscreen: Display %d"
+		NULL,  // "Scaler: %s"
+		NULL,  // "Scaling Mode: %s"
 		// "Play Destruct",
 		"Jukebox",
 		"Return to Main Menu",
@@ -131,7 +131,7 @@ void opentyrian_menu( void )
 				}
 				else
 				{
-					snprintf(buffer, sizeof(buffer), menu_items[i], temp_fullscreen_display + 1);
+					snprintf(buffer, sizeof(buffer), "Fullscreen: Display %d", temp_fullscreen_display + 1);
 					text = buffer;
 				}
 			}
@@ -142,7 +142,7 @@ void opentyrian_menu( void )
 			}
 			else if (i == MENU_SCALING_MODE)
 			{
-				snprintf(buffer, sizeof(buffer), menu_items[i], scaling_mode_names[temp_scaling_mode]);
+				snprintf(buffer, sizeof(buffer), "Scaling Mode: %s", scaling_mode_names[temp_scaling_mode]);
 				text = buffer;
 			}
 

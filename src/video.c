@@ -122,7 +122,7 @@ void deinit_video( void )
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-static void init_renderer()
+static void init_renderer( void )
 {
 	main_window_renderer = SDL_CreateRenderer(main_window, -1, 0);
 
@@ -221,7 +221,7 @@ void reinit_fullscreen( int new_display )
 	}
 }
 
-void video_on_win_resize()
+void video_on_win_resize( void )
 {
 	int w, h;
 	int scaler_w, scaler_h;
