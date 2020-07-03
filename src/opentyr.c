@@ -47,7 +47,7 @@
 #include "video.h"
 #include "video_scale.h"
 
-#include <SDL.h>
+#include "SDL.h"
 
 #include <assert.h>
 #include <stdio.h>

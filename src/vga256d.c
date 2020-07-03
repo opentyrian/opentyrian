@@ -24,7 +24,7 @@
 #include "palette.h"
 #include "video.h"
 
-#include <SDL.h>
+#include "SDL.h"
 
 #include <assert.h>
 #include <ctype.h>

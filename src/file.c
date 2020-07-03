@@ -21,12 +21,12 @@
 #include "opentyr.h"
 #include "varz.h"
 
-#include <SDL.h>
+#include "SDL.h"
 
 #include <errno.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 const char *custom_data_dir = NULL;
 

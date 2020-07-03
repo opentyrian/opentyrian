@@ -27,7 +27,7 @@
 #include "mouse.h"
 #include "video.h"
 
-#include <SDL.h>
+#include "SDL.h"
 
 void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma )
 {
