@@ -113,9 +113,18 @@ static const uint cube_line_width = 150;
 
 
 /*** Functions ***/
-static uint *playeritem_map( PlayerItems *items, uint i )
+static Uint8 *playeritem_map( PlayerItems *items, uint i )
 {
-	uint * const map[] = { &items->ship, &items->weapon[FRONT_WEAPON].id, &items->weapon[REAR_WEAPON].id, &items->shield, &items->generator, &items->sidekick[LEFT_SIDEKICK], &items->sidekick[RIGHT_SIDEKICK] };
+	Uint8 *const map[] =
+	{
+		&items->ship,
+		&items->weapon[FRONT_WEAPON].id,
+		&items->weapon[REAR_WEAPON].id,
+		&items->shield,
+		&items->generator,
+		&items->sidekick[LEFT_SIDEKICK],
+		&items->sidekick[RIGHT_SIDEKICK],
+	};
 	assert(i < COUNTOF(map));
 	return map[i];
 }
