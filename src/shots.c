@@ -93,7 +93,7 @@ void simulate_player_shots( void )
 				if (++shot->shotAni == shot->shotAniMax)
 					shot->shotAni = 0;
 
-				if (anim_frame < 6000)
+				if (anim_frame < 60000)
 				{
 					if (anim_frame > 1000)
 						anim_frame = anim_frame % 1000;
