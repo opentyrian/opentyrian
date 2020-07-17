@@ -60,15 +60,15 @@ ifneq ($(OPENTYRIAN_VERSION), )
     EXTRA_CPPFLAGS += -DOPENTYRIAN_VERSION='"$(OPENTYRIAN_VERSION)"'
 endif
 
-CPPFLAGS := -DNDEBUG
-CFLAGS := -pedantic
-CFLAGS += -MMD
-CFLAGS += -Wall \
+CPPFLAGS ?= -MMD
+CPPFLAGS += -DNDEBUG
+CFLAGS ?= -pedantic \
+          -Wall \
           -Wextra \
-          -Wno-missing-field-initializers
-CFLAGS += -O2
-LDFLAGS :=
-LDLIBS :=
+          -Wno-missing-field-initializers \
+          -O2
+LDFLAGS ?=
+LDLIBS ?=
 
 ifeq ($(WITH_NETWORK), true)
     SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --cflags)
