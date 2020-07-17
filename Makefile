@@ -61,7 +61,7 @@ ifneq ($(OPENTYRIAN_VERSION), )
 endif
 
 CPPFLAGS := -DNDEBUG
-CFLAGS := -pedantic
+CFLAGS += -pedantic
 CFLAGS += -MMD
 CFLAGS += -Wall \
           -Wextra \
