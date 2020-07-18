@@ -2328,7 +2328,7 @@ void JE_drawMainMenuHelpText( void )
 	{
 		memcpy(tempStr, mainMenuHelp[24-1], sizeof(tempStr));
 	}
-	else if ( (temp == menuChoices[curMenu] - 1) || ( (curMenu == 7) && (cubeMax == 0) ) )
+	else if ( (temp == menuChoices[curMenu] - 2) || ( (curMenu == 7) && (cubeMax == 0) ) )
 	{
 		memcpy(tempStr, mainMenuHelp[12-1], sizeof(tempStr));
 	}
