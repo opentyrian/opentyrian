@@ -375,7 +375,12 @@ void JE_loadHelpText( void )
 		read_encrypted_pascal_string(shipInfo[i][1], sizeof(shipInfo[i][1]), f);
 	}
 	skip_pascal_string(f);
-	
+
+	/*Menu 12 - Network Options*/
+	skip_pascal_string(f);
+	for (unsigned int i = 0; i < menuInt_entries[14]; ++i)
+		read_encrypted_pascal_string(menuInt[14][i], sizeof(menuInt[14][i]), f);
+
 	fclose(f);
 }
 
