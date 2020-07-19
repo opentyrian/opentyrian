@@ -2709,12 +2709,9 @@ void JE_menuFunction( JE_byte select )
 		}
 		else if (curSelect == 11) /* done */
 		{
-			if (isNetworkGame || onePlayerAction)
-			{
-				curMenu = MENU_LIMITED_OPTIONS;
-			} else {
-				curMenu = MENU_OPTIONS;
-			}
+			curMenu = isNetworkGame
+				? MENU_LIMITED_OPTIONS
+				: MENU_OPTIONS;
 		}
 		else /* change key */
 		{
@@ -2868,7 +2865,9 @@ void JE_menuFunction( JE_byte select )
 			jumpSection = true;
 			break;
 		case 3:
-			curMenu = MENU_OPTIONS;
+			curMenu = isNetworkGame
+				? MENU_LIMITED_OPTIONS
+				: MENU_OPTIONS;
 			break;
 		case 4:
 			if (JE_quitRequest())
@@ -2926,12 +2925,9 @@ void JE_menuFunction( JE_byte select )
 			reset_joystick_assignments(joystick_config);
 			break;
 		case 17:
-			if (isNetworkGame || onePlayerAction)
-			{
-				curMenu = MENU_LIMITED_OPTIONS;
-			} else {
-				curMenu = MENU_OPTIONS;
-			}
+			curMenu = isNetworkGame
+				? MENU_LIMITED_OPTIONS
+				: MENU_OPTIONS;
 			break;
 		default:
 			if (joysticks == 0)
