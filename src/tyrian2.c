@@ -942,33 +942,39 @@ start_level_first:
 		if (!demo_file)
 			exit(1);
 
-		efwrite(&episodeNum, 1,  1, demo_file);
-		efwrite(levelName,   1, 10, demo_file);
-		efwrite(&lvlFileNum, 1,  1, demo_file);
+		fwrite_u8_die(&episodeNum, 1, demo_file);
 
-		fputc(player[0].items.weapon[FRONT_WEAPON].id,  demo_file);
-		fputc(player[0].items.weapon[REAR_WEAPON].id,   demo_file);
-		fputc(player[0].items.super_arcade_mode,        demo_file);
-		fputc(player[0].items.sidekick[LEFT_SIDEKICK],  demo_file);
-		fputc(player[0].items.sidekick[RIGHT_SIDEKICK], demo_file);
-		fputc(player[0].items.generator,                demo_file);
+		// Pad string buffer with NULs.
+		for (size_t i = 1; i < 10; ++i)
+			if (levelName[i - 1] == '\0')
+				levelName[i] = '\0';
+		fwrite_u8_die((Uint8 *)levelName, 10, demo_file);
 
-		fputc(player[0].items.sidekick_level,           demo_file);
-		fputc(player[0].items.sidekick_series,          demo_file);
+		fwrite_u8_die(&lvlFileNum, 1, demo_file);
 
-		fputc(initial_episode_num,                      demo_file);
+		fwrite_u8_die(&player[0].items.weapon[FRONT_WEAPON].id,  1, demo_file);
+		fwrite_u8_die(&player[0].items.weapon[REAR_WEAPON].id,   1, demo_file);
+		fwrite_u8_die(&player[0].items.super_arcade_mode,        1, demo_file);
+		fwrite_u8_die(&player[0].items.sidekick[LEFT_SIDEKICK],  1, demo_file);
+		fwrite_u8_die(&player[0].items.sidekick[RIGHT_SIDEKICK], 1, demo_file);
+		fwrite_u8_die(&player[0].items.generator,                1, demo_file);
 
-		fputc(player[0].items.shield,                   demo_file);
-		fputc(player[0].items.special,                  demo_file);
-		fputc(player[0].items.ship,                     demo_file);
+		fwrite_u8_die(&player[0].items.sidekick_level,           1, demo_file);
+		fwrite_u8_die(&player[0].items.sidekick_series,          1, demo_file);
+
+		fwrite_u8_die(&initial_episode_num,                      1, demo_file);
+
+		fwrite_u8_die(&player[0].items.shield,                   1, demo_file);
+		fwrite_u8_die(&player[0].items.special,                  1, demo_file);
+		fwrite_u8_die(&player[0].items.ship,                     1, demo_file);
 
 		for (uint i = 0; i < 2; ++i)
-			fputc(player[0].items.weapon[i].power, demo_file);
+			fwrite_u8_die(&player[0].items.weapon[i].power,      1, demo_file);
 
-		for (uint i = 0; i < 3; ++i)
-			fputc(0, demo_file);
+		Uint8 unused[3] = { 0, 0, 0 };
+		fwrite_u8_die(unused, 3, demo_file);
 
-		efwrite(&levelSong,  1,  1, demo_file);
+		fwrite_u8_die(&levelSong, 1, demo_file);
 
 		demo_keys = 0;
 		demo_keys_wait = 0;
@@ -3024,29 +3030,28 @@ new_game:
 	FILE *level_f = dir_fopen_die(data_dir(), levelFile, "rb");
 	fseek(level_f, lvlPos[(lvlFileNum-1) * 2], SEEK_SET);
 
-	fgetc(level_f); // char_mapFile
-	JE_char char_shapeFile = fgetc(level_f);
-	efread(&mapX,  sizeof(JE_word), 1, level_f);
-	efread(&mapX2, sizeof(JE_word), 1, level_f);
-	efread(&mapX3, sizeof(JE_word), 1, level_f);
+	JE_char char_mapFile;
+	JE_char char_shapeFile;
+	fread_die(&char_mapFile,   1, 1, level_f);
+	fread_die(&char_shapeFile, 1, 1, level_f);
+	fread_u16_die(&mapX,  1, level_f);
+	fread_u16_die(&mapX2, 1, level_f);
+	fread_u16_die(&mapX3, 1, level_f);
 
-	efread(&levelEnemyMax, sizeof(JE_word), 1, level_f);
-	for (x = 0; x < levelEnemyMax; x++)
-	{
-		efread(&levelEnemy[x], sizeof(JE_word), 1, level_f);
-	}
+	fread_u16_die(&levelEnemyMax, 1, level_f);
+	fread_u16_die(levelEnemy, levelEnemyMax, level_f);
 
-	efread(&maxEvent, sizeof(JE_word), 1, level_f);
+	fread_u16_die(&maxEvent, 1, level_f);
 	for (x = 0; x < maxEvent; x++)
 	{
-		efread(&eventRec[x].eventtime, sizeof(JE_word), 1, level_f);
-		efread(&eventRec[x].eventtype, sizeof(JE_byte), 1, level_f);
-		efread(&eventRec[x].eventdat,  sizeof(JE_integer), 1, level_f);
-		efread(&eventRec[x].eventdat2, sizeof(JE_integer), 1, level_f);
-		efread(&eventRec[x].eventdat3, sizeof(JE_shortint), 1, level_f);
-		efread(&eventRec[x].eventdat5, sizeof(JE_shortint), 1, level_f);
-		efread(&eventRec[x].eventdat6, sizeof(JE_shortint), 1, level_f);
-		efread(&eventRec[x].eventdat4, sizeof(JE_byte), 1, level_f);
+		fread_u16_die(&eventRec[x].eventtime, 1, level_f);
+		fread_u8_die( &eventRec[x].eventtype, 1, level_f);
+		fread_s16_die(&eventRec[x].eventdat,  1, level_f);
+		fread_s16_die(&eventRec[x].eventdat2, 1, level_f);
+		fread_s8_die( &eventRec[x].eventdat3, 1, level_f);
+		fread_s8_die( &eventRec[x].eventdat5, 1, level_f);
+		fread_s8_die( &eventRec[x].eventdat6, 1, level_f);
+		fread_u8_die( &eventRec[x].eventdat4, 1, level_f);
 	}
 	eventRec[x].eventtime = 65500;  /*Not needed but just in case*/
 
@@ -3055,9 +3060,9 @@ new_game:
 	/*debuginfo('Loading Map');*/
 
 	/* MAP SHAPE LOOKUP TABLE - Each map is directly after level */
-	efread(mapSh, sizeof(JE_word), sizeof(mapSh) / sizeof(JE_word), level_f);
 	for (temp = 0; temp < 3; temp++)
 	{
+		fread_u16_die(mapSh[temp], sizeof(*mapSh) / sizeof(JE_word), level_f);
 		for (temp2 = 0; temp2 < 128; temp2++)
 		{
 			mapSh[temp][temp2] = SDL_Swap16(mapSh[temp][temp2]);
@@ -3070,12 +3075,13 @@ new_game:
 
 	for (int z = 0; z < 600; z++)
 	{
-		JE_boolean shapeBlank = fgetc(shpFile);
+		JE_boolean shapeBlank;
+		fread_bool_die(&shapeBlank, shpFile);
 
 		if (shapeBlank)
 			memset(shape, 0, sizeof(shape));
 		else
-			efread(shape, sizeof(JE_byte), sizeof(shape), shpFile);
+			fread_u8_die(shape, sizeof(shape), shpFile);
 
 		/* Match 1 */
 		for (int x = 0; x <= 71; ++x)
@@ -3084,7 +3090,7 @@ new_game:
 			{
 				memcpy(megaData1.shapes[x].sh, shape, sizeof(JE_DanCShape));
 
-				ref[0][x] = (JE_byte *)megaData1.shapes[x].sh;
+				ref[0][x] = megaData1.shapes[x].sh;
 			}
 		}
 
@@ -3103,7 +3109,7 @@ new_game:
 							y = 0;
 
 					megaData2.shapes[x].fill = y;
-					ref[1][x] = (JE_byte *)megaData2.shapes[x].sh;
+					ref[1][x] = megaData2.shapes[x].sh;
 				}
 				else
 				{
@@ -3127,7 +3133,7 @@ new_game:
 							y = 0;
 
 					megaData3.shapes[x].fill = y;
-					ref[2][x] = (JE_byte *)megaData3.shapes[x].sh;
+					ref[2][x] = megaData3.shapes[x].sh;
 				}
 				else
 				{
@@ -3139,7 +3145,7 @@ new_game:
 
 	fclose(shpFile);
 
-	efread(mapBuf, sizeof(JE_byte), 14 * 300, level_f);
+	fread_u8_die(mapBuf, 14 * 300, level_f);
 	bufLoc = 0;              /* MAP NUMBER 1 */
 	for (y = 0; y < 300; y++)
 	{
@@ -3150,7 +3156,7 @@ new_game:
 		}
 	}
 
-	efread(mapBuf, sizeof(JE_byte), 14 * 600, level_f);
+	fread_u8_die(mapBuf, 14 * 600, level_f);
 	bufLoc = 0;              /* MAP NUMBER 2 */
 	for (y = 0; y < 600; y++)
 	{
@@ -3161,7 +3167,7 @@ new_game:
 		}
 	}
 
-	efread(mapBuf, sizeof(JE_byte), 15 * 600, level_f);
+	fread_u8_die(mapBuf, 15 * 600, level_f);
 	bufLoc = 0;              /* MAP NUMBER 3 */
 	for (y = 0; y < 600; y++)
 	{

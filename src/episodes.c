@@ -59,7 +59,7 @@ void JE_loadItemDat( void )
 	if (episodeNum <= 3)
 	{
 		f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
-		efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
+		fread_s32_die(&episode1DataLoc, 1, f);
 		fseek(f, episode1DataLoc, SEEK_SET);
 	}
 	else
@@ -70,145 +70,149 @@ void JE_loadItemDat( void )
 	}
 
 	JE_word itemNum[7]; /* [1..7] */
-	efread(&itemNum, sizeof(JE_word), 7, f);
+	fread_u16_die(itemNum, 7, f);
 
 	for (int i = 0; i < WEAP_NUM + 1; ++i)
 	{
-		efread(&weapons[i].drain,           sizeof(JE_word), 1, f);
-		efread(&weapons[i].shotrepeat,      sizeof(JE_byte), 1, f);
-		efread(&weapons[i].multi,           sizeof(JE_byte), 1, f);
-		efread(&weapons[i].weapani,         sizeof(JE_word), 1, f);
-		efread(&weapons[i].max,             sizeof(JE_byte), 1, f);
-		efread(&weapons[i].tx,              sizeof(JE_byte), 1, f);
-		efread(&weapons[i].ty,              sizeof(JE_byte), 1, f);
-		efread(&weapons[i].aim,             sizeof(JE_byte), 1, f);
-		efread(&weapons[i].attack,          sizeof(JE_byte), 8, f);
-		efread(&weapons[i].del,             sizeof(JE_byte), 8, f);
-		efread(&weapons[i].sx,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].sy,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].bx,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].by,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].sg,              sizeof(JE_word), 8, f);
-		efread(&weapons[i].acceleration,    sizeof(JE_shortint), 1, f);
-		efread(&weapons[i].accelerationx,   sizeof(JE_shortint), 1, f);
-		efread(&weapons[i].circlesize,      sizeof(JE_byte), 1, f);
-		efread(&weapons[i].sound,           sizeof(JE_byte), 1, f);
-		efread(&weapons[i].trail,           sizeof(JE_byte), 1, f);
-		efread(&weapons[i].shipblastfilter, sizeof(JE_byte), 1, f);
+		fread_u16_die(&weapons[i].drain,           1, f);
+		fread_u8_die( &weapons[i].shotrepeat,      1, f);
+		fread_u8_die( &weapons[i].multi,           1, f);
+		fread_u16_die(&weapons[i].weapani,         1, f);
+		fread_u8_die( &weapons[i].max,             1, f);
+		fread_u8_die( &weapons[i].tx,              1, f);
+		fread_u8_die( &weapons[i].ty,              1, f);
+		fread_u8_die( &weapons[i].aim,             1, f);
+		fread_u8_die(  weapons[i].attack,          8, f);
+		fread_u8_die(  weapons[i].del,             8, f);
+		fread_s8_die(  weapons[i].sx,              8, f);
+		fread_s8_die(  weapons[i].sy,              8, f);
+		fread_s8_die(  weapons[i].bx,              8, f);
+		fread_s8_die(  weapons[i].by,              8, f);
+		fread_u16_die( weapons[i].sg,              8, f);
+		fread_s8_die( &weapons[i].acceleration,    1, f);
+		fread_s8_die( &weapons[i].accelerationx,   1, f);
+		fread_u8_die( &weapons[i].circlesize,      1, f);
+		fread_u8_die( &weapons[i].sound,           1, f);
+		fread_u8_die( &weapons[i].trail,           1, f);
+		fread_u8_die( &weapons[i].shipblastfilter, 1, f);
 	}
 	
 	for (int i = 0; i < PORT_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&weaponPort[i].name,        1, 30, f);
-		weaponPort[i].name[30] = '\0';
-		efread(&weaponPort[i].opnum,       sizeof(JE_byte), 1, f);
-		for (int j = 0; j < 2; ++j)
-		{
-			efread(&weaponPort[i].op[j],   sizeof(JE_word), 11, f);
-		}
-		efread(&weaponPort[i].cost,        sizeof(JE_word), 1, f);
-		efread(&weaponPort[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&weaponPort[i].poweruse,    sizeof(JE_word), 1, f);
+		Uint8 nameLen;
+		fread_u8_die( &nameLen,                   1, f);
+		fread_die(    &weaponPort[i].name,    1, 30, f);
+		weaponPort[i].name[MIN(nameLen, 30)] = '\0';
+		fread_u8_die( &weaponPort[i].opnum,       1, f);
+		fread_u16_die( weaponPort[i].op[0],      11, f);
+		fread_u16_die( weaponPort[i].op[1],      11, f);
+		fread_u16_die(&weaponPort[i].cost,        1, f);
+		fread_u16_die(&weaponPort[i].itemgraphic, 1, f);
+		fread_u16_die(&weaponPort[i].poweruse,    1, f);
 	}
 
 	for (int i = 0; i < SPECIAL_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&special[i].name,        1, 30, f);
-		special[i].name[30] = '\0';
-		efread(&special[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&special[i].pwr,         sizeof(JE_byte), 1, f);
-		efread(&special[i].stype,       sizeof(JE_byte), 1, f);
-		efread(&special[i].wpn,         sizeof(JE_word), 1, f);
+		Uint8 nameLen;
+		fread_u8_die( &nameLen,                1, f);
+		fread_die(    &special[i].name,    1, 30, f);
+		special[i].name[MIN(nameLen, 30)] = '\0';
+		fread_u16_die(&special[i].itemgraphic, 1, f);
+		fread_u8_die( &special[i].pwr,         1, f);
+		fread_u8_die( &special[i].stype,       1, f);
+		fread_u16_die(&special[i].wpn,         1, f);
 	}
 
 	for (int i = 0; i < POWER_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&powerSys[i].name,        1, 30, f);
-		powerSys[i].name[30] = '\0';
-		efread(&powerSys[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&powerSys[i].power,       sizeof(JE_shortint), 1, f);
-		efread(&powerSys[i].speed,       sizeof(JE_byte), 1, f);
-		efread(&powerSys[i].cost,        sizeof(JE_word), 1, f);
+		Uint8 nameLen;
+		fread_u8_die( &nameLen,                 1, f);
+		fread_die(    &powerSys[i].name,    1, 30, f);
+		powerSys[i].name[MIN(nameLen, 30)] = '\0';
+		fread_u16_die(&powerSys[i].itemgraphic, 1, f);
+		fread_u8_die( &powerSys[i].power,       1, f);
+		fread_s8_die( &powerSys[i].speed,       1, f);
+		fread_u16_die(&powerSys[i].cost,        1, f);
 	}
 
 	for (int i = 0; i < SHIP_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&ships[i].name,           1, 30, f);
-		ships[i].name[30] = '\0';
-		efread(&ships[i].shipgraphic,    sizeof(JE_word), 1, f);
-		efread(&ships[i].itemgraphic,    sizeof(JE_word), 1, f);
-		efread(&ships[i].ani,            sizeof(JE_byte), 1, f);
-		efread(&ships[i].spd,            sizeof(JE_shortint), 1, f);
-		efread(&ships[i].dmg,            sizeof(JE_byte), 1, f);
-		efread(&ships[i].cost,           sizeof(JE_word), 1, f);
-		efread(&ships[i].bigshipgraphic, sizeof(JE_byte), 1, f);
+		Uint8 nameLen;
+		fread_u8_die( &nameLen,                 1, f);
+		fread_die(    &ships[i].name,       1, 30, f);
+		ships[i].name[MIN(nameLen, 30)] = '\0';
+		fread_u16_die(&ships[i].shipgraphic,    1, f);
+		fread_u16_die(&ships[i].itemgraphic,    1, f);
+		fread_u8_die( &ships[i].ani,            1, f);
+		fread_s8_die( &ships[i].spd,            1, f);
+		fread_u8_die( &ships[i].dmg,            1, f);
+		fread_u16_die(&ships[i].cost,           1, f);
+		fread_u8_die( &ships[i].bigshipgraphic, 1, f);
 	}
 
 	for (int i = 0; i < OPTION_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&options[i].name,        1, 30, f);
-		options[i].name[30] = '\0';
-		efread(&options[i].pwr,         sizeof(JE_byte), 1, f);
-		efread(&options[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&options[i].cost,        sizeof(JE_word), 1, f);
-		efread(&options[i].tr,          sizeof(JE_byte), 1, f);
-		efread(&options[i].option,      sizeof(JE_byte), 1, f);
-		efread(&options[i].opspd,       sizeof(JE_shortint), 1, f);
-		efread(&options[i].ani,         sizeof(JE_byte), 1, f);
-		efread(&options[i].gr,          sizeof(JE_word), 20, f);
-		efread(&options[i].wport,       sizeof(JE_byte), 1, f);
-		efread(&options[i].wpnum,       sizeof(JE_word), 1, f);
-		efread(&options[i].ammo,        sizeof(JE_byte), 1, f);
-		efread(&options[i].stop,        1, 1, f); /* override sizeof(JE_boolean) */
-		efread(&options[i].icongr,      sizeof(JE_byte), 1, f);
+		Uint8 nameLen;
+		fread_u8_die(  &nameLen,                1, f);
+		fread_die(     &options[i].name,    1, 30, f);
+		options[i].name[MIN(nameLen, 30)] = '\0';
+		fread_u8_die(  &options[i].pwr,         1, f);
+		fread_u16_die( &options[i].itemgraphic, 1, f);
+		fread_u16_die( &options[i].cost,        1, f);
+		fread_u8_die(  &options[i].tr,          1, f);
+		fread_u8_die(  &options[i].option,      1, f);
+		fread_s8_die(  &options[i].opspd,       1, f);
+		fread_u8_die(  &options[i].ani,         1, f);
+		fread_u16_die(  options[i].gr,         20, f);
+		fread_u8_die(  &options[i].wport,       1, f);
+		fread_u16_die( &options[i].wpnum,       1, f);
+		fread_u8_die(  &options[i].ammo,        1, f);
+		fread_bool_die(&options[i].stop,           f);
+		fread_u8_die(  &options[i].icongr,      1, f);
 	}
 
 	for (int i = 0; i < SHIELD_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&shields[i].name,        1, 30, f);
-		shields[i].name[30] = '\0';
-		efread(&shields[i].tpwr,        sizeof(JE_byte), 1, f);
-		efread(&shields[i].mpwr,        sizeof(JE_byte), 1, f);
-		efread(&shields[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&shields[i].cost,        sizeof(JE_word), 1, f);
+		Uint8 nameLen;
+		fread_u8_die( &nameLen,                1, f);
+		fread_die(    &shields[i].name,    1, 30, f);
+		shields[i].name[MIN(nameLen, 30)] = '\0';
+		fread_u8_die( &shields[i].tpwr,        1, f);
+		fread_u8_die( &shields[i].mpwr,        1, f);
+		fread_u16_die(&shields[i].itemgraphic, 1, f);
+		fread_u16_die(&shields[i].cost,        1, f);
 	}
 	
 	for (int i = 0; i < ENEMY_NUM + 1; ++i)
 	{
-		efread(&enemyDat[i].ani,           sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].tur,           sizeof(JE_byte), 3, f);
-		efread(&enemyDat[i].freq,          sizeof(JE_byte), 3, f);
-		efread(&enemyDat[i].xmove,         sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].ymove,         sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].xaccel,        sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].yaccel,        sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].xcaccel,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].ycaccel,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].startx,        sizeof(JE_integer), 1, f);
-		efread(&enemyDat[i].starty,        sizeof(JE_integer), 1, f);
-		efread(&enemyDat[i].startxc,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].startyc,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].armor,         sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].esize,         sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].egraphic,      sizeof(JE_word), 20, f);
-		efread(&enemyDat[i].explosiontype, sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].animate,       sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].shapebank,     sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].xrev,          sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].yrev,          sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].dgr,           sizeof(JE_word), 1, f);
-		efread(&enemyDat[i].dlevel,        sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].dani,          sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].elaunchfreq,   sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].elaunchtype,   sizeof(JE_word), 1, f);
-		efread(&enemyDat[i].value,         sizeof(JE_integer), 1, f);
-		efread(&enemyDat[i].eenemydie,     sizeof(JE_word), 1, f);
+		fread_u8_die( &enemyDat[i].ani,           1, f);
+		fread_u8_die(  enemyDat[i].tur,           3, f);
+		fread_u8_die(  enemyDat[i].freq,          3, f);
+		fread_s8_die( &enemyDat[i].xmove,         1, f);
+		fread_s8_die( &enemyDat[i].ymove,         1, f);
+		fread_s8_die( &enemyDat[i].xaccel,        1, f);
+		fread_s8_die( &enemyDat[i].yaccel,        1, f);
+		fread_s8_die( &enemyDat[i].xcaccel,       1, f);
+		fread_s8_die( &enemyDat[i].ycaccel,       1, f);
+		fread_s16_die(&enemyDat[i].startx,        1, f);
+		fread_s16_die(&enemyDat[i].starty,        1, f);
+		fread_s8_die( &enemyDat[i].startxc,       1, f);
+		fread_s8_die( &enemyDat[i].startyc,       1, f);
+		fread_u8_die( &enemyDat[i].armor,         1, f);
+		fread_u8_die( &enemyDat[i].esize,         1, f);
+		fread_u16_die( enemyDat[i].egraphic,     20, f);
+		fread_u8_die( &enemyDat[i].explosiontype, 1, f);
+		fread_u8_die( &enemyDat[i].animate,       1, f);
+		fread_u8_die( &enemyDat[i].shapebank,     1, f);
+		fread_s8_die( &enemyDat[i].xrev,          1, f);
+		fread_s8_die( &enemyDat[i].yrev,          1, f);
+		fread_u16_die(&enemyDat[i].dgr,           1, f);
+		fread_s8_die( &enemyDat[i].dlevel,        1, f);
+		fread_s8_die( &enemyDat[i].dani,          1, f);
+		fread_u8_die( &enemyDat[i].elaunchfreq,   1, f);
+		fread_u16_die(&enemyDat[i].elaunchtype,   1, f);
+		fread_s16_die(&enemyDat[i].value,         1, f);
+		fread_u16_die(&enemyDat[i].eenemydie,     1, f);
 	}
 	
 	fclose(f);

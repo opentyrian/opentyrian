@@ -32,14 +32,18 @@ void JE_loadPCX( const char *file ) // this is only meant to load tshp2.pcx
 	FILE *f = dir_fopen_die(data_dir(), file, "rb");
 	
 	fseek(f, -769, SEEK_END);
-	
-	if (fgetc(f) == 12)
+
+	Uint8 temp;
+	fread_u8_die(&temp, 1, f);
+	if (temp == 12)
 	{
 		for (int i = 0; i < 256; i++)
 		{
-			efread(&colors[i].r, 1, 1, f);
-			efread(&colors[i].g, 1, 1, f);
-			efread(&colors[i].b, 1, 1, f);
+			Uint8 rgb[3];
+			fread_u8_die(rgb, 3, f);
+			colors[i].r = rgb[0];
+			colors[i].g = rgb[1];
+			colors[i].b = rgb[2];
 		}
 	}
 	
@@ -47,13 +51,17 @@ void JE_loadPCX( const char *file ) // this is only meant to load tshp2.pcx
 	
 	for (int i = 0; i < 320 * 200; )
 	{
-		Uint8 p = fgetc(f);
+		Uint8 p;
+		fread_u8_die(&p, 1, f);
 		if ((p & 0xc0) == 0xc0)
 		{
 			i += (p & 0x3f);
-			memset(s, fgetc(f), (p & 0x3f));
+			fread_u8_die(&temp, 1, f);
+			memset(s, temp, (p & 0x3f));
 			s += (p & 0x3f);
-		} else {
+		}
+		else
+		{
 			i++;
 			*s = p;
 			s++;

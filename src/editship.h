@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-
+// TODO: replace with less opaque type
 typedef JE_byte JE_ShipsType[154]; /* [1..154] */
 
 extern JE_boolean extraAvail;

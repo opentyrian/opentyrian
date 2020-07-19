@@ -78,40 +78,49 @@ char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];                          /* [1..
 char menuInt[MENU_MAX+1][11][18];                                        /* [0..14, 1..11] of string [17] */
 
 
-void decrypt_pascal_string( char *s, int len )
+static void decrypt_string( char *s, size_t len )
 {
 	static const unsigned char crypt_key[] = { 204, 129, 63, 255, 71, 19, 25, 62, 1, 99 };
 
-	for (int i = len - 1; i >= 0; --i)
+	if (len == 0)
+		return;
+
+	for (size_t i = len - 1; ; --i)
 	{
 		s[i] ^= crypt_key[i % sizeof(crypt_key)];
-		if (i > 0)
-			s[i] ^= s[i - 1];
+		if (i == 0)
+			break;
+		s[i] ^= s[i - 1];
 	}
 }
 
-void read_encrypted_pascal_string( char *s, int size, FILE *f )
+void read_encrypted_pascal_string( char *s, size_t size, FILE *f )
 {
-	int len = getc(f);
-	if (len != EOF)
-	{
-		int skip = MAX((len + 1) - size, 0);
-		assert(skip == 0);
+	Uint8 len;
+	char buffer[255];
 
-		len -= skip;
-		efread(s, 1, len, f);
-		if (size > 0)
-			s[len] = '\0';
-		fseek(f, skip, SEEK_CUR);
+	fread_u8_die(&len, 1, f);
+	fread_die(buffer, 1, len, f);
 
-		decrypt_pascal_string(s, len);
-	}
+	if (size == 0)
+		return;
+
+	decrypt_string(buffer, len);
+
+	assert(len < size);
+
+	len = MIN(len, size - 1);
+	memcpy(s, buffer, len);
+	s[len] = '\0';
 }
 
 void skip_pascal_string( FILE *f )
 {
-	int len = getc(f);
-	fseek(f, len, SEEK_CUR);
+	Uint8 len;
+	char buffer[255];
+
+	fread_u8_die(&len, 1, f);
+	fread_die(buffer, 1, len, f);
 }
 
 void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsigned int boxwidth )
@@ -179,7 +188,7 @@ void JE_loadHelpText( void )
 	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 8, -1, -1, 11, -1, -1, -1, 6, 4, 6, 7, 5 };
 	
 	FILE *f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
-	efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
+	fread_s32_die(&episode1DataLoc, 1, f);
 
 	/*Online Help*/
 	skip_pascal_string(f);

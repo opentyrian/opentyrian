@@ -1789,13 +1789,6 @@ bool load_cube( int cube_slot, int cube_index )
 		read_encrypted_pascal_string(buf, sizeof(buf), f);
 		if (buf[0] == '*')
 			--cube_index;
-
-		if (feof(f))
-		{
-			fclose(f);
-
-			return false;
-		}
 	}
 
 	str_pop_int(&buf[4], &cube[cube_slot].face_sprite);
@@ -1813,7 +1806,7 @@ bool load_cube( int cube_slot, int cube_index )
 		read_encrypted_pascal_string(buf, sizeof(buf), f);
 
 		// end of data
-		if (feof(f) || buf[0] == '*')
+		if (buf[0] == '*')
 			break;
 
 		// new paragraph

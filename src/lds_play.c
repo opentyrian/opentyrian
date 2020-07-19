@@ -92,21 +92,20 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 	fseek(f, music_offset, SEEK_SET);
 
 	/* load header */
-	mode = fgetc(f);
+	fread_u8_die(&mode, 1, f);
 	if (mode > 2)
 	{
 		fprintf(stderr, "error: failed to load music\n");
 		return false;
 	}
-	efread(&speed, 2, 1, f);
-	tempo = fgetc(f);
-	pattlen = fgetc(f);
-	for (unsigned int i = 0; i < 9; i++)
-		chandelay[i] = fgetc(f);
-	regbd = fgetc(f);
+	fread_u16_die(&speed,   1, f);
+	fread_u8_die(&tempo,    1, f);
+	fread_u8_die(&pattlen,  1, f);
+	fread_u8_die(chandelay, 9, f);
+	fread_u8_die(&regbd,    1, f);
 
 	/* load patches */
-	efread(&numpatch, 2, 1, f);
+	fread_u16_die(&numpatch, 1, f);
 
 	free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
@@ -114,43 +113,42 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 	for (unsigned int i = 0; i < numpatch; i++)
 	{
 		sb = &soundbank[i];
-		sb->mod_misc = fgetc(f);
-		sb->mod_vol = fgetc(f);
-		sb->mod_ad = fgetc(f);
-		sb->mod_sr = fgetc(f);
-		sb->mod_wave = fgetc(f);
-		sb->car_misc = fgetc(f);
-		sb->car_vol = fgetc(f);
-		sb->car_ad = fgetc(f);
-		sb->car_sr = fgetc(f);
-		sb->car_wave = fgetc(f);
-		sb->feedback = fgetc(f);
-		sb->keyoff = fgetc(f);
-		sb->portamento = fgetc(f);
-		sb->glide = fgetc(f);
-		sb->finetune = fgetc(f);
-		sb->vibrato = fgetc(f);
-		sb->vibdelay = fgetc(f);
-		sb->mod_trem = fgetc(f);
-		sb->car_trem = fgetc(f);
-		sb->tremwait = fgetc(f);
-		sb->arpeggio = fgetc(f);
-		for (unsigned int j = 0; j < 12; j++)
-			sb->arp_tab[j] = fgetc(f);
-		efread(&sb->start, 2, 1, f);
-		efread(&sb->size, 2, 1, f);
-		sb->fms = fgetc(f);
-		efread(&sb->transp, 2, 1, f);
-		sb->midinst = fgetc(f);
-		sb->midvelo = fgetc(f);
-		sb->midkey = fgetc(f);
-		sb->midtrans = fgetc(f);
-		sb->middum1 = fgetc(f);
-		sb->middum2 = fgetc(f);
+		fread_u8_die( &sb->mod_misc,   1, f);
+		fread_u8_die( &sb->mod_vol,    1, f);
+		fread_u8_die( &sb->mod_ad,     1, f);
+		fread_u8_die( &sb->mod_sr,     1, f);
+		fread_u8_die( &sb->mod_wave,   1, f);
+		fread_u8_die( &sb->car_misc,   1, f);
+		fread_u8_die( &sb->car_vol,    1, f);
+		fread_u8_die( &sb->car_ad,     1, f);
+		fread_u8_die( &sb->car_sr,     1, f);
+		fread_u8_die( &sb->car_wave,   1, f);
+		fread_u8_die( &sb->feedback,   1, f);
+		fread_u8_die( &sb->keyoff,     1, f);
+		fread_u8_die( &sb->portamento, 1, f);
+		fread_u8_die( &sb->glide,      1, f);
+		fread_u8_die( &sb->finetune,   1, f);
+		fread_u8_die( &sb->vibrato,    1, f);
+		fread_u8_die( &sb->vibdelay,   1, f);
+		fread_u8_die( &sb->mod_trem,   1, f);
+		fread_u8_die( &sb->car_trem,   1, f);
+		fread_u8_die( &sb->tremwait,   1, f);
+		fread_u8_die( &sb->arpeggio,   1, f);
+		fread_u8_die(  sb->arp_tab,   12, f);
+		fread_u16_die(&sb->start,      1, f);
+		fread_u16_die(&sb->size,       1, f);
+		fread_u8_die( &sb->fms,        1, f);
+		fread_u16_die(&sb->transp,     1, f);
+		fread_u8_die( &sb->midinst,    1, f);
+		fread_u8_die( &sb->midvelo,    1, f);
+		fread_u8_die( &sb->midkey,     1, f);
+		fread_u8_die( &sb->midtrans,   1, f);
+		fread_u8_die( &sb->middum1,    1, f);
+		fread_u8_die( &sb->middum2,    1, f);
 	}
 	
 	/* load positions */
-	efread(&numposi, 2, 1, f);
+	fread_u16_die(&numposi, 1, f);
 	
 	free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
@@ -164,10 +162,9 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 			* word fields anyway, so it ought to be an even number (hopefully) and
 			* we can just divide it by 2 to get our array index of 16bit words.
 			*/
-			Uint16 temp;
-			efread(&temp, 2, 1, f);
-			positions[i * 9 + j].patnum = temp / 2;
-			positions[i * 9 + j].transpose = fgetc(f);
+			fread_u16_die(&positions[i * 9 + j].patnum,    1, f);
+			fread_u8_die( &positions[i * 9 + j].transpose, 1, f);
+			positions[i * 9 + j].patnum /= 2;
 		}
 	}
 	
@@ -175,12 +172,12 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 	fseek(f, 2, SEEK_CUR); /* ignore # of digital sounds (dunno what this is for) */
 	
 	unsigned int remaining = music_size - (ftell(f) - music_offset);
-	
+	size_t numpatterns = remaining / 2;
+
 	free(patterns);
-	patterns = malloc(sizeof(Uint16) * (remaining / 2));
-	
-	for (unsigned int i = 0; i < remaining / 2; i++)
-		efread(&patterns[i], 2, 1, f);
+	patterns = malloc(sizeof(Uint16) * numpatterns);
+
+	fread_u16_die(patterns, numpatterns, f);
 	
 	lds_rewind();
 	

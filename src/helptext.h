@@ -69,7 +69,7 @@ extern char destructModeName[DESTRUCT_MODES][13];
 extern char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];
 extern char menuInt[MENU_MAX+1][11][18];
 
-void read_encrypted_pascal_string( char *s, int size, FILE *f );
+void read_encrypted_pascal_string( char *s, size_t size, FILE *f );
 void skip_pascal_string( FILE *f );
 
 void JE_helpBox( SDL_Surface *screen, int x, int y, const char *message, unsigned int boxwidth );

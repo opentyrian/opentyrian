@@ -39,12 +39,9 @@ void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 		first = false;
 
 		Uint16 temp;
-		efread(&temp, sizeof(Uint16), 1, f);
-		for (int i = 0; i < PCX_NUM; i++)
-		{
-			efread(&pcxpos[i], sizeof(JE_longint), 1, f);
-		}
+		fread_u16_die(&temp, 1, f);
 
+		fread_s32_die(pcxpos, PCX_NUM, f);
 		pcxpos[PCX_NUM] = ftell_eof(f);
 	}
 
@@ -52,7 +49,7 @@ void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 	Uint8 *buffer = malloc(size);
 
 	fseek(f, pcxpos[PCXnumber], SEEK_SET);
-	efread(buffer, sizeof(Uint8), size, f);
+	fread_u8_die(buffer, size, f);
 	fclose(f);
 
 	Uint8 *p = buffer;
@@ -67,7 +64,9 @@ void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 			i += (*p & 0x3f);
 			memset(s, *(p + 1), (*p & 0x3f));
 			s += (*p & 0x3f); p += 2;
-		} else {
+		}
+		else
+		{
 			i++;
 			*s = *p;
 			s++; p++;

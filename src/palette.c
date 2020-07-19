@@ -54,12 +54,11 @@ void JE_loadPals( void )
 			// bits of the original value instead. This ensures that the value goes to 255 as the original goes
 			// to 63.
 
-			int c = getc(f);
-			palettes[p][i].r = (c << 2) | (c >> 4);
-			c = getc(f);
-			palettes[p][i].g = (c << 2) | (c >> 4);
-			c = getc(f);
-			palettes[p][i].b = (c << 2) | (c >> 4);
+			Uint8 rgb[3];
+			fread_u8_die(rgb, 3, f);
+			palettes[p][i].r = (rgb[0] << 2) | (rgb[0] >> 4);
+			palettes[p][i].g = (rgb[1] << 2) | (rgb[1] >> 4);
+			palettes[p][i].b = (rgb[2] << 2) | (rgb[2] >> 4);
 		}
 	}
 	

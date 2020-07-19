@@ -42,21 +42,21 @@
 #define ANI_PAGE_SIZE 0x10000   // 65536.
 typedef struct anim_FileHeader_s
 {
-	unsigned int nlps;            /* Number of 'pages', max 256. */
-	unsigned int nRecords;        /* Number of 'records', max 65535 */
+	Uint16 nlps;            /* Number of 'pages', max 256. */
+	Uint32 nRecords;        /* Number of 'records', max 65535 */
 } anim_FileHeader_t;
 typedef struct anim_LargePageHeader_s
 {
-	unsigned int baseRecord;      /* The first record's number */
-	unsigned int nRecords;        /* Number of records.  Supposedly there are bit flags but I saw no such code */
-	unsigned int nBytes;	      /* Number of bytes used, excluding headers */
+	Uint16 baseRecord;      /* The first record's number */
+	Uint16 nRecords;        /* Number of records.  Supposedly there are bit flags but I saw no such code */
+	Uint16 nBytes;	        /* Number of bytes used, excluding headers */
 } anim_LargePageHeader_t;
 
 
 /*** Globals ***/
 Uint8 CurrentPageBuffer[65536];
 anim_LargePageHeader_t PageHeader[256];
-unsigned int CurrentPageRecordSizes[256];
+Uint16 CurrentPageRecordSizes[256];
 
 anim_LargePageHeader_t CurrentPageHeader;
 anim_FileHeader_t FileHeader;
@@ -98,18 +98,15 @@ int JE_loadPage( unsigned int pagenumber )
 	 * padding folowed by a word for every record.  THEN the data starts.
 	 */
 	fseek(InFile, ANIM_OFFSET + (pagenumber * ANI_PAGE_SIZE), SEEK_SET);
-	efread(&CurrentPageHeader.baseRecord, 2, 1, InFile);
-	efread(&CurrentPageHeader.nRecords,   2, 1, InFile);
-	efread(&CurrentPageHeader.nBytes,     2, 1, InFile);
+	fread_u16_die(&CurrentPageHeader.baseRecord, 1, InFile);
+	fread_u16_die(&CurrentPageHeader.nRecords,   1, InFile);
+	fread_u16_die(&CurrentPageHeader.nBytes,     1, InFile);
 
 	fseek(InFile, 2, SEEK_CUR);
-	for (i = 0; i < CurrentPageHeader.nRecords; i++)
-	{
-		efread(&CurrentPageRecordSizes[i], 2, 1, InFile);
-	}
+	fread_u16_die(CurrentPageRecordSizes, CurrentPageHeader.nRecords, InFile);
 
 	/* What remains is the 'compressed' data */
-	efread(CurrentPageBuffer, 1, CurrentPageHeader.nBytes, InFile);
+	fread_die(CurrentPageBuffer, 1, CurrentPageHeader.nBytes, InFile);
 
 	/* Okay, we've succeeded in all our IO checks.  Now, make sure the
 	 * headers aren't lying or damaged or something.
@@ -229,7 +226,8 @@ void JE_playAnim( const char *animfile, JE_byte startingframe, JE_byte speed )
  */
 int JE_loadAnim( const char *filename )
 {
-	unsigned int i, fileSize;
+	unsigned int i;
+	long fileSize;
 	char temp[4];
 
 
@@ -256,10 +254,10 @@ int JE_loadAnim( const char *filename )
 	 * is constant will be ignored.
 	 */
 
-	efread(&temp, 1, 4, InFile); /* The ID, should equal "LPF " */
+	fread_die(&temp, 1, 4, InFile); /* The ID, should equal "LPF " */
 	fseek(InFile, 2, SEEK_CUR); /* skip over this word */
-	efread(&FileHeader.nlps, 2, 1, InFile); /* Number of pages */
-	efread(&FileHeader.nRecords, 4, 1, InFile); /* Number of records */
+	fread_u16_die(&FileHeader.nlps,     1, InFile); /* Number of pages */
+	fread_u32_die(&FileHeader.nRecords, 1, InFile); /* Number of records */
 
 	if (memcmp(temp, "LPF ", 4) != 0
 	 || FileHeader.nlps == 0  || FileHeader.nRecords == 0
@@ -273,9 +271,9 @@ int JE_loadAnim( const char *filename )
 	fseek(InFile, PAGEHEADER_OFFSET, SEEK_SET);
 	for (i = 0; i < FileHeader.nlps; i++)
 	{
-		efread(&PageHeader[i].baseRecord, 2, 1, InFile);
-		efread(&PageHeader[i].nRecords,   2, 1, InFile);
-		efread(&PageHeader[i].nBytes,     2, 1, InFile);
+		fread_u16_die(&PageHeader[i].baseRecord, 1, InFile);
+		fread_u16_die(&PageHeader[i].nRecords,   1, InFile);
+		fread_u16_die(&PageHeader[i].nBytes,     1, InFile);
 	}
 
 
@@ -295,10 +293,11 @@ int JE_loadAnim( const char *filename )
 	fseek(InFile, PALETTE_OFFSET, SEEK_SET);
 	for (i = 0; i < 256; i++)
 	{
-		efread(&colors[i].b,      1, 1, InFile);
-		efread(&colors[i].g,      1, 1, InFile);
-		efread(&colors[i].r,      1, 1, InFile);
-		getc(InFile);
+		Uint8 bgru[4];
+		fread_u8_die(bgru, 4, InFile);
+		colors[i].b = bgru[0];
+		colors[i].g = bgru[1];
+		colors[i].r = bgru[2];
 	}
 	set_palette(colors, 0, 255);
 

@@ -113,7 +113,7 @@ struct JE_SingleEnemyType
 
 typedef struct JE_SingleEnemyType JE_MultiEnemyType[100]; /* [1..100] */
 
-typedef JE_word JE_DanCShape[(24 * 28) / 2]; /* [1..(24*28) div 2] */
+typedef JE_byte JE_DanCShape[24 * 28]; /* [1..(24*28) div 2] OF WORD */
 
 typedef JE_char JE_CharString[256]; /* [1..256] */
 
@@ -254,7 +254,7 @@ extern bool play_demo, record_demo, stopped_demo;
 extern Uint8 demo_num;
 extern FILE *demo_file;
 
-extern Uint8 demo_keys, next_demo_keys;
+extern Uint8 demo_keys;
 extern Uint16 demo_keys_wait;
 
 extern JE_byte soundQueue[8];

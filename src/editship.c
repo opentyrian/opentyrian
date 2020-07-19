@@ -83,8 +83,8 @@ void JE_loadExtraShapes( void )
 		extraAvail = true;
 		extraShapeSize = ftell_eof(f) - sizeof(extraShips);
 		extraShapes = malloc(extraShapeSize);
-		efread(extraShapes, extraShapeSize, 1, f);
-		efread(extraShips, sizeof(extraShips), 1, f);
+		fread_die(extraShapes, extraShapeSize, 1, f);
+		fread_die(extraShips, sizeof(extraShips), 1, f);
 		JE_decryptShips();
 		fclose(f);
 	}

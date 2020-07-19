@@ -47,7 +47,7 @@ void load_sprites( unsigned int table, FILE *f )
 	free_sprites(table);
 	
 	Uint16 temp;
-	efread(&temp, sizeof(Uint16), 1, f);
+	fread_u16_die(&temp, 1, f);
 	
 	sprite_table[table].count = temp;
 	
@@ -56,17 +56,19 @@ void load_sprites( unsigned int table, FILE *f )
 	for (unsigned int i = 0; i < sprite_table[table].count; ++i)
 	{
 		Sprite * const cur_sprite = sprite(table, i);
-		
-		if (!getc(f)) // sprite is empty
+
+		bool populated;
+		fread_bool_die(&populated, f);
+		if (!populated) // sprite is empty
 			continue;
 		
-		efread(&cur_sprite->width,  sizeof(Uint16), 1, f);
-		efread(&cur_sprite->height, sizeof(Uint16), 1, f);
-		efread(&cur_sprite->size,   sizeof(Uint16), 1, f);
+		fread_u16_die(&cur_sprite->width,  1, f);
+		fread_u16_die(&cur_sprite->height, 1, f);
+		fread_u16_die(&cur_sprite->size,   1, f);
 		
 		cur_sprite->data = malloc(cur_sprite->size);
 		
-		efread(cur_sprite->data, sizeof(Uint8), cur_sprite->size, f);
+		fread_u8_die(cur_sprite->data, cur_sprite->size, f);
 	}
 }
 
@@ -486,8 +488,8 @@ void JE_loadCompShapesB( Sprite2_array *sprite2s, FILE *f )
 {
 	free_sprite2s(sprite2s);
 	
-	sprite2s->data = malloc(sizeof(Uint8) * sprite2s->size);
-	efread(sprite2s->data, sizeof(Uint8), sprite2s->size, f);
+	sprite2s->data = malloc(sprite2s->size);
+	fread_u8_die(sprite2s->data, sprite2s->size, f);
 }
 
 void free_sprite2s( Sprite2_array *sprite2s )
@@ -677,11 +679,10 @@ void JE_loadMainShapeTables( const char *shpfile )
 	JE_word shpNumb;
 	JE_longint shpPos[SHP_NUM + 1]; // +1 for storing file length
 	
-	efread(&shpNumb, sizeof(JE_word), 1, f);
+	fread_u16_die(&shpNumb, 1, f);
 	assert(shpNumb + 1u == COUNTOF(shpPos));
 	
-	for (unsigned int i = 0; i < shpNumb; ++i)
-		efread(&shpPos[i], sizeof(JE_longint), 1, f);
+	fread_s32_die(shpPos, shpNumb, f);
 	
 	fseek(f, 0, SEEK_END);
 	for (unsigned int i = shpNumb; i < COUNTOF(shpPos); ++i)

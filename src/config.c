@@ -741,28 +741,28 @@ void JE_loadConfiguration( void )
 		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
 		   anyways, so it's not like they'll change. */
 		background2 = 0;
-		efread(&background2, 1, 1, fi);
-		efread(&gameSpeed, 1, 1, fi);
+		fread_bool_die(&background2, fi);
+		fread_u8_die(&gameSpeed, 1, fi);
 		
-		efread(&inputDevice_, 1, 1, fi);
-		efread(&jConfigure, 1, 1, fi);
+		fread_u8_die(&inputDevice_, 1, fi);
+		fread_u8_die(&jConfigure, 1, fi);
 		
-		efread(&versionNum, 1, 1, fi);
+		fread_u8_die(&versionNum, 1, fi);
 		
-		efread(&processorType, 1, 1, fi);
-		efread(&midiPort, 1, 1, fi);
-		efread(&soundEffects, 1, 1, fi);
-		efread(&gammaCorrection, 1, 1, fi);
-		efread(&difficultyLevel, 1, 1, fi);
+		fread_u8_die(&processorType, 1, fi);
+		fread_u8_die(&midiPort, 1, fi);
+		fread_u8_die(&soundEffects, 1, fi);
+		fread_u8_die(&gammaCorrection, 1, fi);
+		fread_s8_die(&difficultyLevel, 1, fi);
 		
-		efread(joyButtonAssign, 1, 4, fi);
+		fread_u8_die(joyButtonAssign, 4, fi);
 		
-		efread(&tyrMusicVolume, 2, 1, fi);
-		efread(&fxVolume, 2, 1, fi);
+		fread_u16_die(&tyrMusicVolume, 1, fi);
+		fread_u16_die(&fxVolume, 1, fi);
 		
-		efread(inputDevice, 1, 2, fi);
-		
-		efread(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
+		fread_u8_die(inputDevice, 2, fi);
+
+		fread_die(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
 		
 		fclose(fi);
 	}
@@ -795,7 +795,7 @@ void JE_loadConfiguration( void )
 	{
 
 		fseek(fi, 0, SEEK_SET);
-		efread(saveTemp, 1, sizeof(saveTemp), fi);
+		fread_die(saveTemp, 1, sizeof(saveTemp), fi);
 		JE_decryptSaveTemp();
 
 		/* SYN: The original mostly blasted the save file into raw memory. However, our lives are not so
@@ -975,7 +975,7 @@ void JE_saveConfiguration( void )
 	f = dir_fopen_warn(get_user_directory(), "tyrian.sav", "wb");
 	if (f != NULL)
 	{
-		efwrite(saveTemp, 1, sizeof(saveTemp), f);
+		fwrite_die(saveTemp, 1, sizeof(saveTemp), f);
 
 #if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
 		fsync(fileno(f));
@@ -988,26 +988,26 @@ void JE_saveConfiguration( void )
 	f = dir_fopen_warn(get_user_directory(), "tyrian.cfg", "wb");
 	if (f != NULL)
 	{
-		efwrite(&background2, 1, 1, f);
-		efwrite(&gameSpeed, 1, 1, f);
+		fwrite_bool_die(&background2, f);
+		fwrite_u8_die(&gameSpeed, 1, f);
 		
-		efwrite(&inputDevice_, 1, 1, f);
-		efwrite(&jConfigure, 1, 1, f);
+		fwrite_u8_die(&inputDevice_, 1, f);
+		fwrite_u8_die(&jConfigure, 1, f);
 		
-		efwrite(&versionNum, 1, 1, f);
-		efwrite(&processorType, 1, 1, f);
-		efwrite(&midiPort, 1, 1, f);
-		efwrite(&soundEffects, 1, 1, f);
-		efwrite(&gammaCorrection, 1, 1, f);
-		efwrite(&difficultyLevel, 1, 1, f);
-		efwrite(joyButtonAssign, 1, 4, f);
+		fwrite_u8_die(&versionNum, 1, f);
+		fwrite_u8_die(&processorType, 1, f);
+		fwrite_u8_die(&midiPort, 1, f);
+		fwrite_u8_die(&soundEffects, 1, f);
+		fwrite_u8_die(&gammaCorrection, 1, f);
+		fwrite_s8_die(&difficultyLevel, 1, f);
+		fwrite_u8_die(joyButtonAssign, 4, f);
 		
-		efwrite(&tyrMusicVolume, 2, 1, f);
-		efwrite(&fxVolume, 2, 1, f);
+		fwrite_u16_die(&tyrMusicVolume, f);
+		fwrite_u16_die(&fxVolume, f);
 		
-		efwrite(inputDevice, 1, 2, f);
+		fwrite_u8_die(inputDevice, 2, f);
 		
-		efwrite(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
+		fwrite_die(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
 		
 #if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
 		fsync(fileno(f));

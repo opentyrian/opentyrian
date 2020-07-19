@@ -216,7 +216,7 @@ bool play_demo = false, record_demo = false, stopped_demo = false;
 Uint8 demo_num = 0;
 FILE *demo_file = NULL;
 
-Uint8 demo_keys, next_demo_keys;
+Uint8 demo_keys;
 Uint16 demo_keys_wait;
 
 /* Sound Effects Queue */
