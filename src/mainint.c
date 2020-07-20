@@ -3128,20 +3128,20 @@ redo:
 				/* keyboard input */
 				if ((inputDevice == 0 || inputDevice == 1) && !play_demo)
 				{
-					if (keysactive[keySettings[0]])
+					if (keysactive[keySettings[KEY_SETTING_UP]])
 						this_player->y -= CURRENT_KEY_SPEED;
-					if (keysactive[keySettings[1]])
+					if (keysactive[keySettings[KEY_SETTING_DOWN]])
 						this_player->y += CURRENT_KEY_SPEED;
 
-					if (keysactive[keySettings[2]])
+					if (keysactive[keySettings[KEY_SETTING_LEFT]])
 						this_player->x -= CURRENT_KEY_SPEED;
-					if (keysactive[keySettings[3]])
+					if (keysactive[keySettings[KEY_SETTING_RIGHT]])
 						this_player->x += CURRENT_KEY_SPEED;
 
-					button[0] = button[0] || keysactive[keySettings[4]];
-					button[3] = button[3] || keysactive[keySettings[5]];
-					button[1] = button[1] || keysactive[keySettings[6]];
-					button[2] = button[2] || keysactive[keySettings[7]];
+					button[0] = button[0] || keysactive[keySettings[KEY_SETTING_FIRE]];
+					button[3] = button[3] || keysactive[keySettings[KEY_SETTING_CHANGE_FIRE]];
+					button[1] = button[1] || keysactive[keySettings[KEY_SETTING_LEFT_SIDEKICK]];
+					button[2] = button[2] || keysactive[keySettings[KEY_SETTING_RIGHT_SIDEKICK]];
 
 					if (constantPlay)
 					{

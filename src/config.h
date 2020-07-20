@@ -37,7 +37,24 @@
 /*#define SAVE_FILES_SIZE (2502 - 4)
 #define SAVE_FILE_SIZE (SAVE_FILES_SIZE)*/
 
-typedef SDL_Scancode JE_KeySettingType[8]; /* [1..8] */
+// NOTE: Do not reorder.  This ordering corresponds to the keyboard
+//       configuration menu and to the bits stored in demo files.
+enum
+{
+	KEY_SETTING_UP,
+	KEY_SETTING_DOWN,
+	KEY_SETTING_LEFT,
+	KEY_SETTING_RIGHT,
+	KEY_SETTING_FIRE,
+	KEY_SETTING_CHANGE_FIRE,
+	KEY_SETTING_LEFT_SIDEKICK,
+	KEY_SETTING_RIGHT_SIDEKICK,
+};
+
+typedef JE_byte DosKeySettings[8];  // fka KeySettingType
+
+typedef SDL_Scancode KeySettings[8];
+
 typedef JE_byte JE_PItemsType[12]; /* [1..12] */
 
 typedef JE_byte JE_EditorItemAvailType[100]; /* [1..100] */
@@ -73,7 +90,8 @@ typedef JE_SaveFileType JE_SaveFilesType[SAVE_FILES_NUM]; /* [1..savefilesnum] *
 typedef JE_byte JE_SaveGameTemp[SAVE_FILES_SIZE + 4 + 100]; /* [1..sizeof(savefilestype) + 4 + 100] */
 
 extern const JE_byte cryptKey[10];
-extern const JE_KeySettingType defaultKeySettings;
+extern const DosKeySettings defaultDosKeySettings;  // fka defaultKeySettings
+extern const KeySettings defaultKeySettings;
 extern const char defaultHighScoreNames[34][23];
 extern const char defaultTeamNames[22][25];
 extern const JE_EditorItemAvailType initialItemAvail;
@@ -105,7 +123,8 @@ extern JE_byte shotRepeat[11], shotMultiPos[11];
 extern JE_boolean portConfigChange, portConfigDone;
 extern char lastLevelName[11], levelName[11];
 extern JE_byte mainLevel, nextLevel, saveLevel;
-extern JE_KeySettingType keySettings;
+extern DosKeySettings dosKeySettings;  // fka keySettings
+extern KeySettings keySettings;
 extern JE_shortint levelFilter, levelFilterNew, levelBrightness, levelBrightnessChg;
 extern JE_boolean filtrationAvail, filterActive, filterFade, filterFadeStart;
 extern JE_boolean gameJustLoaded;

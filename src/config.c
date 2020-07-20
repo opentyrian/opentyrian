@@ -48,10 +48,33 @@ const JE_byte cryptKey[10] = /* [1..10] */
 	15, 50, 89, 240, 147, 34, 86, 9, 32, 208
 };
 
-const JE_KeySettingType defaultKeySettings =
+const DosKeySettings defaultDosKeySettings =
 {
-	SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT, SDL_SCANCODE_SPACE, SDL_SCANCODE_RETURN, SDL_SCANCODE_LCTRL, SDL_SCANCODE_LALT
-/*	72, 80, 75, 77, 57, 28, 29, 56*/
+	72, 80, 75, 77, 57, 28, 29, 56
+};
+
+const KeySettings defaultKeySettings =
+{
+	SDL_SCANCODE_UP,
+	SDL_SCANCODE_DOWN,
+	SDL_SCANCODE_LEFT,
+	SDL_SCANCODE_RIGHT,
+	SDL_SCANCODE_SPACE,
+	SDL_SCANCODE_RETURN,
+	SDL_SCANCODE_LCTRL,
+	SDL_SCANCODE_LALT,
+};
+
+static const char *const keySettingNames[] =
+{
+	"up",
+	"down",
+	"left",
+	"right",
+	"fire",
+	"change fire",
+	"left sidekick",
+	"right sidekick",
 };
 
 const char defaultHighScoreNames[34][23] = /* [1..34] of string [22] */
@@ -170,7 +193,8 @@ char    lastLevelName[11], levelName[11]; /* string [10] */
 JE_byte mainLevel, nextLevel, saveLevel;   /*Current Level #*/
 
 /* Keyboard Junk */
-JE_KeySettingType keySettings;
+DosKeySettings dosKeySettings;
+KeySettings keySettings;
 
 /* Configuration */
 JE_shortint levelFilter, levelFilterNew, levelBrightness, levelBrightnessChg;
@@ -256,7 +280,24 @@ bool load_opentyrian_config( void )
 		if (config_get_string_option(section, "scaling_mode", &scaling_mode))
 			set_scaling_mode_by_name(scaling_mode);
 	}
-	
+
+	memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
+
+	section = config_find_section(config, "keyboard", NULL);
+	if (section != NULL)
+	{
+		for (size_t i = 0; i < COUNTOF(keySettings); ++i)
+		{
+			const char *keyName;
+			if (config_get_string_option(section, keySettingNames[i], &keyName))
+			{
+				SDL_Scancode scancode = SDL_GetScancodeFromName(keyName);
+				if (scancode != SDL_SCANCODE_UNKNOWN)
+					keySettings[i] = scancode;
+			}
+		}
+	}
+
 	fclose(file);
 	
 	return true;
@@ -277,7 +318,19 @@ bool save_opentyrian_config( void )
 	config_set_string_option(section, "scaler", scalers[scaler].name);
 	
 	config_set_string_option(section, "scaling_mode", scaling_mode_names[scaling_mode]);
-	
+
+	section = config_find_or_add_section(config, "keyboard", NULL);
+	if (section == NULL)
+		exit(EXIT_FAILURE);  // out of memory
+
+	for (size_t i = 0; i < COUNTOF(keySettings); ++i)
+	{
+		const char *keyName = SDL_GetScancodeName(keySettings[i]);
+		if (keyName[0] == '\0')
+			keyName = NULL;
+		config_set_string_option(section, keySettingNames[i], keyName);
+	}
+
 #ifndef TARGET_WIN32
 	mkdir(get_user_directory(), 0700);
 #else
@@ -736,10 +789,8 @@ void JE_loadConfiguration( void )
 	int y;
 	
 	fi = dir_fopen_warn(get_user_directory(), "tyrian.cfg", "rb");
-	if (fi && ftell_eof(fi) == 20 + sizeof(keySettings))
+	if (fi && ftell_eof(fi) == 28)
 	{
-		/* SYN: I've hardcoded the sizes here because the .CFG file format is fixed
-		   anyways, so it's not like they'll change. */
 		background2 = 0;
 		fread_bool_die(&background2, fi);
 		fread_u8_die(&gameSpeed, 1, fi);
@@ -762,7 +813,7 @@ void JE_loadConfiguration( void )
 		
 		fread_u8_die(inputDevice, 2, fi);
 
-		fread_die(keySettings, sizeof(*keySettings), COUNTOF(keySettings), fi);
+		fread_u8_die(dosKeySettings, 8, fi);
 		
 		fclose(fi);
 	}
@@ -771,7 +822,7 @@ void JE_loadConfiguration( void )
 		printf("\nInvalid or missing TYRIAN.CFG! Continuing using defaults.\n\n");
 		
 		soundEffects = 1;
-		memcpy(&keySettings, &defaultKeySettings, sizeof(keySettings));
+		memcpy(&dosKeySettings, &defaultDosKeySettings, sizeof(dosKeySettings));
 		background2 = true;
 		tyrMusicVolume = fxVolume = 128;
 		gammaCorrection = 0;
@@ -1007,7 +1058,7 @@ void JE_saveConfiguration( void )
 		
 		fwrite_u8_die(inputDevice, 2, f);
 		
-		fwrite_die(keySettings, sizeof(*keySettings), COUNTOF(keySettings), f);
+		fwrite_u8_die(dosKeySettings, 8, f);
 		
 #if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE
 		fsync(fileno(f));
