@@ -123,9 +123,9 @@ inline bool diff(unsigned int w1, unsigned int w2)
 {
 	Uint32 YUV1 = yuv_palette[w1];
 	Uint32 YUV2 = yuv_palette[w2];
-	return ( ( abs((YUV1 & Ymask) - (YUV2 & Ymask)) > trY ) ||
-	         ( abs((YUV1 & Umask) - (YUV2 & Umask)) > trU ) ||
-	         ( abs((YUV1 & Vmask) - (YUV2 & Vmask)) > trV ) );
+	return ( ( abs((int)(YUV1 & Ymask) - (int)(YUV2 & Ymask)) > trY ) ||
+	         ( abs((int)(YUV1 & Umask) - (int)(YUV2 & Umask)) > trU ) ||
+	         ( abs((int)(YUV1 & Vmask) - (int)(YUV2 & Vmask)) > trV ) );
 }
 
 
