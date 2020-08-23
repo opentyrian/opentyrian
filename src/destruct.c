@@ -470,7 +470,7 @@ static void load_destruct_config( Config *config_ )
 				// set defaults
 				for (unsigned int i = 0; i < COUNTOF(defaultKeyConfig[p][k]); ++i)
 					if (defaultKeyConfig[p][k][i] != SDL_SCANCODE_UNKNOWN)
-						config_add_value(option, SDL_GetKeyName(defaultKeyConfig[p][k][i]));
+						config_add_value(option, SDL_GetScancodeName(defaultKeyConfig[p][k][i]));
 			}
 		}
 	}
