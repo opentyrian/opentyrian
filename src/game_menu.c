@@ -499,8 +499,9 @@ void JE_itemScreen( void )
 			}
 
 			/* Get power level info for front and rear weapons */
-			if ((curSel[MENU_UPGRADES] == 3 && curSel[MENU_UPGRADE_SUB] < menuChoices[MENU_UPGRADE_SUB]) ||
-			    (curSel[MENU_UPGRADES] == 4 && curSel[MENU_UPGRADE_SUB] < menuChoices[MENU_UPGRADE_SUB] - 1))
+			if ((curSel[MENU_UPGRADES] == 3 || curSel[MENU_UPGRADES] == 4) &&  // front or rear weapon
+			    curSel[MENU_UPGRADE_SUB] < menuChoices[MENU_UPGRADE_SUB] &&  // not "Done"
+			    itemAvail[itemAvailMap[curSel[MENU_UPGRADES]-2]-1][curSel[MENU_UPGRADE_SUB]-2] != 0)  // not "None"
 			{
 				const uint port = curSel[MENU_UPGRADES] - 3,  // 0 or 1 (front or back)
 				           item_level = player[0].items.weapon[port].power;
@@ -3120,8 +3121,9 @@ void JE_weaponSimUpdate( void )
 
 	JE_weaponViewFrame();
 
-	if ((curSel[MENU_UPGRADES] == 3 && curSel[MENU_UPGRADE_SUB] < menuChoices[MENU_UPGRADE_SUB]) ||
-	    (curSel[MENU_UPGRADES] == 4 && curSel[MENU_UPGRADE_SUB] < menuChoices[MENU_UPGRADE_SUB] - 1))
+	if ((curSel[MENU_UPGRADES] == 3 || curSel[MENU_UPGRADES] == 4) &&  // front or rear weapon
+	    curSel[MENU_UPGRADE_SUB] < menuChoices[MENU_UPGRADE_SUB] &&  // not "Done"
+	    itemAvail[itemAvailMap[curSel[MENU_UPGRADES]-2]-1][curSel[MENU_UPGRADE_SUB]-2] != 0)  // not "None"
 	{
 		if (leftPower)
 		{
