@@ -2090,7 +2090,7 @@ static void DE_RunTickAI( void )
 			ptrUnit = ptrTarget->unit;
 			for (j = 0; j < config.max_installations; j++, ptrUnit++)
 			{
-				if (abs(ptrUnit->unitX - ptrCurUnit->unitX) < 8)
+				if (abs((int)ptrUnit->unitX - (int)ptrCurUnit->unitX) < 8)
 				{
 					/* I get it.  This makes helicopters hover over
 					 * their enemies. */
