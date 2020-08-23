@@ -506,7 +506,7 @@ void JE_itemScreen( void )
 				           item_level = player[0].items.weapon[port].power;
 
 				// calculate upgradeCost
-				JE_getCost(curSel[MENU_UPGRADES], itemAvail[itemAvailMap[curSel[MENU_UPGRADES]-2]-1][curSel[MENU_KEYBOARD_CONFIG]-2]);
+				JE_getCost(curSel[MENU_UPGRADES], itemAvail[itemAvailMap[curSel[MENU_UPGRADES]-2]-1][curSel[MENU_UPGRADE_SUB]-2]);
 
 				leftPower  = item_level > 1;  // can downgrade
 				rightPower = item_level < 11; // can upgrade
