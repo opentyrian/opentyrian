@@ -784,7 +784,7 @@ bool config_parse( Config *config, FILE *file )
 	
 	for (size_t line = 0, next_line = 0; ; line = next_line)
 	{
-		/* find begining of next line */
+		/* find beginning of next line */
 		while (next_line < buffer_end)
 		{
 			char c = buffer[next_line];

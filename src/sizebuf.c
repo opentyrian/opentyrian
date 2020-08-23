@@ -20,7 +20,7 @@
 /*
  * This file is largely based on (and named after) a set of common reading/
  * writing functions used in Quake engines.  Its purpose is to allow extraction
- * of bytes, words, and dwords in a safe, endian adjused environment and should
+ * of bytes, words, and dwords in a safe, endian adjusted environment and should
  * probably be used in any situation where checking for buffer overflows
  * manually makes the code a godawful mess.
  *

@@ -41,7 +41,7 @@ void simulate_player_shots( void );
 void player_shot_set_direction( JE_integer shot_id, uint weapon_id, JE_real direction );
 
 /** Moves and draws a shot. Does \b not collide it with enemies.
- * \return False if the shot went offscreen, true otherwise.
+ * \return False if the shot went off-screen, true otherwise.
  */
 bool player_shot_move_and_draw(
 		int shot_id, bool* out_is_special,

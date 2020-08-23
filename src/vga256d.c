@@ -44,7 +44,7 @@ void JE_pix( SDL_Surface *surface, int x, int y, JE_byte c )
 
 void JE_pix3( SDL_Surface *surface, int x, int y, JE_byte c )
 {
-	/* Originally impemented as several direct accesses */
+	/* Originally implemented as several direct accesses */
 	JE_pix(surface, x, y, c);
 	JE_pix(surface, x - 1, y, c);
 	JE_pix(surface, x + 1, y, c);

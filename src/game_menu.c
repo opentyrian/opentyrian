@@ -604,7 +604,7 @@ void JE_itemScreen( void )
 					JE_drawItem(curSel[MENU_UPGRADES]-1, temp, 160, tempY-4);
 				}
 
-				/* Make selected text brigther */
+				/* Make selected text brighter */
 				temp2 = (tempW == curSel[curMenu]-1) ? 15 : 28;
 
 				/* Draw Cost: if it's not the DONE option */
@@ -752,7 +752,7 @@ void JE_itemScreen( void )
 
 					blit_sprite(VGAScreenSeg, face_x, face_y, FACE_SHAPES, face_sprite);  // datacube face
 
-					// modify pallete for face
+					// modify palette for face
 					paletteChanged = true;
 					temp2 = facepal[face_sprite];
 					newPal = 0;

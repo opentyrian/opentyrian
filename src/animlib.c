@@ -95,7 +95,7 @@ int JE_loadPage( unsigned int pagenumber )
 	 * unless it's the end of the file.
 	 *
 	 * Pages repeat their headers for some reason.  They then have two bytes of
-	 * padding folowed by a word for every record.  THEN the data starts.
+	 * padding followed by a word for every record.  THEN the data starts.
 	 */
 	fseek(InFile, ANIM_OFFSET + (pagenumber * ANI_PAGE_SIZE), SEEK_SET);
 	fread_u16_die(&CurrentPageHeader.baseRecord, 1, InFile);
@@ -189,7 +189,7 @@ void JE_playAnim( const char *animfile, JE_byte startingframe, JE_byte speed )
 	 * The final frame is a delta of the first, and we don't need that.
 	 * We could also, if we ever ended up needing to loop anis, check
 	 * the bools in the header to see if we should render the last
-	 * frame.  But that's never going to be encessary :)
+	 * frame.  But that's never going to be necessary :)
 	 */
     for (i = startingframe; i < FileHeader.nRecords-1; i++)
     {

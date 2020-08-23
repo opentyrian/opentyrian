@@ -11914,5 +11914,3 @@ void hq4x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 
 	SDL_UnlockTexture(dst_texture);
 }
-
-// kate: tab-width 4; vim: set noet:

@@ -5011,7 +5011,7 @@ void JE_whoa( void )
 	bottomBorder = VGAScreenSeg->pitch * 7;
 
 	/* Okay, one disadvantage to using other screens as temp buffers: they
-	 * need to be the right size.  I doubt they'l ever be anything but 320x200,
+	 * need to be the right size.  I doubt they'll ever be anything but 320x200,
 	 * but just in case, these asserts will clue in whoever stumbles across
 	 * the problem.  You can fix it with the stack or malloc. */
 	assert( (unsigned)VGAScreen2->h *  VGAScreen2->pitch >= screenSize

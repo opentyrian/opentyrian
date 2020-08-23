@@ -214,7 +214,7 @@ extern void config_deinit( Config *config );
 /*!
  * \brief Parse a configuration from a file.
  * 
- * \param[in] config the uninitalized configuration
+ * \param[in] config the uninitialized configuration
  * \param[in] file the file handle
  * \return whether parsing succeeded
  */

@@ -41,13 +41,13 @@
  * Hopefully it'll be rewritten some day.
  */
 
-#define NET_VERSION       2            // increment whenever networking changes might create incompatability
+#define NET_VERSION       2            // increment whenever networking changes might create incompatibility
 #define NET_PORT          1333         // UDP
 
 #define NET_PACKET_SIZE   256
 #define NET_PACKET_QUEUE  16
 
-#define NET_RETRY         640          // ticks to wait for packet acknowledgement before resending
+#define NET_RETRY         640          // ticks to wait for packet acknowledgment before resending
 #define NET_RESEND        320          // ticks to wait before requesting unreceived game packet
 #define NET_KEEP_ALIVE    1600         // ticks to wait between keep-alive packets
 #define NET_TIME_OUT      16000        // ticks to wait before considering connection dead
@@ -140,7 +140,7 @@ void network_prepare( Uint16 type )
 	SDLNet_Write16(last_out_sync, &packet_out_temp->data[2]);
 }
 
-// send packet but don't expect acknoledgment of delivery
+// send packet but don't expect acknowledgment of delivery
 static bool network_send_no_ack( int len )
 {
 	packet_out_temp->len = len;
@@ -178,7 +178,7 @@ bool network_send( int len )
 	return temp;
 }
 
-// send acknowledgement packet
+// send acknowledgment packet
 static int network_acknowledge( Uint16 sync )
 {
 	SDLNet_Write16(PACKET_ACKNOWLEDGE, &packet_out_temp->data[0]);

@@ -174,7 +174,7 @@ void draw_background_2( SDL_Surface *surface )
 	
 	if (background2 != 0)
 	{
-		// water effect combines background 1 and 2 by syncronizing the x coordinate
+		// water effect combines background 1 and 2 by synchronizing the x coordinate
 		int x = smoothies[1] ? mapXPos : mapX2Pos;
 		
 		Uint8 **map = (Uint8 **)mapY2Pos + (smoothies[1] ? mapXbpPos : mapX2bpPos) - 12;

@@ -136,7 +136,7 @@ static int parse_short_opt( int argc, const char *const argv[], const Options *o
 			
 			if (options->has_arg)
 			{
-				if (arg_attached)  // arg direclty follows option
+				if (arg_attached)  // arg directly follows option
 				{
 					option->arg = arg + offset + 1;
 					

@@ -1396,7 +1396,7 @@ void JE_inGameHelp( void )
 		helpBoxBrightness = 3;
 		JE_HBox(VGAScreen, 40, 43, 34, 44);
 
-		// sheild/armor help
+		// shield/armor help
 		blit_sprite(VGAScreenSeg, 2, 79, OPTION_SHAPES, 42);
 		helpBoxColor = 5;
 		helpBoxBrightness = 3;
@@ -1891,7 +1891,7 @@ void JE_SFCodes( JE_byte playerNum_, JE_integer PX_, JE_integer PY_, JE_integer 
 			}
 		}
 
-		if (temp2 == 1) // if exactly one direction pressed or firebutton is released
+		if (temp2 == 1) // if exactly one direction pressed or fire button is released
 		{
 			temp += button[0] * 4;
 
@@ -3847,7 +3847,7 @@ redo:
 					this_player->sidekick[LEFT_SIDEKICK].x = this_player->x;
 					this_player->sidekick[LEFT_SIDEKICK].y = MAX(10, this_player->y - 20);
 					break;
-				case 4:  // orbitting
+				case 4:  // orbiting
 					this_player->sidekick[LEFT_SIDEKICK].x = this_player->x + roundf(sinf(optionSatelliteRotate) * 20);
 					this_player->sidekick[LEFT_SIDEKICK].y = this_player->y + roundf(cosf(optionSatelliteRotate) * 20);
 					break;
@@ -3855,7 +3855,7 @@ redo:
 
 				switch (this_player->sidekick[RIGHT_SIDEKICK].style)
 				{
-				case 4:  // orbitting
+				case 4:  // orbiting
 					this_player->sidekick[RIGHT_SIDEKICK].x = this_player->x - roundf(sinf(optionSatelliteRotate) * 20);
 					this_player->sidekick[RIGHT_SIDEKICK].y = this_player->y - roundf(cosf(optionSatelliteRotate) * 20);
 					break;
