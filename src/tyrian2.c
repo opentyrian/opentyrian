@@ -3584,7 +3584,7 @@ bool JE_titleScreen( JE_boolean animate )
 						fadeIn = true;
 						break;
 					case 4: /* Ordering info, now OpenTyrian menu */
-						opentyrian_menu();
+						openTyrianMenu();
 						fadeIn = true;
 						break;
 					case 5: /* Demo */

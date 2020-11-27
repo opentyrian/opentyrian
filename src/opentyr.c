@@ -24,28 +24,29 @@
 #include "episodes.h"
 #include "file.h"
 #include "font.h"
+#include "fonthand.h"
 #include "helptext.h"
 #include "joystick.h"
 #include "jukebox.h"
 #include "keyboard.h"
 #include "loudness.h"
 #include "mainint.h"
+#include "mouse.h"
 #include "mtrand.h"
-#include "musmast.h"
 #include "network.h"
 #include "nortsong.h"
+#include "nortvars.h"
 #include "opentyrian_version.h"
+#include "palette.h"
 #include "params.h"
 #include "picload.h"
-#include "scroller.h"
-#include "setup.h"
 #include "sprite.h"
 #include "tyrian2.h"
-#include "xmas.h"
 #include "varz.h"
 #include "vga256d.h"
 #include "video.h"
 #include "video_scale.h"
+#include "xmas.h"
 
 #include "SDL.h"
 
@@ -58,262 +59,694 @@
 const char *opentyrian_str = "OpenTyrian";
 const char *opentyrian_version = OPENTYRIAN_VERSION;
 
-void opentyrian_menu( void )
+static size_t getDisplayPickerItemsCount(void)
+{
+	return 1 + (size_t)SDL_GetNumVideoDisplays();
+}
+
+static const char *getDisplayPickerItem(size_t i, char *buffer, size_t bufferSize)
+{
+	if (i == 0)
+		return "Window";
+
+	snprintf(buffer, bufferSize, "Display %d", (int)i);
+	return buffer;
+}
+
+static size_t getScalerPickerItemsCount(void)
+{
+	return (size_t)scalers_count;
+}
+
+static const char *getScalerPickerItem(size_t i, char *buffer, size_t bufferSize)
+{
+	(void)buffer, (void)bufferSize;
+
+	return scalers[i].name;
+}
+
+static size_t getScalingModePickerItemsCount(void)
+{
+	return (size_t)ScalingMode_MAX;
+}
+
+static const char *getScalingModePickerItem(size_t i, char *buffer, size_t bufferSize)
+{
+	(void)buffer, (void)bufferSize;
+
+	return scaling_mode_names[i];
+}
+
+void openTyrianMenu( void )
 {
 	typedef enum
 	{
-		MENU_ABOUT = 0,
-		MENU_FULLSCREEN,
-		MENU_SCALER,
-		MENU_SCALING_MODE,
-		// MENU_DESTRUCT,
-		MENU_JUKEBOX,
-		MENU_RETURN,
-		MenuOptions_MAX
-	} MenuOptions;
+		MENU_ITEM_NONE = 0,
+		MENU_ITEM_DONE,
+		MENU_ITEM_GRAPHICS,
+		MENU_ITEM_SOUND,
+		MENU_ITEM_JUKEBOX,
+		MENU_ITEM_DESTRUCT,
+		MENU_ITEM_DISPLAY,
+		MENU_ITEM_SCALER,
+		MENU_ITEM_SCALING_MODE,
+		MENU_ITEM_MUSIC_VOLUME,
+		MENU_ITEM_EFFECTS_VOLUME,
+	} MenuItemId;
 
-	static const char *menu_items[] =
+	typedef enum
 	{
-		"About OpenTyrian",
-		NULL,  // "Windowed" or "Fullscreen: Display %d"
-		NULL,  // "Scaler: %s"
-		NULL,  // "Scaling Mode: %s"
-		// "Play Destruct",
-		"Jukebox",
-		"Return to Main Menu",
+		MENU_NONE = 0,
+		MENU_OPENTYRIAN,
+		MENU_GRAPHICS,
+		MENU_SOUND,
+	} MenuId;
+
+	typedef struct
+	{
+		MenuItemId id;
+		const char *name;
+		const char *description;
+		size_t (*getPickerItemsCount)(void);
+		const char *(*getPickerItem)(size_t i, char *buffer, size_t bufferSize);
+	} MenuItem;
+
+	typedef struct
+	{
+		const char *header;
+		const MenuItem items[6];
+	} Menu;
+
+	static const Menu menus[] = {
+		[MENU_OPENTYRIAN] = {
+			.header = "OpenTyrian",
+			.items = {
+				{ MENU_ITEM_GRAPHICS, "Graphics...", "Change the graphics settings." },
+				{ MENU_ITEM_SOUND, "Sound...", "Change the sound settings." },
+				{ MENU_ITEM_JUKEBOX, "Jukebox", "Listen to the music of Tyrian." },
+				// { MENU_ITEM_DESTRUCT, "Destruct", "Play a bonus mini-game." },
+				{ MENU_ITEM_DONE, "Done", "Return to the main menu." },
+				{ -1 }
+			},
+		},
+		[MENU_GRAPHICS] = {
+			.header = "Graphics",
+			.items = {
+				{ MENU_ITEM_DISPLAY, "Display:", "Change the display mode.", getDisplayPickerItemsCount, getDisplayPickerItem },
+				{ MENU_ITEM_SCALER, "Scaler:", "Change the pixel art scaling algorithm.", getScalerPickerItemsCount, getScalerPickerItem },
+				{ MENU_ITEM_SCALING_MODE, "Scaling Mode:", "Change the scaling mode.", getScalingModePickerItemsCount, getScalingModePickerItem },
+				{ MENU_ITEM_DONE, "Done", "Return to the previous menu." },
+				{ -1 }
+			},
+		},
+		[MENU_SOUND] = {
+			.header = "Sound",
+			.items = {
+				{ MENU_ITEM_MUSIC_VOLUME, "Music Volume", "Change volume with the left/right arrow keys." },
+				{ MENU_ITEM_EFFECTS_VOLUME, "Effects Volume", "Change volume with the left/right arrow keys." },
+				{ MENU_ITEM_DONE, "Done", "Return to the previous menu." },
+				{ -1 }
+			},
+		},
 	};
-	bool menu_items_disabled[] =
+
+	char buffer[100];
+
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites
+
+	bool restart = true;
+
+	MenuId menuParents[COUNTOF(menus)] = { MENU_NONE };
+	size_t selectedMenuItemIndexes[COUNTOF(menus)] = { 0 };
+	MenuId currentMenu = MENU_OPENTYRIAN;
+	MenuItemId currentPicker = MENU_ITEM_NONE;
+	size_t pickerSelectedIndex = 0;
+
+	const int xCenter = 320 / 2;
+	const int yMenuHeader = 4;
+	const int xMenuItem = 45;
+	const int xMenuItemName = xMenuItem;
+	const int wMenuItemName = 135;
+	const int xMenuItemValue = xMenuItemName + wMenuItemName;
+	const int wMenuItemValue = 95;
+	const int wMenuItem = wMenuItemName + wMenuItemValue;
+	const int yMenuItems = 37;
+	const int dyMenuItems = 21;
+	const int hMenuItem = 13;
+
+	for (; ; )
 	{
-		false,
-		false,
-		false,
-		false,
-		// false,
-		false,
-		false,
-	};
-	
-	assert(COUNTOF(menu_items) == MenuOptions_MAX);
-	assert(COUNTOF(menu_items_disabled) == MenuOptions_MAX);
-
-	fade_black(10);
-	JE_loadPic(VGAScreen, 13, false);
-
-	draw_font_hv(VGAScreen, VGAScreen->w / 2, 5, opentyrian_str, large_font, centered, 15, -3);
-
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
-
-	JE_showVGA();
-
-	play_song(36); // A Field for Mag
-
-	MenuOptions sel = 0;
-
-	int temp_fullscreen_display = fullscreen_display;
-	uint temp_scaler = scaler;
-	int temp_scaling_mode = scaling_mode;
-
-	bool fade_in = true, quit = false;
-	do
-	{
-		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-
-		for (MenuOptions i = 0; i < MenuOptions_MAX; i++)
+		if (restart)
 		{
-			const char *text = menu_items[i];
-			char buffer[100];
+			fade_black(10);
 
-			if (i == MENU_FULLSCREEN)
-			{
-				if (temp_fullscreen_display == -1)
-				{
-					text = "Windowed";
-				}
-				else
-				{
-					snprintf(buffer, sizeof(buffer), "Fullscreen: Display %d", temp_fullscreen_display + 1);
-					text = buffer;
-				}
-			}
-			else if (i == MENU_SCALER)
-			{
-				snprintf(buffer, sizeof(buffer), "Scaler: %s", scalers[temp_scaler].name);
-				text = buffer;
-			}
-			else if (i == MENU_SCALING_MODE)
-			{
-				snprintf(buffer, sizeof(buffer), "Scaling Mode: %s", scaling_mode_names[temp_scaling_mode]);
-				text = buffer;
-			}
-
-			int y = i != MENU_RETURN ? i * 16 + 32 : 118;
-			draw_font_hv(VGAScreen, VGAScreen->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
+			JE_loadPic(VGAScreen2, 2, false);
+			fill_rectangle_wh(VGAScreen2, 0, 192, 320, 8, 0);
 		}
 
-		if (sel == MENU_FULLSCREEN || sel == MENU_SCALER || sel == MENU_SCALING_MODE) {
-			draw_font_hv_shadow(VGAScreen, VGAScreen->w / 2, 190, "Change option with Left/Right keys then press Enter.",
-					small_font, centered, 15, 2, true, 1);
+		// Restore background.
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, (size_t)VGAScreen->pitch * VGAScreen->h);
+
+		const Menu *menu = &menus[currentMenu];
+
+		// Draw header.
+		draw_font_hv_shadow(VGAScreen, xCenter, yMenuHeader, menu->header, large_font, centered, 15, -3, false, 2);
+
+		int yPicker = 0;
+		const int dyPickerItem = 15;
+		const int dyPickerItemPadding = 2;
+		const int hPickerItem = dyPickerItem - dyPickerItemPadding;
+
+		size_t *const selectedMenuItemIndex = &selectedMenuItemIndexes[currentMenu];
+		const MenuItem *const menuItems = menu->items;
+
+		// Draw menu items.
+
+		size_t menuItemsCount = 0;
+		for (size_t i = 0; menuItems[i].id != (MenuItemId)-1; ++i)
+		{
+			menuItemsCount += 1;
+
+			const MenuItem *const menuItem = &menuItems[i];
+
+			const int y = yMenuItems + dyMenuItems * i;
+
+			const bool selected = i == *selectedMenuItemIndex;
+			const bool disabled = currentPicker != MENU_ITEM_NONE && !selected;
+
+			if (selected)
+				yPicker = y;
+
+			const char *const name = menuItem->name;
+
+			draw_font_hv_shadow(VGAScreen, xMenuItemName, y, name, normal_font, left_aligned, 15, -3 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+
+			switch (menuItem->id)
+			{
+			case MENU_ITEM_DISPLAY:;
+				const char *value = "Window";
+				if (fullscreen_display >= 0)
+				{
+					snprintf(buffer, sizeof(buffer), "Display %d", fullscreen_display + 1);
+					value = buffer;
+				}
+
+				draw_font_hv_shadow(VGAScreen, xMenuItemValue, y, value, normal_font, left_aligned, 15, -3 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+				break;
+
+			case MENU_ITEM_SCALER:
+				draw_font_hv_shadow(VGAScreen, xMenuItemValue, y, scalers[scaler].name, normal_font, left_aligned, 15, -3 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+				break;
+
+			case MENU_ITEM_SCALING_MODE:
+				draw_font_hv_shadow(VGAScreen, xMenuItemValue, y, scaling_mode_names[scaling_mode], normal_font, left_aligned, 15, -3 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+				break;
+
+			case MENU_ITEM_MUSIC_VOLUME:
+				JE_barDrawShadow(VGAScreen, xMenuItemValue, y, 1, music_disabled ? 170 : 174, (tyrMusicVolume + 4) / 8, 2, 10);
+				JE_rectangle(VGAScreen, xMenuItemValue - 2, y - 2, xMenuItemValue + 96, y + 11, 242);
+				break;
+
+			case MENU_ITEM_EFFECTS_VOLUME:
+				JE_barDrawShadow(VGAScreen, xMenuItemValue, y, 1, samples_disabled ? 170 : 174, (fxVolume + 4) / 8, 2, 10);
+				JE_rectangle(VGAScreen, xMenuItemValue - 2, y - 2, xMenuItemValue + 96, y + 11, 242);
+				break;
+
+			default:
+				break;
+			}
 		}
 
+		// Draw status text.
+		JE_textShade(VGAScreen, xMenuItemName, 190, menuItems[*selectedMenuItemIndex].description, 15, 4, PART_SHADE);
+
+		// Draw picker box and items.
+
+		if (currentPicker != MENU_ITEM_NONE)
+		{
+			const MenuItem *selectedMenuItem = &menuItems[*selectedMenuItemIndex];
+			const size_t pickerItemsCount = selectedMenuItem->getPickerItemsCount();
+
+			const int hPicker = dyPickerItem * pickerItemsCount - dyPickerItemPadding;
+			yPicker = MIN(yPicker, 200 - 10 - (hPicker + 5 + 2));
+
+			JE_rectangle(VGAScreen, xMenuItemValue - 5, yPicker- 3, xMenuItemValue + wMenuItemValue + 5 - 1, yPicker + hPicker + 3 - 1, 248);
+			JE_rectangle(VGAScreen, xMenuItemValue - 4, yPicker- 4, xMenuItemValue + wMenuItemValue + 4 - 1, yPicker + hPicker + 4 - 1, 250);
+			JE_rectangle(VGAScreen, xMenuItemValue - 3, yPicker- 5, xMenuItemValue + wMenuItemValue + 3 - 1, yPicker + hPicker + 5 - 1, 248);
+			fill_rectangle_wh(VGAScreen, xMenuItemValue - 2, yPicker - 2, wMenuItemValue + 2 + 2, hPicker + 2 + 2, 224);
+
+			for (size_t i = 0; i < pickerItemsCount; ++i)
+			{
+				const int y = yPicker + dyPickerItem * (int)i;
+
+				const bool selected = i == pickerSelectedIndex;
+
+				const char *value = selectedMenuItem->getPickerItem(i, buffer, sizeof buffer);
+
+				draw_font_hv_shadow(VGAScreen, xMenuItemValue, y, value, normal_font, left_aligned, 15, -3 + (selected ? 2 : 0), false, 2);
+			}
+		}
+
+		if (restart)
+		{
+			mouseCursor = MOUSE_POINTER_NORMAL;
+
+			fade_palette(colors, 10, 0, 255);
+
+			restart = false;
+		}
+
+		service_SDL_events(true);
+
+		JE_mouseStart();
 		JE_showVGA();
+		JE_mouseReplace();
 
-		if (fade_in)
+		bool mouseMoved = false;
+		int oldFullscreenDisplay = fullscreen_display;
+		do
 		{
-			fade_in = false;
-			fade_palette(colors, 20, 0, 255);
-			wait_noinput(true, false, false);
-		}
+			SDL_Delay(16);
 
-		tempW = 0;
-		JE_textMenuWait(&tempW, false);
+			Uint16 oldMouseX = mouse_x;
+			Uint16 oldMouseY = mouse_y;
 
-		if (newkey)
+			push_joysticks_as_keyboard();
+			service_SDL_events(false);
+
+			mouseMoved = mouse_x != oldMouseX || mouse_y != oldMouseY;
+		} while (!(newkey || newmouse || mouseMoved || fullscreen_display != oldFullscreenDisplay));
+
+		if (currentPicker == MENU_ITEM_NONE)
 		{
-			switch (lastkey_scan)
+			// Handle menu item interaction.
+
+			bool action = false;
+
+			if (mouseMoved || newmouse)
 			{
-			case SDL_SCANCODE_UP:
-				do
+				// Find menu item name or value that was hovered or clicked.
+				if (mouse_x >= xMenuItem && mouse_x < xMenuItem + wMenuItem)
 				{
-					if (sel-- == 0)
-						sel = MenuOptions_MAX - 1;
-				}
-				while (menu_items_disabled[sel]);
-				
-				JE_playSampleNum(S_CURSOR);
-				break;
-			case SDL_SCANCODE_DOWN:
-				do
-				{
-					if (++sel >= MenuOptions_MAX)
-						sel = 0;
-				}
-				while (menu_items_disabled[sel]);
-				
-				JE_playSampleNum(S_CURSOR);
-				break;
-				
-			case SDL_SCANCODE_LEFT:
-				if (sel == MENU_FULLSCREEN)
-				{
-					if (temp_fullscreen_display == -1)
-						temp_fullscreen_display = SDL_GetNumVideoDisplays();
-					temp_fullscreen_display--;
-
-					JE_playSampleNum(S_CURSOR);
-				}
-				else if (sel == MENU_SCALER)
-				{
-					if (temp_scaler == 0)
-						temp_scaler = scalers_count;
-					temp_scaler--;
-					
-					JE_playSampleNum(S_CURSOR);
-				}
-				else if (sel == MENU_SCALING_MODE)
-				{
-					if (temp_scaling_mode == 0)
-						temp_scaling_mode = ScalingMode_MAX;
-					temp_scaling_mode--;
-					
-					JE_playSampleNum(S_CURSOR);
-				}
-				break;
-			case SDL_SCANCODE_RIGHT:
-				if (sel == MENU_FULLSCREEN)
-				{
-					temp_fullscreen_display++;
-					if (temp_fullscreen_display == SDL_GetNumVideoDisplays())
-						temp_fullscreen_display = -1;
-
-					JE_playSampleNum(S_CURSOR);
-				}
-				else if (sel == MENU_SCALER)
-				{
-					temp_scaler++;
-					if (temp_scaler == scalers_count)
-						temp_scaler = 0;
-					
-					JE_playSampleNum(S_CURSOR);
-				}
-				else if (sel == MENU_SCALING_MODE)
-				{
-					temp_scaling_mode++;
-					if (temp_scaling_mode == ScalingMode_MAX)
-						temp_scaling_mode = 0;
-					
-					JE_playSampleNum(S_CURSOR);
-				}
-				break;
-				
-			case SDL_SCANCODE_RETURN:
-				switch (sel)
-				{
-				case MENU_ABOUT:
-					JE_playSampleNum(S_SELECT);
-
-					scroller_sine(about_text);
-
-					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-					JE_showVGA();
-					fade_in = true;
-					break;
-					
-				case MENU_FULLSCREEN:
-					JE_playSampleNum(S_SELECT);
-
-					reinit_fullscreen(temp_fullscreen_display);
-					break;
-					
-				case MENU_SCALER:
-					JE_playSampleNum(S_SELECT);
-
-					if (scaler != temp_scaler)
+					for (size_t i = 0; i < menuItemsCount; ++i)
 					{
-						if (!init_scaler(temp_scaler) &&   // try new scaler
-							!init_scaler(scaler))          // revert on fail
+						const int yMenuItem = yMenuItems + dyMenuItems * i;
+						if (mouse_y >= yMenuItem && mouse_y < yMenuItem + hMenuItem)
+						{
+							if (*selectedMenuItemIndex != i)
+							{
+								JE_playSampleNum(S_CURSOR);
+
+								*selectedMenuItemIndex = i;
+							}
+
+							if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
+							    lastmouse_y >= yMenuItem && lastmouse_y < yMenuItem + hMenuItem)
+							{
+								// Act on menu item via name.
+								if (lastmouse_x >= xMenuItemName && lastmouse_x < xMenuItemName + wMenuItemName)
+								{
+									action = true;
+								}
+
+								// Act on menu item via value.
+								else if (lastmouse_x >= xMenuItemValue && lastmouse_x < xMenuItemValue + wMenuItemValue)
+								{
+									switch (menuItems[*selectedMenuItemIndex].id)
+									{
+									case MENU_ITEM_DISPLAY:
+									case MENU_ITEM_SCALER:
+									case MENU_ITEM_SCALING_MODE:
+									{
+										action = true;
+										break;
+									}
+									case MENU_ITEM_MUSIC_VOLUME:
+									{
+										JE_playSampleNum(S_CURSOR);
+
+										int value = (lastmouse_x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
+										tyrMusicVolume = MIN(MAX(0, value), 255);
+
+										set_volume(tyrMusicVolume, fxVolume);
+										break;
+									}
+									case MENU_ITEM_EFFECTS_VOLUME:
+									{
+										int value = (lastmouse_x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
+										fxVolume = MIN(MAX(0, value), 255);
+
+										JE_calcFXVol();
+
+										set_volume(tyrMusicVolume, fxVolume);
+
+										JE_playSampleNum(S_CURSOR);
+										break;
+									}
+									default:
+										break;
+									}
+								}
+							}
+
+							break;
+						}
+					}
+				}
+			}
+
+			if (newmouse)
+			{
+				if (lastmouse_but == SDL_BUTTON_RIGHT)
+				{
+					JE_playSampleNum(S_SPRING);
+
+					currentMenu = menuParents[currentMenu];
+				}
+			}
+			else if (newkey)
+			{
+				switch (lastkey_scan)
+				{
+				case SDL_SCANCODE_UP:
+				{
+					JE_playSampleNum(S_CURSOR);
+
+					*selectedMenuItemIndex = *selectedMenuItemIndex == 0
+						? menuItemsCount - 1
+						: *selectedMenuItemIndex - 1;
+					break;
+				}
+				case SDL_SCANCODE_DOWN:
+				{
+					JE_playSampleNum(S_CURSOR);
+
+					*selectedMenuItemIndex = *selectedMenuItemIndex == menuItemsCount - 1
+						? 0
+						: *selectedMenuItemIndex + 1;
+					break;
+				}
+				case SDL_SCANCODE_LEFT:
+				{
+					switch (menuItems[*selectedMenuItemIndex].id)
+					{
+					case MENU_ITEM_MUSIC_VOLUME:
+					{
+						JE_playSampleNum(S_CURSOR);
+
+						JE_changeVolume(&tyrMusicVolume, -8, &fxVolume, 0);
+						break;
+					}
+					case MENU_ITEM_EFFECTS_VOLUME:
+					{
+						JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, -8);
+
+						JE_playSampleNum(S_CURSOR);
+						break;
+					}
+					default:
+						break;
+					}
+					break;
+				}
+				case SDL_SCANCODE_RIGHT:
+				{
+					switch (menuItems[*selectedMenuItemIndex].id)
+					{
+					case MENU_ITEM_MUSIC_VOLUME:
+					{
+						JE_playSampleNum(S_CURSOR);
+
+						JE_changeVolume(&tyrMusicVolume, 8, &fxVolume, 0);
+						break;
+					}
+					case MENU_ITEM_EFFECTS_VOLUME:
+					{
+						JE_changeVolume(&tyrMusicVolume, 0, &fxVolume, 8);
+
+						JE_playSampleNum(S_CURSOR);
+						break;
+					}
+					default:
+						break;
+					}
+					break;
+				}
+				case SDL_SCANCODE_SPACE:
+				case SDL_SCANCODE_RETURN:
+				{
+					action = true;
+					break;
+				}
+				case SDL_SCANCODE_ESCAPE:
+				{
+					JE_playSampleNum(S_SPRING);
+
+					currentMenu = menuParents[currentMenu];
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
+			if (action)
+			{
+				const MenuItemId selectedMenuItemId = menuItems[*selectedMenuItemIndex].id;
+
+				switch (selectedMenuItemId)
+				{
+				case MENU_ITEM_DONE:
+				{
+					JE_playSampleNum(S_SELECT);
+
+					currentMenu = menuParents[currentMenu];
+					break;
+				}
+				case MENU_ITEM_GRAPHICS:
+				{
+					JE_playSampleNum(S_SELECT);
+
+					menuParents[MENU_GRAPHICS] = currentMenu;
+					currentMenu = MENU_GRAPHICS;
+					selectedMenuItemIndexes[currentMenu] = 0;
+					break;
+				}
+				case MENU_ITEM_SOUND:
+				{
+					JE_playSampleNum(S_SELECT);
+
+					menuParents[MENU_SOUND] = currentMenu;
+					currentMenu = MENU_SOUND;
+					selectedMenuItemIndexes[currentMenu] = 0;
+					break;
+				}
+				case MENU_ITEM_JUKEBOX:
+				{
+					JE_playSampleNum(S_SELECT);
+
+					fade_black(10);
+
+					jukebox();
+
+					restart = true;
+					break;
+				}
+				case MENU_ITEM_DESTRUCT:
+				{
+					JE_playSampleNum(S_SELECT);
+
+					fade_black(10);
+
+					JE_destructGame();
+
+					restart = true;
+					break;
+				}
+				case MENU_ITEM_DISPLAY:
+				{
+					JE_playSampleNum(S_CLICK);
+
+					currentPicker = selectedMenuItemId;
+					pickerSelectedIndex = (size_t)(fullscreen_display + 1);
+					break;
+				}
+				case MENU_ITEM_SCALER:
+				{
+					JE_playSampleNum(S_CLICK);
+
+					currentPicker = selectedMenuItemId;
+					pickerSelectedIndex = scaler;
+					break;
+				}
+				case MENU_ITEM_SCALING_MODE:
+				{
+					JE_playSampleNum(S_CLICK);
+
+					currentPicker = selectedMenuItemId;
+					pickerSelectedIndex = scaling_mode;
+					break;
+				}
+				case MENU_ITEM_MUSIC_VOLUME:
+				{
+					JE_playSampleNum(S_CLICK);
+
+					music_disabled = !music_disabled;
+					if (!music_disabled)
+						restart_song();
+					break;
+				}
+				case MENU_ITEM_EFFECTS_VOLUME:
+				{
+					samples_disabled = !samples_disabled;
+
+					JE_playSampleNum(S_CLICK);
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
+			if (currentMenu == MENU_NONE)
+			{
+				fade_black(10);
+
+				return;
+			}
+		}
+		else
+		{
+			const MenuItem *selectedMenuItem = &menuItems[*selectedMenuItemIndex];
+
+			// Handle picker interaction.
+
+			bool action = false;
+
+			if (mouseMoved || newmouse)
+			{
+				const size_t pickerItemsCount = selectedMenuItem->getPickerItemsCount();
+
+				// Find picker item that was hovered clicked.
+				if (mouse_x >= xMenuItemValue && mouse_x < xMenuItemValue + wMenuItemValue)
+				{
+					for (size_t i = 0; i < pickerItemsCount; ++i)
+					{
+						const int yPickerItem = yPicker + dyPickerItem * i;
+
+						if (mouse_y >= yPickerItem && mouse_y < yPickerItem + hPickerItem)
+						{
+							if (pickerSelectedIndex != i)
+							{
+								JE_playSampleNum(S_CURSOR);
+
+								pickerSelectedIndex = i;
+							}
+
+							// Act on picker item.
+							if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
+							    lastmouse_x >= xMenuItemValue && lastmouse_y < xMenuItemValue + wMenuItemName &&
+							    lastmouse_y >= yPickerItem && lastmouse_y < yPickerItem + hPickerItem)
+							{
+								action = true;
+							}
+						}
+					}
+				}
+			}
+
+			if (newmouse)
+			{
+				if (lastmouse_but == SDL_BUTTON_RIGHT)
+				{
+					JE_playSampleNum(S_SPRING);
+
+					currentPicker = MENU_ITEM_NONE;
+				}
+			}
+			else if (newkey)
+			{
+				switch (lastkey_scan)
+				{
+				case SDL_SCANCODE_UP:
+				{
+					JE_playSampleNum(S_CURSOR);
+
+					const size_t pickerItemsCount = selectedMenuItem->getPickerItemsCount();
+
+					pickerSelectedIndex = pickerSelectedIndex == 0
+						? pickerItemsCount - 1
+						: pickerSelectedIndex - 1;
+					break;
+				}
+				case SDL_SCANCODE_DOWN:
+				{
+					JE_playSampleNum(S_CURSOR);
+
+					const size_t pickerItemsCount = selectedMenuItem->getPickerItemsCount();
+
+					pickerSelectedIndex = pickerSelectedIndex == pickerItemsCount - 1
+						? 0
+						: pickerSelectedIndex + 1;
+					break;
+				}
+				case SDL_SCANCODE_SPACE:
+				case SDL_SCANCODE_RETURN:
+				{
+					action = true;
+					break;
+				}
+				case SDL_SCANCODE_ESCAPE:
+				{
+					JE_playSampleNum(S_SPRING);
+
+					currentPicker = MENU_ITEM_NONE;
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
+			if (action)
+			{
+				JE_playSampleNum(S_CLICK);
+
+				switch (selectedMenuItem->id)
+				{
+				case MENU_ITEM_DISPLAY:
+				{
+					if ((int)pickerSelectedIndex - 1 != fullscreen_display)
+						reinit_fullscreen((int)pickerSelectedIndex - 1);
+					break;
+				}
+				case MENU_ITEM_SCALER:
+				{
+					if (pickerSelectedIndex != scaler)
+					{
+						const int oldScaler = scaler;
+						if (!init_scaler(pickerSelectedIndex) &&  // try new scaler
+							!init_scaler(oldScaler))              // revert on fail
 						{
 							exit(EXIT_FAILURE);
 						}
 					}
 					break;
-					
-				case MENU_SCALING_MODE:
-					JE_playSampleNum(S_SELECT);
-					scaling_mode = temp_scaling_mode;
-					break;
-
-				case MENU_JUKEBOX:
-					JE_playSampleNum(S_SELECT);
-
-					fade_black(10);
-					jukebox();
-
-					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
-					JE_showVGA();
-					fade_in = true;
-					break;
-					
-				case MENU_RETURN:
-					quit = true;
-					JE_playSampleNum(S_SPRING);
-					break;
-					
-				case MenuOptions_MAX:
-					assert(false);
+				}
+				case MENU_ITEM_SCALING_MODE:
+				{
+					scaling_mode = pickerSelectedIndex;
 					break;
 				}
-				break;
-				
-			case SDL_SCANCODE_ESCAPE:
-				quit = true;
-				JE_playSampleNum(S_SPRING);
-				break;
-				
-			default:
-				break;
+				default:
+					break;
+				}
+
+				currentPicker = MENU_ITEM_NONE;
 			}
 		}
-	} while (!quit);
+	}
 }
 
 int main( int argc, char *argv[] )
