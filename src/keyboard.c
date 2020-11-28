@@ -125,6 +125,8 @@ void set_mouse_position( int x, int y )
 		mouse_x = x;
 		mouse_y = y;
 		map_screen_to_window_pos(&x, &y);
+		SDL_PumpEvents();
+		SDL_FlushEvent(SDL_MOUSEMOTION);
 		SDL_WarpMouseInWindow(main_window, x, y);
 	}
 }
