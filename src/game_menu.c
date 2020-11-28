@@ -877,7 +877,7 @@ void JE_itemScreen( void )
 					                   ? 100
 					                   : (yLoc * 100) / ((cube[currentCube].last_line - 9) * 12);
 
-					char buf[20];
+					char buf[55];
 					snprintf(buf, sizeof(buf), "%s %d%%", miscText[11], percent_read);
 					JE_outTextAndDarken(VGAScreen, 176, 160, buf, 14, 1, TINY_FONT);
 
