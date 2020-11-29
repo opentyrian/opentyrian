@@ -22,51 +22,6 @@
 
 JE_byte songBuy;
 
-const char musicFile[MUSIC_NUM][13] =
-{
-	/*  1 */  "ASTEROI2.DAT",
-	/*  2 */  "ASTEROID.DAT",
-	/*  3 */  "BUY.DAT",
-	/*  4 */  "CAMANIS.DAT",
-	/*  5 */  "CAMANISE.DAT",
-	/*  6 */  "DELIANI.DAT",
-	/*  7 */  "DELIANI2.DAT",
-	/*  8 */  "ENDING1.DAT",
-	/*  9 */  "ENDING2.DAT",
-	/* 10 */  "ENDLEVEL.DAT",
-	/* 11 */  "GAMEOVER.DAT",
-	/* 12 */  "GRYPHON.DAT",
-	/* 13 */  "GRYPHONE.DAT",
-	/* 14 */  "GYGES.DAT",
-	/* 15 */  "GYGESE.DAT",
-	/* 16 */  "HALLOWS.DAT",
-	/* 17 */  "ZICA.DAT",
-	/* 18 */  "TYRSONG2.DAT",
-	/* 19 */  "LOUDNESS.DAT",
-	/* 20 */  "NAVC.DAT",
-	/* 21 */  "SAVARA.DAT",
-	/* 22 */  "SAVARAE.DAT",
-	/* 23 */  "SPACE1.DAT",
-	/* 24 */  "SPACE2.DAT",
-	/* 25 */  "STARENDB.DAT",
-	/* 26 */  "START5.DAT",
-	/* 27 */  "TALK.DAT",
-	/* 28 */  "TORM.DAT",
-	/* 29 */  "TRANSON.DAT",
-	/* 30 */  "TYRSONG.DAT",
-	/* 31 */  "ZANAC3.DAT",
-	/* 32 */  "ZANACS.DAT",
-	/* 33 */  "SAVARA2.DAT",
-	/* 34 */  "HISCORE.DAT",
-	/* 35 */  "TYR4-1.DAT",    /* OMF */
-	/* 36 */  "TYR4-3.DAT",    /* SARAH */
-	/* 37 */  "TYR4-2.DAT",    /* MAGFIELD */
-	/* 38 */  "TYR4-0.DAT",    /* ROCKME */
-	/* 39 */  "TYR4-4.DAT",    /* quiet music */
-	/* 40 */  "TYR4-5.DAT",    /* piano */
-	/* 41 */  "TYR-BEER.DAT"   /* BEER */
-};
-
 const char musicTitle[MUSIC_NUM][48] =
 {
 	"Asteroid Dance Part 2",
