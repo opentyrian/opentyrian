@@ -557,10 +557,13 @@ void JE_destructGame( void )
 	destructTempScreen = game_screen;
 	world.VGAScreen = VGAScreen;
 
-	JE_loadCompShapes(&eShapes[0], '~');
+	JE_loadCompShapes(&destructSpriteSheet, '~');
+
 	fade_black(1);
 
 	JE_destructMain();
+
+	free_sprite2s(&destructSpriteSheet);
 
 	//and of course exit actions go here.
 	free(shotRec);
@@ -1596,7 +1599,7 @@ static void DE_GravityDrawUnit( enum de_player_t team, struct destruct_unit_s * 
 		anim_index += floorf(unit->angle * 9.99f / M_PI);
 	}
 
-	blit_sprite2(VGAScreen, unit->unitX, roundf(unit->unitY) - 13, eShapes[0], anim_index);
+	blit_sprite2(VGAScreen, unit->unitX, roundf(unit->unitY) - 13, destructSpriteSheet, anim_index);
 }
 static void DE_GravityLowerUnit( struct destruct_unit_s * unit )
 {
@@ -1688,7 +1691,7 @@ static void DE_RunTickDrawWalls( void )
 	{
 		if (world.mapWalls[i].wallExist)
 		{
-			blit_sprite2(VGAScreen, world.mapWalls[i].wallX, world.mapWalls[i].wallY, eShapes[0], 42);
+			blit_sprite2(VGAScreen, world.mapWalls[i].wallX, world.mapWalls[i].wallY, destructSpriteSheet, 42);
 		}
 	}
 }
@@ -2227,7 +2230,7 @@ static void DE_RunTickDrawHUD( void )
 		JE_rectangle(VGAScreen, startX + 17, 2, startX + 143, 9, 242);
 		JE_rectangle(VGAScreen, startX + 16, 1, startX + 144, 10, 240);
 
-		blit_sprite2(VGAScreen, startX +  4, 0, eShapes[0], 191 + curUnit->shotType);
+		blit_sprite2(VGAScreen, startX +  4, 0, destructSpriteSheet, 191 + curUnit->shotType);
 
 		JE_outText   (VGAScreen, startX + 20, 3, weaponNames[curUnit->shotType], 15, 2);
 		sprintf      (tempstr, "dmg~%d~", curUnit->health);

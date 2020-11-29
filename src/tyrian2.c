@@ -647,10 +647,10 @@ start_level:
 
 	JE_clearKeyboard();
 
-	free_sprite2s(&eShapes[0]);
-	free_sprite2s(&eShapes[1]);
-	free_sprite2s(&eShapes[2]);
-	free_sprite2s(&eShapes[3]);
+	free_sprite2s(&enemySpriteSheets[0]);
+	free_sprite2s(&enemySpriteSheets[1]);
+	free_sprite2s(&enemySpriteSheets[2]);
+	free_sprite2s(&enemySpriteSheets[3]);
 
 	/* Normal speed */
 	if (fastPlay != 0)
@@ -768,8 +768,8 @@ start_level_first:
 	JE_gammaCorrect(&colors, gammaCorrection);
 	fade_palette(colors, 50, 0, 255);
 
-	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '6'); // explosion sprites
+	if (explosionSpriteSheet.data == NULL)
+		JE_loadCompShapes(&explosionSpriteSheet, '6');
 
 	/* MAPX will already be set correctly */
 	mapY = 300 - 8;
@@ -1037,8 +1037,8 @@ start_level_first:
 	memset(soundQueue,       0, sizeof(soundQueue));
 	soundQueue[3] = V_GOOD_LUCK;
 
-	memset(enemyShapeTables, 0, sizeof(enemyShapeTables));
-	memset(enemy,            0, sizeof(enemy));
+	memset(enemySpriteSheetIds, 0, sizeof(enemySpriteSheetIds));
+	memset(enemy,               0, sizeof(enemy));
 
 	memset(SFCurrentCode,    0, sizeof(SFCurrentCode));
 	memset(SFExecuted,       0, sizeof(SFExecuted));
@@ -1860,9 +1860,9 @@ draw_player_shot_loop_end:
 						}
 
 						if (enemyShot[z].sgr >= 500)
-							blit_sprite2(VGAScreen, enemyShot[z].sx, enemyShot[z].sy, shapesW2, enemyShot[z].sgr + enemyShot[z].animate - 500);
+							blit_sprite2(VGAScreen, enemyShot[z].sx, enemyShot[z].sy, spriteSheet12, enemyShot[z].sgr + enemyShot[z].animate - 500);
 						else
-							blit_sprite2(VGAScreen, enemyShot[z].sx, enemyShot[z].sy, shapesC1, enemyShot[z].sgr + enemyShot[z].animate);
+							blit_sprite2(VGAScreen, enemyShot[z].sx, enemyShot[z].sy, spriteSheet8, enemyShot[z].sgr + enemyShot[z].animate);
 					}
 				}
 
@@ -1964,9 +1964,9 @@ draw_player_shot_loop_end:
 			else
 			{
 				if (explosionTransparent)
-					blit_sprite2_blend(VGAScreen, explosions[j].x, explosions[j].y, shapes6, explosions[j].sprite + 1);
+					blit_sprite2_blend(VGAScreen, explosions[j].x, explosions[j].y, explosionSpriteSheet, explosions[j].sprite + 1);
 				else
-					blit_sprite2(VGAScreen, explosions[j].x, explosions[j].y, shapes6, explosions[j].sprite + 1);
+					blit_sprite2(VGAScreen, explosions[j].x, explosions[j].y, explosionSpriteSheet, explosions[j].sprite + 1);
 
 				explosions[j].ttl--;
 			}
@@ -2717,7 +2717,7 @@ new_game:
 								}
 
 								if (SANextShip[superArcadeMode] < SA_NORTSHIPZ)
-									blit_sprite2x2(VGAScreen, 148, 70, shapes9, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic);
+									blit_sprite2x2(VGAScreen, 148, 70, spriteSheet9, ships[SAShip[SANextShip[superArcadeMode]-1]].shipgraphic);
 								else if (SANextShip[superArcadeMode] == SA_NORTSHIPZ)
 									trentWin = true;
 
@@ -3481,7 +3481,7 @@ bool JE_titleScreen( JE_boolean animate )
 									JE_dString(VGAScreen, JE_fontCenter(superShips[i+1], SMALL_FONT_SHAPES), 100, superShips[i+1], SMALL_FONT_SHAPES);
 									tempW = ships[player[0].items.ship].shipgraphic;
 									if (tempW != 1)
-										blit_sprite2x2(VGAScreen, 148, 70, shapes9, tempW);
+										blit_sprite2x2(VGAScreen, 148, 70, spriteSheet9, tempW);
 
 									JE_showVGA();
 									fade_palette(colors, 50, 0, 255);
@@ -3744,9 +3744,6 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 	if (superArcadeMode != SA_NONE && eDatI == 534)
 		eDatI = 533;
 
-	enemyShapeTables[5-1] = 21;   /*Coins&Gems*/
-	enemyShapeTables[6-1] = 26;   /*Two-Player Stuff*/
-
 	if (uniqueShapeTableI > 0)
 	{
 		shapeTableI = uniqueShapeTableI;
@@ -3755,16 +3752,27 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 	{
 		shapeTableI = enemyDat[eDatI].shapebank;
 	}
-	
+
 	Sprite2_array *sprite2s = NULL;
-	for (uint i = 0; i < 6; ++i)
-		if (shapeTableI == enemyShapeTables[i])
-			sprite2s = &eShapes[i];
+	if (shapeTableI == 21)
+	{
+		sprite2s = &spriteSheet11;  // Coins&Gems
+	}
+	else if (shapeTableI == 26)
+	{
+		sprite2s = &spriteSheet10;  // Two-Player Stuff
+	}
+	else
+	{
+		for (size_t i = 0; i < COUNTOF(enemySpriteSheetIds); ++i)
+			if (shapeTableI == enemySpriteSheetIds[i])
+				sprite2s = &enemySpriteSheets[i];
+	}
 	
 	if (sprite2s != NULL)
 		enemy->sprite2s = sprite2s;
 	else
-		// maintain buggy Tyrian behavior (use shape table value from previous enemy that occupied this index in the enemy array)
+		// Use shape table value from previous enemy that occupied the enemy slot. (Ex. APPROACH.)
 		fprintf(stderr, "warning: ignoring sprite from unloaded shape table %d\n", shapeTableI);
 
 	enemy->enemydatofs = &enemyDat[eDatI];
@@ -4195,17 +4203,17 @@ void JE_eventSystem( void )
 			
 			for (unsigned int i = 0; i < COUNTOF(newEnemyShapeTables); ++i)
 			{
-				if (enemyShapeTables[i] != newEnemyShapeTables[i])
+				if (enemySpriteSheetIds[i] != newEnemyShapeTables[i])
 				{
 					if (newEnemyShapeTables[i] > 0)
 					{
 						assert(newEnemyShapeTables[i] <= COUNTOF(shapeFile));
-						JE_loadCompShapes(&eShapes[i], shapeFile[newEnemyShapeTables[i] - 1]);
+						JE_loadCompShapes(&enemySpriteSheets[i], shapeFile[newEnemyShapeTables[i] - 1]);
 					}
 					else
-						free_sprite2s(&eShapes[i]);
+						free_sprite2s(&enemySpriteSheets[i]);
 
-					enemyShapeTables[i] = newEnemyShapeTables[i];
+					enemySpriteSheetIds[i] = newEnemyShapeTables[i];
 				}
 			}
 		}

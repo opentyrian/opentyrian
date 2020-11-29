@@ -158,8 +158,8 @@ void JE_itemScreen( void )
 {
 	bool quit = false;
 
-	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  // item sprites
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');
 
 	load_cubes();
 
@@ -588,7 +588,7 @@ void JE_itemScreen( void )
 				if (temp == *playeritem_map(&old_items[0], curSel[MENU_UPGRADES] - 2) && temp != 0 && tempW != menuChoices[curMenu]-1)
 				{
 					fill_rectangle_xy(VGAScreen, 160, tempY+7, 300, tempY+11, 227);
-					blit_sprite2(VGAScreen, 298, tempY+2, shapes6, 247);
+					blit_sprite2(VGAScreen, 298, tempY+2, shopSpriteSheet, 247);
 				}
 
 				/* Draw DONE */
@@ -1908,18 +1908,18 @@ void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y )
 		{
 			if (itemNum > 90)
 			{
-				shipGrPtr = &shapes9;
+				shipGrPtr = &spriteSheet9;
 				shipGr = JE_SGr(itemNum - 90, &shipGrPtr);
 				blit_sprite2x2(VGAScreen, x, y, *shipGrPtr, shipGr);
 			}
 			else
 			{
-				blit_sprite2x2(VGAScreen, x, y, shapes9, ships[itemNum].shipgraphic);
+				blit_sprite2x2(VGAScreen, x, y, spriteSheet9, ships[itemNum].shipgraphic);
 			}
 		}
 		else if (tempW > 0)
 		{
-			blit_sprite2x2(VGAScreen, x, y, shapes6, tempW);
+			blit_sprite2x2(VGAScreen, x, y, shopSpriteSheet, tempW);
 		}
 	}
 }

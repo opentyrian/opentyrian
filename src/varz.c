@@ -258,7 +258,6 @@ JE_MultiEnemyType enemy;
 JE_EnemyAvailType enemyAvail;  /* values: 0: used, 1: free, 2: secret pick-up */
 JE_word enemyOffset;
 JE_word enemyOnScreen;
-JE_byte enemyShapeTables[6]; /* [1..6] */
 JE_word superEnemy254Jump;
 
 /*EnemyShotData*/
@@ -329,8 +328,8 @@ void JE_getShipInfo( void )
 {
 	JE_boolean extraShip, extraShip2;
 
-	shipGrPtr = &shapes9;
-	shipGr2ptr = &shapes9;
+	shipGrPtr = &spriteSheet9;
+	shipGr2ptr = &spriteSheet9;
 
 	powerAdd  = powerSys[player[0].items.generator].power;
 
@@ -453,7 +452,9 @@ void JE_tyrianHalt( JE_byte code )
 
 	free_main_shape_tables();
 
-	free_sprite2s(&shapes6);
+	free_sprite2s(&shopSpriteSheet);
+	free_sprite2s(&explosionSpriteSheet);
+	free_sprite2s(&destructSpriteSheet);
 
 	for (int i = 0; i < SAMPLE_COUNT; i++)
 	{
@@ -682,9 +683,9 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 	if (player[0].items.special > 0)
 	{
 		if (shotRepeat[SHOT_SPECIAL] == 0 && specialWait == 0 && flareDuration < 2 && zinglonDuration < 2)
-			blit_sprite2(VGAScreen, 47, 4, shapes9, 94);
+			blit_sprite2(VGAScreen, 47, 4, spriteSheet9, 94);
 		else
-			blit_sprite2(VGAScreen, 47, 4, shapes9, 93);
+			blit_sprite2(VGAScreen, 47, 4, spriteSheet9, 93);
 	}
 
 	if (shotRepeat[SHOT_SPECIAL] > 0)

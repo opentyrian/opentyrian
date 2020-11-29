@@ -28,8 +28,20 @@
 
 Sprite_array sprite_table[SPRITE_TABLES_MAX];
 
-Sprite2_array eShapes[6];
-Sprite2_array shapesC1, shapes6, shapes9, shapesW2;
+Sprite2_array shopSpriteSheet;
+
+Sprite2_array explosionSpriteSheet;
+
+Sprite2_array enemySpriteSheets[4];
+Uint8 enemySpriteSheetIds[4];
+
+Sprite2_array destructSpriteSheet;
+
+Sprite2_array spriteSheet8;
+Sprite2_array spriteSheet9;
+Sprite2_array spriteSheet10;
+Sprite2_array spriteSheet11;
+Sprite2_array spriteSheet12;
 
 void load_sprites_file( unsigned int table, const char *filename )
 {
@@ -472,6 +484,8 @@ void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, u
 
 void JE_loadCompShapes( Sprite2_array *sprite2s, char s )
 {
+	free_sprite2s(sprite2s);
+
 	char buffer[20];
 	snprintf(buffer, sizeof(buffer), "newsh%c.shp", tolower((unsigned char)s));
 	
@@ -486,8 +500,8 @@ void JE_loadCompShapes( Sprite2_array *sprite2s, char s )
 
 void JE_loadCompShapesB( Sprite2_array *sprite2s, FILE *f )
 {
-	free_sprite2s(sprite2s);
-	
+	assert(sprite2s->data == NULL);
+
 	sprite2s->data = malloc(sprite2s->size);
 	fread_u8_die(sprite2s->data, sprite2s->size, f);
 }
@@ -496,6 +510,8 @@ void free_sprite2s( Sprite2_array *sprite2s )
 {
 	free(sprite2s->data);
 	sprite2s->data = NULL;
+
+	sprite2s->size = 0;
 }
 
 // does not clip on left or right edges of surface
@@ -697,28 +713,28 @@ void JE_loadMainShapeTables( const char *shpfile )
 	}
 	
 	// player shot sprites
-	shapesC1.size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapesC1, f);
+	spriteSheet8.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&spriteSheet8, f);
 	i++;
 	
 	// player ship sprites
-	shapes9.size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapes9 , f);
+	spriteSheet9.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&spriteSheet9 , f);
 	i++;
 	
 	// power-up sprites
-	eShapes[5].size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&eShapes[5], f);
+	spriteSheet10.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&spriteSheet10, f);
 	i++;
 	
 	// coins, datacubes, etc sprites
-	eShapes[4].size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&eShapes[4], f);
+	spriteSheet11.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&spriteSheet11, f);
 	i++;
 	
 	// more player shot sprites
-	shapesW2.size = shpPos[i + 1] - shpPos[i];
-	JE_loadCompShapesB(&shapesW2, f);
+	spriteSheet12.size = shpPos[i + 1] - shpPos[i];
+	JE_loadCompShapesB(&spriteSheet12, f);
 	
 	fclose(f);
 }
@@ -728,9 +744,9 @@ void free_main_shape_tables( void )
 	for (uint i = 0; i < COUNTOF(sprite_table); ++i)
 		free_sprites(i);
 	
-	free_sprite2s(&shapesC1);
-	free_sprite2s(&shapes9);
-	free_sprite2s(&eShapes[5]);
-	free_sprite2s(&eShapes[4]);
-	free_sprite2s(&shapesW2);
+	free_sprite2s(&spriteSheet8);
+	free_sprite2s(&spriteSheet9);
+	free_sprite2s(&spriteSheet10);
+	free_sprite2s(&spriteSheet11);
+	free_sprite2s(&spriteSheet12);
 }

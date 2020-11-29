@@ -490,8 +490,8 @@ void JE_loadScreen( void )
 
 	tempstr = NULL;
 
-	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need arrow sprites
 
 	fade_black(10);
 	JE_loadPic(VGAScreen, 2, false);
@@ -608,11 +608,11 @@ void JE_loadScreen( void )
 
 		if (screen == 2)
 		{
-			blit_sprite2x2(VGAScreen, 90, 180, shapes6, 279);
+			blit_sprite2x2(VGAScreen, 90, 180, shopSpriteSheet, 279);
 		}
 		if (screen == 1)
 		{
-			blit_sprite2x2(VGAScreen, 220, 180, shapes6, 281);
+			blit_sprite2x2(VGAScreen, 220, 180, shopSpriteSheet, 281);
 		}
 
 		helpBoxColor = 15;
@@ -881,8 +881,8 @@ void JE_highScoreScreen( void )
 	int quit;
 	char scoretemp[32];
 
-	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  // need arrow sprites
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need arrow sprites
 
 	fade_black(10);
 	JE_loadPic(VGAScreen, 2, false);
@@ -947,12 +947,12 @@ void JE_highScoreScreen( void )
 
 			if (x > 1)
 			{
-				blit_sprite2x2(VGAScreen,  90, 180, shapes6, 279);
+				blit_sprite2x2(VGAScreen,  90, 180, shopSpriteSheet, 279);
 			}
 
 			if ( ( (x < 2) && episodeAvail[2-1] ) || ( (x < 3) && episodeAvail[3-1] ) )
 			{
-				blit_sprite2x2(VGAScreen,  220, 180, shapes6, 281);
+				blit_sprite2x2(VGAScreen,  220, 180, shopSpriteSheet, 281);
 			}
 
 			helpBoxColor = 15;
@@ -1459,8 +1459,8 @@ void JE_inGameHelp( void )
 
 void JE_highScoreCheck( void )
 {
-	free_sprite2s(&shapes6);
-	JE_loadCompShapes(&shapes6, '1');  // need mouse cursor sprite
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprite
 
 	Sint32 temp_score;
 
@@ -2082,7 +2082,7 @@ void JE_playCredits( void )
 		else if (shipxc > 10)
 			ship_sprite += (shipxc > 20) ? 4 : 2;
 
-		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (ticks % 200), shapes9, ship_sprite);
+		blit_sprite2x2(VGAScreen, shipx / 40, 184 - (ticks % 200), spriteSheet9, ship_sprite);
 
 		const int bottom_line = (ticks / 3) / 20;
 		int y = 20 - ((ticks / 3) % 20);
@@ -2483,7 +2483,7 @@ void JE_inGameDisplays( void )
 
 	/*Special Weapon?*/
 	if (player[0].items.special > 0)
-		blit_sprite2x2(VGAScreen, 25, 1, eShapes[5], special[player[0].items.special].itemgraphic);
+		blit_sprite2x2(VGAScreen, 25, 1, spriteSheet10, special[player[0].items.special].itemgraphic);
 
 	/*Lives Left*/
 	if (onePlayerAction || twoPlayerMode)
@@ -2497,7 +2497,7 @@ void JE_inGameDisplays( void )
 
 			if (extra_lives >= 5)
 			{
-				blit_sprite2(VGAScreen, tempW, y, shapes9, 285);
+				blit_sprite2(VGAScreen, tempW, y, spriteSheet9, 285);
 				tempW = (temp == 0) ? 45 : 250;
 				sprintf(tempstr, "%d", extra_lives);
 				JE_textShade(VGAScreen, tempW, y + 3, tempstr, 15, 1, FULL_SHADE);
@@ -2506,7 +2506,7 @@ void JE_inGameDisplays( void )
 			{
 				for (uint i = 0; i < extra_lives; ++i)
 				{
-					blit_sprite2(VGAScreen, tempW, y, shapes9, 285);
+					blit_sprite2(VGAScreen, tempW, y, spriteSheet9, 285);
 
 					tempW += (temp == 0) ? 12 : -12;
 				}
@@ -2530,7 +2530,7 @@ void JE_inGameDisplays( void )
 
 		for (uint j = player[i].superbombs; j > 0; --j)
 		{
-			blit_sprite2(VGAScreen, x, 160, shapes9, 304);
+			blit_sprite2(VGAScreen, x, 160, spriteSheet9, 304);
 			x += (i == 0) ? 12 : -12;
 		}
 	}
@@ -2892,7 +2892,7 @@ void JE_playerMovement( Player *this_player,
                         JE_byte inputDevice,
                         JE_byte playerNum_,
                         JE_word shipGr_,
-                        Sprite2_array *shapes9ptr_,
+                        Sprite2_array *shipGrPtr_,
                         JE_word *mouseX_, JE_word *mouseY_ )
 {
 	JE_integer mouseXC, mouseYC;
@@ -3388,17 +3388,17 @@ redo:
 				{
 					if (shipGr_ == 0)
 					{
-						blit_sprite2x2(VGAScreen, this_player->x - 17, trail_y - 7, *shapes9ptr_, 13);
-						blit_sprite2x2(VGAScreen, this_player->x + 7 , trail_y - 7, *shapes9ptr_, 51);
+						blit_sprite2x2(VGAScreen, this_player->x - 17, trail_y - 7, *shipGrPtr_, 13);
+						blit_sprite2x2(VGAScreen, this_player->x + 7 , trail_y - 7, *shipGrPtr_, 51);
 					}
 					else if (shipGr_ == 1)
 					{
-						blit_sprite2x2(VGAScreen, this_player->x - 17, trail_y - 7, *shapes9ptr_, 220);
-						blit_sprite2x2(VGAScreen, this_player->x + 7 , trail_y - 7, *shapes9ptr_, 222);
+						blit_sprite2x2(VGAScreen, this_player->x - 17, trail_y - 7, *shipGrPtr_, 220);
+						blit_sprite2x2(VGAScreen, this_player->x + 7 , trail_y - 7, *shipGrPtr_, 222);
 					}
 					else
 					{
-						blit_sprite2x2(VGAScreen, this_player->x - 5, trail_y - 7, *shapes9ptr_, shipGr_);
+						blit_sprite2x2(VGAScreen, this_player->x - 5, trail_y - 7, *shipGrPtr_, shipGr_);
 					}
 				}
 			}
@@ -3554,12 +3554,12 @@ redo:
 		{
 			if (background2)
 			{
-				blit_sprite2x2_darken(VGAScreen, this_player->x - 17 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 13);
-				blit_sprite2x2_darken(VGAScreen, this_player->x + 7 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 51);
+				blit_sprite2x2_darken(VGAScreen, this_player->x - 17 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, ship_sprite + 13);
+				blit_sprite2x2_darken(VGAScreen, this_player->x + 7 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, ship_sprite + 51);
 				if (superWild)
 				{
-					blit_sprite2x2_darken(VGAScreen, this_player->x - 16 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 13);
-					blit_sprite2x2_darken(VGAScreen, this_player->x + 6 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite + 51);
+					blit_sprite2x2_darken(VGAScreen, this_player->x - 16 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, ship_sprite + 13);
+					blit_sprite2x2_darken(VGAScreen, this_player->x + 6 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, ship_sprite + 51);
 				}
 			}
 		}
@@ -3567,18 +3567,18 @@ redo:
 		{
 			if (background2)
 			{
-				blit_sprite2x2_darken(VGAScreen, this_player->x - 17 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, 220);
-				blit_sprite2x2_darken(VGAScreen, this_player->x + 7 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, 222);
+				blit_sprite2x2_darken(VGAScreen, this_player->x - 17 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, 220);
+				blit_sprite2x2_darken(VGAScreen, this_player->x + 7 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, 222);
 			}
 		}
 		else
 		{
 			if (background2)
 			{
-				blit_sprite2x2_darken(VGAScreen, this_player->x - 5 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite);
+				blit_sprite2x2_darken(VGAScreen, this_player->x - 5 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, ship_sprite);
 				if (superWild)
 				{
-					blit_sprite2x2_darken(VGAScreen, this_player->x - 4 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shapes9ptr_, ship_sprite);
+					blit_sprite2x2_darken(VGAScreen, this_player->x - 4 - mapX2Ofs + 30, this_player->y - 7 + shadowYDist, *shipGrPtr_, ship_sprite);
 				}
 			}
 		}
@@ -3589,39 +3589,39 @@ redo:
 
 			if (shipGr_ == 0)
 			{
-				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, ship_sprite + 13);
-				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shapes9ptr_, ship_sprite + 51);
+				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shipGrPtr_, ship_sprite + 13);
+				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shipGrPtr_, ship_sprite + 51);
 			}
 			else if (shipGr_ == 1)
 			{
-				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, 220);
-				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shapes9ptr_, 222);
+				blit_sprite2x2_blend(VGAScreen, this_player->x - 17, this_player->y - 7, *shipGrPtr_, 220);
+				blit_sprite2x2_blend(VGAScreen, this_player->x + 7 , this_player->y - 7, *shipGrPtr_, 222);
 			}
 			else
-				blit_sprite2x2_blend(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, ship_sprite);
+				blit_sprite2x2_blend(VGAScreen, this_player->x - 5, this_player->y - 7, *shipGrPtr_, ship_sprite);
 		}
 		else
 		{
 			if (shipGr_ == 0)
 			{
-				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, ship_sprite + 13);
-				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, ship_sprite + 51);
+				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shipGrPtr_, ship_sprite + 13);
+				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shipGrPtr_, ship_sprite + 51);
 			}
 			else if (shipGr_ == 1)
 			{
-				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shapes9ptr_, 220);
-				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shapes9ptr_, 222);
+				blit_sprite2x2(VGAScreen, this_player->x - 17, this_player->y - 7, *shipGrPtr_, 220);
+				blit_sprite2x2(VGAScreen, this_player->x + 7, this_player->y - 7, *shipGrPtr_, 222);
 
 				int ship_banking = 0;
 				switch (ship_sprite)
 				{
 				case 5:
-					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shapes9ptr_, 40);
+					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shipGrPtr_, 40);
 					tempW = this_player->x - 7;
 					ship_banking = -2;
 					break;
 				case 3:
-					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shapes9ptr_, 39);
+					blit_sprite2(VGAScreen, this_player->x - 17, this_player->y + 7, *shipGrPtr_, 39);
 					tempW = this_player->x - 7;
 					ship_banking = -1;
 					break;
@@ -3629,12 +3629,12 @@ redo:
 					ship_banking = 0;
 					break;
 				case -1:
-					blit_sprite2(VGAScreen, this_player->x + 19, this_player->y + 7, *shapes9ptr_, 58);
+					blit_sprite2(VGAScreen, this_player->x + 19, this_player->y + 7, *shipGrPtr_, 58);
 					tempW = this_player->x + 9;
 					ship_banking = 1;
 					break;
 				case -3:
-					blit_sprite2(VGAScreen, this_player->x + 19, this_player->y + 7, *shapes9ptr_, 59);
+					blit_sprite2(VGAScreen, this_player->x + 19, this_player->y + 7, *shipGrPtr_, 59);
 					tempW = this_player->x + 9;
 					ship_banking = 2;
 					break;
@@ -3654,7 +3654,7 @@ redo:
 			}
 			else
 			{
-				blit_sprite2x2(VGAScreen, this_player->x - 5, this_player->y - 7, *shapes9ptr_, ship_sprite);
+				blit_sprite2x2(VGAScreen, this_player->x - 5, this_player->y - 7, *shipGrPtr_, ship_sprite);
 			}
 		}
 
@@ -3757,7 +3757,7 @@ redo:
 				{
 
 					if (!twoPlayerLinked)
-						blit_sprite2(VGAScreen, this_player->x + (shipGr_ == 0) + 1, this_player->y - 13, eShapes[5], 77 + chargeLevel + chargeGr * 19);
+						blit_sprite2(VGAScreen, this_player->x + (shipGr_ == 0) + 1, this_player->y - 13, spriteSheet10, 77 + chargeLevel + chargeGr * 19);
 
 					if (chargeGrWait > 0)
 					{
@@ -4043,9 +4043,9 @@ redo:
 				const uint sprite = this_option->gr[this_player->sidekick[i].animation_frame] + this_player->sidekick[i].charge;
 
 				if (this_player->sidekick[i].style == 1 || this_player->sidekick[i].style == 2)
-					blit_sprite2x2(VGAScreen, x - 6, y, eShapes[5], sprite);
+					blit_sprite2x2(VGAScreen, x - 6, y, spriteSheet10, sprite);
 				else
-					blit_sprite2(VGAScreen, x, y, shapes9, sprite);
+					blit_sprite2(VGAScreen, x, y, spriteSheet9, sprite);
 			}
 
 			if (--this_player->sidekick[i].charge_ticks == 0)

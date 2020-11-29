@@ -103,7 +103,7 @@ void JE_mouseStart( void )
 		
 		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 		
-		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, shapes6, mouseCursorGr[mouseCursor]);
+		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, shopSpriteSheet, mouseCursorGr[mouseCursor]);
 	 }
 }
 

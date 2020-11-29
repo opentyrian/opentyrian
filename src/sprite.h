@@ -53,7 +53,7 @@ typedef struct
 }
 Sprite_array;
 
-extern Sprite_array sprite_table[SPRITE_TABLES_MAX];
+extern Sprite_array sprite_table[SPRITE_TABLES_MAX];  // fka shapearray, shapex, shapey, shapesize, shapexist, maxshape
 
 static inline Sprite *sprite( unsigned int table, unsigned int index )
 {
@@ -75,7 +75,7 @@ static inline Uint16 get_sprite_height( unsigned int table, unsigned int index )
 	return (sprite_exists(table, index) ? sprite(table, index)->height : 0);
 }
 
-void load_sprites_file( unsigned table, const char *filename );
+void load_sprites_file( unsigned int table, const char *filename );
 void load_sprites( unsigned int table, FILE *f );
 void free_sprites( unsigned int table );
 
@@ -88,15 +88,32 @@ void blit_sprite_dark( SDL_Surface *, int x, int y, unsigned int table, unsigned
 
 typedef struct
 {
-	unsigned int size;
+	size_t size;
 	Uint8 *data;
 }
 Sprite2_array;
 
-extern Sprite2_array eShapes[6];
-extern Sprite2_array shapesC1, shapes6, shapes9, shapesW2;
+// Shop icons and arrows sprite sheet.
+extern Sprite2_array shopSpriteSheet;  // fka shapes6
 
-void JE_loadCompShapes( Sprite2_array *, JE_char s );
+// Explosions sprite sheet.
+extern Sprite2_array explosionSpriteSheet;  // fka shapes6
+
+// Enemy sprite sheet banks.
+extern Sprite2_array enemySpriteSheets[4];  // fka eShapes1, eShapes2, eShapes3, eShapes4
+extern Uint8 enemySpriteSheetIds[4];  // fka enemyShapeTables
+
+// Destruct sprite sheet.
+extern Sprite2_array destructSpriteSheet;  // fka shapes6
+
+// Static sprite sheets.  Player shots, player ships, power-ups, coins, etc.
+extern Sprite2_array spriteSheet8;  // fka shapesC1
+extern Sprite2_array spriteSheet9;  // fka shapes9
+extern Sprite2_array spriteSheet10;  // fka eShapes6
+extern Sprite2_array spriteSheet11;  // fka eShapes5
+extern Sprite2_array spriteSheet12;  // fka shapesW2
+
+void JE_loadCompShapes( Sprite2_array *, char s );
 void JE_loadCompShapesB( Sprite2_array *, FILE *f );
 void free_sprite2s( Sprite2_array * );
 

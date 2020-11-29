@@ -98,9 +98,9 @@ void simulate_player_shots( void )
 					if (anim_frame > 1000)
 						anim_frame = anim_frame % 1000;
 					if (anim_frame > 500)
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, anim_frame - 500);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, spriteSheet12, anim_frame - 500);
 					else
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, anim_frame);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, spriteSheet8, anim_frame);
 				}
 			}
 
@@ -288,14 +288,14 @@ bool player_shot_move_and_draw(
 			if (sprite_frame > 500)
 			{
 				if (background2 && *out_shoty + shadowYDist < 190 && tmp_shotXM < 100)
-					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, shapesW2, sprite_frame - 500);
-				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, shapesW2, sprite_frame - 500);
+					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, spriteSheet12, sprite_frame - 500);
+				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, spriteSheet12, sprite_frame - 500);
 			}
 			else
 			{
 				if (background2 && *out_shoty + shadowYDist < 190 && tmp_shotXM < 100)
-					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, shapesC1, sprite_frame);
-				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, shapesC1, sprite_frame);
+					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, spriteSheet8, sprite_frame);
+				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, spriteSheet8, sprite_frame);
 			}
 		}
 	}
