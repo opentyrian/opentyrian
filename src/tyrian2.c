@@ -3612,6 +3612,8 @@ trentWinsGame:
 
 void intro_logos( void )
 {
+	moveTyrianLogoUp = true;
+
 	SDL_FillRect(VGAScreen, NULL, 0);
 
 	fade_white(50);
