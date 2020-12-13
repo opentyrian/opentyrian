@@ -24,6 +24,7 @@
 #include "mouse.h"
 #include "palette.h"
 #include "sprite.h"
+#include "vga256d.h"
 #include "video.h"
 
 #include <stdio.h>
@@ -55,6 +56,17 @@ bool xmas_prompt( void )
 
 	bool restart = true;
 
+	struct
+	{
+		Sint16 x;
+		Sint16 y;
+		Uint8 dyAcc;
+		Uint8 dyAdd;
+	}
+	flakes[80];
+
+	static const Uint8 dyDen = 128;
+
 	const int xCenter = 320 / 2;
 	const int yPrompt = 85;
 	const int dyPrompt = 15;
@@ -63,44 +75,79 @@ bool xmas_prompt( void )
 	const int hChoice = 13;
 	
 	size_t selectedIndex = 0;
-	
+
 	for (; ; )
 	{
-		if (restart)
-		{
-			// Draw prompt.
-			for (uint i = 0; i < COUNTOF(prompt); ++i)
-				draw_font_hv(VGAScreen, xCenter, yPrompt + dyPrompt * i, prompt[i], normal_font, centered, (i % 2) ? 2 : 4, -2);
-		}
-
-		// Draw choices.
-		for (size_t i = 0; i < COUNTOF(choices); ++i)
-		{
-			const int x = xCenter - wChoice / 2 + wChoice * (int)i;
-
-			const bool selected = (selectedIndex == i);
-
-			draw_font_hv(VGAScreen, x, yChoice, choices[i], normal_font, centered, 15, selected ? -2 : -4);
-		}
-
-		if (restart)
-		{
-			mouseCursor = MOUSE_POINTER_NORMAL;
-
-			fade_palette(palettes[0], 10, 0, 255);
-
-			restart = false;
-		}
-
-		service_SDL_events(true);
-
-		JE_mouseStart();
-		JE_showVGA();
-		JE_mouseReplace();
-
 		bool mouseMoved = false;
 		do
 		{
+			if (restart)
+			{
+				for (size_t i = 0; i < COUNTOF(flakes); ++i)
+				{
+					flakes[i].y = 200 + rand() % 200;
+					flakes[i].dyAdd = dyDen / 2 + i * dyDen / COUNTOF(flakes);
+				}
+			}
+
+			for (size_t i = 0; i < COUNTOF(flakes); ++i)
+			{
+				if (flakes[i].y >= 200)
+				{
+					flakes[i].x = rand() % 320;
+					flakes[i].y = 200 - 14 - flakes[i].y;
+					flakes[i].dyAcc = flakes[i].dyAdd;
+				}
+
+				int temp = rand() & 0xF;
+				if ((temp & 0xE) == 0)
+					flakes[i].x += (temp & 1) * 2 - 1;
+
+				Uint16 dyNum = flakes[i].dyAcc + flakes[i].dyAdd;
+				Uint8 dy = dyNum / dyDen;
+				flakes[i].dyAcc = dyNum % dyDen;
+				flakes[i].y += dy;
+			}
+
+			fill_rectangle_wh(VGAScreen, 0, 0, 320, 200, 0x8F);
+
+			// Draw background snowflakes.
+			for (size_t i = 0; i < COUNTOF(flakes) * 2 / 3; ++i)
+				blit_sprite2_blend(VGAScreen, flakes[i].x, flakes[i].y, spriteSheet8, 225);
+
+			// Draw prompt.
+			for (uint i = 0; i < COUNTOF(prompt); ++i)
+				draw_font_hv_full_shadow(VGAScreen, xCenter, yPrompt + dyPrompt * i, prompt[i], normal_font, centered, (i % 2) ? 2 : 4, -2, true, 1);
+
+			// Draw choices.
+			for (size_t i = 0; i < COUNTOF(choices); ++i)
+			{
+				const int x = xCenter - wChoice / 2 + wChoice * (int)i;
+
+				const bool selected = (selectedIndex == i);
+
+				draw_font_hv_full_shadow(VGAScreen, x, yChoice, choices[i], normal_font, centered, 15, selected ? -2 : -4, true, 1);
+			}
+
+			// Draw foreground snowflakes.
+			for (size_t i = COUNTOF(flakes) * 2 / 3; i < COUNTOF(flakes); ++i)
+				blit_sprite2_blend(VGAScreen, flakes[i].x, flakes[i].y, spriteSheet8, 226);
+
+			if (restart)
+			{
+				mouseCursor = MOUSE_POINTER_NORMAL;
+
+				fade_palette(palettes[0], 10, 0, 255);
+
+				restart = false;
+			}
+
+			service_SDL_events(true);
+
+			JE_mouseStart();
+			JE_showVGA();
+			JE_mouseReplace();
+
 			SDL_Delay(16);
 
 			Uint16 oldMouseX = mouse_x;
