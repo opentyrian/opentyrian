@@ -23,6 +23,15 @@
 
 #include "SDL.h"
 
+enum
+{
+	MOUSE_POINTER_NORMAL = 0,
+	MOUSE_POINTER_UP,
+	MOUSE_POINTER_DOWN,
+	MOUSE_POINTER_LEFT,
+	MOUSE_POINTER_RIGHT,
+};
+
 extern bool has_mouse;
 extern bool mouse_has_three_buttons;
 

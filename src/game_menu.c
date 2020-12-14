@@ -829,7 +829,7 @@ void JE_itemScreen( void )
 
 				NETWORK_KEEP_ALIVE();
 
-				mouseCursor = 0;
+				mouseCursor = MOUSE_POINTER_NORMAL;
 
 				col += colC;
 				if (col < -2 || col > 6)
@@ -843,9 +843,9 @@ void JE_itemScreen( void )
 					if (mouseX > 164 && mouseX < 299 && mouseY > 47 && mouseY < 153)
 					{
 						if (mouseY > 100)
-							mouseCursor = 2;
+							mouseCursor = MOUSE_POINTER_DOWN;
 						else
-							mouseCursor = 1;
+							mouseCursor = MOUSE_POINTER_UP;
 					}
 
 					fill_rectangle_xy(VGAScreen, 160, 49, 310, 158, 228);
@@ -1033,10 +1033,10 @@ void JE_itemScreen( void )
 
 				if (curMenu == MENU_DATA_CUBE_SUB)
 				{
-					if (mouseButton > 0 && mouseCursor >= 1)
+					if (mouseButton > 0 && mouseCursor != MOUSE_POINTER_NORMAL)
 					{
 						inputDetected = false;
-						if (mouseCursor == 1)
+						if (mouseCursor == MOUSE_POINTER_UP)
 						{
 							yChg = -1;
 						} else {

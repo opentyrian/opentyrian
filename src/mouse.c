@@ -90,20 +90,42 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	}
 }
 
+typedef struct
+{
+	Uint16 index;
+	Uint8 x;
+	Uint8 y;
+	Uint8 w;
+	Uint8 h;
+	Uint8 fx;
+	Uint8 fy;
+} MousePointerSpriteInfo;
+
+static const MousePointerSpriteInfo mousePointerSprites[] = // fka mouseCursorGr
+{
+	{ 273, 0, 0, 11, 16,  0,  0 },
+	{ 275, 0, 0, 21, 16, 10,  8 },
+	{ 277, 0, 0, 21, 16, 10,  7 },
+	{ 279, 0, 0, 16, 21,  8, 10 },
+	{ 281, 8, 0, 16, 21,  7, 10 },
+};
+
 void JE_mouseStart( void )
 {
-	const JE_word mouseCursorGr[3] /* [1..3] */ = {273, 275, 277};
-	
 	if (has_mouse)
 	{
 		service_SDL_events(false);
+
 		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
-		lastMouseX = MIN(mouse_x, 320 - 13);
-		lastMouseY = MIN(mouse_y, 200 - 16);
-		
+
+		const MousePointerSpriteInfo *spriteInfo = &mousePointerSprites[mouseCursor];
+
+		lastMouseX = MIN(MAX(spriteInfo->fx, mouse_x), 320 - (spriteInfo->w - spriteInfo->fx)) - spriteInfo->fx;
+		lastMouseY = MIN(MAX(spriteInfo->fy, mouse_y), 200 - (spriteInfo->h - spriteInfo->fy)) - spriteInfo->fy;
+
 		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
 		
-		blit_sprite2x2(VGAScreen, lastMouseX, lastMouseY, shopSpriteSheet, mouseCursorGr[mouseCursor]);
+		blit_sprite2x2(VGAScreen, lastMouseX - spriteInfo->x, lastMouseY - spriteInfo->y, shopSpriteSheet, spriteInfo->index);
 	 }
 }
 
