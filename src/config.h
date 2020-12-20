@@ -37,6 +37,21 @@
 /*#define SAVE_FILES_SIZE (2502 - 4)
 #define SAVE_FILE_SIZE (SAVE_FILES_SIZE)*/
 
+enum
+{
+	DIFFICULTY_WIMP = 0,
+	DIFFICULTY_EASY,
+	DIFFICULTY_NORMAL,
+	DIFFICULTY_HARD,
+	DIFFICULTY_IMPOSSIBLE,
+	DIFFICULTY_INSANITY,
+	DIFFICULTY_SUICIDE,
+	DIFFICULTY_MANIACAL,
+	DIFFICULTY_ZINGLON,  // aka Lord of the Game
+	DIFFICULTY_NORTANEOUS,
+	DIFFICULTY_10,
+};
+
 // NOTE: Do not reorder.  This ordering corresponds to the keyboard
 //       configuration menu and to the bits stored in demo files.
 enum

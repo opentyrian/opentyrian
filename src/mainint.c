@@ -1717,44 +1717,44 @@ void adjust_difficulty( void )
 	if (twoPlayerMode)
 	{
 		if (adjusted_score < 10000)
-			new_difficulty = 1;  // Easy
+			new_difficulty = DIFFICULTY_EASY;
 		else if (adjusted_score < 20000)
-			new_difficulty = 2;  // Normal
+			new_difficulty = DIFFICULTY_NORMAL;
 		else if (adjusted_score < 50000)
-			new_difficulty = 3;  // Hard
+			new_difficulty = DIFFICULTY_HARD;
 		else if (adjusted_score < 80000)
-			new_difficulty = 4;  // Impossible
+			new_difficulty = DIFFICULTY_IMPOSSIBLE;
 		else if (adjusted_score < 125000)
-			new_difficulty = 5;  // Insanity
+			new_difficulty = DIFFICULTY_INSANITY;
 		else if (adjusted_score < 200000)
-			new_difficulty = 6;  // Suicide
+			new_difficulty = DIFFICULTY_SUICIDE;
 		else if (adjusted_score < 400000)
-			new_difficulty = 7;  // Maniacal
+			new_difficulty = DIFFICULTY_MANIACAL;
 		else if (adjusted_score < 600000)
-			new_difficulty = 8;  // Zinglon
+			new_difficulty = DIFFICULTY_ZINGLON;
 		else
-			new_difficulty = 9;  // Nortaneous
+			new_difficulty = DIFFICULTY_NORTANEOUS;
 	}
 	else
 	{
 		if (adjusted_score < 40000)
-			new_difficulty = 1;  // Easy
+			new_difficulty = DIFFICULTY_EASY;
 		else if (adjusted_score < 70000)
-			new_difficulty = 2;  // Normal
+			new_difficulty = DIFFICULTY_NORMAL;
 		else if (adjusted_score < 150000)
-			new_difficulty = 3;  // Hard
+			new_difficulty = DIFFICULTY_HARD;
 		else if (adjusted_score < 300000)
-			new_difficulty = 4;  // Impossible
+			new_difficulty = DIFFICULTY_IMPOSSIBLE;
 		else if (adjusted_score < 600000)
-			new_difficulty = 5;  // Insanity
+			new_difficulty = DIFFICULTY_INSANITY;
 		else if (adjusted_score < 1000000)
-			new_difficulty = 6;  // Suicide
+			new_difficulty = DIFFICULTY_SUICIDE;
 		else if (adjusted_score < 2000000)
-			new_difficulty = 7;  // Maniacal
+			new_difficulty = DIFFICULTY_MANIACAL;
 		else if (adjusted_score < 3000000)
-			new_difficulty = 8;  // Zinglon
+			new_difficulty = DIFFICULTY_ZINGLON;
 		else
-			new_difficulty = 9;  // Nortaneous
+			new_difficulty = DIFFICULTY_NORTANEOUS;
 	}
 
 	difficultyLevel = MAX((unsigned)difficultyLevel, new_difficulty);
@@ -1769,7 +1769,7 @@ bool load_next_demo( void )
 	snprintf(demo_filename, sizeof(demo_filename), "demo.%d", demo_num);
 	demo_file = dir_fopen_die(data_dir(), demo_filename, "rb"); // TODO: only play demos from existing file (instead of dying)
 
-	difficultyLevel = 2;
+	difficultyLevel = DIFFICULTY_NORMAL;
 	bonusLevelCurrent = false;
 
 	Uint8 temp;
@@ -3786,7 +3786,7 @@ redo:
 							chargeLevel++;
 
 						chargeWait = 28 - this_player->items.weapon[REAR_WEAPON].power * 2;
-						if (difficultyLevel > 3)
+						if (difficultyLevel > DIFFICULTY_HARD)
 							chargeWait -= 5;
 					}
 

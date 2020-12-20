@@ -367,10 +367,10 @@ enemy_still_exists:
 					if (--enemy[i].eshotwait[j-1] == 0 && temp3)
 					{
 						enemy[i].eshotwait[j-1] = enemy[i].freq[j-1];
-						if (difficultyLevel > 2)
+						if (difficultyLevel > DIFFICULTY_NORMAL)
 						{
 							enemy[i].eshotwait[j-1] = (enemy[i].eshotwait[j-1] / 2) + 1;
-							if (difficultyLevel > 7)
+							if (difficultyLevel > DIFFICULTY_MANIACAL)
 								enemy[i].eshotwait[j-1] = (enemy[i].eshotwait[j-1] / 2) + 1;
 						}
 
@@ -413,7 +413,7 @@ enemy_still_exists:
 							}
 							break;
 						case 255: /* Magneto RePulse!! */
-							if (difficultyLevel != 1) /*DIF*/
+							if (difficultyLevel != DIFFICULTY_EASY) /*DIF*/
 							{
 								if (j == 3)
 								{
@@ -500,7 +500,7 @@ enemy_still_exists:
 									int aim = weapons[temp3].aim;
 
 									/*DIF*/
-									if (difficultyLevel > 2)
+									if (difficultyLevel > DIFFICULTY_NORMAL)
 									{
 										aim += difficultyLevel - 2;
 									}
@@ -735,8 +735,8 @@ start_level_first:
 	oldDifficultyLevel = difficultyLevel;
 	if (episodeNum == EPISODE_AVAILABLE)
 		difficultyLevel--;
-	if (difficultyLevel < 1)
-		difficultyLevel = 1;
+	if (difficultyLevel < DIFFICULTY_EASY)
+		difficultyLevel = DIFFICULTY_EASY;
 
 	player[0].x = 100;
 	player[0].y = 180;
@@ -1066,7 +1066,7 @@ start_level_first:
 
 	if (galagaMode)
 	{
-		difficultyLevel = 2;
+		difficultyLevel = DIFFICULTY_NORMAL;
 	}
 	galagaLife = 10000;
 
@@ -2697,7 +2697,7 @@ new_game:
 							{
 								// if completed Zinglon's Revenge, show SuperTyrian and Destruct codes
 								// if completed SuperTyrian, show Nort-Ship Z code
-								superArcadeMode = (initialDifficulty == 8) ? 8 : 1;
+								superArcadeMode = (initialDifficulty == DIFFICULTY_ZINGLON) ? 8 : 1;
 							}
 
 							if (superArcadeMode < SA_ENGAGE)
@@ -2982,7 +2982,7 @@ new_game:
 						break;
 
 					case 'H':
-						if (initialDifficulty < 3)
+						if (initialDifficulty < DIFFICULTY_HARD)
 						{
 							mainLevel = atoi(s + 4);
 							jumpSection = true;
@@ -2990,7 +2990,7 @@ new_game:
 						break;
 
 					case 'h':
-						if (initialDifficulty > 2)
+						if (initialDifficulty > DIFFICULTY_NORMAL)
 						{
 							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 						}
@@ -3430,16 +3430,16 @@ bool JE_titleScreen( JE_boolean animate )
 								JE_playSampleNum(V_DATA_CUBE);
 								JE_whoa();
 
-								initialDifficulty = keysactive[SDL_SCANCODE_SCROLLLOCK] ? 6 : 8;
+								initialDifficulty = keysactive[SDL_SCANCODE_SCROLLLOCK] ? DIFFICULTY_SUICIDE : DIFFICULTY_ZINGLON;
 
 								JE_clr256(VGAScreen);
 								JE_outText(VGAScreen, 10, 10, "Cheat codes have been disabled.", 15, 4);
-								if (initialDifficulty == 8)
+								if (initialDifficulty == DIFFICULTY_ZINGLON)
 									JE_outText(VGAScreen, 10, 20, "Difficulty level has been set to Lord of Game.", 15, 4);
 								else
 									JE_outText(VGAScreen, 10, 20, "Difficulty level has been set to Suicide.", 15, 4);
 								JE_outText(VGAScreen, 10, 30, "It is imperative that you discover the special codes.", 15, 4);
-								if (initialDifficulty == 8)
+								if (initialDifficulty == DIFFICULTY_ZINGLON)
 									JE_outText(VGAScreen, 10, 40, "(Next time, for an easier challenge hold down SCROLL LOCK.)", 15, 4);
 								JE_outText(VGAScreen, 10, 60, "Prepare to play...", 15, 4);
 
@@ -3907,31 +3907,31 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 		switch (difficultyLevel)
 		{
 		case -1:
-		case 0:
+		case DIFFICULTY_WIMP:
 			tempValue = enemyDat[eDatI].value * 0.75f;
 			break;
-		case 1:
-		case 2:
+		case DIFFICULTY_EASY:
+		case DIFFICULTY_NORMAL:
 			tempValue = enemyDat[eDatI].value;
 			break;
-		case 3:
+		case DIFFICULTY_HARD:
 			tempValue = enemyDat[eDatI].value * 1.125f;
 			break;
-		case 4:
+		case DIFFICULTY_IMPOSSIBLE:
 			tempValue = enemyDat[eDatI].value * 1.5f;
 			break;
-		case 5:
+		case DIFFICULTY_INSANITY:
 			tempValue = enemyDat[eDatI].value * 2;
 			break;
-		case 6:
+		case DIFFICULTY_SUICIDE:
 			tempValue = enemyDat[eDatI].value * 2.5f;
 			break;
-		case 7:
-		case 8:
+		case DIFFICULTY_MANIACAL:
+		case DIFFICULTY_ZINGLON:
 			tempValue = enemyDat[eDatI].value * 4;
 			break;
-		case 9:
-		case 10:
+		case DIFFICULTY_NORTANEOUS:
+		case DIFFICULTY_10:
 			tempValue = enemyDat[eDatI].value * 8;
 			break;
 		}
@@ -3952,35 +3952,35 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 			switch (difficultyLevel)
 			{
 			case -1:
-			case 0:
+			case DIFFICULTY_WIMP:
 				tempArmor = enemyDat[eDatI].armor * 0.5f + 1;
 				break;
-			case 1:
+			case DIFFICULTY_EASY:
 				tempArmor = enemyDat[eDatI].armor * 0.75f + 1;
 				break;
-			case 2:
+			case DIFFICULTY_NORMAL:
 				tempArmor = enemyDat[eDatI].armor;
 				break;
-			case 3:
+			case DIFFICULTY_HARD:
 				tempArmor = enemyDat[eDatI].armor * 1.2f;
 				break;
-			case 4:
+			case DIFFICULTY_IMPOSSIBLE:
 				tempArmor = enemyDat[eDatI].armor * 1.5f;
 				break;
-			case 5:
+			case DIFFICULTY_INSANITY:
 				tempArmor = enemyDat[eDatI].armor * 1.8f;
 				break;
-			case 6:
+			case DIFFICULTY_SUICIDE:
 				tempArmor = enemyDat[eDatI].armor * 2;
 				break;
-			case 7:
+			case DIFFICULTY_MANIACAL:
 				tempArmor = enemyDat[eDatI].armor * 3;
 				break;
-			case 8:
+			case DIFFICULTY_ZINGLON:
 				tempArmor = enemyDat[eDatI].armor * 4;
 				break;
-			case 9:
-			case 10:
+			case DIFFICULTY_NORTANEOUS:
+			case DIFFICULTY_10:
 				tempArmor = enemyDat[eDatI].armor * 8;
 				break;
 			}
@@ -4705,10 +4705,10 @@ void JE_eventSystem( void )
 		if (eventRec[eventLoc-1].eventdat2 == 0 || twoPlayerMode || onePlayerAction)
 		{
 			difficultyLevel += eventRec[eventLoc-1].eventdat;
-			if (difficultyLevel < 1)
-				difficultyLevel = 1;
-			if (difficultyLevel > 10)
-				difficultyLevel = 10;
+			if (difficultyLevel < DIFFICULTY_EASY)
+				difficultyLevel = DIFFICULTY_EASY;
+			if (difficultyLevel > DIFFICULTY_10)
+				difficultyLevel = DIFFICULTY_10;
 		}
 		break;
 
@@ -4818,7 +4818,7 @@ void JE_eventSystem( void )
 		break;
 
 	case 64:
-		if (!(eventRec[eventLoc-1].eventdat == 6 && twoPlayerMode && difficultyLevel > 2))
+		if (!(eventRec[eventLoc-1].eventdat == 6 && twoPlayerMode && difficultyLevel > DIFFICULTY_NORMAL))
 		{
 			smoothies[eventRec[eventLoc-1].eventdat-1] = eventRec[eventLoc-1].eventdat2;
 			temp = eventRec[eventLoc-1].eventdat;

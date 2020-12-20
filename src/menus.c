@@ -240,9 +240,9 @@ bool select_difficulty( void )
 
 				if (difficultyLevel == 6)
 				{
-					difficultyLevel = 8;
+					difficultyLevel = DIFFICULTY_ZINGLON;
 				} else if (difficultyLevel == 5) {
-					difficultyLevel = 6;
+					difficultyLevel = DIFFICULTY_SUICIDE;
 				}
 				return true;
 
