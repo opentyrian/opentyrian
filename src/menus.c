@@ -20,243 +20,653 @@
 
 #include "config.h"
 #include "episodes.h"
+#include "font.h"
 #include "fonthand.h"
+#include "joystick.h"
 #include "keyboard.h"
+#include "mouse.h"
+#include "network.h"
 #include "nortsong.h"
 #include "opentyr.h"
 #include "palette.h"
 #include "picload.h"
-#include "setup.h"
 #include "sprite.h"
+#include "vga256d.h"
 #include "video.h"
 
-char episode_name[6][31], difficulty_name[7][21], gameplay_name[GAMEPLAY_NAME_COUNT][26];
+char episode_name[6][31];
+char difficulty_name[7][21];
+char gameplay_name[5][26];
 
-bool select_gameplay( void )
+bool gameplaySelect( void )
 {
-	JE_loadPic(VGAScreen, 2, false);
-	JE_dString(VGAScreen, JE_fontCenter(gameplay_name[0], FONT_SHAPES), 20, gameplay_name[0], FONT_SHAPES);
+	enum MenuItemIndex
+	{
+		MENU_ITEM_1_PLAYER_FULL_GAME = 0,
+		MENU_ITEM_1_PLAYER_ARCADE,
+		MENU_ITEM_2_PLAYER_ARCADE,
+		MENU_ITEM_NETWORK,
+	};
 
-	int gameplay = 1,
-	    gameplay_max = GAMEPLAY_NAME_COUNT - 1;
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites
 
-	bool fade_in = true;
+	bool restart = true;
+
+	const size_t menuItemsCount = COUNTOF(gameplay_name) - 1;
+	size_t selectedIndex = MENU_ITEM_1_PLAYER_FULL_GAME;
+
+	const int xCenter = 320 / 2;
+	const int yMenuHeader = 20;
+	const int yMenuItems = 54;
+	const int dyMenuItems = 24;
+	const int hMenuItem = 13;
+	int wMenuItem[COUNTOF(gameplay_name) - 1] = { 0 };
+
 	for (; ; )
 	{
-		for (int i = 1; i <= gameplay_max; i++)
+		if (restart)
 		{
-			JE_outTextAdjust(VGAScreen, JE_fontCenter(gameplay_name[i], SMALL_FONT_SHAPES), i * 24 + 30, gameplay_name[i], 15, -4 + (i == gameplay ? 2 : 0) - (i == (GAMEPLAY_NAME_COUNT - 1) ? 4 : 0), SMALL_FONT_SHAPES, true);
-		}
-		JE_showVGA();
+			JE_loadPic(VGAScreen2, 2, false);
 
-		if (fade_in)
+			// Draw header.
+			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, gameplay_name[0], large_font, centered, 15, -3, false, 2);
+		}
+
+		// Restore background and header.
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, (size_t)VGAScreen->pitch * VGAScreen->h);
+
+		// Draw menu items.
+		for (size_t i = 0; i < menuItemsCount; ++i)
 		{
+			const char *const text = gameplay_name[i + 1];
+
+			wMenuItem[i] = JE_textWidth(text, normal_font);
+			const int x = xCenter - wMenuItem[i] / 2;
+			const int y = yMenuItems + dyMenuItems * i;
+
+			const bool selected = i == selectedIndex;
+			const bool disabled = i == MENU_ITEM_NETWORK;
+
+			draw_font_hv_shadow(VGAScreen, x, y, text, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+		}
+
+		if (restart)
+		{
+			mouseCursor = MOUSE_POINTER_NORMAL;
+
 			fade_palette(colors, 10, 0, 255);
-			fade_in = false;
+
+			restart = false;
 		}
 
-		JE_word temp = 0;
-		JE_textMenuWait(&temp, false);
+		service_SDL_events(true);
 
-		if (newkey)
+		JE_mouseStart();
+		JE_showVGA();
+		JE_mouseReplace();
+
+		bool mouseMoved = false;
+		do
+		{
+			SDL_Delay(16);
+
+			Uint16 oldMouseX = mouse_x;
+			Uint16 oldMouseY = mouse_y;
+
+			push_joysticks_as_keyboard();
+			service_SDL_events(false);
+
+			mouseMoved = mouse_x != oldMouseX || mouse_y != oldMouseY;
+		} while (!(newkey || newmouse || mouseMoved));
+
+		// Handle interaction.
+
+		bool action = false;
+		bool cancel = false;
+
+		if (mouseMoved || newmouse)
+		{
+			// Find menu item that was hovered or clicked.
+			for (size_t i = 0; i < menuItemsCount; ++i)
+			{
+				const int xMenuItem = xCenter - wMenuItem[i] / 2;
+				if (mouse_x >= xMenuItem && mouse_x < xMenuItem + wMenuItem[i])
+				{
+					const int yMenuItem = yMenuItems + dyMenuItems * i;
+					if (mouse_y >= yMenuItem && mouse_y < yMenuItem + hMenuItem)
+					{
+						if (selectedIndex != i)
+						{
+							JE_playSampleNum(S_CURSOR);
+
+							selectedIndex = i;
+						}
+
+						if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
+						    lastmouse_x >= xMenuItem && lastmouse_x < xMenuItem + wMenuItem[i] &&
+						    lastmouse_y >= yMenuItem && lastmouse_y < yMenuItem + hMenuItem)
+						{
+							action = true;
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (newmouse)
+		{
+			if (lastmouse_but == SDL_BUTTON_RIGHT)
+			{
+				JE_playSampleNum(S_SPRING);
+
+				cancel = true;
+			}
+		}
+		else if (newkey)
 		{
 			switch (lastkey_scan)
 			{
 			case SDL_SCANCODE_UP:
-				if (--gameplay < 1)
-					gameplay = gameplay_max;
+			{
 				JE_playSampleNum(S_CURSOR);
+
+				selectedIndex = selectedIndex == 0
+					? menuItemsCount - 1
+					: selectedIndex - 1;
 				break;
+			}
 			case SDL_SCANCODE_DOWN:
-				if (++gameplay > gameplay_max)
-					gameplay = 1;
+			{
 				JE_playSampleNum(S_CURSOR);
+
+				selectedIndex = selectedIndex == menuItemsCount - 1
+					? 0
+					: selectedIndex + 1;
 				break;
-
+			}
+			case SDL_SCANCODE_SPACE:
 			case SDL_SCANCODE_RETURN:
-				if (gameplay == GAMEPLAY_NAME_COUNT - 1)
-				{
-					JE_playSampleNum(S_SPRING);
-					/* TODO: NETWORK */
-					fprintf(stderr, "error: networking via menu not implemented\n");
-					break;
-				}
-				JE_playSampleNum(S_SELECT);
-				fade_black(10);
-
-				onePlayerAction = (gameplay == 2);
-				twoPlayerMode = (gameplay == GAMEPLAY_NAME_COUNT - 2);
-				return true;
-
+			{
+				action = true;
+				break;
+			}
 			case SDL_SCANCODE_ESCAPE:
+			{
 				JE_playSampleNum(S_SPRING);
-				/* fading handled elsewhere
-				fade_black(10); */
 
-				return false;
-
+				cancel = true;
+				break;
+			}
 			default:
 				break;
 			}
 		}
+
+		if (action)
+		{
+			switch (selectedIndex)
+			{
+			case MENU_ITEM_1_PLAYER_FULL_GAME:
+			case MENU_ITEM_1_PLAYER_ARCADE:
+			case MENU_ITEM_2_PLAYER_ARCADE:
+			{
+				JE_playSampleNum(S_SELECT);
+
+				fade_black(10);
+
+				onePlayerAction = selectedIndex == MENU_ITEM_1_PLAYER_ARCADE;
+				twoPlayerMode = selectedIndex == MENU_ITEM_2_PLAYER_ARCADE;
+				return true;
+			}
+			case MENU_ITEM_NETWORK:
+			{
+				JE_playSampleNum(S_SPRING);
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (cancel)
+		{
+			fade_black(15);
+
+			return false;
+		}
 	}
 }
 
-bool select_episode( void )
+bool episodeSelect( void )
 {
-	JE_loadPic(VGAScreen, 2, false);
-	JE_dString(VGAScreen, JE_fontCenter(episode_name[0], FONT_SHAPES), 20, episode_name[0], FONT_SHAPES);
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites
 
-	int episode = 1, episode_max = EPISODE_AVAILABLE;
+	bool restart = true;
 
-	bool fade_in = true;
+	const size_t menuItemsCount = EPISODE_AVAILABLE;
+	size_t selectedIndex = 0;
+
+	const int xCenter = 320 / 2;
+	const int yMenuHeader = 20;
+	const int xMenuItem = 20;
+	const int yMenuItems = 50;
+	const int dyMenuItems = 30;
+	const int hMenuItem = 13;
+	int wMenuItem[EPISODE_AVAILABLE] = { 0 };
+
 	for (; ; )
 	{
-		for (int i = 1; i <= episode_max; i++)
+		if (restart)
 		{
-			JE_outTextAdjust(VGAScreen, 20, i * 30 + 20, episode_name[i], 15, -4 + (i == episode ? 2 : 0) - (!episodeAvail[i - 1] ? 4 : 0), SMALL_FONT_SHAPES, true);
-		}
-		JE_showVGA();
+			JE_loadPic(VGAScreen2, 2, false);
 
-		if (fade_in)
+			// Draw header.
+			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, episode_name[0], large_font, centered, 15, -3, false, 2);
+		}
+
+		// Restore background and header.
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, (size_t)VGAScreen->pitch * VGAScreen->h);
+
+		// Draw menu items.
+		for (size_t i = 0; i < menuItemsCount; ++i)
 		{
+			const char *const text = episode_name[i + 1];
+
+			wMenuItem[i] = JE_textWidth(text, normal_font);
+			const int y = yMenuItems + dyMenuItems * i;
+
+			const bool selected = i == selectedIndex;
+			const bool disabled = !episodeAvail[i];
+
+			draw_font_hv_shadow(VGAScreen, xMenuItem, y, text, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+		}
+
+		if (restart)
+		{
+			mouseCursor = MOUSE_POINTER_NORMAL;
+
 			fade_palette(colors, 10, 0, 255);
-			fade_in = false;
+
+			restart = false;
 		}
 
-		JE_word temp = 0;
-		JE_textMenuWait(&temp, false);
+		service_SDL_events(true);
 
-		if (newkey)
+		JE_mouseStart();
+		JE_showVGA();
+		JE_mouseReplace();
+
+		bool mouseMoved = false;
+		do
+		{
+			SDL_Delay(16);
+
+			Uint16 oldMouseX = mouse_x;
+			Uint16 oldMouseY = mouse_y;
+
+			push_joysticks_as_keyboard();
+			service_SDL_events(false);
+
+			NETWORK_KEEP_ALIVE();
+
+			mouseMoved = mouse_x != oldMouseX || mouse_y != oldMouseY;
+		} while (!(newkey || newmouse || mouseMoved));
+
+		// Handle interaction.
+
+		bool action = false;
+		bool cancel = false;
+
+		if (mouseMoved || newmouse)
+		{
+			// Find menu item that was hovered or clicked.
+			for (size_t i = 0; i < menuItemsCount; ++i)
+			{
+				if (mouse_x >= xMenuItem && mouse_x < xMenuItem + wMenuItem[i])
+				{
+					const int yMenuItem = yMenuItems + dyMenuItems * i;
+					if (mouse_y >= yMenuItem && mouse_y < yMenuItem + hMenuItem)
+					{
+						if (selectedIndex != i)
+						{
+							JE_playSampleNum(S_CURSOR);
+
+							selectedIndex = i;
+						}
+
+						if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
+						    lastmouse_x >= xMenuItem && lastmouse_x < xMenuItem + wMenuItem[i] &&
+						    lastmouse_y >= yMenuItem && lastmouse_y < yMenuItem + hMenuItem)
+						{
+							action = true;
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (newmouse)
+		{
+			if (lastmouse_but == SDL_BUTTON_RIGHT)
+			{
+				JE_playSampleNum(S_SPRING);
+
+				cancel = true;
+			}
+		}
+		else if (newkey)
 		{
 			switch (lastkey_scan)
 			{
 			case SDL_SCANCODE_UP:
-				episode--;
-				if (episode < 1)
-				{
-					episode = episode_max;
-				}
+			{
 				JE_playSampleNum(S_CURSOR);
-				break;
-			case SDL_SCANCODE_DOWN:
-				episode++;
-				if (episode > episode_max)
-				{
-					episode = 1;
-				}
-				JE_playSampleNum(S_CURSOR);
-				break;
 
+				selectedIndex = selectedIndex == 0
+					? menuItemsCount - 1
+					: selectedIndex - 1;
+				break;
+			}
+			case SDL_SCANCODE_DOWN:
+			{
+				JE_playSampleNum(S_CURSOR);
+
+				selectedIndex = selectedIndex == menuItemsCount - 1
+					? 0
+					: selectedIndex + 1;
+				break;
+			}
+			case SDL_SCANCODE_SPACE:
 			case SDL_SCANCODE_RETURN:
-				if (!episodeAvail[episode - 1])
-				{
-					JE_playSampleNum(S_SPRING);
-					break;
-				}
+			{
+				action = true;
+				break;
+			}
+			case SDL_SCANCODE_ESCAPE:
+			{
+				JE_playSampleNum(S_SPRING);
+
+				cancel = true;
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (action)
+		{
+			if (episodeAvail[selectedIndex])
+			{
 				JE_playSampleNum(S_SELECT);
+
 				fade_black(10);
 
-				JE_initEpisode(episode);
+				JE_initEpisode(selectedIndex + 1);
 				initial_episode_num = episodeNum;
 				return true;
-
-			case SDL_SCANCODE_ESCAPE:
-				JE_playSampleNum(S_SPRING);
-				/* fading handled elsewhere
-				fade_black(10); */
-
-				return false;
-
-			default:
-				break;
 			}
+			else
+			{
+				JE_playSampleNum(S_SPRING);
+			}
+		}
+
+		if (cancel)
+		{
+			fade_black(15);
+
+			return false;
 		}
 	}
 }
 
-bool select_difficulty( void )
+bool difficultySelect( void )
 {
-	JE_loadPic(VGAScreen, 2, false);
-	JE_dString(VGAScreen, JE_fontCenter(difficulty_name[0], FONT_SHAPES), 20, difficulty_name[0], FONT_SHAPES);
+	if (shopSpriteSheet.data == NULL)
+		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites
 
-	difficultyLevel = 2;
-	int difficulty_max = 3;
+	bool restart = true;
 
-	bool fade_in = true;
+	const size_t menuItemsCount = COUNTOF(difficulty_name) - 1;
+	size_t menuItemsVisibleCount = menuItemsCount - 3;
+	size_t selectedIndex = 1;
+	size_t lordProgress = 0;
+
+	const int xCenter = 320 / 2;
+	const int yMenuHeader = 20;
+	const int yMenuItems = 54;
+	const int dyMenuItems = 24;
+	const int hMenuItem = 13;
+	int wMenuItem[COUNTOF(difficulty_name) - 1] = { 0 };
+
 	for (; ; )
 	{
-		for (int i = 1; i <= difficulty_max; i++)
+		if (restart)
 		{
-			JE_outTextAdjust(VGAScreen, JE_fontCenter(difficulty_name[i], SMALL_FONT_SHAPES), i * 24 + 30, difficulty_name[i], 15, -4 + (i == difficultyLevel ? 2 : 0), SMALL_FONT_SHAPES, true);
-		}
-		JE_showVGA();
+			JE_loadPic(VGAScreen2, 2, false);
 
-		if (fade_in)
+			// Draw header.
+			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, difficulty_name[0], large_font, centered, 15, -3, false, 2);
+		}
+
+		// Restore background and header.
+		memcpy(VGAScreen->pixels, VGAScreen2->pixels, (size_t)VGAScreen->pitch * VGAScreen->h);
+
+		// Draw menu items.
+		for (size_t i = 0; i < menuItemsVisibleCount; ++i)
 		{
+			const char *const text = difficulty_name[i + 1];
+
+			wMenuItem[i] = JE_textWidth(text, normal_font);
+			const int x = xCenter - wMenuItem[i] / 2;
+			const int y = yMenuItems + dyMenuItems * i;
+
+			const bool selected = i == selectedIndex;
+
+			draw_font_hv_shadow(VGAScreen, x, y, text, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0), false, 2);
+		}
+
+		if (restart)
+		{
+			mouseCursor = MOUSE_POINTER_NORMAL;
+
 			fade_palette(colors, 10, 0, 255);
-			fade_in = false;
+
+			restart = false;
 		}
 
-		JE_word temp = 0;
-		JE_textMenuWait(&temp, false);
+		service_SDL_events(true);
 
+		JE_mouseStart();
+		JE_showVGA();
+		JE_mouseReplace();
+
+		bool mouseMoved = false;
+		do
+		{
+			SDL_Delay(16);
+
+			Uint16 oldMouseX = mouse_x;
+			Uint16 oldMouseY = mouse_y;
+
+			push_joysticks_as_keyboard();
+			service_SDL_events(false);
+
+			NETWORK_KEEP_ALIVE();
+
+			mouseMoved = mouse_x != oldMouseX || mouse_y != oldMouseY;
+		} while (!(newkey || newmouse || mouseMoved));
+
+		// Handle interaction.
+
+		if (menuItemsVisibleCount == 5)
+		{
+			const SDL_Scancode lordKeys[] = { SDL_SCANCODE_L, SDL_SCANCODE_O, SDL_SCANCODE_R, SDL_SCANCODE_D };
+
+			for (size_t i = 0; ; ++i)
+			{
+				if (i == COUNTOF(lordKeys))
+				{
+					menuItemsVisibleCount = 6;
+					break;
+				}
+
+				if (!keysactive[lordKeys[i]])
+					break;
+			}
+
+			if (newkey)
+			{
+				// Due to key jamming, holding down 4 keys simultaneous may not be possible, so an
+				// alternate input method is also provided.
+				if (lordProgress < COUNTOF(lordKeys) &&
+					lastkey_scan == lordKeys[lordProgress])
+				{
+					lordProgress += 1;
+
+					if (lordProgress == COUNTOF(lordKeys))
+						menuItemsVisibleCount = 6;
+				}
+				else
+				{
+					lordProgress = 0;
+				}
+			}
+		}
 		if (SDL_GetModState() & KMOD_SHIFT)
 		{
-			if ((difficulty_max < 4 && keysactive[SDL_SCANCODE_G]) ||
-			    (difficulty_max == 4 && keysactive[SDL_SCANCODE_RIGHTBRACKET]))
-			{
-				difficulty_max++;
-			}
-		} else if (difficulty_max == 5 && keysactive[SDL_SCANCODE_L] && keysactive[SDL_SCANCODE_O] && keysactive[SDL_SCANCODE_R] && keysactive[SDL_SCANCODE_D]) {
-			difficulty_max++;
+			if (menuItemsVisibleCount == 4 && keysactive[SDL_SCANCODE_RIGHTBRACKET])
+				menuItemsVisibleCount = 5;
+			if (menuItemsVisibleCount == 3 && keysactive[SDL_SCANCODE_G])
+				menuItemsVisibleCount = 4;
 		}
 
-		if (newkey)
+		bool action = false;
+		bool cancel = false;
+
+		if (mouseMoved || newmouse)
+		{
+			// Find menu item that was hovered or clicked.
+			for (size_t i = 0; i < menuItemsVisibleCount; ++i)
+			{
+				const int xMenuItem = xCenter - wMenuItem[i] / 2;
+				if (mouse_x >= xMenuItem && mouse_x < xMenuItem + wMenuItem[i])
+				{
+					const int yMenuItem = yMenuItems + dyMenuItems * i;
+					if (mouse_y >= yMenuItem && mouse_y < yMenuItem + hMenuItem)
+					{
+						if (selectedIndex != i)
+						{
+							JE_playSampleNum(S_CURSOR);
+
+							selectedIndex = i;
+						}
+
+						if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
+						    lastmouse_x >= xMenuItem && lastmouse_x < xMenuItem + wMenuItem[i] &&
+						    lastmouse_y >= yMenuItem && lastmouse_y < yMenuItem + hMenuItem)
+						{
+							action = true;
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (newmouse)
+		{
+			if (lastmouse_but == SDL_BUTTON_RIGHT)
+			{
+				JE_playSampleNum(S_SPRING);
+
+				cancel = true;
+			}
+		}
+		else if (newkey)
 		{
 			switch (lastkey_scan)
 			{
 			case SDL_SCANCODE_UP:
-				difficultyLevel--;
-				if (difficultyLevel < 1)
-				{
-					difficultyLevel = difficulty_max;
-				}
+			{
 				JE_playSampleNum(S_CURSOR);
+
+				selectedIndex = selectedIndex == 0
+					? menuItemsVisibleCount - 1
+					: selectedIndex - 1;
 				break;
+			}
 			case SDL_SCANCODE_DOWN:
-				difficultyLevel++;
-				if (difficultyLevel > difficulty_max)
-				{
-					difficultyLevel = 1;
-				}
+			{
 				JE_playSampleNum(S_CURSOR);
+
+				selectedIndex = selectedIndex == menuItemsVisibleCount - 1
+					? 0
+					: selectedIndex + 1;
 				break;
-
+			}
+			case SDL_SCANCODE_SPACE:
 			case SDL_SCANCODE_RETURN:
-				JE_playSampleNum(S_SELECT);
-				/* fading handled elsewhere
-				fade_black(10); */
-
-				if (difficultyLevel == 6)
-				{
-					difficultyLevel = DIFFICULTY_ZINGLON;
-				} else if (difficultyLevel == 5) {
-					difficultyLevel = DIFFICULTY_SUICIDE;
-				}
-				return true;
-
+			{
+				action = true;
+				break;
+			}
 			case SDL_SCANCODE_ESCAPE:
+			{
 				JE_playSampleNum(S_SPRING);
-				/* fading handled elsewhere
-				fade_black(10); */
 
-				return false;
-
+				cancel = true;
+				break;
+			}
 			default:
 				break;
 			}
 		}
+
+		if (action)
+		{
+			JE_playSampleNum(S_SELECT);
+
+			switch (selectedIndex)
+			{
+			case 0:
+				difficultyLevel = DIFFICULTY_EASY;
+				break;
+			case 1:
+				difficultyLevel = DIFFICULTY_NORMAL;
+				break;
+			case 2:
+				difficultyLevel = DIFFICULTY_HARD;
+				break;
+			case 3:
+				difficultyLevel = DIFFICULTY_IMPOSSIBLE;
+				break;
+			case 4:
+				difficultyLevel = DIFFICULTY_SUICIDE;
+				break;
+			case 5:
+				difficultyLevel = DIFFICULTY_ZINGLON;
+				break;
+			}
+
+			fade_black(10);
+
+			return true;
+		}
+
+		if (cancel)
+		{
+			fade_black(15);
+
+			return false;
+		}
 	}
 }
-

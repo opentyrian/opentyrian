@@ -685,6 +685,15 @@ void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sp
 	blit_sprite2_darken(surface, x + 12, y + 14, sprite2s, index + 20);
 }
 
+// does not clip on left or right edges of surface
+void blit_sprite2x2_filter( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index, Uint8 filter )
+{
+	blit_sprite2_filter(surface, x,      y,      sprite2s, index, filter);
+	blit_sprite2_filter(surface, x + 12, y,      sprite2s, index + 1, filter);
+	blit_sprite2_filter(surface, x,      y + 14, sprite2s, index + 19, filter);
+	blit_sprite2_filter(surface, x + 12, y + 14, sprite2s, index + 20, filter);
+}
+
 
 void JE_loadMainShapeTables( const char *shpfile )
 {

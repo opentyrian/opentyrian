@@ -95,8 +95,8 @@ typedef struct
 	JE_byte       initialDifficulty;
 
 	/* High Scores - Each episode has both sets of 1&2 player selections - with 3 in each */
-	JE_longint    highScore1,
-	              highScore2;
+	JE_longint    highScore1;
+	JE_longint    highScore2;  // unused
 	char          highScoreName[30]; /* string [29] */
 	JE_byte       highScoreDiff;
 } JE_SaveFileType;

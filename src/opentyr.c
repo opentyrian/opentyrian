@@ -199,8 +199,6 @@ void openTyrianMenu( void )
 	{
 		if (restart)
 		{
-			fade_black(10);
-
 			JE_loadPic(VGAScreen2, 2, false);
 			fill_rectangle_wh(VGAScreen2, 0, 192, 320, 8, 0);
 		}
@@ -850,17 +848,42 @@ int main( int argc, char *argv[] )
 		JE_initPlayerData();
 		JE_sortHighScores();
 
-		if (JE_titleScreen(true))
-			break;  // user quit from title screen
+		play_demo = false;
+		stopped_demo = false;
+
+		gameLoaded = false;
+		jumpSection = false;
+
+#ifdef WITH_NETWORK
+		if (isNetworkGame)
+		{
+			networkStartScreen();
+		}
+		else
+#endif
+		{
+			if (!titleScreen())
+			{
+				// Player quit from title screen.
+				break;
+			}
+		}
 
 		if (loadDestruct)
 		{
 			JE_destructGame();
+
 			loadDestruct = false;
 		}
 		else
 		{
 			JE_main();
+
+			if (trentWin)
+			{
+				// Player beat SuperTyrian.
+				break;
+			}
 		}
 	}
 

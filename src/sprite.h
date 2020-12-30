@@ -125,6 +125,7 @@ void blit_sprite2_filter( SDL_Surface *, int x, int y, Sprite2_array, unsigned i
 void blit_sprite2x2( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2x2_blend( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
 void blit_sprite2x2_darken( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index );
+void blit_sprite2x2_filter( SDL_Surface *, int x, int y, Sprite2_array, unsigned int index, Uint8 filter );
 
 void JE_loadMainShapeTables( const char *shpfile );
 void free_main_shape_tables( void );

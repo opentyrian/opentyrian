@@ -145,7 +145,6 @@
     <ClCompile Include="..\src\pcxmast.c" />
     <ClCompile Include="..\src\picload.c" />
     <ClCompile Include="..\src\player.c" />
-    <ClCompile Include="..\src\setup.c" />
     <ClCompile Include="..\src\shots.c" />
     <ClCompile Include="..\src\sizebuf.c" />
     <ClCompile Include="..\src\sndmast.c" />
@@ -199,7 +198,6 @@
     <ClInclude Include="..\src\pcxmast.h" />
     <ClInclude Include="..\src\picload.h" />
     <ClInclude Include="..\src\player.h" />
-    <ClInclude Include="..\src\setup.h" />
     <ClInclude Include="..\src\shots.h" />
     <ClInclude Include="..\src\sizebuf.h" />
     <ClInclude Include="..\src\sndmast.h" />

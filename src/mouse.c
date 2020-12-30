@@ -129,6 +129,23 @@ void JE_mouseStart( void )
 	 }
 }
 
+void JE_mouseStartFilter( Uint8 filter )
+{
+	if (has_mouse)
+	{
+		mouseButton = mousedown ? lastmouse_but : 0; /* incorrect, possibly unimportant */
+
+		const MousePointerSpriteInfo *spriteInfo = &mousePointerSprites[mouseCursor];
+
+		lastMouseX = MIN(MAX(spriteInfo->fx, mouse_x), 320 - (spriteInfo->w - spriteInfo->fx)) - spriteInfo->fx;
+		lastMouseY = MIN(MAX(spriteInfo->fy, mouse_y), 200 - (spriteInfo->h - spriteInfo->fy)) - spriteInfo->fy;
+
+		JE_grabShapeTypeOne(lastMouseX, lastMouseY, mouseGrabShape);
+
+		blit_sprite2x2_filter(VGAScreen, lastMouseX - spriteInfo->x, lastMouseY - spriteInfo->y, shopSpriteSheet, spriteInfo->index, filter);
+	}
+}
+
 void JE_mouseReplace( void )
 {
 	if (has_mouse)

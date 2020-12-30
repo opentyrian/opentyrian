@@ -1323,8 +1323,8 @@ void JE_itemScreen( void )
 			case SDL_SCANCODE_F1:
 				if (!isNetworkGame)
 				{
-					JE_helpSystem(2);
 					fade_black(10);
+					JE_helpSystem(2);
 
 					play_song(songBuy);
 

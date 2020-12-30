@@ -46,6 +46,7 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape );
 
 void JE_mouseStart( void );
+void JE_mouseStartFilter(Uint8 filter);
 void JE_mouseReplace( void );
 
 #endif /* MOUSE_H */
