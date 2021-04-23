@@ -251,6 +251,7 @@ bool load_opentyrian_config( void )
 	// defaults
 	fullscreen_display = -1;
 	set_scaler_by_name("Scale2x");
+	memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
 	
 	Config *config = &opentyrian_config;
 	
@@ -280,8 +281,6 @@ bool load_opentyrian_config( void )
 		if (config_get_string_option(section, "scaling_mode", &scaling_mode))
 			set_scaling_mode_by_name(scaling_mode);
 	}
-
-	memcpy(keySettings, defaultKeySettings, sizeof(keySettings));
 
 	section = config_find_section(config, "keyboard", NULL);
 	if (section != NULL)
