@@ -43,5 +43,5 @@ not need to open any ports because OpenTyrian makes use of UDP hole punching.
 == Links =======================================================================
 
 project: https://github.com/opentyrian/opentyrian
-irc:     irc://irc.freenode.net/#tyrian
-forums:  http://tyrian2k.proboards.com/index.cgi?board=opentyriangeneral
+irc:     ircs://irc.oftc.net/#opentyrian
+forums:  https://tyrian2k.proboards.com/board/5
