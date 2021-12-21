@@ -36,7 +36,7 @@ mandir ?= $(datarootdir)/man
 man6dir ?= $(mandir)/man6
 man6ext ?= .6
 
-# see http://www.pathname.com/fhs/pub/fhs-2.3.html
+# see https://www.pathname.com/fhs/pub/fhs-2.3.html
 
 gamesdir ?= $(datadir)/games
 
