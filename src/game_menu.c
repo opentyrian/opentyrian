@@ -407,7 +407,7 @@ void JE_itemScreen( void )
 
 		if (curMenu == MENU_JOYSTICK_CONFIG)
 		{
-			const char *menu_item[] =
+			const char *const menu_item[] =
 			{
 				"JOYSTICK",
 				"ANALOG AXES",
@@ -2344,7 +2344,7 @@ void JE_drawMainMenuHelpText( void )
 	temp = curSel[curMenu] - 2;
 	if (curMenu == MENU_JOYSTICK_CONFIG) // joystick settings menu help
 	{
-		int help[16] = { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 24, 11 };
+		const int help[16] = { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 24, 11 };
 		memcpy(tempStr, mainMenuHelp[help[curSel[curMenu] - 2]], sizeof(tempStr));
 	}
 	else if (curMenu < MENU_PLAY_NEXT_LEVEL ||

@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *scaling_mode_names[ScalingMode_MAX] = {
+const char *const scaling_mode_names[ScalingMode_MAX] = {
 	"Center",
 	"Integer",
 	"Fit 8:5",

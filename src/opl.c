@@ -245,7 +245,7 @@ static const Bit8u regbase2op[22] = {
 
 
 // start of the waveform
-static Bit32u waveform[8] = {
+static const Bit32u waveform[8] = {
 	WAVEPREC,
 	WAVEPREC>>1,
 	WAVEPREC,
@@ -257,7 +257,7 @@ static Bit32u waveform[8] = {
 };
 
 // length of the waveform as mask
-static Bit32u wavemask[8] = {
+static const Bit32u wavemask[8] = {
 	WAVEPREC-1,
 	WAVEPREC-1,
 	(WAVEPREC>>1)-1,
@@ -269,7 +269,7 @@ static Bit32u wavemask[8] = {
 };
 
 // where the first entry resides
-static Bit32u wavestart[8] = {
+static const Bit32u wavestart[8] = {
 	0,
 	WAVEPREC>>1,
 	0,
@@ -281,13 +281,13 @@ static Bit32u wavestart[8] = {
 };
 
 // envelope generator function constants
-static fltype attackconst[4] = {
+static const fltype attackconst[4] = {
 	(fltype)(1/2.82624),
 	(fltype)(1/2.25280),
 	(fltype)(1/1.88416),
 	(fltype)(1/1.59744)
 };
-static fltype decrelconst[4] = {
+static const fltype decrelconst[4] = {
 	(fltype)(1/39.28064),
 	(fltype)(1/31.41608),
 	(fltype)(1/26.17344),
@@ -454,7 +454,7 @@ void operator_attack(op_type* op_pt) {
 
 typedef void (*optype_fptr)(op_type*);
 
-optype_fptr opfuncs[6] = {
+const optype_fptr opfuncs[6] = {
 	operator_attack,
 	operator_decay,
 	operator_release,
@@ -478,7 +478,7 @@ void change_attackrate(Bitu regbase, op_type* op_pt) {
 		op_pt->env_step_a = (1<<(steps<=12?12-steps:0))-1;
 
 		Bits step_num = (step_skip<=48)?(4-(step_skip&3)):0;
-		static Bit8u step_skip_mask[5] = {0xff, 0xfe, 0xee, 0xba, 0xaa}; 
+		static const Bit8u step_skip_mask[5] = {0xff, 0xfe, 0xee, 0xba, 0xaa}; 
 		op_pt->env_step_skip_a = step_skip_mask[step_num];
 
 #if defined(OPLTYPE_IS_OPL3)

@@ -381,18 +381,18 @@ static struct destruct_shot_s   * shotRec;
 static struct destruct_explo_s  * exploRec;
 
 
-static const char *player_names[] =
+static const char *const player_names[] =
 {
 	"left", "right",
 };
 
-static const char *key_names[] =
+static const char *const key_names[] =
 {
 	"left", "right", "up", "down",
 	"change", "fire", "previous weapon", "next weapon",
 };
 
-static const char *unit_names[] =
+static const char *const unit_names[] =
 {
 	"tank", "nuke", "dirt", "satellite",
 	"magnet", "laser", "jumper", "heli",

@@ -33,7 +33,7 @@ const char *custom_data_dir = NULL;
 // finds the Tyrian data directory
 const char *data_dir( void )
 {
-	const char *dirs[] =
+	const char *const dirs[] =
 	{
 		custom_data_dir,
 		TYRIAN_DIR,
