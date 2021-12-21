@@ -63,7 +63,7 @@ struct special {
 	str_len:8 = 0x1E // Pascal string length, leave alone
 	name:str30 // Name
 	itemGraphic:16 // The graphic that's displayed during gameplay
-	pwr:8 // Time needed between recharges, may be overriden
+	pwr:8 // Time needed between recharges, may be overridden
 	sType:8 // Determines the type of the special: TODO
 	wpn:16 // Argument used for some kinds of sType
 } SPECIAL_NUM+1 (46+1)

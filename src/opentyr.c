@@ -326,7 +326,7 @@ int main( int argc, char *argv[] )
 
 	printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
 	printf("This is free software, and you are welcome to redistribute it\n");
-	printf("under certain conditions.  See the file GPL.txt for details.\n\n");
+	printf("under certain conditions.  See the file COPYING for details.\n\n");
 
 	if (SDL_Init(0))
 	{

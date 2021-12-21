@@ -29,7 +29,7 @@ ctrl/alt       -- fire left/right sidekick
 == Network Multiplayer =========================================================
 
 Currently OpenTyrian does not have an arena; as such, networked games must be
-initiated manually via the command line simultaniously by both players.
+initiated manually via the command line simultaneously by both players.
 
 syntax:
   opentyrian --net HOSTNAME --net-player-name NAME --net-player-number NUMBER
