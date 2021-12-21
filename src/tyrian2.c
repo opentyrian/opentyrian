@@ -3645,7 +3645,7 @@ bool newGame( void )
 		{
 			// allows player to smuggle arcade/super-arcade ships into full game
 
-			ulong initial_cash[] = { 10000, 15000, 20000, 30000 };
+			const ulong initial_cash[] = { 10000, 15000, 20000, 30000 };
 
 			assert(episodeNum >= 1 && episodeNum <= EPISODE_AVAILABLE);
 			player[0].cash = initial_cash[episodeNum - 1];
@@ -4325,7 +4325,7 @@ void JE_eventSystem( void )
 
 	case 5:  // load enemy shape banks
 		{
-			Uint8 newEnemyShapeTables[] =
+			const Uint8 newEnemyShapeTables[] =
 			{
 				eventRec[eventLoc-1].eventdat > 0 ? eventRec[eventLoc-1].eventdat : 0,
 				eventRec[eventLoc-1].eventdat2 > 0 ? eventRec[eventLoc-1].eventdat2 : 0,

@@ -111,7 +111,7 @@ void step_fade_palette( int diff[256][3], int steps, unsigned int first_color, u
 	
 	for (unsigned int i = first_color; i <= last_color; i++)
 	{
-		int delta[3] = { diff[i][0] / steps, diff[i][1] / steps, diff[i][2] / steps };
+		const int delta[3] = { diff[i][0] / steps, diff[i][1] / steps, diff[i][2] / steps };
 		
 		diff[i][0] -= delta[0];
 		diff[i][1] -= delta[1];

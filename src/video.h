@@ -34,7 +34,7 @@ typedef enum {
 	ScalingMode_MAX
 } ScalingMode;
 
-extern const char *scaling_mode_names[ScalingMode_MAX];
+extern const char *const scaling_mode_names[ScalingMode_MAX];
 
 extern int fullscreen_display; // -1 means windowed
 extern ScalingMode scaling_mode;

@@ -358,7 +358,7 @@ const char *config_get_or_set_string_option( ConfigSection *section, const char 
 	return value;
 }
 
-static const char *bool_values[][2] = 
+static const char *const bool_values[][2] = 
 {
 	{ "0", "1" },
 	{ "no", "yes" },
