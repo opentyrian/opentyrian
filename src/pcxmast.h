@@ -26,7 +26,6 @@
 
 typedef JE_longint JE_pcxpostype[PCX_NUM + 1]; /* [1..PCXnum + 1] */
 
-extern const char *pcxfile[PCX_NUM]; /* [1..PCXnum] */
 extern const JE_byte pcxpal[PCX_NUM];    /* [1..PCXnum] */
 extern const JE_byte facepal[12];       /* [1..12] */
 extern JE_pcxpostype pcxpos;
