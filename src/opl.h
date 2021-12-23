@@ -44,7 +44,7 @@ void adlib_getsample(Bit16s* sndptr, Bits numsamples);
 Bitu adlib_reg_read(Bitu port);
 void adlib_write_index(Bitu port, Bit8u val);
 
-#define opl_init() adlib_init(OUTPUT_QUALITY * 11025)
+#define opl_init() adlib_init(SAMPLE_RATE)
 #define opl_write(reg, val) adlib_write(reg, val)
 #define opl_update(buf, num) adlib_getsample(buf, num)
 
