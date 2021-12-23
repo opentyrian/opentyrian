@@ -349,10 +349,8 @@ extern bool config_get_string_option( const ConfigSection *section, const char *
  */
 typedef enum
 {
-	ZERO_ONE = 0,
-	NO_YES = 1,
-	OFF_ON = 2,
-	FALSE_TRUE = 3,
+	NO_YES = 0, // These values are used to index into the bool_values array.
+	OFF_ON = 1,
 } ConfigBoolStyle;
 
 /*!

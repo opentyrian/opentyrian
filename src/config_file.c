@@ -332,10 +332,8 @@ bool config_get_string_option( const ConfigSection *section, const char *key, co
 
 static const char *bool_values[][2] = 
 {
-	{ "0", "1" },
 	{ "no", "yes" },
 	{ "off", "on" },
-	{ "false", "true" },
 };
 
 void config_set_bool_option( ConfigSection *section, const char *key, bool value, ConfigBoolStyle style )
