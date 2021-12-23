@@ -25,8 +25,6 @@
 
 extern JE_boolean inputDetected;
 
-JE_boolean JE_buttonPressed( void );
-
 JE_boolean JE_anyButton( void );
 
 void JE_dBar3( SDL_Surface *surface, JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col );

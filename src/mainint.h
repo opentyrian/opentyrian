@@ -46,7 +46,6 @@ void JE_gammaCorrect_func( JE_byte *col, JE_real r );
 void JE_gammaCorrect( Palette *colorBuffer, JE_byte gamma );
 JE_boolean JE_gammaCheck( void );
 /* void JE_textMenuWait( JE_word *waitTime, JE_boolean doGamma ); /!\ In setup.h */
-void JE_loadOrderingInfo( void );
 void JE_nextEpisode( void );
 void JE_helpSystem( JE_byte startTopic );
 void JE_doInGameSetup( void );
