@@ -33,18 +33,10 @@ typedef struct sizebuf_s
 void SZ_Init    ( sizebuf_t *, Uint8 *, unsigned int ); /* C style constructor */
 bool SZ_Error   ( sizebuf_t * );
 void SZ_Memset  ( sizebuf_t *, int, size_t ); /* memset with a sizebuf */
-void SZ_Memcpy  ( sizebuf_t *, const Uint8 *, size_t ); /* memcpy with a normal buffer */
 void SZ_Memcpy2 ( sizebuf_t *, sizebuf_t *, size_t );   /* memcpy with a sizebuf */
 void SZ_Seek    ( sizebuf_t *, long, int ); /* fseek with a sizebuf. */
 
-const Uint8 * SZ_GetCurBufferPtr ( sizebuf_t * ); /* Mimic private member, const return */
-
-void MSG_WriteByte  ( sizebuf_t *, unsigned int );
-void MSG_WriteWord  ( sizebuf_t *, unsigned int );
-void MSG_WriteDWord ( sizebuf_t *, unsigned int );
-
 unsigned int MSG_ReadByte  ( sizebuf_t * );
 unsigned int MSG_ReadWord  ( sizebuf_t * );
-unsigned int MSG_ReadDWord ( sizebuf_t * );
 
 #endif
