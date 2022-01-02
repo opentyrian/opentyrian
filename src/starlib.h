@@ -22,7 +22,6 @@
 #include "opentyr.h"
 
 void JE_starlib_main( void );
-void JE_wackyCol( void );
 void JE_starlib_init( void );
 void JE_resetValues( void );
 void JE_changeSetup( JE_byte setupType );

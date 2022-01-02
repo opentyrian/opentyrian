@@ -1085,7 +1085,6 @@ void JE_itemScreen( void )
 				curMenu = MENU_FULL_GAME;
 				JE_playSampleNum(S_SPRING);
 				newPal = 1;
-				JE_wipeKey();
 			}
 
 			if (curMenu == MENU_DATA_CUBE_SUB)
@@ -2379,8 +2378,6 @@ JE_boolean JE_quitRequest( void )
 {
 	bool quit_selected = true, done = false;
 
-	JE_clearKeyboard();
-	JE_wipeKey();
 	wait_noinput(true, true, true);
 
 	JE_barShade(VGAScreen, 65, 55, 255, 155);
@@ -2744,8 +2741,6 @@ void JE_menuFunction( JE_byte select )
 					keySettings[curSelect-2] = lastkey_scan;
 					++curSelect;
 				}
-				
-				JE_wipeKey();
 			}
 		}
 		break;

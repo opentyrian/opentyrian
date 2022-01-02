@@ -1026,7 +1026,6 @@ void JE_nextEpisode( void )
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
 
-	JE_wipeKey();
 	if (!constantPlay)
 	{
 		do
@@ -1877,9 +1876,6 @@ void JE_inGameHelp( void )
 
 	//tempScreenSeg = VGAScreenSeg;
 
-	JE_clearKeyboard();
-	JE_wipeKey();
-
 	JE_barShade(VGAScreen, 1, 1, 262, 182); /*Main Box*/
 	JE_barShade(VGAScreen, 3, 3, 260, 180);
 	JE_barShade(VGAScreen, 5, 5, 258, 178);
@@ -2684,7 +2680,6 @@ void JE_endLevelAni( void )
 	player[0].last_items = player[0].items;
 	strcpy(lastLevelName, levelName);
 
-	JE_wipeKey();
 	frameCountMax = 4;
 	textGlowFont = SMALL_FONT_SHAPES;
 

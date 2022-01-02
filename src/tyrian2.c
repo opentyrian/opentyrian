@@ -644,8 +644,6 @@ start_level:
 	if (galagaMode)
 		twoPlayerMode = false;
 
-	JE_clearKeyboard();
-
 	free_sprite2s(&enemySpriteSheets[0]);
 	free_sprite2s(&enemySpriteSheets[1]);
 	free_sprite2s(&enemySpriteSheets[2]);
@@ -2678,7 +2676,6 @@ new_game:
 						while (s[0] != '#');
 						levelWarningLines--;
 
-						JE_wipeKey();
 						frameCountMax = 4;
 						if (!constantPlay)
 							JE_displayText();
@@ -2951,7 +2948,6 @@ new_game:
 						{
 							if (!ESCPressed)
 							{
-								JE_wipeKey();
 								warningCol = 14 * 16 + 5;
 								warningColChange = 1;
 								warningSoundDelay = 0;

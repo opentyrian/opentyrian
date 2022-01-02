@@ -80,9 +80,3 @@ void JE_barDrawShadow( SDL_Surface *surface, JE_word x, JE_word y, JE_word res, 
 		fill_rectangle_xy(surface, x,y, x+xsize, y+ysize, col+(12 / res * amt));
 	}
 }
-
-void JE_wipeKey( void )
-{
-	// /!\ Doesn't seems to affect anything.
-}
-

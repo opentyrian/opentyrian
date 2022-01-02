@@ -253,9 +253,3 @@ void service_SDL_events( JE_boolean clear_new )
 		}
 	}
 }
-
-void JE_clearKeyboard( void )
-{
-	// /!\ Doesn't seems important. I think. D:
-}
-

@@ -69,8 +69,6 @@ void JE_starlib_main( void )
 	struct JE_StarType *stars;
 	Uint8 *surf;
 
-	JE_wackyCol();
-
 	grayB = false;
 
 	starlib_speed += speedChange;
@@ -319,11 +317,6 @@ void JE_starlib_main( void )
 	}
 
 	nspVarInc += nspVarVarInc;
-}
-
-void JE_wackyCol( void )
-{
-	/* YKS: Does nothing */
 }
 
 void JE_starlib_init( void )
