@@ -44,8 +44,6 @@ SAMPLE_TYPE *channel_pos[SFX_CHANNELS] = { NULL };
 Uint32 channel_len[SFX_CHANNELS] = { 0 };
 Uint8 channel_vol[SFX_CHANNELS];
 
-int sound_init_state = false;
-
 static SDL_AudioDeviceID audio_device = 0;
 
 void audio_cb( void *user_data, unsigned char *sdl_buffer, int bytes_needed );

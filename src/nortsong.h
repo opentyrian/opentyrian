@@ -28,7 +28,7 @@
 
 extern Uint32 target, target2;
 
-extern JE_word frameCount, frameCount2, frameCountMax;
+extern JE_word frameCount, frameCountMax;
 
 extern JE_byte *digiFx[SAMPLE_COUNT];
 extern JE_word fxSize[SAMPLE_COUNT];

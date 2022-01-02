@@ -34,7 +34,7 @@ Uint32 target, target2;
 
 JE_boolean notYetLoadedSound = true;
 
-JE_word frameCount, frameCount2, frameCountMax;
+JE_word frameCount, frameCountMax;
 
 JE_byte *digiFx[SAMPLE_COUNT] = { NULL }; /* [1..soundnum + 9] */
 JE_word fxSize[SAMPLE_COUNT]; /* [1..soundnum + 9] */
