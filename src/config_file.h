@@ -251,17 +251,6 @@ static inline ConfigSection *config_add_section( Config *config, const char *typ
 // TODO: extern Config *config_remove_section( Config *config, unsigned int i );
 
 /*!
- * \brief Iterate sections by type.
- * 
- * \param[in] config the configuration containing the sections
- * \param[in] type the type of the section
- * \param[in,out] save the saved state of the iterator; initialize \c *save to \c NULL before
- *                     iteration
- * \return the section; \c NULL if iteration finished
- */
-extern ConfigSection *config_find_sections( Config *config, const char *type, ConfigSection **save );
-
-/*!
  * \brief Find a section by type and name.
  * 
  * \param[in] config the configuration containing the section
@@ -354,17 +343,6 @@ static inline void config_set_string_option( ConfigSection *section, const char 
  * \return whether \p out_value was set
  */
 extern bool config_get_string_option( const ConfigSection *section, const char *key, const char **out_value );
-
-/*!
- * \brief Get a string value of an 'item' option by key, setting the option if it was invalid or
- *        creating the option if it did not exist.
- * 
- * \param[in] section the section containing the option
- * \param[in] key the option key
- * \param[in] value the default item value
- * \return the value
- */
-extern const char *config_get_or_set_string_option( ConfigSection *section, const char *key, const char *value );
 
 /*!
  * \brief The styles of boolean values.
@@ -461,17 +439,6 @@ extern void config_set_uint_option( ConfigSection *section, const char *key, uns
  * \return whether \p out_value was set
  */
 extern bool config_get_uint_option( const ConfigSection *section, const char *key, unsigned int *out_value );
-
-/*!
- * \brief Get an unsigned integer value of an 'item' option by key, setting the option if it was
- *        invalid or creating the option if it did not exist.
- * 
- * \param[in] section the section containing the option
- * \param[in] key the option key
- * \param[in] value the default item value
- * \return the value
- */
-extern unsigned int config_get_or_set_uint_option( ConfigSection *section, const char *key, unsigned int value );
 
 /* config option accessors/manipulators -- by reference */
 

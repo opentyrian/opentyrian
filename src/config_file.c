@@ -165,27 +165,6 @@ ConfigSection *config_add_section_len( Config *config, const char *type, size_t 
 	return section;
 }
 
-ConfigSection *config_find_sections( Config *config, const char *type, ConfigSection **save )
-{
-	assert(config != NULL);
-	assert(type != NULL);
-	
-	ConfigSection *sections_end = &config->sections[config->sections_count];
-	
-	ConfigSection *section = save != NULL && *save != NULL ?
-		*save :
-		&config->sections[0];
-	
-	for (; section < sections_end; ++section)
-		if (strcmp(config_string_to_cstr(&section->type), type) == 0)
-			break;
-	
-	if (save != NULL)
-		*save = section;
-	
-	return section < sections_end ? section : NULL;
-}
-
 ConfigSection *config_find_section( Config *config, const char *type, const char *name )
 {
 	assert(config != NULL);
@@ -351,13 +330,6 @@ bool config_get_string_option( const ConfigSection *section, const char *key, co
 	return false;
 }
 
-const char *config_get_or_set_string_option( ConfigSection *section, const char *key, const char *value )
-{
-	if (!config_get_string_option(section, key, &value))
-		config_set_string_option_len(section, key, strlen(key), value, value == NULL ? 0 : strlen(value));
-	return value;
-}
-
 static const char *bool_values[][2] = 
 {
 	{ "0", "1" },
@@ -473,13 +445,6 @@ bool config_get_uint_option( const ConfigSection *section, const char *key, unsi
 	}
 	
 	return false;
-}
-
-unsigned int config_get_or_set_uint_option( ConfigSection *section, const char *key, unsigned int value )
-{
-	if (!config_get_uint_option(section, key, &value))
-		config_set_uint_option(section, key, value);
-	return value;
 }
 
 /* config option accessors/manipulators -- by reference */
