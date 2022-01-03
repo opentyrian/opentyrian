@@ -1381,7 +1381,6 @@ void JE_doInGameSetup( void )
 			reallyEndLevel = true;
 			playerEndLevel = true;
 		}
-		quitRequested = false;
 
 		keysactive[SDL_SCANCODE_ESCAPE] = false;
 

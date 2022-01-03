@@ -617,7 +617,6 @@ void JE_setNewGameSpeed( void )
 		break;
 	}
 
-  frameCount = frameCountMax;
   JE_resetTimerInt();
   JE_setTimerInt();
 }

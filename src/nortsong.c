@@ -32,9 +32,7 @@
 
 Uint32 target, target2;
 
-JE_boolean notYetLoadedSound = true;
-
-JE_word frameCount, frameCountMax;
+JE_word frameCountMax;
 
 JE_byte *digiFx[SAMPLE_COUNT] = { NULL }; /* [1..soundnum + 9] */
 JE_word fxSize[SAMPLE_COUNT]; /* [1..soundnum + 9] */
@@ -154,9 +152,6 @@ void JE_loadSndFile( const char *effects_sndfile, const char *voices_sndfile )
 	}
 
 	fclose(fi);
-
-	notYetLoadedSound = false;
-
 }
 
 void JE_playSampleNum( JE_byte samplenum )
