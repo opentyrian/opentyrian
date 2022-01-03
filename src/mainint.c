@@ -986,13 +986,6 @@ void JE_nextEpisode( void )
 
 	if (jumpBackToEpisode1)
 	{
-		// shareware version check
-		if (episodeNum == 1 &&
-			!isNetworkGame && !constantPlay)
-		{
-			// JE_loadOrderingInfo();
-		}
-
 		if (episodeNum > 2 &&
 			!constantPlay)
 		{

@@ -72,7 +72,6 @@ void JE_closeAnim( void );
 int JE_loadAnim( const char * );
 int JE_renderFrame( unsigned int );
 int JE_findPage ( unsigned int );
-int JE_drawFrame( unsigned int );
 int JE_loadPage( unsigned int );
 
 /*** Implementation ***/
@@ -120,20 +119,6 @@ int JE_loadPage( unsigned int pagenumber )
 	if(pageSize != CurrentPageHeader.nBytes) { return(-1); }
 
 	/* So far, so good */
-	return(0);
-}
-
-int JE_drawFrame( unsigned int framenumber )
-{
-	int ret;
-
-
-	ret = JE_loadPage(framenumber);
-	if (ret) { return(ret); }
-
-	ret = JE_renderFrame (framenumber);
-	if (ret) { return(ret); }
-
 	return(0);
 }
 

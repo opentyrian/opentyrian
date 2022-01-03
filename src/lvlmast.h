@@ -35,12 +35,6 @@
 
 #define ENEMY_NUM   850
 
-#define LVL_NUM   (18 * 2)
-#define LVL_NUM_2 (12 * 2)
-#define LVL_NUM_3 (12 * 2)
-#define LVL_NUM_4 (20 * 2)
-#define LVL_NUM_5 (1 * 2)
-
 extern const JE_char shapeFile[34]; /* [1..34] */
 
 #endif /* LVLMAST_H */
