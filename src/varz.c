@@ -178,7 +178,7 @@ JE_word tempBackMove, explodeMove; /*Speed of background movement*/
 JE_byte levelEnd;
 JE_word levelEndFxWait;
 JE_shortint levelEndWarp;
-JE_boolean endLevel, reallyEndLevel, waitToEndLevel, playerEndLevel,
+JE_boolean endLevel, reallyEndLevel, playerEndLevel,
            normalBonusLevelCurrent, bonusLevelCurrent,
            smallEnemyAdjust, readyToEndLevel;
 

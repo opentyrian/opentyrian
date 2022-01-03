@@ -2346,11 +2346,6 @@ draw_player_shot_loop_end:
 		explodeMove = 2;
 		stopBackgroundNum = 0;
 		stopBackgrounds = false;
-		if (waitToEndLevel)
-		{
-			endLevel = true;
-			levelEnd = 40;
-		}
 		if (allPlayersGone)
 		{
 			reallyEndLevel = true;
