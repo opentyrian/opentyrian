@@ -27,7 +27,6 @@
 #define FULL_SHADE 1
 #define DARKEN     2
 #define TRICK      3
-#define NO_SHADE 255
 
 extern const int font_ascii[256];
 

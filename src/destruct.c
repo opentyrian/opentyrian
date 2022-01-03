@@ -66,7 +66,6 @@
 #include <assert.h>
 
 /*** Defines ***/
-#define UNIT_HEIGHT 12
 #define MAX_KEY_OPTIONS 4
 
 /*** Enums ***/

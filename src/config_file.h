@@ -521,19 +521,6 @@ static inline unsigned int config_get_value_count( const ConfigOption *option )
 /*!
  * \brief Iterate over the values assigned to the option.
  * 
- * \param[out] string_value the value variable to declare
- * \param[in] option the option
- */
-#define foreach_option_value( string_value, option ) \
-	for (ConfigOption *_option = (option); _option != NULL; _option = NULL) \
-	for (ConfigString *_values_begin = _option->values_count == 0 ? &_option->v.value : &_option->v.values[0], \
-	                  *_values_end = _option->values_count == 0 ? _values_begin + 1 : &_option->v.values[_option->values_count], \
-	                  *_value = _values_begin; _value < _values_end; ++_value) \
-	for (const char *(string_value) = config_string_to_cstr(_value); (string_value) != NULL; (string_value) = NULL)
-
-/*!
- * \brief Iterate over the values assigned to the option.
- * 
  * \param[out] i the index variable to declare
  * \param[out] string_value the value variable to declare
  * \param[in] option the option
