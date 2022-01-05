@@ -146,37 +146,4 @@ static inline void fwrite_u16_die(const Uint16 *buffer, FILE *stream)
 	fwrite_die(buffer, sizeof(Uint16), 1, stream);
 }
 
-// 16-bit endian-swapping fwrite that dies if write fails
-static inline void fwrite_s16_die(const Sint16 *buffer, FILE *stream)
-{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	Sint16 temp = SDL_Swap16(*buffer);
-	buffer = &temp;
-#endif
-
-	fwrite_die(buffer, sizeof(Sint16), 1, stream);
-}
-
-// 32-bit endian-swapping fwrite that dies if write fails
-static inline void fwrite_u32_die(const Uint32 *buffer, FILE *stream)
-{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	Uint32 temp = SDL_Swap32(*buffer);
-	buffer = &temp;
-#endif
-
-	fwrite_die(buffer, sizeof(Uint32), 1, stream);
-}
-
-// 32-bit endian-swapping fwrite that dies if write fails
-static inline void fwrite_s32_die(const Sint32 *buffer, FILE *stream)
-{
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	Sint32 temp = SDL_Swap32(*buffer);
-	buffer = &temp;
-#endif
-
-	fwrite_die(buffer, sizeof(Sint32), 1, stream);
-}
-
 #endif // FILE_H
