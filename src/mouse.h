@@ -33,7 +33,6 @@ enum
 };
 
 extern bool has_mouse;
-extern bool mouse_has_three_buttons;
 
 extern bool mouseInactive;
 extern JE_byte mouseCursor;

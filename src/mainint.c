@@ -3619,7 +3619,7 @@ redo:
 				{
 					button[0] |= mouse_pressed[0];
 					button[1] |= mouse_pressed[1];
-					button[2] |= mouse_has_three_buttons ? mouse_pressed[2] : mouse_pressed[1];
+					button[2] |= mouse_pressed[2];
 
 					if (input_grab_enabled)
 					{
