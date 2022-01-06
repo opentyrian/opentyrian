@@ -3896,8 +3896,6 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 		// Use shape table value from previous enemy that occupied the enemy slot. (Ex. APPROACH.)
 		fprintf(stderr, "warning: ignoring sprite from unloaded shape table %d\n", shapeTableI);
 
-	enemy->enemydatofs = &enemyDat[eDatI];
-
 	enemy->mapoffset = 0;
 
 	for (uint i = 0; i < 3; ++i)
@@ -3988,9 +3986,6 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 		enemy->eyrev = 0;
 	else
 		enemy->eyrev = enemyDat[eDatI].yrev;
-
-	enemy->exca = (enemy->xaccel > 0) ? 1 : -1;
-	enemy->eyca = (enemy->yaccel > 0) ? 1 : -1;
 
 	enemy->enemytype = eDatI;
 

@@ -52,10 +52,8 @@ enum
 
 struct JE_SingleEnemyType
 {
-	JE_byte     fillbyte;
 	JE_integer  ex, ey;     /* POSITION */
 	JE_shortint exc, eyc;   /* CURRENT SPEED */
-	JE_shortint exca, eyca; /* RANDOM ACCELERATION */
 	JE_shortint excc, eycc; /* FIXED ACCELERATION WAITTIME */
 	JE_shortint exccw, eyccw;
 	JE_byte     armorleft;
@@ -72,14 +70,12 @@ struct JE_SingleEnemyType
 	JE_shortint exrev, eyrev;
 	JE_integer  exccadd, eyccadd;
 	JE_byte     exccwmax, eyccwmax;
-	void       *enemydatofs;
 	JE_boolean  edamaged;
 	JE_word     enemytype;
 	JE_byte     animin;
 	JE_word     edgr;
 	JE_shortint edlevel;
 	JE_shortint edani;
-	JE_byte     fill1;
 	JE_byte     filter;
 	JE_integer  evalue;
 	JE_integer  fixedmovey;
