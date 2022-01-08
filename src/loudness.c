@@ -62,7 +62,7 @@ bool init_audio( void )
 	ask.freq = SAMPLE_RATE;
 	ask.format = (BYTES_PER_SAMPLE == 2) ? AUDIO_S16SYS : AUDIO_S8;
 	ask.channels = 1;
-	ask.samples = 512 * OUTPUT_QUALITY; // 46.4 ms
+	ask.samples = 256 * OUTPUT_QUALITY; // ~23 ms
 	ask.callback = audio_cb;
 	
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO))
