@@ -219,7 +219,7 @@ void load_song( unsigned int song_num )
 	if (audio_disabled)
 		return;
 	
-	SDL_LockAudio();
+	SDL_LockAudioDevice(audio_device);
 	
 	if (song_num < song_count)
 	{
@@ -231,7 +231,7 @@ void load_song( unsigned int song_num )
 		fprintf(stderr, "warning: failed to load song %d\n", song_num + 1);
 	}
 	
-	SDL_UnlockAudio();
+	SDL_UnlockAudioDevice(audio_device);
 }
 
 void play_song( unsigned int song_num )
@@ -273,7 +273,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	if (audio_disabled || samples_disabled)
 		return;
 	
-	SDL_LockAudio();
+	SDL_LockAudioDevice(audio_device);
 	
 	free(channel_buffer[chan]);
 	
@@ -294,6 +294,6 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 		}
 	}
 
-	SDL_UnlockAudio();
+	SDL_UnlockAudioDevice(audio_device);
 }
 
