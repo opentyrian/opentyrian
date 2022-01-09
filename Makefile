@@ -65,6 +65,8 @@ CPPFLAGS += -DNDEBUG
 CFLAGS ?= -pedantic \
           -Wall \
           -Wextra \
+          -Werror \
+          -Wno-format-truncation \
           -Wno-missing-field-initializers \
           -O2
 LDFLAGS ?=
@@ -100,7 +102,6 @@ all : $(TARGET)
 
 .PHONY : debug
 debug : CPPFLAGS += -UNDEBUG
-debug : CFLAGS += -Werror
 debug : CFLAGS += -O0
 debug : CFLAGS += -g3
 debug : all
