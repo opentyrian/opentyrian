@@ -403,14 +403,14 @@ static void scale_and_flip( SDL_Surface *src_surface )
  * coordinates, after scaling. */
 void map_screen_to_window_pos( int *const inout_x, int *const inout_y )
 {
-	*inout_x = (*inout_x * last_output_rect.w / VGAScreen->w) + last_output_rect.x;
-	*inout_y = (*inout_y * last_output_rect.h / VGAScreen->h) + last_output_rect.y;
+	*inout_x = (2 * *inout_x + 1) * last_output_rect.w / (2 * VGAScreen->w) + last_output_rect.x;
+	*inout_y = (2 * *inout_y + 1) * last_output_rect.h / (2 * VGAScreen->h) + last_output_rect.y;
 }
 
 /** Converts the given point from window coordinates (after scaling) to game
  * screen coordinates. */
 void map_window_to_screen_pos( int *const inout_x, int *const inout_y )
 {
-	*inout_x = (*inout_x - last_output_rect.x) * VGAScreen->w / last_output_rect.w;
-	*inout_y = (*inout_y - last_output_rect.y) * VGAScreen->h / last_output_rect.h;
+	*inout_x = (2 * (*inout_x - last_output_rect.x) + 1) * VGAScreen->w / (2 * last_output_rect.w);
+	*inout_y = (2 * (*inout_y - last_output_rect.y) + 1) * VGAScreen->h / (2 * last_output_rect.h);
 }
