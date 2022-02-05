@@ -31,6 +31,7 @@ bool has_mouse = true;
 #endif
 bool mouse_has_three_buttons = true;
 
+bool mouseInactive = true;
 JE_byte mouseCursor;
 JE_word mouseX, mouseY, mouseButton;
 JE_word mouseXB, mouseYB;
@@ -125,9 +126,12 @@ void JE_mouseStart( void )
 
 		JE_grabShapeTypeOne(mouseGrabX, mouseGrabY, mouseGrabShape);
 
-		const Sint32 x = mouse_x - spriteInfo->x - spriteInfo->fx;
-		const Sint32 y = mouse_y - spriteInfo->y - spriteInfo->fy;
-		blit_sprite2x2_clip(VGAScreen, x, y, shopSpriteSheet, spriteInfo->index);
+		if (!mouseInactive)
+		{
+			const Sint32 x = mouse_x - spriteInfo->x - spriteInfo->fx;
+			const Sint32 y = mouse_y - spriteInfo->y - spriteInfo->fy;
+			blit_sprite2x2_clip(VGAScreen, x, y, shopSpriteSheet, spriteInfo->index);
+		}
 	 }
 }
 
@@ -144,9 +148,12 @@ void JE_mouseStartFilter( Uint8 filter )
 
 		JE_grabShapeTypeOne(mouseGrabX, mouseGrabY, mouseGrabShape);
 
-		const Sint32 x = mouse_x - spriteInfo->x - spriteInfo->fx;
-		const Sint32 y = mouse_y - spriteInfo->y - spriteInfo->fy;
-		blit_sprite2x2_filter_clip(VGAScreen, x, y, shopSpriteSheet, spriteInfo->index, filter);
+		if (!mouseInactive)
+		{
+			const Sint32 x = mouse_x - spriteInfo->x - spriteInfo->fx;
+			const Sint32 y = mouse_y - spriteInfo->y - spriteInfo->fy;
+			blit_sprite2x2_filter_clip(VGAScreen, x, y, shopSpriteSheet, spriteInfo->index, filter);
+		}
 	}
 }
 

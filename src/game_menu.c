@@ -354,13 +354,6 @@ void JE_itemScreen( void )
 
 				JE_textShade(VGAScreen, 163, tempY, tempStr, temp2 / 16, temp2 % 16 - 8, DARKEN);
 
-				/* If selected with keyboard, move mouse pointer to match? Or something. */
-				if (x - min + 2 == curSel[curMenu])
-				{
-					if (keyboardUsed)
-						set_mouse_position(305, 38 + (x - min) * 11);
-				}
-
 				if (x < max) /* x == max isn't a save slot */
 				{
 					/* Highlight if current selection */
@@ -394,8 +387,6 @@ void JE_itemScreen( void )
 				if (x == curSel[curMenu])
 				{
 					temp2 = 15;
-					if (keyboardUsed)
-						set_mouse_position(305, 38 + (x - 2) * 12);
 				}
 				else
 				{
@@ -573,10 +564,6 @@ void JE_itemScreen( void )
 				}
 				if (tempW == curSel[curMenu]-1)
 				{
-					if (keyboardUsed)
-					{
-						set_mouse_position(305, tempY + 10);
-					}
 					temp2 = 15;
 				} else {
 					temp2 = 28;
@@ -710,8 +697,6 @@ void JE_itemScreen( void )
 						JE_drawCube(VGAScreenSeg, 166, 38 + (x - 1) * 28, 13, 0);
 						if (x + 1 == curSel[curMenu])
 						{
-							if (keyboardUsed)
-								set_mouse_position(305, 38 + (x - 1) * 28 + 6);
 							temp2 = 252;
 						}
 						else
@@ -727,8 +712,6 @@ void JE_itemScreen( void )
 					int x = cubeMax + 1;
 					if (x + 1 == curSel[curMenu])
 					{
-						if (keyboardUsed)
-							set_mouse_position(305, 38 + (x - 1) * 28 + 6);
 						temp2 = 252;
 					}
 					else
@@ -1989,11 +1972,6 @@ void JE_drawMenuChoices( void )
 		}
 		JE_dString(VGAScreen, 166, tempY, str, SMALL_FONT_SHAPES);
 		free(str);
-
-		if (keyboardUsed && curSel[curMenu] == x)
-		{
-			set_mouse_position(305, tempY + 6);
-		}
 	}
 }
 
