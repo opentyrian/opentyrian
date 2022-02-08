@@ -166,14 +166,6 @@ void service_SDL_events( JE_boolean clear_new )
 			case SDL_KEYDOWN:
 				if (ev.key.keysym.mod & KMOD_CTRL)
 				{
-					/* <ctrl><bksp> emergency kill */
-					if (ev.key.keysym.scancode == SDL_SCANCODE_BACKSPACE)
-					{
-						puts("\n\n\nCtrl+Backspace pressed. Doing emergency quit.\n");
-						SDL_Quit();
-						exit(1);
-					}
-
 					/* <ctrl><f10> toggle input grab */
 					if (ev.key.keysym.scancode == SDL_SCANCODE_F10)
 					{
