@@ -65,6 +65,7 @@ CPPFLAGS += -DNDEBUG
 CFLAGS ?= -pedantic \
           -Wall \
           -Wextra \
+          -Wno-format-truncation \
           -Wno-missing-field-initializers \
           -O2
 LDFLAGS ?=
