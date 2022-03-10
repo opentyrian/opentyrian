@@ -35,6 +35,8 @@ docdir ?= $(datarootdir)/doc/opentyrian
 mandir ?= $(datarootdir)/man
 man6dir ?= $(mandir)/man6
 man6ext ?= .6
+desktopdir ?= $(datarootdir)/applications
+pixmapdir ?= $(datarootdir)/pixmaps
 
 # see https://www.pathname.com/fhs/pub/fhs-2.3.html
 
@@ -111,18 +113,24 @@ installdirs :
 	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(docdir)
 	mkdir -p $(DESTDIR)$(man6dir)
+	mkdir -p $(DESTDIR)$(desktopdir)
+	mkdir -p $(DESTDIR)$(pixmapdir)
 
 .PHONY : install
 install : $(TARGET) installdirs
 	$(INSTALL_PROGRAM) $(TARGET) $(DESTDIR)$(bindir)/
 	$(INSTALL_DATA) NEWS README $(DESTDIR)$(docdir)/
 	$(INSTALL_DATA) linux/man/opentyrian.6 $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
+	$(INSTALL_DATA) linux/opentyrian.desktop $(DESTDIR)$(desktopdir)/
+	$(INSTALL_DATA) linux/icons/tyrian-32.png $(DESTDIR)$(pixmapdir)/opentyrian.png
 
 .PHONY : uninstall
 uninstall :
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)
 	rm -f $(DESTDIR)$(docdir)/{NEWS,README}
 	rm -f $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
+	rm -f $(DESTDIR)$(desktopdir)/opentyrian.desktop
+	rm -f $(DESTDIR)$(pixmapdir)/opentyrian.png
 
 .PHONY : clean
 clean :
