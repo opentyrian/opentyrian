@@ -104,8 +104,6 @@ void init_video( void )
 	init_scaler(scaler);
 
 	SDL_ShowWindow(main_window);
-
-	input_grab(input_grab_enabled);
 }
 
 void deinit_video( void )
@@ -399,18 +397,23 @@ static void scale_and_flip( SDL_Surface *src_surface )
 	last_output_rect = dst_rect;
 }
 
-/** Converts the given point from the game screen coordinates to the window
- * coordinates, after scaling. */
-void map_screen_to_window_pos( int *const inout_x, int *const inout_y )
+/** Maps a specified point in game screen coordinates to window coordinates. */
+void mapScreenPointToWindow(Sint32 *const inout_x, Sint32 *const inout_y)
 {
 	*inout_x = (2 * *inout_x + 1) * last_output_rect.w / (2 * VGAScreen->w) + last_output_rect.x;
 	*inout_y = (2 * *inout_y + 1) * last_output_rect.h / (2 * VGAScreen->h) + last_output_rect.y;
 }
 
-/** Converts the given point from window coordinates (after scaling) to game
- * screen coordinates. */
-void map_window_to_screen_pos( int *const inout_x, int *const inout_y )
+/** Maps a specified point in window coordinates to game screen coordinates. */
+void mapWindowPointToScreen(Sint32 *const inout_x, Sint32 *const inout_y)
 {
 	*inout_x = (2 * (*inout_x - last_output_rect.x) + 1) * VGAScreen->w / (2 * last_output_rect.w);
 	*inout_y = (2 * (*inout_y - last_output_rect.y) + 1) * VGAScreen->h / (2 * last_output_rect.h);
+}
+
+/** Scales a distance in window coordinates to game screen coordinates. */
+void scaleWindowDistanceToScreen(Sint32 *const inout_x, Sint32 *const inout_y)
+{
+	*inout_x = (2 * *inout_x + 1) * VGAScreen->w / (2 * last_output_rect.w);
+	*inout_y = (2 * *inout_y + 1) * VGAScreen->h / (2 * last_output_rect.h);
 }

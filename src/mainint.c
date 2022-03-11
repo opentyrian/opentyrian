@@ -1356,6 +1356,8 @@ JE_boolean JE_gammaCheck( void )
 
 void JE_doInGameSetup( void )
 {
+	mouseSetRelative(false);
+
 	haltGame = false;
 
 #ifdef WITH_NETWORK
@@ -1471,6 +1473,8 @@ void JE_doInGameSetup( void )
 	yourInGameMenuRequest = false;
 
 	//skipStarShowVGA = true;
+
+	mouseSetRelative(true);
 }
 
 JE_boolean JE_inGameSetup( void )
@@ -3315,6 +3319,8 @@ void JE_mainKeyboardInput( void )
 
 void JE_pauseGame( void )
 {
+	mouseSetRelative(false);
+
 	JE_boolean done = false;
 	JE_word mouseX, mouseY;
 
@@ -3408,6 +3414,8 @@ void JE_pauseGame( void )
 	set_volume(tyrMusicVolume, fxVolume);
 
 	//skipStarShowVGA = true;
+
+	mouseSetRelative(true);
 }
 
 void JE_playerMovement( Player *this_player,
@@ -3634,17 +3642,11 @@ redo:
 					button[1] |= mouse_pressed[1];
 					button[2] |= mouse_has_three_buttons ? mouse_pressed[2] : mouse_pressed[1];
 
-					if (input_grab_enabled)
-					{
-						mouseXC += mouse_x - 159;
-						mouseYC += mouse_y - 100;
-					}
-
-					if ((!isNetworkGame || playerNum_ == thisPlayerNum)
-					    && (!galagaMode || (playerNum_ == 2 || !twoPlayerMode || player[1].exploding_ticks > 0)))
-					{
-						set_mouse_position(159, 100);
-					}
+					Sint32 mouseXR;
+					Sint32 mouseYR;
+					mouseGetRelativePosition(&mouseXR, &mouseYR);
+					mouseXC += mouseXR;
+					mouseYC += mouseYR;
 				}
 
 				/* keyboard input */

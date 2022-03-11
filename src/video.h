@@ -59,8 +59,9 @@ void deinit_video( void );
 void JE_clr256( SDL_Surface * );
 void JE_showVGA( void );
 
-void map_screen_to_window_pos( int *inout_x, int *inout_y);
-void map_window_to_screen_pos( int *inout_x, int *inout_y);
+void mapScreenPointToWindow(Sint32 *inout_x, Sint32 *inout_y);
+void mapWindowPointToScreen(Sint32 *inout_x, Sint32 *inout_y);
+void scaleWindowDistanceToScreen(Sint32 *inout_x, Sint32 *inout_y);
 
 #endif /* VIDEO_H */
 

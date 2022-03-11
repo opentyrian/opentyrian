@@ -641,6 +641,8 @@ void JE_main( void )
 
 start_level:
 
+	mouseSetRelative(false);
+
 	if (galagaMode)
 		twoPlayerMode = false;
 
@@ -725,6 +727,9 @@ start_level_first:
 
 	if (mainLevel == 0)  // if quit itemscreen
 		return;          // back to titlescreen
+
+	if (!play_demo)
+		mouseSetRelative(true);
 
 	fade_song();
 
@@ -2173,7 +2178,6 @@ draw_player_shot_loop_end:
 				else
 					JE_dString(VGAScreen, 120, 60, miscText[21], FONT_SHAPES); // game over
 
-				set_mouse_position(159, 100);
 				if (firstGameOver)
 				{
 					if (!play_demo)
@@ -2225,7 +2229,7 @@ draw_player_shot_loop_end:
 				goto level_loop;
 		}
 
-		if (pause_pressed)
+		if (pause_pressed || !windowHasFocus)
 		{
 			pause_pressed = false;
 
