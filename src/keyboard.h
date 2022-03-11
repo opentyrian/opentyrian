@@ -37,18 +37,18 @@ extern JE_boolean mouse_pressed[3];
 extern Sint32 mouse_x, mouse_y;
 extern Uint8 keysactive[SDL_NUM_SCANCODES];
 
+extern bool windowHasFocus;
+
 extern bool new_text;
 extern char last_text[SDL_TEXTINPUTEVENT_TEXT_SIZE];
-
-extern bool input_grab_enabled;
 
 void flush_events_buffer( void );
 void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
 void init_keyboard( void );
-void input_grab( bool enable );
+void mouseSetRelative(bool enable);
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY );
-void set_mouse_position( int x, int y );
+void mouseGetRelativePosition(Sint32 *out_x, Sint32 *out_y);
 
 void service_SDL_events( JE_boolean clear_new );
 

@@ -39,16 +39,18 @@ Sint32 lastmouse_x, lastmouse_y;
 JE_boolean mouse_pressed[3] = {false, false, false};
 Sint32 mouse_x, mouse_y;
 
+bool windowHasFocus;
+
 Uint8 keysactive[SDL_NUM_SCANCODES];
 
 bool new_text;
 char last_text[SDL_TEXTINPUTEVENT_TEXT_SIZE];
 
-#ifdef NDEBUG
-bool input_grab_enabled = true;
-#else
-bool input_grab_enabled = false;
-#endif
+static bool mouseRelativeEnabled;
+
+// Relative mouse position in window coordinates.
+static Sint32 mouseWindowXRelative;
+static Sint32 mouseWindowYRelative;
 
 void flush_events_buffer( void )
 {
@@ -95,20 +97,18 @@ void init_keyboard( void )
 
 	newkey = newmouse = false;
 	keydown = mousedown = false;
+
+	SDL_ShowCursor(SDL_FALSE);
 }
 
-void input_grab( bool enable )
+void mouseSetRelative(bool enable)
 {
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-	enable = true;
-#endif
+	SDL_SetRelativeMouseMode(enable && windowHasFocus);
 
-	input_grab_enabled = enable || fullscreen_display != -1;
+	mouseRelativeEnabled = enable;
 
-	SDL_ShowCursor(input_grab_enabled ? SDL_DISABLE : SDL_ENABLE);
-#ifdef NDEBUG
-	SDL_SetWindowGrab(main_window, input_grab_enabled ? SDL_TRUE : SDL_FALSE);
-#endif
+	mouseWindowXRelative = 0;
+	mouseWindowYRelative = 0;
 }
 
 JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
@@ -119,17 +119,16 @@ JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
 	return mousedown ? lastmouse_but : 0;
 }
 
-void set_mouse_position( int x, int y )
+void mouseGetRelativePosition(Sint32 *const out_x, Sint32 *const out_y)
 {
-	if (input_grab_enabled)
-	{
-		mouse_x = x;
-		mouse_y = y;
-		map_screen_to_window_pos(&x, &y);
-		SDL_PumpEvents();
-		SDL_FlushEvent(SDL_MOUSEMOTION);
-		SDL_WarpMouseInWindow(main_window, x, y);
-	}
+	service_SDL_events(false);
+
+	scaleWindowDistanceToScreen(&mouseWindowXRelative, &mouseWindowYRelative);
+	*out_x = mouseWindowXRelative;
+	*out_y = mouseWindowYRelative;
+
+	mouseWindowXRelative = 0;
+	mouseWindowYRelative = 0;
 }
 
 void service_SDL_events( JE_boolean clear_new )
@@ -148,37 +147,31 @@ void service_SDL_events( JE_boolean clear_new )
 		switch (ev.type)
 		{
 			case SDL_WINDOWEVENT:
-				if (ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST)
-					input_grab(false);
-				else if (ev.window.event == SDL_WINDOWEVENT_RESIZED)
+				switch (ev.window.event)
+				{
+				case SDL_WINDOWEVENT_FOCUS_LOST:
+					windowHasFocus = false;
+
+					mouseSetRelative(mouseRelativeEnabled);
+					break;
+
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+					windowHasFocus = true;
+
+					mouseSetRelative(mouseRelativeEnabled);
+					break;
+
+				case SDL_WINDOWEVENT_RESIZED:
 					video_on_win_resize();
-				break;
-
-			case SDL_MOUSEMOTION:
-				map_window_to_screen_pos(&ev.motion.x, &ev.motion.y);
-				mouse_x = ev.motion.x;
-				mouse_y = ev.motion.y;
-
-				if (ev.motion.xrel != 0 || ev.motion.yrel != 0)
-					mouseInactive = false;
+					break;
+				}
 				break;
 
 			case SDL_KEYDOWN:
-				if (ev.key.keysym.mod & KMOD_CTRL)
-				{
-					/* <ctrl><f10> toggle input grab */
-					if (ev.key.keysym.scancode == SDL_SCANCODE_F10)
-					{
-						input_grab(!input_grab_enabled);
-						break;
-					}
-				}
-
 				/* <alt><enter> toggle fullscreen */
 				if (ev.key.keysym.mod & KMOD_ALT && ev.key.keysym.scancode == SDL_SCANCODE_RETURN)
 				{
 					toggle_fullscreen();
-					input_grab(false);
 					break;
 				}
 
@@ -191,23 +184,37 @@ void service_SDL_events( JE_boolean clear_new )
 
 				mouseInactive = true;
 				return;
+
 			case SDL_KEYUP:
 				keysactive[ev.key.keysym.scancode] = 0;
 				keydown = false;
 				return;
 
-			case SDL_MOUSEBUTTONDOWN:
-				if (!input_grab_enabled)
+			case SDL_MOUSEMOTION:
+				mouse_x = ev.motion.x;
+				mouse_y = ev.motion.y;
+				mapWindowPointToScreen(&mouse_x, &mouse_y);
+
+				if (mouseRelativeEnabled && windowHasFocus)
 				{
-					input_grab(true);
-					break;
+					mouseWindowXRelative += ev.motion.xrel;
+					mouseWindowYRelative += ev.motion.yrel;
 				}
 
+				// Show system mouse pointer if outside screen.
+				SDL_ShowCursor(mouse_x < 0 || mouse_x >= vga_width ||
+				               mouse_y < 0 || mouse_y >= vga_height ? SDL_TRUE : SDL_FALSE);
+
+				if (ev.motion.xrel != 0 || ev.motion.yrel != 0)
+					mouseInactive = false;
+				break;
+
+			case SDL_MOUSEBUTTONDOWN:
 				mouseInactive = false;
 
 				// fall through
 			case SDL_MOUSEBUTTONUP:
-				map_window_to_screen_pos(&ev.button.x, &ev.button.y);
+				mapWindowPointToScreen(&ev.button.x, &ev.button.y);
 				if (ev.type == SDL_MOUSEBUTTONDOWN)
 				{
 					newmouse = true;
@@ -235,6 +242,7 @@ void service_SDL_events( JE_boolean clear_new )
 				SDL_strlcpy(last_text, ev.text.text, COUNTOF(last_text));
 				new_text = true;
 				break;
+
 			case SDL_TEXTEDITING:
 				break;
 

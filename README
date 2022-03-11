@@ -17,9 +17,7 @@ Tyrian 2.1 data files which have been released as freeware:
 
 == Keyboard Controls ===========================================================
 
-ctrl-backspace -- kill OpenTyrian
-alt-enter      -- fullscreen
-ctrl-f10       -- ungrab mouse
+alt-enter      -- toggle full-screen
 
 arrow keys     -- ship movement
 space          -- fire weapons
