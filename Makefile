@@ -127,7 +127,7 @@ install : $(TARGET) installdirs
 .PHONY : uninstall
 uninstall :
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)
-	rm -f $(DESTDIR)$(docdir)/{NEWS,README}
+	rm -f $(DESTDIR)$(docdir)/NEWS $(DESTDIR)$(docdir)/README
 	rm -f $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
 	rm -f $(DESTDIR)$(desktopdir)/opentyrian.desktop
 	rm -f $(DESTDIR)$(pixmapdir)/opentyrian.png
