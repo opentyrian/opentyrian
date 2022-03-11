@@ -35,7 +35,7 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
  * \return the pointer to the first occurrence of \p c in \p s if there is an occurrences;
  *         otherwise the pointer to the terminating NUL character of \p s
  */
-static char *strchrnul( const char *s, int c );
+static char *ot_strchrnul( const char *s, int c );
 
 Option parse_args( int argc, const char *argv[], const Options *options )
 {
@@ -189,7 +189,7 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
 	const char *arg = argv[argn] + 2;  // ignore the "--"
 	
 	const size_t arg_len = strlen(arg),
-	             arg_opt_len = strchrnul(arg, '=') - arg;  // length before "="
+	             arg_opt_len = ot_strchrnul(arg, '=') - arg;  // length before "="
 	
 	const bool arg_attached = (arg_opt_len < arg_len),  // argument attached using "="?
 	           last_in_argv = (argn == argc - 1);
@@ -251,7 +251,7 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
 	return argn;  // which arg in argv that parse_args() should examine when called again
 }
 
-static char *strchrnul( const char *s, int c )
+static char *ot_strchrnul( const char *s, int c )
 {
 	for (; *s != c && *s != '\0'; ++s)
 		;
