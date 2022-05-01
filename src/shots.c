@@ -27,7 +27,7 @@
 PlayerShotDataType playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 
-void simulate_player_shots( void )
+void simulate_player_shots(void)
 {
 	/* Player Shot Images */
 	for (int z = 0; z < MAX_PWEAPON; z++)
@@ -117,7 +117,7 @@ static const JE_word linkSonicGr[17] /* [0..16] */ =
 static const JE_word linkMult2Gr[17] /* [0..16] */ =
 	{78,299,295,297,2,278,276,280,59,279,275,277,40,296,294,298,78};
 
-void player_shot_set_direction( JE_integer shot_id, uint weapon_id, JE_real direction )
+void player_shot_set_direction(JE_integer shot_id, uint weapon_id, JE_real direction)
 {
 	PlayerShotDataType* shot = &playerShotData[shot_id];
 
@@ -162,7 +162,7 @@ bool player_shot_move_and_draw(
 		int* out_shotx, int* out_shoty,
 		JE_integer* out_shot_damage, JE_byte* out_blast_filter,
 		JE_byte* out_chain, JE_byte* out_playerNum,
-		JE_word* out_special_radiusw, JE_word* out_special_radiush )
+		JE_word* out_special_radiusw, JE_word* out_special_radiush)
 {
 	PlayerShotDataType* shot = &playerShotData[shot_id];
 
@@ -303,7 +303,7 @@ bool player_shot_move_and_draw(
 	return true;
 }
 
-JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum )
+JE_integer player_shot_create(JE_word portNum, uint bay_i, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum)
 {
 	static const JE_byte soundChannel[11] /* [1..11] */ = {0, 2, 4, 4, 2, 2, 5, 5, 1, 4, 1};
 

@@ -25,9 +25,9 @@ extern char episode_name[6][31];
 extern char difficulty_name[7][21];
 extern char gameplay_name[5][26];
 
-bool gameplaySelect( void );
-bool episodeSelect( void );
-bool difficultySelect( void );
+bool gameplaySelect(void);
+bool episodeSelect(void);
+bool difficultySelect(void);
 
 #endif /* MENUS_H */
 

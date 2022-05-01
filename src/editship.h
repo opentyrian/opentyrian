@@ -29,8 +29,8 @@ extern JE_ShipsType extraShips;
 extern void *extraShapes;
 extern JE_word extraShapeSize;
 
-void JE_decryptShips( void );
-void JE_loadExtraShapes( void );
+void JE_decryptShips(void);
+void JE_loadExtraShapes(void);
 
 #endif /* EDITSHIP_H */
 

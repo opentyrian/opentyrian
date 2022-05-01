@@ -41,18 +41,18 @@ extern JE_word armorShipDelay;
 extern JE_byte warningCol;
 extern JE_shortint warningColChange;
 
-void JE_dString( SDL_Surface * screen, int x, int y, const char *s, unsigned int font );
+void JE_dString(SDL_Surface * screen, int x, int y, const char *s, unsigned int font);
 
-int JE_fontCenter( const char *s, unsigned int font );
-int JE_textWidth( const char *s, unsigned int font );
-void JE_textShade( SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness, unsigned int shadetype );
-void JE_outText( SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness );
-void JE_outTextModify( SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, unsigned int brightness, unsigned int font );
-void JE_outTextAdjust( SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, int brightness, unsigned int font, bool shadow );
-void JE_outTextAndDarken( SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, unsigned int brightness, unsigned int font );
+int JE_fontCenter(const char *s, unsigned int font);
+int JE_textWidth(const char *s, unsigned int font);
+void JE_textShade(SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness, unsigned int shadetype);
+void JE_outText(SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness);
+void JE_outTextModify(SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, unsigned int brightness, unsigned int font);
+void JE_outTextAdjust(SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, int brightness, unsigned int font, bool shadow);
+void JE_outTextAndDarken(SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, unsigned int brightness, unsigned int font);
 
-void JE_updateWarning( SDL_Surface * screen );
-void JE_outTextGlow( SDL_Surface * screen, int x, int y, const char *s );
+void JE_updateWarning(SDL_Surface * screen);
+void JE_outTextGlow(SDL_Surface * screen, int x, int y, const char *s);
 
 #endif /* FONTHAND_H */
 

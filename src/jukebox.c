@@ -34,7 +34,7 @@
 
 #include <stdio.h>
 
-void jukebox( void )
+void jukebox(void)
 {
 	bool trigger_quit = false,  // true when user wants to quit
 	     quitting = false;

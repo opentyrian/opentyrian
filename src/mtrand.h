@@ -21,10 +21,10 @@
 
 #define MT_RAND_MAX 0xffffffffUL
 
-void mt_srand( unsigned long s );
-unsigned long mt_rand( void );
-float mt_rand_1( void );
-float mt_rand_lt1( void );
+void mt_srand(unsigned long s);
+unsigned long mt_rand(void);
+float mt_rand_1(void);
+float mt_rand_lt1(void);
 
 #endif /* MTRAND_H */
 

@@ -36,9 +36,9 @@ void interp9(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 void interp10(Uint32 *pc, Uint32 c1, Uint32 c2, Uint32 c3);
 bool diff(unsigned int w1, unsigned int w2);
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
-void hq3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
-void hq4x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture );
+void hq2x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture);
+void hq3x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture);
+void hq4x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture);
 
 static int   YUV1, YUV2;
 const  int   Ymask = 0x00FF0000;
@@ -178,7 +178,7 @@ inline bool diff(unsigned int w1, unsigned int w2)
 #define PIXEL11_90    interp9((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 #define PIXEL11_100   interp10((Uint32 *)(dst + dst_pitch + dst_Bpp), c[5], c[6], c[8]);
 
-void hq2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
+void hq2x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 {
 	Uint8 *src = src_surface->pixels, *src_temp;
 	Uint8 *dst, *dst_temp;
@@ -2978,7 +2978,7 @@ void hq2x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 #define PIXEL22_5   interp5((Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp), c[6], c[8]);
 #define PIXEL22_C   *(Uint32 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = c[5];
 
-void hq3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
+void hq3x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 {
 	Uint8 *src = src_surface->pixels, *src_temp;
 	Uint8 *dst, *dst_temp;
@@ -6838,7 +6838,7 @@ void hq3x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
 #define PIXEL4_33_81    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[6]);
 #define PIXEL4_33_82    interp8((Uint32 *)(dst + 3 * dst_pitch + 3 * dst_Bpp), c[5], c[8]);
 
-void hq4x_32( SDL_Surface *src_surface, SDL_Texture *dst_texture )
+void hq4x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 {
 	Uint8 *src = src_surface->pixels, *src_temp;
 	Uint8 *dst, *dst_temp;

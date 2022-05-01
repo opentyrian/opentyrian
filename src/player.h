@@ -116,18 +116,18 @@ Player;
 
 extern Player player[2];
 
-static inline bool all_players_dead( void )
+static inline bool all_players_dead(void)
 {
 	return (!player[0].is_alive && (!twoPlayerMode || !player[1].is_alive));
 }
 
-static inline bool all_players_alive( void )
+static inline bool all_players_alive(void)
 {
 	return (player[0].is_alive && (!twoPlayerMode || player[1].is_alive));
 }
 
-void calc_purple_balls_needed( Player * );
-bool power_up_weapon( Player *, uint port );
-void handle_got_purple_ball( Player * );
+void calc_purple_balls_needed(Player *);
+bool power_up_weapon(Player *, uint port);
+void handle_got_purple_ball(Player *);
 
 #endif // PLAYER_H

@@ -42,19 +42,19 @@ extern bool windowHasFocus;
 extern bool new_text;
 extern char last_text[SDL_TEXTINPUTEVENT_TEXT_SIZE];
 
-void flush_events_buffer( void );
-void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
-void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
-void init_keyboard( void );
+void flush_events_buffer(void);
+void wait_input(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick);
+void wait_noinput(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick);
+void init_keyboard(void);
 void mouseSetRelative(bool enable);
-JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY );
+JE_word JE_mousePosition(JE_word *mouseX, JE_word *mouseY);
 void mouseGetRelativePosition(Sint32 *out_x, Sint32 *out_y);
 
-void service_SDL_events( JE_boolean clear_new );
+void service_SDL_events(JE_boolean clear_new);
 
-void sleep_game( void );
+void sleep_game(void);
 
-void JE_clearKeyboard( void );
+void JE_clearKeyboard(void);
 
 #endif /* KEYBOARD_H */
 

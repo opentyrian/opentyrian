@@ -97,7 +97,7 @@ static const char *getScalingModePickerItem(size_t i, char *buffer, size_t buffe
 	return scaling_mode_names[i];
 }
 
-void setupMenu( void )
+void setupMenu(void)
 {
 	typedef enum
 	{
@@ -747,7 +747,7 @@ void setupMenu( void )
 	}
 }
 
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
 	mt_srand(time(NULL));
 

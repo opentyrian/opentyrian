@@ -22,10 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void permute( const char *argv[], int *first_nonopt, int *first_opt, int after_opt );
+static void permute(const char *argv[], int *first_nonopt, int *first_opt, int after_opt);
 
-static int parse_short_opt( int argc, const char *const argv[], const Options *options, Option *option );
-static int parse_long_opt( int argc, const char *const argv[], const Options *options, Option *option );
+static int parse_short_opt(int argc, const char *const argv[], const Options *options, Option *option);
+static int parse_long_opt(int argc, const char *const argv[], const Options *options, Option *option);
 
 /*!
  * \brief Locate a character in a a string.
@@ -35,9 +35,9 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
  * \return the pointer to the first occurrence of \p c in \p s if there is an occurrences;
  *         otherwise the pointer to the terminating NUL character of \p s
  */
-static char *ot_strchrnul( const char *s, int c );
+static char *ot_strchrnul(const char *s, int c);
 
-Option parse_args( int argc, const char *argv[], const Options *options )
+Option parse_args(int argc, const char *argv[], const Options *options)
 {
 	static int argn = 1;
 	static bool no_more_options = false;
@@ -92,7 +92,7 @@ Option parse_args( int argc, const char *argv[], const Options *options )
 	return option;
 }
 
-static void permute( const char *argv[], int *first_nonopt, int *first_opt, int after_opt )
+static void permute(const char *argv[], int *first_nonopt, int *first_opt, int after_opt)
 {
 	const int nonopts = *first_opt - *first_nonopt;
 	
@@ -115,7 +115,7 @@ static void permute( const char *argv[], int *first_nonopt, int *first_opt, int 
 	*first_opt -= nonopts;
 }
 
-static int parse_short_opt( int argc, const char *const argv[], const Options *options, Option *option )
+static int parse_short_opt(int argc, const char *const argv[], const Options *options, Option *option)
 {
 	static size_t offset = 1;  // ignore the "-"
 	
@@ -182,7 +182,7 @@ static int parse_short_opt( int argc, const char *const argv[], const Options *o
 	return argn;  // which arg in argv that parse_args() should examine when called again
 }
 
-static int parse_long_opt( int argc, const char *const argv[], const Options *options, Option *option )
+static int parse_long_opt(int argc, const char *const argv[], const Options *options, Option *option)
 {
 	int argn = option->argn;
 	
@@ -251,7 +251,7 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
 	return argn;  // which arg in argv that parse_args() should examine when called again
 }
 
-static char *ot_strchrnul( const char *s, int c )
+static char *ot_strchrnul(const char *s, int c)
 {
 	for (; *s != c && *s != '\0'; ++s)
 		;

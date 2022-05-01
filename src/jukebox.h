@@ -21,7 +21,7 @@
 
 #include "opentyr.h"
 
-void jukebox( void );
+void jukebox(void);
 
 #endif /* JUKEBOX_H */
 

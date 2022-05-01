@@ -324,7 +324,7 @@ JE_boolean  linkToPlayer;
 JE_word shipGr, shipGr2;
 Sprite2_array *shipGrPtr, *shipGr2ptr;
 
-void JE_getShipInfo( void )
+void JE_getShipInfo(void)
 {
 	JE_boolean extraShip, extraShip2;
 
@@ -380,7 +380,7 @@ void JE_getShipInfo( void )
 	}
 }
 
-JE_word JE_SGr( JE_word ship, Sprite2_array **ptr )
+JE_word JE_SGr(JE_word ship, Sprite2_array **ptr)
 {
 	const JE_word GR[15] /* [1..15] */ = {233, 157, 195, 271, 81, 0, 119, 5, 43, 81, 119, 157, 195, 233, 271};
 
@@ -391,7 +391,7 @@ JE_word JE_SGr( JE_word ship, Sprite2_array **ptr )
 	return GR[tempW-1];
 }
 
-void JE_drawOptions( void )
+void JE_drawOptions(void)
 {
 	SDL_Surface *temp_surface = VGAScreen;
 	VGAScreen = VGAScreenSeg;
@@ -431,7 +431,7 @@ void JE_drawOptions( void )
 	JE_drawOptionLevel();
 }
 
-void JE_drawOptionLevel( void )
+void JE_drawOptionLevel(void)
 {
 	if (twoPlayerMode)
 	{
@@ -442,7 +442,7 @@ void JE_drawOptionLevel( void )
 	}
 }
 
-void JE_tyrianHalt( JE_byte code )
+void JE_tyrianHalt(JE_byte code)
 {
 	deinit_audio();
 	deinit_video();
@@ -503,7 +503,7 @@ void JE_tyrianHalt( JE_byte code )
 	exit(code);
 }
 
-void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
+void JE_specialComplete(JE_byte playerNum, JE_byte specialType)
 {
 	nextSpecialWait = 0;
 	switch (special[specialType].stype)
@@ -678,7 +678,7 @@ void JE_specialComplete( JE_byte playerNum, JE_byte specialType )
 	}
 }
 
-void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
+void JE_doSpecialShot(JE_byte playerNum, uint *armor, uint *shield)
 {
 	if (player[0].items.special > 0)
 	{
@@ -870,7 +870,7 @@ void JE_doSpecialShot( JE_byte playerNum, uint *armor, uint *shield )
 	}
 }
 
-void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player )
+void JE_setupExplosion(signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player)
 {
 	const struct {
 		JE_word sprite;
@@ -959,7 +959,7 @@ void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned
 	}
 }
 
-void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_integer x, JE_integer y )
+void JE_setupExplosionLarge(JE_boolean enemyGround, JE_byte exploNum, JE_integer x, JE_integer y)
 {
 	if (y >= 0)
 	{
@@ -1006,7 +1006,7 @@ void JE_setupExplosionLarge( JE_boolean enemyGround, JE_byte exploNum, JE_intege
 	}
 }
 
-void JE_wipeShieldArmorBars( void )
+void JE_wipeShieldArmorBars(void)
 {
 	if (!twoPlayerMode || galagaMode)
 	{
@@ -1028,8 +1028,8 @@ void JE_wipeShieldArmorBars( void )
 	}
 }
 
-JE_byte JE_playerDamage( JE_byte temp,
-                         Player *this_player )
+JE_byte JE_playerDamage(JE_byte temp,
+                        Player *this_player)
 {
 	int playerDamage = 0;
 	soundQueue[7] = S_SHIELD_HIT;
@@ -1093,13 +1093,13 @@ JE_byte JE_playerDamage( JE_byte temp,
 	return playerDamage;
 }
 
-JE_word JE_portConfigs( void )
+JE_word JE_portConfigs(void)
 {
 	const uint player_index = twoPlayerMode ? 1 : 0;
 	return tempW = weaponPort[player[player_index].items.weapon[REAR_WEAPON].id].opnum;
 }
 
-void JE_drawShield( void )
+void JE_drawShield(void)
 {
 	if (twoPlayerMode && !galagaMode)
 	{
@@ -1117,7 +1117,7 @@ void JE_drawShield( void )
 	}
 }
 
-void JE_drawArmor( void )
+void JE_drawArmor(void)
 {
 	for (uint i = 0; i < COUNTOF(player); ++i)
 		if (player[i].armor > 28)
@@ -1134,7 +1134,7 @@ void JE_drawArmor( void )
 	}
 }
 
-void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color ) /* superpixels */
+void JE_doSP(JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color) /* superpixels */
 {
 	for (temp = 0; temp < num; temp++)
 	{
@@ -1153,7 +1153,7 @@ void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte col
 	}
 }
 
-void JE_drawSP( void )
+void JE_drawSP(void)
 {
 	for (int i = MAX_SUPERPIXELS; i--; )
 	{

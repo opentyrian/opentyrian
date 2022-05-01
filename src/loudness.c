@@ -48,11 +48,11 @@ int sound_init_state = false;
 
 static SDL_AudioDeviceID audio_device = 0;
 
-void audio_cb( void *user_data, unsigned char *sdl_buffer, int bytes_needed );
+void audio_cb(void *user_data, unsigned char *sdl_buffer, int bytes_needed);
 
-void load_song( unsigned int song_num );
+void load_song(unsigned int song_num);
 
-bool init_audio( void )
+bool init_audio(void)
 {
 	if (audio_disabled)
 		return false;
@@ -88,7 +88,7 @@ bool init_audio( void )
 	return true;
 }
 
-void audio_cb( void *user_data, unsigned char *sdl_buffer, int bytes_needed )
+void audio_cb(void *user_data, unsigned char *sdl_buffer, int bytes_needed)
 {
 	(void)user_data;
 	
@@ -173,7 +173,7 @@ void audio_cb( void *user_data, unsigned char *sdl_buffer, int bytes_needed )
 	}
 }
 
-void deinit_audio( void )
+void deinit_audio(void)
 {
 	if (audio_disabled)
 		return;
@@ -198,7 +198,7 @@ void deinit_audio( void )
 }
 
 
-void load_music( void )
+void load_music(void)
 {
 	if (music_file == NULL)
 	{
@@ -214,7 +214,7 @@ void load_music( void )
 	}
 }
 
-void load_song( unsigned int song_num )
+void load_song(unsigned int song_num)
 {
 	if (audio_disabled)
 		return;
@@ -234,7 +234,7 @@ void load_song( unsigned int song_num )
 	SDL_UnlockAudioDevice(audio_device);
 }
 
-void play_song( unsigned int song_num )
+void play_song(unsigned int song_num)
 {
 	if (song_num != song_playing)
 	{
@@ -245,24 +245,24 @@ void play_song( unsigned int song_num )
 	music_stopped = false;
 }
 
-void restart_song( void )
+void restart_song(void)
 {
 	unsigned int temp = song_playing;
 	song_playing = -1;
 	play_song(temp);
 }
 
-void stop_song( void )
+void stop_song(void)
 {
 	music_stopped = true;
 }
 
-void fade_song( void )
+void fade_song(void)
 {
 	/* STUB: we have no implementation of this to port */
 }
 
-void set_volume( unsigned int music, unsigned int sample )
+void set_volume(unsigned int music, unsigned int sample)
 {
 	music_volume = music * (1.5f / 255.0f);
 	sample_volume = sample * (1.0f / 255.0f);

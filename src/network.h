@@ -65,26 +65,26 @@ extern JE_boolean pauseRequest, skipLevelRequest, helpRequest, nortShipRequest;
 extern JE_boolean yourInGameMenuRequest, inGameMenuRequest;
 
 #ifdef WITH_NETWORK
-void network_prepare( Uint16 type );
-bool network_send( int len );
+void network_prepare(Uint16 type);
+bool network_send(int len);
 
-int network_check( void );
-bool network_update( void );
+int network_check(void);
+bool network_update(void);
 
-bool network_is_sync( void );
+bool network_is_sync(void);
 
-void network_state_prepare( void );
-int network_state_send( void );
-bool network_state_update( void );
-bool network_state_is_reset( void );
-void network_state_reset( void );
+void network_state_prepare(void);
+int network_state_send(void);
+bool network_state_update(void);
+bool network_state_is_reset(void);
+void network_state_reset(void);
 
-int network_connect( void );
-void network_tyrian_halt( unsigned int err, bool attempt_sync );
+int network_connect(void);
+void network_tyrian_halt(unsigned int err, bool attempt_sync);
 
-int network_init( void );
+int network_init(void);
 
-void JE_clearSpecialRequests( void );
+void JE_clearSpecialRequests(void);
 
 #define NETWORK_KEEP_ALIVE() \
 		if (isNetworkGame) \

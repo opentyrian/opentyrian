@@ -38,7 +38,7 @@ char episode_name[6][31];
 char difficulty_name[7][21];
 char gameplay_name[5][26];
 
-bool gameplaySelect( void )
+bool gameplaySelect(void)
 {
 	enum MenuItemIndex
 	{
@@ -240,7 +240,7 @@ bool gameplaySelect( void )
 	}
 }
 
-bool episodeSelect( void )
+bool episodeSelect(void)
 {
 	if (shopSpriteSheet.data == NULL)
 		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites
@@ -427,7 +427,7 @@ bool episodeSelect( void )
 	}
 }
 
-bool difficultySelect( void )
+bool difficultySelect(void)
 {
 	if (shopSpriteSheet.data == NULL)
 		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites

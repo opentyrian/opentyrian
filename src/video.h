@@ -46,18 +46,18 @@ extern SDL_Surface *VGAScreen2;
 extern SDL_Window *main_window;
 extern SDL_PixelFormat *main_window_tex_format;
 
-void init_video( void );
+void init_video(void);
 
-void video_on_win_resize( void );
-void reinit_fullscreen( int new_display );
-void toggle_fullscreen( void );
-bool init_scaler( unsigned int new_scaler );
-bool set_scaling_mode_by_name( const char *name );
+void video_on_win_resize(void);
+void reinit_fullscreen(int new_display);
+void toggle_fullscreen(void);
+bool init_scaler(unsigned int new_scaler);
+bool set_scaling_mode_by_name(const char *name);
 
-void deinit_video( void );
+void deinit_video(void);
 
-void JE_clr256( SDL_Surface * );
-void JE_showVGA( void );
+void JE_clr256(SDL_Surface *);
+void JE_showVGA(void);
 
 void mapScreenPointToWindow(Sint32 *inout_x, Sint32 *inout_y);
 void mapWindowPointToScreen(Sint32 *inout_x, Sint32 *inout_y);

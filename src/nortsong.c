@@ -47,39 +47,39 @@ JE_word speed; /* JE: holds timer speed for 70Hz */
 
 float jasondelay = 1000.0f / (1193180.0f / 0x4300);
 
-void setdelay( JE_byte delay )
+void setdelay(JE_byte delay)
 {
 	target = (delay * 16) + SDL_GetTicks();
 }
 
-void setjasondelay( int delay )
+void setjasondelay(int delay)
 {
 	target = SDL_GetTicks() + delay * jasondelay;
 }
 
-void setjasondelay2( int delay )
+void setjasondelay2(int delay)
 {
 	target2 = SDL_GetTicks() + delay * jasondelay;
 }
 
-int delaycount( void )
+int delaycount(void)
 {
 	return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
 }
 
-int delaycount2( void )
+int delaycount2(void)
 {
 	return (SDL_GetTicks() < target2 ? target2 - SDL_GetTicks() : 0);
 }
 
-void wait_delay( void )
+void wait_delay(void)
 {
 	Sint32 delay = target - SDL_GetTicks();
 	if (delay > 0)
 		SDL_Delay(delay);
 }
 
-void service_wait_delay( void )
+void service_wait_delay(void)
 {
 	while (SDL_GetTicks() < target)
 	{
@@ -88,7 +88,7 @@ void service_wait_delay( void )
 	}
 }
 
-void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
+void wait_delayorinput(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick)
 {
 	service_SDL_events(true);
 	while (SDL_GetTicks() < target && !((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
@@ -99,7 +99,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 	}
 }
 
-void JE_loadSndFile( const char *effects_sndfile, const char *voices_sndfile )
+void JE_loadSndFile(const char *effects_sndfile, const char *voices_sndfile)
 {
 	JE_byte y, z;
 	JE_longint templ;
@@ -159,27 +159,27 @@ void JE_loadSndFile( const char *effects_sndfile, const char *voices_sndfile )
 
 }
 
-void JE_playSampleNum( JE_byte samplenum )
+void JE_playSampleNum(JE_byte samplenum)
 {
 	JE_multiSamplePlay(digiFx[samplenum-1], fxSize[samplenum-1], 0, fxPlayVol);
 }
 
-void JE_calcFXVol( void ) // TODO: not sure *exactly* what this does
+void JE_calcFXVol(void) // TODO: not sure *exactly* what this does
 {
 	fxPlayVol = (fxVolume - 1) >> 5;
 }
 
-void JE_setTimerInt( void )
+void JE_setTimerInt(void)
 {
 	jasondelay = 1000.0f / (1193180.0f / speed);
 }
 
-void JE_resetTimerInt( void )
+void JE_resetTimerInt(void)
 {
 	jasondelay = 1000.0f / (1193180.0f / 0x4300);
 }
 
-void JE_changeVolume( JE_word *music, int music_delta, JE_word *sample, int sample_delta )
+void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sample_delta)
 {
 	int music_temp = *music + music_delta,
 	    sample_temp = *sample + sample_delta;

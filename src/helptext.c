@@ -78,7 +78,7 @@ char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];                          /* [1..
 char menuInt[MENU_MAX+1][11][18];                                        /* [0..14, 1..11] of string [17] */
 
 
-static void decrypt_string( char *s, size_t len )
+static void decrypt_string(char *s, size_t len)
 {
 	static const unsigned char crypt_key[] = { 204, 129, 63, 255, 71, 19, 25, 62, 1, 99 };
 
@@ -94,7 +94,7 @@ static void decrypt_string( char *s, size_t len )
 	}
 }
 
-void read_encrypted_pascal_string( char *s, size_t size, FILE *f )
+void read_encrypted_pascal_string(char *s, size_t size, FILE *f)
 {
 	Uint8 len;
 	char buffer[255];
@@ -114,7 +114,7 @@ void read_encrypted_pascal_string( char *s, size_t size, FILE *f )
 	s[len] = '\0';
 }
 
-void skip_pascal_string( FILE *f )
+void skip_pascal_string(FILE *f)
 {
 	Uint8 len;
 	char buffer[255];
@@ -123,7 +123,7 @@ void skip_pascal_string( FILE *f )
 	fread_die(buffer, 1, len, f);
 }
 
-void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsigned int boxwidth )
+void JE_helpBox(SDL_Surface *screen,  int x, int y, const char *message, unsigned int boxwidth)
 {
 	JE_byte startpos, endpos, pos;
 	JE_boolean endstring;
@@ -178,12 +178,12 @@ void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsign
 	helpBoxShadeType = FULL_SHADE;
 }
 
-void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth )
+void JE_HBox(SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth)
 {
 	JE_helpBox(screen, x, y, helpTxt[messagenum-1], boxwidth);
 }
 
-void JE_loadHelpText( void )
+void JE_loadHelpText(void)
 {
 	const unsigned int menuInt_entries[MENU_MAX + 1] = { -1, 7, 9, 8, -1, -1, 11, -1, -1, -1, 6, 4, 6, 7, 5 };
 	

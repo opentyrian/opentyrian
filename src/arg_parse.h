@@ -53,6 +53,6 @@ typedef struct
 }
 Option;
 
-Option parse_args( int argc, const char *argv[], const Options *options );
+Option parse_args(int argc, const char *argv[], const Options *options);
 
 #endif /* ARG_PARSE_H */

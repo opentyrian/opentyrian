@@ -27,7 +27,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
+void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal)
 {
 	PCXnumber--;
 

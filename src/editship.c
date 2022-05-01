@@ -31,7 +31,7 @@ JE_ShipsType extraShips;
 void *extraShapes;
 JE_word extraShapeSize;
 
-void JE_decryptShips( void )
+void JE_decryptShips(void)
 {
 	JE_boolean correct = true;
 	JE_ShipsType s2;
@@ -74,7 +74,7 @@ void JE_decryptShips( void )
 	memcpy(extraShips, s2, sizeof(extraShips));
 }
 
-void JE_loadExtraShapes( void )
+void JE_loadExtraShapes(void)
 {
 	FILE *f = dir_fopen(get_user_directory(), "newsh$.shp", "rb");
 	

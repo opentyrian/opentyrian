@@ -40,9 +40,9 @@ extern JE_byte mouseCursor;
 extern JE_word mouseX, mouseY, mouseButton;
 extern JE_word mouseXB, mouseYB;
 
-void JE_mouseStart( void );
+void JE_mouseStart(void);
 void JE_mouseStartFilter(Uint8 filter);
-void JE_mouseReplace( void );
+void JE_mouseReplace(void);
 
 #endif /* MOUSE_H */
 

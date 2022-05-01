@@ -20,14 +20,14 @@
 
 Player player[2];
 
-void calc_purple_balls_needed( Player *this_player )
+void calc_purple_balls_needed(Player *this_player)
 {
 	static const uint purple_balls_required[12] = { 1, 1, 2, 4, 8, 12, 16, 20, 25, 30, 40, 50 };
 	
 	this_player->purple_balls_needed = purple_balls_required[*this_player->lives];
 }
 
-bool power_up_weapon( Player *this_player, uint port )
+bool power_up_weapon(Player *this_player, uint port)
 {
 	const bool can_power_up = this_player->items.weapon[port].id != 0 &&  // not None
 	                          this_player->items.weapon[port].power < 11; // not at max power
@@ -46,7 +46,7 @@ bool power_up_weapon( Player *this_player, uint port )
 	return can_power_up;
 }
 
-void handle_got_purple_ball( Player *this_player )
+void handle_got_purple_ball(Player *this_player)
 {
 	if (this_player->purple_balls_needed > 1)
 		--this_player->purple_balls_needed;

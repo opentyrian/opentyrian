@@ -327,31 +327,31 @@ static const int hud_sidekick_y[2][2] =
 	{ 108, 126 }, // two player HUD
 };
 
-void JE_getShipInfo( void );
-JE_word JE_SGr( JE_word ship, Sprite2_array **ptr );
+void JE_getShipInfo(void);
+JE_word JE_SGr(JE_word ship, Sprite2_array **ptr);
 
-void JE_drawOptions( void );
+void JE_drawOptions(void);
 
-void JE_tyrianHalt( JE_byte code ); /* This ends the game */
-void JE_specialComplete( JE_byte playernum, JE_byte specialType );
-void JE_doSpecialShot( JE_byte playernum, uint *armor, uint *shield );
+void JE_tyrianHalt(JE_byte code); /* This ends the game */
+void JE_specialComplete(JE_byte playernum, JE_byte specialType);
+void JE_doSpecialShot(JE_byte playernum, uint *armor, uint *shield);
 
-void JE_wipeShieldArmorBars( void );
-JE_byte JE_playerDamage( JE_byte temp, Player * );
+void JE_wipeShieldArmorBars(void);
+JE_byte JE_playerDamage(JE_byte temp, Player *);
 
-void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player );
-void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );
+void JE_setupExplosion(signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player);
+void JE_setupExplosionLarge(JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y);
 
-void JE_drawShield( void );
-void JE_drawArmor( void );
+void JE_drawShield(void);
+void JE_drawArmor(void);
 
-JE_word JE_portConfigs( void );
+JE_word JE_portConfigs(void);
 
 /*SuperPixels*/
-void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color );
-void JE_drawSP( void );
+void JE_doSP(JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color);
+void JE_drawSP(void);
 
-void JE_drawOptionLevel( void );
+void JE_drawOptionLevel(void);
 
 
 #endif /* VARZ_H */

@@ -85,7 +85,7 @@ static Uint16 numpatch, numposi, mainvolume;
 
 bool playing, songlooped;
 
-bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
+bool lds_load(FILE *f, unsigned int music_offset, unsigned int music_size)
 {
 	SoundBank *sb;
 	
@@ -184,7 +184,7 @@ bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
 	return true;
 }
 
-void lds_free( void )
+void lds_free(void)
 {
 	free(soundbank);
 	soundbank = NULL;
@@ -196,7 +196,7 @@ void lds_free( void )
 	patterns = NULL;
 }
 
-void lds_rewind( void )
+void lds_rewind(void)
 {
 	int i;
 
@@ -243,7 +243,7 @@ void lds_setregs_adv(Uint8 reg, Uint8 mask, Uint8 val)
 	lds_setregs(reg, (fmchip[reg] & mask) | val);
 }
 
-int lds_update( void )
+int lds_update(void)
 {
 	Uint16 comword, freq, octave, chan, tune, wibc, tremc, arpreg;
 	int vbreak;

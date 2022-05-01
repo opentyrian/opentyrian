@@ -32,11 +32,11 @@
 #include <ctype.h>
 #include <string.h>
 
-int joystick_axis_threshold( int j, int value );
-int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2] );
+int joystick_axis_threshold(int j, int value);
+int check_assigned(SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2]);
 
-const char *assignment_to_code( const Joystick_assignment *assignment );
-void code_to_assignment( Joystick_assignment *assignment, const char *buffer );
+const char *assignment_to_code(const Joystick_assignment *assignment);
+void code_to_assignment(Joystick_assignment *assignment, const char *buffer);
 
 int joystick_repeat_delay = 300; // milliseconds, repeat delay for buttons
 bool joydown = false;            // any joystick buttons down, updated by poll_joysticks()
@@ -48,7 +48,7 @@ Joystick *joystick = NULL;
 static const int joystick_analog_max = 32767;
 
 // eliminates axis movement below the threshold
-int joystick_axis_threshold( int j, int value )
+int joystick_axis_threshold(int j, int value)
 {
 	assert(j < joysticks);
 	
@@ -65,7 +65,7 @@ int joystick_axis_threshold( int j, int value )
 }
 
 // converts joystick axis to sane Tyrian-usable value (based on sensitivity)
-int joystick_axis_reduce( int j, int value )
+int joystick_axis_reduce(int j, int value)
 {
 	assert(j < joysticks);
 	
@@ -79,7 +79,7 @@ int joystick_axis_reduce( int j, int value )
 
 // converts analog joystick axes to an angle
 // returns false if axes are centered (there is no angle)
-bool joystick_analog_angle( int j, float *angle )
+bool joystick_analog_angle(int j, float *angle)
 {
 	assert(j < joysticks);
 	
@@ -104,7 +104,7 @@ bool joystick_analog_angle( int j, float *angle )
  * buttons has been pressed or that one of the assigned axes/hats has been moved
  * in the assigned direction
  */
-int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2] )
+int check_assigned(SDL_Joystick *joystick_handle, const Joystick_assignment assignment[2])
 {
 	int result = 0;
 	
@@ -153,7 +153,7 @@ int check_assigned( SDL_Joystick *joystick_handle, const Joystick_assignment ass
 }
 
 // updates joystick state
-void poll_joystick( int j )
+void poll_joystick(int j)
 {
 	assert(j < joysticks);
 	
@@ -205,7 +205,7 @@ void poll_joystick( int j )
 }
 
 // updates all joystick states
-void poll_joysticks( void )
+void poll_joysticks(void)
 {
 	joydown = false;
 	
@@ -214,7 +214,7 @@ void poll_joysticks( void )
 }
 
 // sends SDL KEYDOWN and KEYUP events for a key
-void push_key( SDL_Scancode key )
+void push_key(SDL_Scancode key)
 {
 	SDL_Event e;
 	
@@ -231,7 +231,7 @@ void push_key( SDL_Scancode key )
 }
 
 // helps us be lazy by pretending joysticks are a keyboard (useful for menus)
-void push_joysticks_as_keyboard( void )
+void push_joysticks_as_keyboard(void)
 {
 	const SDL_Scancode confirm = SDL_SCANCODE_RETURN, cancel = SDL_SCANCODE_ESCAPE;
 	const SDL_Scancode direction[4] = { SDL_SCANCODE_UP, SDL_SCANCODE_RIGHT, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT };
@@ -257,7 +257,7 @@ void push_joysticks_as_keyboard( void )
 }
 
 // initializes SDL joystick system and loads assignments for joysticks found
-void init_joysticks( void )
+void init_joysticks(void)
 {
 	if (ignore_joystick)
 		return;
@@ -297,7 +297,7 @@ void init_joysticks( void )
 }
 
 // deinitializes SDL joystick system and saves joystick assignments
-void deinit_joysticks( void )
+void deinit_joysticks(void)
 {
 	if (ignore_joystick)
 		return;
@@ -316,7 +316,7 @@ void deinit_joysticks( void )
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-void reset_joystick_assignments( int j )
+void reset_joystick_assignments(int j)
 {
 	assert(j < joysticks);
 	
@@ -373,7 +373,7 @@ static const char* const assignment_names[] =
 	"pause",
 };
 
-bool load_joystick_assignments( Config *config, int j )
+bool load_joystick_assignments(Config *config, int j)
 {
 	ConfigSection *section = config_find_section(config, "joystick", SDL_JoystickName(joystick[j].handle));
 	if (section == NULL)
@@ -407,7 +407,7 @@ bool load_joystick_assignments( Config *config, int j )
 	return true;
 }
 
-bool save_joystick_assignments( Config *config, int j )
+bool save_joystick_assignments(Config *config, int j)
 {
 	ConfigSection *section = config_find_or_add_section(config, "joystick", SDL_JoystickName(joystick[j].handle));
 	if (section == NULL)
@@ -444,7 +444,7 @@ bool save_joystick_assignments( Config *config, int j )
 }
 
 // fills buffer with comma separated list of assigned joystick functions
-void joystick_assignments_to_string( char *buffer, size_t buffer_len, const Joystick_assignment *assignments )
+void joystick_assignments_to_string(char *buffer, size_t buffer_len, const Joystick_assignment *assignments)
 {
 	strncpy(buffer, "", buffer_len);
 	
@@ -465,7 +465,7 @@ void joystick_assignments_to_string( char *buffer, size_t buffer_len, const Joys
 }
 
 // reverse of assignment_to_code()
-void code_to_assignment( Joystick_assignment *assignment, const char *buffer )
+void code_to_assignment(Joystick_assignment *assignment, const char *buffer)
 {
 	memset(assignment, 0, sizeof(*assignment));
 	
@@ -492,7 +492,7 @@ void code_to_assignment( Joystick_assignment *assignment, const char *buffer )
  * two of these per direction/action is all that can fit on the joystick config screen,
  * assuming two digits for the axis/button/hat number
  */
-const char *assignment_to_code( const Joystick_assignment *assignment )
+const char *assignment_to_code(const Joystick_assignment *assignment)
 {
 	static char name[7];
 	
@@ -527,7 +527,7 @@ const char *assignment_to_code( const Joystick_assignment *assignment )
 // captures joystick input for configuring assignments
 // returns false if non-joystick input was detected
 // TODO: input from joystick other than the one being configured probably should not be ignored
-bool detect_joystick_assignment( int j, Joystick_assignment *assignment )
+bool detect_joystick_assignment(int j, Joystick_assignment *assignment)
 {
 	// get initial joystick state to compare against to see if anything was pressed
 	
@@ -626,7 +626,7 @@ bool detect_joystick_assignment( int j, Joystick_assignment *assignment )
 }
 
 // compares relevant parts of joystick assignments for equality
-bool joystick_assignment_cmp( const Joystick_assignment *a, const Joystick_assignment *b )
+bool joystick_assignment_cmp(const Joystick_assignment *a, const Joystick_assignment *b)
 {
 	if (a->type == b->type)
 	{

@@ -30,13 +30,13 @@ typedef struct sizebuf_s
 	bool error;
 } sizebuf_t;
 
-void SZ_Init    ( sizebuf_t *, Uint8 *, unsigned int ); /* C style constructor */
-bool SZ_Error   ( sizebuf_t * );
-void SZ_Memset  ( sizebuf_t *, int, size_t ); /* memset with a sizebuf */
-void SZ_Memcpy2 ( sizebuf_t *, sizebuf_t *, size_t );   /* memcpy with a sizebuf */
-void SZ_Seek    ( sizebuf_t *, long, int ); /* fseek with a sizebuf. */
+void SZ_Init(sizebuf_t *, Uint8 *, unsigned int); /* C style constructor */
+bool SZ_Error(sizebuf_t *);
+void SZ_Memset(sizebuf_t *, int, size_t); /* memset with a sizebuf */
+void SZ_Memcpy2(sizebuf_t *, sizebuf_t *, size_t);   /* memcpy with a sizebuf */
+void SZ_Seek(sizebuf_t *, long, int); /* fseek with a sizebuf. */
 
-unsigned int MSG_ReadByte  ( sizebuf_t * );
-unsigned int MSG_ReadWord  ( sizebuf_t * );
+unsigned int MSG_ReadByte(sizebuf_t *);
+unsigned int MSG_ReadWord(sizebuf_t *);
 
 #endif

@@ -40,7 +40,7 @@ const char pars[][9] = {
 	"LOOT", "RECORD", "NOJOY", "CONSTANT", "DEATH", "NOSOUND", "NOXMAS", "YESXMAS"
 };
 
-void JE_paramCheck( int argc, char *argv[] )
+void JE_paramCheck(int argc, char *argv[])
 {
 	const Options options[] =
 	{

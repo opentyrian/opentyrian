@@ -246,7 +246,7 @@ JE_word editorLevel;   /*Initial value 800*/
 
 Config opentyrian_config;  // implicitly initialized
 
-bool load_opentyrian_config( void )
+bool load_opentyrian_config(void)
 {
 	// defaults
 	fullscreen_display = -1;
@@ -302,7 +302,7 @@ bool load_opentyrian_config( void )
 	return true;
 }
 
-bool save_opentyrian_config( void )
+bool save_opentyrian_config(void)
 {
 	Config *config = &opentyrian_config;
 	
@@ -350,7 +350,7 @@ bool save_opentyrian_config( void )
 	return true;
 }
 
-static void playeritems_to_pitems( JE_PItemsType pItems, PlayerItems *items, JE_byte initial_episode_num )
+static void playeritems_to_pitems(JE_PItemsType pItems, PlayerItems *items, JE_byte initial_episode_num)
 {
 	pItems[0]  = items->weapon[FRONT_WEAPON].id;
 	pItems[1]  = items->weapon[REAR_WEAPON].id;
@@ -366,7 +366,7 @@ static void playeritems_to_pitems( JE_PItemsType pItems, PlayerItems *items, JE_
 	pItems[11] = items->ship;
 }
 
-static void pitems_to_playeritems( PlayerItems *items, JE_PItemsType pItems, JE_byte *initial_episode_num )
+static void pitems_to_playeritems(PlayerItems *items, JE_PItemsType pItems, JE_byte *initial_episode_num)
 {
 	items->weapon[FRONT_WEAPON].id  = pItems[0];
 	items->weapon[REAR_WEAPON].id   = pItems[1];
@@ -383,7 +383,7 @@ static void pitems_to_playeritems( PlayerItems *items, JE_PItemsType pItems, JE_
 	items->ship                     = pItems[11];
 }
 
-void JE_saveGame( JE_byte slot, const char *name )
+void JE_saveGame(JE_byte slot, const char *name)
 {
 	saveFiles[slot-1].initialDifficulty = initialDifficulty;
 	saveFiles[slot-1].gameHasRepeated = gameHasRepeated;
@@ -439,7 +439,7 @@ void JE_saveGame( JE_byte slot, const char *name )
 	JE_saveConfiguration();
 }
 
-void JE_loadGame( JE_byte slot )
+void JE_loadGame(JE_byte slot)
 {
 	superTyrian = false;
 	onePlayerAction = false;
@@ -518,7 +518,7 @@ void JE_loadGame( JE_byte slot )
 	memcpy(&lastLevelName, &levelName, sizeof(levelName));
 }
 
-void JE_initProcessorType( void )
+void JE_initProcessorType(void)
 {
 	/* SYN: Originally this proc looked at your hardware specs and chose appropriate options. We don't care, so I'll just set
 	   decent defaults here. */
@@ -578,7 +578,7 @@ void JE_initProcessorType( void )
 
 }
 
-void JE_setNewGameSpeed( void )
+void JE_setNewGameSpeed(void)
 {
 	pentiumMode = false;
 
@@ -622,7 +622,7 @@ void JE_setNewGameSpeed( void )
   JE_setTimerInt();
 }
 
-void JE_encryptSaveTemp( void )
+void JE_encryptSaveTemp(void)
 {
 	JE_SaveGameTemp s3;
 	JE_word x;
@@ -668,7 +668,7 @@ void JE_encryptSaveTemp( void )
 	}
 }
 
-void JE_decryptSaveTemp( void )
+void JE_decryptSaveTemp(void)
 {
 	JE_boolean correct = true;
 	JE_SaveGameTemp s2;
@@ -744,7 +744,7 @@ void JE_decryptSaveTemp( void )
 	memcpy(&saveTemp, &s2, sizeof(s2));
 }
 
-const char *get_user_directory( void )
+const char *get_user_directory(void)
 {
 	static char user_dir[500] = "";
 	
@@ -780,7 +780,7 @@ const char *get_user_directory( void )
 Uint8 joyButtonAssign[4] = {1, 4, 5, 5};
 Uint8 inputDevice_ = 0, jConfigure = 0, midiPort = 1;
 
-void JE_loadConfiguration( void )
+void JE_loadConfiguration(void)
 {
 	FILE *fi;
 	int z;
@@ -946,7 +946,7 @@ void JE_loadConfiguration( void )
 	JE_initProcessorType();
 }
 
-void JE_saveConfiguration( void )
+void JE_saveConfiguration(void)
 {
 	FILE *f;
 	JE_byte *p;

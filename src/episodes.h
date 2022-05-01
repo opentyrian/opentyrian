@@ -164,10 +164,10 @@ extern JE_longint episode1DataLoc;
 extern JE_boolean bonusLevel;
 extern JE_boolean jumpBackToEpisode1;
 
-void JE_loadItemDat( void );
-void JE_initEpisode( JE_byte newEpisode );
-unsigned int JE_findNextEpisode( void );
-void JE_scanForEpisodes( void );
+void JE_loadItemDat(void);
+void JE_initEpisode(JE_byte newEpisode);
+unsigned int JE_findNextEpisode(void);
+void JE_scanForEpisodes(void);
 
 #endif /* EPISODES_H */
 

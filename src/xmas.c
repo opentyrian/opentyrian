@@ -32,13 +32,13 @@
 
 bool xmas = false;
 
-bool xmas_time( void )
+bool xmas_time(void)
 {
 	time_t now = time(NULL);
 	return localtime(&now)->tm_mon == 11;
 }
 
-bool xmas_prompt( void )
+bool xmas_prompt(void)
 {
 	static const char *const prompt[] =
 	{

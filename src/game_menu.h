@@ -24,35 +24,35 @@
 
 typedef JE_byte JE_MenuChoiceType[MENU_MAX];
 
-JE_longint JE_cashLeft( void );
-void JE_itemScreen( void );
+JE_longint JE_cashLeft(void);
+void JE_itemScreen(void);
 
-void load_cubes( void );
-bool load_cube( int cube_slot, int cube_index );
+void load_cubes(void);
+bool load_cube(int cube_slot, int cube_index);
 
-void JE_drawItem( JE_byte itemType, JE_word itemNum, JE_word x, JE_word y );
-void JE_drawMenuHeader( void );
-void JE_drawMenuChoices( void );
-void JE_updateNavScreen( void );
-void JE_drawNavLines( JE_boolean dark );
-void JE_drawLines( SDL_Surface *surface, JE_boolean dark );
-void JE_drawDots( void );
-void JE_drawPlanet( JE_byte planetNum );
-void draw_ship_illustration( void );
-void JE_scaleBitmap( SDL_Surface *dst, const SDL_Surface *src, int x1, int y1, int x2, int y2 );
-void JE_initWeaponView( void );
-void JE_computeDots( void );
-JE_integer JE_partWay( JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist );
-void JE_doShipSpecs( void );
-void JE_drawMainMenuHelpText( void );
-JE_boolean JE_quitRequest( void );
-void JE_genItemMenu( JE_byte itemnum );
-void JE_scaleInPicture( SDL_Surface *dst, const SDL_Surface *src );
-void JE_drawScore( void );
-void JE_menuFunction( JE_byte select );
-void JE_drawShipSpecs( SDL_Surface *, SDL_Surface * );
-void JE_weaponSimUpdate( void );
-void JE_weaponViewFrame( void );
+void JE_drawItem(JE_byte itemType, JE_word itemNum, JE_word x, JE_word y);
+void JE_drawMenuHeader(void);
+void JE_drawMenuChoices(void);
+void JE_updateNavScreen(void);
+void JE_drawNavLines(JE_boolean dark);
+void JE_drawLines(SDL_Surface *surface, JE_boolean dark);
+void JE_drawDots(void);
+void JE_drawPlanet(JE_byte planetNum);
+void draw_ship_illustration(void);
+void JE_scaleBitmap(SDL_Surface *dst, const SDL_Surface *src, int x1, int y1, int x2, int y2);
+void JE_initWeaponView(void);
+void JE_computeDots(void);
+JE_integer JE_partWay(JE_integer start, JE_integer finish, JE_byte dots, JE_byte dist);
+void JE_doShipSpecs(void);
+void JE_drawMainMenuHelpText(void);
+JE_boolean JE_quitRequest(void);
+void JE_genItemMenu(JE_byte itemnum);
+void JE_scaleInPicture(SDL_Surface *dst, const SDL_Surface *src);
+void JE_drawScore(void);
+void JE_menuFunction(JE_byte select);
+void JE_drawShipSpecs(SDL_Surface *, SDL_Surface *);
+void JE_weaponSimUpdate(void);
+void JE_weaponViewFrame(void);
 
 #endif // GAME_MENU_H
 

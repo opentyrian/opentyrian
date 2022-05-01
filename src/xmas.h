@@ -23,8 +23,8 @@
 
 extern bool xmas;
 
-bool xmas_time( void );
-bool xmas_prompt( void );
+bool xmas_time(void);
+bool xmas_prompt(void);
 
 #endif /* XMAS_H */
 

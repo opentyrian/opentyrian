@@ -54,7 +54,7 @@
 #include <string.h>
 #include <stdint.h>
 
-inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
+inline static void blit_enemy(SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset);
 
 boss_bar_t boss_bar[2];
 
@@ -72,7 +72,7 @@ char tempStr[31];
 JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
 JE_byte itemAvailMax[9]; /* [1..9] */
 
-void JE_starShowVGA( void )
+void JE_starShowVGA(void)
 {
 	JE_byte *src;
 	Uint8 *s = NULL; /* screen pointer, 8-bit specific */
@@ -154,7 +154,7 @@ void JE_starShowVGA( void )
 	skipStarShowVGA = false;
 }
 
-inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
+inline static void blit_enemy(SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset)
 {
 	if (enemy[i].sprite2s == NULL)
 	{
@@ -172,7 +172,7 @@ inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int 
 		blit_sprite2(surface, x, y, *enemy[i].sprite2s, index);
 }
 
-void JE_drawEnemy( int enemyOffset ) // actually does a whole lot more than just drawing
+void JE_drawEnemy(int enemyOffset) // actually does a whole lot more than just drawing
 {
 	player[0].x -= 25;
 
@@ -617,7 +617,7 @@ draw_enemy_end:
 	player[0].x += 25;
 }
 
-void JE_main( void )
+void JE_main(void)
 {
 	char buffer[256];
 
@@ -2403,7 +2403,7 @@ draw_player_shot_loop_end:
 }
 
 /* --- Load Level/Map Data --- */
-void JE_loadMap( void )
+void JE_loadMap(void)
 {
 	JE_DanCShape shape;
 
@@ -3193,7 +3193,7 @@ new_game:
 }
 
 #ifdef WITH_NETWORK
-void networkStartScreen( void )
+void networkStartScreen(void)
 {
 	JE_loadPic(VGAScreen, 2, false);
 	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
@@ -3272,7 +3272,7 @@ void networkStartScreen( void )
 }
 #endif /* WITH_NETWORK */
 
-bool titleScreen( void )
+bool titleScreen(void)
 {
 	enum MenuItemIndex
 	{
@@ -3616,7 +3616,7 @@ bool titleScreen( void )
 	}
 }
 
-bool newGame( void )
+bool newGame(void)
 {
 	if (gameplaySelect())
 	{
@@ -3661,7 +3661,7 @@ bool newGame( void )
 	return gameLoaded;
 }
 
-bool newSuperArcadeGame( unsigned int i )
+bool newSuperArcadeGame(unsigned int i)
 {
 	player[0].items.ship = SAShip[i];
 
@@ -3703,7 +3703,7 @@ bool newSuperArcadeGame( unsigned int i )
 	return gameLoaded;
 }
 
-void newSuperTyrianGame( void )
+void newSuperTyrianGame(void)
 {
 	/* SuperTyrian */
 
@@ -3748,7 +3748,7 @@ void newSuperTyrianGame( void )
 	fade_black(10);
 }
 
-void intro_logos( void )
+void intro_logos(void)
 {
 	moveTyrianLogoUp = true;
 
@@ -3777,7 +3777,7 @@ void intro_logos( void )
 	fade_black(10);
 }
 
-void JE_readTextSync( void )
+void JE_readTextSync(void)
 {
 #if 0  // this function seems to be unnecessary
 	JE_clr256(VGAScreen);
@@ -3804,7 +3804,7 @@ void JE_readTextSync( void )
 }
 
 
-void JE_displayText( void )
+void JE_displayText(void)
 {
 	/* Display Warning Text */
 	tempY = 55;
@@ -3859,7 +3859,7 @@ void JE_displayText( void )
 	levelWarningDisplay = false;
 }
 
-Sint16 JE_newEnemy( int enemyOffset, Uint16 eDatI, Sint16 uniqueShapeTableI )
+Sint16 JE_newEnemy(int enemyOffset, Uint16 eDatI, Sint16 uniqueShapeTableI)
 {
 	for (int i = enemyOffset; i < enemyOffset + 25; ++i)
 	{
@@ -3873,7 +3873,7 @@ Sint16 JE_newEnemy( int enemyOffset, Uint16 eDatI, Sint16 uniqueShapeTableI )
 	return 0;
 }
 
-uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 uniqueShapeTableI )
+uint JE_makeEnemy(struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 uniqueShapeTableI)
 {
 	uint avail;
 
@@ -4155,7 +4155,7 @@ uint JE_makeEnemy( struct JE_SingleEnemyType *enemy, Uint16 eDatI, Sint16 unique
 	return avail;
 }
 
-void JE_createNewEventEnemy( JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 uniqueShapeTableI )
+void JE_createNewEventEnemy(JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 uniqueShapeTableI)
 {
 	int i;
 
@@ -4226,7 +4226,7 @@ void JE_createNewEventEnemy( JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 u
 	enemy[b-1].fixedmovey = eventRec[eventLoc-1].eventdat6;
 }
 
-void JE_eventJump( JE_word jump )
+void JE_eventJump(JE_word jump)
 {
 	JE_word tempW;
 
@@ -4248,7 +4248,7 @@ void JE_eventJump( JE_word jump )
 	eventLoc = tempW - 1;
 }
 
-bool JE_searchFor/*enemy*/( JE_byte PLType, JE_byte* out_index )
+bool JE_searchFor/*enemy*/(JE_byte PLType, JE_byte* out_index)
 {
 	int found_id = -1;
 
@@ -4274,7 +4274,7 @@ bool JE_searchFor/*enemy*/( JE_byte PLType, JE_byte* out_index )
 	}
 }
 
-void JE_eventSystem( void )
+void JE_eventSystem(void)
 {
 	switch (eventRec[eventLoc-1].eventtype)
 	{
@@ -5138,7 +5138,7 @@ void JE_eventSystem( void )
 	eventLoc++;
 }
 
-void JE_whoa( void )
+void JE_whoa(void)
 {
 	unsigned int i, j, color, offset, timer;
 	unsigned int screenSize, topBorder, bottomBorder;
@@ -5216,14 +5216,14 @@ void JE_whoa( void )
 	levelWarningLines = 4;
 }
 
-static void JE_barX( JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col )
+static void JE_barX(JE_word x1, JE_word y1, JE_word x2, JE_word y2, JE_byte col)
 {
 	fill_rectangle_xy(VGAScreen, x1, y1,     x2, y1,     col + 1);
 	fill_rectangle_xy(VGAScreen, x1, y1 + 1, x2, y2 - 1, col    );
 	fill_rectangle_xy(VGAScreen, x1, y2,     x2, y2,     col - 1);
 }
 
-void draw_boss_bar( void )
+void draw_boss_bar(void)
 {
 	for (unsigned int b = 0; b < COUNTOF(boss_bar); b++)
 	{

@@ -37,28 +37,28 @@ extern JE_byte smoothie_data[9];
 
 extern int starfield_speed;
 
-void JE_darkenBackground( JE_word neat );
+void JE_darkenBackground(JE_word neat);
 
-void blit_background_row( SDL_Surface *surface, int x, int y, Uint8 **map );
-void blit_background_row_blend( SDL_Surface *surface, int x, int y, Uint8 **map );
+void blit_background_row(SDL_Surface *surface, int x, int y, Uint8 **map);
+void blit_background_row_blend(SDL_Surface *surface, int x, int y, Uint8 **map);
 
-void draw_background_1( SDL_Surface *surface );
-void draw_background_2( SDL_Surface *surface );
-void draw_background_2_blend( SDL_Surface *surface );
-void draw_background_3( SDL_Surface *surface );
+void draw_background_1(SDL_Surface *surface);
+void draw_background_2(SDL_Surface *surface);
+void draw_background_2_blend(SDL_Surface *surface);
+void draw_background_3(SDL_Surface *surface);
 
-void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
+void JE_filterScreen(JE_shortint col, JE_shortint generic_int);
 
-void JE_checkSmoothies( void );
-void lava_filter( SDL_Surface *dst, SDL_Surface *src );
-void water_filter( SDL_Surface *dst, SDL_Surface *src );
-void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src );
-void blur_filter( SDL_Surface *dst, SDL_Surface *src );
+void JE_checkSmoothies(void);
+void lava_filter(SDL_Surface *dst, SDL_Surface *src);
+void water_filter(SDL_Surface *dst, SDL_Surface *src);
+void iced_blur_filter(SDL_Surface *dst, SDL_Surface *src);
+void blur_filter(SDL_Surface *dst, SDL_Surface *src);
 /*smoothies #5 is used for 3*/
 /*smoothies #9 is a vertical flip*/
 
-void initialize_starfield( void );
-void update_and_draw_starfield( SDL_Surface* surface, int move_speed );
+void initialize_starfield(void);
+void update_and_draw_starfield(SDL_Surface* surface, int move_speed);
 
 #endif /* BACKGRND_H */
 

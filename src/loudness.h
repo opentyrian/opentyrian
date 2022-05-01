@@ -43,16 +43,16 @@ extern unsigned int song_playing;
 
 extern bool audio_disabled, music_disabled, samples_disabled;
 
-bool init_audio( void );
-void deinit_audio( void );
+bool init_audio(void);
+void deinit_audio(void);
 
-void load_music( void );
-void play_song( unsigned int song_num );
-void restart_song( void );
-void stop_song( void );
-void fade_song( void );
+void load_music(void);
+void play_song(unsigned int song_num);
+void restart_song(void);
+void stop_song(void);
+void fade_song(void);
 
-void set_volume( unsigned int music, unsigned int sample );
+void set_volume(unsigned int music, unsigned int sample);
 
 void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
 

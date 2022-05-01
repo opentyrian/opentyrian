@@ -52,14 +52,14 @@ static bool mouseRelativeEnabled;
 static Sint32 mouseWindowXRelative;
 static Sint32 mouseWindowYRelative;
 
-void flush_events_buffer( void )
+void flush_events_buffer(void)
 {
 	SDL_Event ev;
 
 	while (SDL_PollEvent(&ev));
 }
 
-void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
+void wait_input(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick)
 {
 	service_SDL_events(false);
 	while (!((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
@@ -75,7 +75,7 @@ void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 	}
 }
 
-void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
+void wait_noinput(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick)
 {
 	service_SDL_events(false);
 	while ((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown))
@@ -91,7 +91,7 @@ void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 	}
 }
 
-void init_keyboard( void )
+void init_keyboard(void)
 {
 	//SDL_EnableKeyRepeat(500, 60); TODO Find if SDL2 has an equivalent.
 
@@ -111,7 +111,7 @@ void mouseSetRelative(bool enable)
 	mouseWindowYRelative = 0;
 }
 
-JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY )
+JE_word JE_mousePosition(JE_word *mouseX, JE_word *mouseY)
 {
 	service_SDL_events(false);
 	*mouseX = mouse_x;
@@ -131,7 +131,7 @@ void mouseGetRelativePosition(Sint32 *const out_x, Sint32 *const out_y)
 	mouseWindowYRelative = 0;
 }
 
-void service_SDL_events( JE_boolean clear_new )
+void service_SDL_events(JE_boolean clear_new)
 {
 	SDL_Event ev;
 
@@ -254,7 +254,7 @@ void service_SDL_events( JE_boolean clear_new )
 	}
 }
 
-void JE_clearKeyboard( void )
+void JE_clearKeyboard(void)
 {
 	// /!\ Doesn't seems important. I think. D:
 }
