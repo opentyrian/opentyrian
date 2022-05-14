@@ -36,7 +36,7 @@ mandir ?= $(datarootdir)/man
 man6dir ?= $(mandir)/man6
 man6ext ?= .6
 desktopdir ?= $(datarootdir)/applications
-pixmapdir ?= $(datarootdir)/pixmaps
+icondir ?= $(datarootdir)/icons
 
 # see https://www.pathname.com/fhs/pub/fhs-2.3.html
 
@@ -114,7 +114,11 @@ installdirs :
 	mkdir -p $(DESTDIR)$(docdir)
 	mkdir -p $(DESTDIR)$(man6dir)
 	mkdir -p $(DESTDIR)$(desktopdir)
-	mkdir -p $(DESTDIR)$(pixmapdir)
+	mkdir -p $(DESTDIR)$(icondir)/hicolor/22x22/apps
+	mkdir -p $(DESTDIR)$(icondir)/hicolor/24x24/apps
+	mkdir -p $(DESTDIR)$(icondir)/hicolor/32x32/apps
+	mkdir -p $(DESTDIR)$(icondir)/hicolor/48x48/apps
+	mkdir -p $(DESTDIR)$(icondir)/hicolor/128x128/apps
 
 .PHONY : install
 install : $(TARGET) installdirs
@@ -122,7 +126,11 @@ install : $(TARGET) installdirs
 	$(INSTALL_DATA) NEWS README $(DESTDIR)$(docdir)/
 	$(INSTALL_DATA) linux/man/opentyrian.6 $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
 	$(INSTALL_DATA) linux/opentyrian.desktop $(DESTDIR)$(desktopdir)/
-	$(INSTALL_DATA) linux/icons/tyrian-32.png $(DESTDIR)$(pixmapdir)/opentyrian.png
+	$(INSTALL_DATA) linux/icons/tyrian-22.png $(DESTDIR)$(icondir)/hicolor/22x22/apps/opentyrian.png
+	$(INSTALL_DATA) linux/icons/tyrian-24.png $(DESTDIR)$(icondir)/hicolor/24x24/apps/opentyrian.png
+	$(INSTALL_DATA) linux/icons/tyrian-32.png $(DESTDIR)$(icondir)/hicolor/32x32/apps/opentyrian.png
+	$(INSTALL_DATA) linux/icons/tyrian-48.png $(DESTDIR)$(icondir)/hicolor/48x48/apps/opentyrian.png
+	$(INSTALL_DATA) linux/icons/tyrian-128.png $(DESTDIR)$(icondir)/hicolor/128x128/apps/opentyrian.png
 
 .PHONY : uninstall
 uninstall :
@@ -130,7 +138,11 @@ uninstall :
 	rm -f $(DESTDIR)$(docdir)/NEWS $(DESTDIR)$(docdir)/README
 	rm -f $(DESTDIR)$(man6dir)/opentyrian$(man6ext)
 	rm -f $(DESTDIR)$(desktopdir)/opentyrian.desktop
-	rm -f $(DESTDIR)$(pixmapdir)/opentyrian.png
+	rm -f $(DESTDIR)$(icondir)/hicolor/22x22/apps/opentyrian.png
+	rm -f $(DESTDIR)$(icondir)/hicolor/24x24/apps/opentyrian.png
+	rm -f $(DESTDIR)$(icondir)/hicolor/32x32/apps/opentyrian.png
+	rm -f $(DESTDIR)$(icondir)/hicolor/48x48/apps/opentyrian.png
+	rm -f $(DESTDIR)$(icondir)/hicolor/128x128/apps/opentyrian.png
 
 .PHONY : clean
 clean :
