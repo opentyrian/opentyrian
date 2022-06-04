@@ -3192,6 +3192,7 @@ new_game:
 	/* End of find loop for LEVEL??.DAT */
 }
 
+#ifdef WITH_NETWORK
 void networkStartScreen( void )
 {
 	JE_loadPic(VGAScreen, 2, false);
@@ -3269,6 +3270,7 @@ void networkStartScreen( void )
 		SDL_Delay(16);
 	}
 }
+#endif /* WITH_NETWORK */
 
 bool titleScreen( void )
 {
