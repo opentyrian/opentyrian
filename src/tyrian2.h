@@ -55,7 +55,9 @@ void JE_starShowVGA( void );
 
 void JE_main( void );
 void JE_loadMap( void );
+#ifdef WITH_NETWORK
 void networkStartScreen( void );
+#endif
 bool titleScreen( void );
 bool newGame( void );
 bool newSuperArcadeGame( unsigned int i );
