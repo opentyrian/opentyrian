@@ -3280,12 +3280,12 @@ bool titleScreen( void )
 		MENU_ITEM_LOAD_GAME,
 		MENU_ITEM_HIGH_SCORES,
 		MENU_ITEM_INSTRUCTIONS,
-		MENU_ITEM_OPENTYRIAN,
+		MENU_ITEM_SETUP,
 		MENU_ITEM_DEMO,
 		MENU_ITEM_QUIT,
 	};
 
-	SDL_strlcpy(menuText[4], opentyrian_str, sizeof menuText[4]);  // OpenTyrian override
+	SDL_strlcpy(menuText[4], "Setup", sizeof menuText[4]);  // override "Ordering Info"
 
 	if (shopSpriteSheet.data == NULL)
 		JE_loadCompShapes(&shopSpriteSheet, '1');  // need mouse pointer sprites
@@ -3580,11 +3580,11 @@ bool titleScreen( void )
 				restart = true;
 				break;
 			}
-			case MENU_ITEM_OPENTYRIAN:
+			case MENU_ITEM_SETUP:
 			{
 				fade_black(15);
 
-				openTyrianMenu();
+				setupMenu();
 
 				restart = true;
 				break;
