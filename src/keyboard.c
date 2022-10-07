@@ -99,6 +99,10 @@ void init_keyboard(void)
 	keydown = mousedown = false;
 
 	SDL_ShowCursor(SDL_FALSE);
+
+#if SDL_VERSION_ATLEAST(2, 26, 0)
+	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SYSTEM_SCALE, "1");
+#endif
 }
 
 void mouseSetRelative(bool enable)
