@@ -196,7 +196,6 @@ JE_word curLoc; /*Current Pixel location of background 1*/
 
 JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
 
-
 /* Destruction Ratio */
 JE_word totalEnemy;
 JE_word enemyKilled;
@@ -287,11 +286,9 @@ JE_real optionSatelliteRotate;
 JE_integer optionAttachmentMove;
 JE_boolean optionAttachmentLinked, optionAttachmentReturn;
 
-
 JE_byte chargeWait, chargeLevel, chargeMax, chargeGr, chargeGrWait;
 
 JE_word neat;
-
 
 /*ExplosionData*/
 explosion_type explosions[MAX_EXPLOSIONS]; /* [1..ExplosionMax] */
@@ -363,7 +360,6 @@ void JE_getShipInfo(void)
 	{
 		player[i].initial_armor = player[i].armor;
 
-
 		uint temp = ((i == 0 && extraShip) ||
 		             (i == 1 && extraShip2)) ? 2 : ships[player[i].items.ship].ani;
 
@@ -415,7 +411,6 @@ void JE_drawOptions(void)
 
 		this_player->sidekick[i].charge = 0;
 		this_player->sidekick[i].charge_ticks = 20;
-
 
 		// draw initial sidekick HUD
 		const int y = hud_sidekick_y[twoPlayerMode ? 1 : 0][i];
@@ -545,8 +540,8 @@ void JE_specialComplete(JE_byte playerNum, JE_byte specialType)
 		case 4:
 			for (temp = 0; temp < 100; temp++)
 			{
-				if (enemyAvail[temp] != 1 && enemy[temp].scoreitem
-				    && enemy[temp].evalue != 0)
+				if (enemyAvail[temp] != 1 && enemy[temp].scoreitem &&
+				    enemy[temp].evalue != 0)
 				{
 					if (player[0].x > enemy[temp].ex)
 						enemy[temp].exc++;
@@ -943,7 +938,8 @@ void JE_setupExplosion(signed int x, signed int y, signed int delta_y, unsigned 
 				{
 					explosions[i].y += 12;
 					explosions[i].x += 2;
-				} else if (type == 98)
+				}
+				else if (type == 98)
 				{
 					type = 6;
 				}
@@ -969,7 +965,9 @@ void JE_setupExplosionLarge(JE_boolean enemyGround, JE_byte exploNum, JE_integer
 			JE_setupExplosion(x + 6, y - 14, 0,  4, false, false);
 			JE_setupExplosion(x - 6, y,      0,  3, false, false);
 			JE_setupExplosion(x + 6, y,      0,  5, false, false);
-		} else {
+		}
+		else
+		{
 			JE_setupExplosion(x - 6, y - 14, 0,  7, false, false);
 			JE_setupExplosion(x + 6, y - 14, 0,  9, false, false);
 			JE_setupExplosion(x - 6, y,      0,  8, false, false);
@@ -1183,4 +1181,3 @@ void JE_drawSP(void)
 		}
 	}
 }
-

@@ -126,7 +126,6 @@ void step_fade_palette(int diff[256][3], int steps, unsigned int first_color, un
 	}
 }
 
-
 void fade_palette(Palette colors, int steps, unsigned int first_color, unsigned int last_color)
 {
 	assert(steps > 0);
@@ -184,4 +183,3 @@ static Uint32 rgb_to_yuv(int r, int g, int b)
 	    v = 128 + ((-r + 2 * g - b) >> 3);
 	return (y << 16) + (u << 8) + v;
 }
-

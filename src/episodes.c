@@ -24,7 +24,6 @@
 #include "lvlmast.h"
 #include "opentyr.h"
 
-
 /* MAIN Weapons Data */
 JE_WeaponPortType weaponPort;
 JE_WeaponType     weapons[WEAP_NUM + 1]; /* [0..weapnum] */
@@ -268,4 +267,3 @@ unsigned int JE_findNextEpisode(void)
 	
 	return newEpisode;
 }
-

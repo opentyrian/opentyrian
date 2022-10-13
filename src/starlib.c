@@ -59,7 +59,6 @@ static JE_shortint speedChange;
 
 static JE_byte pColor;
 
-
 void JE_starlib_main(void)
 {
 	int off;
@@ -75,15 +74,13 @@ void JE_starlib_main(void)
 
 	starlib_speed += speedChange;
 
-
-	for(stars = star, i = starlib_MAX_STARS; i > 0; stars++, i--)
+	for (stars = star, i = starlib_MAX_STARS; i > 0; stars++, i--)
 	{
 		/* Make a pointer to the screen... */
 		surf = VGAScreen->pixels;
 
 		/* Calculate the offset to where we wish to draw */
 		off = (stars->lastX)+(stars->lastY)*320;
-
 
 		/* We don't want trails in our star field.  Erase the old graphic */
 		if (off >= 640 && off < (320*200)-640)
@@ -107,7 +104,6 @@ void JE_starlib_main(void)
 		tempY = (stars->spY / tempZ) + 100;
 		tempZ -=  starlib_speed;
 
-
 		/* If star is out of range, make a new one */
 		if (tempZ <=  0 ||
 		    tempY ==  0 || tempY > 198 ||
@@ -129,11 +125,9 @@ void JE_starlib_main(void)
 			off = tempX+tempY*320;
 
 			if (grayB)
-			{
 				tempCol = tempZ >> 1;
-			} else {
+			else
 				tempCol = pColor+((tempZ >> 4) & 31);
-			}
 
 			/* Draw the pixel! */
 			if (off >= 640 && off < (320*200)-640)
@@ -366,20 +360,14 @@ void JE_changeSetup(JE_byte setupType)
 	changeTime = (mt_rand() % 1000);
 
 	if (setupType > 0)
-	{
 		setup = setupType;
-	} else {
+	else
 		setup = mt_rand() % (MAX_TYPES + 1);
-	}
 
 	if (setup == 1)
-	{
 		nspVarInc = 0.1f;
-	}
 	if (nspVarInc > 2.2f)
-	{
 		nspVarInc = 0.1f;
-	}
 }
 
 void JE_newStar(void)
@@ -388,7 +376,9 @@ void JE_newStar(void)
 	{
 		tempX = (mt_rand() % 64000) - 32000;
 		tempY = (mt_rand() % 40000) - 20000;
-	} else {
+	}
+	else
+	{
 		nsp = nsp + nspVarInc; /* YKS: < lol */
 		switch (setup)
 		{
@@ -423,36 +413,28 @@ void JE_newStar(void)
 			case 7:
 				tempX = mt_rand() % 65535;
 				if ((mt_rand() % 2) == 0)
-				{
 					tempY = (int)(cosf(nsp / 80) * 10000) + 15000;
-				} else {
+				else
 					tempY = 50000 - (int)(cosf(nsp / 80) * 13000);
-				}
 				break;
 			case 9:
 				nsp2 += nspVar2Inc;
 				if ((nsp2 == 65535) || (nsp2 == 0))
-				{
 					nspVar2Inc = -nspVar2Inc;
-				}
 				tempX = (int)(cosf(sinf(nsp2 / 10.0f) + (nsp / 500)) * 32000);
 				tempY = (int)(sinf(cosf(nsp2 / 10.0f) + (nsp / 500)) * 30000);
 				break;
 			case 10:
 				nsp2 += nspVar2Inc;
 				if ((nsp2 == 65535) || (nsp2 == 0))
-				{
 					nspVar2Inc = -nspVar2Inc;
-				}
 				tempX = (int)(cosf(sinf(nsp2 / 5.0f) + (nsp / 100)) * 32000);
 				tempY = (int)(sinf(cosf(nsp2 / 5.0f) + (nsp / 100)) * 30000);
 				break;;
 			case 11:
 				nsp2 += nspVar2Inc;
 				if ((nsp2 == 65535) || (nsp2 == 0))
-				{
 					nspVar2Inc = -nspVar2Inc;
-				}
 				tempX = (int)(cosf(sinf(nsp2 / 1000.0f) + (nsp / 2)) * 32000);
 				tempY = (int)(sinf(cosf(nsp2 / 1000.0f) + (nsp / 2)) * 30000);
 				break;
@@ -461,9 +443,7 @@ void JE_newStar(void)
 				{
 					nsp2 += nspVar2Inc;
 					if ((nsp2 == 65535) || (nsp2 == 0))
-					{
 						nspVar2Inc = -nspVar2Inc;
-					}
 					tempX = (int)(cosf(sinf(nsp2 / 2.0f) / (sqrtf(fabsf(nsp)) / 10.0f + 1) + (nsp2 / 100.0f)) * 32000);
 					tempY = (int)(sinf(cosf(nsp2 / 2.0f) / (sqrtf(fabsf(nsp)) / 10.0f + 1) + (nsp2 / 100.0f)) * 30000);
 				}
@@ -473,9 +453,7 @@ void JE_newStar(void)
 				{
 					nsp2 += nspVar2Inc;
 					if ((nsp2 == 65535) || (nsp2 == 0))
-					{
 						nspVar2Inc = -nspVar2Inc;
-					}
 					tempX = (int)(cosf(sinf(nsp2 / 10.0f) / 2 + (nsp / 20)) * 32000);
 					tempY = (int)(sinf(sinf(nsp2 / 11.0f) / 2 + (nsp / 20)) * 30000);
 				}
@@ -488,4 +466,3 @@ void JE_newStar(void)
 		}
 	}
 }
-

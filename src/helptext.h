@@ -77,4 +77,3 @@ void JE_HBox(SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsign
 void JE_loadHelpText(void);
 
 #endif /* HELPTEXT_H */
-

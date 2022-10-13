@@ -59,4 +59,3 @@ extern const char *opentyrian_version;
 void setupMenu(void);
 
 #endif /* OPENTYR_H */
-

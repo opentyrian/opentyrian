@@ -200,4 +200,3 @@ void jukebox(void)
 
 	set_volume(tyrMusicVolume, fxVolume);
 }
-

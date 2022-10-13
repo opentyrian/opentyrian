@@ -27,4 +27,3 @@ float mt_rand_1(void);
 float mt_rand_lt1(void);
 
 #endif /* MTRAND_H */
-

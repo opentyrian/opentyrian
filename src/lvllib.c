@@ -38,4 +38,3 @@ void JE_analyzeLevel(void)
 	
 	fclose(f);
 }
-

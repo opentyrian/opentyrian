@@ -68,4 +68,3 @@ const char musicTitle[MUSIC_NUM][48] =
 };
 
 JE_boolean musicFade;
-

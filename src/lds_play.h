@@ -71,4 +71,3 @@ void lds_setregs(unsigned char reg, unsigned char val);
 void lds_setregs_adv(unsigned char reg, unsigned char mask, unsigned char val);
 
 #endif /* LDS_PLAY_H */
-

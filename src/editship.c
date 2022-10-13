@@ -89,4 +89,3 @@ void JE_loadExtraShapes(void)
 		fclose(f);
 	}
 }
-

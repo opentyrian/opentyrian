@@ -24,4 +24,3 @@
 void JE_loadPCX(const char *file);
 
 #endif /* PCXLOAD_H */
-

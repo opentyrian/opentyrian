@@ -111,7 +111,6 @@ static const JE_word planetY[21] = {  40,  90,  90,  80, 170,  30,  50, 130, 120
 static const uint cube_line_chars = sizeof(*cube->text) - 1;
 static const uint cube_line_width = 150;
 
-
 /*** Functions ***/
 static Uint8 *playeritem_map(PlayerItems *items, uint i)
 {
@@ -128,7 +127,6 @@ static Uint8 *playeritem_map(PlayerItems *items, uint i)
 	assert(i < COUNTOF(map));
 	return map[i];
 }
-
 
 JE_longint JE_cashLeft(void)
 {
@@ -198,7 +196,7 @@ void JE_itemScreen(void)
 
 		int slot = 0;
 
-		for ( ; slot < itemAvailMax[itemAvailMap[i]-1]; ++slot)
+		for (; slot < itemAvailMax[itemAvailMap[i]-1]; ++slot)
 		{
 			if (itemAvail[itemAvailMap[i]-1][slot] == item)
 				break;
@@ -541,11 +539,9 @@ void JE_itemScreen(void)
 				{
 					case 1: /* ship */
 						if (temp > 90)
-						{
 							snprintf(tempStr, sizeof(tempStr), "Custom Ship %d", temp - 90);
-						} else {
+						else
 							strcpy(tempStr, ships[temp].name);
-						}
 						break;
 					case 2: /* front and rear weapon */
 					case 3:
@@ -563,11 +559,9 @@ void JE_itemScreen(void)
 						break;
 				}
 				if (tempW == curSel[curMenu]-1)
-				{
 					temp2 = 15;
-				} else {
+				else
 					temp2 = 28;
-				}
 
 				JE_getShipInfo();
 
@@ -940,8 +934,9 @@ void JE_itemScreen(void)
 
 						JE_mouseReplace();
 
-					} else { /* current menu is anything but weapon sim or datacube */
-
+					}
+					else  /* current menu is anything but weapon sim or datacube */
+					{
 						setjasondelay(2);
 
 						JE_drawScore();
@@ -984,7 +979,7 @@ void JE_itemScreen(void)
 
 				if (curMenu != MENU_LOAD_SAVE)
 				{
-					if (keysactive[SDL_SCANCODE_S] && (keysactive[SDL_SCANCODE_LALT] || keysactive[SDL_SCANCODE_RALT]) )
+					if (keysactive[SDL_SCANCODE_S] && (keysactive[SDL_SCANCODE_LALT] || keysactive[SDL_SCANCODE_RALT]))
 					{
 						if (curMenu == MENU_DATA_CUBE_SUB ||
 						    curMenu == MENU_DATA_CUBES)
@@ -998,7 +993,7 @@ void JE_itemScreen(void)
 						newPal = 1;
 						oldPal = curPal;
 					}
-					if (keysactive[SDL_SCANCODE_L] && (keysactive[SDL_SCANCODE_LALT] || keysactive[SDL_SCANCODE_RALT]) )
+					if (keysactive[SDL_SCANCODE_L] && (keysactive[SDL_SCANCODE_LALT] || keysactive[SDL_SCANCODE_RALT]))
 					{
 						if (curMenu == MENU_DATA_CUBE_SUB ||
 						    curMenu == MENU_DATA_CUBES)
@@ -1020,11 +1015,9 @@ void JE_itemScreen(void)
 					{
 						inputDetected = false;
 						if (mouseCursor == MOUSE_POINTER_UP)
-						{
 							yChg = -1;
-						} else {
+						else
 							yChg = 1;
-						}
 					}
 
 					if (keysactive[SDL_SCANCODE_PAGEUP])
@@ -1448,17 +1441,14 @@ void JE_itemScreen(void)
 						JE_playSampleNum(S_CURSOR);
 
 						int temp = curSel[curMenu] - 3;
-						do {
+						do
+						{
 							if (joysticks == 0)
-							{
 								inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
-							}
 							if (inputDevice[temp] <= 1)
-							{
 								inputDevice[temp] = 2 + joysticks;
-							} else {
+							else
 								inputDevice[temp]--;
-							}
 						} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
 						break;
 					}
@@ -1544,17 +1534,14 @@ void JE_itemScreen(void)
 						JE_playSampleNum(S_CURSOR);
 
 						int temp = curSel[curMenu] - 3;
-						do {
+						do
+						{
 							if (joysticks == 0)
-							{
 								inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
-							}
 							if (inputDevice[temp] >= 2 + joysticks)
-							{
 								inputDevice[temp] = 1;
-							} else {
+							else
 								inputDevice[temp]++;
-							}
 						} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
 						break;
 					}
@@ -1967,7 +1954,9 @@ void JE_drawMenuChoices(void)
 		{
 			str[0] = '~';
 			strcpy(str+1, menuInt[curMenu + 1][x-1]);
-		} else {
+		}
+		else
+		{
 			strcpy(str, menuInt[curMenu + 1][x-1]);
 		}
 		JE_dString(VGAScreen, 166, tempY, str, SMALL_FONT_SHAPES);
@@ -2072,11 +2061,9 @@ void JE_drawLines(SDL_Surface *surface, JE_boolean dark)
 		if (tempX > 18 && tempX < 135)
 		{
 			if (dark)
-			{
 				JE_rectangle(surface, tempX + 1, 0, tempX + 1, 199, 32+3);
-			} else {
+			else
 				JE_rectangle(surface, tempX, 0, tempX, 199, 32+5);
-			}
 		}
 	}
 
@@ -2089,11 +2076,9 @@ void JE_drawLines(SDL_Surface *surface, JE_boolean dark)
 		if (tempY > 15 && tempY < 169)
 		{
 			if (dark)
-			{
 				JE_rectangle(surface, 0, tempY + 1, 319, tempY + 1, 32+3);
-			} else {
+			else
 				JE_rectangle(surface, 0, tempY, 319, tempY, 32+5);
-			}
 
 			tempW2 = 0;
 
@@ -2215,7 +2200,6 @@ void JE_scaleBitmap(SDL_Surface *dst_bitmap, const SDL_Surface *src_bitmap,  int
 	      base_skip_h = src_bitmap->h / (float)h;
 	float cumulative_skip_w, cumulative_skip_h;
 
-
 	//Okay, it's time to loop through and add bits of A to a rectangle in B
 	Uint8 *dst = dst_bitmap->pixels;  /* 8-bit specific */
 	const Uint8 *src, *src_w;  /* 8-bit specific */
@@ -2283,16 +2267,12 @@ void JE_computeDots(void)
 		tempX = abs(distX) + abs(distY);
 
 		if (tempX != 0)
-		{
 			planetDots[x] = roundf(sqrtf(sqrtf((distX * distX) + (distY * distY)))) - 1;
-		} else {
+		else
 			planetDots[x] = 0;
-		}
 
 		if (planetDots[x] > 10)
-		{
 			planetDots[x] = 10;
-		}
 
 		for (y = 0; y < planetDots[x]; y++)
 		{
@@ -2537,7 +2517,8 @@ void JE_scaleInPicture(SDL_Surface *dst, const SDL_Surface *src)
 {
 	for (int i = 2; i <= 160; i += 2)
 	{
-		if (JE_anyButton()) { break; }
+		if (JE_anyButton())
+			break;
 
 		JE_scaleBitmap(dst, src, 160 - i, 0, 160 + i - 1, 100 + roundf(i * 0.625f) - 1);
 		JE_showVGA();
@@ -2545,7 +2526,6 @@ void JE_scaleInPicture(SDL_Surface *dst, const SDL_Surface *src)
 		SDL_Delay(1);
 	}
 }
-
 
 void JE_drawScore(void)
 {
@@ -2662,7 +2642,9 @@ void JE_menuFunction(JE_byte select)
 		{
 			curMenu = MENU_FULL_GAME;
 			newPal = 1;
-		} else {
+		}
+		else
+		{
 			mainLevel = mapSection[curSelect - 2];
 			jumpSection = true;
 		}
@@ -2706,7 +2688,8 @@ void JE_menuFunction(JE_byte select)
 			col = 248;
 			colC = 1;
 
-			do {
+			do
+			{
 				setjasondelay(1);
 
 				col += colC;
@@ -2757,16 +2740,18 @@ void JE_menuFunction(JE_byte select)
 			{
 				curMenu = oldMenu;
 				newPal = oldPal;
-			} else {
+			}
+			else
+			{
 				curMenu = MENU_OPTIONS;
 			}
-		} else {
+		}
+		else
+		{
 			if (twoPlayerMode)
-			{
 				temp = 11;
-			} else {
+			else
 				temp = 0;
-			}
 			JE_operation(curSelect - 1 + temp);
 			if (quikSave)
 			{
@@ -2781,7 +2766,9 @@ void JE_menuFunction(JE_byte select)
 		{
 			curMenu = MENU_FULL_GAME;
 			newPal = 1;
-		} else {
+		}
+		else
+		{
 			if (cubeMax > 0)
 			{
 				firstMenu9 = true;
@@ -2789,7 +2776,9 @@ void JE_menuFunction(JE_byte select)
 				yLoc = 0;
 				yChg = 0;
 				currentCube = curSel[MENU_DATA_CUBES] - 2;
-			} else {
+			}
+			else
+			{
 				curMenu = MENU_FULL_GAME;
 				newPal = 1;
 			}
@@ -2812,17 +2801,14 @@ void JE_menuFunction(JE_byte select)
 			JE_playSampleNum(S_CURSOR);
 
 			int temp = curSel[curMenu] - 3;
-			do {
+			do
+			{
 				if (joysticks == 0)
-				{
 					inputDevice[temp == 0 ? 1 : 0] = inputDevice[temp]; // swap controllers
-				}
 				if (inputDevice[temp] >= 2 + joysticks)
-				{
 					inputDevice[temp] = 1;
-				} else {
+				else
 					inputDevice[temp]++;
-				}
 			} while (inputDevice[temp] == inputDevice[temp == 0 ? 1 : 0]);
 			break;
 		case 5:
@@ -2999,7 +2985,6 @@ void JE_drawShipSpecs(SDL_Surface * screen, SDL_Surface * temp_screen)
 	int temp_x = 0, temp_y = 0, temp_index;
 	Uint8 *src, *dst;
 
-
 	//first, draw the text and other assorted flavoring.
 	JE_clr256(screen);
 	JE_drawLines(screen, true);
@@ -3014,7 +2999,6 @@ void JE_drawShipSpecs(SDL_Surface * screen, SDL_Surface * temp_screen)
 	verticalHeight = 7;
 
 	JE_outText(screen, JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
-
 
 	//now draw the green ship over that.
 	//This hardcoded stuff is for positioning our little ship graphic
@@ -3050,7 +3034,6 @@ void JE_drawShipSpecs(SDL_Surface * screen, SDL_Surface * temp_screen)
 	}
 	temp_x -= 30;
 
-
 	//draw the ship into our temp buffer.
 	JE_clr256(temp_screen);
 	blit_sprite(temp_screen, temp_x, temp_y, OPTION_SHAPES, temp_index - 1);  // ship illustration
@@ -3081,11 +3064,9 @@ void JE_drawShipSpecs(SDL_Surface * screen, SDL_Surface * temp_screen)
 			avg /= 4;
 
 			if ((*src & 0x0f) > avg)
-			{
 				*dst = (*src & 0x0f) | 0xc0;
-			//} else {
+			//else
 			//	*dst = 0;
-			}
 
 			src++;
 			dst++;
@@ -3231,7 +3212,6 @@ void JE_weaponViewFrame(void)
 
 	blit_sprite(VGAScreenSeg, 0, 0, OPTION_SHAPES, 12); // upgrade interface
 
-
 	/*========================Power Bar=========================*/
 
 	power += powerAdd;
@@ -3273,4 +3253,3 @@ void JE_weaponViewFrame(void)
 
 	//JE_waitFrameCount();  TODO: didn't do anything?
 }
-

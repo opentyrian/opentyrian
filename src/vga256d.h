@@ -41,4 +41,3 @@ static inline void fill_rectangle_wh(SDL_Surface *surface, int x, int y, uint w,
 void draw_segmented_gauge(SDL_Surface *surface, int x, int y, Uint8 color, uint segment_width, uint segment_height, uint segment_value, uint value);
 
 #endif /* VGA256D_H */
-

@@ -32,4 +32,3 @@ void JE_barDrawShadow(SDL_Surface *surface, JE_word x, JE_word y, JE_word res, J
 void JE_wipeKey(void);
 
 #endif /* NORTVARS_H */
-

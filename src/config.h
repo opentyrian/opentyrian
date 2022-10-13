@@ -179,4 +179,3 @@ void JE_encryptSaveTemp(void);
 void JE_decryptSaveTemp(void);
 
 #endif /* CONFIG_H */
-

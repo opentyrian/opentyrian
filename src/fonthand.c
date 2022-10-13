@@ -331,4 +331,3 @@ void JE_outTextGlow(SDL_Surface * screen, int x, int y, const char *s)
 	}
 	textGlowBrightness = 6;
 }
-

@@ -39,7 +39,6 @@ JE_word mapXPos, oldMapXOfs, mapXOfs, mapX2Ofs, mapX2Pos, mapX3Pos, oldMapX3Ofs,
 intptr_t mapXbpPos, mapX2bpPos, mapX3bpPos;
 JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 
-
 JE_boolean  anySmoothies;
 JE_byte     smoothie_data[9]; /* [1..9] */
 
@@ -465,7 +464,6 @@ void blur_filter(SDL_Surface *dst, SDL_Surface *src)
 		src_pixel += (src->pitch - 320);  // in case pitch is not 320
 	}
 }
-
 
 /* Background Starfield */
 typedef struct

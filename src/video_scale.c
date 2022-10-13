@@ -165,7 +165,6 @@ void nn_16(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 	SDL_UnlockTexture(dst_texture);
 }
 
-
 void scale2x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 {
 	Uint8 *src = src_surface->pixels, *src_temp;
@@ -201,12 +200,15 @@ void scale2x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 			F = rgb_palette[*(x < width - 1 ? src + 1 : src)];
 			H = rgb_palette[*(src + nextline)];
 			
-			if (B != H && D != F) {
+			if (B != H && D != F)
+			{
 				E0 = D == B ? D : E;
 				E1 = B == F ? F : E;
 				E2 = D == H ? D : E;
 				E3 = H == F ? F : E;
-			} else {
+			}
+			else
+			{
 				E0 = E1 = E2 = E3 = E;
 			}
 			
@@ -261,12 +263,15 @@ void scale2x_16(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 			F = rgb_palette[*(x < width - 1 ? src + 1 : src)];
 			H = rgb_palette[*(src + nextline)];
 			
-			if (B != H && D != F) {
+			if (B != H && D != F)
+			{
 				E0 = D == B ? D : E;
 				E1 = B == F ? F : E;
 				E2 = D == H ? D : E;
 				E3 = H == F ? F : E;
-			} else {
+			}
+			else
+			{
 				E0 = E1 = E2 = E3 = E;
 			}
 			
@@ -285,7 +290,6 @@ void scale2x_16(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 
 	SDL_UnlockTexture(dst_texture);
 }
-
 
 void scale3x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 {
@@ -326,7 +330,8 @@ void scale3x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 			H = rgb_palette[*(src + nextline)];
 			I = rgb_palette[*(src + nextline + (x < width - 1 ? 1 : 0))];
 			
-			if (B != H && D != F) {
+			if (B != H && D != F)
+			{
 				E0 = D == B ? D : E;
 				E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
 				E2 = B == F ? F : E;
@@ -336,7 +341,9 @@ void scale3x_32(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 				E6 = D == H ? D : E;
 				E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
 				E8 = H == F ? F : E;
-			} else {
+			}
+			else
+			{
 				E0 = E1 = E2 = E3 = E4 = E5 = E6 = E7 = E8 = E;
 			}
 			
@@ -400,7 +407,8 @@ void scale3x_16(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 			H = rgb_palette[*(src + nextline)];
 			I = rgb_palette[*(src + nextline + (x < width - 1 ? 1 : 0))];
 			
-			if (B != H && D != F) {
+			if (B != H && D != F)
+			{
 				E0 = D == B ? D : E;
 				E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
 				E2 = B == F ? F : E;
@@ -410,7 +418,9 @@ void scale3x_16(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 				E6 = D == H ? D : E;
 				E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
 				E8 = H == F ? F : E;
-			} else {
+			}
+			else
+			{
 				E0 = E1 = E2 = E3 = E4 = E5 = E6 = E7 = E8 = E;
 			}
 			
@@ -434,4 +444,3 @@ void scale3x_16(SDL_Surface *src_surface, SDL_Texture *dst_texture)
 
 	SDL_UnlockTexture(dst_texture);
 }
-

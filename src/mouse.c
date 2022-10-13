@@ -56,7 +56,8 @@ static void JE_drawShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 	{
 		for (xloop = 0; xloop < 24; xloop++)
 		{
-			if (s >= s_limit) return;
+			if (s >= s_limit)
+				return;
 			*s = *p;
 			s++; p++;
 		}
@@ -82,7 +83,8 @@ static void JE_grabShapeTypeOne(JE_word x, JE_word y, JE_byte *shape)
 	{
 		for (xloop = 0; xloop < 24; xloop++)
 		{
-			if (s >= s_limit) return;
+			if (s >= s_limit)
+				return;
 			*p = *s;
 			s++; p++;
 		}
@@ -162,4 +164,3 @@ void JE_mouseReplace(void)
 	if (has_mouse)
 		JE_drawShapeTypeOne(mouseGrabX, mouseGrabY, mouseGrabShape);
 }
-

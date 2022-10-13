@@ -796,7 +796,6 @@ int main(int argc, char *argv[])
 		JE_loadMainShapeTables("tyrian.shp");
 	}
 
-
 	/* Default Options */
 	youAreCheating = false;
 	smoothScroll = true;
@@ -891,4 +890,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-

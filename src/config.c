@@ -145,7 +145,6 @@ const char defaultTeamNames[22][25] = /* [1..22] of string [24] */
 	"Carlos' Crawlers"
 };
 
-
 const JE_EditorItemAvailType initialItemAvail =
 {
 	1,1,1,0,0,1,1,0,1,1,1,1,1,0,1,0,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0, /* Front/Rear Weapons 1-38  */
@@ -163,7 +162,6 @@ const JE_EditorItemAvailType initialItemAvail =
  * X div 168 = Shield (1-12)
  * X div 280 = Engine (1-06)
  */
-
 
 JE_boolean smoothies[9] = /* [1..9] */
 { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -505,11 +503,9 @@ void JE_loadGame(JE_byte slot)
 	if (strcmp(levelName, "Completed") == 0)
 	{
 		if (episode == EPISODE_AVAILABLE)
-		{
 			episode = 1;
-		} else if (episode < EPISODE_AVAILABLE) {
+		else if (episode < EPISODE_AVAILABLE)
 			episode++;
-		}
 		/* Increment episode.  Episode EPISODE_AVAILABLE goes to 1. */
 	}
 
@@ -617,9 +613,9 @@ void JE_setNewGameSpeed(void)
 		break;
 	}
 
-  frameCount = frameCountMax;
-  JE_resetTimerInt();
-  JE_setTimerInt();
+	frameCount = frameCountMax;
+	JE_resetTimerInt();
+	JE_setTimerInt();
 }
 
 void JE_encryptSaveTemp(void)
@@ -912,7 +908,9 @@ void JE_loadConfiguration(void)
 		editorLevel = (saveTemp[SIZEOF_SAVEGAMETEMP - 5] << 8) | saveTemp[SIZEOF_SAVEGAMETEMP - 6];
 
 		fclose(fi);
-	} else {
+	}
+	else
+	{
 		/* We didn't have a save file! Let's make up random stuff! */
 		editorLevel = 800;
 
@@ -937,7 +935,9 @@ void JE_loadConfiguration(void)
 			{
 				saveFiles[z].highScore2 = ((mt_rand() % 20) + 1) * 1000;
 				strcpy(saveFiles[z].highScoreName, defaultTeamNames[mt_rand() % 22]);
-			} else {
+			}
+			else
+			{
 				strcpy(saveFiles[z].highScoreName, defaultHighScoreNames[mt_rand() % 34]);
 			}
 		}
@@ -1067,4 +1067,3 @@ void JE_saveConfiguration(void)
 	
 	save_opentyrian_config();
 }
-

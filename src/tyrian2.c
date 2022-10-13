@@ -443,8 +443,9 @@ enemy_still_exists:
 								if (weapons[temp3].sound > 0)
 								{
 									do
+									{
 										temp = mt_rand() % 8;
-									while (temp == 3);
+									} while (temp == 3);
 									soundQueue[temp] = weapons[temp3].sound;
 								}
 
@@ -597,12 +598,13 @@ enemy_still_exists:
 						}
 
 						do
+						{
 							temp = mt_rand() % 8;
-						while (temp == 3);
+						} while (temp == 3);
 						soundQueue[temp] = randomEnemyLaunchSounds[(mt_rand() % 3)];
 
-						if (enemy[i].launchspecial == 1
-						    && enemy[i].linknum < 100)
+						if (enemy[i].launchspecial == 1 &&
+						    enemy[i].linknum < 100)
 						{
 							e->linknum = enemy[i].linknum;
 						}
@@ -630,9 +632,7 @@ void JE_main(void)
 	/* --------------------------------------------------------------- */
 	goto start_level_first;
 
-
 	/*------------------------------GAME LOOP-----------------------------------*/
-
 
 	/* Startlevel is called after a previous level is over.  If the first level
 	   is started for a gaming session, startlevelfirst is called instead and
@@ -836,7 +836,7 @@ start_level_first:
 	backMove3 = 3;
 	explodeMove = 2;
 	enemiesActive = true;
-	for(temp = 0; temp < 3; temp++)
+	for (temp = 0; temp < 3; temp++)
 	{
 		button[temp] = false;
 	}
@@ -939,8 +939,7 @@ start_level_first:
 		do
 		{
 			sprintf(tempStr, "demorec.%d", new_demo_num++);
-		}
-		while (dir_file_exists(get_user_directory(), tempStr)); // until file doesn't exist
+		} while (dir_file_exists(get_user_directory(), tempStr)); // until file doesn't exist
 
 		demo_file = dir_fopen_warn(get_user_directory(), tempStr, "wb");
 		if (!demo_file)
@@ -1089,29 +1088,23 @@ level_loop:
 	{
 		smoothies[9-1] = false;
 		smoothies[6-1] = false;
-	} else {
+	}
+	else
+	{
 		starShowVGASpecialCode = smoothies[9-1] + (smoothies[6-1] << 1);
 	}
 
 	/*Background Wrapping*/
 	if (mapYPos <= BKwrap1)
-	{
 		mapYPos = BKwrap1to;
-	}
 	if (mapY2Pos <= BKwrap2)
-	{
 		mapY2Pos = BKwrap2to;
-	}
 	if (mapY3Pos <= BKwrap3)
-	{
 		mapY3Pos = BKwrap3to;
-	}
-
 
 	allPlayersGone = all_players_dead() &&
 	                 ((*player[0].lives == 1 && player[0].exploding_ticks == 0) || (!onePlayerAction && !twoPlayerMode)) &&
 	                 ((*player[1].lives == 1 && player[1].exploding_ticks == 0) || !twoPlayerMode);
-
 
 	/*-----MUSIC FADE------*/
 	if (musicFade)
@@ -1136,7 +1129,6 @@ level_loop:
 	{
 		play_song(levelSong - 1);
 	}
-
 
 	if (!endLevel) // draw HUD
 	{
@@ -1267,7 +1259,6 @@ level_loop:
 	if (isNetworkGame && reallyEndLevel)
 		goto start_level;
 
-
 	/* SMOOTHIES! */
 	JE_checkSmoothies();
 	if (anySmoothies)
@@ -1306,9 +1297,7 @@ level_loop:
 	}
 
 	if (starActive || astralDuration > 0)
-	{
 		update_and_draw_starfield(VGAScreen, starfield_speed);
-	}
 
 	if (processorType > 1 && smoothies[5-1])
 	{
@@ -1642,8 +1631,8 @@ level_loop:
 								{
 									temp3 = enemy[temp2].linknum;
 									if ((temp2 == b) || (temp == 254) ||
-									    ((temp != 255) && ((temp == temp3) || (temp - 100 == temp3)
-									    || ((temp3 > 40) && (temp3 / 20 == temp / 20) && (temp3 <= temp)))))
+									    ((temp != 255) && ((temp == temp3) || (temp - 100 == temp3) ||
+									                       ((temp3 > 40) && (temp3 / 20 == temp / 20) && (temp3 <= temp)))))
 									{
 
 										int enemy_screen_x = enemy[temp2].ex + enemy[temp2].mapoffset;
@@ -1666,7 +1655,8 @@ level_loop:
 												enemy_offset = 0;
 											}
 											b = JE_newEnemy(enemy_offset, tempW, 0);
-											if (b != 0) {
+											if (b != 0)
+											{
 												if ((superArcadeMode != SA_NONE) && (enemy[b-1].evalue > 30000))
 												{
 													superArcadePowerUp++;
@@ -1711,7 +1701,9 @@ level_loop:
 											enemy[temp2].animin = 1;
 											enemy[temp2].edamaged = true;
 											enemy[temp2].enemycycle = 1;
-										} else {
+										}
+										else
+										{
 											enemyAvail[temp2] = 1;
 											enemyKilled++;
 										}
@@ -1790,14 +1782,12 @@ draw_player_shot_loop_end:
 					if (enemyShot[z].sx > player[0].x)
 					{
 						if (enemyShot[z].sxm > -enemyShot[z].tx)
-						{
 							enemyShot[z].sxm--;
-						}
-					} else {
+					}
+					else
+					{
 						if (enemyShot[z].sxm < enemyShot[z].tx)
-						{
 							enemyShot[z].sxm++;
-						}
 					}
 				}
 
@@ -1809,14 +1799,12 @@ draw_player_shot_loop_end:
 					if (enemyShot[z].sy > player[0].y)
 					{
 						if (enemyShot[z].sym > -enemyShot[z].ty)
-						{
 							enemyShot[z].sym--;
-						}
-					} else {
+					}
+					else
+					{
 						if (enemyShot[z].sym < enemyShot[z].ty)
-						{
 							enemyShot[z].sym++;
-						}
 					}
 				}
 
@@ -1979,7 +1967,6 @@ draw_player_shot_loop_end:
 
 	if (!portConfigChange)
 		portConfigDone = true;
-
 
 	/*-----------------------BACKGROUNDS------------------------*/
 	/*-----------------------BACKGROUND 2------------------------*/
@@ -2391,7 +2378,6 @@ draw_player_shot_loop_end:
 		}
 	}
 
-
 	/*Other Network Functions*/
 	JE_handleChat();
 
@@ -2597,11 +2583,9 @@ new_game:
 
 					case 'b':
 						if (twoPlayerMode)
-						{
 							temp = 22;
-						} else {
+						else
 							temp = 11;
-						}
 						JE_saveGame(11, "LAST LEVEL    ");
 						break;
 
@@ -2669,8 +2653,9 @@ new_game:
 						for (x = 0; x < temp - 1; x++)
 						{
 							do
+							{
 								read_encrypted_pascal_string(s, sizeof(s), ep_f);
-							while (s[0] != '#');
+							} while (s[0] != '#');
 						}
 
 						do
@@ -2678,8 +2663,7 @@ new_game:
 							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 							strcpy(levelWarningText[levelWarningLines], s);
 							levelWarningLines++;
-						}
-						while (s[0] != '#');
+						} while (s[0] != '#');
 						levelWarningLines--;
 
 						JE_wipeKey();
@@ -2898,7 +2882,7 @@ new_game:
 
 									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
 
-									for(y = 0; y < 200; y++)
+									for (y = 0; y < 200; y++)
 									{
 										memcpy(vga, vga2 + z, 319 - z);
 										vga += 320 - z;
@@ -2975,8 +2959,7 @@ new_game:
 										strcpy(levelWarningText[levelWarningLines], s);
 										levelWarningLines++;
 									}
-								}
-								while (!(s[0] == '#'));
+								} while (!(s[0] == '#'));
 
 								JE_displayText();
 								newkey = false;
@@ -3018,7 +3001,6 @@ new_game:
 				}
 
 			} while (!(loadLevelOk || jumpSection));
-
 
 			fclose(ep_f);
 
@@ -3803,7 +3785,6 @@ void JE_readTextSync(void)
 #endif
 }
 
-
 void JE_displayText(void)
 {
 	/* Display Warning Text */
@@ -3830,24 +3811,22 @@ void JE_displayText(void)
 	{
 		frameCountMax = 6;
 		temp = 1;
-	} else {
+	}
+	else
+	{
 		temp = 0;
 	}
 	textGlowFont = TINY_FONT;
 	tempW = 184;
 	if (warningRed)
-	{
 		tempW = 7 * 16 + 6;
-	}
 
 	JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempW, miscText[4]);
 
 	do
 	{
 		if (levelWarningDisplay)
-		{
 			JE_updateWarning(VGAScreen);
-		}
 
 		setjasondelay(1);
 
@@ -4161,7 +4140,7 @@ void JE_createNewEventEnemy(JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 un
 
 	b = 0;
 
-	for(i = enemyOffset; i < enemyOffset + 25; i++)
+	for (i = enemyOffset; i < enemyOffset + 25; i++)
 	{
 		if (enemyAvail[i] == 1)
 		{
@@ -4171,9 +4150,7 @@ void JE_createNewEventEnemy(JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 un
 	}
 
 	if (b == 0)
-	{
 		return;
-	}
 
 	tempW = eventRec[eventLoc-1].eventdat + enemyTypeOfs;
 
@@ -4194,24 +4171,18 @@ void JE_createNewEventEnemy(JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 un
 			break;
 		case 50:
 			if (background3x1)
-			{
 				enemy[b-1].ex = eventRec[eventLoc-1].eventdat2 - (mapX - 1) * 24 - 12;
-			} else {
+			else
 				enemy[b-1].ex = eventRec[eventLoc-1].eventdat2 - mapX3 * 24 - 24 * 2 + 6;
-			}
 			enemy[b-1].ey -= backMove3;
 
 			if (background3x1b)
-			{
 				enemy[b-1].ex -= 6;
-			}
 			break;
 		}
 		enemy[b-1].ey = -28;
 		if (background3x1b && enemyOffset == 50)
-		{
 			enemy[b-1].ey += 4;
-		}
 	}
 
 	if (smallEnemyAdjust && enemy[b-1].size == 0)
@@ -4243,8 +4214,7 @@ void JE_eventJump(JE_word jump)
 	do
 	{
 		tempW++;
-	}
-	while (!(eventRec[tempW-1].eventtime >= curLoc));
+	} while (!(eventRec[tempW-1].eventtime >= curLoc));
 	eventLoc = tempW - 1;
 }
 
@@ -4258,18 +4228,18 @@ bool JE_searchFor/*enemy*/(JE_byte PLType, JE_byte* out_index)
 		{
 			found_id = i;
 			if (galagaMode)
-			{
 				enemy[i].evalue += enemy[i].evalue;
-			}
 		}
 	}
 
-	if (found_id != -1) {
-		if (out_index) {
+	if (found_id != -1)
+	{
+		if (out_index)
 			*out_index = found_id;
-		}
 		return true;
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
@@ -4379,14 +4349,15 @@ void JE_eventSystem(void)
 
 	case 11:
 		if (allPlayersGone || eventRec[eventLoc-1].eventdat == 1)
+		{
 			reallyEndLevel = true;
-		else
-			if (!endLevel)
-			{
-				readyToEndLevel = false;
-				endLevel = true;
-				levelEnd = 40;
-			}
+		}
+		else if (!endLevel)
+		{
+			readyToEndLevel = false;
+			endLevel = true;
+			levelEnd = 40;
+		}
 		break;
 
 	case 12: /* Custom 4x4 Ground Enemy */
@@ -4451,17 +4422,13 @@ void JE_eventSystem(void)
 	case 17: /* Ground Bottom */
 		JE_createNewEventEnemy(0, 25, 0);
 		if (b > 0)
-		{
 			enemy[b-1].ey = 190 + eventRec[eventLoc-1].eventdat5;
-		}
 		break;
 
 	case 18: /* Sky Enemy on Bottom */
 		JE_createNewEventEnemy(0, 0, 0);
 		if (b > 0)
-		{
 			enemy[b-1].ey = 190 + eventRec[eventLoc-1].eventdat5;
-		}
 		break;
 
 	case 19: /* Enemy Global Move */
@@ -4537,8 +4504,8 @@ void JE_eventSystem(void)
 
 		for (temp = 0; temp < 100; temp++)
 		{
-			if (enemyAvail[temp] != 1
-			    && (enemy[temp].linknum == eventRec[eventLoc-1].eventdat4 || eventRec[eventLoc-1].eventdat4 == 0))
+			if (enemyAvail[temp] != 1 &&
+			    (enemy[temp].linknum == eventRec[eventLoc-1].eventdat4 || eventRec[eventLoc-1].eventdat4 == 0))
 			{
 				if (eventRec[eventLoc-1].eventdat != -99)
 				{
@@ -4767,9 +4734,7 @@ void JE_eventSystem(void)
 		for (tempW = 0; tempW < maxEvent; tempW++)
 		{
 			if (eventRec[tempW].eventtime <= curLoc)
-			{
 				new_event_loc = tempW+1 - 1;
-			}
 		}
 		eventLoc = new_event_loc;
 		break;
@@ -5001,9 +4966,9 @@ void JE_eventSystem(void)
 			if (!found)
 				JE_eventJump(eventRec[eventLoc-1].eventdat);
 		}
-		else if (!JE_searchFor(eventRec[eventLoc-1].eventdat2, NULL)
-		         && (eventRec[eventLoc-1].eventdat3 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat3, NULL))
-		         && (eventRec[eventLoc-1].eventdat4 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat4, NULL)))
+		else if (!JE_searchFor(eventRec[eventLoc-1].eventdat2, NULL) &&
+		         (eventRec[eventLoc-1].eventdat3 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat3, NULL)) &&
+		         (eventRec[eventLoc-1].eventdat4 == 0 || !JE_searchFor(eventRec[eventLoc-1].eventdat4, NULL)))
 		{
 			JE_eventJump(eventRec[eventLoc-1].eventdat);
 		}
@@ -5011,9 +4976,7 @@ void JE_eventSystem(void)
 
 	case 71:
 		if (((((intptr_t)mapYPos - (intptr_t)&megaData1.mainmap) / sizeof(JE_byte *)) * 2) <= (unsigned)eventRec[eventLoc-1].eventdat2)
-		{
 			JE_eventJump(eventRec[eventLoc-1].eventdat);
-		}
 		break;
 
 	case 72:
@@ -5049,10 +5012,10 @@ void JE_eventSystem(void)
 
 		for (temp = 0; temp < 100; temp++)
 		{
-			if (enemyAvail[temp] == 0
-			    && enemy[temp].eyc == 0
-			    && enemy[temp].linknum >= eventRec[eventLoc-1].eventdat
-			    && enemy[temp].linknum <= eventRec[eventLoc-1].eventdat2)
+			if (enemyAvail[temp] == 0 &&
+			    enemy[temp].eyc == 0 &&
+			    enemy[temp].linknum >= eventRec[eventLoc-1].eventdat &&
+			    enemy[temp].linknum <= eventRec[eventLoc-1].eventdat2)
 			{
 				temp_no_clue = true;
 			}
@@ -5064,8 +5027,7 @@ void JE_eventSystem(void)
 			do
 			{
 				temp = (mt_rand() % (eventRec[eventLoc-1].eventdat2 + 1 - eventRec[eventLoc-1].eventdat)) + eventRec[eventLoc-1].eventdat;
-			}
-			while (!(JE_searchFor(temp, &enemy_i) && enemy[enemy_i].eyc == 0));
+			} while (!(JE_searchFor(temp, &enemy_i) && enemy[enemy_i].eyc == 0));
 
 			newPL[eventRec[eventLoc-1].eventdat3 - 80] = temp;
 		}
@@ -5162,9 +5124,8 @@ void JE_whoa(void)
 	 * need to be the right size.  I doubt they'll ever be anything but 320x200,
 	 * but just in case, these asserts will clue in whoever stumbles across
 	 * the problem.  You can fix it with the stack or malloc. */
-	assert( (unsigned)VGAScreen2->h *  VGAScreen2->pitch >= screenSize
-	    && (unsigned)game_screen->h * game_screen->pitch >= screenSize);
-
+	assert((unsigned)VGAScreen2->h  * VGAScreen2->pitch >= screenSize &&
+	       (unsigned)game_screen->h * game_screen->pitch >= screenSize);
 
 	/* Clear the top and bottom borders.  We don't want to process
 	 * them and we don't want to draw them. */
@@ -5174,7 +5135,6 @@ void JE_whoa(void)
 	/* Copy our test subject to one of the temporary buffers.  Blank the other */
 	memset(TempScreen1, 0, screenSize);
 	memcpy(TempScreen2, VGAScreenSeg->pixels, VGAScreenSeg->h * VGAScreenSeg->pitch);
-
 
 	service_SDL_events(true);
 	timer = 300; /* About 300 rounds is enough to make the screen mostly black */
@@ -5268,4 +5228,3 @@ void draw_boss_bar(void)
 			boss_bar[b].color--;
 	}
 }
-

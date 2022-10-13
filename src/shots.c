@@ -84,7 +84,9 @@ void simulate_player_shots(void)
 					if (shot->shotTrail == 98)
 					{
 						JE_setupExplosion(shot->shotX - shot->shotXM, shot->shotY - shot->shotYM, shot->shotTrail);
-					} else {
+					}
+					else
+					{
 						JE_setupExplosion(shot->shotX, shot->shotY, shot->shotTrail);
 					}
 				}*/
@@ -465,7 +467,6 @@ JE_integer player_shot_create(JE_word portNum, uint bay_i, JE_word PX, JE_word P
 			if (shot->shotXM == 101)
 				shot->shotY -= player[shot->playerNumber-1].delta_y_shot_move;
 		}
-
 
 		if (weapon->aim > 5)  /*Guided Shot*/
 		{

@@ -29,7 +29,6 @@
 #include <assert.h>
 #include <string.h>
 
-
 const JE_byte menuHelp[MENU_MAX][11] = /* [1..maxmenu, 1..11] */
 {
 	{  1, 34,  2,  3,  4,  5,                  0, 0, 0, 0, 0 },
@@ -76,7 +75,6 @@ char weaponNames[17][17];                                                /* [1..
 char destructModeName[DESTRUCT_MODES][13];                               /* [1..destructmodes] of string [12] */
 char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];                          /* [1..13, 1..2] of string */
 char menuInt[MENU_MAX+1][11][18];                                        /* [0..14, 1..11] of string [17] */
-
 
 static void decrypt_string(char *s, size_t len)
 {
@@ -392,4 +390,3 @@ void JE_loadHelpText(void)
 
 	fclose(f);
 }
-

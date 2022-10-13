@@ -26,7 +26,6 @@
 #	include "SDL_net.h"
 #endif
 
-
 #define PACKET_ACKNOWLEDGE   0x00    // 
 #define PACKET_KEEP_ALIVE    0x01    // 
 
@@ -89,13 +88,8 @@ void JE_clearSpecialRequests(void);
 #define NETWORK_KEEP_ALIVE() \
 		if (isNetworkGame) \
 			network_check();
-
 #else
-
 #define NETWORK_KEEP_ALIVE()
-
 #endif
 
-
 #endif /* NETWORK_H */
-

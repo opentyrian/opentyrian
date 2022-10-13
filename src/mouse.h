@@ -45,4 +45,3 @@ void JE_mouseStartFilter(Uint8 filter);
 void JE_mouseReplace(void);
 
 #endif /* MOUSE_H */
-

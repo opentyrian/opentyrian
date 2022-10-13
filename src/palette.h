@@ -48,4 +48,3 @@ void fade_black(int steps);
 void fade_white(int steps);
 
 #endif /* PALETTE_H */
-

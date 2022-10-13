@@ -40,18 +40,19 @@
 #define PAGEHEADER_OFFSET 0x500 // PALETTE_OFFSET + sizeof(palette)
 #define ANIM_OFFSET   0x0B00    // PAGEHEADER_OFFSET + sizeof(largepageheader) * 256
 #define ANI_PAGE_SIZE 0x10000   // 65536.
+
 typedef struct anim_FileHeader_s
 {
 	Uint16 nlps;            /* Number of 'pages', max 256. */
 	Uint32 nRecords;        /* Number of 'records', max 65535 */
 } anim_FileHeader_t;
+
 typedef struct anim_LargePageHeader_s
 {
 	Uint16 baseRecord;      /* The first record's number */
 	Uint16 nRecords;        /* Number of records.  Supposedly there are bit flags but I saw no such code */
 	Uint16 nBytes;	        /* Number of bytes used, excluding headers */
 } anim_LargePageHeader_t;
-
 
 /*** Globals ***/
 Uint8 CurrentPageBuffer[65536];
@@ -65,7 +66,6 @@ unsigned int Curlpnum;
 
 FILE * InFile;
 
-
 /*** Function decs ***/
 int JE_playRunSkipDump(Uint8 *, unsigned int);
 void JE_closeAnim(void);
@@ -76,7 +76,6 @@ int JE_loadPage(unsigned int);
 
 /*** Implementation ***/
 
-
 /* Loads the given page into memory.
  *
  * Returns  0 on success or nonzero on failure (bad data)
@@ -85,8 +84,8 @@ int JE_loadPage(unsigned int pagenumber)
 {
 	unsigned int i, pageSize;
 
-
-	if (Curlpnum == pagenumber) { return(0); } /* Already loaded */
+	if (Curlpnum == pagenumber)
+		return 0; /* Already loaded */
 	Curlpnum = pagenumber;
 
 	/* We need to seek to the page and load it into our buffer.
@@ -112,45 +111,40 @@ int JE_loadPage(unsigned int pagenumber)
 	 */
 	pageSize = 0;
 	for (i = 0; i < CurrentPageHeader.nRecords; i++)
-	{
 		pageSize += CurrentPageRecordSizes[i];
-	}
 
-	if(pageSize != CurrentPageHeader.nBytes) { return(-1); }
+	if (pageSize != CurrentPageHeader.nBytes)
+		return -1;
 
 	/* So far, so good */
-	return(0);
+	return 0;
 }
 
 int JE_findPage(unsigned int framenumber)
 {
 	unsigned int i;
 
-
 	for (i = 0; i < FileHeader.nlps; i++)
 	{
-		if (PageHeader[i].baseRecord <= framenumber
-		 && PageHeader[i].baseRecord + PageHeader[i].nRecords > framenumber)
+		if (PageHeader[i].baseRecord <= framenumber &&
+		    PageHeader[i].baseRecord + PageHeader[i].nRecords > framenumber)
 		{
-			return(i);
+			return i;
 		}
 	}
 
-	return(-1); /* Did not find */
+	return -1; /* Did not find */
 }
 
 int JE_renderFrame(unsigned int framenumber)
 {
 	unsigned int i, offset, destframe;
 
-
 	destframe = framenumber - CurrentPageHeader.baseRecord;
 
 	offset = 0;
 	for (i = 0; i < destframe; i++)
-	{
 		offset += CurrentPageRecordSizes[i];
-	}
 
 	return (JE_playRunSkipDump(CurrentPageBuffer + offset + 4, CurrentPageRecordSizes[destframe] - 4));
 }
@@ -161,14 +155,11 @@ void JE_playAnim(const char *animfile, JE_byte startingframe, JE_byte speed)
 	int pageNum;
 
 	if (JE_loadAnim(animfile) != 0)
-	{
 		return; /* Failed to open or process file */
-	}
 
 	/* Blank screen */
 	JE_clr256(VGAScreen);
 	JE_showVGA();
-
 
 	/* re FileHeader.nRecords-1: It's -1 in the pascal too.
 	 * The final frame is a delta of the first, and we don't need that.
@@ -176,32 +167,32 @@ void JE_playAnim(const char *animfile, JE_byte startingframe, JE_byte speed)
 	 * the bools in the header to see if we should render the last
 	 * frame.  But that's never going to be necessary :)
 	 */
-    for (i = startingframe; i < FileHeader.nRecords-1; i++)
-    {
-    	/* Handle boring crap */
-    	setjasondelay(speed);
+	for (i = startingframe; i < FileHeader.nRecords-1; i++)
+	{
+		/* Handle boring crap */
+		setjasondelay(speed);
 
 		/* Load required frame.  The loading function is smart enough to not re-load an already loaded frame */
 		pageNum = JE_findPage(i);
-		if(pageNum == -1) { break; }
-		if (JE_loadPage(pageNum) != 0) { break; }
+		if (pageNum == -1)
+			break;
+		if (JE_loadPage(pageNum) != 0)
+			break;
 
 		/* render frame. */
-    	if (JE_renderFrame(i) != 0) { break; }
-    	JE_showVGA();
-
+		if (JE_renderFrame(i) != 0)
+			break;
+		JE_showVGA();
 
 		/* Return early if user presses a key */
 		service_SDL_events(true);
 		if (newkey)
-		{
 			break;
-		}
 
 		/* Wait until we need the next frame */
 		NETWORK_KEEP_ALIVE();
 		wait_delay();
-    }
+	}
 
 	JE_closeAnim();
 }
@@ -215,21 +206,18 @@ int JE_loadAnim(const char *filename)
 	long fileSize;
 	char temp[4];
 
-
 	Curlpnum = -1;
 	InFile = dir_fopen(data_dir(), filename, "rb");
-	if(InFile == NULL)
-	{
-		return(-1);
-	}
+	if (InFile == NULL)
+		return -1;
 
 	fileSize = ftell_eof(InFile);
-	if(fileSize < ANIM_OFFSET)
+	if (fileSize < ANIM_OFFSET)
 	{
 		/* We don't know the exact size our file should be yet,
 		 * but we do know it should be way more than this */
 		fclose(InFile);
-		return(-1);
+		return -1;
 	}
 
 	/* Read in the header.  The header is 256 bytes long or so,
@@ -244,12 +232,12 @@ int JE_loadAnim(const char *filename)
 	fread_u16_die(&FileHeader.nlps,     1, InFile); /* Number of pages */
 	fread_u32_die(&FileHeader.nRecords, 1, InFile); /* Number of records */
 
-	if (memcmp(temp, "LPF ", 4) != 0
-	 || FileHeader.nlps == 0  || FileHeader.nRecords == 0
-	 || FileHeader.nlps > 256 || FileHeader.nRecords > 65535)
+	if (memcmp(temp, "LPF ", 4) != 0 ||
+	    FileHeader.nlps == 0  || FileHeader.nRecords == 0 ||
+	    FileHeader.nlps > 256 || FileHeader.nRecords > 65535)
 	{
 		fclose(InFile);
-		return(-1);
+		return -1;
 	}
 
 	/* Read in headers */
@@ -261,7 +249,6 @@ int JE_loadAnim(const char *filename)
 		fread_u16_die(&PageHeader[i].nBytes,     1, InFile);
 	}
 
-
 	/* Now we have enough information to calculate the 'expected' file size.
 	 * Our calculation SHOULD be equal to fileSize, but we won't begrudge
 	 * padding */
@@ -270,9 +257,8 @@ int JE_loadAnim(const char *filename)
 	  + PageHeader[FileHeader.nlps-1].nRecords * 2 + 8)
 	{
 		fclose(InFile);
-		return(-1);
+		return -1;
 	}
-
 
 	/* Now read in the palette. */
 	fseek(InFile, PALETTE_OFFSET, SEEK_SET);
@@ -287,7 +273,7 @@ int JE_loadAnim(const char *filename)
 	set_palette(colors, 0, 255);
 
 	/* Whew!  That was hard.  Let's go grab some beers! */
-	return(0);
+	return 0;
 }
 
 void JE_closeAnim(void)
@@ -322,14 +308,12 @@ int JE_playRunSkipDump(Uint8 *incomingBuffer, unsigned int IncomingBufferLength)
 	SZ_Init(pBuffer_IN,  incomingBuffer,    IncomingBufferLength);
 	SZ_Init(pBuffer_OUT, VGAScreen->pixels, VGAScreen->h * VGAScreen->pitch);
 
-
 	/* 320x200 is the only supported format.
 	 * Assert is here as a hint should our screen size ever changes.
 	 * As for how to decompress to the wrong screen size... */
 	assert(VGAScreen->h * VGAScreen->pitch == 320 * 200);
 
-
-	while (1)
+	while (true)
 	{
 		/* Get one byte.  This byte may have flags that tell us more */
 		unsigned int opcode = MSG_ReadByte(pBuffer_IN);
@@ -343,9 +327,7 @@ int JE_playRunSkipDump(Uint8 *incomingBuffer, unsigned int IncomingBufferLength)
 		 * leaving ANYWAY.  The contents of our buffers doesn't matter.
 		 */
 		if (SZ_Error(pBuffer_IN) || SZ_Error(pBuffer_OUT))
-		{
-			return(-1);
-		}
+			return -1;
 
 		/* Divide into 'short' and 'long' */
 		if (opcode == ANI_LONG_OP) /* long ops */
@@ -411,6 +393,5 @@ int JE_playRunSkipDump(Uint8 *incomingBuffer, unsigned int IncomingBufferLength)
 	}
 
 	/* And that's that */
-	return(0);
+	return 0;
 }
-

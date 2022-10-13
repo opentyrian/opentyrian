@@ -55,4 +55,3 @@ void JE_weaponSimUpdate(void);
 void JE_weaponViewFrame(void);
 
 #endif // GAME_MENU_H
-

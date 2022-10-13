@@ -481,7 +481,6 @@ void blit_sprite_dark(SDL_Surface *surface, int x, int y, unsigned int table, un
 	}
 }
 
-
 void JE_loadCompShapes(Sprite2_array *sprite2s, char s)
 {
 	free_sprite2s(sprite2s);
@@ -581,8 +580,7 @@ void blit_sprite2_clip(SDL_Surface *surface, int x, int y, Sprite2_array sprite2
 				if (x >= 0 && x < surface->pitch)
 					pixel_row[x] = *data;
 				x += 1;
-			}
-			while (--fill_count);
+			} while (--fill_count);
 		}
 		else
 		{
@@ -731,8 +729,7 @@ void blit_sprite2_filter_clip(SDL_Surface *surface, int x, int y, Sprite2_array 
 				if (x >= 0 && x < surface->pitch)
 					pixel_row[x] = filter | (*data & 0x0f);;
 				x += 1;
-			}
-			while (--fill_count);
+			} while (--fill_count);
 		}
 		else
 		{
@@ -793,7 +790,6 @@ void blit_sprite2x2_filter_clip(SDL_Surface *surface, int x, int y, Sprite2_arra
 	blit_sprite2_filter_clip(surface, x,      y + 14, sprite2s, index + 19, filter);
 	blit_sprite2_filter_clip(surface, x + 12, y + 14, sprite2s, index + 20, filter);
 }
-
 
 void JE_loadMainShapeTables(const char *shpfile)
 {

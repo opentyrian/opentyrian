@@ -95,4 +95,3 @@ bool detect_joystick_assignment(int j, Joystick_assignment *assignment);
 bool joystick_assignment_cmp(const Joystick_assignment *, const Joystick_assignment *);
 
 #endif /* JOYSTICK_H */
-

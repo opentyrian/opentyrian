@@ -164,7 +164,9 @@ bool network_send(int len)
 	{
 		packet_out[i] = SDLNet_AllocPacket(NET_PACKET_SIZE);
 		packet_copy(packet_out[i], packet_out_temp);
-	} else {
+	}
+	else
+	{
 		// connection is probably bad now
 		fprintf(stderr, "warning: outbound packet queue overflow\n");
 		return false;
@@ -300,7 +302,9 @@ int network_check(void)
 								if (packet_in[i] == NULL)
 									packet_in[i] = SDLNet_AllocPacket(NET_PACKET_SIZE);
 								packet_copy(packet_in[i], packet_temp);
-							} else {
+							}
+							else
+							{
 								// inbound packet queue overflow/underflow
 								// under normal circumstances, this is okay
 							}
@@ -349,7 +353,9 @@ int network_check(void)
 								{
 									packet_state_in_xor[i] = SDLNet_AllocPacket(NET_PACKET_SIZE);
 									packet_copy(packet_state_in_xor[i], packet_temp);
-								} else if (SDLNet_Read16(&packet_state_in_xor[i]->data[0]) != PACKET_STATE_XOR) {
+								}
+								else if (SDLNet_Read16(&packet_state_in_xor[i]->data[0]) != PACKET_STATE_XOR)
+								{
 									for (int j = 4; j < packet_state_in_xor[i]->len; j++)
 										packet_state_in_xor[i]->data[j] ^= packet_temp->data[j];
 									SDLNet_Write16(PACKET_STATE_XOR, &packet_state_in_xor[i]->data[0]);
@@ -411,14 +417,15 @@ bool network_is_sync(void)
 	return (queue_out_sync - last_ack_sync == 1);
 }
 
-
 // prepare new state for sending
 void network_state_prepare(void)
 {
 	if (packet_state_out[0])
 	{
 		fprintf(stderr, "warning: state packet overwritten (previous packet remains unsent)\n");
-	} else {
+	}
+	else
+	{
 		packet_state_out[0] = SDLNet_AllocPacket(NET_PACKET_SIZE);
 		packet_state_out[0]->len = 28;
 	}
@@ -466,7 +473,9 @@ bool network_state_update(void)
 	if (network_state_is_reset())
 	{
 		return 0;
-	} else {
+	}
+	else
+	{
 		packets_shift_up(packet_state_in, NET_PACKET_QUEUE);
 
 		packets_shift_up(packet_state_in_xor, NET_PACKET_QUEUE);
@@ -525,7 +534,9 @@ bool network_state_update(void)
 				packet_state_in_xor[x] = SDLNet_AllocPacket(NET_PACKET_SIZE);
 				packet_copy(packet_state_in_xor[x], packet_state_in[0]);
 				packet_state_in_xor[x]->status = 0;
-			} else {
+			}
+			else
+			{
 				for (int j = 4; j < packet_state_in_xor[x]->len; j++)
 					packet_state_in_xor[x]->data[j] ^= packet_state_in[0]->data[j];
 			}
@@ -575,7 +586,6 @@ void network_state_reset(void)
 
 	last_state_in_tick = SDL_GetTicks();
 }
-
 
 // attempt to punch through firewall by firing off UDP packets at the opponent
 // exchange game information
@@ -788,4 +798,3 @@ void JE_clearSpecialRequests(void)
 	helpRequest = false;
 	nortShipRequest = false;
 }
-

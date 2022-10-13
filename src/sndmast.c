@@ -74,4 +74,3 @@ const JE_byte windowTextSamples[9] = /* [1..9] */
 	V_DANGER,
 	V_ENEMIES
 };
-

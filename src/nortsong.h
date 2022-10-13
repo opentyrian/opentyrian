@@ -61,4 +61,3 @@ void JE_loadSndFile(const char *effects_sndfile, const char *voices_sndfile);
 void JE_playSampleNum(JE_byte samplenum);
 
 #endif /* NORTSONG_H */
-

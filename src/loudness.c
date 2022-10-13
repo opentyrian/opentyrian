@@ -38,7 +38,6 @@ FILE *music_file = NULL;
 Uint32 *song_offset;
 Uint16 song_count = 0;
 
-
 SAMPLE_TYPE *channel_buffer[SFX_CHANNELS] = { NULL };
 SAMPLE_TYPE *channel_pos[SFX_CHANNELS] = { NULL };
 Uint32 channel_len[SFX_CHANNELS] = { 0 };
@@ -197,7 +196,6 @@ void deinit_audio(void)
 	lds_free();
 }
 
-
 void load_music(void)
 {
 	if (music_file == NULL)
@@ -296,4 +294,3 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 
 	SDL_UnlockAudioDevice(audio_device);
 }
-

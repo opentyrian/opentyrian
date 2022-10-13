@@ -61,4 +61,3 @@ void initialize_starfield(void);
 void update_and_draw_starfield(SDL_Surface* surface, int move_speed);
 
 #endif /* BACKGRND_H */
-

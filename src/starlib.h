@@ -29,4 +29,3 @@ void JE_changeSetup(JE_byte setupType);
 void JE_newStar(void);
 
 #endif /* STARLIB_H */
-

@@ -104,4 +104,3 @@ float mt_rand_lt1(void)
 	/* MT_RAND_MAX must be a float before adding one to it! */
 	return ((float)mt_rand() / ((float)MT_RAND_MAX + 1.0f));
 }
-

@@ -86,6 +86,4 @@ const char *JE_getName(JE_byte pnum);
 
 void JE_playerCollide(Player *this_player, JE_byte playerNum);
 
-
 #endif /* MAININT_H */
-

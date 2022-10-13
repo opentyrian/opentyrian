@@ -64,4 +64,3 @@ void mapWindowPointToScreen(Sint32 *inout_x, Sint32 *inout_y);
 void scaleWindowDistanceToScreen(Sint32 *inout_x, Sint32 *inout_y);
 
 #endif /* VIDEO_H */
-

@@ -161,7 +161,8 @@ void JE_loadSndFile(const char *effects_sndfile, const char *voices_sndfile)
 		fseek(fi, sndPos[1][y], SEEK_SET);
 
 		templ = (sndPos[1][y+1] - sndPos[1][y]) - 100; /* SYN: I'm not entirely sure what's going on here. */
-		if (templ < 1) templ = 1;
+		if (templ < 1)
+			templ = 1;
 		fxSize[z + y] = templ; /* Store sample sizes */
 		free(digiFx[z + y]);
 		digiFx[z + y] = malloc(fxSize[z + y]);
@@ -234,4 +235,3 @@ void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sampl
 	
 	set_volume(*music, *sample);
 }
-

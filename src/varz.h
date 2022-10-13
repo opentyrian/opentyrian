@@ -353,6 +353,4 @@ void JE_drawSP(void);
 
 void JE_drawOptionLevel(void);
 
-
 #endif /* VARZ_H */
-

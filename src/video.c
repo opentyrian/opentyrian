@@ -246,11 +246,10 @@ void video_on_win_resize(void)
 
 void toggle_fullscreen(void)
 {
-	if (fullscreen_display != -1) {
+	if (fullscreen_display != -1)
 		reinit_fullscreen(-1);
-	} else {
+	else
 		reinit_fullscreen(SDL_GetWindowDisplayIndex(main_window));
-	}
 }
 
 bool init_scaler(unsigned int new_scaler)

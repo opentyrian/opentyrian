@@ -50,7 +50,9 @@ void JE_dBar3(SDL_Surface *surface, JE_integer x,  JE_integer y,  JE_integer num
 		if (zWait > 0)
 		{
 			zWait--;
-		} else {
+		}
+		else
+		{
 			col++;
 			zWait = 1;
 		}
@@ -85,4 +87,3 @@ void JE_wipeKey(void)
 {
 	// /!\ Doesn't seems to affect anything.
 }
-

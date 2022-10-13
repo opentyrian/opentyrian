@@ -24,4 +24,3 @@
 void JE_playAnim(const char *animfile, JE_byte startingframe, JE_byte speed);
 
 #endif /* ANIMLIB_H */
-

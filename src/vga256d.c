@@ -77,7 +77,9 @@ void JE_rectangle(SDL_Surface *surface, int a, int b, int c, int d, int e) /* x1
 		{
 			vga[i] = e;
 		}
-	} else {
+	}
+	else
+	{
 		printf("!!! WARNING: Rectangle clipped: %d %d %d %d %d\n", a, b, c, d, e);
 	}
 }
@@ -105,7 +107,9 @@ void JE_barShade(SDL_Surface *surface, int a, int b, int c, int d) /* x1, y1, x2
 				vga[i + j] = ((vga[i + j] & 0x0F) >> 1) | (vga[i + j] & 0xF0);
 			}
 		}
-	} else {
+	}
+	else
+	{
 		printf("!!! WARNING: Darker Rectangle clipped: %d %d %d %d\n", a,b,c,d);
 	}
 }
@@ -138,7 +142,9 @@ void JE_barBright(SDL_Surface *surface, int a, int b, int c, int d) /* x1, y1, x
 				vga[i + j] = al + ah;
 			}
 		}
-	} else {
+	}
+	else
+	{
 		printf("!!! WARNING: Brighter Rectangle clipped: %d %d %d %d\n", a,b,c,d);
 	}
 }
@@ -158,4 +164,3 @@ void draw_segmented_gauge(SDL_Surface *surface, int x, int y, Uint8 color, uint 
 	if (partial_segment > 0)
 		fill_rectangle_wh(surface, x, y, segment_width, segment_height, color + (12 * partial_segment / segment_value));
 }
-

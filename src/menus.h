@@ -30,4 +30,3 @@ bool episodeSelect(void);
 bool difficultySelect(void);
 
 #endif /* MENUS_H */
-

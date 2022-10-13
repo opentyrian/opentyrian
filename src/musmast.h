@@ -36,4 +36,3 @@ extern const char musicTitle[MUSIC_NUM][48];
 extern JE_boolean musicFade;
 
 #endif /* MUSMAST_H */
-

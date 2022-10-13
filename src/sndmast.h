@@ -71,4 +71,3 @@ extern const char soundTitle[SAMPLE_COUNT][9];
 extern const JE_byte windowTextSamples[9];
 
 #endif /* SNDMAST_H */
-

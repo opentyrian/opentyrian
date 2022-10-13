@@ -765,4 +765,3 @@ void lds_playsound(int inst_number, int channel_number, int tunehigh)
 	c->keycount = i->keyoff;
 	c->nextvol = c->glideto = c->finetune = c->vibcount = c->arp_pos = c->arp_count = 0;
 }
-

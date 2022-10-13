@@ -55,4 +55,3 @@ void JE_updateWarning(SDL_Surface * screen);
 void JE_outTextGlow(SDL_Surface * screen, int x, int y, const char *s);
 
 #endif /* FONTHAND_H */
-

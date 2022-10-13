@@ -264,4 +264,3 @@ void JE_paramCheck(int argc, char *argv[])
 		}
 	}
 }
-

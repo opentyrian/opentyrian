@@ -135,4 +135,3 @@ void JE_loadMainShapeTables(const char *shpfile);
 void free_main_shape_tables(void);
 
 #endif // SPRITE_H
-

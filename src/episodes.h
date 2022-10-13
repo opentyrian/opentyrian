@@ -23,7 +23,6 @@
 
 #include "lvlmast.h"
 
-
 /* Episodes and general data */
 
 #define FIRST_LEVEL 1
@@ -170,4 +169,3 @@ unsigned int JE_findNextEpisode(void);
 void JE_scanForEpisodes(void);
 
 #endif /* EPISODES_H */
-
