@@ -3762,7 +3762,7 @@ void intro_logos(void)
 	fade_palette(colors, 50, 0, 255);
 
 	setjasondelay(200);
-	wait_delayorinput(true, true, true);
+	wait_delayorinput();
 
 	fade_black(10);
 
@@ -3772,7 +3772,7 @@ void intro_logos(void)
 	fade_palette(colors, 10, 0, 255);
 
 	setjasondelay(200);
-	wait_delayorinput(true, true, true);
+	wait_delayorinput();
 
 	fade_black(10);
 }

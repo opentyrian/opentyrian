@@ -25,7 +25,7 @@
 
 #include <stdbool.h>
 
-#define SDL_POLL_INTERVAL 5
+#define SDL_POLL_INTERVAL 10
 
 extern JE_boolean ESCPressed;
 extern JE_boolean newkey, newmouse, keydown, mousedown;
