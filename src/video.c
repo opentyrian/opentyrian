@@ -104,6 +104,10 @@ void init_video(void)
 	init_scaler(scaler);
 
 	SDL_ShowWindow(main_window);
+
+	SDL_SetRenderDrawColor(main_window_renderer, 0, 0, 0, 255);
+	SDL_RenderClear(main_window_renderer);
+	SDL_RenderPresent(main_window_renderer);
 }
 
 void deinit_video(void)
