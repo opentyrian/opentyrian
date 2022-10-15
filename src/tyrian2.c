@@ -3754,12 +3754,12 @@ void intro_logos(void)
 
 	SDL_FillRect(VGAScreen, NULL, 0);
 
-	fade_white(50);
+	fade_white(25);
 
 	JE_loadPic(VGAScreen, 10, false);
 	JE_showVGA();
 
-	fade_palette(colors, 50, 0, 255);
+	fade_palette(colors, 25, 0, 255);
 
 	setjasondelay(200);
 	wait_delayorinput();
