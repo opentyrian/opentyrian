@@ -874,7 +874,7 @@ void JE_itemScreen(void)
 					}
 					JE_mouseReplace();
 
-					setjasondelay(1);
+					setDelay(1);
 				}
 				else
 				{
@@ -904,7 +904,7 @@ void JE_itemScreen(void)
 					     (curSel[MENU_UPGRADES] >= 6 &&
 					      curSel[MENU_UPGRADES] <= 8)))
 					{
-						setjasondelay(3);
+						setDelay(3);
 						JE_weaponSimUpdate();
 						JE_drawScore();
 						service_SDL_events(false);
@@ -937,10 +937,9 @@ void JE_itemScreen(void)
 					}
 					else  /* current menu is anything but weapon sim or datacube */
 					{
-						setjasondelay(2);
+						setDelay(2);
 
 						JE_drawScore();
-						//JE_waitRetrace();  didn't do anything anyway?
 
 						if (newPal > 0)
 						{
@@ -2373,7 +2372,7 @@ JE_boolean JE_quitRequest(void)
 		do
 		{
 			service_SDL_events(true);
-			setjasondelay(4);
+			setDelay(4);
 
 			blit_sprite(VGAScreen, 50, 50, OPTION_SHAPES, 35);  // message box
 			JE_textShade(VGAScreen, 70, 60, miscText[28], 0, 5, FULL_SHADE);
@@ -2690,7 +2689,7 @@ void JE_menuFunction(JE_byte select)
 
 			do
 			{
-				setjasondelay(1);
+				setDelay(1);
 
 				col += colC;
 				if (col < 243 || col > 248)

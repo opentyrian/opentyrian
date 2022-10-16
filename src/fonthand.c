@@ -258,7 +258,7 @@ void JE_outTextAndDarken(SDL_Surface * screen, int x, int y, const char *s, unsi
 
 void JE_updateWarning(SDL_Surface * screen)
 {
-	if (delaycount2() == 0)
+	if (getDelayTicks2() == 0)
 	{ /*Update Color Bars*/
 
 		warningCol += warningColChange;
@@ -270,7 +270,7 @@ void JE_updateWarning(SDL_Surface * screen)
 		fill_rectangle_xy(screen, 0, 194, 319, 199, warningCol);
 		JE_showVGA();
 
-		setjasondelay2(6);
+		setDelay2(6);
 
 		if (warningSoundDelay > 0)
 		{
@@ -301,7 +301,7 @@ void JE_outTextGlow(SDL_Surface * screen, int x, int y, const char *s)
 	if (frameCountMax > 0)
 		for (z = 1; z <= 12; z++)
 		{
-			setjasondelay(frameCountMax);
+			setDelay(frameCountMax);
 			JE_outTextAdjust(screen, x, y, s, c, z - 10, textGlowFont, false);
 			if (JE_anyButton())
 			{
@@ -316,7 +316,7 @@ void JE_outTextGlow(SDL_Surface * screen, int x, int y, const char *s)
 		}
 	for (z = (frameCountMax == 0) ? 6 : 12; z >= textGlowBrightness; z--)
 	{
-		setjasondelay(frameCountMax);
+		setDelay(frameCountMax);
 		JE_outTextAdjust(screen, x, y, s, c, z - 10, textGlowFont, false);
 		if (JE_anyButton())
 		{

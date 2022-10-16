@@ -30,11 +30,9 @@
 
 #include "SDL.h"
 
-Uint32 target, target2;
-
 JE_boolean notYetLoadedSound = true;
 
-JE_word frameCount, frameCount2, frameCountMax;
+JE_word frameCountMax;
 
 JE_byte *digiFx[SAMPLE_COUNT] = { NULL }; /* [1..soundnum + 9] */
 JE_word fxSize[SAMPLE_COUNT]; /* [1..soundnum + 9] */
@@ -43,33 +41,35 @@ JE_word tyrMusicVolume, fxVolume;
 JE_word fxPlayVol;
 JE_word tempVolume;
 
-JE_word speed; /* JE: holds timer speed for 70Hz */
+// The period of the x86 programmable interval timer in milliseconds.
+static const float pitPeriod = (12.0f / 14318180.0f) * 1000.0f;
 
-float jasondelay = 1000.0f / (1193180.0f / 0x4300);
+static Uint16 delaySpeed = 0x4300;
+static float delayPeriod = 0x4300 * ((12.0f / 14318180.0f) * 1000.0f);
 
-void setdelay(JE_byte delay)
+static Uint32 target = 0;
+static Uint32 target2 = 0;
+
+void setDelay(int delay)  // FKA NortSong.frameCount
 {
-	target = (delay * 16) + SDL_GetTicks();
+	target = SDL_GetTicks() + delay * delayPeriod;
 }
 
-void setjasondelay(int delay)
+void setDelay2(int delay)  // FKA NortSong.frameCount2
 {
-	target = SDL_GetTicks() + delay * jasondelay;
+	target2 = SDL_GetTicks() + delay * delayPeriod;
 }
 
-void setjasondelay2(int delay)
+Uint32 getDelayTicks(void)  // FKA NortSong.frameCount
 {
-	target2 = SDL_GetTicks() + delay * jasondelay;
+	Sint32 delay = target - SDL_GetTicks();
+	return MAX(0, delay);
 }
 
-int delaycount(void)
+Uint32 getDelayTicks2(void)  // FKA NortSong.frameCount2
 {
-	return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
-}
-
-int delaycount2(void)
-{
-	return (SDL_GetTicks() < target2 ? target2 - SDL_GetTicks() : 0);
+	Sint32 delay = target2 - SDL_GetTicks();
+	return MAX(0, delay);
 }
 
 void wait_delay(void)
@@ -185,14 +185,10 @@ void JE_calcFXVol(void) // TODO: not sure *exactly* what this does
 	fxPlayVol = (fxVolume - 1) >> 5;
 }
 
-void JE_setTimerInt(void)
+void setDelaySpeed(Uint16 speed)  // FKA NortSong.speed and NortSong.setTimerInt
 {
-	jasondelay = 1000.0f / (1193180.0f / speed);
-}
-
-void JE_resetTimerInt(void)
-{
-	jasondelay = 1000.0f / (1193180.0f / 0x4300);
+	delaySpeed = speed;
+	delayPeriod = speed * pitPeriod;
 }
 
 void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sample_delta)

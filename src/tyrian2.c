@@ -90,7 +90,7 @@ void JE_starShowVGA(void)
 		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
 		{
 			wait_delay();
-			setjasondelay(frameCountMax);
+			setDelay(frameCountMax);
 		}
 
 		if (starShowVGASpecialCode == 1)
@@ -657,9 +657,8 @@ start_level:
 	if (fastPlay != 0)
 	{
 		smoothScroll = true;
-		speed = 0x4300;
-		JE_resetTimerInt();
-		JE_setTimerInt();
+		Uint16 speed = 0x4300;
+		setDelaySpeed(speed);
 	}
 
 	if (play_demo || record_demo)
@@ -2777,7 +2776,7 @@ new_game:
 									vga2 = VGAScreen2->pixels;
 									pic = pic_buffer + (199 - z) * 320;
 
-									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
+									setDelay(1);
 
 									for (y = 0; y <= 199; y++)
 									{
@@ -2828,7 +2827,7 @@ new_game:
 									vga2 = VGAScreen2->pixels;
 									pic = pic_buffer;
 
-									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
+									setDelay(1);
 
 									for (y = 0; y < 199; y++)
 									{
@@ -2880,7 +2879,7 @@ new_game:
 									vga2 = VGAScreen2->pixels;
 									pic = pic_buffer;
 
-									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
+									setDelay(1);
 
 									for (y = 0; y < 200; y++)
 									{
@@ -2946,7 +2945,7 @@ new_game:
 								levelWarningDisplay = (s[2] == 'y');
 								levelWarningLines = 0;
 								frameCountMax = atoi(s + 4);
-								setjasondelay2(6);
+								setDelay2(6);
 								warningRed = frameCountMax / 10;
 								frameCountMax = frameCountMax % 10;
 
@@ -3302,7 +3301,7 @@ bool titleScreen(void)
 
 				for (int y = 60; y >= 4; y -= 2)
 				{
-					setjasondelay(2);
+					setDelay(2);
 
 					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
@@ -3743,7 +3742,7 @@ void intro_logos(void)
 
 	fade_palette(colors, 25, 0, 255);
 
-	setjasondelay(200);
+	setDelay(200);
 	wait_delayorinput();
 
 	fade_black(10);
@@ -3753,7 +3752,7 @@ void intro_logos(void)
 
 	fade_palette(colors, 10, 0, 255);
 
-	setjasondelay(200);
+	setDelay(200);
 	wait_delayorinput();
 
 	fade_black(10);
@@ -3828,7 +3827,7 @@ void JE_displayText(void)
 		if (levelWarningDisplay)
 			JE_updateWarning(VGAScreen);
 
-		setjasondelay(1);
+		setDelay(1);
 
 		NETWORK_KEEP_ALIVE();
 
@@ -5141,7 +5140,7 @@ void JE_whoa(void)
 
 	do
 	{
-		setjasondelay(1);
+		setDelay(1);
 
 		/* This gets us our 'whoa' effect with pixel bleeding magic.
 		 * I'm willing to bet the guy who originally wrote the asm was goofing

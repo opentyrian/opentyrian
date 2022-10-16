@@ -83,7 +83,7 @@ void jukebox(void)
 				play_song(mt_rand() % MUSIC_NUM);
 		}
 
-		setdelay(1);
+		setDelay(1);
 
 		SDL_FillRect(VGAScreenSeg, NULL, 0);
 

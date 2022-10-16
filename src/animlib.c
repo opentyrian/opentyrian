@@ -170,7 +170,7 @@ void JE_playAnim(const char *animfile, JE_byte startingframe, JE_byte speed)
 	for (i = startingframe; i < FileHeader.nRecords-1; i++)
 	{
 		/* Handle boring crap */
-		setjasondelay(speed);
+		setDelay(speed);
 
 		/* Load required frame.  The loading function is smart enough to not re-load an already loaded frame */
 		pageNum = JE_findPage(i);

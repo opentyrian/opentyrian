@@ -550,7 +550,7 @@ bool detect_joystick_assignment(int j, Joystick_assignment *assignment)
 	
 	do
 	{
-		setjasondelay(1);
+		setDelay(1);
 		
 		SDL_JoystickUpdate();
 		

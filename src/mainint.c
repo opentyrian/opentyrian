@@ -88,7 +88,7 @@ void JE_outCharGlow(JE_word x, JE_word y, const char *s)
 	JE_word textloc[60]; /* [1..60] */
 	JE_byte bank;
 
-	setjasondelay2(1);
+	setDelay2(1);
 
 	bank = (warningRed) ? 7 : ((useLastBank) ? 15 : 14);
 
@@ -126,7 +126,7 @@ void JE_outCharGlow(JE_word x, JE_word y, const char *s)
 		{
 			if (!ESCPressed)
 			{
-				setjasondelay(frameCountMax);
+				setDelay(frameCountMax);
 
 				NETWORK_KEEP_ALIVE();
 
@@ -160,7 +160,7 @@ void JE_outCharGlow(JE_word x, JE_word y, const char *s)
 						JE_updateWarning(VGAScreen);
 
 					SDL_Delay(16);
-				} while (!(delaycount() == 0 || ESCPressed));
+				} while (!(getDelayTicks() == 0 || ESCPressed));
 
 				JE_showVGA();
 			}
@@ -2089,7 +2089,7 @@ void JE_highScoreCheck(void)
 
 						for (int i = 0; i < 14; i++)
 						{
-							setjasondelay(1);
+							setDelay(1);
 
 							JE_mouseStart();
 							JE_showVGA();
@@ -2514,7 +2514,7 @@ void JE_playCredits(void)
 
 	load_sprites_file(EXTRA_SHAPES, "estsc.shp");
 
-	setjasondelay2(1000);
+	setDelay2(1000);
 
 	play_song(8);
 
@@ -2536,7 +2536,7 @@ void JE_playCredits(void)
 	const int ticks_max = lines * 20 * 3;
 	for (int ticks = 0; ticks < ticks_max; ++ticks)
 	{
-		setjasondelay(1);
+		setDelay(1);
 		JE_clr256(VGAScreen);
 
 		blit_sprite_hv(VGAScreenSeg, 319 - sprite(EXTRA_SHAPES, currentpic)->width, 100 - (sprite(EXTRA_SHAPES, currentpic)->height / 2), EXTRA_SHAPES, currentpic, 0x0, fade - 15);
@@ -2552,10 +2552,10 @@ void JE_playCredits(void)
 		if (fade == 15)
 			fadechg = 0;
 
-		if (delaycount2() == 0)
+		if (getDelayTicks2() == 0)
 		{
 			fadechg = -1;
-			setjasondelay2(900);
+			setDelay2(900);
 		}
 
 		if (ticks % 200 == 0)
@@ -2770,7 +2770,7 @@ void JE_endLevelAni(void)
 
 				for (i = -15; i <= 10; i++)
 				{
-					setjasondelay(frameCountMax);
+					setDelay(frameCountMax);
 
 					blit_sprite_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
 
@@ -2783,7 +2783,7 @@ void JE_endLevelAni(void)
 				}
 				for (i = 10; i >= 0; i--)
 				{
-					setjasondelay(frameCountMax);
+					setDelay(frameCountMax);
 
 					blit_sprite_hv(VGAScreenSeg, x, y, OPTION_SHAPES, 25, 0x9, i);
 
@@ -2819,7 +2819,7 @@ void JE_endLevelAni(void)
 	{
 		do
 		{
-			setjasondelay(1);
+			setDelay(1);
 
 			NETWORK_KEEP_ALIVE();
 
@@ -2926,7 +2926,7 @@ void JE_operation(JE_byte slot)
 
 				for (int i = 0; i < 14; i++)
 				{
-					setjasondelay(1);
+					setDelay(1);
 
 					push_joysticks_as_keyboard();
 					service_wait_delay();
@@ -3364,7 +3364,7 @@ void JE_pauseGame(void)
 
 	do
 	{
-		setjasondelay(2);
+		setDelay(2);
 
 		push_joysticks_as_keyboard();
 		service_SDL_events(true);

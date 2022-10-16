@@ -26,9 +26,7 @@
 
 #include "SDL.h"
 
-extern Uint32 target, target2;
-
-extern JE_word frameCount, frameCount2, frameCountMax;
+extern JE_word frameCountMax;
 
 extern JE_byte *digiFx[SAMPLE_COUNT];
 extern JE_word fxSize[SAMPLE_COUNT];
@@ -37,22 +35,16 @@ extern JE_word tyrMusicVolume, fxVolume;
 extern JE_word fxPlayVol;
 extern JE_word tempVolume;
 
-extern JE_word speed;
-
-extern float jasondelay;
-
-void setdelay(JE_byte delay);
-void setjasondelay(int delay);
-void setjasondelay2(int delay);
-int delaycount(void);
-int delaycount2(void);
+void setDelay(int delay);
+void setDelay2(int delay);
+Uint32 getDelayTicks(void);
+Uint32 getDelayTicks2(void);
 
 void wait_delay(void);
 void service_wait_delay(void);
 void wait_delayorinput(void);
 
-void JE_resetTimerInt(void);
-void JE_setTimerInt(void);
+void setDelaySpeed(Uint16 speed);
 
 void JE_calcFXVol(void);
 void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sample_delta);
