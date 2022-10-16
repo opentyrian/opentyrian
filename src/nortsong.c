@@ -30,15 +30,13 @@
 
 #include "SDL.h"
 
-JE_boolean notYetLoadedSound = true;
-
 JE_word frameCountMax;
 
-JE_byte *digiFx[SAMPLE_COUNT] = { NULL }; /* [1..soundnum + 9] */
-JE_word fxSize[SAMPLE_COUNT]; /* [1..soundnum + 9] */
+Sint16 *soundSamples[SOUND_COUNT] = { NULL }; /* [1..soundnum + 9] */  // FKA digiFx
+size_t soundSampleCount[SOUND_COUNT] = { 0 }; /* [1..soundnum + 9] */  // FKA fxSize
 
 JE_word tyrMusicVolume, fxVolume;
-JE_word fxPlayVol;
+const JE_word fxPlayVol = 4;
 JE_word tempVolume;
 
 // The period of the x86 programmable interval timer in milliseconds.
@@ -114,75 +112,139 @@ void wait_delayorinput(void)
 	}
 }
 
-void JE_loadSndFile(const char *effects_sndfile, const char *voices_sndfile)
+void loadSndFile(bool xmas)
 {
-	JE_byte y, z;
-	JE_longint templ;
-	JE_longint sndPos[2][SAMPLE_COUNT + 1];
-	JE_word sndNum;
+	FILE *f;
 
-	FILE *fi;
-	
-	/* SYN: Loading offsets into TYRIAN.SND */
-	fi = dir_fopen_die(data_dir(), effects_sndfile, "rb");
+	f = dir_fopen_die(data_dir(), "tyrian.snd", "rb");
 
-	fread_u16_die(&sndNum, 1, fi);
+	Uint16 sfxCount;
+	Uint32 sfxPositions[SFX_COUNT + 1];
 
-	assert(sndNum < COUNTOF(sndPos[0]) - 1);
-	fread_s32_die(sndPos[0], sndNum, fi);
-	fseek(fi, 0, SEEK_END);
-	sndPos[0][sndNum] = ftell(fi); /* Store file size */
+	// Read number of sounds.
+	fread_u16_die(&sfxCount, 1, f);
+	if (sfxCount != SFX_COUNT)
+		goto die;
 
-	for (z = 0; z < sndNum; z++)
+	// Read positions of sounds.
+	fread_u32_die(sfxPositions, sfxCount, f);
+
+	// Determine end of last sound.
+	fseek(f, 0, SEEK_END);
+	sfxPositions[sfxCount] = ftell(f);
+
+	// Read samples.
+	for (size_t i = 0; i < sfxCount; ++i)
 	{
-		fseek(fi, sndPos[0][z], SEEK_SET);
-		fxSize[z] = (sndPos[0][z+1] - sndPos[0][z]); /* Store sample sizes */
-		free(digiFx[z]);
-		digiFx[z] = malloc(fxSize[z]);
-		fread_u8_die(digiFx[z], fxSize[z], fi); /* JE: Load sample to buffer */
+		soundSampleCount[i] = sfxPositions[i + 1] - sfxPositions[i];
+
+		// Sound size cannot exceed 64 KiB.
+		if (soundSampleCount[i] > UINT16_MAX)
+			goto die;
+
+		free(soundSamples[i]);
+		soundSamples[i] = malloc(soundSampleCount[i]);
+
+		fseek(f, sfxPositions[i], SEEK_SET);
+		fread_u8_die((Uint8 *)soundSamples[i], soundSampleCount[i], f);
 	}
 
-	fclose(fi);
+	fclose(f);
 
-	/* SYN: Loading offsets into VOICES.SND */
-	fi = dir_fopen_die(data_dir(), voices_sndfile, "rb");
-	
-	fread_u16_die(&sndNum, 1, fi);
+	f = dir_fopen_die(data_dir(), xmas ? "voicesc.snd" : "voices.snd", "rb");
 
-	assert(sndNum < COUNTOF(sndPos[1]) - 1);
-	fread_s32_die(sndPos[1], sndNum, fi);
-	fseek(fi, 0, SEEK_END);
-	sndPos[1][sndNum] = ftell(fi); /* Store file size */
+	Uint16 voiceCount;
+	Uint32 voicePositions[VOICE_COUNT + 1];
 
-	z = SAMPLE_COUNT - 9;
+	// Read number of sounds.
+	fread_u16_die(&voiceCount, 1, f);
+	if (voiceCount != VOICE_COUNT)
+		goto die;
 
-	for (y = 0; y < sndNum; y++)
+	// Read positions of sounds.
+	fread_u32_die(voicePositions, voiceCount, f);
+
+	// Determine end of last sound.
+	fseek(f, 0, SEEK_END);
+	voicePositions[voiceCount] = ftell(f);
+
+	for (size_t vi = 0; vi < voiceCount; ++vi)
 	{
-		fseek(fi, sndPos[1][y], SEEK_SET);
+		size_t i = SFX_COUNT + vi;
 
-		templ = (sndPos[1][y+1] - sndPos[1][y]) - 100; /* SYN: I'm not entirely sure what's going on here. */
-		if (templ < 1)
-			templ = 1;
-		fxSize[z + y] = templ; /* Store sample sizes */
-		free(digiFx[z + y]);
-		digiFx[z + y] = malloc(fxSize[z + y]);
-		fread_u8_die(digiFx[z + y], fxSize[z + y], fi); /* JE: Load sample to buffer */
+		soundSampleCount[i] = voicePositions[vi + 1] - voicePositions[vi];
+
+		// Voice sounds have some bad data at the end.
+		soundSampleCount[i] = soundSampleCount[i] >= 100
+			? soundSampleCount[i] - 100
+			: 0;
+
+		// Sound size cannot exceed 64 KiB.
+		if (soundSampleCount[i] > UINT16_MAX)
+			goto die;
+
+		free(soundSamples[i]);
+		soundSamples[i] = malloc(soundSampleCount[i]);
+
+		fseek(f, voicePositions[vi], SEEK_SET);
+		fread_u8_die((Uint8 *)soundSamples[i], soundSampleCount[i], f);
 	}
 
-	fclose(fi);
+	fclose(f);
 
-	notYetLoadedSound = false;
+	// Convert samples to output sample format and rate.
 
+	SDL_AudioCVT cvt;
+	if (SDL_BuildAudioCVT(&cvt, AUDIO_S8, 1, 11025, AUDIO_S16SYS, 1, audioSampleRate) < 0)
+	{
+		fprintf(stderr, "error: Failed to build audio converter: %s\n", SDL_GetError());
+
+		for (int i = 0; i < SOUND_COUNT; ++i)
+			soundSampleCount[i] = 0;
+
+		return;
+	}
+
+	size_t maxSampleSize = 0;
+	for (size_t i = 0; i < SOUND_COUNT; ++i)
+		maxSampleSize = MAX(maxSampleSize, soundSampleCount[i]);
+
+	cvt.buf = malloc(maxSampleSize * cvt.len_mult);
+
+	for (size_t i = 0; i < SOUND_COUNT; ++i)
+	{
+		cvt.len = soundSampleCount[i];
+		memcpy(cvt.buf, soundSamples[i], cvt.len);
+
+		if (SDL_ConvertAudio(&cvt))
+		{
+			fprintf(stderr, "error: Failed to convert audio: %s\n", SDL_GetError());
+
+			soundSampleCount[i] = 0;
+
+			continue;
+		}
+
+		free(soundSamples[i]);
+		soundSamples[i] = malloc(cvt.len_cvt);
+
+		memcpy(soundSamples[i], cvt.buf, cvt.len_cvt);
+		soundSampleCount[i] = cvt.len_cvt / sizeof (Sint16);
+	}
+
+	free(cvt.buf);
+
+	return;
+
+die:
+	fprintf(stderr, "error: Unexpected data was read from a file.\n");
+	SDL_Quit();
+	exit(EXIT_FAILURE);
 }
 
 void JE_playSampleNum(JE_byte samplenum)
 {
-	JE_multiSamplePlay(digiFx[samplenum-1], fxSize[samplenum-1], 0, fxPlayVol);
-}
-
-void JE_calcFXVol(void) // TODO: not sure *exactly* what this does
-{
-	fxPlayVol = (fxVolume - 1) >> 5;
+	multiSamplePlay(soundSamples[samplenum-1], soundSampleCount[samplenum-1], 0, fxPlayVol);
 }
 
 void setDelaySpeed(Uint16 speed)  // FKA NortSong.speed and NortSong.setTimerInt
@@ -226,8 +288,6 @@ void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sampl
 	
 	*music = music_temp;
 	*sample = sample_temp;
-	
-	JE_calcFXVol();
 	
 	set_volume(*music, *sample);
 }

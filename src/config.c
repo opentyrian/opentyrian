@@ -822,7 +822,8 @@ void JE_loadConfiguration(void)
 		soundEffects = 1;
 		memcpy(&dosKeySettings, &defaultDosKeySettings, sizeof(dosKeySettings));
 		background2 = true;
-		tyrMusicVolume = fxVolume = 128;
+		tyrMusicVolume = 191;
+		fxVolume = 191;
 		gammaCorrection = 0;
 		processorType = 3;
 		gameSpeed = 4;
@@ -834,8 +835,6 @@ void JE_loadConfiguration(void)
 		tyrMusicVolume = 255;
 	if (fxVolume > 255)
 		fxVolume = 255;
-	
-	JE_calcFXVol();
 	
 	set_volume(tyrMusicVolume, fxVolume);
 	

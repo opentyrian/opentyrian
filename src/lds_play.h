@@ -29,8 +29,7 @@ int lds_update(void);
 bool lds_load(FILE *f, unsigned int music_offset, unsigned int music_size);
 void lds_free(void);
 void lds_rewind(void);
-
-#define REFRESH 70.0f
+void lds_fade(Uint8 speed);
 
 /*unsigned int getorders() { return numposi; }
 unsigned int getorder() { return posplay; }

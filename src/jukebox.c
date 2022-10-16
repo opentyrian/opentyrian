@@ -34,7 +34,7 @@
 
 #include <stdio.h>
 
-void jukebox(void)
+void jukebox(void)  // FKA Setup.jukeboxGo
 {
 	bool trigger_quit = false,  // true when user wants to quit
 	     quitting = false;
@@ -146,10 +146,10 @@ void jukebox(void)
 				break;
 			case SDL_SCANCODE_COMMA:
 				if (fx && --fx_num < 0)
-					fx_num = SAMPLE_COUNT - 1;
+					fx_num = SOUND_COUNT - 1;
 				break;
 			case SDL_SCANCODE_PERIOD:
-				if (fx && ++fx_num >= SAMPLE_COUNT)
+				if (fx && ++fx_num >= SOUND_COUNT)
 					fx_num = 0;
 				break;
 			case SDL_SCANCODE_SEMICOLON:

@@ -1118,8 +1118,6 @@ void JE_itemScreen(void)
 						fxVolume = 255;
 				}
 
-				JE_calcFXVol();
-
 				set_volume(tyrMusicVolume, fxVolume);
 
 				JE_playSampleNum(S_CURSOR);

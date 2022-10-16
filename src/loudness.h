@@ -24,20 +24,7 @@
 
 #include "SDL.h"
 
-#define SFX_CHANNELS 8
-
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-#define OUTPUT_QUALITY 2  // 22 kHz
-#else
-#define OUTPUT_QUALITY 4  // 44 kHz
-#endif
-
-#define SAMPLE_RATE (11025 * OUTPUT_QUALITY)
-#define SAMPLE_SCALING OUTPUT_QUALITY
-#define SAMPLE_TYPE Bit16s
-#define BYTES_PER_SAMPLE 2
-
-extern float music_volume, sample_volume;
+extern int audioSampleRate;
 
 extern unsigned int song_playing;
 
@@ -52,8 +39,8 @@ void restart_song(void);
 void stop_song(void);
 void fade_song(void);
 
-void set_volume(unsigned int music, unsigned int sample);
+void set_volume(Uint8 musicVolume, Uint8 sampleVolume);
 
-void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol);
+void multiSamplePlay(const Sint16 *samples, size_t sampleCount, Uint8 chan, Uint8 vol);
 
 #endif /* LOUDNESS_H */

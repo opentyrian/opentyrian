@@ -20,7 +20,7 @@
 
 #include "opentyr.h"
 
-const char soundTitle[SAMPLE_COUNT][9] = /* [1..soundnum + 9] of string [8] */
+const char soundTitle[SOUND_COUNT][9] = /* [1..soundnum + 9] of string [8] */
 {
 	"SCALEDN2", /*1*/
 	"F2",       /*2*/

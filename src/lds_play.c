@@ -230,6 +230,11 @@ void lds_rewind(void)
 	}
 }
 
+void lds_fade(Uint8 speed)
+{
+	fadeonoff = speed;
+}
+
 void lds_setregs(Uint8 reg, Uint8 val)
 {
 	if(fmchip[reg] == val) return;

@@ -451,9 +451,9 @@ void JE_tyrianHalt(JE_byte code)
 	free_sprite2s(&explosionSpriteSheet);
 	free_sprite2s(&destructSpriteSheet);
 
-	for (int i = 0; i < SAMPLE_COUNT; i++)
+	for (int i = 0; i < SOUND_COUNT; i++)
 	{
-		free(digiFx[i]);
+		free(soundSamples[i]);
 	}
 
 	if (code != 9)

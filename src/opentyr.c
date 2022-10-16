@@ -395,8 +395,6 @@ void setupMenu(void)
 										int value = (lastmouse_x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
 										fxVolume = MIN(MAX(0, value), 255);
 
-										JE_calcFXVol();
-
 										set_volume(tyrMusicVolume, fxVolume);
 
 										JE_playSampleNum(S_CURSOR);
@@ -809,7 +807,7 @@ int main(int argc, char *argv[])
 
 		load_music();
 
-		JE_loadSndFile("tyrian.snd", xmas ? "voicesc.snd" : "voices.snd");
+		loadSndFile(xmas);
 	}
 	else
 	{

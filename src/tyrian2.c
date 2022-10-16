@@ -922,7 +922,7 @@ start_level_first:
 
 	JE_setNewGameSpeed();
 
-	/* JE_setVol(tyrMusicVolume, fxPlayVol >> 2); NOTE: MXD killed this because it was broken */
+	set_volume(tyrMusicVolume, fxVolume);
 
 	/*Save backup game*/
 	if (!play_demo && !doNotSaveBackup)
@@ -2051,7 +2051,7 @@ draw_player_shot_loop_end:
 	if (firstGameOver)
 	{
 		temp = 0;
-		for (temp2 = 0; temp2 < SFX_CHANNELS; temp2++)
+		for (temp2 = 0; temp2 < COUNTOF(soundQueue); temp2++)
 		{
 			if (soundQueue[temp2] != S_NONE)
 			{
@@ -2063,7 +2063,7 @@ draw_player_shot_loop_end:
 				else   /*Lightning*/
 					temp3 = fxPlayVol / 2;
 
-				JE_multiSamplePlay(digiFx[temp-1], fxSize[temp-1], temp2, temp3);
+				multiSamplePlay(soundSamples[temp-1], soundSampleCount[temp-1], temp2, temp3);
 
 				soundQueue[temp2] = S_NONE;
 			}

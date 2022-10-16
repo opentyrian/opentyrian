@@ -1652,8 +1652,6 @@ JE_boolean JE_inGameSetup(void)
 									int value = (lastmouse_x - xMenuItemValue) * 255 / (w - 1);
 									fxVolume = MIN(MAX(0, value), 255);
 
-									JE_calcFXVol();
-
 									set_volume(tyrMusicVolume, fxVolume);
 
 									JE_playSampleNum(S_CURSOR);
