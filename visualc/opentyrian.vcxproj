@@ -54,6 +54,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SDL2BaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(WITH_NETWORK)'=='true'">$(SDL2netBaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>EnableAllWarnings</WarningLevel>
