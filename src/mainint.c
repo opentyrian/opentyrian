@@ -1812,7 +1812,7 @@ JE_boolean JE_inGameSetup(void)
 			{
 				JE_playSampleNum(S_CURSOR);
 
-				processorType = processorType > 1 ? processorType - 1 : 4;
+				processorType = processorType > 1 ? processorType - 1 : 6;
 				JE_initProcessorType();
 				JE_setNewGameSpeed();
 				break;
@@ -1852,7 +1852,7 @@ JE_boolean JE_inGameSetup(void)
 			{
 				JE_playSampleNum(S_CURSOR);
 
-				processorType = processorType < 4 ? processorType + 1 : 1;
+				processorType = processorType < 6 ? processorType + 1 : 1;
 				JE_initProcessorType();
 				JE_setNewGameSpeed();
 				break;
