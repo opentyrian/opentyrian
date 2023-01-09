@@ -2638,7 +2638,7 @@ new_game:
 						if (twoPlayerMode)
 						{
 							for (uint i = 0; i < 2; ++i)
-								snprintf(levelWarningText[i], sizeof(*levelWarningText), "%s %lu", miscText[40], player[i].cash);
+								snprintf(levelWarningText[i], sizeof(*levelWarningText), "%s %lu", miscText[40 + i], player[i].cash);
 							strcpy(levelWarningText[2], "");
 							levelWarningLines = 3;
 						}
