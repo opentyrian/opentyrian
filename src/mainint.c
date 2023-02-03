@@ -267,6 +267,7 @@ void JE_helpSystem(JE_byte startTopic)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
@@ -502,6 +503,7 @@ static bool helpSystemPage(Uint8 *topic, bool *restart)
 
 			SDL_Delay(16);
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 		} while (!(newkey || newmouse));
@@ -740,6 +742,7 @@ bool JE_loadScreen(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
@@ -1207,6 +1210,7 @@ void JE_highScoreScreen(void)
 
 			SDL_Delay(16);
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 		} while (!(newkey || newmouse));
@@ -1587,6 +1591,7 @@ JE_boolean JE_inGameSetup(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
@@ -1968,6 +1973,7 @@ void JE_inGameHelp(void)
 
 		SDL_Delay(16);
 
+		redetect_joysticks();
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 
@@ -2098,6 +2104,7 @@ void JE_highScoreCheck(void)
 							}
 							JE_mouseReplace();
 
+							redetect_joysticks();
 							push_joysticks_as_keyboard();
 							service_wait_delay();
 
@@ -2926,6 +2933,7 @@ void JE_operation(JE_byte slot)
 				{
 					setDelay(1);
 
+					redetect_joysticks();
 					push_joysticks_as_keyboard();
 					service_wait_delay();
 
@@ -3364,6 +3372,7 @@ void JE_pauseGame(void)
 	{
 		setDelay(2);
 
+		redetect_joysticks();
 		push_joysticks_as_keyboard();
 		service_SDL_events(true);
 

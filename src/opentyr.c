@@ -58,6 +58,7 @@
 
 const char *opentyrian_str = "OpenTyrian";
 const char *opentyrian_version = OPENTYRIAN_VERSION;
+num_plugins_check = 0;
 
 static size_t getDisplayPickerItemsCount(void)
 {
@@ -330,6 +331,7 @@ void setupMenu(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
