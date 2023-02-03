@@ -64,6 +64,18 @@ int joystick_axis_threshold(int j, int value)
 	return negative ? -value : value;
 }
 
+// redects joysticks to support hotplugging
+void redetect_joysticks(void)
+{
+	int num_plugins = SDL_NumJoysticks();
+	if (num_plugins <= 2 && num_plugins > num_plugins_check)
+	{
+		deinit_joysticks();
+		init_joysticks();
+	}
+	num_plugins_check = num_plugins;
+}
+
 // converts joystick axis to sane Tyrian-usable value (based on sensitivity)
 int joystick_axis_reduce(int j, int value)
 {

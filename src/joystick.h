@@ -73,6 +73,9 @@ extern bool ignore_joystick;
 extern int joysticks;
 extern Joystick *joystick;
 
+int num_plugins_check;
+void redetect_joysticks(void);
+
 int joystick_axis_reduce(int j, int value);
 bool joystick_analog_angle(int j, float *angle);
 
