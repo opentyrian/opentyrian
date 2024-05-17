@@ -295,6 +295,30 @@ bool load_opentyrian_config(void)
 		}
 	}
 
+	section = config_find_section(config, "music", NULL);
+	if (section != NULL)
+	{
+		const char *music_device_name;
+		const char *soundfont_name;
+
+		if (config_get_string_option(section, "music_device", &music_device_name))
+		{
+			for (size_t i = 0; i < COUNTOF(music_device_names); ++i)
+			{
+				if (strcmp(music_device_name, music_device_names[i]) == 0)
+				{
+					music_device = i;
+					break;
+				}
+			}
+		}
+
+		if (config_get_string_option(section, "soundfont", &soundfont_name))
+			strncpy(soundfont, soundfont_name, MAX(strlen(soundfont_name) + 1, 4096));
+		
+		
+	}
+
 	fclose(file);
 	
 	return true;
@@ -333,6 +357,13 @@ bool save_opentyrian_config(void)
 #else
 	mkdir(get_user_directory());
 #endif
+	
+	section = config_find_or_add_section(config, "music", NULL);
+	if (section == NULL)
+		exit(EXIT_FAILURE);  // out of memory
+
+	config_set_string_option(section, "music_device", music_device_names[music_device]);
+	config_set_string_option(section, "soundfont", soundfont);
 	
 	FILE *file = dir_fopen(get_user_directory(), "opentyrian.cfg", "w");
 	if (file == NULL)

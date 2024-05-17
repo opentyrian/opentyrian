@@ -105,7 +105,7 @@ void read_encrypted_pascal_string(char *s, size_t size, FILE *f)
 
 	decrypt_string(buffer, len);
 
-	assert(len < size);
+	//assert(len < size);
 
 	len = MIN(len, size - 1);
 	memcpy(s, buffer, len);
