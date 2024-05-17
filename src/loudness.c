@@ -191,7 +191,8 @@ void convert_midi_data(void){
 			continue;
 		}
 
-		midi_data[i].duration = MIDPROC_Container_GetDuration(midi_container, 0, true);
+		midi_data[i].duration = MIDPROC_Container_GetDuration(midi_container, 0, false);
+		midi_data[i].duration_ms = MIDPROC_Container_GetDuration(midi_container, 0, true);
 		MIDPROC_Container_DetectLoops(midi_container, false, true, false, false);
 		midi_data[i].loop_start = MIDPROC_Container_GetLoopBeginTimestamp(midi_container, 0, false);
 		midi_data[i].loop_end = MIDPROC_Container_GetLoopEndTimestamp(midi_container, 0, false);
@@ -212,10 +213,8 @@ bool _play_midi(Uint32 songnum){
 	}
 	assert((midi_tracks[songnum] != NULL));
 	Sint32 loops = -1; // loop forever
-	// No loop
-	if (midi_data[songnum].loop_end > midi_data[songnum].duration){
-		loops = 1;
-	}
+	// Not setting loops to 0 for no loop because it will either loop anyway 
+	// or continue playing for like 4+ seconds after the end; we stop it manually below
 	Mix_RewindMusicStream(midi_tracks[songnum]);
 	if (Mix_PlayMusic(midi_tracks[songnum], loops) != 0)
 	{
@@ -358,6 +357,9 @@ static void audioCallback(void *userdata, Uint8 *stream, int size)
 				cur_position *= factor;
 				// check the duration of the song and see if it looped
 				bool has_loop = midi_data[song_playing].loop_end <= midi_data[song_playing].duration;
+				#ifdef _DEBUG
+				fprintf(stderr, "cur_position: %f, time_playing: %f, duration: %d, loop_end: %d\n", cur_position, time_playing, midi_data[song_playing].duration, midi_data[song_playing].loop_end);
+				#endif
 				if (unwated_loop && !has_loop) {
 					// this is to get around a bug in fluidsynth where it plays songs twice even if no loops are set
 					_stop_midi();
