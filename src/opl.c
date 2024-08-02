@@ -38,7 +38,6 @@
 #define OPL_INLINE inline
 
 
-#undef NUM_CHANNELS
 #if defined(OPLTYPE_IS_OPL3)
 #define NUM_CHANNELS	18
 #else
@@ -80,6 +79,12 @@
 #define ARC_WAVE_SEL		0xe0
 
 #define ARC_SECONDSET		0x100	// second operator set for OPL3
+
+#if defined(OPLTYPE_IS_OPL3)
+#define ARC_SECONDSET_MASK	0x100
+#else
+#define ARC_SECONDSET_MASK	0
+#endif
 
 
 #define OP_ACT_OFF			0x00
@@ -197,9 +202,8 @@ static Bit32s vibval_var2[BLOCKBUF_SIZE];
 //static Bit32s vibval_var3[BLOCKBUF_SIZE];
 //static Bit32s vibval_var4[BLOCKBUF_SIZE];
 
-// vibrato/trmolo value table pointers
+// vibrato value table pointers
 static Bit32s *vibval1, *vibval2, *vibval3, *vibval4;
-static Bit32s *tremval1, *tremval2, *tremval3, *tremval4;
 
 
 // key scale level lookup table
@@ -748,7 +752,7 @@ void adlib_init(Bit32u samplerate) {
 
 
 void adlib_write(Bitu idx, Bit8u val) {
-	Bit32u second_set = idx&0x100;
+	Bit32u second_set = idx&ARC_SECONDSET_MASK;
 	adlibreg[idx] = val;
 
 	switch (idx&0xf0) {
@@ -1126,6 +1130,9 @@ void adlib_getsample(Bit16s* sndptr, Bits numsamples) {
 		// clear second output buffer (opl3 stereo)
 		if (adlibreg[0x105]&1) memset((void*)&outbufr,0,endsamples*sizeof(Bit32s));
 #endif
+
+		// tremolo value table pointers
+		Bit32s *tremval1, *tremval2, *tremval3, *tremval4;
 
 		// calculate vibrato/tremolo lookup tables
 		Bit32s vib_tshift = ((adlibreg[ARC_PERC_MODE]&0x40)==0) ? 1 : 0;	// 14cents/7cents switching

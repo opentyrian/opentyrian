@@ -4724,7 +4724,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 							shotRepeat[SHOT_SPECIAL2] = 0;
 
 							if (isNetworkGame)
-								sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], special[evalue - 32100].name);
+								snprintf(tempStr, sizeof tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], special[evalue - 32100].name);
 							else if (twoPlayerMode)
 								sprintf(tempStr, "%s %s", miscText[43-1], special[evalue - 32100].name);
 							else
@@ -4740,7 +4740,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 						{
 							enemyAvail[z] = 1;
 							if (isNetworkGame)
-								sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], options[evalue - 32000].name);
+								snprintf(tempStr, sizeof tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], options[evalue - 32000].name);
 							else
 								sprintf(tempStr, "%s %s", miscText[44-1], options[evalue - 32000].name);
 							JE_drawTextWindow(tempStr);
@@ -4788,7 +4788,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 						if (playerNum_ == 2)
 						{
 							if (isNetworkGame)
-								sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], weaponPort[evalue - 31000].name);
+								snprintf(tempStr, sizeof tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], weaponPort[evalue - 31000].name);
 							else
 								sprintf(tempStr, "%s %s", miscText[44-1], weaponPort[evalue - 31000].name);
 							JE_drawTextWindow(tempStr);
@@ -4815,7 +4815,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 						if (playerNum_ == 1 && twoPlayerMode)
 						{
 							if (isNetworkGame)
-								sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], weaponPort[evalue - 30000].name);
+								snprintf(tempStr, sizeof tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], weaponPort[evalue - 30000].name);
 							else
 								sprintf(tempStr, "%s %s", miscText[43-1], weaponPort[evalue - 30000].name);
 							JE_drawTextWindow(tempStr);
@@ -4896,7 +4896,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 					else if (evalue == -1)  // got front weapon powerup
 					{
 						if (isNetworkGame)
-							sprintf(tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], miscText[45-1]);
+							snprintf(tempStr, sizeof tempStr, "%s %s %s", JE_getName(1), miscTextB[4-1], miscText[45-1]);
 						else if (twoPlayerMode)
 							sprintf(tempStr, "%s %s", miscText[43-1], miscText[45-1]);
 						else
@@ -4909,7 +4909,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 					else if (evalue == -2)  // got rear weapon powerup
 					{
 						if (isNetworkGame)
-							sprintf(tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], miscText[46-1]);
+							snprintf(tempStr, sizeof tempStr, "%s %s %s", JE_getName(2), miscTextB[4-1], miscText[46-1]);
 						else if (twoPlayerMode)
 							sprintf(tempStr, "%s %s", miscText[44-1], miscText[46-1]);
 						else
