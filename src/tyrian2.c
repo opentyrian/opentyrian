@@ -174,6 +174,7 @@ inline static void blit_enemy(SDL_Surface *surface, unsigned int i, signed int x
 
 void JE_drawEnemy(int enemyOffset) // actually does a whole lot more than just drawing
 {
+	JE_integer enemyX, enemyY;
 	player[0].x -= 25;
 
 	for (int i = enemyOffset - 25; i < enemyOffset; i++)
@@ -336,8 +337,8 @@ enemy_still_exists:
 			if (enemy[i].ex <= -24 || enemy[i].ex >= 296)
 				goto draw_enemy_end;
 
-			tempX = enemy[i].ex;
-			tempY = enemy[i].ey;
+			enemyX = enemy[i].ex;
+			enemyY = enemy[i].ey;
 
 			temp = enemy[i].enemytype;
 
@@ -381,32 +382,32 @@ enemy_still_exists:
 						case 252: /* Savara Boss DualMissile */
 							if (enemy[i].ey > 20)
 							{
-								JE_setupExplosion(tempX - 8 + tempMapXOfs, tempY - 20 - backMove * 8, -2, 6, false, false);
-								JE_setupExplosion(tempX + 4 + tempMapXOfs, tempY - 20 - backMove * 8, -2, 6, false, false);
+								JE_setupExplosion(enemyX - 8 + tempMapXOfs, enemyY - 20 - backMove * 8, -2, 6, false, false);
+								JE_setupExplosion(enemyX + 4 + tempMapXOfs, enemyY - 20 - backMove * 8, -2, 6, false, false);
 							}
 							break;
 						case 251:; /* Suck-O-Magnet */
-							const int attractivity = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 100;
-							player[0].x_velocity += (player[0].x > tempX) ? -attractivity : attractivity;
+							const int attractivity = 4 - (abs(player[0].x - enemyX) + abs(player[0].y - enemyY)) / 100;
+							player[0].x_velocity += (player[0].x > enemyX) ? -attractivity : attractivity;
 							break;
 						case 253: /* Left ShortRange Magnet */
-							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
+							if (abs(player[0].x + 25 - 14 - enemyX) < 24 && abs(player[0].y - enemyY) < 28)
 							{
 								player[0].x_velocity += 2;
 							}
 							if (twoPlayerMode &&
-							   (abs(player[1].x - 14 - tempX) < 24 && abs(player[1].y - tempY) < 28))
+							   (abs(player[1].x - 14 - enemyX) < 24 && abs(player[1].y - enemyY) < 28))
 							{
 								player[1].x_velocity += 2;
 							}
 							break;
 						case 254: /* Left ShortRange Magnet */
-							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
+							if (abs(player[0].x + 25 - 14 - enemyX) < 24 && abs(player[0].y - enemyY) < 28)
 							{
 								player[0].x_velocity -= 2;
 							}
 							if (twoPlayerMode &&
-							   (abs(player[1].x - 14 - tempX) < 24 && abs(player[1].y - tempY) < 28))
+							   (abs(player[1].x - 14 - enemyX) < 24 && abs(player[1].y - enemyY) < 28))
 							{
 								player[1].x_velocity -= 2;
 							}
@@ -420,9 +421,9 @@ enemy_still_exists:
 								}
 								else
 								{
-									const int repulsivity = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 20;
+									const int repulsivity = 4 - (abs(player[0].x - enemyX) + abs(player[0].y - enemyY)) / 20;
 									if (repulsivity > 0)
-										player[0].x_velocity += (player[0].x > tempX) ? repulsivity : -repulsivity;
+										player[0].x_velocity += (player[0].x > enemyX) ? repulsivity : -repulsivity;
 								}
 							}
 							break;
@@ -460,8 +461,8 @@ enemy_still_exists:
 								if (j == 1)
 									temp2 = 4;
 
-								enemyShot[b].sx = tempX + weapons[temp3].bx[tempPos] + tempMapXOfs;
-								enemyShot[b].sy = tempY + weapons[temp3].by[tempPos];
+								enemyShot[b].sx = enemyX + weapons[temp3].bx[tempPos] + tempMapXOfs;
+								enemyShot[b].sy = enemyY + weapons[temp3].by[tempPos];
 								enemyShot[b].sdmg = weapons[temp3].attack[tempPos];
 								enemyShot[b].tx = weapons[temp3].tx;
 								enemyShot[b].ty = weapons[temp3].ty;
@@ -505,8 +506,8 @@ enemy_still_exists:
 										aim += difficultyLevel - 2;
 									}
 
-									JE_word target_x = player[0].x;
-									JE_word target_y = player[0].y;
+									int target_x = player[0].x;
+									int target_y = player[0].y;
 
 									if (twoPlayerMode)
 									{
@@ -525,10 +526,10 @@ enemy_still_exists:
 										}
 									}
 
-									int relative_x = (target_x + 25) - tempX - tempMapXOfs - 4;
+									int relative_x = (target_x + 25) - enemyX - tempMapXOfs - 4;
 									if (relative_x == 0)
 										relative_x = 1;
-									int relative_y = target_y - tempY;
+									int relative_y = target_y - enemyY;
 									if (relative_y == 0)
 										relative_y = 1;
 									const int longest_side = MAX(abs(relative_x), abs(relative_y));
@@ -572,8 +573,8 @@ enemy_still_exists:
 					{
 						struct JE_SingleEnemyType* e = &enemy[b-1];
 
-						e->ex = tempX;
-						e->ey = tempY + enemyDat[e->enemytype].startyc;
+						e->ex = enemyX;
+						e->ey = enemyY + enemyDat[e->enemytype].startyc;
 						if (e->size == 0)
 							e->ey -= 7;
 
@@ -585,10 +586,10 @@ enemy_still_exists:
 							}
 							else
 							{
-								int target_x = (player[0].x + 25) - tempX - tempMapXOfs - 4;
+								int target_x = (player[0].x + 25) - enemyX - tempMapXOfs - 4;
 								if (target_x == 0)
 									target_x = 1;
-								int tempI5 = player[0].y - tempY;
+								int tempI5 = player[0].y - enemyY;
 								if (tempI5 == 0)
 									tempI5 = 1;
 								const int longest_side = MAX(abs(target_x), abs(tempI5));
