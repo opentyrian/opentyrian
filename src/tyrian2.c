@@ -1934,18 +1934,17 @@ draw_player_shot_loop_end:
 	{
 		if (explosions[j].ttl != 0)
 		{
-			if (explosions[j].fixed_position != true)
+			if (!explosions[j].fixedPosition)
 			{
 				explosions[j].sprite++;
 				explosions[j].y += explodeMove;
 			}
-			else if (explosions[j].follow_player == true)
+			else if (explosions[j].followPlayer)
 			{
 				explosions[j].x += explosionFollowAmountX;
 				explosions[j].y += explosionFollowAmountY;
 			}
-			explosions[j].y += explosions[j].delta_y;
-			explosions[j].x += explosions[j].delta_x;
+			explosions[j].y += explosions[j].deltaY;
 
 			if (explosions[j].y > 200 - 14)
 			{
