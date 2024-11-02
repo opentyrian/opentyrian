@@ -4614,12 +4614,13 @@ void JE_mainGamePlayerFunctions(void)
 	}
 
 	/* == Parallax Map Scrolling == */
+	JE_word tempX;
 	if (twoPlayerMode)
 		tempX = (player[0].x + player[1].x) / 2;
 	else
 		tempX = player[0].x;
 
-	tempW = floorf((260.0f - (tempX - 36.0f)) / (260.0f - 36.0f) * (24.0f * 3.0f) - 1.0f);
+	tempW = floorf((float)(260 - (tempX - 36)) / (260 - 36) * (24 * 3) - 1);
 	mapX3Ofs   = tempW;
 	mapX3Pos   = mapX3Ofs % 24;
 	mapX3bpPos = 1 - (mapX3Ofs / 24);

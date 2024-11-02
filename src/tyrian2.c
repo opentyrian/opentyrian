@@ -336,8 +336,8 @@ enemy_still_exists:
 			if (enemy[i].ex <= -24 || enemy[i].ex >= 296)
 				goto draw_enemy_end;
 
-			tempX = enemy[i].ex;
-			tempY = enemy[i].ey;
+			JE_integer tempX = enemy[i].ex;
+			JE_integer tempY = enemy[i].ey;
 
 			temp = enemy[i].enemytype;
 
@@ -386,8 +386,9 @@ enemy_still_exists:
 							}
 							break;
 						case 251:; /* Suck-O-Magnet */
-							const int attractivity = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 100;
-							player[0].x_velocity += (player[0].x > tempX) ? -attractivity : attractivity;
+							const JE_integer attraction = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 100;
+							if (attraction > 0)
+								player[0].x_velocity += (player[0].x > tempX) ? -attraction : attraction;
 							break;
 						case 253: /* Left ShortRange Magnet */
 							if (abs(player[0].x + 25 - 14 - tempX) < 24 && abs(player[0].y - tempY) < 28)
@@ -420,9 +421,9 @@ enemy_still_exists:
 								}
 								else
 								{
-									const int repulsivity = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 20;
-									if (repulsivity > 0)
-										player[0].x_velocity += (player[0].x > tempX) ? repulsivity : -repulsivity;
+									const JE_integer repulsion = 4 - (abs(player[0].x - tempX) + abs(player[0].y - tempY)) / 20;
+									if (repulsion > 0)
+										player[0].x_velocity += (player[0].x > tempX) ? repulsion : -repulsion;
 								}
 							}
 							break;
@@ -497,16 +498,14 @@ enemy_still_exists:
 
 								if (weapons[temp3].aim > 0)
 								{
-									int aim = weapons[temp3].aim;
+									JE_byte aim = weapons[temp3].aim;
 
 									/*DIF*/
 									if (difficultyLevel > DIFFICULTY_NORMAL)
-									{
 										aim += difficultyLevel - 2;
-									}
 
-									JE_word target_x = player[0].x;
-									JE_word target_y = player[0].y;
+									JE_word targetX = player[0].x;
+									JE_word targetY = player[0].y;
 
 									if (twoPlayerMode)
 									{
@@ -520,20 +519,20 @@ enemy_still_exists:
 
 										if (temp == 1)
 										{
-											target_x = player[1].x - 25;
-											target_y = player[1].y;
+											targetX = player[1].x - 25;
+											targetY = player[1].y;
 										}
 									}
 
-									int relative_x = (target_x + 25) - tempX - tempMapXOfs - 4;
-									if (relative_x == 0)
-										relative_x = 1;
-									int relative_y = target_y - tempY;
-									if (relative_y == 0)
-										relative_y = 1;
-									const int longest_side = MAX(abs(relative_x), abs(relative_y));
-									enemyShot[b].sxm = roundf((float)relative_x / longest_side * aim);
-									enemyShot[b].sym = roundf((float)relative_y / longest_side * aim);
+									JE_integer aimX = (targetX + 25) - tempX - tempMapXOfs - 4;
+									if (aimX == 0)
+										aimX = 1;
+									JE_integer aimY = targetY - tempY;
+									if (aimY == 0)
+										aimY = 1;
+									const JE_integer maxMagAim = MAX(abs(aimX), abs(aimY));
+									enemyShot[b].sxm = roundf((float)aimX / maxMagAim * aim);
+									enemyShot[b].sym = roundf((float)aimY / maxMagAim * aim);
 								}
 							}
 							break;
@@ -585,15 +584,15 @@ enemy_still_exists:
 							}
 							else
 							{
-								int target_x = (player[0].x + 25) - tempX - tempMapXOfs - 4;
-								if (target_x == 0)
-									target_x = 1;
-								int tempI5 = player[0].y - tempY;
-								if (tempI5 == 0)
-									tempI5 = 1;
-								const int longest_side = MAX(abs(target_x), abs(tempI5));
-								e->exc = roundf(((float)target_x / longest_side) * e->launchtype);
-								e->eyc = roundf(((float)tempI5 / longest_side) * e->launchtype);
+								JE_integer aimX = (player[0].x + 25) - tempX - tempMapXOfs - 4;
+								if (aimX == 0)
+									aimX = 1;
+								JE_integer aimY = player[0].y - tempY;
+								if (aimY == 0)
+									aimY = 1;
+								const JE_integer maxMagAim = MAX(abs(aimX), abs(aimY));
+								e->exc = roundf((float)aimX / maxMagAim * e->launchtype);
+								e->eyc = roundf((float)aimY / maxMagAim * e->launchtype);
 							}
 						}
 
@@ -1606,8 +1605,8 @@ level_loop:
 											if (enemy[temp3].armorleft > (unsigned char)enemy[temp3].edlevel)
 												enemy[temp3].armorleft = enemy[temp3].edlevel;
 
-											tempX = enemy[temp3].ex + enemy[temp3].mapoffset;
-											tempY = enemy[temp3].ey;
+											JE_integer tempX = enemy[temp3].ex + enemy[temp3].mapoffset;
+											JE_integer tempY = enemy[temp3].ey;
 
 											if (enemyDat[enemy[temp3].enemytype].esize != 1)
 												JE_setupExplosion(tempX, tempY - 6, 0, 1, false, false);
@@ -1821,8 +1820,8 @@ draw_player_shot_loop_end:
 						    enemyShot[z].sy > player[i].y - (signed)player[i].shot_hit_area_y &&
 						    enemyShot[z].sy < player[i].y + (signed)player[i].shot_hit_area_y)
 						{
-							tempX = enemyShot[z].sx;
-							tempY = enemyShot[z].sy;
+							JE_integer tempX = enemyShot[z].sx;
+							JE_integer tempY = enemyShot[z].sy;
 							temp = enemyShot[z].sdmg;
 
 							enemyShotAvail[z] = true;
@@ -1903,8 +1902,8 @@ draw_player_shot_loop_end:
 			}
 
 			rep_explosions[i].y += backMove2 + 1;
-			tempX = rep_explosions[i].x + (mt_rand() % 24) - 12;
-			tempY = rep_explosions[i].y + (mt_rand() % 27) - 24;
+			JE_integer tempX = rep_explosions[i].x + (mt_rand() % 24) - 12;
+			JE_integer tempY = rep_explosions[i].y + (mt_rand() % 27) - 24;
 
 			if (rep_explosions[i].big)
 			{
@@ -2079,8 +2078,6 @@ draw_player_shot_loop_end:
 	/*-------      DEbug      ---------*/
 	debugTime = SDL_GetTicks();
 	tempW = lastmouse_but;
-	tempX = mouse_x;
-	tempY = mouse_y;
 
 	if (debug)
 	{
@@ -2736,7 +2733,7 @@ new_game:
 					case 'P':
 						if (!constantPlay)
 						{
-							tempX = atoi(s + 3);
+							JE_word tempX = atoi(s + 3);
 							if (tempX > 900)
 							{
 								memcpy(colors, palettes[pcxpal[tempX-1 - 900]], sizeof(colors));
@@ -2762,7 +2759,7 @@ new_game:
 						{
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
-							tempX = atoi(s + 3);
+							JE_word tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
@@ -2814,7 +2811,7 @@ new_game:
 							/* TODO: NETWORK */
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
-							tempX = atoi(s + 3);
+							JE_word tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
@@ -2865,7 +2862,7 @@ new_game:
 							/* TODO: NETWORK */
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
-							tempX = atoi(s + 3);
+							JE_word tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
@@ -3787,7 +3784,7 @@ void JE_readTextSync(void)
 void JE_displayText(void)
 {
 	/* Display Warning Text */
-	tempY = 55;
+	JE_word tempY = 55;
 	if (warningRed)
 	{
 		tempY = 2;
