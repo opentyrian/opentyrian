@@ -258,7 +258,7 @@ static void deinit_option(ConfigOption *option)
 
 static ConfigOption *append_option(ConfigSection *section, const char *key, size_t key_len, const char *value, size_t value_len)
 {
-	ConfigOption *options = realloc(section->options, (section->options_count + 1) * sizeof(ConfigSection));
+	ConfigOption *options = realloc(section->options, (section->options_count + 1) * sizeof(ConfigOption));
 	if (options == NULL)
 		return NULL;
 	
