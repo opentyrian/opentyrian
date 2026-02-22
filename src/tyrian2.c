@@ -4153,6 +4153,10 @@ void JE_createNewEventEnemy(JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 un
 
 	if (eventRec[eventLoc-1].eventdat2 != -99)
 	{
+		enemy[b-1].ey = -28;
+		if (background3x1b && enemyOffset == 50)
+			enemy[b-1].ey += 4;
+
 		switch (enemyOffset)
 		{
 		case 0:
@@ -4175,9 +4179,6 @@ void JE_createNewEventEnemy(JE_byte enemyTypeOfs, JE_word enemyOffset, Sint16 un
 				enemy[b-1].ex -= 6;
 			break;
 		}
-		enemy[b-1].ey = -28;
-		if (background3x1b && enemyOffset == 50)
-			enemy[b-1].ey += 4;
 	}
 
 	if (smallEnemyAdjust && enemy[b-1].size == 0)
