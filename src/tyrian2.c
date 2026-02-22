@@ -2181,8 +2181,6 @@ draw_player_shot_loop_end:
 
 				if (!play_demo)
 				{
-					push_joysticks_as_keyboard();
-					service_SDL_events(true);
 					if ((newkey || button[0] || button[1] || button[2]) || newmouse)
 					{
 						reallyEndLevel = true;
@@ -2197,9 +2195,6 @@ draw_player_shot_loop_end:
 
 	if (play_demo) // input kills demo
 	{
-		push_joysticks_as_keyboard();
-		service_SDL_events(false);
-
 		if (newkey || newmouse)
 		{
 			reallyEndLevel = true;
@@ -2209,8 +2204,6 @@ draw_player_shot_loop_end:
 	}
 	else // input handling for pausing, menu, cheats
 	{
-		service_SDL_events(false);
-
 		if (newkey)
 		{
 			skipStarShowVGA = false;

@@ -125,8 +125,6 @@ JE_word JE_mousePosition(JE_word *mouseX, JE_word *mouseY)
 
 void mouseGetRelativePosition(Sint32 *const out_x, Sint32 *const out_y)
 {
-	service_SDL_events(false);
-
 	scaleWindowDistanceToScreen(&mouseWindowXRelative, &mouseWindowYRelative);
 	*out_x = mouseWindowXRelative;
 	*out_y = mouseWindowYRelative;

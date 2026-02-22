@@ -3578,8 +3578,6 @@ redo:
 					int j_max = inputDevice == 0 ? joysticks : inputDevice - 3 + 1;
 					for (; j < j_max; j++)
 					{
-						poll_joystick(j);
-
 						if (joystick[j].analog)
 						{
 							mouseXC += joystick_axis_reduce(j, joystick[j].x);
