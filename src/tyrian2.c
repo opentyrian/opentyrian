@@ -1083,6 +1083,12 @@ level_loop:
 		setDelay(frameCountMax);
 	}
 
+	/* Drain all pending input at the top of the frame so that every
+	   subsystem within this iteration sees a consistent snapshot of
+	   keyboard, mouse and joystick state. */
+	push_joysticks_as_keyboard();
+	service_SDL_events_full(true);
+
 	//tempScreenSeg = game_screen; /* side-effect of game_screen */
 
 	if (isNetworkGame)

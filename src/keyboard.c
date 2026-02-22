@@ -135,7 +135,7 @@ void mouseGetRelativePosition(Sint32 *const out_x, Sint32 *const out_y)
 	mouseWindowYRelative = 0;
 }
 
-void service_SDL_events(JE_boolean clear_new)
+static void service_SDL_events_ex(JE_boolean clear_new, JE_boolean drain_all)
 {
 	SDL_Event ev;
 
@@ -187,12 +187,16 @@ void service_SDL_events(JE_boolean clear_new)
 				keydown = true;
 
 				mouseInactive = true;
-				return;
+				if (!drain_all)
+					return;
+				break;
 
 			case SDL_KEYUP:
 				keysactive[ev.key.keysym.scancode] = 0;
 				keydown = false;
-				return;
+				if (!drain_all)
+					return;
+				break;
 
 			case SDL_MOUSEMOTION:
 				mouse_x = ev.motion.x;
@@ -256,6 +260,16 @@ void service_SDL_events(JE_boolean clear_new)
 				break;
 		}
 	}
+}
+
+void service_SDL_events(JE_boolean clear_new)
+{
+	service_SDL_events_ex(clear_new, false);
+}
+
+void service_SDL_events_full(JE_boolean clear_new)
+{
+	service_SDL_events_ex(clear_new, true);
 }
 
 void JE_clearKeyboard(void)
