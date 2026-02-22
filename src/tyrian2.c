@@ -87,12 +87,6 @@ void JE_starShowVGA(void)
 		src = game_screen->pixels;
 		src += 24;
 
-		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
-		{
-			wait_delay();
-			setDelay(frameCountMax);
-		}
-
 		if (starShowVGASpecialCode == 1)
 		{
 			src += game_screen->pitch * 183;
@@ -1079,6 +1073,15 @@ start_level_first:
 	BKwrap3 = BKwrap3to = &megaData3.mainmap[1][0];
 
 level_loop:
+
+	/* Frame pacing — moved from JE_starShowVGA so that wait_delay sleeps
+	   at the top of the frame rather than just before present.  This
+	   reduces input-to-display latency from ~1 frame to near zero. */
+	if (smoothScroll != 0 && !playerEndLevel && !skipStarShowVGA)
+	{
+		wait_delay();
+		setDelay(frameCountMax);
+	}
 
 	//tempScreenSeg = game_screen; /* side-effect of game_screen */
 
