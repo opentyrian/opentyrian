@@ -425,63 +425,57 @@ static bool helpSystemPage(Uint8 *topic, bool *restart)
 
 		// Draw text.
 
-		helpBoxBrightness = 3;
-		verticalHeight = 8;
-
 		switch (page)
 		{
 		case 1: /* One-Player Menu */
-			JE_HBox(VGAScreen, 10,  20,  2, 60);
-			JE_HBox(VGAScreen, 10,  50,  5, 60);
-			JE_HBox(VGAScreen, 10,  80, 21, 60);
-			JE_HBox(VGAScreen, 10, 110,  1, 60);
-			JE_HBox(VGAScreen, 10, 140, 28, 60);
+			JE_HBox(VGAScreen, 10,  20,  2, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  50,  5, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  80, 21, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 110,  1, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 140, 28, 60, 8, 12, 3);
 			break;
 		case 2: /* Two-Player Menu */
-			JE_HBox(VGAScreen, 10,  20,  1, 60);
-			JE_HBox(VGAScreen, 10,  60,  2, 60);
-			JE_HBox(VGAScreen, 10, 100, 21, 60);
-			JE_HBox(VGAScreen, 10, 140, 28, 60);
+			JE_HBox(VGAScreen, 10,  20,  1, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  60,  2, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 100, 21, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 140, 28, 60, 8, 12, 3);
 			break;
 		case 3: /* Upgrade Ship */
-			JE_HBox(VGAScreen, 10,  20,  5, 60);
-			JE_HBox(VGAScreen, 10,  70,  6, 60);
-			JE_HBox(VGAScreen, 10, 110,  7, 60);
+			JE_HBox(VGAScreen, 10,  20,  5, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  70,  6, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 110,  7, 60, 8, 12, 3);
 			break;
 		case 4:
-			JE_HBox(VGAScreen, 10,  20,  8, 60);
-			JE_HBox(VGAScreen, 10,  55,  9, 60);
-			JE_HBox(VGAScreen, 10,  87, 10, 60);
-			JE_HBox(VGAScreen, 10, 120, 11, 60);
-			JE_HBox(VGAScreen, 10, 170, 13, 60);
+			JE_HBox(VGAScreen, 10,  20,  8, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  55,  9, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  87, 10, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 120, 11, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 170, 13, 60, 8, 12, 3);
 			break;
 		case 5:
-			JE_HBox(VGAScreen, 10,  20, 14, 60);
-			JE_HBox(VGAScreen, 10,  80, 15, 60);
-			JE_HBox(VGAScreen, 10, 120, 16, 60);
+			JE_HBox(VGAScreen, 10,  20, 14, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  80, 15, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 120, 16, 60, 8, 12, 3);
 			break;
 		case 6:
-			JE_HBox(VGAScreen, 10,  20, 17, 60);
-			JE_HBox(VGAScreen, 10,  40, 18, 60);
-			JE_HBox(VGAScreen, 10, 130, 20, 60);
+			JE_HBox(VGAScreen, 10,  20, 17, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  40, 18, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 130, 20, 60, 8, 12, 3);
 			break;
 		case 7: /* Options */
-			JE_HBox(VGAScreen, 10,  20, 21, 60);
-			JE_HBox(VGAScreen, 10,  70, 22, 60);
-			JE_HBox(VGAScreen, 10, 110, 23, 60);
-			JE_HBox(VGAScreen, 10, 140, 24, 60);
+			JE_HBox(VGAScreen, 10,  20, 21, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  70, 22, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 110, 23, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 140, 24, 60, 8, 12, 3);
 			break;
 		case 8:
-			JE_HBox(VGAScreen, 10,  20, 25, 60);
-			JE_HBox(VGAScreen, 10,  60, 26, 60);
-			JE_HBox(VGAScreen, 10, 100, 27, 60);
-			JE_HBox(VGAScreen, 10, 140, 28, 60);
-			JE_HBox(VGAScreen, 10, 170, 29, 60);
+			JE_HBox(VGAScreen, 10,  20, 25, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10,  60, 26, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 100, 27, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 140, 28, 60, 8, 12, 3);
+			JE_HBox(VGAScreen, 10, 170, 29, 60, 8, 12, 3);
 			break;
 		}
-
-		helpBoxBrightness = 1;
-		verticalHeight = 7;
 
 		if (*restart)
 		{
@@ -714,8 +708,7 @@ bool JE_loadScreen(void)
 		if (rightControlVisible)
 			blit_sprite2x2(VGAScreen, xRightControl, yControls, shopSpriteSheet, 281);
 
-		helpBoxColor = 15;
-		JE_helpBox(VGAScreen, 103, 182, miscText[55], 25);
+		JE_helpBox(VGAScreen, 103, 182, miscText[55], 25, 7, 15, 1, FULL_SHADE);
 
 		if (restart)
 		{
@@ -1185,8 +1178,7 @@ void JE_highScoreScreen(void)
 		if (rightControlVisible)
 			blit_sprite2x2(VGAScreen, xRightControl, yControls, shopSpriteSheet, 281);
 
-		helpBoxColor = 15;
-		JE_helpBox(VGAScreen, 103, 182, miscText[56], 25);
+		JE_helpBox(VGAScreen, 103, 182, miscText[56], 25, 7, 15, 1, FULL_SHADE);
 
 		if (restart)
 		{
@@ -1895,63 +1887,41 @@ void JE_inGameHelp(void)
 
 	if (twoPlayerMode)  // Two-Player Help
 	{
-		helpBoxColor = 3;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 20,  4, 36, 50);
+		JE_HBox(VGAScreen, 20,  4, 36, 50, 7, 3, 3);
 
 		// weapon help
 		blit_sprite(VGAScreenSeg, 2, 21, OPTION_SHAPES, 43);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 55, 20, 37, 40);
+		JE_HBox(VGAScreen, 55, 20, 37, 40, 7, 5, 3);
 
 		// sidekick help
 		blit_sprite(VGAScreenSeg, 5, 36, OPTION_SHAPES, 41);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 40, 43, 34, 44);
+		JE_HBox(VGAScreen, 40, 43, 34, 44, 7, 5, 3);
 
 		// shield/armor help
 		blit_sprite(VGAScreenSeg, 2, 79, OPTION_SHAPES, 42);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 54, 84, 35, 40);
+		JE_HBox(VGAScreen, 54, 84, 35, 40, 7, 5, 3);
 
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 5, 126, 38, 55);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 5, 160, 39, 55);
+		JE_HBox(VGAScreen, 5, 126, 38, 55, 7, 5, 3);
+		JE_HBox(VGAScreen, 5, 160, 39, 55, 7, 5, 3);
 	}
 	else
 	{
 		// power bar help
 		blit_sprite(VGAScreenSeg, 15, 5, OPTION_SHAPES, 40);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 40, 10, 31, 45);
+		JE_HBox(VGAScreen, 40, 10, 31, 45, 7, 5, 3);
 
 		// weapon help
 		blit_sprite(VGAScreenSeg, 5, 37, OPTION_SHAPES, 39);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 40, 40, 32, 44);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 40, 60, 33, 44);
+		JE_HBox(VGAScreen, 40, 40, 32, 44, 7, 5, 3);
+		JE_HBox(VGAScreen, 40, 60, 33, 44, 7, 5, 3);
 
 		// sidekick help
 		blit_sprite(VGAScreenSeg, 5, 98, OPTION_SHAPES, 41);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 40, 103, 34, 44);
+		JE_HBox(VGAScreen, 40, 103, 34, 44, 7, 5, 3);
 
 		// shield/armor help
 		blit_sprite(VGAScreenSeg, 2, 138, OPTION_SHAPES, 42);
-		helpBoxColor = 5;
-		helpBoxBrightness = 3;
-		JE_HBox(VGAScreen, 54, 143, 35, 40);
+		JE_HBox(VGAScreen, 54, 143, 35, 40, 7, 5, 3);
 	}
 
 	// "press a key"

@@ -639,18 +639,15 @@ void JE_itemScreen(void)
 			}
 			else if (superArcadeMode != SA_NONE || superTyrian)
 			{
-				helpBoxColor = 15;
-				helpBoxBrightness = 4;
 				if (!superTyrian)
-					JE_helpBox(VGAScreen, 35, 25, superShips[superArcadeMode], 18);
+					JE_helpBox(VGAScreen, 35, 25, superShips[superArcadeMode], 18, 7, 15, 4, FULL_SHADE);
 				else
-					JE_helpBox(VGAScreen, 35, 25, superShips[SA+3], 18);
-				helpBoxBrightness = 1;
+					JE_helpBox(VGAScreen, 35, 25, superShips[SA+3], 18, 7, 15, 4, FULL_SHADE);
 
 				JE_textShade(VGAScreen, 25, 50, superShips[SA+1], 15, 0, FULL_SHADE);
-				JE_helpBox(VGAScreen,   25, 60, weaponPort[player[0].items.weapon[FRONT_WEAPON].id].name, 22);
+				JE_helpBox(VGAScreen,   25, 60, weaponPort[player[0].items.weapon[FRONT_WEAPON].id].name, 22, 7, 12, 1, FULL_SHADE);
 				JE_textShade(VGAScreen, 25, 120, superShips[SA+2], 15, 0, FULL_SHADE);
-				JE_helpBox(VGAScreen,   25, 130, special[player[0].items.special].name, 22);
+				JE_helpBox(VGAScreen,   25, 130, special[player[0].items.special].name, 22, 7, 12, 1, FULL_SHADE);
 			}
 			else
 			{
@@ -680,7 +677,7 @@ void JE_itemScreen(void)
 			{
 				if (cubeMax == 0)
 				{
-					JE_helpBox(VGAScreen, 166, 80, miscText[16 - 1], 30);
+					JE_helpBox(VGAScreen, 166, 80, miscText[16 - 1], 30, 7, 12, 1, FULL_SHADE);
 					tempW = 160;
 					temp2 = 252;
 				}
@@ -698,10 +695,7 @@ void JE_itemScreen(void)
 							temp2 = 250;
 						}
 
-						helpBoxColor = temp2 / 16;
-						helpBoxBrightness = (temp2 % 16) - 8;
-						helpBoxShadeType = DARKEN;
-						JE_helpBox(VGAScreen, 192, 44 + (x - 1) * 28, cube[x - 1].title, 24);
+						JE_helpBox(VGAScreen, 192, 44 + (x - 1) * 28, cube[x - 1].title, 24, 7, temp2 / 16, (temp2 % 16) - 8, DARKEN);
 					}
 					int x = cubeMax + 1;
 					if (x + 1 == curSel[curMenu])
@@ -2374,7 +2368,7 @@ JE_boolean JE_quitRequest(void)
 
 			blit_sprite(VGAScreen, 50, 50, OPTION_SHAPES, 35);  // message box
 			JE_textShade(VGAScreen, 70, 66, miscText[28], 0, 5, FULL_SHADE);
-			JE_helpBox(VGAScreen, 70, 90, miscText[30], 30);
+			JE_helpBox(VGAScreen, 70, 90, miscText[30], 30, 7, 12, 1, FULL_SHADE);
 
 			col += colC;
 			if (col > 8 || col < 2)
@@ -2989,11 +2983,9 @@ void JE_drawShipSpecs(SDL_Surface * screen, SDL_Surface * temp_screen)
 	JE_rectangle(screen, 0, 0, 319, 199, 37);
 	JE_rectangle(screen, 1, 1, 318, 198, 35);
 
-	verticalHeight = 9;
 	JE_outText(screen, 10, 2, ships[player[0].items.ship].name, 12, 3);
-	JE_helpBox(screen, 100, 20, shipInfo[player[0].items.ship-1][0], 40);
-	JE_helpBox(screen, 100, 100, shipInfo[player[0].items.ship-1][1], 40);
-	verticalHeight = 7;
+	JE_helpBox(screen, 100, 20, shipInfo[player[0].items.ship-1][0], 40, 9, 12, 1, FULL_SHADE);
+	JE_helpBox(screen, 100, 100, shipInfo[player[0].items.ship-1][1], 40, 9, 12, 1, FULL_SHADE);
 
 	JE_outText(screen, JE_fontCenter(miscText[4], TINY_FONT), 190, miscText[4], 12, 2);
 

@@ -31,9 +31,6 @@
 
 extern const JE_byte menuHelp[MENU_MAX][11];   /* [1..14, 1..11] */
 
-extern JE_byte verticalHeight;
-extern JE_byte helpBoxColor, helpBoxBrightness, helpBoxShadeType;
-
 #define HELPTEXT_MISCTEXT_COUNT 68
 #define HELPTEXT_MISCTEXTB_COUNT 5
 #define HELPTEXT_MISCTEXTB_SIZE 11
@@ -72,8 +69,8 @@ extern char menuInt[MENU_MAX+1][11][18];
 void read_encrypted_pascal_string(char *s, size_t size, FILE *f);
 void skip_pascal_string(FILE *f);
 
-void JE_helpBox(SDL_Surface *screen, int x, int y, const char *message, unsigned int boxwidth);
-void JE_HBox(SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth);
+void JE_helpBox(SDL_Surface *screen, int x, int y, const char *message, JE_byte boxWidth, JE_byte verticalHeight, JE_byte color, JE_byte brightness, JE_byte shadeType);
+void JE_HBox(SDL_Surface *screen, int x, int y, JE_byte messageNum, JE_byte boxWidth, JE_byte verticalHeight, JE_byte color, JE_byte brightness);
 void JE_loadHelpText(void);
 
 #endif /* HELPTEXT_H */

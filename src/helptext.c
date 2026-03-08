@@ -47,11 +47,6 @@ const JE_byte menuHelp[MENU_MAX][11] = /* [1..maxmenu, 1..11] */
 	{  4, 34,  3,  5,                    0, 0, 0, 0, 0, 0, 0 }
 };
 
-JE_byte verticalHeight = 7;
-JE_byte helpBoxColor = 12;
-JE_byte helpBoxBrightness = 1;
-JE_byte helpBoxShadeType = FULL_SHADE;
-
 char helpTxt[39][231];                                                   /* [1..39] of string [230] */
 char pName[21][16];                                                      /* [1..21] of string [15] */
 char miscText[HELPTEXT_MISCTEXT_COUNT][42];                              /* [1..68] of string [41] */
@@ -121,7 +116,7 @@ void skip_pascal_string(FILE *f)
 	fread_die(buffer, 1, len, f);
 }
 
-void JE_helpBox(SDL_Surface *screen,  int x, int y, const char *message, unsigned int boxwidth)
+void JE_helpBox(SDL_Surface *screen,  int x, int y, const char *message, JE_byte boxWidth, JE_byte verticalHeight, JE_byte color, JE_byte brightness, JE_byte shadeType)
 {
 	JE_byte startpos, endpos, pos;
 	JE_boolean endstring;
@@ -150,7 +145,7 @@ void JE_helpBox(SDL_Surface *screen,  int x, int y, const char *message, unsigne
 				if (pos == strlen(message))
 				{
 					endstring = true;
-					if ((unsigned)(pos - startpos) < boxwidth)
+					if ((unsigned)(pos - startpos) < boxWidth)
 					{
 						endpos = pos + 1;
 					}
@@ -158,10 +153,10 @@ void JE_helpBox(SDL_Surface *screen,  int x, int y, const char *message, unsigne
 
 			} while (!(message[pos-1] == ' ' || endstring));
 
-		} while (!((unsigned)(pos - startpos) > boxwidth || endstring));
+		} while (!((unsigned)(pos - startpos) > boxWidth || endstring));
 
 		SDL_strlcpy(substring, message + startpos - 1, MIN((size_t)(endpos - startpos + 1), sizeof(substring)));
-		JE_textShade(screen, x, y, substring, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+		JE_textShade(screen, x, y, substring, color, brightness, shadeType);
 
 		y += verticalHeight;
 
@@ -169,16 +164,13 @@ void JE_helpBox(SDL_Surface *screen,  int x, int y, const char *message, unsigne
 
 	if (endpos != pos + 1)
 	{
-		JE_textShade(screen, x, y, message + endpos, helpBoxColor, helpBoxBrightness, helpBoxShadeType);
+		JE_textShade(screen, x, y, message + endpos, color, brightness, shadeType);
 	}
-
-	helpBoxColor = 12;
-	helpBoxShadeType = FULL_SHADE;
 }
 
-void JE_HBox(SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth)
+void JE_HBox(SDL_Surface *screen, int x, int y, JE_byte messageNum, JE_byte boxWidth, JE_byte verticalHeight, JE_byte color, JE_byte brightness)
 {
-	JE_helpBox(screen, x, y, helpTxt[messagenum-1], boxwidth);
+	JE_helpBox(screen, x, y, helpTxt[messageNum-1], boxWidth, verticalHeight, color, brightness, FULL_SHADE);
 }
 
 void JE_loadHelpText(void)
