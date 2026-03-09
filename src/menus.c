@@ -114,6 +114,7 @@ bool gameplaySelect(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
@@ -308,6 +309,7 @@ bool episodeSelect(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
@@ -496,6 +498,7 @@ bool difficultySelect(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 

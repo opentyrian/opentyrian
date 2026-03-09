@@ -90,6 +90,7 @@ void jukebox(void)  // FKA Setup.jukeboxGo
 		// starlib input needs to be rewritten
 		JE_starlib_main();
 
+		redetect_joysticks();
 		push_joysticks_as_keyboard();
 		service_SDL_events(true);
 

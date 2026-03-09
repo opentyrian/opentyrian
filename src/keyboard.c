@@ -65,6 +65,7 @@ void wait_input(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick)
 	while (!((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
 	{
 		SDL_Delay(SDL_POLL_INTERVAL);
+		redetect_joysticks();
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 

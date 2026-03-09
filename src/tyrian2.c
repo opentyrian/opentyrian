@@ -1082,6 +1082,8 @@ level_loop:
 
 	//tempScreenSeg = game_screen; /* side-effect of game_screen */
 
+	redetect_joysticks();
+	
 	if (isNetworkGame)
 	{
 		smoothies[9-1] = false;
@@ -2172,6 +2174,7 @@ draw_player_shot_loop_end:
 
 				if (!play_demo)
 				{
+					redetect_joysticks();
 					push_joysticks_as_keyboard();
 					service_SDL_events(true);
 					if ((newkey || button[0] || button[1] || button[2]) || newmouse)
@@ -2188,6 +2191,7 @@ draw_player_shot_loop_end:
 
 	if (play_demo) // input kills demo
 	{
+		redetect_joysticks();
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 
@@ -3373,6 +3377,7 @@ bool titleScreen(void)
 			Uint16 oldMouseX = mouse_x;
 			Uint16 oldMouseY = mouse_y;
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 

@@ -965,6 +965,7 @@ void JE_itemScreen(void)
 
 				wait_delay();
 
+				redetect_joysticks();
 				push_joysticks_as_keyboard();
 				service_SDL_events(false);
 				mouseButton = JE_mousePosition(&mouseX, &mouseY);
@@ -2399,6 +2400,7 @@ JE_boolean JE_quitRequest(void)
 
 			wait_delay();
 
+			redetect_joysticks();
 			push_joysticks_as_keyboard();
 			service_SDL_events(false);
 
