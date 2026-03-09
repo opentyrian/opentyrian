@@ -2373,7 +2373,7 @@ JE_boolean JE_quitRequest(void)
 			setDelay(4);
 
 			blit_sprite(VGAScreen, 50, 50, OPTION_SHAPES, 35);  // message box
-			JE_textShade(VGAScreen, 70, 60, miscText[28], 0, 5, FULL_SHADE);
+			JE_textShade(VGAScreen, 70, 66, miscText[28], 0, 5, FULL_SHADE);
 			JE_helpBox(VGAScreen, 70, 90, miscText[30], 30);
 
 			col += colC;
