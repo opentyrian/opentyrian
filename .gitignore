@@ -12,6 +12,9 @@ tyrian.sav
 /obj/
 /src/*.gch
 /opentyrian
+/opentyrian.data
+/opentyrian.js
+/opentyrian.wasm
 
 # Windows build output
 /opentyrian.exe
@@ -32,5 +35,11 @@ tyrian.sav
 /visualc/*.props
 /visualc/*.user
 
+#idea
+/.idea
+
 # Doxygen output
 /doc/doxygen/
+
+#misc fs files
+.DS_Store

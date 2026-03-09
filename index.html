@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <link rel="preload" href="./opentyrian.data" as="fetch" />
+    <style>
+        body { margin: 0; height: 0; }
+        canvas {
+            height: 100vh;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+  </head>
+<body>
+  <canvas id="canvas" width="320" height="200"></canvas>
+  <script>
+    Object.assign(window, { Module: { canvas: document.querySelector('canvas') } } )
+  </script>
+  <script src="./opentyrian.js"></script>
+</body>
