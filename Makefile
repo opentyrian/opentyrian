@@ -2,13 +2,48 @@
 
 ifneq ($(filter Msys Cygwin, $(shell uname -o)), )
     PLATFORM := WIN32
+    OS := win
     TYRIAN_DIR = C:\\TYRIAN
+else ifeq (Darwin, $(shell uname)) # macOS
+    PLATFORM := UNIX
+    OS := osx
+    TYRIAN_DIR = $(gamesdir)/opentyrian2000
 else
     PLATFORM := UNIX
+    OS := linux
     TYRIAN_DIR = $(gamesdir)/tyrian
 endif
 
+# detect the architecture
+HOST_TRIPLET := $(shell $(CC) -dumpmachine)
+_ARCH := $(word 1, $(subst -, ,$(HOST_TRIPLET)))
+
+ifeq ($(_ARCH), aarch64)
+    ARCH := arm64
+else
+    ARCH := $(_ARCH)
+endif
+
+# check if VCPKG_TRIPLET, VCPKG_TARGET_TRIPLET, or VCPKG_DEFAULT_TRIPLET is set
+# if not, set it to the OS and ARCH
+ifneq ($(VCPKG_TRIPLET), )
+    $(info VCPKG_TRIPLET: $(VCPKG_TRIPLET))
+else ifneq ($(VCPKG_TARGET_TRIPLET), )
+    VCPKG_TRIPLET := $(VCPKG_TARGET_TRIPLET)
+else ifneq ($(VCPKG_DEFAULT_TRIPLET), )
+    VCPKG_TRIPLET := $(VCPKG_DEFAULT_TRIPLET)
+else
+    _VCPKG_TRIPLET := $(ARCH)-$(OS)
+    # if using windows, use the static-md triplet by default
+    ifeq ($(OS), win)
+        VCPKG_TRIPLET := $(_VCPKG_TRIPLET)-static-md
+    else
+        VCPKG_TRIPLET := $(_VCPKG_TRIPLET)
+    endif
+endif
+
 WITH_NETWORK := true
+WITH_MIDI := true
 
 ################################################################################
 
@@ -56,6 +91,14 @@ ifeq ($(WITH_NETWORK), true)
     EXTRA_CPPFLAGS += -DWITH_NETWORK
 endif
 
+ifeq ($(WITH_MIDI), true)
+    EXTRA_CPPFLAGS += -DWITH_MIDI
+endif
+
+ifeq ($(OS), linux)
+    EXTRA_CPPFLAGS += -DNO_NATIVE_MIDI
+endif
+
 OPENTYRIAN_VERSION := $(shell $(VCS_IDREV) 2>/dev/null && \
                               touch src/opentyrian_version.h)
 ifneq ($(OPENTYRIAN_VERSION), )
@@ -67,20 +110,57 @@ CPPFLAGS += -DNDEBUG
 CFLAGS ?= -pedantic \
           -Wall \
           -Wextra \
-          -Wno-format-truncation \
+          -Wno-strict-prototypes \
           -Wno-missing-field-initializers \
-          -O2
+          -O3
+
 LDFLAGS ?=
 LDLIBS ?=
 
-ifeq ($(WITH_NETWORK), true)
-    SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --cflags)
-    SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --libs-only-L --libs-only-other)
-    SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl2 SDL2_net --libs-only-l)
+libmidiconv_PC_PATH :=
+
+# check if the "vcpkg_installed" directory exists in the directory that this makefile is in
+# if it does, add it to the pkg-config search path=
+VCPKG_CHLDDIR := $(VCPKG_TRIPLET)/lib/pkgconfig
+ifeq ($(findstring debug, $(MAKECMDGOALS)), debug)
+    VCPKG_CHLDDIR := $(VCPKG_TRIPLET)/debug/lib/pkgconfig
+endif
+
+# local vcpkg
+ifneq ($(wildcard vcpkg_installed), )
+    VCPKG_PC_PATH := $(CURDIR)/vcpkg_installed/$(VCPKG_CHLDDIR)
+# global vcpkg
+else ifneq ($(VCPKG_ROOT), )
+    VCPKG_PC_PATH := $(VCPKG_ROOT)/installed/$(VCPKG_CHLDDIR)
+endif
+
+ifeq ($(PKG_CONFIG_PATH), )
+    PKG_CONFIG_PATH := $(VCPKG_PC_PATH):$(libmidiconv_PC_PATH):$(shell $(PKG_CONFIG) --variable pc_path pkg-config)
 else
-    SDL_CPPFLAGS := $(shell $(PKG_CONFIG) sdl2 --cflags)
-    SDL_LDFLAGS := $(shell $(PKG_CONFIG) sdl2 --libs-only-L --libs-only-other)
-    SDL_LDLIBS := $(shell $(PKG_CONFIG) sdl2 --libs-only-l)
+    PKG_CONFIG_PATH := $(VCPKG_PC_PATH):$(libmidiconv_PC_PATH):$(PKG_CONFIG_PATH)
+endif
+
+
+SDL_PACKAGES := sdl2
+MIDIPROC_LIBS :=
+PC_CMD := PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG)
+
+ifeq ($(WITH_NETWORK), true)
+    SDL_PACKAGES += SDL2_net
+endif
+
+ifeq ($(WITH_MIDI), true)
+    SDL_PACKAGES += SDL2_mixer_ext
+    MIDIPROC_LIBS := midiproc fluidsynth
+endif
+
+SDL_CPPFLAGS := $(shell $(PC_CMD) $(SDL_PACKAGES) $(MIDIPROC_LIBS) --cflags)
+SDL_LDFLAGS := $(shell $(PC_CMD) $(SDL_PACKAGES) $(MIDIPROC_LIBS) --libs-only-L --libs-only-other)
+SDL_LDLIBS := $(shell $(PC_CMD) $(SDL_PACKAGES) $(MIDIPROC_LIBS) --libs-only-l)
+
+# add stdc++ to the ldlibs if using midiproc
+ifneq ($(MIDIPROC_LIBS), )
+    SDL_LDLIBS += -lstdc++
 endif
 
 ALL_CPPFLAGS = -DTARGET_$(PLATFORM) \
