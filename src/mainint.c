@@ -229,19 +229,19 @@ void JE_helpSystem(JE_byte startTopic)
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, (size_t)VGAScreen->pitch * VGAScreen->h);
 
 		// Draw header.
-		draw_font_hv_shadow(VGAScreen, xCenter, yMenuHeader, topicName[0], large_font, centered, 15, -3, false, 2);
+		drawFontHvShadowAligned(VGAScreen, xCenter, yMenuHeader, topicName[0], FONT_LARGE, ALIGN_CENTER, 15, -3, false, 2);
 
 		// Draw menu items.
 		for (size_t i = 0; i < menuItemsCount; ++i)
 		{
 			const char *const text = topicName[i + 1];
 
-			wMenuItem[i] = JE_textWidth(text, normal_font);
+			wMenuItem[i] = JE_textWidth(text, FONT_NORMAL);
 			const int y = yMenuItems + dyMenuItems * i;
 
 			const bool selected = i == selectedIndex;
 
-			draw_font_hv_shadow(VGAScreen, xCenter, y, text, normal_font, centered, 15, -3 + (selected ? 2 : 0), false, 2);
+			drawFontHvShadowAligned(VGAScreen, xCenter, y, text, FONT_NORMAL, ALIGN_CENTER, 15, -3 + (selected ? 2 : 0), false, 2);
 		}
 
 		mouseCursor = MOUSE_POINTER_NORMAL;
@@ -412,16 +412,16 @@ static bool helpSystemPage(Uint8 *topic, bool *restart)
 		const char *const text = topicName[*topic - 1];
 
 		// Draw header.
-		draw_font_hv_shadow(VGAScreen, xCenter, 1, text, normal_font, centered, 15, -3, false, 2);
+		drawFontHvShadowAligned(VGAScreen, xCenter, 1, text, FONT_NORMAL, ALIGN_CENTER, 15, -3, false, 2);
 
 		// Draw footer.
 		JE_char buffer[128];
 
 		snprintf(buffer, sizeof buffer, "%s %d", miscText[24], page - topicStart[*topic - 1] + 1);
-		draw_font_hv(VGAScreen, 10, 192, buffer, small_font, left_aligned, 13, 5);
+		drawFontHvAligned(VGAScreen, 10, 192, buffer, FONT_SMALL, ALIGN_LEFT, 13, 5);
 
 		snprintf(buffer, sizeof buffer, "%s %d of %d", miscText[25], page, MAX_PAGE);
-		draw_font_hv(VGAScreen, 320 - 10, 192, buffer, small_font, right_aligned, 13, 5);
+		drawFontHvAligned(VGAScreen, 320 - 10, 192, buffer, FONT_SMALL, ALIGN_RIGHT, 13, 5);
 
 		// Draw text.
 
@@ -656,7 +656,7 @@ bool JE_loadScreen(void)
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, (size_t)VGAScreen->pitch * VGAScreen->h);
 
 		// Draw header.
-		draw_font_hv_shadow(VGAScreen, xCenter, yMenuHeader, miscText[38 + playersIndex], large_font, centered, 15, -3, false, 2);
+		drawFontHvShadowAligned(VGAScreen, xCenter, yMenuHeader, miscText[38 + playersIndex], FONT_LARGE, ALIGN_CENTER, 15, -3, false, 2);
 
 		// Draw menu items.
 
@@ -1120,7 +1120,7 @@ void JE_highScoreScreen(void)
 			fill_rectangle_wh(VGAScreen2, 0, 192, 320, 8, 0);
 
 			// Draw header.
-			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, miscText[50], large_font, centered, 15, -3, false, 2);
+			drawFontHvShadowAligned(VGAScreen2, xCenter, yMenuHeader, miscText[50], FONT_LARGE, ALIGN_CENTER, 15, -3, false, 2);
 		}
 
 		// Restore background and header.
@@ -1129,13 +1129,13 @@ void JE_highScoreScreen(void)
 		const bool disabled = !episodeAvail[episodeIndex];
 
 		// Draw episode header.
-		draw_font_hv_shadow(VGAScreen, xCenter, yEpisodeHeader, episode_name[episodeIndex + 1], normal_font, centered, 15, -3 + (disabled ? -4 : 0), false, 2);
+		drawFontHvShadowAligned(VGAScreen, xCenter, yEpisodeHeader, episode_name[episodeIndex + 1], FONT_NORMAL, ALIGN_CENTER, 15, -3 + (disabled ? -4 : 0), false, 2);
 
 		char buffer[29];
 
 		// Draw 1-player scores.
 
-		draw_font_hv_shadow(VGAScreen, xCenter, 55, miscText[46], normal_font, centered, 15, -3, false, 2);
+		drawFontHvShadowAligned(VGAScreen, xCenter, 55, miscText[46], FONT_NORMAL, ALIGN_CENTER, 15, -3, false, 2);
 
 		for (Uint8 i = 0; i < 3; ++i)
 		{
@@ -1152,7 +1152,7 @@ void JE_highScoreScreen(void)
 
 		// Draw 2-player scores.
 
-		draw_font_hv_shadow(VGAScreen, xCenter, 120, miscText[47], normal_font, centered, 15, -3, false, 2);
+		drawFontHvShadowAligned(VGAScreen, xCenter, 120, miscText[47], FONT_NORMAL, ALIGN_CENTER, 15, -3, false, 2);
 
 		for (Uint8 i = 0; i < 3; ++i)
 		{
@@ -1535,7 +1535,7 @@ JE_boolean JE_inGameSetup(void)
 
 			const bool selected = i == selectedIndex;
 
-			draw_font_hv_shadow(VGAScreen, xMenuItemName, y, name, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0), false, 2);
+			drawFontHvShadow(VGAScreen, xMenuItemName, y, name, FONT_NORMAL, 15, -4 + (selected ? 2 : 0), false, 2);
 
 			switch (i)
 			{
@@ -1551,12 +1551,12 @@ JE_boolean JE_inGameSetup(void)
 			}
 			case MENU_ITEM_DETAIL_LEVEL:
 			{
-				draw_font_hv_shadow(VGAScreen, xMenuItemValue, y, detailLevel[processorType-1], normal_font, left_aligned, 15, -4 + (selected ? 2 : 0), false, 2);
+				drawFontHvShadow(VGAScreen, xMenuItemValue, y, detailLevel[processorType-1], FONT_NORMAL, 15, -4 + (selected ? 2 : 0), false, 2);
 				break;
 			}
 			case MENU_ITEM_GAME_SPEED:
 			{
-				draw_font_hv_shadow(VGAScreen, xMenuItemValue, y, gameSpeedText[gameSpeed-1], normal_font, left_aligned, 15, -4 + (selected ? 2 : 0), false, 2);
+				drawFontHvShadow(VGAScreen, xMenuItemValue, y, gameSpeedText[gameSpeed-1], FONT_NORMAL, 15, -4 + (selected ? 2 : 0), false, 2);
 				break;
 			}
 			}

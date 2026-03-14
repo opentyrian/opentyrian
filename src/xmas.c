@@ -117,7 +117,7 @@ bool xmas_prompt(void)
 
 			// Draw prompt.
 			for (uint i = 0; i < COUNTOF(prompt); ++i)
-				draw_font_hv_full_shadow(VGAScreen, xCenter, yPrompt + dyPrompt * i, prompt[i], normal_font, centered, (i % 2) ? 2 : 4, -2, true, 1);
+				drawFontHvFullShadowAligned(VGAScreen, xCenter, yPrompt + dyPrompt * i, prompt[i], FONT_NORMAL, ALIGN_CENTER, (i % 2) ? 2 : 4, -2, true, 1);
 
 			// Draw choices.
 			for (size_t i = 0; i < COUNTOF(choices); ++i)
@@ -126,7 +126,7 @@ bool xmas_prompt(void)
 
 				const bool selected = (selectedIndex == i);
 
-				draw_font_hv_full_shadow(VGAScreen, x, yChoice, choices[i], normal_font, centered, 15, selected ? -2 : -4, true, 1);
+				drawFontHvFullShadowAligned(VGAScreen, x, yChoice, choices[i], FONT_NORMAL, ALIGN_CENTER, 15, selected ? -2 : -4, true, 1);
 			}
 
 			// Draw foreground snowflakes.

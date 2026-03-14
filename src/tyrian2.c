@@ -3287,7 +3287,7 @@ bool titleScreen(void)
 
 			JE_loadPic(VGAScreen, 4, false);
 
-			draw_font_hv_shadow(VGAScreen, 2, 192, opentyrian_version, small_font, left_aligned, 15, 0, false, 1);
+			drawFontHvShadow(VGAScreen, 2, 192, opentyrian_version, FONT_SMALL, 15, 0, false, 1);
 
 			if (moveTyrianLogoUp)
 			{
@@ -3324,15 +3324,15 @@ bool titleScreen(void)
 			{
 				const char *const text = menuText[i];
 
-				wMenuItem[i] = JE_textWidth(text, normal_font);
+				wMenuItem[i] = JE_textWidth(text, FONT_NORMAL);
 				const int x = xCenter - wMenuItem[i] / 2;
 				const int y = yMenuItems + hMenuItem * i;
 
-				draw_font_hv(VGAScreen, x - 1, y - 1, menuText[i], normal_font, left_aligned, 15, -10);
-				draw_font_hv(VGAScreen, x + 1, y + 1, menuText[i], normal_font, left_aligned, 15, -10);
-				draw_font_hv(VGAScreen, x + 1, y - 1, menuText[i], normal_font, left_aligned, 15, -10);
-				draw_font_hv(VGAScreen, x - 1, y + 1, menuText[i], normal_font, left_aligned, 15, -10);
-				draw_font_hv(VGAScreen, x,     y,     menuText[i], normal_font, left_aligned, 15, -3);
+				drawFontHv(VGAScreen, x - 1, y - 1, menuText[i], FONT_NORMAL, 15, -10);
+				drawFontHv(VGAScreen, x + 1, y + 1, menuText[i], FONT_NORMAL, 15, -10);
+				drawFontHv(VGAScreen, x + 1, y - 1, menuText[i], FONT_NORMAL, 15, -10);
+				drawFontHv(VGAScreen, x - 1, y + 1, menuText[i], FONT_NORMAL, 15, -10);
+				drawFontHv(VGAScreen, x,     y,     menuText[i], FONT_NORMAL, 15, -3);
 			}
 
 			memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
@@ -3348,7 +3348,7 @@ bool titleScreen(void)
 		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
 		// Highlight selected menu item.
-		draw_font_hv(VGAScreen, VGAScreen->w / 2, yMenuItems + hMenuItem * selectedIndex, menuText[selectedIndex], normal_font, centered, 15, -1);
+		drawFontHvAligned(VGAScreen, VGAScreen->w / 2, yMenuItems + hMenuItem * selectedIndex, menuText[selectedIndex], FONT_NORMAL, ALIGN_CENTER, 15, -1);
 
 		service_SDL_events(true);
 

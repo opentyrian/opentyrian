@@ -70,7 +70,7 @@ bool gameplaySelect(void)
 			JE_loadPic(VGAScreen2, 2, false);
 
 			// Draw header.
-			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, gameplay_name[0], large_font, centered, 15, -3, false, 2);
+			drawFontHvShadowAligned(VGAScreen2, xCenter, yMenuHeader, gameplay_name[0], FONT_LARGE, ALIGN_CENTER, 15, -3, false, 2);
 		}
 
 		// Restore background and header.
@@ -81,14 +81,14 @@ bool gameplaySelect(void)
 		{
 			const char *const text = gameplay_name[i + 1];
 
-			wMenuItem[i] = JE_textWidth(text, normal_font);
+			wMenuItem[i] = JE_textWidth(text, FONT_NORMAL);
 			const int x = xCenter - wMenuItem[i] / 2;
 			const int y = yMenuItems + dyMenuItems * i;
 
 			const bool selected = i == selectedIndex;
 			const bool disabled = i == MENU_ITEM_NETWORK;
 
-			draw_font_hv_shadow(VGAScreen, x, y, text, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+			drawFontHvShadow(VGAScreen, x, y, text, FONT_NORMAL, 15, -4 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
 		}
 
 		if (restart)
@@ -265,7 +265,7 @@ bool episodeSelect(void)
 			JE_loadPic(VGAScreen2, 2, false);
 
 			// Draw header.
-			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, episode_name[0], large_font, centered, 15, -3, false, 2);
+			drawFontHvShadowAligned(VGAScreen2, xCenter, yMenuHeader, episode_name[0], FONT_LARGE, ALIGN_CENTER, 15, -3, false, 2);
 		}
 
 		// Restore background and header.
@@ -276,13 +276,13 @@ bool episodeSelect(void)
 		{
 			const char *const text = episode_name[i + 1];
 
-			wMenuItem[i] = JE_textWidth(text, normal_font);
+			wMenuItem[i] = JE_textWidth(text, FONT_NORMAL);
 			const int y = yMenuItems + dyMenuItems * i;
 
 			const bool selected = i == selectedIndex;
 			const bool disabled = !episodeAvail[i];
 
-			draw_font_hv_shadow(VGAScreen, xMenuItem, y, text, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
+			drawFontHvShadow(VGAScreen, xMenuItem, y, text, FONT_NORMAL, 15, -4 + (selected ? 2 : 0) + (disabled ? -4 : 0), false, 2);
 		}
 
 		if (restart)
@@ -453,7 +453,7 @@ bool difficultySelect(void)
 			JE_loadPic(VGAScreen2, 2, false);
 
 			// Draw header.
-			draw_font_hv_shadow(VGAScreen2, xCenter, yMenuHeader, difficulty_name[0], large_font, centered, 15, -3, false, 2);
+			drawFontHvShadowAligned(VGAScreen2, xCenter, yMenuHeader, difficulty_name[0], FONT_LARGE, ALIGN_CENTER, 15, -3, false, 2);
 		}
 
 		// Restore background and header.
@@ -464,13 +464,13 @@ bool difficultySelect(void)
 		{
 			const char *const text = difficulty_name[i + 1];
 
-			wMenuItem[i] = JE_textWidth(text, normal_font);
+			wMenuItem[i] = JE_textWidth(text, FONT_NORMAL);
 			const int x = xCenter - wMenuItem[i] / 2;
 			const int y = yMenuItems + dyMenuItems * i;
 
 			const bool selected = i == selectedIndex;
 
-			draw_font_hv_shadow(VGAScreen, x, y, text, normal_font, left_aligned, 15, -4 + (selected ? 2 : 0), false, 2);
+			drawFontHvShadow(VGAScreen, x, y, text, FONT_NORMAL, 15, -4 + (selected ? 2 : 0), false, 2);
 		}
 
 		if (restart)
