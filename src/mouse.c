@@ -33,8 +33,7 @@ bool mouse_has_three_buttons = true;
 
 bool mouseInactive = true;
 JE_byte mouseCursor;
-JE_word mouseX, mouseY, mouseButton;
-JE_word mouseXB, mouseYB;
+JE_word mouseButton;
 
 static JE_word mouseGrabX, mouseGrabY;
 static JE_byte mouseGrabShape[24 * 28];

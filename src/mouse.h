@@ -37,8 +37,7 @@ extern bool mouse_has_three_buttons;
 
 extern bool mouseInactive;
 extern JE_byte mouseCursor;
-extern JE_word mouseX, mouseY, mouseButton;
-extern JE_word mouseXB, mouseYB;
+extern JE_word mouseButton;
 
 void JE_mouseStart(void);
 void JE_mouseStartFilter(Uint8 filter);

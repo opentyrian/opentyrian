@@ -2082,11 +2082,11 @@ void JE_highScoreCheck(void)
 
 					if (mouseButton > 0)
 					{
-						if (mouseX > 56 && mouseX < 142 && mouseY > 123 && mouseY < 149)
+						if (mouse_x > 56 && mouse_x < 142 && mouse_y > 123 && mouse_y < 149)
 						{
 							quit = true;
 						}
-						else if (mouseX > 151 && mouseX < 237 && mouseY > 123 && mouseY < 149)
+						else if (mouse_x > 151 && mouse_x < 237 && mouse_y > 123 && mouse_y < 149)
 						{
 							quit = true;
 							cancel = true;
@@ -4571,16 +4571,16 @@ void JE_mainGamePlayerFunctions(void)
 	{
 		JE_playerMovement(&player[0],
 		                  !galagaMode ? inputDevice[0] : 0, 1, shipGr, shipGrPtr,
-		                  &mouseX, &mouseY);
+		                  &player[0].mouseX, &player[0].mouseY);
 		JE_playerMovement(&player[1],
 		                  !galagaMode ? inputDevice[1] : 0, 2, shipGr2, shipGr2ptr,
-		                  &mouseXB, &mouseYB);
+		                  &player[1].mouseX, &player[1].mouseY);
 	}
 	else
 	{
 		JE_playerMovement(&player[0],
 		                  0, 1, shipGr, shipGrPtr,
-		                  &mouseX, &mouseY);
+		                  &player[0].mouseX, &player[0].mouseY);
 	}
 
 	/* == Parallax Map Scrolling == */
@@ -4894,7 +4894,7 @@ void JE_playerCollide(Player *this_player, JE_byte playerNum_)
 					{
 						// picked up orbiting asteroid killer
 						shotMultiPos[SHOT_MISC] = 0;
-						b = player_shot_create(0, SHOT_MISC, this_player->x, this_player->y, mouseX, mouseY, 104, playerNum_);
+						b = player_shot_create(0, SHOT_MISC, this_player->x, this_player->y, player[0].mouseX, player[0].mouseY, 104, playerNum_);
 						shotAvail[z] = 0;
 					}
 					else if (evalue == -4)

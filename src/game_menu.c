@@ -783,6 +783,8 @@ void JE_itemScreen(void)
 		/* SYN: Let's start by getting fresh events from SDL */
 		service_SDL_events(true);
 
+		JE_word mouseX = mouse_x, mouseY = mouse_y;
+
 		if (constantPlay)
 		{
 			mainLevel = mapSection[mapPNum-1];
@@ -3136,8 +3138,8 @@ void JE_weaponViewFrame(void)
 
 	update_and_draw_starfield(VGAScreen, 1);
 
-	mouseX = player[0].x;
-	mouseY = player[0].y;
+	player[0].mouseX = player[0].x;
+	player[0].mouseY = player[0].y;
 
 	// create shots in weapon simulator
 	for (uint i = 0; i < 2; ++i)
@@ -3152,7 +3154,7 @@ void JE_weaponViewFrame(void)
 			           item_power = player[0].items.weapon[i].power - 1,
 			           item_mode = (i == REAR_WEAPON) ? player[0].weapon_mode - 1 : 0;
 
-			b = player_shot_create(item, i, player[0].x, player[0].y, mouseX, mouseY, weaponPort[item].op[item_mode][item_power], 1);
+			b = player_shot_create(item, i, player[0].x, player[0].y, player[0].mouseX, player[0].mouseY, weaponPort[item].op[item_mode][item_power], 1);
 		}
 	}
 
@@ -3168,7 +3170,7 @@ void JE_weaponViewFrame(void)
 			const int x = player[0].sidekick[LEFT_SIDEKICK].x,
 			          y = player[0].sidekick[LEFT_SIDEKICK].y;
 
-			b = player_shot_create(options[item].wport, SHOT_LEFT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
+			b = player_shot_create(options[item].wport, SHOT_LEFT_SIDEKICK, x, y, player[0].mouseX, player[0].mouseY, options[item].wpnum, 1);
 		}
 	}
 
@@ -3195,7 +3197,7 @@ void JE_weaponViewFrame(void)
 			const int x = player[0].sidekick[RIGHT_SIDEKICK].x,
 			          y = player[0].sidekick[RIGHT_SIDEKICK].y;
 
-			b = player_shot_create(options[item].wport, SHOT_RIGHT_SIDEKICK, x, y, mouseX, mouseY, options[item].wpnum, 1);
+			b = player_shot_create(options[item].wport, SHOT_RIGHT_SIDEKICK, x, y, player[0].mouseX, player[0].mouseY, options[item].wpnum, 1);
 		}
 	}
 

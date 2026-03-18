@@ -80,7 +80,10 @@ typedef struct
 	uint weapon_mode;
 	uint superbombs;
 	uint purple_balls_needed;
-	
+
+	Uint16 mouseX;  // FKA NortVars.mouseX, Varz.mouseXB
+	Uint16 mouseY;  // FKA NortVars.mouseY, Varz.mouseYB
+
 	int x, y;
 	int old_x[20], old_y[20];
 	
