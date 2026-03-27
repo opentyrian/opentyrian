@@ -1731,6 +1731,8 @@ void draw_ship_illustration(void)
 
 void load_cubes(void)
 {
+	assert(cubeMax <= COUNTOF(cube));
+
 	for (int cube_slot = 0; cube_slot < cubeMax; ++cube_slot)
 	{
 		memset(cube[cube_slot].text, 0, sizeof(cube->text));

@@ -2476,23 +2476,25 @@ new_game:
 
 					case '?':
 						temp = atoi(s + 4);
+						if (temp > COUNTOF(cubeList))
+							temp = COUNTOF(cubeList);
 						for (i = 0; i < temp; i++)
-						{
 							cubeList[i] = atoi(s + 3 + (i + 1) * 4);
-						}
 						if (cubeMax > temp)
 							cubeMax = temp;
 						break;
 
 					case '!':
 						cubeMax = atoi(s + 4);    /*Auto set CubeMax*/
+						if (cubeMax > COUNTOF(cubeList))
+							cubeMax = COUNTOF(cubeList);
 						break;
 
 					case '+':
 						temp = atoi(s + 4);
 						cubeMax += temp;
-						if (cubeMax > 4)
-							cubeMax = 4;
+						if (cubeMax > COUNTOF(cubeList))
+							cubeMax = COUNTOF(cubeList);
 						break;
 
 					case 'g':
