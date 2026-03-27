@@ -3578,8 +3578,6 @@ redo:
 					int j_max = inputDevice == 0 ? joysticks : inputDevice - 3 + 1;
 					for (; j < j_max; j++)
 					{
-						poll_joystick(j);
-
 						if (joystick[j].analog)
 						{
 							mouseXC += joystick_axis_reduce(j, joystick[j].x);
@@ -3602,8 +3600,6 @@ redo:
 						pause_pressed |= joystick[j].action_pressed[5];
 					}
 				}
-
-				service_SDL_events(false);
 
 				/* mouse input */
 				if ((inputDevice == 0 || inputDevice == 2) && has_mouse)

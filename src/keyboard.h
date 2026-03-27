@@ -51,6 +51,7 @@ JE_word JE_mousePosition(JE_word *mouseX, JE_word *mouseY);
 void mouseGetRelativePosition(Sint32 *out_x, Sint32 *out_y);
 
 void service_SDL_events(JE_boolean clear_new);
+void service_SDL_events_full(JE_boolean clear_new);
 
 void sleep_game(void);
 
