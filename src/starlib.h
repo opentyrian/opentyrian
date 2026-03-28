@@ -21,7 +21,9 @@
 
 #include "opentyr.h"
 
-void JE_starlib_main(void);
+#include "keyboard.h"
+
+bool starLibMain(KeyboardInput *out_keyboardInput);
 void JE_wackyCol(void);
 void JE_starlib_init(void);
 void JE_resetValues(void);

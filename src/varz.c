@@ -190,8 +190,8 @@ JE_longint galagaLife;
 
 JE_boolean debug = false; /*Debug Mode*/
 Uint32 debugTime, lastDebugTime;
-JE_longint debugHistCount;
-JE_real debugHist;
+Uint32 debugHistCount;
+Uint32 debugHist;
 JE_word curLoc; /*Current Pixel location of background 1*/
 
 JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
@@ -622,7 +622,7 @@ void JE_specialComplete(JE_byte playerNum, JE_byte specialType)
 					break;
 			}
 			break;
-		case 12:
+		case 12:  // Invulnerability
 			player[playerNum-1].invulnerable_ticks = temp2 * 10;
 
 			if (superArcadeMode > 0 && superArcadeMode <= SA)
@@ -632,18 +632,18 @@ void JE_specialComplete(JE_byte playerNum, JE_byte specialType)
 				player[0].invulnerable_ticks = 100;
 			}
 			break;
-		case 13:
+		case 13:  // Repair Player 1
 			player[0].armor += temp2 / 4 + 1;
 
 			soundQueue[3] = S_POWERUP;
 			break;
-		case 14:
+		case 14:  // Repair Player 2
 			player[1].armor += temp2 / 4 + 1;
 
 			soundQueue[3] = S_POWERUP;
 			break;
 
-		case 17:  // spawn left or right sidekick
+		case 17:  // Spawn left or right sidekick
 			soundQueue[3] = S_POWERUP;
 
 			if (player[0].items.sidekick[LEFT_SIDEKICK] == special[specialType].wpn)
@@ -660,7 +660,7 @@ void JE_specialComplete(JE_byte playerNum, JE_byte specialType)
 			JE_drawOptions();
 			break;
 
-		case 18:  // spawn right sidekick
+		case 18:  // Spawn right sidekick
 			player[0].items.sidekick[RIGHT_SIDEKICK] = special[specialType].wpn;
 
 			JE_drawOptions();

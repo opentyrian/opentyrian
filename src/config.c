@@ -617,8 +617,8 @@ void JE_setNewGameSpeed(void)
 		break;
 	}
 
-	setDelaySpeed(speed);
-	setDelay(frameCountMax);
+	setFrameSpeed(speed);
+	setFrameCount(frameCountMax);
 }
 
 void JE_encryptSaveTemp(void)

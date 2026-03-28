@@ -22,6 +22,7 @@
 #include "config_file.h"
 #include "file.h"
 #include "keyboard.h"
+#include "network.h"
 #include "nortsong.h"
 #include "opentyr.h"
 #include "params.h"
@@ -548,12 +549,16 @@ bool detect_joystick_assignment(int j, Joystick_assignment *assignment)
 	
 	bool detected = false;
 	
-	do
+	while (true)
 	{
-		setDelay(1);
+		setFrameCount(1);
 		
-		SDL_JoystickUpdate();
-		
+		NETWORK_KEEP_ALIVE();
+
+		delayUntilElapsed();
+
+		handleSdlEvents();
+
 		for (int i = 0; i < axes; ++i)
 		{
 			Sint16 temp = SDL_JoystickGetAxis(joystick[j].handle, i);
@@ -611,11 +616,9 @@ bool detect_joystick_assignment(int j, Joystick_assignment *assignment)
 			}
 		}
 		
-		service_SDL_events(true);
-		JE_showVGA();
-		
-		wait_delay();
-	} while (!detected && !newkey && !newmouse);
+		if (detected || hasInput(INPUT_NO_MOTION))
+			break;
+	}
 	
 	free(axis);
 	free(button);

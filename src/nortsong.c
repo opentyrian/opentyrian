@@ -23,6 +23,7 @@
 #include "keyboard.h"
 #include "loudness.h"
 #include "musmast.h"
+#include "network.h"
 #include "opentyr.h"
 #include "params.h"
 #include "sndmast.h"
@@ -39,77 +40,77 @@ JE_word tyrMusicVolume, fxVolume;
 const JE_word fxPlayVol = 4;
 JE_word tempVolume;
 
-// The period of the x86 programmable interval timer in milliseconds.
-static const float pitPeriod = (12.0f / 14318180.0f) * 1000.0f;
+// The frequency of the x86 programmable interval timer is (315 / 88 / 3) MHz.
+// The PIT was configured to generate an interrupt every `speed` cycles, which
+// decremented `frameCount`.
 
-static Uint16 delaySpeed = 0x4300;
-static float delayPeriod = 0x4300 * ((12.0f / 14318180.0f) * 1000.0f);
+static Uint16 frameSpeed = 0x4300;
 
-static Uint32 target = 0;
-static Uint32 target2 = 0;
+// Fixed point UQ6.10 in milliseconds.
+static Uint16 framePeriod = ((Uint64)0x4300 << 10) * 1000 * 88 * 3 / 315000000;
 
-void setDelay(int delay)  // FKA NortSong.frameCount
+// Fixed point UQ22.10 in milliseconds.
+static Uint32 frameCountEnd = 0;
+static Uint32 frameCount2End = 0;
+
+void setFrameSpeed(Uint16 speed)  // FKA NortSong.speed and NortSong.setTimerInt
 {
-	target = SDL_GetTicks() + delay * delayPeriod;
+	frameSpeed = speed;
+	framePeriod = ((Uint64)speed << 10) * 1000 * 88 * 3 / 315000000;
+
+	Uint32 now = SDL_GetTicks() << 10;
+	frameCountEnd = now;
 }
 
-void setDelay2(int delay)  // FKA NortSong.frameCount2
+void setFrameCount(JE_word frameCount)  // FKA NortSong.frameCount
 {
-	target2 = SDL_GetTicks() + delay * delayPeriod;
+	// Keep the partial timer period that has already elapsed.
+	Uint32 now = SDL_GetTicks() << 10;
+	Sint32 diff = now - frameCountEnd;
+	if (diff >= framePeriod)
+		frameCountEnd = now - (Uint32)diff % framePeriod;
+	else if (-diff >= framePeriod)
+		frameCountEnd = now + (Uint32)-diff % framePeriod;
+
+	frameCountEnd += frameCount * framePeriod;
 }
 
-Uint32 getDelayTicks(void)  // FKA NortSong.frameCount
+void setFrameCount2(JE_word frameCount2)  // FKA NortSong.frameCount2
 {
-	Sint32 delay = target - SDL_GetTicks();
-	return MAX(0, delay);
+	// Keep the partial timer period that has already elapsed.
+	Uint32 now = SDL_GetTicks() << 10;
+	Sint32 diff = now - frameCount2End;
+	if (diff >= framePeriod)
+		frameCount2End = now - (Uint32)diff % framePeriod;
+	else if (-diff >= framePeriod)
+		frameCount2End = now + (Uint32)-diff % framePeriod;
+
+	frameCount2End += frameCount2 * framePeriod;
 }
 
-Uint32 getDelayTicks2(void)  // FKA NortSong.frameCount2
+Uint32 getFrameCountTicks(void)
 {
-	Sint32 delay = target2 - SDL_GetTicks();
-	return MAX(0, delay);
+	const Uint32 half = 1 << 9;
+	Uint32 now = SDL_GetTicks() << 10;
+	Sint32 diff = frameCountEnd - now;
+	return diff >= 0 ? ((Uint32)diff + half) >> 10 : 0;
 }
 
-void wait_delay(void)
+Uint32 getFrameCount2Ticks(void)
 {
-	Sint32 delay = target - SDL_GetTicks();
-	if (delay > 0)
-		SDL_Delay(delay);
+	const Uint32 half = 1 << 9;
+	Uint32 now = SDL_GetTicks() << 10;
+	Sint32 diff = frameCount2End - now;
+	return diff >= 0 ? ((Uint32)diff + half) >> 10 : 0;
 }
 
-void service_wait_delay(void)
+void delayUntilElapsed(void)
 {
-	for (; ; )
-	{
-		service_SDL_events(false);
-
-		Sint32 delay = target - SDL_GetTicks();
-		if (delay <= 0)
-			return;
-
-		SDL_Delay(MIN(delay, SDL_POLL_INTERVAL));
-	}
-}
-
-void wait_delayorinput(void)
-{
-	for (; ; )
-	{
-		service_SDL_events(false);
-		poll_joysticks();
-
-		if (newkey || mousedown || joydown)
-		{
-			newkey = false;
-			return;
-		}
-
-		Sint32 delay = target - SDL_GetTicks();
-		if (delay <= 0)
-			return;
-
-		SDL_Delay(MIN(delay, SDL_POLL_INTERVAL));
-	}
+	const Uint32 half = 1 << 9;
+	Uint32 now = SDL_GetTicks() << 10;
+	Sint32 diff = frameCountEnd - now;
+	if (diff >= 0)
+		SDL_Delay(((Uint32)diff + half) >> 10);
 }
 
 void loadSndFile(bool xmas)
@@ -245,12 +246,6 @@ die:
 void JE_playSampleNum(JE_byte samplenum)
 {
 	multiSamplePlay(soundSamples[samplenum-1], soundSampleCount[samplenum-1], 0, fxPlayVol);
-}
-
-void setDelaySpeed(Uint16 speed)  // FKA NortSong.speed and NortSong.setTimerInt
-{
-	delaySpeed = speed;
-	delayPeriod = speed * pitPeriod;
 }
 
 void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sample_delta)

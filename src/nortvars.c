@@ -18,24 +18,9 @@
  */
 #include "nortvars.h"
 
-#include "file.h"
-#include "joystick.h"
-#include "keyboard.h"
 #include "opentyr.h"
 #include "vga256d.h"
 #include "video.h"
-
-#include <assert.h>
-#include <ctype.h>
-
-JE_boolean inputDetected;
-
-JE_boolean JE_anyButton(void)
-{
-	poll_joysticks();
-	service_SDL_events(true);
-	return newkey || mousedown || joydown;
-}
 
 void JE_dBar3(SDL_Surface *surface, JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col)
 {
@@ -81,9 +66,4 @@ void JE_barDrawShadow(SDL_Surface *surface, JE_word x, JE_word y, JE_word res, J
 		JE_barShade(surface, x+2, y+2, x+xsize+2, y+ysize+2);
 		fill_rectangle_xy(surface, x,y, x+xsize, y+ysize, col+(12 / res * amt));
 	}
-}
-
-void JE_wipeKey(void)
-{
-	// /!\ Doesn't seems to affect anything.
 }

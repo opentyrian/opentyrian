@@ -744,11 +744,16 @@ static void JE_introScreen(void)
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
 
-	newkey = false;
-	while (!newkey)
+	while (true)
 	{
-		service_SDL_events(false);
-		SDL_Delay(16);
+		setFrameCount(1);
+
+		delayUntilElapsed();
+
+		handleSdlEvents();
+
+		if (keyboardGetInput(NULL))
+			break;
 	}
 
 	fade_black(15);
@@ -793,52 +798,74 @@ static enum de_mode_t JE_modeSelect(void)
 		DrawModeSelectMenu(mode);
 		JE_showVGA();
 
-		/* Grab keys */
-		newkey = false;
-		do
+		while (true)
 		{
-			service_SDL_events(false);
-			SDL_Delay(16);
-		} while (!newkey);
+			setFrameCount(1);
 
-		/* See what was pressed */
-		if (keysactive[SDL_SCANCODE_ESCAPE])
-		{
-			mode = MODE_NONE; /* User is quitting, return failure */
-			break;
+			delayUntilElapsed();
+
+			handleSdlEvents();
+
+			if (keyboardHasInput())
+				break;
 		}
-		if (keysactive[SDL_SCANCODE_RETURN])
+
+		bool done = false;
+
+		KeyboardInput keyboardInput;
+
+		if (keyboardGetInput(&keyboardInput))
 		{
-			break; /* User has selected, return choice */
-		}
-		if (keysactive[SDL_SCANCODE_UP])
-		{
-			if (mode == MODE_FIRST)
+			switch (keyboardInput.scancode)
 			{
-				if (config.allow_custom == true)
-					mode = MODE_LAST;
+			case SDL_SCANCODE_ESCAPE:
+			{
+				mode = MODE_NONE;
+				done = true;
+				break;
+			}
+			case SDL_SCANCODE_RETURN:
+			{
+				done = true;
+				break;
+			}
+			case SDL_SCANCODE_UP:
+			{
+				if (mode == MODE_FIRST)
+				{
+					if (config.allow_custom == true)
+						mode = MODE_LAST;
+					else
+						mode = MODE_LAST-1;
+				}
 				else
-					mode = MODE_LAST-1;
+				{
+					mode--;
+				}
+				break;
 			}
-			else
+			case SDL_SCANCODE_DOWN:
 			{
-				mode--;
-			}
-		}
-		if (keysactive[SDL_SCANCODE_DOWN])
-		{
-			if (mode >= MODE_LAST-1)
-			{
-				if (config.allow_custom == true && mode == MODE_LAST-1)
+				if (mode >= MODE_LAST-1)
+				{
+					if (config.allow_custom == true && mode == MODE_LAST-1)
+						mode++;
+					else
+						mode = MODE_FIRST;
+				}
+				else
+				{
 					mode++;
-				else
-					mode = MODE_FIRST;
+				}
+				break;
 			}
-			else
-			{
-				mode++;
+			default:
+				break;
 			}
 		}
+
+		if (done)
+			break;
 	}
 
 	fade_black(15);
@@ -1379,11 +1406,17 @@ static void JE_helpScreen(void)
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
 
-	do  /* wait until user hits a key */
+	while (true)
 	{
-		service_SDL_events(true);
-		SDL_Delay(16);
-	} while (!newkey);
+		setFrameCount(1);
+
+		delayUntilElapsed();
+
+		handleSdlEvents();
+
+		if (keyboardGetInput(NULL))
+			break;
+	}
 
 	fade_black(15);
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
@@ -1400,11 +1433,17 @@ static void JE_pauseScreen(void)
 	JE_outText(VGAScreen, JE_fontCenter(miscText[22], TINY_FONT), 90, miscText[22], 12, 5);
 	JE_showVGA();
 
-	do  /* wait until user hits a key */
+	while (true)
 	{
-		service_SDL_events(true);
-		SDL_Delay(16);
-	} while (!newkey);
+		setFrameCount(1);
+
+		delayUntilElapsed();
+
+		handleSdlEvents();
+
+		if (keyboardGetInput(NULL))
+			break;
+	}
 
 	/* Restore current screen & volume*/
 	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
@@ -1517,7 +1556,7 @@ static enum de_state_t DE_RunTick(void)
 {
 	static unsigned int endDelay;
 
-	setDelay(1);
+	setFrameCount(1);
 
 	memset(soundQueue, 0, sizeof(soundQueue));
 	JE_tempScreenChecking();
@@ -1557,7 +1596,10 @@ static enum de_state_t DE_RunTick(void)
 
 	DE_RunTickPlaySounds();
 
-	/* The rest of this cruft needs to be put in appropriate sections */
+	delayUntilElapsed();
+
+	keyboardClearInput();
+
 	if (keysactive[SDL_SCANCODE_F10])
 	{
 		destruct_player[PLAYER_LEFT].is_cpu = !destruct_player[PLAYER_LEFT].is_cpu;
@@ -1571,16 +1613,14 @@ static enum de_state_t DE_RunTick(void)
 	if (keysactive[SDL_SCANCODE_P])
 	{
 		JE_pauseScreen();
-		keysactive[lastkey_scan] = false;
+		keysactive[SDL_SCANCODE_P] = false;
 	}
 
 	if (keysactive[SDL_SCANCODE_F1])
 	{
 		JE_helpScreen();
-		keysactive[lastkey_scan] = false;
+		keysactive[SDL_SCANCODE_F1] = false;
 	}
-
-	wait_delay();
 
 	if (keysactive[SDL_SCANCODE_ESCAPE])
 	{
@@ -2328,7 +2368,7 @@ static void DE_RunTickGetInput(void)
 	 * destruct_player.keys line up; rather than manually checking left and
 	 * right we can just loop through the indexes and set the actions as
 	 * needed. */
-	service_SDL_events(true);
+	handleSdlEvents();
 
 	for (player_index = 0; player_index < MAX_PLAYERS; player_index++)
 	{

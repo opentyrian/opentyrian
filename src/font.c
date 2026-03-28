@@ -153,7 +153,7 @@ void drawFontHv(SDL_Surface *surface, int x, int y, const char *text, Font font,
 
 	for (; *text != '\0'; ++text)
 	{
-		int sprite_id = font_ascii[(unsigned char)*text];
+		int sprite_id = fontMap[(unsigned char)*text];
 
 		switch (*text)
 		{
@@ -218,7 +218,7 @@ void drawFontHvBlend(SDL_Surface *surface, int x, int y, const char *text, Font 
 {
 	for (; *text != '\0'; ++text)
 	{
-		int sprite_id = font_ascii[(unsigned char)*text];
+		int sprite_id = fontMap[(unsigned char)*text];
 
 		switch (*text)
 		{
@@ -278,7 +278,7 @@ void drawFontDark(SDL_Surface *surface, int x, int y, const char *text, Font fon
 {
 	for (; *text != '\0'; ++text)
 	{
-		int sprite_id = font_ascii[(unsigned char)*text];
+		int sprite_id = fontMap[(unsigned char)*text];
 
 		switch (*text)
 		{

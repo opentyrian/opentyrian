@@ -19,6 +19,7 @@
 #include "palette.h"
 
 #include "file.h"
+#include "keyboard.h"
 #include "nortsong.h"
 #include "opentyr.h"
 #include "video.h"
@@ -135,14 +136,18 @@ void fade_palette(Palette colors, int steps, unsigned int first_color, unsigned 
 	
 	for (; steps > 0; steps--)
 	{
-		setDelay(1);
+		setFrameCount(1);
 		
 		step_fade_palette(diff, steps, first_color, last_color);
 		
 		JE_showVGA();
 		
-		service_wait_delay();
+		waitUntilElapsed();
 	}
+
+	// Discard input during fade.
+	keyboardClearInput();
+	mouseClearInput();
 }
 
 void fade_solid(SDL_Color color, int steps, unsigned int first_color, unsigned int last_color)
@@ -154,14 +159,18 @@ void fade_solid(SDL_Color color, int steps, unsigned int first_color, unsigned i
 	
 	for (; steps > 0; steps--)
 	{
-		setDelay(1);
+		setFrameCount(1);
 		
 		step_fade_palette(diff, steps, first_color, last_color);
 		
 		JE_showVGA();
 		
-		service_wait_delay();
+		waitUntilElapsed();
 	}
+
+	// Discard input during fade.
+	keyboardClearInput();
+	mouseClearInput();
 }
 
 void fade_black(int steps)

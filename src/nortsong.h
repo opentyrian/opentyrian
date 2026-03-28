@@ -35,16 +35,12 @@ extern JE_word tyrMusicVolume, fxVolume;
 extern const JE_word fxPlayVol;
 extern JE_word tempVolume;
 
-void setDelay(int delay);
-void setDelay2(int delay);
-Uint32 getDelayTicks(void);
-Uint32 getDelayTicks2(void);
-
-void wait_delay(void);
-void service_wait_delay(void);
-void wait_delayorinput(void);
-
-void setDelaySpeed(Uint16 speed);
+void setFrameSpeed(Uint16 speed);
+void setFrameCount(JE_word frameCount);
+void setFrameCount2(JE_word frameCount2);
+Uint32 getFrameCountTicks(void);
+Uint32 getFrameCount2Ticks(void);
+void delayUntilElapsed(void);
 
 void JE_changeVolume(JE_word *music, int music_delta, JE_word *sample, int sample_delta);
 

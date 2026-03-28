@@ -23,37 +23,69 @@
 
 #include "SDL.h"
 
-#include <stdbool.h>
+#define KEY_COMBO(mod, scancode) ((Uint32)(scancode) | \
+	(((mod) & KMOD_SHIFT ? (Uint32)KMOD_SHIFT : 0) | \
+	 ((mod) & KMOD_CTRL ? (Uint32)KMOD_CTRL : 0) | \
+	 ((mod) & KMOD_ALT ? (Uint32)KMOD_ALT : 0) | \
+	 ((mod) & KMOD_GUI ? (Uint32)KMOD_GUI : 0)) << 16)
 
-#define SDL_POLL_INTERVAL 10
+typedef struct KeyboardInput
+{
+	SDL_Keycode sym;  // Used for secret text input (ex. super arcade codes).
+	Uint16 scancode;  // SDL_Scancode; used for non-text input.
+	Uint16 mod;  // SDL_Keymod
+	Uint8 ch;  // CP437 character; used for text input (ex. save file name).
+} KeyboardInput;
 
-extern JE_boolean ESCPressed;
-extern JE_boolean newkey, newmouse, keydown, mousedown;
-extern SDL_Scancode lastkey_scan;
-extern SDL_Keymod lastkey_mod;
-extern Uint8 lastmouse_but;
-extern Sint32 lastmouse_x, lastmouse_y;
-extern JE_boolean mouse_pressed[3];
-extern Sint32 mouse_x, mouse_y;
-extern Uint8 keysactive[SDL_NUM_SCANCODES];
+typedef struct MouseInput
+{
+	Sint32 x;
+	Sint32 y;
+	Uint8 button;
+} MouseInput;
+
+typedef enum InputFlags
+{
+	INPUT_ANY = 0,
+	INPUT_NO_MOTION = 1,  // Ignore mouse motion.
+} InputFlags;
+
+extern JE_boolean ESCPressed;  // TODO: Implement this.
 
 extern bool windowHasFocus;
 
-extern bool new_text;
-extern char last_text[SDL_TEXTINPUTEVENT_TEXT_SIZE];
+extern bool keysactive[SDL_NUM_SCANCODES];
 
-void flush_events_buffer(void);
-void wait_input(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick);
-void wait_noinput(JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick);
+extern const SDL_Keycode lordKeySyms[4];
+extern bool lordKeySymsDown[4];
+
+extern Sint32 mouseX;
+extern Sint32 mouseY;
+extern Uint8 mouseButtonsDown;
+
 void init_keyboard(void);
+
+bool keyboardHasInput(void);
+bool keyboardGetInput(KeyboardInput *out_input);
+void keyboardClearInput(void);
+
+bool mouseHasInput(InputFlags flags);
+bool mouseGetInput(InputFlags flags, MouseInput *out_input);
+void mouseClearInput(void);
+
 void mouseSetRelative(bool enable);
-JE_word JE_mousePosition(JE_word *mouseX, JE_word *mouseY);
 void mouseGetRelativePosition(Sint32 *out_x, Sint32 *out_y);
 
-void service_SDL_events(JE_boolean clear_new);
+void handleSdlEvents(void);
 
-void sleep_game(void);
+bool hasInput(InputFlags flags);
+bool getInput(void);
 
-void JE_clearKeyboard(void);
+void waitUntilHasInput(InputFlags flags);
+void waitUntilGetInput(void);
+
+void waitUntilElapsed(void);
+bool waitUntilHasInputOrElapsed(void);
+bool waitUntilGetInputOrElapsed(void);
 
 #endif /* KEYBOARD_H */

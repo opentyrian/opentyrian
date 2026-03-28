@@ -18,12 +18,11 @@
  */
 #include "starlib.h"
 
-#include "keyboard.h"
+#include "joystick.h"
 #include "mtrand.h"
+#include "nortsong.h"
 #include "opentyr.h"
 #include "video.h"
-
-#include <ctype.h>
 
 #define starlib_MAX_STARS 1000
 #define MAX_TYPES 14
@@ -59,7 +58,7 @@ static JE_shortint speedChange;
 
 static JE_byte pColor;
 
-void JE_starlib_main(void)
+bool starLibMain(KeyboardInput *const keyboardInput)  // FKA StarLib.Main
 {
 	int off;
 	JE_word i;
@@ -149,149 +148,97 @@ void JE_starlib_main(void)
 		}
 	}
 
-	if (newkey)
+	push_joysticks_as_keyboard();
+	handleSdlEvents();
+
+	bool gotKeyboardInput = keyboardGetInput(keyboardInput);
+
+	if (gotKeyboardInput)
 	{
-		char key = 0;
-
-		if ((lastkey_mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI)) == KMOD_NONE)
+		switch (KEY_COMBO(keyboardInput->mod, keyboardInput->scancode))
 		{
-			switch (lastkey_scan)
-			{
-			case SDL_SCANCODE_C: key = 'c'; break;
-			case SDL_SCANCODE_P: key = 'p'; break;
-			case SDL_SCANCODE_S: key = 's'; break;
-			case SDL_SCANCODE_X: key = 'x'; break;
-			case SDL_SCANCODE_1: key = '1'; break;
-			case SDL_SCANCODE_2: key = '2'; break;
-			case SDL_SCANCODE_3: key = '3'; break;
-			case SDL_SCANCODE_4: key = '4'; break;
-			case SDL_SCANCODE_5: key = '5'; break;
-			case SDL_SCANCODE_6: key = '6'; break;
-			case SDL_SCANCODE_7: key = '7'; break;
-			case SDL_SCANCODE_8: key = '8'; break;
-			case SDL_SCANCODE_9: key = '9'; break;
-			case SDL_SCANCODE_0: key = '0'; break;
-			case SDL_SCANCODE_ESCAPE: key = 27; break;
-			case SDL_SCANCODE_MINUS: key = '-'; break;
-			case SDL_SCANCODE_LEFTBRACKET: key = '['; break;
-			case SDL_SCANCODE_RIGHTBRACKET: key = ']'; break;
-			case SDL_SCANCODE_GRAVE: key = '`'; break;
-			case SDL_SCANCODE_KP_MINUS: key = '-'; break;
-			case SDL_SCANCODE_KP_PLUS: key = '+'; break;
-			case SDL_SCANCODE_KP_1: key = '1'; break;
-			case SDL_SCANCODE_KP_2: key = '2'; break;
-			case SDL_SCANCODE_KP_3: key = '3'; break;
-			case SDL_SCANCODE_KP_4: key = '4'; break;
-			case SDL_SCANCODE_KP_5: key = '5'; break;
-			case SDL_SCANCODE_KP_6: key = '6'; break;
-			case SDL_SCANCODE_KP_7: key = '7'; break;
-			case SDL_SCANCODE_KP_8: key = '8'; break;
-			case SDL_SCANCODE_KP_9: key = '9'; break;
-			case SDL_SCANCODE_KP_0: key = '0'; break;
-			default: break;
-			}
-		}
-		else if ((lastkey_mod & KMOD_SHIFT) != KMOD_NONE &&
-		         (lastkey_mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI)) == KMOD_NONE)
-		{
-			switch (lastkey_scan)
-			{
-			case SDL_SCANCODE_C: key = 'C'; break;
-			case SDL_SCANCODE_P: key = 'P'; break;
-			case SDL_SCANCODE_S: key = 'S'; break;
-			case SDL_SCANCODE_X: key = 'X'; break;
-			case SDL_SCANCODE_1: key = '!'; break;
-			case SDL_SCANCODE_2: key = '@'; break;
-			case SDL_SCANCODE_3: key = '#'; break;
-			case SDL_SCANCODE_4: key = '$'; break;
-			case SDL_SCANCODE_EQUALS: key = '+'; break;
-			case SDL_SCANCODE_LEFTBRACKET: key = '{'; break;
-			case SDL_SCANCODE_RIGHTBRACKET: key = '}'; break;
-			default: break;
-			}
-		}
-
-		switch (toupper(key))
-		{
-			case '+':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_EQUALS):
 				starlib_speed++;
 				speedChange = 0;
 				break;
-			case '-':
+			case SDL_SCANCODE_MINUS:
 				starlib_speed--;
 				speedChange = 0;
 				break;
-			case '1':
+			case SDL_SCANCODE_1:
 				JE_changeSetup(1);
 				break;
-			case '2':
+			case SDL_SCANCODE_2:
 				JE_changeSetup(2);
 				break;
-			case '3':
+			case SDL_SCANCODE_3:
 				JE_changeSetup(3);
 				break;
-			case '4':
+			case SDL_SCANCODE_4:
 				JE_changeSetup(4);
 				break;
-			case '5':
+			case SDL_SCANCODE_5:
 				JE_changeSetup(5);
 				break;
-			case '6':
+			case SDL_SCANCODE_6:
 				JE_changeSetup(6);
 				break;
-			case '7':
+			case SDL_SCANCODE_7:
 				JE_changeSetup(7);
 				break;
-			case '8':
+			case SDL_SCANCODE_8:
 				JE_changeSetup(8);
 				break;
-			case '9':
+			case SDL_SCANCODE_9:
 				JE_changeSetup(9);
 				break;
-			case '0':
+			case SDL_SCANCODE_0:
 				JE_changeSetup(10);
 				break;
-			case '!':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_1):
 				JE_changeSetup(11);
 				break;
-			case '@':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_2):
 				JE_changeSetup(12);
 				break;
-			case '#':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_3):
 				JE_changeSetup(13);
 				break;
-			case '$':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_4):
 				JE_changeSetup(14);
 				break;
 
-			case 'C':
+			case SDL_SCANCODE_C:
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_C):
 				JE_resetValues();
 				break;
-			case 'S':
+			case SDL_SCANCODE_S:
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_S):
 				nspVarVarInc = mt_rand_1() * 0.01f - 0.005f;
 				break;
-			case 'X':
-			case 27:
+			case SDL_SCANCODE_X:
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_X):
+			case SDL_SCANCODE_ESCAPE:
 				run = false;
 				break;
-			case '[':
+			case SDL_SCANCODE_LEFTBRACKET:
 				pColor--;
 				break;
-			case ']':
+			case SDL_SCANCODE_RIGHTBRACKET:
 				pColor++;
 				break;
-			case '{':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_LEFTBRACKET):
 				pColor -= 72;
 				break;
-			case '}':
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_RIGHTBRACKET):
 				pColor += 72;
 				break;
-			case '`':
+			case SDL_SCANCODE_GRAVE:
 				doChange = !doChange;
 				break;
-			case 'P':
-				wait_noinput(true, false, false);
-				wait_input(true, false, false);
+			case SDL_SCANCODE_P:
+			case KEY_COMBO(KMOD_SHIFT, SDL_SCANCODE_P):
+				waitUntilGetInput();
 				break;
 			default:
 				break;
@@ -313,6 +260,8 @@ void JE_starlib_main(void)
 	}
 
 	nspVarInc += nspVarVarInc;
+
+	return gotKeyboardInput;
 }
 
 void JE_wackyCol(void)

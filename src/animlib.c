@@ -169,8 +169,7 @@ void JE_playAnim(const char *animfile, JE_byte startingframe, JE_byte speed)
 	 */
 	for (i = startingframe; i < FileHeader.nRecords-1; i++)
 	{
-		/* Handle boring crap */
-		setDelay(speed);
+		setFrameCount(speed);
 
 		/* Load required frame.  The loading function is smart enough to not re-load an already loaded frame */
 		pageNum = JE_findPage(i);
@@ -184,14 +183,8 @@ void JE_playAnim(const char *animfile, JE_byte startingframe, JE_byte speed)
 			break;
 		JE_showVGA();
 
-		/* Return early if user presses a key */
-		service_SDL_events(true);
-		if (newkey)
+		if (waitUntilGetInputOrElapsed())
 			break;
-
-		/* Wait until we need the next frame */
-		NETWORK_KEEP_ALIVE();
-		wait_delay();
 	}
 
 	JE_closeAnim();

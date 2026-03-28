@@ -89,8 +89,9 @@ void JE_starShowVGA(void)
 
 		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
 		{
-			wait_delay();
-			setDelay(frameCountMax);
+			delayUntilElapsed();
+
+			setFrameCount(frameCountMax);
 		}
 
 		if (starShowVGASpecialCode == 1)
@@ -149,6 +150,8 @@ void JE_starShowVGA(void)
 		}
 		JE_showVGA();
 	}
+
+	handleSdlEvents();
 
 	quitRequested = false;
 	skipStarShowVGA = false;
@@ -640,12 +643,13 @@ void JE_main(void)
 
 start_level:
 
+	keyboardClearInput();
+	mouseClearInput();
+
 	mouseSetRelative(false);
 
 	if (galagaMode)
 		twoPlayerMode = false;
-
-	JE_clearKeyboard();
 
 	free_sprite2s(&enemySpriteSheets[0]);
 	free_sprite2s(&enemySpriteSheets[1]);
@@ -657,7 +661,7 @@ start_level:
 	{
 		smoothScroll = true;
 		Uint16 speed = 0x4300;
-		setDelaySpeed(speed);
+		setFrameSpeed(speed);
 	}
 
 	if (play_demo || record_demo)
@@ -672,8 +676,6 @@ start_level:
 		{
 			stop_song();
 			fade_black(10);
-
-			wait_noinput(true, true, true);
 		}
 	}
 
@@ -813,8 +815,6 @@ start_level_first:
 		player[i].invulnerable_ticks = 100;
 	}
 
-	newkey = newmouse = false;
-
 	/* Initialize Level Data and Debug Mode */
 	levelEnd = 255;
 	levelEndWarp = -4;
@@ -906,8 +906,6 @@ start_level_first:
 	JE_drawPortConfigButtons();
 
 	/* --- MAIN LOOP --- */
-
-	newkey = false;
 
 #ifdef WITH_NETWORK
 	if (isNetworkGame)
@@ -2076,7 +2074,6 @@ draw_player_shot_loop_end:
 
 	/*-------      DEbug      ---------*/
 	debugTime = SDL_GetTicks();
-	tempW = lastmouse_but;
 
 	if (debug)
 	{
@@ -2093,9 +2090,9 @@ draw_player_shot_loop_end:
 		sprintf(buffer, "Enemies onscreen = %d", enemyOnScreen);
 		JE_outText(VGAScreen, 30, 90, buffer, 6, 0);
 
-		debugHist = debugHist + abs((JE_longint)debugTime - (JE_longint)lastDebugTime);
+		debugHist += debugTime - lastDebugTime;
 		debugHistCount++;
-		sprintf(tempStr, "%2.3f", 1000.0f / roundf(debugHist / debugHistCount));
+		sprintf(tempStr, "%2.3f", debugHistCount / (debugHist * 1e-3f));
 		sprintf(buffer, "X:%d Y:%-5d  %s FPS  %d %d %d %d", (mapX - 1) * 12 + player[0].x, curLoc, tempStr, player[0].x_velocity, player[0].y_velocity, player[0].x, player[0].y);
 		JE_outText(VGAScreen, 45, 175, buffer, 15, 3);
 		lastDebugTime = debugTime;
@@ -2173,11 +2170,10 @@ draw_player_shot_loop_end:
 				if (!play_demo)
 				{
 					push_joysticks_as_keyboard();
-					service_SDL_events(true);
-					if ((newkey || button[0] || button[1] || button[2]) || newmouse)
-					{
+					handleSdlEvents();
+
+					if (hasInput(INPUT_NO_MOTION))
 						reallyEndLevel = true;
-					}
 				}
 
 				if (isNetworkGame)
@@ -2189,9 +2185,9 @@ draw_player_shot_loop_end:
 	if (play_demo) // input kills demo
 	{
 		push_joysticks_as_keyboard();
-		service_SDL_events(false);
+		handleSdlEvents();
 
-		if (newkey || newmouse)
+		if (hasInput(INPUT_NO_MOTION))
 		{
 			reallyEndLevel = true;
 
@@ -2200,18 +2196,27 @@ draw_player_shot_loop_end:
 	}
 	else // input handling for pausing, menu, cheats
 	{
-		service_SDL_events(false);
+		handleSdlEvents();
 
-		if (newkey)
+		// Ensure gameplay input does not affect pause or menu.
+		mouseClearInput();
+
+		if (keyboardHasInput())
 		{
+			// Pause, menu, and cheats are triggered on keysactive, so this is fine.
+			keyboardClearInput();
+
 			skipStarShowVGA = false;
 			JE_mainKeyboardInput();
-			newkey = false;
 			if (skipStarShowVGA)
 				goto level_loop;
 		}
 
+#ifdef NDEBUG
 		if (pause_pressed || !windowHasFocus)
+#else
+		if (pause_pressed)
+#endif
 		{
 			pause_pressed = false;
 
@@ -2460,11 +2465,11 @@ new_game:
 				{
 					switch (s[1])
 					{
-					case 'A':
+					case 'A':  // Show animation.
 						JE_playAnim("tyrend.anm", 0, 7);
 						break;
 
-					case 'G':
+					case 'G':  // Set next level choices.
 						mapOrigin = atoi(s + 4);
 						mapPNum   = atoi(s + 7);
 						for (i = 0; i < mapPNum; i++)
@@ -2474,7 +2479,7 @@ new_game:
 						}
 						break;
 
-					case '?':
+					case '?':  // Set data cubes.
 						temp = atoi(s + 4);
 						if (temp > COUNTOF(cubeList))
 							temp = COUNTOF(cubeList);
@@ -2484,21 +2489,21 @@ new_game:
 							cubeMax = temp;
 						break;
 
-					case '!':
+					case '!':  // Set number of data cubes acquired.
 						cubeMax = atoi(s + 4);    /*Auto set CubeMax*/
 						if (cubeMax > COUNTOF(cubeList))
 							cubeMax = COUNTOF(cubeList);
 						break;
 
-					case '+':
+					case '+':  // Increase number of data cubes acquired.
 						temp = atoi(s + 4);
 						cubeMax += temp;
 						if (cubeMax > COUNTOF(cubeList))
 							cubeMax = COUNTOF(cubeList);
 						break;
 
-					case 'g':
-						galagaMode = true;   /*GALAGA mode*/
+					case 'g':  // Enable GALAGA mode.  (Used for bonus games.)
+						galagaMode = true;
 
 						player[1].items = player[0].items;
 						player[1].items.weapon[REAR_WEAPON].id = 15;  // Vulcan Cannon
@@ -2506,11 +2511,11 @@ new_game:
 							player[1].items.sidekick[i] = 0;          // None
 						break;
 
-					case 'x':
+					case 'x':  // Enable bonus game.
 						extraGame = true;
 						break;
 
-					case 'e': // ENGAGE mode, used for mini-games
+					case 'e':  // Enable ENGAGE mode.  (Used for bonus games.)
 						doNotSaveBackup = true;
 						constantDie = false;
 						onePlayerAction = true;
@@ -2532,13 +2537,13 @@ new_game:
 						player[0].items.weapon[REAR_WEAPON].power = 1;
 						break;
 
-					case 'J':  // section jump
+					case 'J':  // Jump to section.
 						temp = atoi(s + 3);
 						mainLevel = temp;
 						jumpSection = true;
 						break;
 
-					case '2':  // two-player section jump
+					case '2':  // Jump to section in two-player or one-player arcade.
 						temp = atoi(s + 3);
 						if (twoPlayerMode || onePlayerAction)
 						{
@@ -2547,7 +2552,7 @@ new_game:
 						}
 						break;
 
-					case 'w':  // Stalker 21.126 section jump
+					case 'w':  // Jump to section if player has Stalker 21.126.
 						temp = atoi(s + 3);   /*Allowed to go to Time War?*/
 						if (player[0].items.ship == 13)
 						{
@@ -2556,7 +2561,7 @@ new_game:
 						}
 						break;
 
-					case 't':
+					case 't':  // Jump to section if level timer expired.
 						temp = atoi(s + 3);
 						if (levelTimer && levelTimerCountdown == 0)
 						{
@@ -2565,7 +2570,7 @@ new_game:
 						}
 						break;
 
-					case 'l':
+					case 'l':  // Jump to section if player died.
 						temp = atoi(s + 3);
 						if (!all_players_alive())
 						{
@@ -2574,11 +2579,11 @@ new_game:
 						}
 						break;
 
-					case 's':
+					case 's':  // Set section that will be stored in saved game to current section.
 						saveLevel = mainLevel;
 						break; /*store savepoint*/
 
-					case 'b':
+					case 'b':  // Explicit auto-save.  (Used before bonus games.)
 						if (twoPlayerMode)
 							temp = 22;
 						else
@@ -2586,12 +2591,13 @@ new_game:
 						JE_saveGame(11, "LAST LEVEL    ");
 						break;
 
-					case 'i':
+					case 'i':  // Set menu music track.
 						temp = atoi(s + 3);
 						songBuy = temp - 1;
 						break;
 
-					case 'I': /*Load Items Available Information*/
+					case 'I':  // Menu.
+						/*Load Items Available Information*/
 						memset(&itemAvail, 0, sizeof(itemAvail));
 
 						for (int i = 0; i < 9; ++i)
@@ -2610,7 +2616,7 @@ new_game:
 						JE_itemScreen();
 						break;
 
-					case 'L':
+					case 'L':  // Play level.
 						nextLevel = atoi(s + 9);
 						SDL_strlcpy(levelName, s + 13, 10);
 						levelSong = atoi(s + 22);
@@ -2625,11 +2631,11 @@ new_game:
 						gameJustLoaded = false;
 						break;
 
-					case '@':
+					case '@':  // Toggle text color bank.
 						useLastBank = !useLastBank;
 						break;
 
-					case 'Q':
+					case 'Q':  // End of episode.
 						ESCPressed = false;
 						temp = secretHint + (mt_rand() % 3) * 3;
 
@@ -2663,7 +2669,6 @@ new_game:
 						} while (s[0] != '#');
 						levelWarningLines--;
 
-						JE_wipeKey();
 						frameCountMax = 4;
 						if (!constantPlay)
 							JE_displayText();
@@ -2712,7 +2717,7 @@ new_game:
 								fade_palette(colors, 50, 0, 255);
 
 								if (!constantPlay)
-									wait_input(true, true, true);
+									waitUntilGetInput();
 							}
 
 							jumpSection = true;
@@ -2731,7 +2736,7 @@ new_game:
 						}
 						break;
 
-					case 'P':
+					case 'P':  // Show picture or clear and set palette.
 						if (!constantPlay)
 						{
 							JE_word tempX = atoi(s + 3);
@@ -2755,7 +2760,7 @@ new_game:
 						}
 						break;
 
-					case 'U':
+					case 'U':  // Pan up to picture.
 						if (!constantPlay)
 						{
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
@@ -2764,147 +2769,128 @@ new_game:
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
-							service_SDL_events(true);
-
 							for (int z = 0; z <= 199; z++)
 							{
-								if (!newkey)
+								if (ESCPressed)
+									break;
+
+								vga = VGAScreen->pixels;
+								vga2 = VGAScreen2->pixels;
+								pic = pic_buffer + (199 - z) * 320;
+
+								setFrameCount(1);
+
+								for (y = 0; y <= 199; y++)
 								{
-									vga = VGAScreen->pixels;
-									vga2 = VGAScreen2->pixels;
-									pic = pic_buffer + (199 - z) * 320;
-
-									setDelay(1);
-
-									for (y = 0; y <= 199; y++)
+									if (y <= z)
 									{
-										if (y <= z)
-										{
-											memcpy(vga, pic, 320);
-											pic += 320;
-										}
-										else
-										{
-											memcpy(vga, vga2, VGAScreen->pitch);
-											vga2 += VGAScreen->pitch;
-										}
-										vga += VGAScreen->pitch;
+										memcpy(vga, pic, 320);
+										pic += 320;
 									}
-
-									JE_showVGA();
-
-									if (isNetworkGame)
+									else
 									{
-										/* TODO: NETWORK */
+										memcpy(vga, vga2, VGAScreen->pitch);
+										vga2 += VGAScreen->pitch;
 									}
-
-									service_wait_delay();
+									vga += VGAScreen->pitch;
 								}
+
+								JE_showVGA();
+
+								if (waitUntilGetInputOrElapsed())
+									break;
 							}
 
 							memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
 						}
 						break;
 
-					case 'V':
+					case 'V':  // Slide picture up.
 						if (!constantPlay)
 						{
-							/* TODO: NETWORK */
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 							JE_word tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
 
-							service_SDL_events(true);
 							for (int z = 0; z <= 199; z++)
 							{
-								if (!newkey)
+								if (ESCPressed)
+									break;
+
+								vga = VGAScreen->pixels;
+								vga2 = VGAScreen2->pixels;
+								pic = pic_buffer;
+
+								setFrameCount(1);
+
+								for (y = 0; y < 199; y++)
 								{
-									vga = VGAScreen->pixels;
-									vga2 = VGAScreen2->pixels;
-									pic = pic_buffer;
-
-									setDelay(1);
-
-									for (y = 0; y < 199; y++)
+									if (y <= 199 - z)
 									{
-										if (y <= 199 - z)
-										{
-											memcpy(vga, vga2, VGAScreen->pitch);
-											vga2 += VGAScreen->pitch;
-										}
-										else
-										{
-											memcpy(vga, pic, 320);
-											pic += 320;
-										}
-										vga += VGAScreen->pitch;
+										memcpy(vga, vga2, VGAScreen->pitch);
+										vga2 += VGAScreen->pitch;
 									}
-
-									JE_showVGA();
-
-									if (isNetworkGame)
+									else
 									{
-										/* TODO: NETWORK */
+										memcpy(vga, pic, 320);
+										pic += 320;
 									}
-
-									service_wait_delay();
+									vga += VGAScreen->pitch;
 								}
+
+								JE_showVGA();
+
+								if (waitUntilGetInputOrElapsed())
+									break;
 							}
 
 							memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
 						}
 						break;
 
-					case 'R':
+					case 'R':  // Pan right to picture.
 						if (!constantPlay)
 						{
-							/* TODO: NETWORK */
 							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
 
 							JE_word tempX = atoi(s + 3);
 							JE_loadPic(VGAScreen, tempX, false);
 							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
-
-							service_SDL_events(true);
 
 							for (int z = 0; z <= 318; z++)
 							{
-								if (!newkey)
+								if (ESCPressed)
+									break;
+
+								vga = VGAScreen->pixels;
+								vga2 = VGAScreen2->pixels;
+								pic = pic_buffer;
+
+								setFrameCount(1);
+
+								for (y = 0; y < 200; y++)
 								{
-									vga = VGAScreen->pixels;
-									vga2 = VGAScreen2->pixels;
-									pic = pic_buffer;
-
-									setDelay(1);
-
-									for (y = 0; y < 200; y++)
-									{
-										memcpy(vga, vga2 + z, 319 - z);
-										vga += 320 - z;
-										vga2 += VGAScreen2->pitch;
-										memcpy(vga, pic, z + 1);
-										vga += z;
-										pic += 320;
-									}
-
-									JE_showVGA();
-
-									if (isNetworkGame)
-									{
-										/* TODO: NETWORK */
-									}
-
-									service_wait_delay();
+									memcpy(vga, vga2 + z, 319 - z);
+									vga += 320 - z;
+									vga2 += VGAScreen2->pitch;
+									memcpy(vga, pic, z + 1);
+									vga += z;
+									pic += 320;
 								}
+
+								JE_showVGA();
+
+								if (waitUntilGetInputOrElapsed())
+									break;
 							}
 
 							memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
 						}
 						break;
 
-					case 'C':
+					case 'C':  // Fade to black, clear, and reset palette.
 						if (!isNetworkGame)
 						{
 							fade_black(10);
@@ -2915,13 +2901,14 @@ new_game:
 						set_palette(colors, 0, 255);
 						break;
 
-					case 'B':
+					case 'B':  // Fade to black.
 						if (!isNetworkGame)
 						{
 							fade_black(10);
 						}
 						break;
-					case 'F':
+
+					case 'F':  // Flash and clear.
 						if (!isNetworkGame)
 						{
 							fade_white(100);
@@ -2931,19 +2918,18 @@ new_game:
 						JE_showVGA();
 						break;
 
-					case 'W':
+					case 'W':  // Show text, optionally with warning flashers and sirens.
 						if (!constantPlay)
 						{
 							if (!ESCPressed)
 							{
-								JE_wipeKey();
 								warningCol = 14 * 16 + 5;
 								warningColChange = 1;
 								warningSoundDelay = 0;
 								levelWarningDisplay = (s[2] == 'y');
 								levelWarningLines = 0;
 								frameCountMax = atoi(s + 4);
-								setDelay2(6);
+								setFrameCount2(6);
 								warningRed = frameCountMax / 10;
 								frameCountMax = frameCountMax % 10;
 
@@ -2959,12 +2945,11 @@ new_game:
 								} while (!(s[0] == '#'));
 
 								JE_displayText();
-								newkey = false;
 							}
 						}
 						break;
 
-					case 'H':
+					case 'H':  // Jump to section if difficulty is less than hard.
 						if (initialDifficulty < DIFFICULTY_HARD)
 						{
 							mainLevel = atoi(s + 4);
@@ -2972,25 +2957,25 @@ new_game:
 						}
 						break;
 
-					case 'h':
+					case 'h':  // Skip next line of script if difficulty is hard or higher.
 						if (initialDifficulty > DIFFICULTY_NORMAL)
 						{
 							read_encrypted_pascal_string(s, sizeof(s), ep_f);
 						}
 						break;
 
-					case 'S':
+					case 'S':  // (Not used.)
 						if (isNetworkGame)
 						{
 							JE_readTextSync();
 						}
 						break;
 
-					case 'n':
+					case 'n':  // End of scene.
 						ESCPressed = false;
 						break;
 
-					case 'M':
+					case 'M':  // Play music track.
 						temp = atoi(s + 3);
 						play_song(temp - 1);
 						break;
@@ -3215,16 +3200,14 @@ void networkStartScreen(void)
 		// until opponent sends details packet
 		while (true)
 		{
-			service_SDL_events(false);
-			JE_showVGA();
+			setFrameCount(1);
 
 			if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_DETAILS)
 				break;
 
 			network_update();
-			network_check();
 
-			SDL_Delay(16);
+			waitUntilElapsed();
 		}
 
 		JE_initEpisode(SDLNet_Read16(&packet_in[0]->data[4]));
@@ -3242,11 +3225,9 @@ void networkStartScreen(void)
 
 	while (!network_is_sync())
 	{
-		service_SDL_events(false);
-		JE_showVGA();
+		setFrameCount(1);
 
-		network_check();
-		SDL_Delay(16);
+		waitUntilElapsed();
 	}
 }
 #endif /* WITH_NETWORK */
@@ -3281,6 +3262,8 @@ bool titleScreen(void)
 
 	for (; ; )
 	{
+		setFrameCount(1);
+
 		if (restart)
 		{
 			play_song(SONG_TITLE);
@@ -3299,7 +3282,7 @@ bool titleScreen(void)
 
 				for (int y = 60; y >= 4; y -= 2)
 				{
-					setDelay(2);
+					setFrameCount(2);
 
 					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
 
@@ -3307,7 +3290,7 @@ bool titleScreen(void)
 
 					JE_showVGA();
 
-					service_wait_delay();
+					waitUntilElapsed();
 				}
 
 				moveTyrianLogoUp = false;
@@ -3350,16 +3333,13 @@ bool titleScreen(void)
 		// Highlight selected menu item.
 		drawFontHvAligned(VGAScreen, VGAScreen->w / 2, yMenuItems + hMenuItem * selectedIndex, menuText[selectedIndex], FONT_NORMAL, ALIGN_CENTER, 15, -1);
 
-		service_SDL_events(true);
-
 		JE_mouseStartFilter(0xF0);
 		JE_showVGA();
 		JE_mouseReplace();
 
 		const Uint32 idleStartTick = SDL_GetTicks();
 
-		bool mouseMoved = false;
-		do
+		while (true)
 		{
 			// Play demo after idle for 30 seconds.
 			if (SDL_GetTicks() - idleStartTick > 30000)
@@ -3370,32 +3350,32 @@ bool titleScreen(void)
 				return true;
 			}
 
-			SDL_Delay(16);
+			waitUntilElapsed();
 
-			Uint16 oldMouseX = mouse_x;
-			Uint16 oldMouseY = mouse_y;
+			if (hasInput(INPUT_ANY))
+				break;
 
-			push_joysticks_as_keyboard();
-			service_SDL_events(false);
-
-			mouseMoved = mouse_x != oldMouseX || mouse_y != oldMouseY;
-		} while (!(newkey || new_text || newmouse || mouseMoved));
+			setFrameCount(1);
+		}
 
 		// Handle interaction.
 
 		bool action = false;
 		bool done = false;
 
-		if (mouseMoved || newmouse)
+		MouseInput mouseInput;
+		KeyboardInput keyboardInput;
+
+		if (mouseGetInput(INPUT_ANY, &mouseInput))
 		{
 			// Find menu item that was hovered or clicked.
 			for (size_t i = 0; i < COUNTOF(menuText); ++i)
 			{
 				const int xMenuItem = xCenter - wMenuItem[i] / 2;
-				if (mouse_x >= xMenuItem && mouse_x < xMenuItem + wMenuItem[i])
+				if (mouseInput.x >= xMenuItem && mouseInput.x < xMenuItem + wMenuItem[i])
 				{
 					const int yMenuItem = yMenuItems + hMenuItem * i;
-					if (mouse_y >= yMenuItem && mouse_y < yMenuItem + hMenuItem)
+					if (mouseInput.y >= yMenuItem && mouseInput.y < yMenuItem + hMenuItem)
 					{
 						if (selectedIndex != i)
 						{
@@ -3404,9 +3384,9 @@ bool titleScreen(void)
 							selectedIndex = i;
 						}
 
-						if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
-						    lastmouse_x >= xMenuItem && lastmouse_x < xMenuItem + wMenuItem[i] &&
-						    lastmouse_y >= yMenuItem && lastmouse_y < yMenuItem + hMenuItem)
+						if (mouseInput.button == SDL_BUTTON_LEFT &&
+						    mouseInput.x >= xMenuItem && mouseInput.x < xMenuItem + wMenuItem[i] &&
+						    mouseInput.y >= yMenuItem && mouseInput.y < yMenuItem + hMenuItem)
 						{
 							action = true;
 						}
@@ -3415,20 +3395,17 @@ bool titleScreen(void)
 					}
 				}
 			}
-		}
 
-		if (newmouse)
-		{
-			if (lastmouse_but == SDL_BUTTON_RIGHT)
+			if (mouseInput.button == SDL_BUTTON_RIGHT)
 			{
 				JE_playSampleNum(S_SPRING);
 
 				done = true;
 			}
 		}
-		else if (newkey)
+		else if (keyboardGetInput(&keyboardInput))
 		{
-			switch (lastkey_scan)
+			switch (keyboardInput.scancode)
 			{
 			case SDL_SCANCODE_UP:
 			{
@@ -3463,53 +3440,47 @@ bool titleScreen(void)
 			default:
 				break;
 			}
-		}
 
-		if (new_text)
-		{
-			for (size_t ti = 0U; last_text[ti] != '\0'; ++ti)
+			SDL_Keycode sym = toupper(keyboardInput.sym);
+
+			for (size_t i = 0; i < SA_ENGAGE; i++)
 			{
-				const char c = toupper(last_text[ti]);
-
-				for (size_t i = 0; i < SA_ENGAGE; i++)
+				if (specialNameProgress[i] >= COUNTOF(specialName[i]) - 1 ||
+				    sym != specialName[i][specialNameProgress[i]])
 				{
-					if (specialNameProgress[i] >= COUNTOF(specialName[i]) - 1 ||
-						c != specialName[i][specialNameProgress[i]])
+					specialNameProgress[i] = 0;
+					continue;
+				}
+
+				specialNameProgress[i]++;
+
+				if (specialName[i][specialNameProgress[i]] == '\0')
+				{
+					if (i + 1 == SA_DESTRUCT)
 					{
-						specialNameProgress[i] = 0;
-						continue;
+						fade_black(10);
+
+						loadDestruct = true;
+						return true;
 					}
-
-					specialNameProgress[i]++;
-
-					if (specialName[i][specialNameProgress[i]] == '\0')
+					else if (i + 1 == SA_ENGAGE)
 					{
-						if (i + 1 == SA_DESTRUCT)
-						{
-							fade_black(10);
+						JE_playSampleNum(V_DATA_CUBE);
 
-							loadDestruct = true;
+						JE_whoa();
+						set_colors((SDL_Color) { 0, 0, 0 }, 0, 255);
+
+						newSuperTyrianGame();
+						return true;
+					}
+					else
+					{
+						fade_black(10);
+
+						if (newSuperArcadeGame(i))
 							return true;
-						}
-						else if (i + 1 == SA_ENGAGE)
-						{
-							JE_playSampleNum(V_DATA_CUBE);
 
-							JE_whoa();
-							set_colors((SDL_Color) { 0, 0, 0 }, 0, 255);
-
-							newSuperTyrianGame();
-							return true;
-						}
-						else
-						{
-							fade_black(10);
-
-							if (newSuperArcadeGame(i))
-								return true;
-
-							restart = true;
-						}
+						restart = true;
 					}
 				}
 			}
@@ -3658,7 +3629,7 @@ bool newSuperArcadeGame(unsigned int i)
 		JE_showVGA();
 		fade_palette(colors, 50, 0, 255);
 
-		wait_input(true, true, true);
+		waitUntilGetInput();
 
 		twoPlayerMode = false;
 		onePlayerAction = true;
@@ -3709,8 +3680,18 @@ void newSuperTyrianGame(void)
 	JE_showVGA();
 	fade_palette(colors, 10, 0, 255);
 
-	wait_noinput(true, true, true);
-	wait_input(true, true, true);
+	while (true)
+	{
+		waitUntilHasInput(INPUT_NO_MOTION);
+
+		KeyboardInput keyboardInput;
+		if ((keyboardGetInput(&keyboardInput) &&
+		     keyboardInput.scancode != SDL_SCANCODE_SCROLLLOCK) ||
+		    mouseGetInput(INPUT_NO_MOTION, NULL))
+		{
+			break;
+		}
+	}
 
 	JE_initEpisode(1);
 	constantDie = false;
@@ -3740,8 +3721,8 @@ void intro_logos(void)
 
 	fade_palette(colors, 25, 0, 255);
 
-	setDelay(200);
-	wait_delayorinput();
+	setFrameCount(200);
+	waitUntilGetInputOrElapsed();
 
 	fade_black(10);
 
@@ -3750,36 +3731,15 @@ void intro_logos(void)
 
 	fade_palette(colors, 10, 0, 255);
 
-	setDelay(200);
-	wait_delayorinput();
+	setFrameCount(200);
+	waitUntilGetInputOrElapsed();
 
 	fade_black(10);
 }
 
 void JE_readTextSync(void)
 {
-#if 0  // this function seems to be unnecessary
-	JE_clr256(VGAScreen);
-	JE_showVGA();
-	JE_loadPic(VGAScreen, 1, true);
-
-	JE_barShade(VGAScreen, 3, 3, 316, 196);
-	JE_barShade(VGAScreen, 1, 1, 318, 198);
-	JE_dString(VGAScreen, 10, 160, "Waiting for other player.", SMALL_FONT_SHAPES);
-	JE_showVGA();
-
-	/* TODO: NETWORK */
-
-	do
-	{
-		setjasondelay(2);
-
-		/* TODO: NETWORK */
-
-		wait_delay();
-
-	} while (0 /* TODO: NETWORK */);
-#endif
+	// this function seems to be unnecessary
 }
 
 void JE_displayText(void)
@@ -3804,34 +3764,37 @@ void JE_displayText(void)
 			tempY += 10;
 		}
 	}
+
+	bool slow;
 	if (frameCountMax != 0)
 	{
 		frameCountMax = 6;
-		temp = 1;
+		slow = true;
 	}
 	else
 	{
-		temp = 0;
+		slow = false;
 	}
-	textGlowFont = TINY_FONT;
 	tempW = 184;
 	if (warningRed)
 		tempW = 7 * 16 + 6;
 
 	JE_outCharGlow(JE_fontCenter(miscText[4], TINY_FONT), tempW, miscText[4]);
 
-	do
+	while (true)
 	{
+		setFrameCount(1);
+
 		if (levelWarningDisplay)
 			JE_updateWarning(VGAScreen);
 
-		setDelay(1);
+		if (waitUntilGetInputOrElapsed())
+			break;
 
-		NETWORK_KEEP_ALIVE();
+		if ((frameCountMax == 0 && slow) || ESCPressed)
+			break;
+	}
 
-		wait_delay();
-
-	} while (!(JE_anyButton() || (frameCountMax == 0 && temp == 1) || ESCPressed));
 	levelWarningDisplay = false;
 }
 
@@ -5099,7 +5062,7 @@ void JE_eventSystem(void)
 
 void JE_whoa(void)
 {
-	unsigned int i, j, color, offset, timer;
+	unsigned int i, j, color, offset;
 	unsigned int screenSize, topBorder, bottomBorder;
 	Uint8 * TempScreen1, * TempScreen2, * TempScreenSwap;
 
@@ -5133,12 +5096,9 @@ void JE_whoa(void)
 	memset(TempScreen1, 0, screenSize);
 	memcpy(TempScreen2, VGAScreenSeg->pixels, VGAScreenSeg->h * VGAScreenSeg->pitch);
 
-	service_SDL_events(true);
-	timer = 300; /* About 300 rounds is enough to make the screen mostly black */
-
-	do
+	for (unsigned int loops = 300; loops > 0; --loops)
 	{
-		setDelay(1);
+		setFrameCount(1);
 
 		/* This gets us our 'whoa' effect with pixel bleeding magic.
 		 * I'm willing to bet the guy who originally wrote the asm was goofing
@@ -5160,15 +5120,21 @@ void JE_whoa(void)
 
 		JE_showVGA();
 
-		timer--;
-		wait_delay();
+		waitUntilElapsed();
+
+		KeyboardInput keyboardInput;
+		if ((keyboardGetInput(&keyboardInput) &&
+		     keyboardInput.scancode != SDL_SCANCODE_SCROLLLOCK) ||
+		    mouseGetInput(INPUT_NO_MOTION, NULL))
+		{
+			break;
+		}
 
 		/* Flip the buffer. */
 		TempScreenSwap = TempScreen1;
 		TempScreen1    = TempScreen2;
 		TempScreen2    = TempScreenSwap;
-
-	} while (!(timer == 0 || JE_anyButton()));
+	}
 
 	levelWarningLines = 4;
 }

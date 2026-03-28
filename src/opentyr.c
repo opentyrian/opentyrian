@@ -197,6 +197,8 @@ void setupMenu(void)
 
 	for (; ; )
 	{
+		setFrameCount(1);
+
 		if (restart)
 		{
 			JE_loadPic(VGAScreen2, 2, false);
@@ -315,26 +317,25 @@ void setupMenu(void)
 			restart = false;
 		}
 
-		service_SDL_events(true);
-
 		JE_mouseStart();
 		JE_showVGA();
 		JE_mouseReplace();
 
-		bool mouseMoved = false;
 		int oldFullscreenDisplay = fullscreen_display;
-		do
+		while (true)
 		{
-			SDL_Delay(16);
+			waitUntilElapsed();
 
-			Uint16 oldMouseX = mouse_x;
-			Uint16 oldMouseY = mouse_y;
+			// If full-screen is toggled via keyboard shortcut then display
+			// setting needs to be updated.
+			if (fullscreen_display != oldFullscreenDisplay)
+				break;
 
-			push_joysticks_as_keyboard();
-			service_SDL_events(false);
+			if (hasInput(INPUT_ANY))
+				break;
 
-			mouseMoved = mouse_x != oldMouseX || mouse_y != oldMouseY;
-		} while (!(newkey || newmouse || mouseMoved || fullscreen_display != oldFullscreenDisplay));
+			setFrameCount(1);
+		}
 
 		if (currentPicker == MENU_ITEM_NONE)
 		{
@@ -342,15 +343,18 @@ void setupMenu(void)
 
 			bool action = false;
 
-			if (mouseMoved || newmouse)
+			MouseInput mouseInput;
+			KeyboardInput keyboardInput;
+
+			if (mouseGetInput(INPUT_ANY, &mouseInput))
 			{
 				// Find menu item name or value that was hovered or clicked.
-				if (mouse_x >= xMenuItem && mouse_x < xMenuItem + wMenuItem)
+				if (mouseInput.x >= xMenuItem && mouseInput.x < xMenuItem + wMenuItem)
 				{
 					for (size_t i = 0; i < menuItemsCount; ++i)
 					{
 						const int yMenuItem = yMenuItems + dyMenuItems * i;
-						if (mouse_y >= yMenuItem && mouse_y < yMenuItem + hMenuItem)
+						if (mouseInput.y >= yMenuItem && mouseInput.y < yMenuItem + hMenuItem)
 						{
 							if (*selectedMenuItemIndex != i)
 							{
@@ -359,17 +363,17 @@ void setupMenu(void)
 								*selectedMenuItemIndex = i;
 							}
 
-							if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
-							    lastmouse_y >= yMenuItem && lastmouse_y < yMenuItem + hMenuItem)
+							if (mouseInput.button == SDL_BUTTON_LEFT &&
+							    mouseInput.y >= yMenuItem && mouseInput.y < yMenuItem + hMenuItem)
 							{
 								// Act on menu item via name.
-								if (lastmouse_x >= xMenuItemName && lastmouse_x < xMenuItemName + wMenuItemName)
+								if (mouseInput.x >= xMenuItemName && mouseInput.x < xMenuItemName + wMenuItemName)
 								{
 									action = true;
 								}
 
 								// Act on menu item via value.
-								else if (lastmouse_x >= xMenuItemValue && lastmouse_x < xMenuItemValue + wMenuItemValue)
+								else if (mouseInput.x >= xMenuItemValue && mouseInput.x < xMenuItemValue + wMenuItemValue)
 								{
 									switch (menuItems[*selectedMenuItemIndex].id)
 									{
@@ -384,7 +388,7 @@ void setupMenu(void)
 									{
 										JE_playSampleNum(S_CURSOR);
 
-										int value = (lastmouse_x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
+										int value = (mouseInput.x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
 										tyrMusicVolume = MIN(MAX(0, value), 255);
 
 										set_volume(tyrMusicVolume, fxVolume);
@@ -392,7 +396,7 @@ void setupMenu(void)
 									}
 									case MENU_ITEM_SOUND_VOLUME:
 									{
-										int value = (lastmouse_x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
+										int value = (mouseInput.x - xMenuItemValue) * 255 / (wMenuItemValue - 1);
 										fxVolume = MIN(MAX(0, value), 255);
 
 										set_volume(tyrMusicVolume, fxVolume);
@@ -410,20 +414,17 @@ void setupMenu(void)
 						}
 					}
 				}
-			}
 
-			if (newmouse)
-			{
-				if (lastmouse_but == SDL_BUTTON_RIGHT)
+				if (mouseInput.button == SDL_BUTTON_RIGHT)
 				{
 					JE_playSampleNum(S_SPRING);
 
 					currentMenu = menuParents[currentMenu];
 				}
 			}
-			else if (newkey)
+			else if (keyboardGetInput(&keyboardInput))
 			{
-				switch (lastkey_scan)
+				switch (keyboardInput.scancode)
 				{
 				case SDL_SCANCODE_UP:
 				{
@@ -620,18 +621,21 @@ void setupMenu(void)
 
 			bool action = false;
 
-			if (mouseMoved || newmouse)
+			MouseInput mouseInput;
+			KeyboardInput keyboardInput;
+
+			if (mouseGetInput(INPUT_ANY, &mouseInput))
 			{
 				const size_t pickerItemsCount = selectedMenuItem->getPickerItemsCount();
 
-				// Find picker item that was hovered clicked.
-				if (mouse_x >= xMenuItemValue && mouse_x < xMenuItemValue + wMenuItemValue)
+				// Find picker item that was hovered or clicked.
+				if (mouseInput.x >= xMenuItemValue && mouseInput.x < xMenuItemValue + wMenuItemValue)
 				{
 					for (size_t i = 0; i < pickerItemsCount; ++i)
 					{
 						const int yPickerItem = yPicker + dyPickerItem * i;
 
-						if (mouse_y >= yPickerItem && mouse_y < yPickerItem + hPickerItem)
+						if (mouseInput.y >= yPickerItem && mouseInput.y < yPickerItem + hPickerItem)
 						{
 							if (pickerSelectedIndex != i)
 							{
@@ -641,29 +645,26 @@ void setupMenu(void)
 							}
 
 							// Act on picker item.
-							if (newmouse && lastmouse_but == SDL_BUTTON_LEFT &&
-							    lastmouse_x >= xMenuItemValue && lastmouse_y < xMenuItemValue + wMenuItemName &&
-							    lastmouse_y >= yPickerItem && lastmouse_y < yPickerItem + hPickerItem)
+							if (mouseInput.button == SDL_BUTTON_LEFT &&
+							    mouseInput.x >= xMenuItemValue && mouseInput.y < xMenuItemValue + wMenuItemName &&
+							    mouseInput.y >= yPickerItem && mouseInput.y < yPickerItem + hPickerItem)
 							{
 								action = true;
 							}
 						}
 					}
 				}
-			}
 
-			if (newmouse)
-			{
-				if (lastmouse_but == SDL_BUTTON_RIGHT)
+				if (mouseInput.button == SDL_BUTTON_RIGHT)
 				{
 					JE_playSampleNum(S_SPRING);
 
 					currentPicker = MENU_ITEM_NONE;
 				}
 			}
-			else if (newkey)
+			else if (keyboardGetInput(&keyboardInput))
 			{
-				switch (lastkey_scan)
+				switch (keyboardInput.scancode)
 				{
 				case SDL_SCANCODE_UP:
 				{

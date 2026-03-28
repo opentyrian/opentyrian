@@ -29,7 +29,7 @@
 #define TRICK      3
 #define NO_SHADE 255
 
-extern const int font_ascii[256];
+extern const Sint8 fontMap[256];
 
 extern JE_byte textGlowFont, textGlowBrightness;
 extern JE_boolean levelWarningDisplay;

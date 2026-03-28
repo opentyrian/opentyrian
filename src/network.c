@@ -24,7 +24,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 #include "mainint.h"
-#include "nortvars.h"
+#include "nortsong.h"
 #include "opentyr.h"
 #include "picload.h"
 #include "sprite.h"
@@ -620,10 +620,11 @@ connect_reset:
 	// until opponent sends connect packet
 	while (true)
 	{
-		push_joysticks_as_keyboard();
-		service_SDL_events(false);
+		setFrameCount(1);
 
-		if (newkey && lastkey_scan == SDL_SCANCODE_ESCAPE)
+		KeyboardInput keyboardInput;
+
+		if (keyboardGetInput(&keyboardInput) && keyboardInput.scancode == SDL_SCANCODE_ESCAPE)
 			network_tyrian_halt(0, false);
 
 		// never timeout
@@ -633,9 +634,8 @@ connect_reset:
 			break;
 
 		network_update();
-		network_check();
 
-		SDL_Delay(16);
+		waitUntilElapsed();
 	}
 
 connect_again:
@@ -669,19 +669,17 @@ connect_again:
 	// until opponent has acknowledged
 	while (!network_is_sync())
 	{
-		service_SDL_events(false);
+		setFrameCount(1);
 
 		// got a duplicate packet; process it again (but why?)
 		if (packet_in[0] && SDLNet_Read16(&packet_in[0]->data[0]) == PACKET_CONNECT)
 			goto connect_again;
 
-		network_check();
-
 		// maybe opponent didn't get our packet
 		if (SDL_GetTicks() - last_out_tick > NET_RETRY)
 			goto connect_reset;
 
-		SDL_Delay(16);
+		waitUntilElapsed();
 	}
 
 	// send another packet since sometimes the network syncs without both connect packets exchanged
@@ -731,18 +729,14 @@ void network_tyrian_halt(unsigned int err, bool attempt_sync)
 	{
 		while (!network_is_sync() && network_is_alive())
 		{
-			service_SDL_events(false);
+			setFrameCount(1);
 
-			network_check();
-			SDL_Delay(16);
+			waitUntilElapsed();
 		}
 	}
 
 	if (err)
-	{
-		while (!JE_anyButton())
-			SDL_Delay(16);
-	}
+		waitUntilGetInput();
 
 	fade_black(10);
 
