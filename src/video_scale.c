@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2010  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  * 
  * Scale2x, Scale3x
  * Copyright (C) 2001, 2002, 2003, 2004 Andrea Mazzoleni
