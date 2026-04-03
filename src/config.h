@@ -28,15 +28,6 @@
 
 #define SAVE_FILES_NUM (11 * 2)
 
-/* These are necessary because the size of the structure has changed from the original, but we
-   need to know the original sizes in order to find things in TYRIAN.SAV */
-#define SAVE_FILES_SIZE 2398
-#define SIZEOF_SAVEGAMETEMP SAVE_FILES_SIZE + 4 + 100
-#define SAVE_FILE_SIZE (SIZEOF_SAVEGAMETEMP - 4)
-
-/*#define SAVE_FILES_SIZE (2502 - 4)
-#define SAVE_FILE_SIZE (SAVE_FILES_SIZE)*/
-
 enum
 {
 	DIFFICULTY_WIMP = 0,
@@ -65,8 +56,6 @@ enum
 	KEY_SETTING_LEFT_SIDEKICK,
 	KEY_SETTING_RIGHT_SIDEKICK,
 };
-
-typedef JE_byte DosKeySettings[8];  // fka KeySettingType
 
 typedef SDL_Scancode KeySettings[8];
 
@@ -102,14 +91,8 @@ typedef struct
 } JE_SaveFileType;
 
 typedef JE_SaveFileType JE_SaveFilesType[SAVE_FILES_NUM]; /* [1..savefilesnum] */
-typedef JE_byte JE_SaveGameTemp[SAVE_FILES_SIZE + 4 + 100]; /* [1..sizeof(savefilestype) + 4 + 100] */
 
-extern const JE_byte cryptKey[10];
-extern const DosKeySettings defaultDosKeySettings;  // fka defaultKeySettings
 extern const KeySettings defaultKeySettings;
-extern const char defaultHighScoreNames[34][23];
-extern const char defaultTeamNames[22][25];
-extern const JE_EditorItemAvailType initialItemAvail;
 extern JE_boolean smoothies[9];
 extern JE_byte starShowVGASpecialCode;
 extern JE_word lastCubeMax, cubeMax;
@@ -138,7 +121,6 @@ extern JE_byte shotRepeat[11], shotMultiPos[11];
 extern JE_boolean portConfigChange, portConfigDone;
 extern char lastLevelName[11], levelName[11];
 extern JE_byte mainLevel, nextLevel, saveLevel;
-extern DosKeySettings dosKeySettings;  // fka keySettings
 extern KeySettings keySettings;
 extern JE_shortint levelFilter, levelFilterNew, levelBrightness, levelBrightnessChg;
 extern JE_boolean filtrationAvail, filterActive, filterFade, filterFadeStart;
@@ -155,27 +137,28 @@ extern JE_byte background3over;
 extern JE_byte background2over;
 extern JE_byte gammaCorrection;
 extern JE_boolean superPause, explosionTransparent, youAreCheating, displayScore, background2, smoothScroll, wild, superWild, starActive, topEnemyOver, skyEnemyOverAll, background2notTransparent;
-extern JE_byte versionNum;
 extern JE_byte fastPlay;
 extern JE_boolean pentiumMode;
 extern JE_byte gameSpeed;
 extern JE_byte processorType;
 extern JE_SaveFilesType saveFiles;
-extern JE_SaveGameTemp saveTemp;
+extern JE_EditorItemAvailType editorItemAvail;
 extern JE_word editorLevel;
 
 extern Config opentyrian_config;
 
 void JE_initProcessorType(void);
 void JE_setNewGameSpeed(void);
+
 const char *get_user_directory(void);
-void JE_loadConfiguration(void);
-void JE_saveConfiguration(void);
+
+void loadConfiguration(void);
+void saveConfiguration(void);
+
+void loadSaves(void);
+void saveSaves(void);
 
 void JE_saveGame(JE_byte slot, const char *name);
 void JE_loadGame(JE_byte slot);
-
-void JE_encryptSaveTemp(void);
-void JE_decryptSaveTemp(void);
 
 #endif /* CONFIG_H */

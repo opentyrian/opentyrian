@@ -2466,7 +2466,7 @@ new_game:
 					switch (s[1])
 					{
 					case 'A':  // Show animation.
-						JE_playAnim("tyrend.anm", 0, 7);
+						playAnim("tyrend.anm", 0, 7);
 						break;
 
 					case 'G':  // Set next level choices.
@@ -3588,7 +3588,7 @@ bool newGame(void)
 
 			player[0].items.ship = 11;  // Silver Ship
 
-			difficultyLevel++;
+			difficultyLevel++;  // Make it one step harder for 2-player mode!
 
 			inputDevice[0] = 1;
 			inputDevice[1] = 2;

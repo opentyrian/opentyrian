@@ -2610,22 +2610,28 @@ void JE_endLevelAni(void)
 
 	if (!constantPlay)
 	{
-		// grant shipedit privileges
+		// Grant ShipEdit privileges
 
-		// special
-		if (player[0].items.special < 21)
-			saveTemp[SAVE_FILES_SIZE + 81 + player[0].items.special] = 1;
-
-		for (uint p = 0; p < COUNTOF(player); ++p)
+		for (size_t p = 0; p < COUNTOF(player); ++p)
 		{
-			// front, rear
-			for (uint i = 0; i < COUNTOF(player[p].items.weapon); ++i)
-				saveTemp[SAVE_FILES_SIZE + player[p].items.weapon[i].id] = 1;
+			for (size_t i = 0; i < COUNTOF(player[p].items.weapon); ++i)
+			{
+				size_t e = (size_t)-1 + player[p].items.weapon[i].id;
+				if (e < COUNTOF(editorItemAvail))
+					editorItemAvail[e] = 1;
+			}
 
-			// options
-			for (uint i = 0; i < COUNTOF(player[p].items.sidekick); ++i)
-				saveTemp[SAVE_FILES_SIZE + 51 + player[p].items.sidekick[i]] = 1;
+			for (size_t i = 0; i < COUNTOF(player[p].items.sidekick); ++i)
+			{
+				size_t e = (size_t)50 + player[p].items.sidekick[i];
+				if (e < COUNTOF(editorItemAvail))
+					editorItemAvail[e] = 1;
+			}
 		}
+
+		size_t e = (size_t)80 + player[0].items.special;
+		if (e < COUNTOF(editorItemAvail))
+			editorItemAvail[e] = 1;
 	}
 
 	adjust_difficulty();

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -132,6 +132,8 @@
     <ClCompile Include="..\src\lvllib.c" />
     <ClCompile Include="..\src\lvlmast.c" />
     <ClCompile Include="..\src\mainint.c" />
+    <ClCompile Include="..\src\memreader.c" />
+    <ClCompile Include="..\src\memwriter.c" />
     <ClCompile Include="..\src\menus.c" />
     <ClCompile Include="..\src\mouse.c" />
     <ClCompile Include="..\src\mtrand.c" />
@@ -148,7 +150,6 @@
     <ClCompile Include="..\src\picload.c" />
     <ClCompile Include="..\src\player.c" />
     <ClCompile Include="..\src\shots.c" />
-    <ClCompile Include="..\src\sizebuf.c" />
     <ClCompile Include="..\src\sndmast.c" />
     <ClCompile Include="..\src\sprite.c" />
     <ClCompile Include="..\src\starlib.c" />
@@ -183,6 +184,8 @@
     <ClInclude Include="..\src\lvllib.h" />
     <ClInclude Include="..\src\lvlmast.h" />
     <ClInclude Include="..\src\mainint.h" />
+    <ClInclude Include="..\src\memreader.h" />
+    <ClInclude Include="..\src\memwriter.h" />
     <ClInclude Include="..\src\menus.h" />
     <ClInclude Include="..\src\mouse.h" />
     <ClInclude Include="..\src\mtrand.h" />
@@ -200,7 +203,6 @@
     <ClInclude Include="..\src\picload.h" />
     <ClInclude Include="..\src\player.h" />
     <ClInclude Include="..\src\shots.h" />
-    <ClInclude Include="..\src\sizebuf.h" />
     <ClInclude Include="..\src\sndmast.h" />
     <ClInclude Include="..\src\sprite.h" />
     <ClInclude Include="..\src\starlib.h" />

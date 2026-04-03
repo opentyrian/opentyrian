@@ -764,7 +764,8 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	JE_loadConfiguration();
+	loadConfiguration();
+	loadSaves();
 
 	xmas = xmas_time();  // arg handler may override
 
