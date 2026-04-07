@@ -51,6 +51,7 @@ void JE_paramCheck(int argc, char *argv[])
 		{ 'x', 'x', "no-xmas",           false },
 		
 		{ 't', 't', "data",              true },
+		{ 'f', 'f', "soundfont",         true },
 		
 		{ 'n', 'n', "net",               true },
 		{ 256, 0,   "net-player-name",   true }, // TODO: no short codes because there should
@@ -98,7 +99,9 @@ void JE_paramCheck(int argc, char *argv[])
 			       "  --net-player-number=NUMBER   Sets local player number in a networked game\n"
 			       "                               (1 or 2)\n"
 			       "  -p, --net-port=PORT          Local port to bind (default is 1333)\n"
-			       "  -d, --net-delay=FRAMES       Set lag-compensation delay (default is 1)\n", argv[0]);
+			       "  -d, --net-delay=FRAMES       Set lag-compensation delay (default is 1)\n"
+				   "  -f, --soundfont=FILE         Set the soundfont for MIDI playback\n\n"
+				   , argv[0]);
 			exit(0);
 			break;
 			
@@ -106,7 +109,10 @@ void JE_paramCheck(int argc, char *argv[])
 			// Disables sound/music usage
 			audio_disabled = true;
 			break;
-			
+		case 'f':
+			// Set the soundfont for MIDI playback
+			strncpy(soundfont, option.arg, MAX(strlen(option.arg) + 1, 4096));
+			break;
 		case 'j':
 			// Disables joystick detection
 			ignore_joystick = true;
