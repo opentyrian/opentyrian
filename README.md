@@ -2,10 +2,6 @@
 
 # OpenTyrian
 
-[![Linux](https://github.com/opentyrian/opentyrian/actions/workflows/linux.yml/badge.svg)](https://github.com/opentyrian/opentyrian/actions/workflows/linux.yml)
-[![macOS](https://github.com/opentyrian/opentyrian/actions/workflows/macos.yml/badge.svg)](https://github.com/opentyrian/opentyrian/actions/workflows/macos.yml)
-[![Windows](https://github.com/opentyrian/opentyrian/actions/workflows/windows.yml/badge.svg)](https://github.com/opentyrian/opentyrian/actions/workflows/windows.yml)
-
 OpenTyrian is an open-source port of the DOS game Tyrian.
 
 Tyrian is an arcade-style vertical scrolling shooter.  The story is set
@@ -17,34 +13,37 @@ multiplayer.
 
 ## Downloads
 
-Self-contained builds are attached to each
-[release](https://github.com/opentyrian/opentyrian/releases).  They include
-SDL2 and the freeware Tyrian 2.1 game data, so there is nothing to install:
+Download the appropriate build for your platform from the
+[latest release](https://github.com/opentyrian/opentyrian/releases/latest),
+extract it, and run it:
 
 | Platform | File | Run |
 |---|---|---|
-| macOS (Apple Silicon and Intel) | `opentyrian-macos-universal.zip` | Unzip and open `OpenTyrian.app` |
-| Linux x86_64 / arm64 | `opentyrian-linux-<arch>.tar.gz` | Extract and run `./opentyrian` |
-| Windows x86_64 / arm64 | `opentyrian-windows-<arch>.zip` | Unzip and run `opentyrian.exe` |
+| Windows | `opentyrian-windows-<arch>.zip` | Unzip and run `opentyrian.exe` |
+| macOS | `opentyrian-macos-universal.zip` | Unzip and open `OpenTyrian.app` |
+| Linux | `opentyrian-linux-<arch>.tar.gz` | Extract and run `./opentyrian` |
+
+These builds contain everything needed to run the game, including the freeware
+Tyrian 2.1 data files.
 
 The macOS app is not notarized.  If Gatekeeper refuses to open it, right-click
 the app, choose *Open*, and confirm once.
 
-Configuration and saved games are kept per user, outside the game directory:
+Configuration and saved game files are kept in one of the following locations:
 
 | Platform | Location |
 |---|---|
-| Linux / macOS | `$XDG_CONFIG_HOME/opentyrian`, or `~/.config/opentyrian` |
 | Windows | `%APPDATA%\OpenTyrian` |
+| macOS / Linux | `$XDG_CONFIG_HOME/opentyrian` or `~/.config/opentyrian` |
 
 ## Game Data
 
-OpenTyrian needs the Tyrian 2.1 data files, which have been released as
-freeware: <https://camanis.net/tyrian/tyrian21.zip>
+If you download a release build of OpenTyrian, the freeware Tyrian 2.1 data
+files are included and do not need to be downloaded separately.
 
-The release builds above already contain them.  Otherwise, extract the
-archive so that the files (lowercase names) are in one of these places,
-searched in order:
+Otherwise, download [Tyrian v2.1](https://camanis.net/tyrian/tyrian21.zip) and
+extract the archive so that the files (with lowercase filenames) are in one of
+the following locations, searched in order:
 
 1. the directory given with `--data=DIR`
 2. a `data` directory next to the executable (inside `Contents/Resources`
@@ -52,34 +51,16 @@ searched in order:
 3. the system directory the build was configured with
    (`/usr/local/share/games/tyrian` by default; `C:\TYRIAN` on Windows)
 
-`./get_data.sh [dir]` downloads and extracts them for you.  Filenames in the
-archive may be uppercase; the script lowercases them, as does
-`lower-script.sh` for an existing directory.
-
 ## Building
 
-Requirements: a C99 compiler, GNU make, pkg-config, SDL2 and, for network
+Requirements: a C99 compiler, GNU make, pkg-config, SDL2, and, for network
 play, SDL2_net.
 
     make
 
-Network play is left out automatically when SDL2_net is not found
-(`make WITH_NETWORK=false` forces that; `WITH_NETWORK=true` requires it).
-`make debug` builds with `-Werror`, `-O0` and debug info.  `make install`
-honours `DESTDIR` and `prefix`.
+Network play is enabled automatically when SDL2_net is found.
 
-A Visual Studio solution is in `visualc/`.
-
-The self-contained release builds are produced by the same scripts CI uses:
-
-    ./make_macos.sh      # universal OpenTyrian.app in build/, SDL2.framework bundled
-    ./make_linux.sh    # SDL2 built from source and linked statically
-    ./get_data.sh      # fetches the game data into data/ (both scripts call it)
-
-The Linux script needs the development headers listed at the top of the file;
-SDL loads the matching X11, Wayland and audio backends at run time, so the
-resulting binary depends on nothing but glibc.  The Windows packages are
-built under MSYS2 by `.github/workflows/windows.yml`.
+A Visual Studio solution is provided in `visualc/`.
 
 ## Command-Line Options
 
@@ -95,26 +76,15 @@ built under MSYS2 by `.github/workflows/windows.yml`.
     -p, --net-port=PORT          Set local port to bind (default is 1333)
     -d, --net-delay=FRAMES       Set lag-compensation delay (default is 1)
 
-## Keyboard Controls
-
-    alt-enter      -- toggle full-screen
-
-    arrow keys     -- ship movement
-    space          -- fire weapons
-    enter          -- toggle rear weapon mode
-    ctrl/alt       -- fire left/right sidekick
-
 ## Network Multiplayer
 
 Currently OpenTyrian does not have an arena; as such, networked games must be
 initiated manually via the command line simultaneously by both players.
 
-syntax:
-
     opentyrian --net HOSTNAME --net-player-name NAME --net-player-number NUMBER
 
-where HOSTNAME is the IP address of your opponent, NUMBER is either 1 or 2
-depending on which ship you intend to pilot, and NAME is your alias
+where `HOSTNAME` is the IP address of your opponent, `NUMBER` is either 1 or 2
+depending on which ship you intend to pilot, and `NAME` is your alias.
 
 OpenTyrian uses UDP port 1333 for multiplayer, but in most cases players will
 not need to open any ports because OpenTyrian makes use of UDP hole punching.
