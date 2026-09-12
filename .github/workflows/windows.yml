@@ -81,4 +81,8 @@ jobs:
         shell: bash          # runner's own bash — gh isn't on the MSYS2 PATH
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "opentyrian-windows-${{ matrix.arch }}.zip" --clobber
+        run: |
+          tag="${{ github.event.release.tag_name }}"
+          asset="opentyrian-$tag-windows-${{ matrix.arch }}.zip"
+          mv "opentyrian-windows-${{ matrix.arch }}.zip" "$asset"
+          gh release upload "$tag" "$asset" --clobber

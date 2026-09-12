@@ -83,4 +83,8 @@ jobs:
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "opentyrian-linux-${{ matrix.arch }}.tar.gz" --clobber
+        run: |
+          tag="${{ github.event.release.tag_name }}"
+          asset="opentyrian-$tag-linux-${{ matrix.arch }}.tar.gz"
+          mv "opentyrian-linux-${{ matrix.arch }}.tar.gz" "$asset"
+          gh release upload "$tag" "$asset" --clobber

@@ -50,4 +50,8 @@ jobs:
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" build/opentyrian-macos-universal.zip --clobber
+        run: |
+          tag="${{ github.event.release.tag_name }}"
+          asset="opentyrian-$tag-macos-universal.zip"
+          mv build/opentyrian-macos-universal.zip "$asset"
+          gh release upload "$tag" "$asset" --clobber

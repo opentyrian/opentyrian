@@ -19,9 +19,9 @@ extract it, and run it:
 
 | Platform | File | Run |
 |---|---|---|
-| Windows | `opentyrian-windows-<arch>.zip` | Unzip and run `opentyrian.exe` |
-| macOS | `opentyrian-macos-universal.zip` | Unzip and open `OpenTyrian.app` |
-| Linux | `opentyrian-linux-<arch>.tar.gz` | Extract and run `./opentyrian` |
+| Windows | `opentyrian-<version>-windows-<arch>.zip` | Unzip and run `opentyrian.exe` |
+| macOS | `opentyrian-<version>-macos-universal.zip` | Unzip and open `OpenTyrian.app` |
+| Linux | `opentyrian-<version>-linux-<arch>.tar.gz` | Extract and run `./opentyrian` |
 
 These builds contain everything needed to run the game, including the freeware
 Tyrian 2.1 data files.
