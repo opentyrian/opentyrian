@@ -41,7 +41,7 @@ SDL2_NET_VER="2.2.0"
 PREFIX="$PWD/build/sdl"
 NPROC="$(nproc 2>/dev/null || echo 4)"
 
-# The licence of anything we link in has to travel with the binary.  Keep the
+# The license of anything we link in has to travel with the binary.  Keep the
 # copies inside the prefix, since that is what CI caches: on a cache hit the
 # source trees below are never unpacked.
 install_license() {  # $1 = source directory, $2 = name in the package
@@ -52,7 +52,7 @@ install_license() {  # $1 = source directory, $2 = name in the package
             return 0
         fi
     done
-    echo "ERROR: no licence file found in $1" >&2
+    echo "ERROR: no license file found in $1" >&2
     exit 1
 }
 

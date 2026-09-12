@@ -1,0 +1,8 @@
+Tyrian Freeware License
+=======================
+
+Tyrian was developed by Eclipse Software and was published by Epic MegaGames in
+1995.  In 2004, Jason Emery released the game as freeware under the following
+terms:
+
+    Feel free to play it all you want and share it with friends.

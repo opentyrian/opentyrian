@@ -63,7 +63,7 @@ jobs:
           ldd opentyrian.exe | grep -iv "system32\|/c/windows" | awk '{print $3}' | sort -u | xargs -I{} cp {} dist/opentyrian/
           cp -r data dist/opentyrian/data
           cp COPYING dist/opentyrian/COPYING.txt
-          cp doc/tyrian-data-license.txt dist/opentyrian/licenses/tyrian-data.txt
+          cp doc/tyrian-freeware-license.txt dist/opentyrian/licenses/Tyrian.txt
           for pkg in SDL2 SDL2_net; do
             cp "$MINGW_PREFIX/share/licenses/$pkg/LICENSE.txt" "dist/opentyrian/licenses/$pkg.txt"
           done

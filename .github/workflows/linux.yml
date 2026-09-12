@@ -63,7 +63,7 @@ jobs:
           cp opentyrian dist/opentyrian/
           cp -r data dist/opentyrian/data
           cp COPYING dist/opentyrian/
-          cp doc/tyrian-data-license.txt dist/opentyrian/licenses/tyrian-data.txt
+          cp doc/tyrian-freeware-license.txt dist/opentyrian/licenses/Tyrian.txt
           # SDL2 and SDL2_net are linked in statically, so their licences ship too
           cp build/sdl/share/licenses/SDL2.txt dist/opentyrian/licenses/
           cp build/sdl/share/licenses/SDL2_net.txt dist/opentyrian/licenses/

@@ -94,12 +94,12 @@ find "$DATA_DIR" -maxdepth 1 -type f | while read -r f; do
     cp "$f" "$OUT/Contents/Resources/data/$(basename "$f" | tr '[:upper:]' '[:lower:]')"
 done
 
-# Licences.  SDL2's travels inside the framework already, but three levels
+# Licenses.  SDL2's travels inside the framework already, but three levels
 # down where nobody would look for it.
-cp COPYING "$OUT/Contents/Resources/COPYING"
+cp COPYING "$OUT/Contents/Resources/COPYING.txt"
 mkdir -p "$OUT/Contents/Resources/licenses"
 cp "$FW/Versions/A/Resources/License.txt" "$OUT/Contents/Resources/licenses/SDL2.txt"
-cp doc/tyrian-data-license.txt "$OUT/Contents/Resources/licenses/tyrian-data.txt"
+cp doc/tyrian-freeware-license.txt "$OUT/Contents/Resources/licenses/Tyrian.txt"
 
 # App icon from the 128px Linux icon
 python3 make_icon.py linux/icons/tyrian-128.png "$OUT/Contents/Resources/OpenTyrian.icns" \
