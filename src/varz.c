@@ -34,6 +34,8 @@
 #include "vga256d.h"
 #include "video.h"
 
+#include <math.h>
+
 JE_integer tempDat, tempDat2, tempDat3;
 
 const JE_byte SANextShip[SA + 2] /* [0..SA + 1] */ = { 3, 9, 6, 2, 5, 1, 4, 3, 7 }; // 0 -> 3 -> 2 -> 6 -> 4 -> 5 -> 1 -> 9 -> 7

@@ -45,6 +45,7 @@
 #include "video.h"
 
 #include <assert.h>
+#include <math.h>
 
 enum
 {

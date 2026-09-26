@@ -23,6 +23,8 @@
 #include "opentyr.h"
 #include "video.h"
 
+#include <math.h>
+
 #define starlib_MAX_STARS 1000
 #define MAX_TYPES 14
 

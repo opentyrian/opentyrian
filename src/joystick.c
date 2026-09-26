@@ -28,6 +28,7 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <math.h>
 #include <string.h>
 
 int joystick_axis_threshold(int j, int value);
