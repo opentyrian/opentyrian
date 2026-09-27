@@ -3454,12 +3454,16 @@ bool titleScreen(void)
 				break;
 			}
 
-			SDL_Keycode sym = toupper(keyboardInput.sym);
+			SDL_Keycode sym = keyboardInput.sym;
+			// Convert key code (which is Unicode where possible) to uppercase ASCII.
+			char ch = sym >= 0 && sym < 0x80
+				? toupper((char)sym)
+				: '\0';
 
 			for (size_t i = 0; i < SA_ENGAGE; i++)
 			{
 				if (specialNameProgress[i] >= COUNTOF(specialName[i]) - 1 ||
-				    sym != specialName[i][specialNameProgress[i]])
+				    ch != specialName[i][specialNameProgress[i]])
 				{
 					specialNameProgress[i] = 0;
 					continue;
