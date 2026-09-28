@@ -75,7 +75,7 @@ void init_keyboard(void)
 {
 	SDL_StopTextInput();
 
-	SDL_ShowCursor(SDL_FALSE);
+	SDL_ShowCursor(SDL_DISABLE);
 
 #if SDL_VERSION_ATLEAST(2, 26, 0)
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SYSTEM_SCALE, "1");
@@ -319,8 +319,6 @@ void handleSdlEvents(void)
 				mouseY = ev.motion.y;
 				mapWindowPointToScreen(&mouseX, &mouseY);
 
-				mouseHasMotionInput = true;
-
 				if (mouseRelativeEnabled && windowHasFocus)
 				{
 					mouseWindowXRelative += ev.motion.xrel;
@@ -332,7 +330,11 @@ void handleSdlEvents(void)
 				               mouseY < 0 || mouseY >= vga_height ? SDL_ENABLE : SDL_DISABLE);
 
 				if (ev.motion.xrel != 0 || ev.motion.yrel != 0)
+				{
+					mouseHasMotionInput = true;
+
 					mouseInactive = false;
+				}
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:

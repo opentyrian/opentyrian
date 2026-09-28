@@ -306,9 +306,9 @@ void JE_clr256(SDL_Surface *screen)
 	SDL_FillRect(screen, NULL, 0);
 }
 
-void JE_showVGA(void) 
-{ 
-	scale_and_flip(VGAScreen); 
+void JE_showVGA(void)
+{
+	scale_and_flip(VGAScreen);
 }
 
 static void calc_dst_render_rect(SDL_Surface *const src_surface, SDL_Rect *const dst_rect)

@@ -726,7 +726,7 @@ void setupMenu(void)
 					{
 						const int oldScaler = scaler;
 						if (!init_scaler(pickerSelectedIndex) &&  // try new scaler
-							!init_scaler(oldScaler))              // revert on fail
+						    !init_scaler(oldScaler))              // revert on fail
 						{
 							exit(EXIT_FAILURE);
 						}
