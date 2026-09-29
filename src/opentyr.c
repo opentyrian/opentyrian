@@ -835,11 +835,8 @@ int main(int argc, char *argv[])
 
 	if (!audio_disabled)
 	{
-		logInfo("Initializing SDL audio...");
-
-		init_audio();
-
-		loadSndFile(xmas);
+		if (init_audio())
+			loadSndFile(xmas);
 	}
 	else
 	{
