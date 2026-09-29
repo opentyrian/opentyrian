@@ -1,6 +1,6 @@
-<img src="linux/icons/tyrian-128.png" width="128" height="128" align="right" alt="OpenTyrian icon">
-
 # OpenTyrian
+
+<img src="linux/icons/tyrian-128.png" width="128" height="128" align="right" alt="OpenTyrian icon">
 
 OpenTyrian is an open-source port of the DOS game Tyrian.
 
