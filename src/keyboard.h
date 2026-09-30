@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,35 +23,68 @@
 
 #include "SDL.h"
 
+#define KEY_COMBO(mod, key) ((Uint32)(key) | \
+	(((mod) & KMOD_SHIFT ? (Uint32)KMOD_SHIFT : 0) | \
+	 ((mod) & KMOD_CTRL ? (Uint32)KMOD_CTRL : 0) | \
+	 ((mod) & KMOD_ALT ? (Uint32)KMOD_ALT : 0) | \
+	 ((mod) & KMOD_META ? (Uint32)KMOD_META : 0)) << 16)
 
-#define SDL_POLL_INTERVAL 5
+typedef struct KeyboardInput
+{
+	Uint16 key;  // SDLKey; used for non-text input and for secret text input (ex. super arcade codes).
+	Uint16 mod;  // SDLMod
+	Uint8 ch;  // CP437 character; used for text input (ex. save file name).
+} KeyboardInput;
 
-extern JE_boolean ESCPressed;
-extern JE_boolean newkey, newmouse, keydown, mousedown;
-extern SDLKey lastkey_sym;
-extern SDLMod lastkey_mod;
-extern unsigned char lastkey_char;
-extern Uint8 lastmouse_but;
-extern Uint16 lastmouse_x, lastmouse_y;
-extern JE_boolean mouse_pressed[3];
-extern Uint16 mouse_x, mouse_y;
-extern Uint8 keysactive[SDLK_LAST];
+typedef struct MouseInput
+{
+	Sint32 x;
+	Sint32 y;
+	Uint8 button;
+} MouseInput;
 
-extern bool input_grab_enabled;
+typedef enum InputFlags
+{
+	INPUT_ANY = 0,
+	INPUT_NO_MOTION = 1,  // Ignore mouse motion.
+} InputFlags;
 
-void flush_events_buffer( void );
-void wait_input( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
-void wait_noinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick );
-void init_keyboard( void );
-void input_grab( bool enable );
-JE_word JE_mousePosition( JE_word *mouseX, JE_word *mouseY );
-void set_mouse_position( int x, int y );
+extern JE_boolean ESCPressed;  // TODO: Implement this.
 
-void service_SDL_events( JE_boolean clear_new );
+extern bool windowHasFocus;
 
-void sleep_game( void );
+extern bool keysactive[SDLK_LAST];
 
-void JE_clearKeyboard( void );
+extern const SDLKey lordKeySyms[4];
+extern bool lordKeySymsDown[4];
+
+extern Sint32 mouseX;
+extern Sint32 mouseY;
+extern Uint8 mouseButtonsDown;
+
+void init_keyboard(void);
+
+bool keyboardHasInput(void);
+bool keyboardGetInput(KeyboardInput *out_input);
+void keyboardClearInput(void);
+
+bool mouseHasInput(InputFlags flags);
+bool mouseGetInput(InputFlags flags, MouseInput *out_input);
+void mouseClearInput(void);
+
+void mouseSetRelative(bool enable);
+void mouseGetRelativePosition(Sint32 *out_x, Sint32 *out_y);
+
+void handleSdlEvents(void);
+
+bool hasInput(InputFlags flags);
+bool getInput(void);
+
+void waitUntilHasInput(InputFlags flags);
+void waitUntilGetInput(void);
+
+void waitUntilElapsed(void);
+bool waitUntilHasInputOrElapsed(void);
+bool waitUntilGetInputOrElapsed(void);
 
 #endif /* KEYBOARD_H */
-

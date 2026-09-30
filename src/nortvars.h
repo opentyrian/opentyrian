@@ -1,6 +1,6 @@
 /*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +23,7 @@
 
 #include "SDL.h"
 
-extern JE_boolean inputDetected;
-
-JE_boolean JE_buttonPressed( void );
-
-JE_boolean JE_anyButton( void );
-
-void JE_dBar3( SDL_Surface *surface, JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col );
-void JE_barDrawShadow( SDL_Surface *surface, JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize );
-void JE_wipeKey( void );
+void JE_dBar3(SDL_Surface *surface, JE_integer x,  JE_integer y,  JE_integer num,  JE_integer col);
+void JE_barDrawShadow(SDL_Surface *surface, JE_word x, JE_word y, JE_word res, JE_word col, JE_word amt, JE_word xsize, JE_word ysize);
 
 #endif /* NORTVARS_H */
-

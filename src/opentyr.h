@@ -1,6 +1,6 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,10 +21,12 @@
 
 #include "SDL_types.h"
 
-#include <math.h>
 #include <stdbool.h>
 
-#define COUNTOF(x) ((unsigned)(sizeof(x) / sizeof *(x)))  // use only on arrays!
+#ifndef COUNTOF
+#define COUNTOF(x) (sizeof(x) / sizeof *(x))  // use only on arrays!
+#endif
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -51,12 +53,9 @@ typedef bool   JE_boolean;
 typedef char   JE_char;
 typedef float  JE_real;
 
-#define TYRIAN_VERSION "2.1"
-
 extern const char *opentyrian_str;
 extern const char *opentyrian_version;
 
-void opentyrian_menu( void );
+void setupMenu(void);
 
 #endif /* OPENTYR_H */
-

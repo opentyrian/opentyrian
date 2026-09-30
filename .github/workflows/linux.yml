@@ -1,0 +1,43 @@
+name: Linux
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Linux (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false     # one arch failing must not cancel the other
+      matrix:
+        include:
+          - { runner: ubuntu-22.04,     arch: x86_64 }
+          - { runner: ubuntu-22.04-arm, arch: arm64 }
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # git describe --tags for the version string
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config libsdl1.2-dev libsdl-net1.2
+      - name: Compile check (debug, -Werror)
+        run: make -j"$(nproc)" debug
+      - name: Smoke test
+        run: ./opentyrian --help
+      - name: Compile check (release)
+        run: |
+          make clean
+          make -j"$(nproc)"
+      - name: Smoke test
+        run: ./opentyrian --help
+      - name: Test install/uninstall
+        run: |
+          DESTDIR=$(mktemp -d)
+          make install DESTDIR="$DESTDIR"
+          make uninstall DESTDIR="$DESTDIR"
+          find "$DESTDIR" -type f | grep . && exit 1
+          rm -rf "$DESTDIR"

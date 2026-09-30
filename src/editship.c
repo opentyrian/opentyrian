@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,75 +18,81 @@
  */
 #include "editship.h"
 
-#include "config.h"
 #include "file.h"
-#include "opentyr.h"
 
-#define SAS (sizeof(JE_ShipsType) - 4)
+#define EXTRA_SHIPS_FILE_SIZE (sizeof(JE_ShipsType) - 4)
 
-const JE_byte extraCryptKey[10] = { 58, 23, 16, 192, 254, 82, 113, 147, 62, 99 };
+static const Uint8 extraCryptKey[10] /* [1..10] */ =
+{
+	58, 23, 16, 192, 254, 82, 113, 147, 62, 99
+};
 
-JE_boolean extraAvail;
+bool extraAvail = false;
 JE_ShipsType extraShips;
-void *extraShapes;
-JE_word extraShapeSize;
+Sprite2_array extraShapes;
 
-void JE_decryptShips( void )
-{
-	JE_boolean correct = true;
-	JE_ShipsType s2;
-	JE_byte y;
-	
-	for (int x = SAS - 1; x >= 0; x--)
-	{
-		s2[x] = extraShips[x] ^ extraCryptKey[(x + 1) % 10];
-		if (x > 0)
-			s2[x] ^= extraShips[x - 1];
-	}  /*  <= Key Decryption Test (Reversed key) */
-	
-	y = 0;
-	for (uint x = 0; x < SAS; x++)
-		y += s2[x];
-	if (extraShips[SAS + 0] != y)
-		correct = false;
-	
-	y = 0;
-	for (uint x = 0; x < SAS; x++)
-		y -= s2[x];
-	if (extraShips[SAS + 1] != y)
-		correct = false;
-	
-	y = 1;
-	for (uint x = 0; x < SAS; x++)
-		y = y * s2[x] + 1;
-	if (extraShips[SAS + 2] != y)
-		correct = false;
-	
-	y = 0;
-	for (uint x = 0; x < SAS; x++)
-		y ^= s2[x];
-	if (extraShips[SAS + 3] != y)
-		correct = false;
-	
-	if (!correct)
-		exit(255);
-	
-	memcpy(extraShips, s2, sizeof(extraShips));
-}
+static bool decryptExtraShipsData(Uint8 *data);
 
-void JE_loadExtraShapes( void )
+void loadExtraShapes(void)
 {
-	FILE *f = dir_fopen(get_user_directory(), "newsh$.shp", "rb");
-	
-	if (f)
+	assert(extraShapes.data == NULL);
+
+	File file = userFileOpen("newsh$.shp", "rb");
+	if (file.error)
+		return;
+
+	long fileLength = fileGetLength(&file);
+	if ((size_t)fileLength >= sizeof extraShips)
 	{
-		extraAvail = true;
-		extraShapeSize = ftell_eof(f) - sizeof(extraShips);
-		extraShapes = malloc(extraShapeSize);
-		efread(extraShapes, extraShapeSize, 1, f);
-		efread(extraShips, sizeof(extraShips), 1, f);
-		JE_decryptShips();
-		fclose(f);
+		extraShapes.size = (size_t)fileLength - sizeof extraShips;
+		extraShapes.data = malloc(extraShapes.size);
+		fileReadExactly(&file, extraShapes.data, extraShapes.size);
+		fileReadExactly(&file, extraShips, sizeof extraShips);
+
+		extraAvail = !file.error;
+
+		extraAvail &= decryptExtraShipsData(extraShips);
 	}
+
+	fileClose(&file);
 }
 
+bool decryptExtraShipsData(Uint8 *data)
+{
+	for (size_t i = EXTRA_SHIPS_FILE_SIZE - 1; ; --i)
+	{
+		data[i] ^= extraCryptKey[(i + 1) % 10];
+		if (i > 0)
+			data[i] ^= data[i - 1];
+		else
+			break;
+	}
+
+	Uint8 y;
+
+	y = 0;
+	for (size_t i = 0; i < EXTRA_SHIPS_FILE_SIZE; ++i)
+		y += data[i];
+	if (data[EXTRA_SHIPS_FILE_SIZE + 0] != y)
+		return false;
+
+	y = 0;
+	for (size_t i = 0; i < EXTRA_SHIPS_FILE_SIZE; ++i)
+		y -= data[i];
+	if (data[EXTRA_SHIPS_FILE_SIZE + 1] != y)
+		return false;
+
+	y = 1;
+	for (size_t i = 0; i < EXTRA_SHIPS_FILE_SIZE; ++i)
+		y = y * data[i] + 1;
+	if (data[EXTRA_SHIPS_FILE_SIZE + 2] != y)
+		return false;
+
+	y = 0;
+	for (size_t i = 0; i < EXTRA_SHIPS_FILE_SIZE; ++i)
+		y ^= data[i];
+	if (data[EXTRA_SHIPS_FILE_SIZE + 3] != y)
+		return false;
+
+	return true;
+}

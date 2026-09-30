@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,9 +19,6 @@
 #ifndef DESTRUCT_H
 #define DESTRUCT_H
 
-#include "opentyr.h"
-
-void JE_destructGame( void );
+void JE_destructGame(void);
 
 #endif /* DESTRUCT_H */
-

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -28,7 +28,7 @@
     <IntDir>$(SolutionDir)..\obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
@@ -54,6 +54,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
+      <CompileAs>CompileAsC</CompileAs>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SDLBaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(WITH_NETWORK)'=='true'">$(SDLnetBaseDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>EnableAllWarnings</WarningLevel>
@@ -62,7 +64,8 @@
       <PreprocessorDefinitions Condition="'$(OPENTYRIAN_VERSION)'!=''">OPENTYRIAN_VERSION="$(OPENTYRIAN_VERSION)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(WITH_NETWORK)'=='true'">WITH_NETWORK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(TYRIAN_DIR)'!=''">TYRIAN_DIR=$(TYRIAN_DIR);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableSpecificWarnings>4018;4061;4204;4210;4242;4244;4245;4267;4305;4456;4457;4459;4710;4711;4738;4820;5045;26451</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4018;4061;4204;4210;4242;4244;4245;4267;4305;4456;4457;4459;4668;4710;4711;4738;4820;5045;26451</DisableSpecificWarnings>
+      <TreatSpecificWarningsAsErrors>4013</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -76,6 +79,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
     </Link>
@@ -114,6 +118,7 @@
     <ClCompile Include="..\src\backgrnd.c" />
     <ClCompile Include="..\src\config.c" />
     <ClCompile Include="..\src\config_file.c" />
+    <ClCompile Include="..\src\demo.c" />
     <ClCompile Include="..\src\destruct.c" />
     <ClCompile Include="..\src\editship.c" />
     <ClCompile Include="..\src\episodes.c" />
@@ -126,10 +131,13 @@
     <ClCompile Include="..\src\jukebox.c" />
     <ClCompile Include="..\src\keyboard.c" />
     <ClCompile Include="..\src\lds_play.c" />
+    <ClCompile Include="..\src\logging.c" />
     <ClCompile Include="..\src\loudness.c" />
     <ClCompile Include="..\src\lvllib.c" />
     <ClCompile Include="..\src\lvlmast.c" />
     <ClCompile Include="..\src\mainint.c" />
+    <ClCompile Include="..\src\memreader.c" />
+    <ClCompile Include="..\src\memwriter.c" />
     <ClCompile Include="..\src\menus.c" />
     <ClCompile Include="..\src\mouse.c" />
     <ClCompile Include="..\src\mtrand.c" />
@@ -139,20 +147,17 @@
     <ClCompile Include="..\src\nortvars.c" />
     <ClCompile Include="..\src\opentyr.c" />
     <ClCompile Include="..\src\opl.c" />
+    <ClCompile Include="..\src\pal.c" />
     <ClCompile Include="..\src\palette.c" />
     <ClCompile Include="..\src\params.c" />
     <ClCompile Include="..\src\pcxload.c" />
     <ClCompile Include="..\src\pcxmast.c" />
     <ClCompile Include="..\src\picload.c" />
     <ClCompile Include="..\src\player.c" />
-    <ClCompile Include="..\src\scroller.c" />
-    <ClCompile Include="..\src\setup.c" />
     <ClCompile Include="..\src\shots.c" />
-    <ClCompile Include="..\src\sizebuf.c" />
     <ClCompile Include="..\src\sndmast.c" />
     <ClCompile Include="..\src\sprite.c" />
     <ClCompile Include="..\src\starlib.c" />
-    <ClCompile Include="..\src\std_support.c" />
     <ClCompile Include="..\src\tyrian2.c" />
     <ClCompile Include="..\src\varz.c" />
     <ClCompile Include="..\src\vga256d.c" />
@@ -168,6 +173,7 @@
     <ClInclude Include="..\src\backgrnd.h" />
     <ClInclude Include="..\src\config.h" />
     <ClInclude Include="..\src\config_file.h" />
+    <ClInclude Include="..\src\demo.h" />
     <ClInclude Include="..\src\destruct.h" />
     <ClInclude Include="..\src\editship.h" />
     <ClInclude Include="..\src\episodes.h" />
@@ -180,10 +186,13 @@
     <ClInclude Include="..\src\jukebox.h" />
     <ClInclude Include="..\src\keyboard.h" />
     <ClInclude Include="..\src\lds_play.h" />
+    <ClInclude Include="..\src\logging.h" />
     <ClInclude Include="..\src\loudness.h" />
     <ClInclude Include="..\src\lvllib.h" />
     <ClInclude Include="..\src\lvlmast.h" />
     <ClInclude Include="..\src\mainint.h" />
+    <ClInclude Include="..\src\memreader.h" />
+    <ClInclude Include="..\src\memwriter.h" />
     <ClInclude Include="..\src\menus.h" />
     <ClInclude Include="..\src\mouse.h" />
     <ClInclude Include="..\src\mtrand.h" />
@@ -194,20 +203,17 @@
     <ClInclude Include="..\src\opentyr.h" />
     <ClInclude Include="..\src\opentyrian_version.h" />
     <ClInclude Include="..\src\opl.h" />
+    <ClInclude Include="..\src\pal.h" />
     <ClInclude Include="..\src\palette.h" />
     <ClInclude Include="..\src\params.h" />
     <ClInclude Include="..\src\pcxload.h" />
     <ClInclude Include="..\src\pcxmast.h" />
     <ClInclude Include="..\src\picload.h" />
     <ClInclude Include="..\src\player.h" />
-    <ClInclude Include="..\src\scroller.h" />
-    <ClInclude Include="..\src\setup.h" />
     <ClInclude Include="..\src\shots.h" />
-    <ClInclude Include="..\src\sizebuf.h" />
     <ClInclude Include="..\src\sndmast.h" />
     <ClInclude Include="..\src\sprite.h" />
     <ClInclude Include="..\src\starlib.h" />
-    <ClInclude Include="..\src\std_support.h" />
     <ClInclude Include="..\src\tyrian2.h" />
     <ClInclude Include="..\src\varz.h" />
     <ClInclude Include="..\src\vga256d.h" />

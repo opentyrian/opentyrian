@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,6 @@
 #include "opentyr.h"
 
 #include "lvlmast.h"
-
 
 /* Episodes and general data */
 
@@ -158,16 +157,15 @@ extern JE_EnemyDatType enemyDat;
 extern JE_byte initial_episode_num, episodeNum;
 extern JE_boolean episodeAvail[EPISODE_MAX];
 
-extern char episode_file[13], cube_file[13];
+extern char episodeFilename[13];
+extern char cubeFilename[13];
 
-extern JE_longint episode1DataLoc;
 extern JE_boolean bonusLevel;
 extern JE_boolean jumpBackToEpisode1;
 
-void JE_loadItemDat( void );
-void JE_initEpisode( JE_byte newEpisode );
-unsigned int JE_findNextEpisode( void );
-void JE_scanForEpisodes( void );
+void JE_loadItemDat(void);
+void JE_initEpisode(JE_byte newEpisode);
+unsigned int JE_findNextEpisode(void);
+void JE_scanForEpisodes(void);
 
 #endif /* EPISODES_H */
-

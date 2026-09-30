@@ -1,6 +1,6 @@
 /*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2013  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,16 +18,19 @@
  */
 #include "shots.h"
 
+#include "episodes.h"
 #include "player.h"
 #include "sprite.h"
 #include "video.h"
 #include "varz.h"
 
+#include <math.h>
+
 // I'm pretty sure the last extra entry is never used.
 PlayerShotDataType playerShotData[MAX_PWEAPON + 1]; /* [1..MaxPWeapon+1] */
 JE_byte shotAvail[MAX_PWEAPON]; /* [1..MaxPWeapon] */   /*0:Avail 1-255:Duration left*/
 
-void simulate_player_shots( void )
+void simulate_player_shots(void)
 {
 	/* Player Shot Images */
 	for (int z = 0; z < MAX_PWEAPON; z++)
@@ -84,7 +87,9 @@ void simulate_player_shots( void )
 					if (shot->shotTrail == 98)
 					{
 						JE_setupExplosion(shot->shotX - shot->shotXM, shot->shotY - shot->shotYM, shot->shotTrail);
-					} else {
+					}
+					else
+					{
 						JE_setupExplosion(shot->shotX, shot->shotY, shot->shotTrail);
 					}
 				}*/
@@ -93,14 +98,14 @@ void simulate_player_shots( void )
 				if (++shot->shotAni == shot->shotAniMax)
 					shot->shotAni = 0;
 
-				if (anim_frame < 6000)
+				if (anim_frame < 60000)
 				{
 					if (anim_frame > 1000)
 						anim_frame = anim_frame % 1000;
 					if (anim_frame > 500)
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesW2, anim_frame - 500);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, spriteSheet12, anim_frame - 500);
 					else
-						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, shapesC1, anim_frame);
+						blit_sprite2(VGAScreen, tempShotX+1, tempShotY, spriteSheet8, anim_frame);
 				}
 			}
 
@@ -117,7 +122,7 @@ static const JE_word linkSonicGr[17] /* [0..16] */ =
 static const JE_word linkMult2Gr[17] /* [0..16] */ =
 	{78,299,295,297,2,278,276,280,59,279,275,277,40,296,294,298,78};
 
-void player_shot_set_direction( JE_integer shot_id, uint weapon_id, JE_real direction )
+void player_shot_set_direction(JE_integer shot_id, uint weapon_id, JE_real direction)
 {
 	PlayerShotDataType* shot = &playerShotData[shot_id];
 
@@ -162,7 +167,7 @@ bool player_shot_move_and_draw(
 		int* out_shotx, int* out_shoty,
 		JE_integer* out_shot_damage, JE_byte* out_blast_filter,
 		JE_byte* out_chain, JE_byte* out_playerNum,
-		JE_word* out_special_radiusw, JE_word* out_special_radiush )
+		JE_word* out_special_radiusw, JE_word* out_special_radiush)
 {
 	PlayerShotDataType* shot = &playerShotData[shot_id];
 
@@ -288,14 +293,14 @@ bool player_shot_move_and_draw(
 			if (sprite_frame > 500)
 			{
 				if (background2 && *out_shoty + shadowYDist < 190 && tmp_shotXM < 100)
-					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, shapesW2, sprite_frame - 500);
-				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, shapesW2, sprite_frame - 500);
+					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, spriteSheet12, sprite_frame - 500);
+				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, spriteSheet12, sprite_frame - 500);
 			}
 			else
 			{
 				if (background2 && *out_shoty + shadowYDist < 190 && tmp_shotXM < 100)
-					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, shapesC1, sprite_frame);
-				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, shapesC1, sprite_frame);
+					blit_sprite2_darken(VGAScreen, *out_shotx+1, *out_shoty + shadowYDist, spriteSheet8, sprite_frame);
+				blit_sprite2(VGAScreen, *out_shotx+1, *out_shoty, spriteSheet8, sprite_frame);
 			}
 		}
 	}
@@ -303,7 +308,7 @@ bool player_shot_move_and_draw(
 	return true;
 }
 
-JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum )
+JE_integer player_shot_create(JE_word portNum, uint bay_i, JE_word PX, JE_word PY, JE_word mouseX, JE_word mouseY, JE_word wpNum, JE_byte playerNum)  // FKA Varz.initPlayerShot
 {
 	static const JE_byte soundChannel[11] /* [1..11] */ = {0, 2, 4, 4, 2, 2, 5, 5, 1, 4, 1};
 
@@ -465,7 +470,6 @@ JE_integer player_shot_create( JE_word portNum, uint bay_i, JE_word PX, JE_word 
 			if (shot->shotXM == 101)
 				shot->shotY -= player[shot->playerNumber-1].delta_y_shot_move;
 		}
-
 
 		if (weapon->aim > 5)  /*Guided Shot*/
 		{

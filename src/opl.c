@@ -38,7 +38,6 @@
 #define OPL_INLINE inline
 
 
-#undef NUM_CHANNELS
 #if defined(OPLTYPE_IS_OPL3)
 #define NUM_CHANNELS	18
 #else
@@ -81,6 +80,12 @@
 
 #define ARC_SECONDSET		0x100	// second operator set for OPL3
 
+#if defined(OPLTYPE_IS_OPL3)
+#define ARC_SECONDSET_MASK	0x100
+#else
+#define ARC_SECONDSET_MASK	0
+#endif
+
 
 #define OP_ACT_OFF			0x00
 #define OP_ACT_NORMAL		0x01	// regular channel activated (bitmasked)
@@ -106,7 +111,7 @@
  adlib register set.
  Only the channels 0,1,2 (first set) and 9,10,11 (second set) can act as
  4op channels. The two additional operators for a channel y come from the
- 2op channel y+3 so the operatorss y, (9+y), y+3, (9+y)+3 make up a 4op
+ 2op channel y+3 so the operators y, (9+y), y+3, (9+y)+3 make up a 4op
  channel.
  */
 typedef struct operator_struct {
@@ -197,9 +202,8 @@ static Bit32s vibval_var2[BLOCKBUF_SIZE];
 //static Bit32s vibval_var3[BLOCKBUF_SIZE];
 //static Bit32s vibval_var4[BLOCKBUF_SIZE];
 
-// vibrato/trmolo value table pointers
+// vibrato value table pointers
 static Bit32s *vibval1, *vibval2, *vibval3, *vibval4;
-static Bit32s *tremval1, *tremval2, *tremval3, *tremval4;
 
 
 // key scale level lookup table
@@ -245,7 +249,7 @@ static const Bit8u regbase2op[22] = {
 
 
 // start of the waveform
-static Bit32u waveform[8] = {
+static const Bit32u waveform[8] = {
 	WAVEPREC,
 	WAVEPREC>>1,
 	WAVEPREC,
@@ -257,7 +261,7 @@ static Bit32u waveform[8] = {
 };
 
 // length of the waveform as mask
-static Bit32u wavemask[8] = {
+static const Bit32u wavemask[8] = {
 	WAVEPREC-1,
 	WAVEPREC-1,
 	(WAVEPREC>>1)-1,
@@ -269,7 +273,7 @@ static Bit32u wavemask[8] = {
 };
 
 // where the first entry resides
-static Bit32u wavestart[8] = {
+static const Bit32u wavestart[8] = {
 	0,
 	WAVEPREC>>1,
 	0,
@@ -281,13 +285,13 @@ static Bit32u wavestart[8] = {
 };
 
 // envelope generator function constants
-static fltype attackconst[4] = {
+static const fltype attackconst[4] = {
 	(fltype)(1/2.82624),
 	(fltype)(1/2.25280),
 	(fltype)(1/1.88416),
 	(fltype)(1/1.59744)
 };
-static fltype decrelconst[4] = {
+static const fltype decrelconst[4] = {
 	(fltype)(1/39.28064),
 	(fltype)(1/31.41608),
 	(fltype)(1/26.17344),
@@ -454,7 +458,7 @@ void operator_attack(op_type* op_pt) {
 
 typedef void (*optype_fptr)(op_type*);
 
-optype_fptr opfuncs[6] = {
+const optype_fptr opfuncs[6] = {
 	operator_attack,
 	operator_decay,
 	operator_release,
@@ -478,7 +482,7 @@ void change_attackrate(Bitu regbase, op_type* op_pt) {
 		op_pt->env_step_a = (1<<(steps<=12?12-steps:0))-1;
 
 		Bits step_num = (step_skip<=48)?(4-(step_skip&3)):0;
-		static Bit8u step_skip_mask[5] = {0xff, 0xfe, 0xee, 0xba, 0xaa}; 
+		static const Bit8u step_skip_mask[5] = {0xff, 0xfe, 0xee, 0xba, 0xaa}; 
 		op_pt->env_step_skip_a = step_skip_mask[step_num];
 
 #if defined(OPLTYPE_IS_OPL3)
@@ -748,7 +752,7 @@ void adlib_init(Bit32u samplerate) {
 
 
 void adlib_write(Bitu idx, Bit8u val) {
-	Bit32u second_set = idx&0x100;
+	Bit32u second_set = idx&ARC_SECONDSET_MASK;
 	adlibreg[idx] = val;
 
 	switch (idx&0xf0) {
@@ -1126,6 +1130,9 @@ void adlib_getsample(Bit16s* sndptr, Bits numsamples) {
 		// clear second output buffer (opl3 stereo)
 		if (adlibreg[0x105]&1) memset((void*)&outbufr,0,endsamples*sizeof(Bit32s));
 #endif
+
+		// tremolo value table pointers
+		Bit32s *tremval1, *tremval2, *tremval3, *tremval4;
 
 		// calculate vibrato/tremolo lookup tables
 		Bit32s vib_tshift = ((adlibreg[ARC_PERC_MODE]&0x40)==0) ? 1 : 0;	// 14cents/7cents switching

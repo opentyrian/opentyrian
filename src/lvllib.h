@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,14 +21,12 @@
 
 #include "opentyr.h"
 
-
 typedef JE_longint JE_LvlPosType[43]; /* [1..42 + 1] */
 
 extern JE_LvlPosType lvlPos;
-extern char levelFile[13]; /* string [12] */
+extern char levelFilename[13]; /* string [12] */
 extern JE_word lvlNum;
 
-void JE_analyzeLevel( void );
+void analyzeLevel(void);
 
 #endif /* LVLLIB_H */
-

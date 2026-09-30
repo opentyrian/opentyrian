@@ -1,6 +1,6 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,190 +19,397 @@
 #include "file.h"
 
 #include "opentyr.h"
-#include "varz.h"
+#include "pal.h"
 
 #include "SDL.h"
 
+#include <assert.h>
+#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-const char *custom_data_dir = NULL;
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
 
-// finds the Tyrian data directory
-const char *data_dir( void )
-{
-	const char *dirs[] =
-	{
-		custom_data_dir,
-		TYRIAN_DIR,
-		"data",
-		".",
-	};
-	
-	static const char *dir = NULL;
-	
-	if (dir != NULL)
-		return dir;
-	
-	for (uint i = 0; i < COUNTOF(dirs); ++i)
-	{
-		if (dirs[i] == NULL)
-			continue;
-		
-		FILE *f = dir_fopen(dirs[i], "tyrian1.lvl", "rb");
-		if (f)
-		{
-			fclose(f);
-			
-			dir = dirs[i];
-			break;
-		}
-	}
-	
-	if (dir == NULL) // data not found
-		dir = "";
-	
-	return dir;
-}
+const char *customDataDirPath = NULL;
 
-// prepend directory and fopen
-FILE *dir_fopen( const char *dir, const char *file, const char *mode )
+enum
 {
-	char *path = malloc(strlen(dir) + 1 + strlen(file) + 1);
-	sprintf(path, "%s/%s", dir, file);
-	
-	FILE *f = fopen(path, mode);
-	
-	free(path);
-	
-	return f;
-}
+	ERRNUM_EOF = -1,
+};
 
-// warn when dir_fopen fails
-FILE *dir_fopen_warn(  const char *dir, const char *file, const char *mode )
-{
-	FILE *f = dir_fopen(dir, file, mode);
-	
-	if (f == NULL)
-		fprintf(stderr, "warning: failed to open '%s': %s\n", file, strerror(errno));
-	
-	return f;
-}
+static const char *dataDirPath = NULL;
+static size_t dataDirPathLen = 0;
 
-// die when dir_fopen fails
-FILE *dir_fopen_die( const char *dir, const char *file, const char *mode )
-{
-	FILE *f = dir_fopen(dir, file, mode);
-	
-	if (f == NULL)
-	{
-		fprintf(stderr, "error: failed to open '%s': %s\n", file, strerror(errno));
-		fprintf(stderr, "error: One or more of the required Tyrian " TYRIAN_VERSION " data files could not be found.\n"
-		                "       Please read the README file.\n");
-		JE_tyrianHalt(1);
-	}
-	
-	return f;
-}
+static char *userDirPath = NULL;
+static size_t userDirPathLen = 0;
 
-// check if file can be opened for reading
-bool dir_file_exists( const char *dir, const char *file )
+static bool fileExists(const char *path)
 {
-	FILE *f = dir_fopen(dir, file, "rb");
+	FILE *f = fopen(path, "rb");
 	if (f != NULL)
 		fclose(f);
-	return (f != NULL);
+	return f != NULL;
 }
 
-// returns end-of-file position
-long ftell_eof( FILE *f )
+static File fileOpen(const char *path, const char *mode)
 {
-	long pos = ftell(f);
-	
-	fseek(f, 0, SEEK_END);
-	long size = ftell(f);
-	
-	fseek(f, pos, SEEK_SET);
-	
-	return size;
+	errno = 0;  // fopen might not set errno
+	FILE *f = fopen(path, mode);
+	return (File) { f, errno, f == NULL };
 }
 
-// endian-swapping fread that dies if the expected amount cannot be read
-size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
+bool findDataFiles(void)
 {
-	size_t num_read = fread(buffer, size, num, stream);
-	
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	switch (size)
+	dataDirPath = NULL;
+	dataDirPathLen = 0;
+
+	const char *filename = "tyrian1.lvl";
+
+	if (customDataDirPath != NULL)
 	{
-		case 2:
-			for (size_t i = 0; i < num; i++)
-				((Uint16 *)buffer)[i] = SDL_Swap16(((Uint16 *)buffer)[i]);
-			break;
-		case 4:
-			for (size_t i = 0; i < num; i++)
-				((Uint32 *)buffer)[i] = SDL_Swap32(((Uint32 *)buffer)[i]);
-			break;
-		case 8:
-			for (size_t i = 0; i < num; i++)
-				((Uint64 *)buffer)[i] = SDL_Swap64(((Uint64 *)buffer)[i]);
-			break;
-		default:
-			break;
+		dataDirPath = customDataDirPath;
+		dataDirPathLen = strlen(dataDirPath);
+
+		return dataFileExists(filename);
+	}
+
+	// A "data" directory next to the executable (or inside the app bundle's
+	// Resources on macOS), so a self-contained distribution runs from any cwd.
+	static char *baseDataDirPath = NULL;
+	if (baseDataDirPath == NULL)
+	{
+		char *basePath = getBasePath();
+		if (basePath != NULL)
+		{
+			size_t baseDataDirPathSize = strlen(basePath) + strlen("data") + 1;
+			baseDataDirPath = malloc(baseDataDirPathSize);
+			snprintf(baseDataDirPath, baseDataDirPathSize, "%sdata", basePath);
+			free(basePath);
+		}
+	}
+
+	const char *dataDirPaths[] =
+	{
+		baseDataDirPath,
+#ifdef TYRIAN_DIR
+		TYRIAN_DIR,
+#endif
+	};
+
+	for (size_t i = 0; i < COUNTOF(dataDirPaths); ++i)
+	{
+		if (dataDirPaths[i] == NULL)
+			continue;
+
+		dataDirPath = dataDirPaths[i];
+		dataDirPathLen = strlen(dataDirPath);
+
+		if (dataFileExists(filename))
+			return true;
+	}
+
+	dataDirPath = "";
+	dataDirPathLen = 0;
+
+	return fileExists(filename);
+}
+
+bool dataFileExists(const char *filename)
+{
+	File file = dataFileOpen(filename, "rb");
+
+	bool result = !file.error;
+
+	fileClose(&file);
+
+	return result;
+}
+
+bool userFileExists(const char *filename)
+{
+	File file = userFileOpen(filename, "rb");
+
+	bool result = !file.error;
+
+	fileClose(&file);
+
+	return result;
+}
+
+File dataFileOpen(const char *filename, const char *mode)
+{
+	if (dataDirPath == NULL)
+		findDataFiles();
+
+#ifndef NDEBUG
+	for (size_t i = 0; filename[i] != '\0'; ++i)
+		assert(!isupper(filename[i]));
+#endif
+
+	if (dataDirPathLen == 0)
+		return fileOpen(filename, mode);
+
+	size_t pathSize = dataDirPathLen + 1 + strlen(filename) + 1;
+	char *path = malloc(pathSize);
+	snprintf(path, pathSize, "%s/%s", dataDirPath, filename);
+
+	File file = fileOpen(path, mode);
+
+	free(path);
+
+	return file;
+}
+
+static void determineUserDirPath(void)
+{
+	if (userDirPathLen != 0)
+	{
+		free(userDirPath);
+		userDirPathLen = 0;
+	}
+
+	char *basePath = getBasePath();
+	if (basePath != NULL)
+	{
+		// If a certain file exists in the base path, store user files there.
+		const char *const filename = "opentyrian.cfg";
+
+		size_t filePathSize = strlen(basePath) + strlen(filename) + 1;
+		char *filePath = malloc(filePathSize);
+		snprintf(filePath, filePathSize, "%s%s", basePath, filename);
+
+		bool portable = fileExists(filePath);
+		
+		free(filePath);
+
+		if (portable)
+		{
+			userDirPathLen = strlen(basePath) - 1;  // Trim trailing slash.
+			size_t userDirPathSize = userDirPathLen + 1;
+			userDirPath = malloc(userDirPathSize);
+			snprintf(userDirPath, userDirPathSize, "%s", basePath);
+		}
+
+		free(basePath);
+
+		if (portable)
+			return;
+	}
+
+#ifdef TARGET_WIN32
+	const char *appData = getenv("APPDATA");
+	if (appData != NULL)
+	{
+		userDirPathLen = strlen(appData) + strlen("/OpenTyrian");
+		size_t userDirPathSize = userDirPathLen + 1;
+		userDirPath = malloc(userDirPathSize);
+		snprintf(userDirPath, userDirPathSize, "%s/OpenTyrian", appData);
+		return;
+	}
+#else
+	const char *xdgConfigHome = getenv("XDG_CONFIG_HOME");
+	if (xdgConfigHome != NULL)
+	{
+		userDirPathLen = strlen(xdgConfigHome) + strlen("/opentyrian");
+		size_t userDirPathSize = userDirPathLen + 1;
+		userDirPath = malloc(userDirPathSize);
+		snprintf(userDirPath, userDirPathSize, "%s/opentyrian", xdgConfigHome);
+		return;
+	}
+
+	const char *home = getenv("HOME");
+	if (home != NULL)
+	{
+		userDirPathLen = strlen(home) + strlen("/.config/opentyrian");
+		size_t userDirPathSize = userDirPathLen + 1;
+		userDirPath = malloc(userDirPathSize);
+		snprintf(userDirPath, userDirPathSize, "%s/.config/opentyrian", home);
+		return;
 	}
 #endif
-	
-	if (num_read != num)
-	{
-		fprintf(stderr, "error: An unexpected problem occurred while reading from a file.\n");
-		JE_tyrianHalt(1);
-	}
 
-	return num_read;
+	userDirPath = "";
+	userDirPathLen = 0;
 }
 
-// endian-swapping fwrite that dies if the expected amount cannot be written
-size_t efwrite( const void *buffer, size_t size, size_t num, FILE *stream )
+File userFileOpen(const char *filename, const char *mode)
 {
-	void *swap_buffer = NULL;
-	
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	switch (size)
-	{
-		case 2:
-			swap_buffer = malloc(size * num);
-			for (size_t i = 0; i < num; i++)
-				((Uint16 *)swap_buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
-			buffer = swap_buffer;
-			break;
-		case 4:
-			swap_buffer = malloc(size * num);
-			for (size_t i = 0; i < num; i++)
-				((Uint32 *)swap_buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
-			buffer = swap_buffer;
-			break;
-		case 8:
-			swap_buffer = malloc(size * num);
-			for (size_t i = 0; i < num; i++)
-				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
-			buffer = swap_buffer;
-			break;
-		default:
-			break;
-	}
+	if (userDirPath == NULL)
+		determineUserDirPath();
+
+	if (userDirPathLen == 0)
+		return fileOpen(filename, mode);
+
+#ifdef _WIN32
+	(void)_mkdir(userDirPath);
+#else
+	(void)mkdir(userDirPath, 0700);
 #endif
-	
-	size_t num_written = fwrite(buffer, size, num, stream);
-	
-	if (swap_buffer != NULL)
-		free(swap_buffer);
-	
-	if (num_written != num)
+
+	size_t pathSize = userDirPathLen + 1 + strlen(filename) + 1;
+	char *path = malloc(pathSize);
+	snprintf(path, pathSize, "%s/%s", userDirPath, filename);
+
+	File file = fileOpen(path, mode);
+
+	free(path);
+
+	return file;
+}
+
+void fileSetPosition(File *file, long position)
+{
+	if (file->error)
+		return;
+
+	errno = 0;  // fseek might not set errno
+	if (fseek(file->f, position, SEEK_SET) == 0)
+		return;
+
+	file->errnum = errno;
+	file->error = true;
+}
+
+long fileGetPosition(File *file)
+{
+	if (file->error)
+		return 0;
+
+	errno = 0;  // ftell might not set errno
+	long position = ftell(file->f);
+	if (position >= 0)
+		return position;
+
+	file->errnum = errno;
+	file->error = true;
+
+	return 0;
+}
+
+long fileGetLength(File *file)
+{
+	if (file->error)
+		return 0;
+
+	errno = 0;  // fseek/ftell might not set errno
+	long position = ftell(file->f);
+	if (position >= 0 &&
+	    fseek(file->f, 0, SEEK_END) == 0)
 	{
-		fprintf(stderr, "error: An unexpected problem occurred while writing to a file.\n");
-		JE_tyrianHalt(1);
+		long length = ftell(file->f);
+		if (length >= 0 &&
+		    fseek(file->f, position, SEEK_SET) == 0)
+		{
+			return length;
+		}
 	}
-	
-	return num_written;
+
+	file->errnum = errno;
+	file->error = true;
+
+	return 0;
+}
+
+size_t fileReadAtMost(File *file, void *data, size_t size)
+{
+	if (file->error)
+		return 0;
+
+	errno = 0;  // fread might not set errno
+	size_t read = fread(data, 1, size, file->f);
+	if (read == size)
+		return read;
+
+	file->errnum = errno;
+	file->error = ferror(file->f) != 0;
+	assert(file->error || feof(file->f) != 0);
+
+	return read;
+}
+
+void fileReadExactly(File *file, void *data, size_t size)
+{
+	if (file->error)
+	{
+		memset(data, 0, size);
+		return;
+	}
+
+	errno = 0;  // fread might not set errno
+	size_t read = fread(data, 1, size, file->f);
+	if (read == size)
+		return;
+
+	file->errnum = errno;
+	file->error = true;
+
+	if (file->errnum == 0)
+		file->errnum = ERRNUM_EOF;
+
+	memset((uint8_t *)data + read, 0, size - read);
+}
+
+void fileWrite(File *file, const void *data, size_t size)
+{
+	if (file->error)
+		return;
+
+	errno = 0;  // fwrite might not set errno
+	size_t written = fwrite(data, 1, size, file->f);
+	if (written == size)
+		return;
+
+	file->errnum = errno;
+	file->error = true;
+
+	assert(written < size);
+}
+
+void fileFlush(File *file)
+{
+	if (file->error)
+		return;
+
+	errno = 0;  // fflush might not set errno
+	if (fflush(file->f) == 0)
+		return;
+
+	file->errnum = errno;
+	file->error = true;
+}
+
+void fileClose(File *file)
+{
+	if (file->f == NULL)
+		return;
+
+	errno = 0;  // fclose might not set errno
+	int result = fclose(file->f);
+	file->f = NULL;
+	if (result == 0)
+		return;
+
+	file->errnum = errno;
+	file->error = true;
+}
+
+const char *fileGetError(File *file)
+{
+	switch (file->errnum)
+	{
+	case ERRNUM_EOF:
+		return "Unexpected end of file";
+	case 0:
+		if (file->error)
+			return "Unknown error";
+		// fall through
+	default:
+		return strerror(file->errnum);
+	}
 }

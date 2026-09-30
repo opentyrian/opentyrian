@@ -1,6 +1,6 @@
-/* 
+/*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,20 +24,39 @@
 
 #include "SDL.h"
 
-#include <stdio.h>
-
 #define SAVE_FILES_NUM (11 * 2)
 
-/* These are necessary because the size of the structure has changed from the original, but we
-   need to know the original sizes in order to find things in TYRIAN.SAV */
-#define SAVE_FILES_SIZE 2398
-#define SIZEOF_SAVEGAMETEMP SAVE_FILES_SIZE + 4 + 100
-#define SAVE_FILE_SIZE (SIZEOF_SAVEGAMETEMP - 4)
+enum
+{
+	DIFFICULTY_WIMP = 0,
+	DIFFICULTY_EASY,
+	DIFFICULTY_NORMAL,
+	DIFFICULTY_HARD,
+	DIFFICULTY_IMPOSSIBLE,
+	DIFFICULTY_INSANITY,
+	DIFFICULTY_SUICIDE,
+	DIFFICULTY_MANIACAL,
+	DIFFICULTY_ZINGLON,  // aka Lord of the Game
+	DIFFICULTY_NORTANEOUS,
+	DIFFICULTY_10,
+};
 
-/*#define SAVE_FILES_SIZE (2502 - 4)
-#define SAVE_FILE_SIZE (SAVE_FILES_SIZE)*/
+// NOTE: Do not reorder.  This ordering corresponds to the keyboard
+//       configuration menu and to the bits stored in demo files.
+enum
+{
+	KEY_SETTING_UP,
+	KEY_SETTING_DOWN,
+	KEY_SETTING_LEFT,
+	KEY_SETTING_RIGHT,
+	KEY_SETTING_FIRE,
+	KEY_SETTING_CHANGE_FIRE,
+	KEY_SETTING_LEFT_SIDEKICK,
+	KEY_SETTING_RIGHT_SIDEKICK,
+};
 
-typedef SDLKey JE_KeySettingType[8]; /* [1..8] */
+typedef SDLKey KeySettings[8];
+
 typedef JE_byte JE_PItemsType[12]; /* [1..12] */
 
 typedef JE_byte JE_EditorItemAvailType[100]; /* [1..100] */
@@ -63,20 +82,15 @@ typedef struct
 	JE_byte       initialDifficulty;
 
 	/* High Scores - Each episode has both sets of 1&2 player selections - with 3 in each */
-	JE_longint    highScore1,
-	              highScore2;
+	JE_longint    highScore1;
+	JE_longint    highScore2;  // unused
 	char          highScoreName[30]; /* string [29] */
 	JE_byte       highScoreDiff;
 } JE_SaveFileType;
 
 typedef JE_SaveFileType JE_SaveFilesType[SAVE_FILES_NUM]; /* [1..savefilesnum] */
-typedef JE_byte JE_SaveGameTemp[SAVE_FILES_SIZE + 4 + 100]; /* [1..sizeof(savefilestype) + 4 + 100] */
 
-extern const JE_byte cryptKey[10];
-extern const JE_KeySettingType defaultKeySettings;
-extern const char defaultHighScoreNames[34][23];
-extern const char defaultTeamNames[22][25];
-extern const JE_EditorItemAvailType initialItemAvail;
+extern const KeySettings defaultKeySettings;
 extern JE_boolean smoothies[9];
 extern JE_byte starShowVGASpecialCode;
 extern JE_word lastCubeMax, cubeMax;
@@ -105,7 +119,7 @@ extern JE_byte shotRepeat[11], shotMultiPos[11];
 extern JE_boolean portConfigChange, portConfigDone;
 extern char lastLevelName[11], levelName[11];
 extern JE_byte mainLevel, nextLevel, saveLevel;
-extern JE_KeySettingType keySettings;
+extern KeySettings keySettings;
 extern JE_shortint levelFilter, levelFilterNew, levelBrightness, levelBrightnessChg;
 extern JE_boolean filtrationAvail, filterActive, filterFade, filterFadeStart;
 extern JE_boolean gameJustLoaded;
@@ -121,28 +135,28 @@ extern JE_byte background3over;
 extern JE_byte background2over;
 extern JE_byte gammaCorrection;
 extern JE_boolean superPause, explosionTransparent, youAreCheating, displayScore, background2, smoothScroll, wild, superWild, starActive, topEnemyOver, skyEnemyOverAll, background2notTransparent;
-extern JE_byte versionNum;
 extern JE_byte fastPlay;
 extern JE_boolean pentiumMode;
 extern JE_byte gameSpeed;
 extern JE_byte processorType;
 extern JE_SaveFilesType saveFiles;
-extern JE_SaveGameTemp saveTemp;
+extern JE_EditorItemAvailType editorItemAvail;
 extern JE_word editorLevel;
 
 extern Config opentyrian_config;
 
-void JE_initProcessorType( void );
-void JE_setNewGameSpeed( void );
-const char *get_user_directory( void );
-void JE_loadConfiguration( void );
-void JE_saveConfiguration( void );
+void JE_initProcessorType(void);
+void JE_setNewGameSpeed(void);
 
-void JE_saveGame( JE_byte slot, const char *name );
-void JE_loadGame( JE_byte slot );
+void loadConfiguration(void);
+void saveConfiguration(void);
 
-void JE_encryptSaveTemp( void );
-void JE_decryptSaveTemp( void );
+void loadSaves(void);
+void saveSaves(void);
+
+void JE_saveGame(JE_byte slot, const char *name);
+void JE_loadGame(JE_byte slot);
+
+SDLKey getKeyFromName(const char *name);
 
 #endif /* CONFIG_H */
-

@@ -1,6 +1,6 @@
 /*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +20,15 @@
 #define HELPTEXT_H
 
 #include "opentyr.h"
+#include "file.h"
 
 #include "SDL.h"
-
-#include <stdio.h>
 
 #define MENU_MAX 14
 
 #define DESTRUCT_MODES 5
 
 extern const JE_byte menuHelp[MENU_MAX][11];   /* [1..14, 1..11] */
-
-extern JE_byte verticalHeight;
-extern JE_byte helpBoxColor, helpBoxBrightness, helpBoxShadeType;
 
 #define HELPTEXT_MISCTEXT_COUNT 68
 #define HELPTEXT_MISCTEXTB_COUNT 5
@@ -69,12 +65,10 @@ extern char destructModeName[DESTRUCT_MODES][13];
 extern char shipInfo[HELPTEXT_SHIPINFO_COUNT][2][256];
 extern char menuInt[MENU_MAX+1][11][18];
 
-void read_encrypted_pascal_string( char *s, int size, FILE *f );
-void skip_pascal_string( FILE *f );
+void readEncryptedString(File *file, char *dst, size_t size);
 
-void JE_helpBox( SDL_Surface *screen, int x, int y, const char *message, unsigned int boxwidth );
-void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth );
-void JE_loadHelpText( void );
+void JE_helpBox(SDL_Surface *screen, int x, int y, const char *message, JE_byte boxWidth, JE_byte verticalHeight, JE_byte color, JE_byte brightness, JE_byte shadeType);
+void JE_HBox(SDL_Surface *screen, int x, int y, JE_byte messageNum, JE_byte boxWidth, JE_byte verticalHeight, JE_byte color, JE_byte brightness);
+void JE_loadHelpText(void);
 
 #endif /* HELPTEXT_H */
-

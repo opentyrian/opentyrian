@@ -1,6 +1,6 @@
 /*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,6 @@
 
 #include "SDL.h"
 
-void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal );
+void JE_loadPic(SDL_Surface *screen, JE_byte id, JE_boolean storepal);
 
 #endif /* PICLOAD_H */
-

@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,10 @@
 
 #include "config.h"
 #include "file.h"
+#include "logging.h"
 #include "lvllib.h"
 #include "lvlmast.h"
 #include "opentyr.h"
-
 
 /* MAIN Weapons Data */
 JE_WeaponPortType weaponPort;
@@ -42,9 +42,8 @@ JE_EnemyDatType enemyDat;
 /* EPISODE variables */
 JE_byte    initial_episode_num, episodeNum = 0;
 JE_boolean episodeAvail[EPISODE_MAX]; /* [1..episodemax] */
-char       episode_file[13], cube_file[13];
-
-JE_longint episode1DataLoc;
+char       episodeFilename[13];  // FKA Episodes.macroFile
+char       cubeFilename[13];  // FKA Episodes.cubeFile
 
 /* Tells the game whether the level currently loaded is a bonus level. */
 JE_boolean bonusLevel;
@@ -52,194 +51,225 @@ JE_boolean bonusLevel;
 /* Tells if the game jumped back to Episode 1 */
 JE_boolean jumpBackToEpisode1;
 
-void JE_loadItemDat( void )
+void JE_loadItemDat(void)
 {
-	FILE *f = NULL;
+	const char *filename;
+
+	File file;
 	
 	if (episodeNum <= 3)
 	{
-		f = dir_fopen_die(data_dir(), "tyrian.hdt", "rb");
-		efread(&episode1DataLoc, sizeof(JE_longint), 1, f);
-		fseek(f, episode1DataLoc, SEEK_SET);
+		filename = "tyrian.hdt";
+
+		file = dataFileOpen(filename, "rb");
+		if (file.error)
+		{
+			logFatal("Failed to open file '%s': %s", filename, fileGetError(&file));
+			exit(EXIT_FAILURE);
+		}
+
+		long position = fileReadU32(&file);
+
+		fileSetPosition(&file, position);
 	}
 	else
 	{
-		// episode 4 stores item data in the level file
-		f = dir_fopen_die(data_dir(), levelFile, "rb");
-		fseek(f, lvlPos[lvlNum-1], SEEK_SET);
-	}
+		// Episode 4 stores item data in the level file.
+		filename = levelFilename;
 
-	JE_word itemNum[7]; /* [1..7] */
-	efread(&itemNum, sizeof(JE_word), 7, f);
-
-	for (int i = 0; i < WEAP_NUM + 1; ++i)
-	{
-		efread(&weapons[i].drain,           sizeof(JE_word), 1, f);
-		efread(&weapons[i].shotrepeat,      sizeof(JE_byte), 1, f);
-		efread(&weapons[i].multi,           sizeof(JE_byte), 1, f);
-		efread(&weapons[i].weapani,         sizeof(JE_word), 1, f);
-		efread(&weapons[i].max,             sizeof(JE_byte), 1, f);
-		efread(&weapons[i].tx,              sizeof(JE_byte), 1, f);
-		efread(&weapons[i].ty,              sizeof(JE_byte), 1, f);
-		efread(&weapons[i].aim,             sizeof(JE_byte), 1, f);
-		efread(&weapons[i].attack,          sizeof(JE_byte), 8, f);
-		efread(&weapons[i].del,             sizeof(JE_byte), 8, f);
-		efread(&weapons[i].sx,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].sy,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].bx,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].by,              sizeof(JE_shortint), 8, f);
-		efread(&weapons[i].sg,              sizeof(JE_word), 8, f);
-		efread(&weapons[i].acceleration,    sizeof(JE_shortint), 1, f);
-		efread(&weapons[i].accelerationx,   sizeof(JE_shortint), 1, f);
-		efread(&weapons[i].circlesize,      sizeof(JE_byte), 1, f);
-		efread(&weapons[i].sound,           sizeof(JE_byte), 1, f);
-		efread(&weapons[i].trail,           sizeof(JE_byte), 1, f);
-		efread(&weapons[i].shipblastfilter, sizeof(JE_byte), 1, f);
-	}
-	
-	for (int i = 0; i < PORT_NUM + 1; ++i)
-	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&weaponPort[i].name,        1, 30, f);
-		weaponPort[i].name[30] = '\0';
-		efread(&weaponPort[i].opnum,       sizeof(JE_byte), 1, f);
-		for (int j = 0; j < 2; ++j)
+		file = dataFileOpen(filename, "rb");
+		if (file.error)
 		{
-			efread(&weaponPort[i].op[j],   sizeof(JE_word), 11, f);
+			logFatal("Failed to open file '%s': %s", filename, fileGetError(&file));
+			exit(EXIT_FAILURE);
 		}
-		efread(&weaponPort[i].cost,        sizeof(JE_word), 1, f);
-		efread(&weaponPort[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&weaponPort[i].poweruse,    sizeof(JE_word), 1, f);
+
+		fileSetPosition(&file, lvlPos[lvlNum-1]);
 	}
 
-	for (int i = 0; i < SPECIAL_NUM + 1; ++i)
-	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&special[i].name,        1, 30, f);
-		special[i].name[30] = '\0';
-		efread(&special[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&special[i].pwr,         sizeof(JE_byte), 1, f);
-		efread(&special[i].stype,       sizeof(JE_byte), 1, f);
-		efread(&special[i].wpn,         sizeof(JE_word), 1, f);
-	}
+	Uint16 counts[7];
+	fileReadU16Array(&file, counts, COUNTOF(counts));
 
-	for (int i = 0; i < POWER_NUM + 1; ++i)
-	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&powerSys[i].name,        1, 30, f);
-		powerSys[i].name[30] = '\0';
-		efread(&powerSys[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&powerSys[i].power,       sizeof(JE_shortint), 1, f);
-		efread(&powerSys[i].speed,       sizeof(JE_byte), 1, f);
-		efread(&powerSys[i].cost,        sizeof(JE_word), 1, f);
-	}
+	assert(counts[0] == WEAP_NUM);
+	assert(counts[1] == PORT_NUM);
+	assert(counts[2] == POWER_NUM);
+	assert(counts[3] == SHIP_NUM);
+	assert(counts[4] == OPTION_NUM);
+	assert(counts[5] == SHIELD_NUM);
+	assert(counts[6] == ENEMY_NUM);
 
-	for (int i = 0; i < SHIP_NUM + 1; ++i)
+	for (size_t i = 0; i < WEAP_NUM + 1; ++i)
 	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&ships[i].name,           1, 30, f);
-		ships[i].name[30] = '\0';
-		efread(&ships[i].shipgraphic,    sizeof(JE_word), 1, f);
-		efread(&ships[i].itemgraphic,    sizeof(JE_word), 1, f);
-		efread(&ships[i].ani,            sizeof(JE_byte), 1, f);
-		efread(&ships[i].spd,            sizeof(JE_shortint), 1, f);
-		efread(&ships[i].dmg,            sizeof(JE_byte), 1, f);
-		efread(&ships[i].cost,           sizeof(JE_word), 1, f);
-		efread(&ships[i].bigshipgraphic, sizeof(JE_byte), 1, f);
-	}
-
-	for (int i = 0; i < OPTION_NUM + 1; ++i)
-	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&options[i].name,        1, 30, f);
-		options[i].name[30] = '\0';
-		efread(&options[i].pwr,         sizeof(JE_byte), 1, f);
-		efread(&options[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&options[i].cost,        sizeof(JE_word), 1, f);
-		efread(&options[i].tr,          sizeof(JE_byte), 1, f);
-		efread(&options[i].option,      sizeof(JE_byte), 1, f);
-		efread(&options[i].opspd,       sizeof(JE_shortint), 1, f);
-		efread(&options[i].ani,         sizeof(JE_byte), 1, f);
-		efread(&options[i].gr,          sizeof(JE_word), 20, f);
-		efread(&options[i].wport,       sizeof(JE_byte), 1, f);
-		efread(&options[i].wpnum,       sizeof(JE_word), 1, f);
-		efread(&options[i].ammo,        sizeof(JE_byte), 1, f);
-		efread(&options[i].stop,        1, 1, f); /* override sizeof(JE_boolean) */
-		efread(&options[i].icongr,      sizeof(JE_byte), 1, f);
-	}
-
-	for (int i = 0; i < SHIELD_NUM + 1; ++i)
-	{
-		fseek(f, 1, SEEK_CUR); /* skip string length */
-		efread(&shields[i].name,        1, 30, f);
-		shields[i].name[30] = '\0';
-		efread(&shields[i].tpwr,        sizeof(JE_byte), 1, f);
-		efread(&shields[i].mpwr,        sizeof(JE_byte), 1, f);
-		efread(&shields[i].itemgraphic, sizeof(JE_word), 1, f);
-		efread(&shields[i].cost,        sizeof(JE_word), 1, f);
+		fileReadU16Array(&file, &weapons[i].drain,           1);
+		fileReadU8Array( &file, &weapons[i].shotrepeat,      1);
+		fileReadU8Array( &file, &weapons[i].multi,           1);
+		fileReadU16Array(&file, &weapons[i].weapani,         1);
+		fileReadU8Array( &file, &weapons[i].max,             1);
+		fileReadU8Array( &file, &weapons[i].tx,              1);
+		fileReadU8Array( &file, &weapons[i].ty,              1);
+		fileReadU8Array( &file, &weapons[i].aim,             1);
+		fileReadU8Array( &file,  weapons[i].attack,          8);
+		fileReadU8Array( &file,  weapons[i].del,             8);
+		fileReadS8Array( &file,  weapons[i].sx,              8);
+		fileReadS8Array( &file,  weapons[i].sy,              8);
+		fileReadS8Array( &file,  weapons[i].bx,              8);
+		fileReadS8Array( &file,  weapons[i].by,              8);
+		fileReadU16Array(&file,  weapons[i].sg,              8);
+		fileReadS8Array( &file, &weapons[i].acceleration,    1);
+		fileReadS8Array( &file, &weapons[i].accelerationx,   1);
+		fileReadU8Array( &file, &weapons[i].circlesize,      1);
+		fileReadU8Array( &file, &weapons[i].sound,           1);
+		fileReadU8Array( &file, &weapons[i].trail,           1);
+		fileReadU8Array( &file, &weapons[i].shipblastfilter, 1);
 	}
 	
-	for (int i = 0; i < ENEMY_NUM + 1; ++i)
+	for (size_t i = 0; i < PORT_NUM + 1; ++i)
 	{
-		efread(&enemyDat[i].ani,           sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].tur,           sizeof(JE_byte), 3, f);
-		efread(&enemyDat[i].freq,          sizeof(JE_byte), 3, f);
-		efread(&enemyDat[i].xmove,         sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].ymove,         sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].xaccel,        sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].yaccel,        sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].xcaccel,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].ycaccel,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].startx,        sizeof(JE_integer), 1, f);
-		efread(&enemyDat[i].starty,        sizeof(JE_integer), 1, f);
-		efread(&enemyDat[i].startxc,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].startyc,       sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].armor,         sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].esize,         sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].egraphic,      sizeof(JE_word), 20, f);
-		efread(&enemyDat[i].explosiontype, sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].animate,       sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].shapebank,     sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].xrev,          sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].yrev,          sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].dgr,           sizeof(JE_word), 1, f);
-		efread(&enemyDat[i].dlevel,        sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].dani,          sizeof(JE_shortint), 1, f);
-		efread(&enemyDat[i].elaunchfreq,   sizeof(JE_byte), 1, f);
-		efread(&enemyDat[i].elaunchtype,   sizeof(JE_word), 1, f);
-		efread(&enemyDat[i].value,         sizeof(JE_integer), 1, f);
-		efread(&enemyDat[i].eenemydie,     sizeof(JE_word), 1, f);
+		Uint8 nameLen = fileReadU8(&file);
+		fileReadCharArray(&file,  weaponPort[i].name,       30);
+		weaponPort[i].name[MIN(nameLen, 30)] = '\0';
+		fileReadU8Array(  &file, &weaponPort[i].opnum,       1);
+		fileReadU16Array( &file,  weaponPort[i].op[0],      11);
+		fileReadU16Array( &file,  weaponPort[i].op[1],      11);
+		fileReadU16Array( &file, &weaponPort[i].cost,        1);
+		fileReadU16Array( &file, &weaponPort[i].itemgraphic, 1);
+		fileReadU16Array( &file, &weaponPort[i].poweruse,    1);
+	}
+
+	for (size_t i = 0; i < SPECIAL_NUM + 1; ++i)
+	{
+		Uint8 nameLen = fileReadU8(&file);
+		fileReadCharArray(&file,  special[i].name,       30);
+		special[i].name[MIN(nameLen, 30)] = '\0';
+		fileReadU16Array( &file, &special[i].itemgraphic, 1);
+		fileReadU8Array(  &file, &special[i].pwr,         1);
+		fileReadU8Array(  &file, &special[i].stype,       1);
+		fileReadU16Array( &file, &special[i].wpn,         1);
+	}
+
+	for (size_t i = 0; i < POWER_NUM + 1; ++i)
+	{
+		Uint8 nameLen = fileReadU8(&file);
+		fileReadCharArray(&file,  powerSys[i].name,       30);
+		powerSys[i].name[MIN(nameLen, 30)] = '\0';
+		fileReadU16Array( &file, &powerSys[i].itemgraphic, 1);
+		fileReadU8Array(  &file, &powerSys[i].power,       1);
+		fileReadS8Array(  &file, &powerSys[i].speed,       1);
+		fileReadU16Array( &file, &powerSys[i].cost,        1);
+	}
+
+	for (size_t i = 0; i < SHIP_NUM + 1; ++i)
+	{
+		Uint8 nameLen = fileReadU8(&file);
+		fileReadCharArray(&file,  ships[i].name,          30);
+		ships[i].name[MIN(nameLen, 30)] = '\0';
+		fileReadU16Array( &file, &ships[i].shipgraphic,    1);
+		fileReadU16Array( &file, &ships[i].itemgraphic,    1);
+		fileReadU8Array(  &file, &ships[i].ani,            1);
+		fileReadS8Array(  &file, &ships[i].spd,            1);
+		fileReadU8Array(  &file, &ships[i].dmg,            1);
+		fileReadU16Array( &file, &ships[i].cost,           1);
+		fileReadU8Array(  &file, &ships[i].bigshipgraphic, 1);
+	}
+
+	for (size_t i = 0; i < OPTION_NUM + 1; ++i)
+	{
+		Uint8 nameLen = fileReadU8(&file);
+		fileReadCharArray(&file,  options[i].name,       30);
+		options[i].name[MIN(nameLen, 30)] = '\0';
+		fileReadU8Array(  &file, &options[i].pwr,         1);
+		fileReadU16Array( &file, &options[i].itemgraphic, 1);
+		fileReadU16Array( &file, &options[i].cost,        1);
+		fileReadU8Array(  &file, &options[i].tr,          1);
+		fileReadU8Array(  &file, &options[i].option,      1);
+		fileReadS8Array(  &file, &options[i].opspd,       1);
+		fileReadU8Array(  &file, &options[i].ani,         1);
+		fileReadU16Array( &file,  options[i].gr,         20);
+		fileReadU8Array(  &file, &options[i].wport,       1);
+		fileReadU16Array( &file, &options[i].wpnum,       1);
+		fileReadU8Array(  &file, &options[i].ammo,        1);
+		fileReadBoolArray(&file, &options[i].stop,        1);
+		fileReadU8Array(  &file, &options[i].icongr,      1);
+	}
+
+	for (size_t i = 0; i < SHIELD_NUM + 1; ++i)
+	{
+		Uint8 nameLen = fileReadU8(&file);
+		fileReadCharArray(&file,  shields[i].name,       30);
+		shields[i].name[MIN(nameLen, 30)] = '\0';
+		fileReadU8Array(  &file, &shields[i].tpwr,        1);
+		fileReadU8Array(  &file, &shields[i].mpwr,        1);
+		fileReadU16Array( &file, &shields[i].itemgraphic, 1);
+		fileReadU16Array( &file, &shields[i].cost,        1);
 	}
 	
-	fclose(f);
+	for (size_t i = 0; i < ENEMY_NUM + 1; ++i)
+	{
+		fileReadU8Array( &file, &enemyDat[i].ani,           1);
+		fileReadU8Array( &file,  enemyDat[i].tur,           3);
+		fileReadU8Array( &file,  enemyDat[i].freq,          3);
+		fileReadS8Array( &file, &enemyDat[i].xmove,         1);
+		fileReadS8Array( &file, &enemyDat[i].ymove,         1);
+		fileReadS8Array( &file, &enemyDat[i].xaccel,        1);
+		fileReadS8Array( &file, &enemyDat[i].yaccel,        1);
+		fileReadS8Array( &file, &enemyDat[i].xcaccel,       1);
+		fileReadS8Array( &file, &enemyDat[i].ycaccel,       1);
+		fileReadS16Array(&file, &enemyDat[i].startx,        1);
+		fileReadS16Array(&file, &enemyDat[i].starty,        1);
+		fileReadS8Array( &file, &enemyDat[i].startxc,       1);
+		fileReadS8Array( &file, &enemyDat[i].startyc,       1);
+		fileReadU8Array( &file, &enemyDat[i].armor,         1);
+		fileReadU8Array( &file, &enemyDat[i].esize,         1);
+		fileReadU16Array(&file,  enemyDat[i].egraphic,     20);
+		fileReadU8Array( &file, &enemyDat[i].explosiontype, 1);
+		fileReadU8Array( &file, &enemyDat[i].animate,       1);
+		fileReadU8Array( &file, &enemyDat[i].shapebank,     1);
+		fileReadS8Array( &file, &enemyDat[i].xrev,          1);
+		fileReadS8Array( &file, &enemyDat[i].yrev,          1);
+		fileReadU16Array(&file, &enemyDat[i].dgr,           1);
+		fileReadS8Array( &file, &enemyDat[i].dlevel,        1);
+		fileReadS8Array( &file, &enemyDat[i].dani,          1);
+		fileReadU8Array( &file, &enemyDat[i].elaunchfreq,   1);
+		fileReadU16Array(&file, &enemyDat[i].elaunchtype,   1);
+		fileReadS16Array(&file, &enemyDat[i].value,         1);
+		fileReadU16Array(&file, &enemyDat[i].eenemydie,     1);
+	}
+	
+	if (file.error)
+	{
+		logFatal("Failed to read from file '%s': %s", filename, fileGetError(&file));
+		exit(EXIT_FAILURE);
+	}
+
+	fileClose(&file);
 }
 
-void JE_initEpisode( JE_byte newEpisode )
+void JE_initEpisode(JE_byte newEpisode)
 {
 	if (newEpisode == episodeNum)
 		return;
 	
 	episodeNum = newEpisode;
 	
-	sprintf(levelFile,    "tyrian%d.lvl",  episodeNum);
-	sprintf(cube_file,    "cubetxt%d.dat", episodeNum);
-	sprintf(episode_file, "levels%d.dat",  episodeNum);
+	snprintf(levelFilename,   sizeof levelFilename,   "tyrian%d.lvl",  episodeNum);
+	snprintf(cubeFilename,    sizeof cubeFilename,    "cubetxt%d.dat", episodeNum);
+	snprintf(episodeFilename, sizeof episodeFilename, "levels%d.dat",  episodeNum);
 	
-	JE_analyzeLevel();
+	analyzeLevel();
 	JE_loadItemDat();
 }
 
-void JE_scanForEpisodes( void )
+void JE_scanForEpisodes(void)
 {
 	for (int i = 0; i < EPISODE_MAX; ++i)
 	{
-		char ep_file[20];
-		snprintf(ep_file, sizeof(ep_file), "tyrian%d.lvl", i + 1);
-		episodeAvail[i] = dir_file_exists(data_dir(), ep_file);
+		char filename[13];
+		snprintf(filename, sizeof filename, "tyrian%d.lvl", i + 1);
+		episodeAvail[i] = dataFileExists(filename);
 	}
 }
 
-unsigned int JE_findNextEpisode( void )
+unsigned int JE_findNextEpisode(void)
 {
 	unsigned int newEpisode = episodeNum;
 	
@@ -264,4 +294,3 @@ unsigned int JE_findNextEpisode( void )
 	
 	return newEpisode;
 }
-

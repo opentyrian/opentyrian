@@ -1,6 +1,6 @@
 /*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,16 +18,15 @@
  */
 #include "fonthand.h"
 
-#include "network.h"
+#include "keyboard.h"
 #include "nortsong.h"
-#include "nortvars.h"
-#include "opentyr.h"
-#include "params.h"
+#include "sndmast.h"
 #include "sprite.h"
 #include "vga256d.h"
 #include "video.h"
 
-const int font_ascii[256] =
+// Mapping from CP437 to font sprite index.
+const Sint8 fontMap[256] = /* [33..168] */
 {
 	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
 	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
@@ -62,7 +61,7 @@ JE_word armorShipDelay;
 JE_byte warningCol;
 JE_shortint warningColChange;
 
-void JE_dString( SDL_Surface * screen, int x, int y, const char *s, unsigned int font )
+void JE_dString(SDL_Surface * screen, int x, int y, const char *s, unsigned int font)
 {
 	const int defaultBrightness = -3;
 
@@ -70,7 +69,7 @@ void JE_dString( SDL_Surface * screen, int x, int y, const char *s, unsigned int
 
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
+		int sprite_id = fontMap[(unsigned char)s[i]];
 
 		switch (s[i])
 		{
@@ -95,18 +94,18 @@ void JE_dString( SDL_Surface * screen, int x, int y, const char *s, unsigned int
 	}
 }
 
-int JE_fontCenter( const char *s, unsigned int font )
+int JE_fontCenter(const char *s, unsigned int font)
 {
 	return 160 - (JE_textWidth(s, font) / 2);
 }
 
-int JE_textWidth( const char *s, unsigned int font )
+int JE_textWidth(const char *s, unsigned int font)
 {
 	int x = 0;
 
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
+		int sprite_id = fontMap[(unsigned char)s[i]];
 
 		if (s[i] == ' ')
 			x += 6;
@@ -117,7 +116,7 @@ int JE_textWidth( const char *s, unsigned int font )
 	return x;
 }
 
-void JE_textShade( SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness, unsigned int shadetype )
+void JE_textShade(SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness, unsigned int shadetype)
 {
 	switch (shadetype)
 	{
@@ -141,13 +140,13 @@ void JE_textShade( SDL_Surface * screen, int x, int y, const char *s, unsigned i
 	}
 }
 
-void JE_outText( SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness )
+void JE_outText(SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, int brightness)
 {
 	int bright = 0;
 
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
+		int sprite_id = fontMap[(unsigned char)s[i]];
 
 		switch (s[i])
 		{
@@ -174,11 +173,11 @@ void JE_outText( SDL_Surface * screen, int x, int y, const char *s, unsigned int
 	}
 }
 
-void JE_outTextModify( SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, unsigned int brightness, unsigned int font )
+void JE_outTextModify(SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, unsigned int brightness, unsigned int font)
 {
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
+		int sprite_id = fontMap[(unsigned char)s[i]];
 
 		if (s[i] == ' ')
 		{
@@ -193,13 +192,13 @@ void JE_outTextModify( SDL_Surface * screen, int x, int y, const char *s, unsign
 	}
 }
 
-void JE_outTextAdjust( SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, int brightness, unsigned int font, JE_boolean shadow )
+void JE_outTextAdjust(SDL_Surface * screen, int x, int y, const char *s, unsigned int filter, int brightness, unsigned int font, JE_boolean shadow)
 {
 	int bright = 0;
 
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
+		int sprite_id = fontMap[(unsigned char)s[i]];
 
 		switch (s[i])
 		{
@@ -225,13 +224,13 @@ void JE_outTextAdjust( SDL_Surface * screen, int x, int y, const char *s, unsign
 	}
 }
 
-void JE_outTextAndDarken( SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, unsigned int brightness, unsigned int font )
+void JE_outTextAndDarken(SDL_Surface * screen, int x, int y, const char *s, unsigned int colorbank, unsigned int brightness, unsigned int font)
 {
 	int bright = 0;
 
 	for (int i = 0; s[i] != '\0'; ++i)
 	{
-		int sprite_id = font_ascii[(unsigned char)s[i]];
+		int sprite_id = fontMap[(unsigned char)s[i]];
 
 		switch (s[i])
 		{
@@ -256,10 +255,11 @@ void JE_outTextAndDarken( SDL_Surface * screen, int x, int y, const char *s, uns
 	}
 }
 
-void JE_updateWarning( SDL_Surface * screen )
+void JE_updateWarning(SDL_Surface * screen)
 {
-	if (delaycount2() == 0)
-	{ /*Update Color Bars*/
+	if (getFrameCount2Ticks() == 0)
+	{
+		/*Update Color Bars*/
 
 		warningCol += warningColChange;
 		if (warningCol > 14 * 16 + 10 || warningCol < 14 * 16 + 4)
@@ -270,7 +270,7 @@ void JE_updateWarning( SDL_Surface * screen )
 		fill_rectangle_xy(screen, 0, 194, 319, 199, warningCol);
 		JE_showVGA();
 
-		setjasondelay2(6);
+		setFrameCount2(6);
 
 		if (warningSoundDelay > 0)
 		{
@@ -279,12 +279,13 @@ void JE_updateWarning( SDL_Surface * screen )
 		else
 		{
 			warningSoundDelay = 14;
+
 			JE_playSampleNum(S_WARNING);
 		}
 	}
 }
 
-void JE_outTextGlow( SDL_Surface * screen, int x, int y, const char *s )
+void JE_outTextGlow(SDL_Surface * screen, int x, int y, const char *s)
 {
 	JE_integer z;
 	JE_byte c = 15;
@@ -298,37 +299,33 @@ void JE_outTextGlow( SDL_Surface * screen, int x, int y, const char *s )
 	JE_outTextAdjust(screen, x,     y - 1, s, 0, -12, textGlowFont, false);
 	JE_outTextAdjust(screen, x + 1, y,     s, 0, -12, textGlowFont, false);
 	JE_outTextAdjust(screen, x,     y + 1, s, 0, -12, textGlowFont, false);
+
 	if (frameCountMax > 0)
+	{
 		for (z = 1; z <= 12; z++)
 		{
-			setjasondelay(frameCountMax);
-			JE_outTextAdjust(screen, x, y, s, c, z - 10, textGlowFont, false);
-			if (JE_anyButton())
-			{
-				frameCountMax = 0;
-			}
+			setFrameCount(frameCountMax);
 
-			NETWORK_KEEP_ALIVE();
+			JE_outTextAdjust(screen, x, y, s, c, z - 10, textGlowFont, false);
 
 			JE_showVGA();
 
-			wait_delay();
+			if (waitUntilGetInputOrElapsed())
+				frameCountMax = 0;
 		}
+	}
+
 	for (z = (frameCountMax == 0) ? 6 : 12; z >= textGlowBrightness; z--)
 	{
-		setjasondelay(frameCountMax);
-		JE_outTextAdjust(screen, x, y, s, c, z - 10, textGlowFont, false);
-		if (JE_anyButton())
-		{
-			frameCountMax = 0;
-		}
+		setFrameCount(frameCountMax);
 
-		NETWORK_KEEP_ALIVE();
+		JE_outTextAdjust(screen, x, y, s, c, z - 10, textGlowFont, false);
 
 		JE_showVGA();
 
-		wait_delay();
+		if (waitUntilGetInputOrElapsed())
+			frameCountMax = 0;
 	}
+
 	textGlowBrightness = 6;
 }
-

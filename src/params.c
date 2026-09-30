@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,17 +19,17 @@
 #include "params.h"
 
 #include "arg_parse.h"
+#include "demo.h"
 #include "file.h"
 #include "joystick.h"
+#include "logging.h"
 #include "loudness.h"
 #include "network.h"
 #include "opentyr.h"
-#include "varz.h"
 #include "xmas.h"
 
 #include <assert.h>
 #include <ctype.h>
-#include <errno.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -40,7 +40,7 @@ const char pars[][9] = {
 	"LOOT", "RECORD", "NOJOY", "CONSTANT", "DEATH", "NOSOUND", "NOXMAS", "YESXMAS"
 };
 
-void JE_paramCheck( int argc, char *argv[] )
+void JE_paramCheck(int argc, char *argv[])
 {
 	const Options options[] =
 	{
@@ -64,7 +64,7 @@ void JE_paramCheck( int argc, char *argv[] )
 		{ 'r', 'r', "record",            false },
 		{ 'l', 'l', "loot",              false },
 		
-		{ 0, 0, NULL, false}
+		{ 0, 0, NULL, false }
 	};
 	
 	Option option;
@@ -81,25 +81,26 @@ void JE_paramCheck( int argc, char *argv[] )
 		case INVALID_OPTION:
 		case AMBIGUOUS_OPTION:
 		case OPTION_MISSING_ARG:
-			fprintf(stderr, "Try `%s --help' for more information.\n", argv[0]);
+			logError("Try '%s --help' for more information.", argv[0]);
 			exit(EXIT_FAILURE);
 			break;
 			
 		case 'h':
-			printf("Usage: %s [OPTION...]\n\n"
-			       "Options:\n"
-			       "  -h, --help                   Show help about options\n\n"
-			       "  -s, --no-sound               Disable audio\n"
-			       "  -j, --no-joystick            Disable joystick/gamepad input\n"
-			       "  -x, --no-xmas                Disable Christmas mode\n\n"
-			       "  -t, --data=DIR               Set Tyrian data directory\n\n"
-			       "  -n, --net=HOST[:PORT]        Start a networked game\n"
-			       "  --net-player-name=NAME       Sets local player name in a networked game\n"
-			       "  --net-player-number=NUMBER   Sets local player number in a networked game\n"
-			       "                               (1 or 2)\n"
-			       "  -p, --net-port=PORT          Local port to bind (default is 1333)\n"
-			       "  -d, --net-delay=FRAMES       Set lag-compensation delay (default is 1)\n", argv[0]);
-			exit(0);
+			logInfo("Usage: %s [OPTION...]", argv[0]);
+			logInfo("%s", "");
+			logInfo("Options:");
+			logInfo("  -h, --help                   Show help about options");
+			logInfo("  -s, --no-sound               Disable audio");
+			logInfo("  -j, --no-joystick            Disable joystick/gamepad input");
+			logInfo("  -x, --no-xmas                Disable Christmas mode");
+			logInfo("  -t, --data=DIR               Set Tyrian data directory");
+			logInfo("  -n, --net=HOST[:PORT]        Start a networked game");
+			logInfo("  --net-player-name=NAME       Set local player name in a networked game");
+			logInfo("  --net-player-number=NUMBER   Set local player number in a networked game");
+			logInfo("                               (1 or 2)");
+			logInfo("  -p, --net-port=PORT          Set local port to bind (default is 1333)");
+			logInfo("  -d, --net-delay=FRAMES       Set lag-compensation delay (default is 1)");
+			exit(EXIT_SUCCESS);
 			break;
 			
 		case 's':
@@ -118,7 +119,7 @@ void JE_paramCheck( int argc, char *argv[] )
 			
 		// set custom Tyrian data directory
 		case 't':
-			custom_data_dir = option.arg;
+			customDataDirPath = option.arg;
 			break;
 			
 		case 'n':
@@ -134,7 +135,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					network_opponent_port = temp_port;
 				else
 				{
-					fprintf(stderr, "%s: error: invalid network port number\n", argv[0]);
+					logError("%s: invalid network port number", argv[0]);
 					exit(EXIT_FAILURE);
 				}
 				
@@ -160,7 +161,7 @@ void JE_paramCheck( int argc, char *argv[] )
 				thisPlayerNum = temp;
 			else
 			{
-				fprintf(stderr, "%s: error: invalid network player number\n", argv[0]);
+				logError("%s: invalid network player number", argv[0]);
 				exit(EXIT_FAILURE);
 			}
 			break;
@@ -172,7 +173,7 @@ void JE_paramCheck( int argc, char *argv[] )
 				network_player_port = temp;
 			else
 			{
-				fprintf(stderr, "%s: error: invalid network port number\n", argv[0]);
+				logError("%s: invalid network port number", argv[0]);
 				exit(EXIT_FAILURE);
 			}
 			break;
@@ -184,7 +185,7 @@ void JE_paramCheck( int argc, char *argv[] )
 				network_delay = 1 + temp;
 			else
 			{
-				fprintf(stderr, "%s: error: invalid network delay value\n", argv[0]);
+				logError("%s: invalid network delay value", argv[0]);
 				exit(EXIT_FAILURE);
 			}
 			break;
@@ -205,7 +206,7 @@ void JE_paramCheck( int argc, char *argv[] )
 			break;
 			
 		case 'r':
-			record_demo = true;
+			recordDemo = true;
 			break;
 			
 		case 'l':
@@ -223,7 +224,7 @@ void JE_paramCheck( int argc, char *argv[] )
 	for (int i = option.argn; i < argc; ++i)
 	{
 		for (uint j = 0; j < strlen(argv[i]); ++j)
-			argv[i][j] = toupper((unsigned char)argv[i][j]);
+			argv[i][j] = toupper(argv[i][j]);
 		
 		for (uint j = 0; j < COUNTOF(pars); ++j)
 		{
@@ -235,7 +236,7 @@ void JE_paramCheck( int argc, char *argv[] )
 					richMode = true;
 					break;
 				case 1:
-					record_demo = true;
+					recordDemo = true;
 					break;
 				case 2:
 					ignore_joystick = true;
@@ -264,4 +265,3 @@ void JE_paramCheck( int argc, char *argv[] )
 		}
 	}
 }
-

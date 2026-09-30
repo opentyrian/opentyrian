@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,15 @@
 #define EDITSHIP_H
 
 #include "opentyr.h"
+#include "sprite.h"
 
-
+// TODO: replace with less opaque type
 typedef JE_byte JE_ShipsType[154]; /* [1..154] */
 
-extern JE_boolean extraAvail;
+extern bool extraAvail;
 extern JE_ShipsType extraShips;
-extern void *extraShapes;
-extern JE_word extraShapeSize;
+extern Sprite2_array extraShapes;
 
-void JE_decryptShips( void );
-void JE_loadExtraShapes( void );
+void loadExtraShapes(void);
 
 #endif /* EDITSHIP_H */
-

@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,8 +23,7 @@
 
 extern bool xmas;
 
-bool xmas_time( void );
-bool xmas_prompt( void );
+bool xmas_time(void);
+bool xmas_prompt(void);
 
 #endif /* XMAS_H */
-

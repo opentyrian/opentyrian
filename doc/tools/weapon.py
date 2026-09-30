@@ -21,19 +21,19 @@ def pack_weapon(dict):
 	l.append(dict['aim'])
 
 	tmp = dict['patterns']
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['attack'])
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['del'])
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['sx'])
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['sy'])
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['bx'])
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['by'])
-	for j in xrange(8):
+	for j in range(8):
 		l.append(tmp[j]['sg'])
 
 	l.append(dict['acceleration'])
@@ -60,26 +60,26 @@ def unpack_weapon(str):
 
 	i = 8
 
-	tmp = [{} for j in xrange(8)]
-	for j in xrange(8):
+	tmp = [{} for j in range(8)]
+	for j in range(8):
 		tmp[j]['attack'] = tup[i]
 		i += 1
-	for j in xrange(8):
+	for j in range(8):
 		tmp[j]['del'] = tup[i]
 		i += 1
-	for j in xrange(8):
+	for j in range(8):
 		tmp[j]['sx'] = tup[i]
 		i += 1
-	for j in xrange(8):
+	for j in range(8):
 		tmp[j]['sy'] = tup[i]
 		i += 1
-	for j in xrange(8):
+	for j in range(8):
 		tmp[j]['bx'] = tup[i]
 		i += 1
-	for j in xrange(8):
+	for j in range(8):
 		tmp[j]['by'] = tup[i]
 		i += 1
-	for j in xrange(8):
+	for j in range(8):
 		tmp[j]['sg'] = tup[i]
 		i += 1
 	dict['patterns'] = tmp
@@ -103,13 +103,13 @@ def DOMToDict(doc, weap_node):
 		if i.hasAttribute("value"):
 			dict[i.tagName] = int(i.getAttribute("value"))
 		elif i.tagName == "patterns":
-			dict['patterns'] = [{} for el in xrange(8)]
+			dict['patterns'] = [{} for el in range(8)]
 			index = 0
 			for j in i.childNodes:
 				if j.nodeType != i.ELEMENT_NODE:
 					continue
 
-				attrs = [j.attributes.item(i) for i in xrange(j.attributes.length)]
+				attrs = [j.attributes.item(i) for i in range(j.attributes.length)]
 				for i in attrs:
 					dict['patterns'][index][i.name] = int(i.nodeValue)
 				index += 1
@@ -121,13 +121,13 @@ def dictToDOM(doc, root, dict, index=None):
 	if index != None:
 		entry.setAttribute("index", "%04X" % (index,))
 	
-	keys = dict.keys()
+	keys = list(dict)
 	keys.sort()
 	for i in keys:
 		node = doc.createElement(i)
 		if isinstance(dict[i], list):
 			for j in dict[i]:
-				keys = j.keys()
+				keys = list(j)
 				keys.sort()
 
 				n = doc.createElement("entry")
@@ -144,15 +144,15 @@ def toXML(hdt, output):
 	doc = dom.getDOMImplementation().createDocument(None, "TyrianHDT", None)
 
 	try:
-		f = file(hdt, "rb")
+		f = open(hdt, "rb")
 	except IOError:
-		print "%s couldn't be opened for reading." % (hdt,)
+		print("%s couldn't be opened for reading." % (hdt,))
 		sys.exit(1)
 
 	try:
-		outf = file(output, "w")
+		outf = open(output, "w")
 	except IOError:
-		print "%s couldn't be opened for writing." % (outf,)
+		print("%s couldn't be opened for writing." % (output,))
 		sys.exit(1)
 
 	f.seek(struct.unpack("<i", f.read(4))[0])
@@ -162,7 +162,7 @@ def toXML(hdt, output):
 	sys.stdout.write("Converting weapons")
 	index = 0
 
-	for i in xrange(WEAP_NUM+1):
+	for i in range(WEAP_NUM+1):
 		tmp = f.read(struct.calcsize(struct_fmt))
 		shot = unpack_weapon(tmp)
 		dictToDOM(doc, doc.documentElement, shot, index)
@@ -179,15 +179,15 @@ def toXML(hdt, output):
 
 def toHDT(input, hdt):
 	try:
-		f = file(input, "r")
+		f = open(input, "r")
 	except IOError:
-		print "%s couldn't be opened for reading." % (input,)
+		print("%s couldn't be opened for reading." % (input,))
 		sys.exit(1)
 
 	try:
-		outf = file(hdt, "r+b")
+		outf = open(hdt, "r+b")
 	except IOError:
-		print "%s couldn't be opened for writing." % (hdt,)
+		print("%s couldn't be opened for writing." % (hdt,))
 		sys.exit(1)
 
 	outf.seek(struct.unpack("<i", outf.read(4))[0])
@@ -215,8 +215,8 @@ def toHDT(input, hdt):
 	sys.stdout.write("Done!\n")
 
 def printHelp():
-	print "Usage: weapons.py toxml path/to/tyrian.hdt output.xml"
-	print "       weapons.py tohdt input.xml path/to/tyrian.hdt"
+	print("Usage: weapon.py toxml path/to/tyrian.hdt output.xml")
+	print("       weapon.py tohdt input.xml path/to/tyrian.hdt")
 	sys.exit(1)
 
 ##############################

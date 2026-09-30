@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,6 +53,6 @@ typedef struct
 }
 Option;
 
-Option parse_args( int argc, const char *argv[], const Options *options );
+Option parse_args(int argc, const char *argv[], const Options *options);
 
 #endif /* ARG_PARSE_H */

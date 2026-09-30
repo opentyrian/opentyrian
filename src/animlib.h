@@ -1,6 +1,6 @@
 /*
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,6 @@
 
 #include "opentyr.h"
 
-void JE_playAnim( const char *animfile, JE_byte startingframe, JE_byte speed );
+void playAnim(const char *filename, Uint8 startingFrame, Uint8 speed);
 
 #endif /* ANIMLIB_H */
-

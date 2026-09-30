@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,6 @@
 
 #include "opentyr.h"
 
-
 #define DEFAULT_SONG_BUY 2
 #define SONG_LEVELEND    9
 #define SONG_GAMEOVER    10
@@ -33,9 +32,7 @@
 #define MUSIC_NUM 41
 
 extern JE_byte songBuy;
-extern const char musicFile[MUSIC_NUM][13];
 extern const char musicTitle[MUSIC_NUM][48];
 extern JE_boolean musicFade;
 
 #endif /* MUSMAST_H */
-

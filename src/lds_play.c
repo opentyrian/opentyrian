@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,11 +18,12 @@
  */
 #include "lds_play.h"
 
-#include "file.h"
-#include "loudness.h"
-#include "opentyr.h"
+#include "memreader.h"
+#include "opl.h"
 
 #include <assert.h>
+#include <string.h>
+#include <stdlib.h>
 
 const unsigned char op_table[9] = {0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12};
 
@@ -83,109 +84,102 @@ static Uint16 numpatch, numposi, mainvolume;
 
 bool playing, songlooped;
 
-bool lds_load( FILE *f, unsigned int music_offset, unsigned int music_size )
+bool lds_load(const void *data, size_t size)
 {
-	SoundBank *sb;
-	
-	fseek(f, music_offset, SEEK_SET);
+	MemReader reader = { data, size, false };
 
 	/* load header */
-	mode = fgetc(f);
+	memReadU8Array( &reader, &mode, 1);
 	if (mode > 2)
-	{
-		fprintf(stderr, "error: failed to load music\n");
 		return false;
-	}
-	efread(&speed, 2, 1, f);
-	tempo = fgetc(f);
-	pattlen = fgetc(f);
-	for (unsigned int i = 0; i < 9; i++)
-		chandelay[i] = fgetc(f);
-	regbd = fgetc(f);
+	memReadU16Array(&reader, &speed,     1);
+	memReadU8Array( &reader, &tempo,     1);
+	memReadU8Array( &reader, &pattlen,   1);
+	memReadU8Array( &reader,  chandelay, 9);
+	memReadU8Array( &reader, &regbd,     1);
 
 	/* load patches */
-	efread(&numpatch, 2, 1, f);
+	memReadU16Array(&reader, &numpatch,  1);
 
 	free(soundbank);
 	soundbank = malloc(sizeof(SoundBank) * numpatch);
 
 	for (unsigned int i = 0; i < numpatch; i++)
 	{
-		sb = &soundbank[i];
-		sb->mod_misc = fgetc(f);
-		sb->mod_vol = fgetc(f);
-		sb->mod_ad = fgetc(f);
-		sb->mod_sr = fgetc(f);
-		sb->mod_wave = fgetc(f);
-		sb->car_misc = fgetc(f);
-		sb->car_vol = fgetc(f);
-		sb->car_ad = fgetc(f);
-		sb->car_sr = fgetc(f);
-		sb->car_wave = fgetc(f);
-		sb->feedback = fgetc(f);
-		sb->keyoff = fgetc(f);
-		sb->portamento = fgetc(f);
-		sb->glide = fgetc(f);
-		sb->finetune = fgetc(f);
-		sb->vibrato = fgetc(f);
-		sb->vibdelay = fgetc(f);
-		sb->mod_trem = fgetc(f);
-		sb->car_trem = fgetc(f);
-		sb->tremwait = fgetc(f);
-		sb->arpeggio = fgetc(f);
-		for (unsigned int j = 0; j < 12; j++)
-			sb->arp_tab[j] = fgetc(f);
-		efread(&sb->start, 2, 1, f);
-		efread(&sb->size, 2, 1, f);
-		sb->fms = fgetc(f);
-		efread(&sb->transp, 2, 1, f);
-		sb->midinst = fgetc(f);
-		sb->midvelo = fgetc(f);
-		sb->midkey = fgetc(f);
-		sb->midtrans = fgetc(f);
-		sb->middum1 = fgetc(f);
-		sb->middum2 = fgetc(f);
+		SoundBank *sb = &soundbank[i];
+		memReadU8Array( &reader, &sb->mod_misc,   1);
+		memReadU8Array( &reader, &sb->mod_vol,    1);
+		memReadU8Array( &reader, &sb->mod_ad,     1);
+		memReadU8Array( &reader, &sb->mod_sr,     1);
+		memReadU8Array( &reader, &sb->mod_wave,   1);
+		memReadU8Array( &reader, &sb->car_misc,   1);
+		memReadU8Array( &reader, &sb->car_vol,    1);
+		memReadU8Array( &reader, &sb->car_ad,     1);
+		memReadU8Array( &reader, &sb->car_sr,     1);
+		memReadU8Array( &reader, &sb->car_wave,   1);
+		memReadU8Array( &reader, &sb->feedback,   1);
+		memReadU8Array( &reader, &sb->keyoff,     1);
+		memReadU8Array( &reader, &sb->portamento, 1);
+		memReadU8Array( &reader, &sb->glide,      1);
+		memReadU8Array( &reader, &sb->finetune,   1);
+		memReadU8Array( &reader, &sb->vibrato,    1);
+		memReadU8Array( &reader, &sb->vibdelay,   1);
+		memReadU8Array( &reader, &sb->mod_trem,   1);
+		memReadU8Array( &reader, &sb->car_trem,   1);
+		memReadU8Array( &reader, &sb->tremwait,   1);
+		memReadU8Array( &reader, &sb->arpeggio,   1);
+		memReadU8Array( &reader,  sb->arp_tab,   12);
+		memReadU16Array(&reader, &sb->start,      1);
+		memReadU16Array(&reader, &sb->size,       1);
+		memReadU8Array( &reader, &sb->fms,        1);
+		memReadU16Array(&reader, &sb->transp,     1);
+		memReadU8Array( &reader, &sb->midinst,    1);
+		memReadU8Array( &reader, &sb->midvelo,    1);
+		memReadU8Array( &reader, &sb->midkey,     1);
+		memReadU8Array( &reader, &sb->midtrans,   1);
+		memReadU8Array( &reader, &sb->middum1,    1);
+		memReadU8Array( &reader, &sb->middum2,    1);
 	}
 	
 	/* load positions */
-	efread(&numposi, 2, 1, f);
+	memReadU16Array(&reader, &numposi, 1);
 	
 	free(positions);
 	positions = malloc(sizeof(Position) * 9 * numposi);
 	
-	for (unsigned int i = 0; i < numposi; i++)
+	for (size_t i = 0; i < numposi; i++)
 	{
-		for (unsigned int j = 0; j < 9; j++)
+		for (size_t j = 0; j < 9; j++)
 		{
 			/*
 			* patnum is a pointer inside the pattern space, but patterns are 16bit
 			* word fields anyway, so it ought to be an even number (hopefully) and
 			* we can just divide it by 2 to get our array index of 16bit words.
 			*/
-			Uint16 temp;
-			efread(&temp, 2, 1, f);
-			positions[i * 9 + j].patnum = temp / 2;
-			positions[i * 9 + j].transpose = fgetc(f);
+			memReadU16Array(&reader, &positions[i * 9 + j].patnum,    1);
+			memReadU8Array( &reader, &positions[i * 9 + j].transpose, 1);
+			positions[i * 9 + j].patnum /= 2;
 		}
 	}
 	
 	/* load patterns */
-	fseek(f, 2, SEEK_CUR); /* ignore # of digital sounds (dunno what this is for) */
+	memReaderSkip(&reader, 2); /* ignore # of digital sounds */
 	
-	unsigned int remaining = music_size - (ftell(f) - music_offset);
-	
+	size_t numpatterns = reader.size / 2;
+
 	free(patterns);
-	patterns = malloc(sizeof(Uint16) * (remaining / 2));
-	
-	for (unsigned int i = 0; i < remaining / 2; i++)
-		efread(&patterns[i], 2, 1, f);
-	
+	patterns = malloc(sizeof(Uint16) * numpatterns);
+
+	memReadU16Array(&reader, patterns, numpatterns);
+
+	assert(reader.size == 0 && !reader.error);
+
 	lds_rewind();
 	
 	return true;
 }
 
-void lds_free( void )
+void lds_free(void)
 {
 	free(soundbank);
 	soundbank = NULL;
@@ -197,7 +191,7 @@ void lds_free( void )
 	patterns = NULL;
 }
 
-void lds_rewind( void )
+void lds_rewind(void)
 {
 	int i;
 
@@ -231,6 +225,11 @@ void lds_rewind( void )
 	}
 }
 
+void lds_fade(Uint8 speed)
+{
+	fadeonoff = speed;
+}
+
 void lds_setregs(Uint8 reg, Uint8 val)
 {
 	if(fmchip[reg] == val) return;
@@ -244,7 +243,7 @@ void lds_setregs_adv(Uint8 reg, Uint8 mask, Uint8 val)
 	lds_setregs(reg, (fmchip[reg] & mask) | val);
 }
 
-int lds_update( void )
+int lds_update(void)
 {
 	Uint16 comword, freq, octave, chan, tune, wibc, tremc, arpreg;
 	int vbreak;
@@ -305,7 +304,6 @@ int lds_update( void )
 			if(!c->packwait) {
 				Uint16 patnum = positions[posplay * 9 + chan].patnum;
 				Uint8 transpose = positions[posplay * 9 + chan].transpose;
-				/*printf("> %p", positions);*/
 
 				comword = patterns[patnum + c->packpos];
 				comhi = comword >> 8; comlo = comword & 0xff;
@@ -766,4 +764,3 @@ void lds_playsound(int inst_number, int channel_number, int tunehigh)
 	c->keycount = i->keyoff;
 	c->nextvol = c->glideto = c->finetune = c->vibcount = c->arp_pos = c->arp_count = 0;
 }
-

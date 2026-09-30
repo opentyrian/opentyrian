@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,14 +19,14 @@
 #ifndef MENUS_H
 #define MENUS_H
 
-#include "opentyr.h"
+#include <stdbool.h>
 
-#define GAMEPLAY_NAME_COUNT 5
-extern char episode_name[6][31], difficulty_name[7][21], gameplay_name[GAMEPLAY_NAME_COUNT][26];
+extern char episode_name[6][31];
+extern char difficulty_name[7][21];
+extern char gameplay_name[5][26];
 
-bool select_gameplay( void );
-bool select_episode( void );
-bool select_difficulty( void );
+bool gameplaySelect(void);
+bool episodeSelect(void);
+bool difficultySelect(void);
 
 #endif /* MENUS_H */
-

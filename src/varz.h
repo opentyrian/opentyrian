@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 #ifndef VARZ_H
 #define VARZ_H
 
-#include "episodes.h"
+#include "lvlmast.h"
 #include "opentyr.h"
 #include "player.h"
 #include "sprite.h"
@@ -113,7 +113,7 @@ struct JE_SingleEnemyType
 
 typedef struct JE_SingleEnemyType JE_MultiEnemyType[100]; /* [1..100] */
 
-typedef JE_word JE_DanCShape[(24 * 28) / 2]; /* [1..(24*28) div 2] */
+typedef JE_byte JE_DanCShape[24 * 28]; /* [1..(24*28) div 2] OF WORD */
 
 typedef JE_char JE_CharString[256]; /* [1..256] */
 
@@ -183,13 +183,13 @@ typedef struct {
 } EnemyShotType;
 
 typedef struct {
-	unsigned int ttl;
-	signed int x, y;
-	signed int delta_x, delta_y;
-	bool fixed_position;
-	bool follow_player;
-	unsigned int sprite;
-} explosion_type;
+	JE_byte ttl;
+	JE_integer x, y;
+	JE_word sprite;
+	bool followPlayer;
+	bool fixedPosition;
+	JE_integer deltaY;
+} Explosion;
 
 typedef struct {
 	unsigned int delay;
@@ -237,8 +237,8 @@ extern JE_word galagaShotFreq;
 extern JE_longint galagaLife;
 extern JE_boolean debug;
 extern Uint32 debugTime, lastDebugTime;
-extern JE_longint debugHistCount;
-extern JE_real debugHist;
+extern Uint32 debugHistCount;
+extern Uint32 debugHist;
 extern JE_word curLoc;
 extern JE_boolean firstGameOver, gameLoaded, enemyStillExploding;
 extern JE_word totalEnemy;
@@ -249,13 +249,6 @@ extern struct JE_MegaDataType3 megaData3;
 extern JE_byte flash;
 extern JE_shortint flashChange;
 extern JE_byte displayTime;
-
-extern bool play_demo, record_demo, stopped_demo;
-extern Uint8 demo_num;
-extern FILE *demo_file;
-
-extern Uint8 demo_keys, next_demo_keys;
-extern Uint16 demo_keys_wait;
 
 extern JE_byte soundQueue[8];
 extern JE_boolean enemyContinualDamage;
@@ -282,9 +275,8 @@ extern JE_MultiEnemyType enemy;
 extern JE_EnemyAvailType enemyAvail;
 extern JE_word enemyOffset;
 extern JE_word enemyOnScreen;
-extern JE_byte enemyShapeTables[6];
 extern JE_word superEnemy254Jump;
-extern explosion_type explosions[MAX_EXPLOSIONS];
+extern Explosion explosions[MAX_EXPLOSIONS];
 extern JE_integer explosionFollowAmountX, explosionFollowAmountY;
 extern JE_boolean fireButtonHeld;
 extern JE_boolean enemyShotAvail[ENEMY_SHOT_MAX];
@@ -310,7 +302,6 @@ extern rep_explosion_type rep_explosions[MAX_REPEATING_EXPLOSIONS];
 extern superpixel_type superpixels[MAX_SUPERPIXELS];
 extern unsigned int last_superpixel;
 extern JE_byte temp, temp2, temp3;
-extern JE_word tempX, tempY;
 extern JE_word tempW;
 extern JE_boolean doNotSaveBackup;
 extern JE_word x, y;
@@ -328,32 +319,30 @@ static const int hud_sidekick_y[2][2] =
 	{ 108, 126 }, // two player HUD
 };
 
-void JE_getShipInfo( void );
-JE_word JE_SGr( JE_word ship, Sprite2_array **ptr );
+void JE_getShipInfo(void);
+JE_word JE_SGr(JE_word ship, Sprite2_array **ptr);
 
-void JE_drawOptions( void );
+void JE_drawOptions(void);
 
-void JE_tyrianHalt( JE_byte code ); /* This ends the game */
-void JE_specialComplete( JE_byte playernum, JE_byte specialType );
-void JE_doSpecialShot( JE_byte playernum, uint *armor, uint *shield );
+void JE_tyrianHalt(JE_byte code); /* This ends the game */
+void JE_specialComplete(JE_byte playernum, JE_byte specialType);
+void JE_doSpecialShot(JE_byte playernum, uint *armor, uint *shield);
 
-void JE_wipeShieldArmorBars( void );
-JE_byte JE_playerDamage( JE_byte temp, Player * );
+void JE_wipeShieldArmorBars(void);
+JE_byte JE_playerDamage(JE_byte temp, Player *);
 
-void JE_setupExplosion( signed int x, signed int y, signed int delta_y, unsigned int type, bool fixed_position, bool follow_player );
-void JE_setupExplosionLarge( JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y );
+void JE_setupExplosion(JE_integer x, JE_integer y, JE_integer deltaY, JE_integer type, bool fixedPosition, bool followPlayer);
+void JE_setupExplosionLarge(JE_boolean enemyground, JE_byte explonum, JE_integer x, JE_integer y);
 
-void JE_drawShield( void );
-void JE_drawArmor( void );
+void JE_drawShield(void);
+void JE_drawArmor(void);
 
-JE_word JE_portConfigs( void );
+JE_word JE_portConfigs(void);
 
 /*SuperPixels*/
-void JE_doSP( JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color );
-void JE_drawSP( void );
+void JE_doSP(JE_word x, JE_word y, JE_word num, JE_byte explowidth, JE_byte color);
+void JE_drawSP(void);
 
-void JE_drawOptionLevel( void );
-
+void JE_drawOptionLevel(void);
 
 #endif /* VARZ_H */
-

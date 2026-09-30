@@ -1,6 +1,6 @@
 /* 
  * OpenTyrian: A modern cross-platform port of Tyrian
- * Copyright (C) 2007-2009  The OpenTyrian Development Team
+ * Copyright (C) The OpenTyrian Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,22 +18,27 @@
  */
 #include "arg_parse.h"
 
-#include "std_support.h"
+#include "logging.h"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static void permute( const char *argv[], int *first_nonopt, int *first_opt, int after_opt );
+static void permute(const char *argv[], int *first_nonopt, int *first_opt, int after_opt);
 
-static int parse_short_opt( int argc, const char *const argv[], const Options *options, Option *option );
-static int parse_long_opt( int argc, const char *const argv[], const Options *options, Option *option );
+static int parse_short_opt(int argc, const char *const argv[], const Options *options, Option *option);
+static int parse_long_opt(int argc, const char *const argv[], const Options *options, Option *option);
 
-Option parse_args( int argc, const char *argv[], const Options *options )
+/*!
+ * \brief Locate a character in a a string.
+ * 
+ * \param[in] s the string
+ * \param[in] c the character
+ * \return the pointer to the first occurrence of \p c in \p s if there is an occurrences;
+ *         otherwise the pointer to the terminating NUL character of \p s
+ */
+static char *ot_strchrnul(const char *s, int c);
+
+Option parse_args(int argc, const char *argv[], const Options *options)
 {
 	static int argn = 1;
 	static bool no_more_options = false;
@@ -88,7 +93,7 @@ Option parse_args( int argc, const char *argv[], const Options *options )
 	return option;
 }
 
-static void permute( const char *argv[], int *first_nonopt, int *first_opt, int after_opt )
+static void permute(const char *argv[], int *first_nonopt, int *first_opt, int after_opt)
 {
 	const int nonopts = *first_opt - *first_nonopt;
 	
@@ -111,7 +116,7 @@ static void permute( const char *argv[], int *first_nonopt, int *first_opt, int 
 	*first_opt -= nonopts;
 }
 
-static int parse_short_opt( int argc, const char *const argv[], const Options *options, Option *option )
+static int parse_short_opt(int argc, const char *const argv[], const Options *options, Option *option)
 {
 	static size_t offset = 1;  // ignore the "-"
 	
@@ -136,7 +141,7 @@ static int parse_short_opt( int argc, const char *const argv[], const Options *o
 			
 			if (options->has_arg)
 			{
-				if (arg_attached)  // arg direclty follows option
+				if (arg_attached)  // arg directly follows option
 				{
 					option->arg = arg + offset + 1;
 					
@@ -162,10 +167,10 @@ static int parse_short_opt( int argc, const char *const argv[], const Options *o
 	switch (option->value)
 	{
 	case INVALID_OPTION:
-		fprintf(stderr, "%s: invalid option -- '%c'\n", argv[0], argv[option->argn][offset]);
+		logError("%s: invalid option -- '%c'", argv[0], argv[option->argn][offset]);
 		break;
 	case OPTION_MISSING_ARG:
-		fprintf(stderr, "%s: option requires an argument -- '%c'\n", argv[0], argv[option->argn][offset]);
+		logError("%s: option requires an argument -- '%c'", argv[0], argv[option->argn][offset]);
 		break;
 	}
 	
@@ -178,7 +183,7 @@ static int parse_short_opt( int argc, const char *const argv[], const Options *o
 	return argn;  // which arg in argv that parse_args() should examine when called again
 }
 
-static int parse_long_opt( int argc, const char *const argv[], const Options *options, Option *option )
+static int parse_long_opt(int argc, const char *const argv[], const Options *options, Option *option)
 {
 	int argn = option->argn;
 	
@@ -232,17 +237,24 @@ static int parse_long_opt( int argc, const char *const argv[], const Options *op
 	switch (option->value)
 	{
 	case INVALID_OPTION:
-		fprintf(stderr, "%s: unrecognized option '%s'\n", argv[0], argv[option->argn]);
+		logError("%s: unrecognized option '%s'", argv[0], argv[option->argn]);
 		break;
 	case AMBIGUOUS_OPTION:
-		fprintf(stderr, "%s: option '%s' is ambiguous\n", argv[0], argv[option->argn]);
+		logError("%s: option '%s' is ambiguous", argv[0], argv[option->argn]);
 		break;
 	case OPTION_MISSING_ARG:
-		fprintf(stderr, "%s: option '%s' requires an argument\n", argv[0], argv[option->argn]);
+		logError("%s: option '%s' requires an argument", argv[0], argv[option->argn]);
 		break;
 	}
 	
 	++argn;
 	
 	return argn;  // which arg in argv that parse_args() should examine when called again
+}
+
+static char *ot_strchrnul(const char *s, int c)
+{
+	for (; *s != c && *s != '\0'; ++s)
+		;
+	return (char *)s;
 }
