@@ -320,8 +320,8 @@ void handleSdlEvents(void)
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:;
-				mouseX = ev.motion.x;
-				mouseY = ev.motion.y;
+				mouseX = ev.button.x;
+				mouseY = ev.button.y;
 				mapWindowPointToScreen(&mouseX, &mouseY);
 
 				if (mouseInputsCount < COUNTOF(mouseInputs))
@@ -344,8 +344,8 @@ void handleSdlEvents(void)
 				goto mouseMotion;
 
 			case SDL_MOUSEBUTTONUP:
-				mouseX = ev.motion.x;
-				mouseY = ev.motion.y;
+				mouseX = ev.button.x;
+				mouseY = ev.button.y;
 				mapWindowPointToScreen(&mouseX, &mouseY);
 
 				mouseButtonsDown &= ~SDL_BUTTON(ev.button.button);
