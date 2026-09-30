@@ -79,8 +79,8 @@ bool findDataFiles(void)
 		return dataFileExists(filename);
 	}
 
-	// A "data" directory next to the executable (or inside the app bundle's
-	// Resources on macOS), so a self-contained distribution runs from any cwd.
+	// A "data" directory next to the executable, so a self-contained distribution
+	// runs from any cwd.  Only available where getBasePath() is implemented.
 	static char *baseDataDirPath = NULL;
 	if (baseDataDirPath == NULL)
 	{
