@@ -2157,7 +2157,7 @@ void JE_highScoreCheck(void)
 // increases game difficulty based on player's total score / total of players' scores
 void adjust_difficulty(void)
 {
-	const float score_multiplier[10] =
+	static const float score_multiplier[10] =
 	{
 		0,     // Wimp  (doesn't exist)
 		0.4f,  // Easy

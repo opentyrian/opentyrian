@@ -28,7 +28,7 @@
 void JE_pix(SDL_Surface *surface, int x, int y, JE_byte c)
 {
 	/* Bad things happen if we don't clip */
-	if (x <  surface->pitch && y <  surface->h)
+	if ((unsigned int)x < (unsigned int)surface->pitch && (unsigned int)y < (unsigned int)surface->h)
 	{
 		Uint8 *vga = surface->pixels;
 		vga[y * surface->pitch + x] = c;
@@ -47,8 +47,8 @@ void JE_pix3(SDL_Surface *surface, int x, int y, JE_byte c)
 
 void JE_rectangle(SDL_Surface *surface, int a, int b, int c, int d, int e) /* x1, y1, x2, y2, color */
 {
-	if (a < surface->pitch && b < surface->h &&
-	    c < surface->pitch && d < surface->h)
+	if ((unsigned int)a < (unsigned int)surface->pitch && (unsigned int)b < (unsigned int)surface->h &&
+	    (unsigned int)c < (unsigned int)surface->pitch && (unsigned int)d < (unsigned int)surface->h)
 	{
 		Uint8 *vga = surface->pixels;
 		int i;
@@ -85,8 +85,8 @@ void fill_rectangle_xy(SDL_Surface *surface, int x, int y, int x2, int y2, Uint8
 
 void JE_barShade(SDL_Surface *surface, int a, int b, int c, int d) /* x1, y1, x2, y2 */
 {
-	if (a < surface->pitch && b < surface->h &&
-	    c < surface->pitch && d < surface->h)
+	if ((unsigned int)a < (unsigned int)surface->pitch && (unsigned int)b < (unsigned int)surface->h &&
+	    (unsigned int)c < (unsigned int)surface->pitch && (unsigned int)d < (unsigned int)surface->h)
 	{
 		Uint8 *vga = surface->pixels;
 		int i, j, width;
@@ -109,8 +109,8 @@ void JE_barShade(SDL_Surface *surface, int a, int b, int c, int d) /* x1, y1, x2
 
 void JE_barBright(SDL_Surface *surface, int a, int b, int c, int d) /* x1, y1, x2, y2 */
 {
-	if (a < surface->pitch && b < surface->h &&
-	    c < surface->pitch && d < surface->h)
+	if ((unsigned int)a < (unsigned int)surface->pitch && (unsigned int)b < (unsigned int)surface->h &&
+	    (unsigned int)c < (unsigned int)surface->pitch && (unsigned int)d < (unsigned int)surface->h)
 	{
 		Uint8 *vga = surface->pixels;
 		int i, j, width;
