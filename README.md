@@ -11,23 +11,10 @@ to fight MicroSol and save the galaxy.
 Tyrian features a story mode, one- and two-player arcade modes, and networked
 multiplayer.
 
-## Downloads
+This is the SDL 1.2 branch of OpenTyrian.  Release builds are made from the
+`master` branch, which uses SDL2.
 
-Download the appropriate build for your platform from the
-[latest release](https://github.com/opentyrian/opentyrian/releases/latest),
-extract it, and run it:
-
-| Platform | File | Run |
-|---|---|---|
-| Windows | `opentyrian-<version>-windows-<arch>.zip` | Unzip and run `opentyrian.exe` |
-| macOS | `opentyrian-<version>-macos-universal.zip` | Unzip and open `OpenTyrian.app` |
-| Linux | `opentyrian-<version>-linux-<arch>.tar.gz` | Extract and run `./opentyrian` |
-
-These builds contain everything needed to run the game, including the freeware
-Tyrian 2.1 data files.
-
-The macOS app is not notarized.  If Gatekeeper refuses to open it, right-click
-the app, choose *Open*, and confirm once.
+## Configuration
 
 Configuration and saved game files are kept in one of the following locations:
 
@@ -41,27 +28,24 @@ executable, the configuration and saved game files will be stored there instead.
 
 ## Game Data
 
-If you download a release build of OpenTyrian, the freeware Tyrian 2.1 data
-files are included and do not need to be downloaded separately.
-
-Otherwise, download [Tyrian v2.1](https://camanis.net/tyrian/tyrian21.zip) and
+Download [Tyrian v2.1](https://camanis.net/tyrian/tyrian21.zip) and
 extract the archive so that the files (with lowercase filenames) are in one of
 the following locations, searched in order:
 
 1. the directory given with `--data=DIR`
-2. a `data` directory next to the executable (inside `Contents/Resources`
-   for the macOS app)
+2. a `data` directory next to the executable (Windows and Linux only)
 3. the system directory the build was configured with
    (`/usr/local/share/games/tyrian` by default; `C:\TYRIAN` on Windows)
+4. the current directory
 
 ## Building
 
-Requirements: a C99 compiler, GNU make, pkg-config, SDL2, and, for network
-play, SDL2_net.
+Requirements: a C99 compiler, GNU make, pkg-config, SDL 1.2, and, for network
+play, SDL_net 1.2.
 
     make
 
-Network play is enabled automatically when SDL2_net is found.
+Network play is enabled automatically when SDL_net is found.
 
 A Visual Studio solution is provided in `visualc/`.
 
