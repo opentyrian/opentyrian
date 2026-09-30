@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            build-essential pkg-config libsdl1.2-dev libsdl-net1.2
+            build-essential pkg-config libsdl1.2-dev libsdl-net1.2-dev
       - name: Compile check (debug, -Werror)
         run: make -j"$(nproc)" debug
       - name: Smoke test
