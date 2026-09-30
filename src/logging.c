@@ -28,6 +28,11 @@
 
 static void logMessageV(const char *priority, const char *fmt, va_list ap)
 {
+#ifdef _WIN32
+	va_list apCopy;
+	va_copy(apCopy, ap);
+#endif
+
 	fprintf(stderr, "%s: ", priority);
 	vfprintf(stderr, fmt, ap);
 	fputc('\n', stderr);
@@ -37,10 +42,12 @@ static void logMessageV(const char *priority, const char *fmt, va_list ap)
 	{
 		char buffer[4096];
 		int len = snprintf(buffer, sizeof buffer, "%s: ", priority);
-		len += vsnprintf(buffer + len, sizeof buffer - len, fmt, ap);
-		len += snprintf(buffer + len, sizeof buffer - len, "\n");
+		vsnprintf(buffer + len, sizeof buffer - len, fmt, apCopy);
 		OutputDebugStringA(buffer);
+		OutputDebugStringA("\n");
 	}
+
+	va_end(apCopy);
 #endif
 }
 
