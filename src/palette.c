@@ -175,18 +175,25 @@ void step_fade_palette(int diff[256][3], int steps, unsigned int first_color, un
 void fade_palette(Palette colors, int steps, unsigned int first_color, unsigned int last_color)
 {
 	assert(steps > 0);
-	
+
+	SDL_Surface *const surface = SDL_GetVideoSurface();
+	const uint bpp = surface->format->BitsPerPixel;
+
+	if (bpp == 8)
+		JE_showVGA();
+
 	static int diff[256][3];
 	init_step_fade_palette(diff, colors, first_color, last_color);
-	
+
 	for (; steps > 0; steps--)
 	{
 		setFrameCount(1);
-		
+
 		step_fade_palette(diff, steps, first_color, last_color);
-		
-		JE_showVGA();
-		
+
+		if (bpp != 8)
+			JE_showVGA();
+
 		waitUntilElapsed();
 	}
 
@@ -198,18 +205,25 @@ void fade_palette(Palette colors, int steps, unsigned int first_color, unsigned 
 void fade_solid(SDL_Color color, int steps, unsigned int first_color, unsigned int last_color)
 {
 	assert(steps > 0);
-	
+
+	SDL_Surface *const surface = SDL_GetVideoSurface();
+	const uint bpp = surface->format->BitsPerPixel;
+
+	if (bpp == 8)
+		JE_showVGA();
+
 	static int diff[256][3];
 	init_step_fade_solid(diff, color, first_color, last_color);
-	
+
 	for (; steps > 0; steps--)
 	{
 		setFrameCount(1);
-		
+
 		step_fade_palette(diff, steps, first_color, last_color);
-		
-		JE_showVGA();
-		
+
+		if (bpp != 8)
+			JE_showVGA();
+
 		waitUntilElapsed();
 	}
 
