@@ -18,6 +18,8 @@
 */
 #include "logging.h"
 
+#include "opentyr.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -28,20 +30,49 @@
 
 static void logMessageV(const char *priority, const char *fmt, va_list ap)
 {
-	fprintf(stderr, "%s: ", priority);
-	vfprintf(stderr, fmt, ap);
-	fputc('\n', stderr);
+	char buffer[256];
+	char *bufferPtr = buffer;
+	size_t bufferSize = sizeof buffer;
+
+again:;
+	int temp = snprintf(bufferPtr, bufferSize, "%s: ", priority);
+	size_t neededLen = (size_t)MAX(0, temp);
+	size_t len = MIN(neededLen, bufferSize);
+
+	va_list apCopy;
+	va_copy(apCopy, ap);
+	temp = vsnprintf(bufferPtr + len, bufferSize - len, fmt, apCopy);
+	va_end(apCopy);
+	neededLen += (size_t)MAX(0, temp);
+	len = MIN(neededLen, bufferSize);
+
+	size_t neededSize = neededLen + sizeof "\n";
+	if (neededSize > bufferSize)
+	{
+		if (bufferPtr != buffer)
+			free(bufferPtr);
+
+		bufferSize = neededSize;
+		bufferPtr = malloc(bufferSize);
+		if (bufferPtr != NULL)
+			goto again;
+
+		bufferPtr = buffer;
+		bufferSize = sizeof buffer;
+	}
+
+	len = MIN(len, bufferSize - sizeof "\n");
+	strcpy(bufferPtr + len, "\n");
 
 #ifdef _WIN32
 	if (IsDebuggerPresent())
-	{
-		char buffer[4096];
-		int len = snprintf(buffer, sizeof buffer, "%s: ", priority);
-		len += vsnprintf(buffer + len, sizeof buffer - len, fmt, ap);
-		len += snprintf(buffer + len, sizeof buffer - len, "\n");
-		OutputDebugStringA(buffer);
-	}
+		OutputDebugStringA(bufferPtr);
 #endif
+
+	fputs(bufferPtr, stderr);
+
+	if (bufferPtr != buffer)
+		free(bufferPtr);
 }
 
 PRINTF_VARARG_FUNC(2)
