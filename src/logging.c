@@ -18,17 +18,53 @@
 */
 #include "logging.h"
 
+#include "opentyr.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+
 SDL_PRINTF_VARARG_FUNC(1)
 void logFatal(SDL_PRINTF_FORMAT_STRING const char *fmt, ...)
 {
+	char buffer[256];
+	char *bufferPtr = buffer;
+	size_t bufferSize = sizeof buffer;
+
+again:;
 	va_list ap;
 	va_start(ap, fmt);
-
-	SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, fmt, ap);
-
-	char buffer[4096];
-	SDL_vsnprintf(buffer, sizeof(buffer), fmt, ap);
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", buffer, NULL);
-
+	int temp = vsnprintf(bufferPtr, bufferSize, fmt, ap);
 	va_end(ap);
+	size_t neededLen = (size_t)MAX(0, temp);
+	size_t len = MIN(neededLen, bufferSize);
+
+	size_t neededSize = neededLen + sizeof "\n";
+	if (neededSize > bufferSize)
+	{
+		if (bufferPtr != buffer)
+			free(bufferPtr);
+
+		bufferSize = neededSize;
+		bufferPtr = malloc(bufferSize);
+		if (bufferPtr != NULL)
+			goto again;
+
+		bufferPtr = buffer;
+		bufferSize = sizeof buffer;
+	}
+
+	len = MIN(len, bufferSize - sizeof "\n");
+	strcpy(bufferPtr + len, "\n");
+
+	SDL_LogOutputFunction logOutput;
+	void *userdata;
+	SDL_LogGetOutputFunction(&logOutput, &userdata);
+	if (logOutput != NULL)
+		logOutput(userdata, SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, bufferPtr);
+
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", bufferPtr, NULL);
+
+	if (bufferPtr != buffer)
+		free(bufferPtr);
 }
