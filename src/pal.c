@@ -36,14 +36,14 @@ char *getBasePath(void)
 	DWORD size = 32;
 
 again:;
-	TCHAR *path = malloc(sizeof(TCHAR) * size);
+	char *path = malloc(size);
 	if (path == NULL)
 	{
 		logFatal("Out of memory.");
 		exit(EXIT_FAILURE);
 	}
 
-	DWORD len = GetModuleFileName(NULL, path, size);
+	DWORD len = GetModuleFileNameA(NULL, path, size);
 	if (len == size)
 	{
 		free(path);
@@ -75,34 +75,7 @@ again:;
 		return NULL;
 	}
 
-#ifdef UNICODE
-	int mbSize = WideCharToMultiByte(CP_UTF8, 0, path, len + 1, NULL, 0, NULL, NULL);
-	if (mbSize <= 0)
-	{
-		logFatal("Failed to encode to UTF-8.");
-		exit(EXIT_FAILURE);
-	}
-
-	char *mbPath = malloc(mbSize);
-	if (mbPath == NULL)
-	{
-		logFatal("Out of memory.");
-		exit(EXIT_FAILURE);
-	}
-
-	mbSize = WideCharToMultiByte(CP_UTF8, 0, path, len + 1, mbPath, mbSize, NULL, NULL);
-	if (mbSize <= 0)
-	{
-		logFatal("Failed to encode to UTF-8.");
-		exit(EXIT_FAILURE);
-	}
-
-	free(path);
-
-	return mbPath;
-#else
 	return path;
-#endif
 }
 
 #else
