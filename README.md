@@ -29,6 +29,8 @@ Tyrian 2.1 data files.
 The macOS app is not notarized.  If Gatekeeper refuses to open it, right-click
 the app, choose *Open*, and confirm once.
 
+## Configuration
+
 Configuration and saved game files are kept in one of the following locations:
 
 | Platform | Location |
@@ -53,6 +55,7 @@ the following locations, searched in order:
    for the macOS app)
 3. the system directory the build was configured with
    (`/usr/local/share/games/tyrian` by default; `C:\TYRIAN` on Windows)
+4. the current directory
 
 ## Building
 
