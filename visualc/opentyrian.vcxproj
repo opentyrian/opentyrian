@@ -158,6 +158,7 @@
     <ClCompile Include="..\src\vga256d.c" />
     <ClCompile Include="..\src\vga_palette.c" />
     <ClCompile Include="..\src\video.c" />
+    <ClCompile Include="..\src\video_effects.c" />
     <ClCompile Include="..\src\video_scale.c" />
     <ClCompile Include="..\src\video_scale_hqNx.c" />
     <ClCompile Include="..\src\xmas.c" />
@@ -213,6 +214,7 @@
     <ClInclude Include="..\src\vga256d.h" />
     <ClInclude Include="..\src\vga_palette.h" />
     <ClInclude Include="..\src\video.h" />
+    <ClInclude Include="..\src\video_effects.h" />
     <ClInclude Include="..\src\video_scale.h" />
     <ClInclude Include="..\src\xmas.h" />
   </ItemGroup>

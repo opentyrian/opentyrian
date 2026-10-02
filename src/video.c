@@ -20,6 +20,7 @@
 
 #include "keyboard.h"
 #include "logging.h"
+#include "video_effects.h"
 #include "video_scale.h"
 
 #include <assert.h>
@@ -58,6 +59,7 @@ static int window_get_display_index(void);
 static void window_center_in_display(int display_index);
 static void calc_dst_render_rect(SDL_Surface *src_surface, SDL_Rect *dst_rect);
 static void scale_and_flip(SDL_Surface *);
+static void render_to_window(SDL_Surface *src_surface, bool new_frame);
 
 void init_video(void)
 {
@@ -95,6 +97,7 @@ void init_video(void)
 
 	reinit_fullscreen(fullscreen_display);
 	init_renderer();
+	initVideoEffects(main_window_renderer);
 	init_texture();
 	init_scaler(scaler);
 
@@ -108,6 +111,7 @@ void init_video(void)
 void deinit_video(void)
 {
 	deinit_texture();
+	deinitVideoEffects();
 	deinit_renderer();
 
 	SDL_DestroyWindow(main_window);
@@ -382,6 +386,11 @@ static void scale_and_flip(SDL_Surface *src_surface)
 	assert(scaler_function != NULL);
 	scaler_function(src_surface, main_window_texture);
 
+	render_to_window(src_surface, true);
+}
+
+static void render_to_window(SDL_Surface *const src_surface, const bool new_frame)
+{
 	SDL_Rect dst_rect;
 	calc_dst_render_rect(src_surface, &dst_rect);
 
@@ -389,10 +398,18 @@ static void scale_and_flip(SDL_Surface *src_surface)
 	SDL_SetRenderDrawColor(main_window_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(main_window_renderer);
 	SDL_RenderCopy(main_window_renderer, main_window_texture, NULL, &dst_rect);
+	renderVideoEffects(new_frame ? src_surface : NULL, &dst_rect);
 	SDL_RenderPresent(main_window_renderer);
 
 	// Save output rect to be used by mouse functions
 	last_output_rect = dst_rect;
+}
+
+void video_redraw_effects(void)
+{
+	// The output texture still holds the last frame, so only the effects need to be updated.
+	if (videoEffectsNeedRedraw())
+		render_to_window(VGAScreen, false);
 }
 
 /** Maps a specified point in game screen coordinates to window coordinates. */
