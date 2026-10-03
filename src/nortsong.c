@@ -112,7 +112,31 @@ void delayUntilElapsed(void)
 		SDL_Delay(((Uint32)diff + half) >> 10);
 }
 
-static void loadSounds(size_t soundsOffset, size_t soundsCount, const char *filename, bool trim, SDL_AudioCVT *cvt)
+// Converts 8-bit 11025 Hz sound data to the output sample format and rate using
+// linear interpolation.  SDL1 can only resample by factors of two.
+static Sint16 *convertSound(const Sint8 *in, size_t inCount, size_t *out_count)
+{
+	const size_t outCount = inCount / 11025 * audioSampleRate + inCount % 11025 * audioSampleRate / 11025;
+	Sint16 *const out = malloc(sizeof *out * (outCount > 0 ? outCount : 1));
+
+	// Input position in 16.16 fixed point.
+	const Uint32 step = ((Uint32)11025 << 16) / audioSampleRate;
+	Uint32 pos = 0;
+
+	for (size_t i = 0; i < outCount; ++i, pos += step)
+	{
+		const size_t j = pos >> 16;
+		const Sint32 frac = pos & 0xFFFF;
+		const Sint32 a = in[j];
+		const Sint32 b = j + 1 < inCount ? in[j + 1] : a;
+		out[i] = (Sint16)((a * 65536 + (b - a) * frac) / 256);
+	}
+
+	*out_count = outCount;
+	return out;
+}
+
+static void loadSounds(size_t soundsOffset, size_t soundsCount, const char *filename, bool trim)
 {
 	File file = dataFileOpen(filename, "rb");
 	if (file.error)
@@ -150,7 +174,7 @@ static void loadSounds(size_t soundsOffset, size_t soundsCount, const char *file
 		maxSize = MAX(maxSize, size);
 	}
 
-	cvt->buf = malloc(maxSize * cvt->len_mult);
+	Sint8 *const buf = malloc(maxSize > 0 ? maxSize : 1);
 
 	for (size_t i = 0; i < count; ++i)
 	{
@@ -166,21 +190,12 @@ static void loadSounds(size_t soundsOffset, size_t soundsCount, const char *file
 
 		fileSetPosition(&file, position);
 
-		fileReadExactly(&file, cvt->buf, size);
-		cvt->len = size;
+		fileReadExactly(&file, buf, size);
 
-		if (SDL_ConvertAudio(cvt) != 0)
-		{
-			logError("Failed to convert audio: %s", SDL_GetError());
-			continue;
-		}
-
-		soundSamples[soundsOffset + i] = malloc(cvt->len_cvt);
-		memcpy(soundSamples[soundsOffset + i], cvt->buf, cvt->len_cvt);
-		soundSampleCount[soundsOffset + i] = cvt->len_cvt / sizeof (Sint16);
+		soundSamples[soundsOffset + i] = convertSound(buf, size, &soundSampleCount[soundsOffset + i]);
 	}
 
-	free(cvt->buf);
+	free(buf);
 
 	free(positions);
 
@@ -200,19 +215,14 @@ void loadSndFile(bool xmas)
 		soundSampleCount[i] = 0;
 	}
 
-	// Build converter to output sample format and rate.
-	SDL_AudioCVT cvt;
-	if (SDL_BuildAudioCVT(&cvt, AUDIO_S8, 1, 11025, AUDIO_S16SYS, 1, audioSampleRate) < 0)
-	{
-		logError("Failed to build audio converter: %s", SDL_GetError());
+	if (audio_disabled)
 		return;
-	}
 
 	const char *sfxFilename = "tyrian.snd";
-	loadSounds(0, SFX_COUNT, sfxFilename, false, &cvt);
+	loadSounds(0, SFX_COUNT, sfxFilename, false);
 
 	const char *voiceFilename = xmas ? "voicesc.snd" : "voices.snd";
-	loadSounds(SFX_COUNT, VOICE_COUNT, voiceFilename, true, &cvt);
+	loadSounds(SFX_COUNT, VOICE_COUNT, voiceFilename, true);
 }
 
 void JE_playSampleNum(JE_byte samplenum)
