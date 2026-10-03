@@ -97,7 +97,9 @@ bool init_audio(void)
 		return false;
 	}
 
-	if (SDL_OpenAudio(&ask, NULL) != 0)
+	SDL_AudioSpec got;
+
+	if (SDL_OpenAudio(&ask, &got) != 0)
 	{
 		logError("Failed to open audio device: %s", SDL_GetError());
 
@@ -107,7 +109,27 @@ bool init_audio(void)
 		return false;
 	}
 
-	audioSampleRate = ask.freq;
+	// Mix at the rate the device runs at, because SDL1 cannot resample to an
+	// arbitrary rate.  Reopening at that rate without an obtained spec lets SDL
+	// convert format and channels without resampling.
+	if (got.format != ask.format || got.channels != ask.channels)
+	{
+		SDL_CloseAudio();
+
+		ask.freq = got.freq;
+
+		if (SDL_OpenAudio(&ask, NULL) != 0)
+		{
+			logError("Failed to open audio device: %s", SDL_GetError());
+
+			SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
+			audio_disabled = true;
+			return false;
+		}
+	}
+
+	audioSampleRate = got.freq;
 
 	samplesPerLdsUpdate = 2 * (audioSampleRate / ldsUpdate2Rate);
 	samplesPerLdsUpdateFrac = 2 * (audioSampleRate % ldsUpdate2Rate);
