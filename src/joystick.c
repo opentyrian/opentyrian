@@ -319,33 +319,115 @@ void reset_joystick_assignments(int j)
 {
 	assert(j < joysticks);
 	
-	// defaults: first 2 axes, first hat, first 6 buttons
+	// clear assignments
 	for (uint a = 0; a < COUNTOF(joystick[j].assignment); a++)
 	{
-		// clear assignments
 		for (uint i = 0; i < COUNTOF(joystick[j].assignment[a]); i++)
 			joystick[j].assignment[a][i].type = NONE;
-		
-		if (a < 4)
+	}
+	
+	// defaults: first 2 axes and first hat for direction
+	for (uint a = 0; a < 4; a++)
+	{
+		if (SDL_JoystickNumAxes(joystick[j].handle) >= 2)
 		{
-			if (SDL_JoystickNumAxes(joystick[j].handle) >= 2)
+			joystick[j].assignment[a][0].type = AXIS;
+			joystick[j].assignment[a][0].num = (a + 1) % 2;
+			joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+		}
+		
+		if (SDL_JoystickNumHats(joystick[j].handle) >= 1)
+		{
+			joystick[j].assignment[a][1].type = HAT;
+			joystick[j].assignment[a][1].num = 0;
+			joystick[j].assignment[a][1].x_axis = (a == 1 || a == 3);
+			joystick[j].assignment[a][1].negative_axis = (a == 0 || a == 3);
+		}
+	}
+	
+	const int num_buttons = SDL_JoystickNumButtons(joystick[j].handle);
+	const char *joy_name = SDL_JoystickName(joystick[j].handle);
+	
+	// Detect known modern gamepad types or generic gamepads with 8+ buttons
+	bool is_xbox = joy_name && (strstr(joy_name, "Xbox") != NULL || strstr(joy_name, "XBOX") != NULL || strstr(joy_name, "XInput") != NULL || strstr(joy_name, "xinput") != NULL);
+	bool is_playstation = joy_name && (strstr(joy_name, "Wireless Controller") != NULL || strstr(joy_name, "PS4") != NULL || strstr(joy_name, "PS5") != NULL || strstr(joy_name, "DualShock") != NULL || strstr(joy_name, "DualSense") != NULL || strstr(joy_name, "Sony") != NULL);
+	bool is_switch = joy_name && (strstr(joy_name, "Nintendo") != NULL || strstr(joy_name, "Switch") != NULL || strstr(joy_name, "Pro Controller") != NULL);
+	
+	if ((is_xbox || is_playstation || is_switch || num_buttons >= 8) && num_buttons >= 6)
+	{
+		// Fire: primary bottom face button (A / Cross / B)
+		joystick[j].assignment[4][0].type = BUTTON;
+		joystick[j].assignment[4][0].num = 0;
+		
+		// Change fire: top face button (Y / Triangle / X)
+		joystick[j].assignment[5][0].type = BUTTON;
+		joystick[j].assignment[5][0].num = 3;
+		
+		// Left sidekick: left face button (X / Square / Y) and LB / L1 / L
+		joystick[j].assignment[6][0].type = BUTTON;
+		joystick[j].assignment[6][0].num = 2;
+		if (num_buttons > 4)
+		{
+			joystick[j].assignment[6][1].type = BUTTON;
+			joystick[j].assignment[6][1].num = 4;
+		}
+		
+		// Right sidekick: right face button (B / Circle / A) and RB / R1 / R
+		joystick[j].assignment[7][0].type = BUTTON;
+		joystick[j].assignment[7][0].num = 1;
+		if (num_buttons > 5)
+		{
+			joystick[j].assignment[7][1].type = BUTTON;
+			joystick[j].assignment[7][1].num = 5;
+		}
+		
+		// Menu & Pause buttons
+		if (is_xbox)
+		{
+			if (num_buttons > 7)
 			{
-				joystick[j].assignment[a][0].type = AXIS;
-				joystick[j].assignment[a][0].num = (a + 1) % 2;
-				joystick[j].assignment[a][0].negative_axis = (a == 0 || a == 3);
+				joystick[j].assignment[8][0].type = BUTTON; // Menu (Start)
+				joystick[j].assignment[8][0].num = 7;
 			}
-			
-			if (SDL_JoystickNumHats(joystick[j].handle) >= 1)
+			if (num_buttons > 6)
 			{
-				joystick[j].assignment[a][1].type = HAT;
-				joystick[j].assignment[a][1].num = 0;
-				joystick[j].assignment[a][1].x_axis = (a == 1 || a == 3);
-				joystick[j].assignment[a][1].negative_axis = (a == 0 || a == 3);
+				joystick[j].assignment[9][0].type = BUTTON; // Pause (Back)
+				joystick[j].assignment[9][0].num = 6;
 			}
 		}
-		else
+		else if (is_playstation || is_switch)
 		{
-			if (a - 4 < (unsigned)SDL_JoystickNumButtons(joystick[j].handle))
+			if (num_buttons > 9)
+			{
+				joystick[j].assignment[8][0].type = BUTTON; // Menu (Options / +)
+				joystick[j].assignment[8][0].num = 9;
+			}
+			if (num_buttons > 8)
+			{
+				joystick[j].assignment[9][0].type = BUTTON; // Pause (Share / -)
+				joystick[j].assignment[9][0].num = 8;
+			}
+		}
+		else // Generic PC gamepad with 8+ buttons
+		{
+			if (num_buttons > 7)
+			{
+				joystick[j].assignment[8][0].type = BUTTON;
+				joystick[j].assignment[8][0].num = 7;
+			}
+			if (num_buttons > 6)
+			{
+				joystick[j].assignment[9][0].type = BUTTON;
+				joystick[j].assignment[9][0].num = 6;
+			}
+		}
+	}
+	else
+	{
+		// Legacy sequential button fallback
+		for (uint a = 4; a < COUNTOF(joystick[j].assignment); a++)
+		{
+			if (a - 4 < (unsigned)num_buttons)
 			{
 				joystick[j].assignment[a][0].type = BUTTON;
 				joystick[j].assignment[a][0].num = a - 4;
