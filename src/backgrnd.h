@@ -55,7 +55,9 @@ void water_filter(SDL_Surface *dst, SDL_Surface *src);
 void iced_blur_filter(SDL_Surface *dst, SDL_Surface *src);
 void blur_filter(SDL_Surface *dst, SDL_Surface *src);
 /*smoothies #5 is used for 3*/
-/*smoothies #9 is a vertical flip*/
+void showHeadlight(SDL_Surface *dst, SDL_Surface *src, Sint16 playerX, Sint16 playerY);
+void showFlipped(SDL_Surface *dst, SDL_Surface *src);
+void showNormal(SDL_Surface *dst, SDL_Surface *src);
 
 void initialize_starfield(void);
 void update_and_draw_starfield(SDL_Surface* surface, int move_speed);
