@@ -64,8 +64,12 @@ if [ ! -f "$PREFIX/lib/libSDL2.a" ]; then
     rm -rf "build/vendor/SDL2-$SDL2_VER"
     tar -xzf build/vendor/SDL2.tar.gz -C build/vendor
     cmake -S "build/vendor/SDL2-$SDL2_VER" -B "build/vendor/SDL2-$SDL2_VER/build" \
-        -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-        -DSDL_SHARED=OFF -DSDL_STATIC=ON -DSDL_STATIC_PIC=ON -DSDL_TEST=OFF >/dev/null
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+        -DSDL_SHARED=OFF \
+        -DSDL_STATIC=ON \
+        -DSDL_STATIC_PIC=ON \
+        -DSDL_TEST=OFF >/dev/null
     cmake --build "build/vendor/SDL2-$SDL2_VER/build" -j"$NPROC" >/dev/null
     cmake --install "build/vendor/SDL2-$SDL2_VER/build" >/dev/null
     install_license "build/vendor/SDL2-$SDL2_VER" SDL2
@@ -78,9 +82,14 @@ if [ ! -f "$PREFIX/lib/libSDL2_net.a" ]; then
         "https://github.com/libsdl-org/SDL_net/releases/download/release-$SDL2_NET_VER/SDL2_net-$SDL2_NET_VER.tar.gz"
     rm -rf "build/vendor/SDL2_net-$SDL2_NET_VER"
     tar -xzf build/vendor/SDL2_net.tar.gz -C build/vendor
+    # Work around SDL2_net not creating a .pc file
+    sed -i ':a;N;$!ba;s/if(SDL2NET_BUILD_SHARED_LIBS)[[:space:]]*\n\([[:space:]]*\)# Only create a .pc file for a shared SDL2_net/if(TRUE)\n\1set(ENABLE_SHARED_TRUE "#")/' "build/vendor/SDL2_net-$SDL2_NET_VER/CMakeLists.txt"
     cmake -S "build/vendor/SDL2_net-$SDL2_NET_VER" -B "build/vendor/SDL2_net-$SDL2_NET_VER/build" \
-        -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_PREFIX_PATH="$PREFIX" \
-        -DBUILD_SHARED_LIBS=OFF -DSDL2NET_SAMPLES=OFF >/dev/null
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+        -DCMAKE_PREFIX_PATH="$PREFIX" \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DSDL2NET_SAMPLES=OFF >/dev/null
     cmake --build "build/vendor/SDL2_net-$SDL2_NET_VER/build" -j"$NPROC" >/dev/null
     cmake --install "build/vendor/SDL2_net-$SDL2_NET_VER/build" >/dev/null
     install_license "build/vendor/SDL2_net-$SDL2_NET_VER" SDL2_net
