@@ -67,7 +67,7 @@ static inline void memReadS8Array(MemReader *reader, int8_t *values, size_t coun
 	memReadU8Array(reader, (uint8_t *)values, count);
 }
 
-static inline int8_t memReadS16(MemReader *reader)
+static inline int16_t memReadS16(MemReader *reader)
 {
 	return memReadU16(reader);
 }

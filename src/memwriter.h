@@ -73,7 +73,7 @@ static inline void memWriteS8Array(MemWriter *writer, const int8_t *values, size
 	memWriteU8Array(writer, (const uint8_t *)values, count);
 }
 
-static inline void memWriteS16(MemWriter *writer, int8_t value)
+static inline void memWriteS16(MemWriter *writer, int16_t value)
 {
 	memWriteU16(writer, value);
 }
