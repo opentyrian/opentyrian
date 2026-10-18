@@ -30,6 +30,7 @@
 #include "player.h"
 #include "varz.h"
 #include "video.h"
+#include "video_effects.h"
 #include "video_scale.h"
 
 #define SAVE_FILES_SIZE (109 * SAVE_FILES_NUM)
@@ -289,6 +290,16 @@ static void loadOpenTyrianConfig(void)
 		const char *scaling_mode;
 		if (config_get_string_option(section, "scaling_mode", &scaling_mode))
 			set_scaling_mode_by_name(scaling_mode);
+
+		const char *effectLevel;
+		if (config_get_string_option(section, "scanlines", &effectLevel))
+			setEffectLevelByName(&scanlinesLevel, effectLevel);
+		if (config_get_string_option(section, "pixel_grid", &effectLevel))
+			setEffectLevelByName(&pixelGridLevel, effectLevel);
+		if (config_get_string_option(section, "bloom", &effectLevel))
+			setEffectLevelByName(&bloomLevel, effectLevel);
+		if (config_get_string_option(section, "phosphor", &effectLevel))
+			setEffectLevelByName(&phosphorLevel, effectLevel);
 	}
 
 	section = config_find_section(config, "keyboard", NULL);
@@ -322,6 +333,11 @@ static void saveOpenTyrianConfig(void)
 	config_set_string_option(section, "scaler", scalers[scaler].name);
 	
 	config_set_string_option(section, "scaling_mode", scaling_mode_names[scaling_mode]);
+
+	config_set_string_option(section, "scanlines", effectLevelNames[scanlinesLevel]);
+	config_set_string_option(section, "pixel_grid", effectLevelNames[pixelGridLevel]);
+	config_set_string_option(section, "bloom", effectLevelNames[bloomLevel]);
+	config_set_string_option(section, "phosphor", effectLevelNames[phosphorLevel]);
 
 	section = config_find_or_add_section(config, "keyboard", NULL);
 	if (section == NULL)
