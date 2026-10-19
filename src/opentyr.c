@@ -863,13 +863,13 @@ int main(int argc, char *argv[])
 #endif
 	}
 
-	for (; ; )
-	{
 #ifdef NDEBUG
-		if (!isNetworkGame && !stoppedDemo)
-			intro_logos();
+	if (!isNetworkGame)
+		intro_logos();
 #endif
 
+	for (; ; )
+	{
 		JE_initPlayerData();
 		JE_sortHighScores();
 
@@ -910,6 +910,11 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
+
+#ifdef NDEBUG
+		if (playDemo && !stoppedDemo)
+			intro_logos();
+#endif
 	}
 
 	JE_tyrianHalt(0);
