@@ -863,12 +863,20 @@ int main(int argc, char *argv[])
 #endif
 	}
 
+	bool doLogos = true;
+
 	for (; ; )
 	{
+		doLogos |= playDemo && !stoppedDemo;
+
+		if (!isNetworkGame && doLogos)
+		{
 #ifdef NDEBUG
-		if (!isNetworkGame && !stoppedDemo)
 			intro_logos();
 #endif
+
+			doLogos = false;
+		}
 
 		JE_initPlayerData();
 		JE_sortHighScores();
