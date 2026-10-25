@@ -19,11 +19,44 @@
 #ifndef MTRAND_H
 #define MTRAND_H
 
-#define MT_RAND_MAX 0xffffffffUL
+#include <stddef.h>
 
-void mt_srand(unsigned long s);
-unsigned long mt_rand(void);
-float mt_rand_1(void);
-float mt_rand_lt1(void);
+#define MT_RAND_MAX 0xffffffffUL
+#define MT_RAND_N 624
+
+typedef struct
+{
+	unsigned long x[MT_RAND_N];  /* the array for the state vector */
+	size_t p0, p1, pm;           /* indexes into x */
+} MtState;
+
+/* An MtState must be seeded with mt_srand_r() before use. */
+void mt_srand_r(MtState *mt, unsigned long s);
+unsigned long mt_rand_r(MtState *mt);
+float mt_rand_1_r(MtState *mt);
+float mt_rand_lt1_r(MtState *mt);
+
+/* The generator used by mt_rand() etc. */
+extern MtState mt_global;
+
+static inline void mt_srand(unsigned long s)
+{
+	mt_srand_r(&mt_global, s);
+}
+
+static inline unsigned long mt_rand(void)
+{
+	return mt_rand_r(&mt_global);
+}
+
+static inline float mt_rand_1(void)
+{
+	return mt_rand_1_r(&mt_global);
+}
+
+static inline float mt_rand_lt1(void)
+{
+	return mt_rand_lt1_r(&mt_global);
+}
 
 #endif /* MTRAND_H */
