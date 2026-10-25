@@ -2062,7 +2062,6 @@ draw_player_shot_loop_end:
 				if (!playDemo)
 				{
 					push_joysticks_as_keyboard();
-					handleSdlEvents();
 
 					if (hasInput(INPUT_NO_MOTION))
 						reallyEndLevel = true;
@@ -2077,7 +2076,6 @@ draw_player_shot_loop_end:
 	if (playDemo) // input stops demo
 	{
 		push_joysticks_as_keyboard();
-		handleSdlEvents();
 
 		if (hasInput(INPUT_NO_MOTION))
 		{
@@ -2088,8 +2086,6 @@ draw_player_shot_loop_end:
 	}
 	else // input handling for pausing, menu, cheats
 	{
-		handleSdlEvents();
-
 		// Ensure gameplay input does not affect pause or menu.
 		mouseClearInput();
 
