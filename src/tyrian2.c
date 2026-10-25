@@ -78,13 +78,6 @@ void JE_starShowVGA(void)
 {
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
-		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
-		{
-			delayUntilElapsed();
-
-			setFrameCount(frameCountMax);
-		}
-
 		if (starShowVGASpecialCode == 1)
 		{
 			showFlipped(VGAScreenSeg, game_screen);
@@ -98,6 +91,15 @@ void JE_starShowVGA(void)
 			showNormal(VGAScreenSeg, game_screen);
 		}
 		JE_showVGA();
+
+		// Wait after presenting rather than before so that the frame is shown
+		// as soon as it is ready; input is then sampled right after the wait.
+		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
+		{
+			delayUntilElapsed();
+
+			setFrameCount(frameCountMax);
+		}
 	}
 
 	handleSdlEvents();
