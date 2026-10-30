@@ -2914,6 +2914,7 @@ void JE_menuFunction(JE_byte select)
 			// JE_textShade(VGAScreen, 236, 38 + i * 8, value, temp / 16, temp % 16 - 8, DARKEN);
 
 			JE_rectangle(VGAScreen, 235, 21 + select * 8, 310, 30 + select * 8, 248);
+			JE_showVGA();
 
 			Joystick_assignment temp;
 			if (detect_joystick_assignment(joystick_config, &temp))
