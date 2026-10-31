@@ -35,6 +35,15 @@ extern JE_byte map1YDelay, map1YDelayMax, map2YDelay, map2YDelayMax;
 extern JE_boolean anySmoothies;  // if yes, I want one :D
 extern JE_byte smoothie_data[9];
 
+typedef struct
+{
+	Uint8 color;
+	JE_word position; // relies on overflow wrap-around
+	int speed;
+} StarfieldStar;
+
+#define MAX_STARS 100
+extern StarfieldStar starfield_stars[MAX_STARS];
 extern int starfield_speed;
 
 void JE_darkenBackground(JE_word neat);
