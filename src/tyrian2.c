@@ -26,6 +26,7 @@
 #include "font.h"
 #include "fonthand.h"
 #include "game_menu.h"
+#include "hooks.h"
 #include "joystick.h"
 #include "keyboard.h"
 #include "lds_play.h"
@@ -57,6 +58,8 @@
 #include <stdint.h>
 
 inline static void blit_enemy(SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset);
+
+GameHooks game_hooks;
 
 boss_bar_t boss_bar[2];
 
@@ -589,6 +592,9 @@ void JE_main(void)
 
 start_level:
 
+	if (game_hooks.level_ended)
+		game_hooks.level_ended();
+
 	keyboardClearInput();
 	mouseClearInput();
 
@@ -968,7 +974,23 @@ start_level_first:
 	BKwrap2 = BKwrap2to = &megaData2.mainmap[1][0];
 	BKwrap3 = BKwrap3to = &megaData3.mainmap[1][0];
 
+	if (game_hooks.level_initialized)
+		game_hooks.level_initialized();
+
 level_loop:
+
+	if (game_hooks.level_tick_substitute)
+	{
+		switch (game_hooks.level_tick_substitute())
+		{
+		case LEVEL_TICK_NOT_SUBSTITUTED:
+			break;
+		case LEVEL_TICK_SUBSTITUTED:
+			goto level_loop;
+		case LEVEL_TICK_STOPPING:
+			goto start_level;
+		}
+	}
 
 	//tempScreenSeg = game_screen; /* side-effect of game_screen */
 

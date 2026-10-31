@@ -177,6 +177,7 @@
     <ClInclude Include="..\src\fonthand.h" />
     <ClInclude Include="..\src\game_menu.h" />
     <ClInclude Include="..\src\helptext.h" />
+    <ClInclude Include="..\src\hooks.h" />
     <ClInclude Include="..\src\joystick.h" />
     <ClInclude Include="..\src\jukebox.h" />
     <ClInclude Include="..\src\keyboard.h" />
