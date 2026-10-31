@@ -1042,16 +1042,8 @@ void showNormal(SDL_Surface *dst, SDL_Surface *src)
 }
 
 /* Background Starfield */
-typedef struct
-{
-	Uint8 color;
-	JE_word position; // relies on overflow wrap-around
-	int speed;
-} StarfieldStar;
-
-#define MAX_STARS 100
 #define STARFIELD_HUE 0x90
-static StarfieldStar starfield_stars[MAX_STARS];
+StarfieldStar starfield_stars[MAX_STARS];
 int starfield_speed;
 
 void initialize_starfield(void)
