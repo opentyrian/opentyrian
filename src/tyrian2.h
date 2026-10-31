@@ -35,6 +35,11 @@ boss_bar_t;
 
 extern boss_bar_t boss_bar[2];
 
+extern JE_boolean loadLevelOk;
+extern struct JE_EventRecType eventRec[EVENT_MAXIMUM];
+extern JE_word levelEnemyMax;
+extern JE_word levelEnemyFrequency;
+extern JE_word levelEnemy[40];
 extern char tempStr[31];
 extern JE_byte itemAvail[9][10], itemAvailMax[9];
 
