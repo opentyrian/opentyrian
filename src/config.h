@@ -136,7 +136,6 @@ extern JE_byte background2over;
 extern JE_byte gammaCorrection;
 extern JE_boolean superPause, explosionTransparent, youAreCheating, displayScore, background2, smoothScroll, wild, superWild, starActive, topEnemyOver, skyEnemyOverAll, background2notTransparent;
 extern JE_byte fastPlay;
-extern JE_boolean pentiumMode;
 extern JE_byte gameSpeed;
 extern JE_byte processorType;
 extern JE_SaveFilesType saveFiles;
