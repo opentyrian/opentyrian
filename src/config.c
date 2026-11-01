@@ -215,7 +215,6 @@ JE_boolean explosionTransparent,
            background2notTransparent;
 
 JE_byte    fastPlay;
-JE_boolean pentiumMode;
 
 /* Savegame files */
 JE_byte    gameSpeed;
@@ -585,8 +584,6 @@ void JE_initProcessorType(void)
 
 void JE_setNewGameSpeed(void)
 {
-	pentiumMode = false;
-
 	Uint16 speed;
 	switch (fastPlay)
 	{
@@ -619,10 +616,9 @@ void JE_setNewGameSpeed(void)
 		frameCountMax = 3;
 		break;
 	case 5:  // Slow
-		speed = 0x4300;
+		speed = 0x53C0;  // 2.5 periods of 0x4300 per frame
 		smoothScroll = true;
 		frameCountMax = 2;
-		pentiumMode = true;
 		break;
 	}
 

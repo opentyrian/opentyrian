@@ -1999,12 +1999,6 @@ draw_player_shot_loop_end:
 			flashChange = -flashChange;
 	}
 
-	/*Pentium Speed Mode?*/
-	if (pentiumMode)
-	{
-		frameCountMax = (frameCountMax == 2) ? 3 : 2;
-	}
-
 	/*--------  Level Timer    ---------*/
 	if (levelTimer && levelTimerCountdown > 0)
 	{
