@@ -74,38 +74,6 @@ char tempStr[31];
 JE_byte itemAvail[9][10]; /* [1..9, 1..10] */
 JE_byte itemAvailMax[9]; /* [1..9] */
 
-void JE_starShowVGA(void)
-{
-	if (!playerEndLevel && !skipStarShowVGA)
-	{
-		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
-		{
-			delayUntilElapsed();
-
-			setFrameCount(frameCountMax);
-		}
-
-		if (starShowVGASpecialCode == 1)
-		{
-			showFlipped(VGAScreenSeg, game_screen);
-		}
-		else if (starShowVGASpecialCode == 2 && processorType >= 2)
-		{
-			showHeadlight(VGAScreenSeg, game_screen, player[0].x, player[0].y);
-		}
-		else
-		{
-			showNormal(VGAScreenSeg, game_screen);
-		}
-		JE_showVGA();
-	}
-
-	handleSdlEvents();
-
-	quitRequested = false;
-	skipStarShowVGA = false;
-}
-
 inline static void blit_enemy(SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset)
 {
 	if (enemy[i].sprite2s == NULL)
@@ -2211,7 +2179,37 @@ draw_player_shot_loop_end:
 
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 
-	JE_starShowVGA();
+	if (!playerEndLevel && !skipStarShowVGA)
+	{
+		if (starShowVGASpecialCode == 1)
+		{
+			showFlipped(VGAScreenSeg, game_screen);
+		}
+		else if (starShowVGASpecialCode == 2 && processorType >= 2)
+		{
+			showHeadlight(VGAScreenSeg, game_screen, player[0].x, player[0].y);
+		}
+		else
+		{
+			showNormal(VGAScreenSeg, game_screen);
+		}
+
+		// Scale the screen before the delay so that it can be presented
+		// immediately after it.
+		scale_and_render_screen(VGAScreen);
+
+		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
+		{
+			delayUntilElapsed();
+
+			setFrameCount(frameCountMax);
+		}
+
+		present_screen();
+	}
+
+	quitRequested = false;
+	skipStarShowVGA = false;
 
 	/*Start backgrounds if no enemies on screen
 	  End level if number of enemies left to kill equals 0.*/
@@ -2262,6 +2260,8 @@ draw_player_shot_loop_end:
 
 	/*Other Network Functions*/
 	JE_handleChat();
+
+	handleSdlEvents();
 
 	if (reallyEndLevel)
 	{

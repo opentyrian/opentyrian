@@ -37,6 +37,7 @@ const char *const scaling_mode_names[ScalingMode_MAX] = {
 int fullscreen_display;
 ScalingMode scaling_mode = SCALE_INTEGER;
 static SDL_Rect last_output_rect = { 0, 0, vga_width, vga_height };
+static SDL_Rect next_output_rect = { 0, 0, vga_width, vga_height };
 
 SDL_Surface *VGAScreen, *VGAScreenSeg;
 SDL_Surface *VGAScreen2;
@@ -57,7 +58,6 @@ static void deinit_texture(void);
 static int window_get_display_index(void);
 static void window_center_in_display(int display_index);
 static void calc_dst_render_rect(SDL_Surface *src_surface, SDL_Rect *dst_rect);
-static void scale_and_flip(SDL_Surface *);
 
 void init_video(void)
 {
@@ -308,7 +308,8 @@ void JE_clr256(SDL_Surface *screen)
 
 void JE_showVGA(void)
 {
-	scale_and_flip(VGAScreen);
+	scale_and_render_screen(VGAScreen);
+	present_screen();
 }
 
 static void calc_dst_render_rect(SDL_Surface *const src_surface, SDL_Rect *const dst_rect)
@@ -374,7 +375,8 @@ static void calc_dst_render_rect(SDL_Surface *const src_surface, SDL_Rect *const
 	dst_rect->y = (win_h - dst_rect->h) / 2;
 }
 
-static void scale_and_flip(SDL_Surface *src_surface)
+/** Scales a surface and copies it to the renderer without presenting it. */
+void scale_and_render_screen(SDL_Surface *src_surface)
 {
 	assert(src_surface->format->BitsPerPixel == 8);
 
@@ -389,10 +391,20 @@ static void scale_and_flip(SDL_Surface *src_surface)
 	SDL_SetRenderDrawColor(main_window_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(main_window_renderer);
 	SDL_RenderCopy(main_window_renderer, main_window_texture, NULL, &dst_rect);
+#if SDL_VERSION_ATLEAST(2, 0, 10)
+	SDL_RenderFlush(main_window_renderer);
+#endif
+
+	next_output_rect = dst_rect;
+}
+
+/** Presents what scale_and_render_screen() copied to the renderer. */
+void present_screen(void)
+{
 	SDL_RenderPresent(main_window_renderer);
 
 	// Save output rect to be used by mouse functions
-	last_output_rect = dst_rect;
+	last_output_rect = next_output_rect;
 }
 
 /** Maps a specified point in game screen coordinates to window coordinates. */

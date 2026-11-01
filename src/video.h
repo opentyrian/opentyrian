@@ -58,6 +58,8 @@ void deinit_video(void);
 
 void JE_clr256(SDL_Surface *);
 void JE_showVGA(void);
+void scale_and_render_screen(SDL_Surface *src_surface);
+void present_screen(void);
 
 void mapScreenPointToWindow(Sint32 *inout_x, Sint32 *inout_y);
 void mapWindowPointToScreen(Sint32 *inout_x, Sint32 *inout_y);
