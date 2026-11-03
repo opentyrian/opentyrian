@@ -2093,75 +2093,10 @@ draw_player_shot_loop_end:
 		}
 	}
 
-	/*Network Update*/
+	/* Exchange tick state with other player when playing a network game. */
 #ifdef WITH_NETWORK
 	if (isNetworkGame)
-	{
-		if (!reallyEndLevel)
-		{
-			Uint16 requests = (pauseRequest == true) |
-			                  (inGameMenuRequest == true) << 1 |
-			                  (skipLevelRequest == true) << 2 |
-			                  (nortShipRequest == true) << 3;
-			SDLNet_Write16(requests,        &packet_state_out[0]->data[14]);
-
-			SDLNet_Write16(difficultyLevel, &packet_state_out[0]->data[16]);
-			SDLNet_Write16(player[0].x,     &packet_state_out[0]->data[18]);
-			SDLNet_Write16(player[1].x,     &packet_state_out[0]->data[20]);
-			SDLNet_Write16(player[0].y,     &packet_state_out[0]->data[22]);
-			SDLNet_Write16(player[1].y,     &packet_state_out[0]->data[24]);
-			SDLNet_Write16(curLoc,          &packet_state_out[0]->data[26]);
-
-			network_state_send();
-
-			if (network_state_update())
-			{
-				assert(SDLNet_Read16(&packet_state_in[0]->data[26]) == SDLNet_Read16(&packet_state_out[network_delay]->data[26]));
-
-				requests = SDLNet_Read16(&packet_state_in[0]->data[14]) ^ SDLNet_Read16(&packet_state_out[network_delay]->data[14]);
-				if (requests & 1)
-				{
-					JE_pauseGame();
-				}
-				if (requests & 2)
-				{
-					yourInGameMenuRequest = SDLNet_Read16(&packet_state_out[network_delay]->data[14]) & 2;
-					JE_doInGameSetup();
-					yourInGameMenuRequest = false;
-					if (haltGame)
-						reallyEndLevel = true;
-				}
-				if (requests & 4)
-				{
-					levelTimer = true;
-					levelTimerCountdown = 0;
-					endLevel = true;
-					levelEnd = 40;
-				}
-				if (requests & 8) // nortship
-				{
-					player[0].items.ship = 12;                     // Nort Ship
-					player[0].items.special = 13;                  // Astral Zone
-					player[0].items.weapon[FRONT_WEAPON].id = 36;  // NortShip Super Pulse
-					player[0].items.weapon[REAR_WEAPON].id = 37;   // NortShip Spreader
-					shipGr = 1;
-				}
-
-				for (int i = 0; i < 2; i++)
-				{
-					if (SDLNet_Read16(&packet_state_in[0]->data[18 + i * 2]) != SDLNet_Read16(&packet_state_out[network_delay]->data[18 + i * 2]) || SDLNet_Read16(&packet_state_in[0]->data[20 + i * 2]) != SDLNet_Read16(&packet_state_out[network_delay]->data[20 + i * 2]))
-					{
-						char temp[64];
-						sprintf(temp, "Player %d is unsynchronized!", i + 1);
-
-						JE_textShade(game_screen, 40, 110 + i * 10, temp, 9, 2, FULL_SHADE);
-					}
-				}
-			}
-		}
-
-		JE_clearSpecialRequests();
-	}
+		network_level_update();
 #endif
 
 	/** Test **/

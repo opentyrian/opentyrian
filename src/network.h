@@ -83,6 +83,8 @@ void network_tyrian_halt(unsigned int err, bool attempt_sync);
 
 int network_init(void);
 
+void network_level_update(void);
+
 void JE_clearSpecialRequests(void);
 
 #define NETWORK_KEEP_ALIVE() \
