@@ -1328,7 +1328,7 @@ static void JE_eSound(unsigned int sound)
 
 static void JE_superPixel(unsigned int tempPosX, unsigned int tempPosY)
 {
-	const unsigned int starPattern[5][5] =
+	static const unsigned int starPattern[5][5] =
 	{
 		{   0,   0, 246,   0,   0 },
 		{   0, 247, 249, 247,   0 },
@@ -1336,7 +1336,7 @@ static void JE_superPixel(unsigned int tempPosX, unsigned int tempPosY)
 		{   0, 247, 249, 247,   0 },
 		{   0,   0, 246,   0,   0 }
 	};
-	const unsigned int starIntensity[5][5] =
+	static const unsigned int starIntensity[5][5] =
 	{
 		{   0,   0,   1,   0,   0 },
 		{   0,   1,   2,   1,   0 },
